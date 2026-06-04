@@ -5,8 +5,8 @@ namespace App\Notifications;
 use App\Models\Ability;
 use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -19,8 +19,8 @@ class WineryAbilityChangedNotification extends Notification implements ShouldQue
 
     public function __construct(
         protected Ability $ability,
-        protected bool    $granted,       // true = activado, false = desactivado
-        protected string  $supervisorName
+        protected bool $granted,       // true = activado, false = desactivado
+        protected string $supervisorName
     ) {}
 
     public function notificationCategory(): string
@@ -42,16 +42,16 @@ class WineryAbilityChangedNotification extends Notification implements ShouldQue
         }
 
         $subject = $this->granted
-            ? '✅ Módulo activado por tu DO — ' . $this->ability->name
-            : '⚠️ Módulo desactivado por tu DO — ' . $this->ability->name;
+            ? '✅ Módulo activado por tu DO — '.$this->ability->name
+            : '⚠️ Módulo desactivado por tu DO — '.$this->ability->name;
 
         return (new MailMessage)
             ->subject($subject)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line(
                 $this->granted
-                    ? 'Tu Denominación de Origen **' . $this->supervisorName . '** ha **activado** el módulo **' . $this->ability->name . '** en tu cuenta.'
-                    : 'Tu Denominación de Origen **' . $this->supervisorName . '** ha **desactivado** el módulo **' . $this->ability->name . '** en tu cuenta.'
+                    ? 'Tu Denominación de Origen **'.$this->supervisorName.'** ha **activado** el módulo **'.$this->ability->name.'** en tu cuenta.'
+                    : 'Tu Denominación de Origen **'.$this->supervisorName.'** ha **desactivado** el módulo **'.$this->ability->name.'** en tu cuenta.'
             )
             ->when(
                 $this->granted,
@@ -65,15 +65,15 @@ class WineryAbilityChangedNotification extends Notification implements ShouldQue
     public function toArray(object $notifiable): array
     {
         return [
-            'ability_id'      => $this->ability->id,
-            'ability_name'    => $this->ability->name,
-            'ability_code'    => $this->ability->code,
-            'granted'         => $this->granted,
+            'ability_id' => $this->ability->id,
+            'ability_name' => $this->ability->name,
+            'ability_code' => $this->ability->code,
+            'granted' => $this->granted,
             'supervisor_name' => $this->supervisorName,
-            'icon'            => $this->granted ? '🔓' : '🔒',
-            'message'         => ($this->granted ? 'Módulo activado' : 'Módulo desactivado') . ': ' . $this->ability->name,
-            'action_url'      => route('winery.denomination.index'),
-            'action_text'     => __('Ver mi DO'),
+            'icon' => $this->granted ? '🔓' : '🔒',
+            'message' => ($this->granted ? 'Módulo activado' : 'Módulo desactivado').': '.$this->ability->name,
+            'action_url' => route('winery.denomination.index'),
+            'action_text' => __('Ver mi DO'),
         ];
     }
 }

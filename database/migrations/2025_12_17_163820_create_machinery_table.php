@@ -31,7 +31,7 @@ return new class extends Migration
             $table->unsignedBigInteger('viticulturist_id');
             $table->boolean('active')->default(true);
             $table->timestamps();
-            
+
             $table->foreign('viticulturist_id')->references('id')->on('users')->onDelete('cascade');
             $table->index(['viticulturist_id', 'active']);
             $table->index('type');

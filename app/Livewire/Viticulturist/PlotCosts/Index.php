@@ -15,18 +15,31 @@ class Index extends Component
     use WithPagination, WithToastNotifications;
 
     public string $filter_campaign_id = '';
+
     public string $filter_plot_id = '';
+
     public string $filter_category = '';
 
     protected $queryString = [
         'filter_campaign_id' => ['except' => '', 'as' => 'campaign'],
-        'filter_plot_id'     => ['except' => '', 'as' => 'plot'],
-        'filter_category'    => ['except' => '', 'as' => 'category'],
+        'filter_plot_id' => ['except' => '', 'as' => 'plot'],
+        'filter_category' => ['except' => '', 'as' => 'category'],
     ];
 
-    public function updatingFilterCampaignId(): void { $this->resetPage(); }
-    public function updatingFilterPlotId(): void { $this->resetPage(); }
-    public function updatingFilterCategory(): void { $this->resetPage(); }
+    public function updatingFilterCampaignId(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterPlotId(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterCategory(): void
+    {
+        $this->resetPage();
+    }
 
     public function delete(int $id): void
     {
@@ -55,24 +68,24 @@ class Index extends Component
 
         $base = PlotCost::where('viticulturist_id', $user->id);
         $filtered = (clone $base)
-            ->when($this->filter_campaign_id, fn($q) => $q->where('campaign_id', $this->filter_campaign_id))
-            ->when($this->filter_plot_id, fn($q) => $q->where('plot_id', $this->filter_plot_id))
-            ->when($this->filter_category, fn($q) => $q->where('category', $this->filter_category));
+            ->when($this->filter_campaign_id, fn ($q) => $q->where('campaign_id', $this->filter_campaign_id))
+            ->when($this->filter_plot_id, fn ($q) => $q->where('plot_id', $this->filter_plot_id))
+            ->when($this->filter_category, fn ($q) => $q->where('category', $this->filter_category));
 
         $stats = [
-            'total'        => (clone $base)->count(),
+            'total' => (clone $base)->count(),
             'total_amount' => (clone $base)->sum('amount'),
             'filtered_amount' => (clone $filtered)->sum('amount'),
         ];
 
         $campaigns = Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get();
-        $plots      = Plot::where('viticulturist_id', $user->id)->orderBy('name')->get();
+        $plots = Plot::where('viticulturist_id', $user->id)->orderBy('name')->get();
 
         return view('livewire.viticulturist.plot-costs.index', [
-            'costs'      => $costs,
-            'stats'      => $stats,
-            'campaigns'  => $campaigns,
-            'plots'      => $plots,
+            'costs' => $costs,
+            'stats' => $stats,
+            'campaigns' => $campaigns,
+            'plots' => $plots,
             'categories' => PlotCost::categoryOptions(),
         ])->layout('layouts.app');
     }

@@ -11,41 +11,31 @@ class EnergyUsage extends Model
     use HasFactory;
 
     const ENERGY_TYPES = [
-        'diesel'      => 'Gasóleo agrícola',
-        'gasoline'    => 'Gasolina',
+        'diesel' => 'Gasóleo agrícola',
+        'gasoline' => 'Gasolina',
         'electricity' => 'Electricidad',
-        'lpg'         => 'GLP (Gas licuado del petróleo)',
+        'lpg' => 'GLP (Gas licuado del petróleo)',
         'natural_gas' => 'Gas natural',
-        'water_pump'  => 'Bombeo de agua',
-        'other'       => 'Otro',
+        'water_pump' => 'Bombeo de agua',
+        'other' => 'Otro',
     ];
-
-    public static function energyTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::ENERGY_TYPES);
-    }
 
     const UNITS = [
         'liters' => 'Litros (L)',
-        'kwh'    => 'kWh',
-        'm3'     => 'm³',
-        'kg'     => 'kg',
+        'kwh' => 'kWh',
+        'm3' => 'm³',
+        'kg' => 'kg',
     ];
-
-    public static function unitOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::UNITS);
-    }
 
     // kg CO₂ equivalente por unidad
     const CO2_FACTORS = [
-        'diesel'      => 2.640,
-        'gasoline'    => 2.392,
+        'diesel' => 2.640,
+        'gasoline' => 2.392,
         'electricity' => 0.250,
-        'lpg'         => 1.512,
+        'lpg' => 1.512,
         'natural_gas' => 2.020,
-        'water_pump'  => 0.250,
-        'other'       => 0.000,
+        'water_pump' => 0.250,
+        'other' => 0.000,
     ];
 
     protected $fillable = [
@@ -66,26 +56,22 @@ class EnergyUsage extends Model
     ];
 
     protected $casts = [
-        'date'             => 'date',
-        'quantity'         => 'decimal:3',
-        'cost_per_unit'    => 'decimal:4',
-        'total_cost'       => 'decimal:2',
-        'co2_kg_equivalent'=> 'decimal:3',
-        'active'           => 'boolean',
+        'date' => 'date',
+        'quantity' => 'decimal:3',
+        'cost_per_unit' => 'decimal:4',
+        'total_cost' => 'decimal:2',
+        'co2_kg_equivalent' => 'decimal:3',
+        'active' => 'boolean',
     ];
 
-    protected static function booted(): void
+    public static function energyTypeOptions(): array
     {
-        static::saving(function (EnergyUsage $usage) {
-            // Auto-calcular CO₂ equivalente
-            $factor = self::CO2_FACTORS[$usage->energy_type] ?? 0;
-            $usage->co2_kg_equivalent = round($usage->quantity * $factor, 3);
+        return array_map(fn ($v) => __($v), static::ENERGY_TYPES);
+    }
 
-            // Auto-calcular coste total
-            if ($usage->cost_per_unit && $usage->quantity) {
-                $usage->total_cost = round($usage->quantity * $usage->cost_per_unit, 2);
-            }
-        });
+    public static function unitOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::UNITS);
     }
 
     public function campaign(): BelongsTo
@@ -131,5 +117,19 @@ class EnergyUsage extends Model
     public function scopeForCampaign($query, int $campaignId)
     {
         return $query->where('campaign_id', $campaignId);
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (EnergyUsage $usage) {
+            // Auto-calcular CO₂ equivalente
+            $factor = self::CO2_FACTORS[$usage->energy_type] ?? 0;
+            $usage->co2_kg_equivalent = round($usage->quantity * $factor, 3);
+
+            // Auto-calcular coste total
+            if ($usage->cost_per_unit && $usage->quantity) {
+                $usage->total_cost = round($usage->quantity * $usage->cost_per_unit, 2);
+            }
+        });
     }
 }

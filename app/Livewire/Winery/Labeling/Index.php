@@ -10,20 +10,23 @@ use Illuminate\Support\Facades\DB;
 
 class Index extends AbstractIndex
 {
-    public string $search     = '';
+    public string $search = '';
+
     public string $wineFilter = '';
 
     protected $queryString = [
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'wineFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void    { $this->resetPage(); }
-    public function updatingWineFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'wineFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingWineFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
@@ -41,6 +44,11 @@ class Index extends AbstractIndex
         $this->toastSuccess(__('Sesión de etiquetado eliminada.'));
     }
 
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'wineFilter' => ''];
+    }
+
     protected function baseQuery(): Builder
     {
         return WineLabeling::where('user_id', $this->wineryId())
@@ -50,8 +58,8 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
-            $query->whereHas('wine', fn($w) => $w->whereRaw('LOWER(name) LIKE ?', [$term]));
+            $term = '%'.mb_strtolower($this->search).'%';
+            $query->whereHas('wine', fn ($w) => $w->whereRaw('LOWER(name) LIKE ?', [$term]));
         }
 
         if ($this->wineFilter) {
@@ -64,9 +72,15 @@ class Index extends AbstractIndex
         $query->orderByDesc('labeling_date')->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['labeling_date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['labeling_date', 'desc'];
+    }
 
-    protected function perPage(): int { return 20; }
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -74,7 +88,7 @@ class Index extends AbstractIndex
 
         return [
             'labelings' => $entries,
-            'wines'     => $wines,
+            'wines' => $wines,
         ];
     }
 }

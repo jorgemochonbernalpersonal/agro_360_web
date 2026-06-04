@@ -30,21 +30,22 @@ class DeleteUnverifiedUsers extends Command
     {
         $hours = $this->option('hours');
         $dryRun = $this->option('dry-run');
-        
+
         $this->info("Looking for unverified users created more than {$hours} hours ago...");
-        
+
         // Buscar usuarios no verificados creados hace más de X horas
         $unverifiedUsers = User::whereNull('email_verified_at')
             ->where('created_at', '<', now()->subHours($hours))
             ->get();
-        
+
         if ($unverifiedUsers->isEmpty()) {
             $this->info('No unverified users found to delete.');
+
             return Command::SUCCESS;
         }
-        
+
         $this->warn("Found {$unverifiedUsers->count()} unverified user(s) to delete:");
-        
+
         // Mostrar lista de usuarios que se eliminarán
         $this->table(
             ['ID', 'Name', 'Email', 'Role', 'Created At'],
@@ -58,20 +59,22 @@ class DeleteUnverifiedUsers extends Command
                 ];
             })
         );
-        
+
         if ($dryRun) {
             $this->comment('DRY RUN: No users were actually deleted.');
+
             return Command::SUCCESS;
         }
-        
+
         // Confirmar antes de eliminar (solo en modo interactivo)
         if ($this->input->isInteractive()) {
-            if (!$this->confirm('Do you want to proceed with deletion?')) {
+            if (! $this->confirm('Do you want to proceed with deletion?')) {
                 $this->info('Operation cancelled.');
+
                 return Command::SUCCESS;
             }
         }
-        
+
         // Eliminar usuarios
         $deletedCount = 0;
         foreach ($unverifiedUsers as $user) {
@@ -83,9 +86,9 @@ class DeleteUnverifiedUsers extends Command
                 $this->error("Failed to delete user {$user->email}: {$e->getMessage()}");
             }
         }
-        
+
         $this->info("Successfully deleted {$deletedCount} unverified user(s).");
-        
+
         return Command::SUCCESS;
     }
 }

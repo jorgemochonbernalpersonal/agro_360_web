@@ -20,17 +20,19 @@ class Show extends Component
 
     public Container $container;
 
-    public bool   $fromVisual        = false;
+    public bool $fromVisual = false;
 
     // Ajuste manual de litros
-    public bool   $showAdjustModal  = false;
-    public string $adjustWineId     = '';
-    public string $adjustLiters     = '';
+    public bool $showAdjustModal = false;
+
+    public string $adjustWineId = '';
+
+    public string $adjustLiters = '';
 
     public function mount(Container $container): void
     {
         abort_if($container->user_id !== Auth::id(), 403);
-        $this->container  = $container;
+        $this->container = $container;
         $this->fromVisual = request()->query('from') === 'visual';
     }
 
@@ -44,8 +46,8 @@ class Show extends Component
 
     public function openAdjustModal(): void
     {
-        $this->adjustLiters  = (string) $this->container->wine_volume_liters;
-        $this->adjustWineId  = (string) ($this->container->currentState?->wine_id ?? '');
+        $this->adjustLiters = (string) $this->container->wine_volume_liters;
+        $this->adjustWineId = (string) ($this->container->currentState?->wine_id ?? '');
         $this->showAdjustModal = true;
     }
 
@@ -87,7 +89,7 @@ class Show extends Component
             ->get();
 
         $recentTransfers = WineTransfer::with(['wine', 'fromContainer', 'toContainer'])
-            ->where(fn($q) => $q
+            ->where(fn ($q) => $q
                 ->where('from_container_id', $container->id)
                 ->orWhere('to_container_id', $container->id)
             )
@@ -96,7 +98,7 @@ class Show extends Component
             ->get();
 
         $maintenanceCount = $container->maintenances()->count();
-        $additiveCount    = $container->additiveSupplies()->count();
+        $additiveCount = $container->additiveSupplies()->count();
 
         $recentAnalyses = WineAnalysis::with('wine')
             ->where('container_id', $container->id)
@@ -127,17 +129,17 @@ class Show extends Component
         $auditLogs = $container->auditLogs()->with('user')->limit(20)->get();
 
         return view('livewire.winery.cellar.containers.show', [
-            'wines'               => $wines,
-            'container'           => $container,
-            'history'             => $history,
-            'recentTransfers'     => $recentTransfers,
-            'maintenanceCount'    => $maintenanceCount,
-            'additiveCount'       => $additiveCount,
-            'harvestPct'          => round($harvestPct, 1),
-            'winePct'             => round($winePct, 1),
-            'recentAnalyses'      => $recentAnalyses,
+            'wines' => $wines,
+            'container' => $container,
+            'history' => $history,
+            'recentTransfers' => $recentTransfers,
+            'maintenanceCount' => $maintenanceCount,
+            'additiveCount' => $additiveCount,
+            'harvestPct' => round($harvestPct, 1),
+            'winePct' => round($winePct, 1),
+            'recentAnalyses' => $recentAnalyses,
             'recentFermentations' => $recentFermentations,
-            'auditLogs'           => $auditLogs,
+            'auditLogs' => $auditLogs,
         ])->layout('layouts.app');
     }
 }

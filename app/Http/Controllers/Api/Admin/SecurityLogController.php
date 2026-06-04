@@ -37,8 +37,8 @@ class SecurityLogController extends Controller
             $term = $request->input('search');
             $query->where(function ($q) use ($term) {
                 $q->where('message', 'like', "%{$term}%")
-                  ->orWhere('email', 'like', "%{$term}%")
-                  ->orWhere('ip', 'like', "%{$term}%");
+                    ->orWhere('email', 'like', "%{$term}%")
+                    ->orWhere('ip', 'like', "%{$term}%");
             });
         }
 
@@ -55,10 +55,10 @@ class SecurityLogController extends Controller
         return response()->json([
             'data' => SecurityEventResource::collection($items),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
+                'last_page' => $items->lastPage(),
             ],
         ]);
     }

@@ -4,40 +4,40 @@ namespace App\Providers;
 
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
+use App\Models\Client;
+use App\Models\Container;
 use App\Models\Crew;
+use App\Models\DoInspection;
+use App\Models\DoLabel;
+use App\Models\DoQualification;
 use App\Models\Harvest;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Machinery;
+use App\Models\MultipartPlotSigpac;
 use App\Models\PhytosanitaryProduct;
 use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Models\User;
-use App\Models\WineLoss;
-use App\Models\MultipartPlotSigpac;
-use App\Models\WineryViticulturist;
 use App\Models\PlotRemoteSensing;
+use App\Models\User;
+use App\Models\Wine;
+use App\Models\WineLoss;
+use App\Models\WineryViticulturist;
 use App\Observers\AgriculturalActivityObserver;
-use App\Observers\MultipartPlotSigpacObserver;
-use App\Observers\UserObserver;
-use App\Observers\WineryViticulturistObserver;
-use App\Observers\PlotRemoteSensingObserver;
 use App\Observers\CampaignObserver;
 use App\Observers\HarvestObserver;
 use App\Observers\InvoiceItemObserver;
 use App\Observers\InvoiceObserver;
+use App\Observers\MultipartPlotSigpacObserver;
 use App\Observers\PhytosanitaryProductObserver;
 use App\Observers\PhytosanitaryTreatmentObserver;
 use App\Observers\PlotObserver;
 use App\Observers\PlotPlantingObserver;
+use App\Observers\PlotRemoteSensingObserver;
+use App\Observers\UserObserver;
 use App\Observers\WineLossObserver;
-use App\Models\Client;
-use App\Models\Container;
-use App\Models\DoInspection;
-use App\Models\DoLabel;
-use App\Models\DoQualification;
-use App\Models\Wine;
+use App\Observers\WineryViticulturistObserver;
 use App\Policies\AgriculturalActivityPolicy;
 use App\Policies\CampaignPolicy;
 use App\Policies\ClientPolicy;
@@ -69,20 +69,20 @@ class AppServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Plot::class               => PlotPolicy::class,
-        PlotPlanting::class       => PlotPlantingPolicy::class,
-        Campaign::class           => CampaignPolicy::class,
+        Plot::class => PlotPolicy::class,
+        PlotPlanting::class => PlotPlantingPolicy::class,
+        Campaign::class => CampaignPolicy::class,
         AgriculturalActivity::class => AgriculturalActivityPolicy::class,
-        Crew::class               => CrewPolicy::class,
-        Machinery::class          => MachineryPolicy::class,
-        Client::class             => ClientPolicy::class,
-        Harvest::class            => HarvestPolicy::class,
-        Wine::class               => WinePolicy::class,
-        Container::class          => ContainerPolicy::class,
-        Invoice::class            => InvoicePolicy::class,
-        DoLabel::class            => DoLabelPolicy::class,
-        DoInspection::class       => DoInspectionPolicy::class,
-        DoQualification::class    => DoQualificationPolicy::class,
+        Crew::class => CrewPolicy::class,
+        Machinery::class => MachineryPolicy::class,
+        Client::class => ClientPolicy::class,
+        Harvest::class => HarvestPolicy::class,
+        Wine::class => WinePolicy::class,
+        Container::class => ContainerPolicy::class,
+        Invoice::class => InvoicePolicy::class,
+        DoLabel::class => DoLabelPolicy::class,
+        DoInspection::class => DoInspectionPolicy::class,
+        DoQualification::class => DoQualificationPolicy::class,
     ];
 
     public function register(): void
@@ -104,7 +104,7 @@ class AppServiceProvider extends ServiceProvider
         VerifyEmail::toMailUsing(function ($notifiable, string $url) {
             return (new MailMessage)
                 ->subject('Verifica tu cuenta en Agro365')
-                ->greeting('Hola ' . ($notifiable->name ?: '') . ',')
+                ->greeting('Hola '.($notifiable->name ?: '').',')
                 ->line('Gracias por registrarte en Agro365, tu cuaderno de campo digital para viticultores.')
                 ->line('Para activar tu cuenta y empezar a utilizar la plataforma, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente botón:')
                 ->action('Verificar mi email', $url)
@@ -116,20 +116,20 @@ class AppServiceProvider extends ServiceProvider
 
         ResetPassword::toMailUsing(function ($notifiable, string $token) {
             $email = $notifiable->getEmailForPasswordReset();
-            $url   = route('password.reset', ['token' => $token]) . '?email=' . urlencode($email);
+            $url = route('password.reset', ['token' => $token]).'?email='.urlencode($email);
 
             if ($this->app->environment('local')) {
                 \Log::info('Password reset URL generated', [
-                    'email'        => $email,
+                    'email' => $email,
                     'token_length' => strlen($token),
-                    'url'          => $url,
-                    'environment'  => $this->app->environment(),
+                    'url' => $url,
+                    'environment' => $this->app->environment(),
                 ]);
             }
 
             return (new MailMessage)
                 ->subject('Restablece tu contraseña en Agro365')
-                ->greeting('Hola ' . ($notifiable->name ?: '') . ',')
+                ->greeting('Hola '.($notifiable->name ?: '').',')
                 ->line('Has solicitado restablecer tu contraseña en Agro365.')
                 ->line('Haz clic en el siguiente botón para crear una nueva contraseña:')
                 ->action('Restablecer Contraseña', $url)
@@ -162,7 +162,7 @@ class AppServiceProvider extends ServiceProvider
     private function registerEmailRedirect(): void
     {
         $pattern = config('mail.redirect_pattern');
-        $target  = config('mail.redirect_to');
+        $target = config('mail.redirect_to');
 
         if (! $pattern || ! $target) {
             return;
@@ -181,5 +181,4 @@ class AppServiceProvider extends ServiceProvider
             $message->to(...$newTo);
         });
     }
-
 }

@@ -14,16 +14,6 @@ class DniMergeTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function makeGhost(string $dni, ?string $email = null): User
-    {
-        return User::factory()->create([
-            'role'      => 'viticulturist',
-            'can_login' => false,
-            'dni'       => strtoupper($dni),
-            'email'     => $email ?? 'viticultores.' . fake()->unique()->numerify('######') . '@agro365.es',
-        ]);
-    }
-
     // ── Happy path ────────────────────────────────────────────────────────────
 
     public function test_ghost_with_matching_dni_is_activated(): void
@@ -67,13 +57,13 @@ class DniMergeTest extends TestCase
     public function test_winery_relations_are_preserved_after_merge(): void
     {
         $winery = User::factory()->create(['role' => 'winery']);
-        $ghost  = $this->makeGhost('12345678A');
+        $ghost = $this->makeGhost('12345678A');
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $ghost->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
         ]);
 
         Livewire::test(Register::class)
@@ -87,7 +77,7 @@ class DniMergeTest extends TestCase
 
         // Ghost id preserved → relation still valid
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $ghost->id,
         ]);
     }
@@ -140,7 +130,7 @@ class DniMergeTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'email' => 'nuevo@example.com',
-            'dni'   => '99999999Z',
+            'dni' => '99999999Z',
         ]);
     }
 
@@ -157,7 +147,7 @@ class DniMergeTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'email' => 'maria@example.com',
-            'dni'   => '11111111H',
+            'dni' => '11111111H',
         ]);
     }
 
@@ -183,7 +173,7 @@ class DniMergeTest extends TestCase
 
         // Another active user already owns the email the ghost wants to use
         User::factory()->create([
-            'email'     => 'taken@example.com',
+            'email' => 'taken@example.com',
             'can_login' => true,
         ]);
 
@@ -203,8 +193,8 @@ class DniMergeTest extends TestCase
     public function test_duplicate_active_dni_shows_validation_error(): void
     {
         User::factory()->create([
-            'email'     => 'active@example.com',
-            'dni'       => '12345678A',
+            'email' => 'active@example.com',
+            'dni' => '12345678A',
             'can_login' => true,
         ]);
 
@@ -232,5 +222,15 @@ class DniMergeTest extends TestCase
             ->set('password_confirmation', 'password123')
             ->call('register')
             ->assertHasErrors(['dni']);
+    }
+
+    private function makeGhost(string $dni, ?string $email = null): User
+    {
+        return User::factory()->create([
+            'role' => 'viticulturist',
+            'can_login' => false,
+            'dni' => strtoupper($dni),
+            'email' => $email ?? 'viticultores.'.fake()->unique()->numerify('######').'@agro365.es',
+        ]);
     }
 }

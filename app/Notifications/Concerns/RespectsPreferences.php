@@ -36,13 +36,13 @@ trait RespectsPreferences
      */
     protected function filterChannelsByPreferences(object $notifiable, array $defaultChannels): array
     {
-        if (!$notifiable instanceof User) {
+        if (! $notifiable instanceof User) {
             return $defaultChannels;
         }
 
         $prefs = $notifiable->notification_preferences;
 
-        if (empty($prefs) || !isset($prefs['channels'])) {
+        if (empty($prefs) || ! isset($prefs['channels'])) {
             return $defaultChannels;
         }
 

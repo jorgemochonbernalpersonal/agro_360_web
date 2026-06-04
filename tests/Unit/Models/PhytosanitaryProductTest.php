@@ -2,17 +2,17 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\GrapeVariety;
 use App\Models\PhytosanitaryProduct;
 use App\Models\PhytosanitaryTreatment;
-use App\Models\AgriculturalActivity;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Models\GrapeVariety;
-use App\Models\Campaign;
 use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
 use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -36,7 +36,7 @@ class PhytosanitaryProductTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
-        
+
         $grapeVariety = GrapeVariety::firstOrCreate(
             ['code' => 'TEMP'],
             ['name' => 'Tempranillo', 'color' => 'red']
@@ -48,7 +48,7 @@ class PhytosanitaryProductTest extends TestCase
             'planting_year' => now()->year - 5,
             'status' => 'active',
         ]);
-        
+
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -145,4 +145,3 @@ class PhytosanitaryProductTest extends TestCase
         $this->assertEquals('Descripción del producto', $product->description);
     }
 }
-

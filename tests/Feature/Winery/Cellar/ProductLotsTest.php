@@ -47,24 +47,24 @@ class ProductLotsTest extends WineryTestCase
 
         $this->assertDatabaseHas('wine_lots', [
             'user_id' => $this->winery->id,
-            'name'    => 'Tempranillo Gran Reserva',
+            'name' => 'Tempranillo Gran Reserva',
         ]);
     }
 
     public function test_edit_saves_changes(): void
     {
         $lot = ProductLot::create([
-            'user_id'            => $this->winery->id,
-            'name'               => 'Old Name',
-            'wine_type'          => 'tinto',
-            'quantity'           => 500,
-            'initial_quantity'   => 500,
-            'unit'               => 'botellas',
+            'user_id' => $this->winery->id,
+            'name' => 'Old Name',
+            'wine_type' => 'tinto',
+            'quantity' => 500,
+            'initial_quantity' => 500,
+            'unit' => 'botellas',
             'available_quantity' => 500,
-            'reserved_quantity'  => 0,
-            'sold_quantity'      => 0,
-            'price_per_unit'     => 0,
-            'archived'           => false,
+            'reserved_quantity' => 0,
+            'sold_quantity' => 0,
+            'price_per_unit' => 0,
+            'archived' => false,
         ]);
 
         Livewire::test(Edit::class, ['lot' => $lot])
@@ -73,7 +73,7 @@ class ProductLotsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_lots', [
-            'id'   => $lot->id,
+            'id' => $lot->id,
             'name' => 'New Name',
         ]);
     }
@@ -83,17 +83,17 @@ class ProductLotsTest extends WineryTestCase
         $otherWinery = $this->makeOtherWinery();
 
         $lot = ProductLot::create([
-            'user_id'            => $this->winery->id,
-            'name'               => 'My Lot',
-            'wine_type'          => 'tinto',
-            'quantity'           => 500,
-            'initial_quantity'   => 500,
-            'unit'               => 'botellas',
+            'user_id' => $this->winery->id,
+            'name' => 'My Lot',
+            'wine_type' => 'tinto',
+            'quantity' => 500,
+            'initial_quantity' => 500,
+            'unit' => 'botellas',
             'available_quantity' => 500,
-            'reserved_quantity'  => 0,
-            'sold_quantity'      => 0,
-            'price_per_unit'     => 0,
-            'archived'           => false,
+            'reserved_quantity' => 0,
+            'sold_quantity' => 0,
+            'price_per_unit' => 0,
+            'archived' => false,
         ]);
 
         $this->actingAs($otherWinery)
@@ -114,17 +114,17 @@ class ProductLotsTest extends WineryTestCase
     public function test_sales_renders(): void
     {
         $lot = ProductLot::create([
-            'user_id'            => $this->winery->id,
-            'name'               => 'Sales Lot',
-            'wine_type'          => 'tinto',
-            'quantity'           => 500,
-            'initial_quantity'   => 500,
-            'unit'               => 'botellas',
+            'user_id' => $this->winery->id,
+            'name' => 'Sales Lot',
+            'wine_type' => 'tinto',
+            'quantity' => 500,
+            'initial_quantity' => 500,
+            'unit' => 'botellas',
             'available_quantity' => 500,
-            'reserved_quantity'  => 0,
-            'sold_quantity'      => 0,
-            'price_per_unit'     => 0,
-            'archived'           => false,
+            'reserved_quantity' => 0,
+            'sold_quantity' => 0,
+            'price_per_unit' => 0,
+            'archived' => false,
         ]);
 
         $this->get(route('winery.product-lots.sales', $lot))->assertOk();

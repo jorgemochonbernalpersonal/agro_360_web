@@ -18,7 +18,10 @@ class Index extends Component
         'search' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
 
     public function delete(int $id): void
     {
@@ -26,6 +29,7 @@ class Index extends Component
 
         if ($room->containers()->exists()) {
             $this->toastError(__('No se puede eliminar una sala que tiene depósitos asignados.'));
+
             return;
         }
 
@@ -37,7 +41,7 @@ class Index extends Component
     {
         $query = ContainerRoom::where('user_id', Auth::id())
             ->when($this->search, function ($q) {
-                $term = '%' . mb_strtolower($this->search) . '%';
+                $term = '%'.mb_strtolower($this->search).'%';
                 $q->whereRaw('LOWER(name) LIKE ?', [$term]);
             })
             ->withCount('containers')

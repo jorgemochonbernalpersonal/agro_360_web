@@ -11,20 +11,6 @@ use Tests\Feature\WineryTestCase;
 
 class LabelsTest extends WineryTestCase
 {
-    private function makeSupervisor(): User
-    {
-        return User::factory()->create(['role' => 'supervisor', 'email_verified_at' => now()]);
-    }
-
-    private function link(User $supervisor, User $winery): void
-    {
-        SupervisorWinery::create([
-            'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $supervisor->id,
-        ]);
-    }
-
     // ── access ────────────────────────────────────────────────────────────────
 
     public function test_winery_can_access_denomination_labels(): void
@@ -50,18 +36,18 @@ class LabelsTest extends WineryTestCase
     public function test_winery_sees_only_own_labels(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
-        $other      = $this->makeOtherWinery();
+        $winery = $this->makeWinery();
+        $other = $this->makeOtherWinery();
 
         $this->link($supervisor, $winery);
         $this->link($supervisor, $other);
 
-        $own   = DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => 2025, 'quantity_requested' => 100]);
+        $own = DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => 2025, 'quantity_requested' => 100]);
         $theirs = DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $other->id, 'vintage' => 2025, 'quantity_requested' => 200]);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
-            ->assertViewHas('labels', fn($l) => $l->contains('id', $own->id) && !$l->contains('id', $theirs->id));
+            ->assertViewHas('labels', fn ($l) => $l->contains('id', $own->id) && ! $l->contains('id', $theirs->id));
     }
 
     // ── counts ────────────────────────────────────────────────────────────────
@@ -69,7 +55,7 @@ class LabelsTest extends WineryTestCase
     public function test_counts_reflect_label_statuses(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $this->link($supervisor, $winery);
 
         DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => 2025, 'quantity_requested' => 100, 'status' => 'pending']);
@@ -77,7 +63,7 @@ class LabelsTest extends WineryTestCase
 
         Livewire::actingAs($winery)
             ->test(Index::class)
-            ->assertViewHas('counts', fn($c) => $c['all'] === 2 && $c['pending'] === 1 && $c['issued'] === 1);
+            ->assertViewHas('counts', fn ($c) => $c['all'] === 2 && $c['pending'] === 1 && $c['issued'] === 1);
     }
 
     // ── filters ───────────────────────────────────────────────────────────────
@@ -85,7 +71,7 @@ class LabelsTest extends WineryTestCase
     public function test_vintage_filter_narrows_results(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $this->link($supervisor, $winery);
 
         $a = DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => 2024, 'quantity_requested' => 100]);
@@ -94,21 +80,35 @@ class LabelsTest extends WineryTestCase
         Livewire::actingAs($winery)
             ->test(Index::class)
             ->set('vintageFilter', '2024')
-            ->assertViewHas('labels', fn($l) => $l->contains('id', $a->id) && !$l->contains('id', $b->id));
+            ->assertViewHas('labels', fn ($l) => $l->contains('id', $a->id) && ! $l->contains('id', $b->id));
     }
 
     public function test_status_filter_narrows_results(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $this->link($supervisor, $winery);
 
-        $pending  = DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => 2025, 'quantity_requested' => 100, 'status' => 'pending']);
+        $pending = DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => 2025, 'quantity_requested' => 100, 'status' => 'pending']);
         $approved = DoLabel::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'vintage' => 2025, 'quantity_requested' => 100, 'status' => 'approved']);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
             ->set('statusFilter', 'pending')
-            ->assertViewHas('labels', fn($l) => $l->contains('id', $pending->id) && !$l->contains('id', $approved->id));
+            ->assertViewHas('labels', fn ($l) => $l->contains('id', $pending->id) && ! $l->contains('id', $approved->id));
+    }
+
+    private function makeSupervisor(): User
+    {
+        return User::factory()->create(['role' => 'supervisor', 'email_verified_at' => now()]);
+    }
+
+    private function link(User $supervisor, User $winery): void
+    {
+        SupervisorWinery::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $supervisor->id,
+        ]);
     }
 }

@@ -11,41 +11,34 @@ class Create extends Component
 {
     use WithToastNotifications;
 
-    public string $title             = '';
-    public string $document_type     = 'other';
-    public string $reference_number  = '';
-    public string $issue_date        = '';
-    public string $expiry_date       = '';
-    public string $issuing_authority = '';
-    public string $notes             = '';
+    public string $title = '';
 
-    protected function rules(): array
-    {
-        return [
-            'title'             => ['required', 'string', 'max:200'],
-            'document_type'     => ['required', 'in:' . implode(',', array_keys(WineryDocument::DOCUMENT_TYPES))],
-            'reference_number'  => ['nullable', 'string', 'max:100'],
-            'issue_date'        => ['nullable', 'date'],
-            'expiry_date'       => ['nullable', 'date'],
-            'issuing_authority' => ['nullable', 'string', 'max:200'],
-            'notes'             => ['nullable', 'string'],
-        ];
-    }
+    public string $document_type = 'other';
+
+    public string $reference_number = '';
+
+    public string $issue_date = '';
+
+    public string $expiry_date = '';
+
+    public string $issuing_authority = '';
+
+    public string $notes = '';
 
     public function save(): void
     {
         $this->validate();
 
         WineryDocument::create([
-            'user_id'           => Auth::id(),
-            'title'             => $this->title,
-            'document_type'     => $this->document_type,
-            'reference_number'  => $this->reference_number ?: null,
-            'issue_date'        => $this->issue_date ?: null,
-            'expiry_date'       => $this->expiry_date ?: null,
+            'user_id' => Auth::id(),
+            'title' => $this->title,
+            'document_type' => $this->document_type,
+            'reference_number' => $this->reference_number ?: null,
+            'issue_date' => $this->issue_date ?: null,
+            'expiry_date' => $this->expiry_date ?: null,
             'issuing_authority' => $this->issuing_authority ?: null,
-            'notes'             => $this->notes ?: null,
-            'active'            => true,
+            'notes' => $this->notes ?: null,
+            'active' => true,
         ]);
 
         $this->toastSuccess("Documento «{$this->title}» creado correctamente.");
@@ -57,5 +50,18 @@ class Create extends Component
         return view('livewire.winery.documents.create', [
             'types' => WineryDocument::documentTypeOptions(),
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'title' => ['required', 'string', 'max:200'],
+            'document_type' => ['required', 'in:'.implode(',', array_keys(WineryDocument::DOCUMENT_TYPES))],
+            'reference_number' => ['nullable', 'string', 'max:100'],
+            'issue_date' => ['nullable', 'date'],
+            'expiry_date' => ['nullable', 'date'],
+            'issuing_authority' => ['nullable', 'string', 'max:200'],
+            'notes' => ['nullable', 'string'],
+        ];
     }
 }

@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payment;
-use App\Models\Subscription;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -20,8 +17,9 @@ class PaymentController extends Controller
         $user = Auth::user();
         $pendingData = session('pending_subscription');
 
-        if (!$pendingData) {
+        if (! $pendingData) {
             session()->flash('error', __('No se encontró información de pago pendiente.'));
+
             return redirect()->route('subscription.manage');
         }
 
@@ -33,7 +31,7 @@ class PaymentController extends Controller
                 $pendingData['payment_id'] ?? null
             );
 
-            if (!$orderId) {
+            if (! $orderId) {
                 throw new \Exception(__('No se encontró el ID de la orden de pago.'));
             }
 
@@ -53,6 +51,7 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             $this->paymentService->handlePaymentError($e, $user, $orderId ?? null);
             session()->flash('error', __('Error al procesar el pago: :error', ['error' => $e->getMessage()]));
+
             return redirect()->route('subscription.manage');
         }
     }
@@ -61,6 +60,7 @@ class PaymentController extends Controller
     {
         session()->forget('pending_subscription');
         session()->flash('message', __('Pago cancelado.'));
+
         return redirect()->route('subscription.manage');
     }
 }

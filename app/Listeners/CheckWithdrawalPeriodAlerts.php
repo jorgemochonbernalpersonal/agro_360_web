@@ -21,14 +21,14 @@ class CheckWithdrawalPeriodAlerts
         }
 
         $treatment = $activity->phytosanitaryTreatment;
-        
-        if (!$treatment || !$treatment->product) {
+
+        if (! $treatment || ! $treatment->product) {
             return;
         }
 
         $product = $treatment->product;
-        
-        if (!$product->withdrawal_period_days) {
+
+        if (! $product->withdrawal_period_days) {
             return;
         }
 

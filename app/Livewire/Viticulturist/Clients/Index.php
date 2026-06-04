@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Viticulturist\Clients;
 
-use App\Models\Client;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
+use App\Models\Client;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 class Index extends Component
@@ -13,7 +13,9 @@ class Index extends Component
     use WithPagination, WithToastNotifications;
 
     public $currentTab = 'active'; // 'active', 'inactive'
+
     public $search = '';
+
     public $filterType = '';
 
     protected $queryString = [
@@ -40,7 +42,7 @@ class Index extends Component
 
     public function clearFilters(): void
     {
-        $this->search     = '';
+        $this->search = '';
         $this->filterType = '';
         $this->resetPage();
     }
@@ -51,6 +53,7 @@ class Index extends Component
 
         if ($client->invoices()->exists()) {
             $this->toastError(__('No se puede eliminar un cliente con facturas asociadas.'));
+
             return;
         }
 
@@ -63,7 +66,7 @@ class Index extends Component
         $user = Auth::user();
         $client = Client::forUser($user->id)->findOrFail($clientId);
 
-        $newActiveState = !$client->active;
+        $newActiveState = ! $client->active;
 
         $client->update(['active' => $newActiveState]);
 
@@ -99,29 +102,29 @@ class Index extends Component
 
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('first_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('company_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('email', 'like', '%' . $this->search . '%')
-                  ->orWhere('phone', 'like', '%' . $this->search . '%')
-                  ->orWhere('company_document', 'like', '%' . $this->search . '%')
-                  ->orWhere('particular_document', 'like', '%' . $this->search . '%');
+                $q->where('first_name', 'like', '%'.$this->search.'%')
+                    ->orWhere('last_name', 'like', '%'.$this->search.'%')
+                    ->orWhere('company_name', 'like', '%'.$this->search.'%')
+                    ->orWhere('email', 'like', '%'.$this->search.'%')
+                    ->orWhere('phone', 'like', '%'.$this->search.'%')
+                    ->orWhere('company_document', 'like', '%'.$this->search.'%')
+                    ->orWhere('particular_document', 'like', '%'.$this->search.'%');
             });
         }
 
         $clients = $query->orderBy('created_at', 'desc')->paginate(12);
 
         $stats = [
-            'total'    => Client::forUser($user->id)->count(),
-            'active'   => Client::forUser($user->id)->where('active', true)->count(),
+            'total' => Client::forUser($user->id)->count(),
+            'active' => Client::forUser($user->id)->where('active', true)->count(),
             'inactive' => Client::forUser($user->id)->where('active', false)->count(),
         ];
 
         return view('livewire.viticulturist.clients.index', [
             'clients' => $clients,
-            'stats'   => $stats,
+            'stats' => $stats,
         ])->layout('layouts.app', [
-            'title'       => __('Clientes - Agro365'),
+            'title' => __('Clientes - Agro365'),
             'description' => __('Gestiona tus clientes y analiza tu cartera. Control completo de clientes particulares y empresas.'),
         ]);
     }

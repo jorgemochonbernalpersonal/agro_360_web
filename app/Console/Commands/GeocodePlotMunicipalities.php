@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Http;
 
 class GeocodePlotMunicipalities extends Command
 {
-    protected $signature   = 'municipalities:geocode-plots';
+    protected $signature = 'municipalities:geocode-plots';
+
     protected $description = 'Geocodifica solo los municipios que tienen parcelas (rápido)';
 
     public function handle(): int
@@ -25,6 +26,7 @@ class GeocodePlotMunicipalities extends Command
 
         if ($municipalities->isEmpty()) {
             $this->info('Todos los municipios con parcelas ya tienen coordenadas.');
+
             return self::SUCCESS;
         }
 
@@ -33,10 +35,10 @@ class GeocodePlotMunicipalities extends Command
 
         foreach ($municipalities as $municipality) {
             $province = $municipality->province?->name ?? '';
-            $search   = "{$municipality->name}, {$province}, España";
+            $search = "{$municipality->name}, {$province}, España";
 
             $http = Http::withHeaders([
-                'User-Agent'      => 'Agro365/1.0 (info@agro365.es)',
+                'User-Agent' => 'Agro365/1.0 (info@agro365.es)',
                 'Accept-Language' => 'es',
             ]);
 
@@ -45,15 +47,15 @@ class GeocodePlotMunicipalities extends Command
             }
 
             $response = $http->get('https://nominatim.openstreetmap.org/search', [
-                'q'            => $search,
-                'format'       => 'json',
-                'limit'        => 1,
+                'q' => $search,
+                'format' => 'json',
+                'limit' => 1,
                 'countrycodes' => 'es',
             ]);
 
             $results = $response->json();
 
-            if (!empty($results)) {
+            if (! empty($results)) {
                 $municipality->update([
                     'lat' => round((float) $results[0]['lat'], 6),
                     'lng' => round((float) $results[0]['lon'], 6),
@@ -68,6 +70,7 @@ class GeocodePlotMunicipalities extends Command
         }
 
         $this->info("Listo. Actualizados: {$updated}");
+
         return self::SUCCESS;
     }
 }

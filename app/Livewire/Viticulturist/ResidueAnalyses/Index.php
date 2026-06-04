@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Auth;
 
 class Index extends AbstractIndex
 {
-    public string $filterCampaign  = '';
+    public string $filterCampaign = '';
+
     public string $filterCompliant = '';
 
     public function mount(): void
@@ -19,18 +20,25 @@ class Index extends AbstractIndex
         $this->filterCampaign = (string) ($campaign?->id ?? '');
     }
 
-    public function updatingFilterCampaign(): void  { $this->resetPage(); }
-    public function updatingFilterCompliant(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingFilterCampaign(): void
     {
-        return ['filterCampaign' => '', 'filterCompliant' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingFilterCompliant(): void
+    {
+        $this->resetPage();
     }
 
     public function deactivate(int $id): void
     {
         $this->findOwned(ResidueAnalysis::class, $id)->update(['active' => false]);
         $this->toastSuccess(__('Análisis archivado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['filterCampaign' => '', 'filterCompliant' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -50,24 +58,30 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['analysis_date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['analysis_date', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
         $base = ResidueAnalysis::where('viticulturist_id', $this->viticulturistId())->active();
 
         $stats = [
-            'total'     => (clone $base)->count(),
+            'total' => (clone $base)->count(),
             'compliant' => (clone $base)->where('overall_compliant', true)->count(),
-            'failed'    => (clone $base)->where('overall_compliant', false)->count(),
+            'failed' => (clone $base)->where('overall_compliant', false)->count(),
         ];
 
         return [
-            'entries'   => $entries,
+            'entries' => $entries,
             'campaigns' => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
-            'stats'     => $stats,
+            'stats' => $stats,
         ];
     }
 }

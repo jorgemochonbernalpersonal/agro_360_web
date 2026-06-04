@@ -2,19 +2,21 @@
 
 namespace App\Livewire\Subscription;
 
-use App\Models\Subscription;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Payment;
+use App\Models\Subscription;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Illuminate\Support\Facades\Log;
-use App\Livewire\Concerns\WithToastNotifications;
 
 class Manage extends Component
 {
     use WithToastNotifications;
+
     public $selectedPlan = 'monthly';
+
     public $activeSubscription;
 
     public function mount()
@@ -30,10 +32,11 @@ class Manage extends Component
     public function initiatePayment()
     {
         $user = Auth::user();
-        
+
         // Verificar si ya tiene una suscripción activa
         if ($user->hasActiveSubscription()) {
             $this->toastError(__('Ya tienes una suscripción activa.'));
+
             return;
         }
 
@@ -50,25 +53,25 @@ class Manage extends Component
 
             // Crear orden de pago
             $order = $provider->createOrder([
-                "intent" => "CAPTURE",
-                "purchase_units" => [
+                'intent' => 'CAPTURE',
+                'purchase_units' => [
                     [
-                        "amount" => [
-                            "currency_code" => "EUR",
-                            "value" => number_format($amount, 2, '.', '')
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => number_format($amount, 2, '.', ''),
                         ],
-                        "description" => "Suscripción Agro365 - " . ($this->selectedPlan === 'yearly' ? 'Anual' : 'Mensual')
-                    ]
+                        'description' => 'Suscripción Agro365 - '.($this->selectedPlan === 'yearly' ? 'Anual' : 'Mensual'),
+                    ],
                 ],
-                "application_context" => [
-                    "return_url" => route('payment.success'),
-                    "cancel_url" => route('payment.cancel'),
-                    "brand_name" => "Agro365",
-                    "locale" => "es-ES",
-                    "landing_page" => "BILLING",
-                    "shipping_preference" => "NO_SHIPPING",
-                    "user_action" => "PAY_NOW"
-                ]
+                'application_context' => [
+                    'return_url' => route('payment.success'),
+                    'cancel_url' => route('payment.cancel'),
+                    'brand_name' => 'Agro365',
+                    'locale' => 'es-ES',
+                    'landing_page' => 'BILLING',
+                    'shipping_preference' => 'NO_SHIPPING',
+                    'user_action' => 'PAY_NOW',
+                ],
             ]);
 
             if (isset($order['id']) && $order['status'] === 'CREATED') {
@@ -88,13 +91,14 @@ class Manage extends Component
                         'plan_type' => $this->selectedPlan,
                         'amount' => $amount,
                         'payment_id' => $payment->id,
-                    ]
+                    ],
                 ]);
 
                 // Redirigir a PayPal usando JavaScript
                 foreach ($order['links'] as $link) {
                     if ($link['rel'] === 'approve') {
                         $this->dispatch('redirect-to-paypal', url: $link['href']);
+
                         return;
                     }
                 }
@@ -116,8 +120,9 @@ class Manage extends Component
         $user = Auth::user();
         $subscription = $user->activeSubscription;
 
-        if (!$subscription) {
+        if (! $subscription) {
             $this->toastError(__('No tienes una suscripción activa.'));
+
             return;
         }
 
@@ -128,7 +133,7 @@ class Manage extends Component
                 $provider->setApiCredentials(config('paypal'));
                 $token = $provider->getAccessToken();
                 $provider->setAccessToken($token);
-                
+
                 $provider->cancelSubscription($subscription->paypal_subscription_id, 'Usuario canceló la suscripción');
             }
 
@@ -148,11 +153,12 @@ class Manage extends Component
     public function render()
     {
         $user = Auth::user();
+
         return view('livewire.subscription.manage', [
             'monthlyPrice' => $user->viticulturistMonthlyPrice(),
-            'yearlyPrice'  => $user->viticulturistYearlyPrice(),
+            'yearlyPrice' => $user->viticulturistYearlyPrice(),
             'isWineryLinked' => $user->hasWinery(),
-            'isProducer'   => $user->isProducer(),
+            'isProducer' => $user->isProducer(),
         ]);
     }
 }

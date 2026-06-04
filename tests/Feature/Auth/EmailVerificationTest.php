@@ -3,9 +3,9 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\VerifyEmailNotification;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -193,9 +193,8 @@ class EmailVerificationTest extends TestCase
             ->call('register');
 
         $user = User::where('email', 'test@example.com')->first();
-        
+
         Notification::assertSentTo($user, VerifyEmailNotification::class);
         $this->assertNull($user->email_verified_at);
     }
 }
-

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('country')->default('España');
             $table->string('phone')->nullable();
             $table->timestamps();
-            
+
             $table->unique('user_id');
         });
     }

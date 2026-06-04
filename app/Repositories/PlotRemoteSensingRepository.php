@@ -16,20 +16,6 @@ use Illuminate\Support\Facades\DB;
 class PlotRemoteSensingRepository
 {
     /**
-     * Base query scoped to plot + optional sigpac parcel.
-     */
-    private function baseQuery(Plot $plot, ?int $plotSigpacId = null)
-    {
-        $q = PlotRemoteSensing::where('plot_id', $plot->id);
-
-        if ($plotSigpacId !== null) {
-            $q->where('multipart_plot_sigpac_id', $plotSigpacId);
-        }
-
-        return $q;
-    }
-
-    /**
      * Get the latest remote sensing data for a plot (optionally scoped to a sigpac parcel).
      */
     public function getLatestForPlot(Plot $plot, ?int $plotSigpacId = null): ?PlotRemoteSensing
@@ -107,7 +93,7 @@ class PlotRemoteSensingRepository
     public function createOrUpdate(Plot $plot, Carbon $imageDate, array $data, ?int $plotSigpacId = null): PlotRemoteSensing
     {
         $matchKeys = [
-            'plot_id'    => $plot->id,
+            'plot_id' => $plot->id,
             'image_date' => $imageDate->format('Y-m-d'),
         ];
 
@@ -208,10 +194,24 @@ class PlotRemoteSensingRepository
 
         return [
             'excellent' => $latestData->where('health_status', 'excellent')->count(),
-            'good'      => $latestData->where('health_status', 'good')->count(),
-            'moderate'  => $latestData->where('health_status', 'moderate')->count(),
-            'poor'      => $latestData->where('health_status', 'poor')->count(),
-            'critical'  => $latestData->where('health_status', 'critical')->count(),
+            'good' => $latestData->where('health_status', 'good')->count(),
+            'moderate' => $latestData->where('health_status', 'moderate')->count(),
+            'poor' => $latestData->where('health_status', 'poor')->count(),
+            'critical' => $latestData->where('health_status', 'critical')->count(),
         ];
+    }
+
+    /**
+     * Base query scoped to plot + optional sigpac parcel.
+     */
+    private function baseQuery(Plot $plot, ?int $plotSigpacId = null)
+    {
+        $q = PlotRemoteSensing::where('plot_id', $plot->id);
+
+        if ($plotSigpacId !== null) {
+            $q->where('multipart_plot_sigpac_id', $plotSigpacId);
+        }
+
+        return $q;
     }
 }

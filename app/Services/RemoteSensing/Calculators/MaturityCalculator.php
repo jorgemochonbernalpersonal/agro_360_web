@@ -2,13 +2,12 @@
 
 namespace App\Services\RemoteSensing\Calculators;
 
-use App\Models\Plot;
 use App\Models\PlotRemoteSensing;
 use Carbon\Carbon;
 
 /**
  * Maturity Index Calculator for Vineyards
- * 
+ *
  * Predicts grape maturity (°Brix, sugars) based on:
  * - NDVI evolution
  * - Growing Degree Days (GDD)
@@ -28,10 +27,11 @@ class MaturityCalculator
      * Calculate maturity index (0-100)
      * Based on multiple factors
      *
-     * @param PlotRemoteSensing $currentData Current data
-     * @param array $historicalData Historical NDVI data
-     * @param float $gdd Accumulated Growing Degree Days
-     * @param Carbon $veraison Estimated veraison date
+     * @param PlotRemoteSensing $currentData    Current data
+     * @param array             $historicalData Historical NDVI data
+     * @param float             $gdd            Accumulated Growing Degree Days
+     * @param Carbon            $veraison       Estimated veraison date
+     *
      * @return array Maturity analysis
      */
     public function calculateMaturityIndex(
@@ -73,7 +73,7 @@ class MaturityCalculator
         return [
             'maturity_index' => round($maturityIndex, 1),
             'predicted_brix' => $predictedBrix,
-            'days_from_veraison' => (int)$daysFromVeraison,
+            'days_from_veraison' => (int) $daysFromVeraison,
             'estimated_days_to_harvest' => $this->estimateDaysToHarvest($maturityIndex),
             'optimal_harvest_date' => $this->estimateHarvestDate($maturityIndex),
             'classification' => $this->classifyMaturity($maturityIndex),
@@ -84,6 +84,60 @@ class MaturityCalculator
                 'stress_score' => round($stressScore, 1),
             ],
             'recommendations' => $this->getMaturityRecommendations($maturityIndex, $predictedBrix),
+        ];
+    }
+
+    /**
+     * Calculate quality index based on maturity + weather
+     * Predicts potential wine quality
+     */
+    public function calculateQualityPotential(
+        float $maturityIndex,
+        array $weatherHistory,
+        float $avgNDVI
+    ): array {
+        $qualityScore = 0;
+        $maxScore = 100;
+
+        // Factor 1: Maturity timing (30 points)
+        if ($maturityIndex >= 80 && $maturityIndex <= 90) {
+            $qualityScore += 30;
+        } elseif ($maturityIndex >= 70 && $maturityIndex < 95) {
+            $qualityScore += 20;
+        } else {
+            $qualityScore += 10;
+        }
+
+        // Factor 2: Consistent growth (NDVI) (30 points)
+        if ($avgNDVI >= 0.6 && $avgNDVI <= 0.8) {
+            $qualityScore += 30;
+        } elseif ($avgNDVI >= 0.5 && $avgNDVI < 0.9) {
+            $qualityScore += 20;
+        } else {
+            $qualityScore += 10;
+        }
+
+        // Factor 3: Weather conditions (40 points)
+        // Ideal: warm days, cool nights, no excessive rain
+        $weatherScore = $this->evaluateWeatherForQuality($weatherHistory);
+        $qualityScore += $weatherScore;
+
+        return [
+            'quality_score' => round($qualityScore, 1),
+            'classification' => match (true) {
+                $qualityScore >= 85 => 'exceptional',
+                $qualityScore >= 75 => 'excellent',
+                $qualityScore >= 65 => 'very_good',
+                $qualityScore >= 50 => 'good',
+                default => 'average',
+            },
+            'label' => match (true) {
+                $qualityScore >= 85 => __('Excepcional'),
+                $qualityScore >= 75 => __('Excelente'),
+                $qualityScore >= 65 => __('Muy Bueno'),
+                $qualityScore >= 50 => __('Bueno'),
+                default => __('Estándar'),
+            },
         ];
     }
 
@@ -203,7 +257,7 @@ class MaturityCalculator
         // Typical ranges:
         // Red wine: 22-26 °Brix optimal
         // White wine: 19-23 °Brix optimal
-        
+
         $brix = match (true) {
             $maturityIndex >= 95 => 26.0,
             $maturityIndex >= 90 => 24.0 + (($maturityIndex - 90) / 5) * 2,
@@ -247,7 +301,7 @@ class MaturityCalculator
     private function estimateHarvestDate(float $maturityIndex): ?Carbon
     {
         $days = $this->estimateDaysToHarvest($maturityIndex);
-        
+
         if ($days === null) {
             return null;
         }
@@ -367,60 +421,6 @@ class MaturityCalculator
     }
 
     /**
-     * Calculate quality index based on maturity + weather
-     * Predicts potential wine quality
-     */
-    public function calculateQualityPotential(
-        float $maturityIndex,
-        array $weatherHistory,
-        float $avgNDVI
-    ): array {
-        $qualityScore = 0;
-        $maxScore = 100;
-
-        // Factor 1: Maturity timing (30 points)
-        if ($maturityIndex >= 80 && $maturityIndex <= 90) {
-            $qualityScore += 30;
-        } elseif ($maturityIndex >= 70 && $maturityIndex < 95) {
-            $qualityScore += 20;
-        } else {
-            $qualityScore += 10;
-        }
-
-        // Factor 2: Consistent growth (NDVI) (30 points)
-        if ($avgNDVI >= 0.6 && $avgNDVI <= 0.8) {
-            $qualityScore += 30;
-        } elseif ($avgNDVI >= 0.5 && $avgNDVI < 0.9) {
-            $qualityScore += 20;
-        } else {
-            $qualityScore += 10;
-        }
-
-        // Factor 3: Weather conditions (40 points)
-        // Ideal: warm days, cool nights, no excessive rain
-        $weatherScore = $this->evaluateWeatherForQuality($weatherHistory);
-        $qualityScore += $weatherScore;
-
-        return [
-            'quality_score' => round($qualityScore, 1),
-            'classification' => match (true) {
-                $qualityScore >= 85 => 'exceptional',
-                $qualityScore >= 75 => 'excellent',
-                $qualityScore >= 65 => 'very_good',
-                $qualityScore >= 50 => 'good',
-                default => 'average',
-            },
-            'label' => match (true) {
-                $qualityScore >= 85 => __('Excepcional'),
-                $qualityScore >= 75 => __('Excelente'),
-                $qualityScore >= 65 => __('Muy Bueno'),
-                $qualityScore >= 50 => __('Bueno'),
-                default => __('Estándar'),
-            },
-        ];
-    }
-
-    /**
      * Evaluate weather history for wine quality
      */
     private function evaluateWeatherForQuality(array $weatherHistory): float
@@ -433,11 +433,11 @@ class MaturityCalculator
 
         // Look for ideal conditions (last 30 days)
         $recent = array_slice($weatherHistory, -30);
-        
+
         $avgTemp = array_sum(array_column($recent, 'temp_mean')) / count($recent);
         $totalRain = array_sum(array_column($recent, 'precipitation'));
-        $hotDays = count(array_filter($recent, fn($d) => ($d['temp_max'] ?? 0) > 30));
-        $coolNights = count(array_filter($recent, fn($d) => ($d['temp_min'] ?? 20) < 15));
+        $hotDays = count(array_filter($recent, fn ($d) => ($d['temp_max'] ?? 0) > 30));
+        $coolNights = count(array_filter($recent, fn ($d) => ($d['temp_min'] ?? 20) < 15));
 
         // Warm but not too hot (20-28°C avg)
         if ($avgTemp >= 20 && $avgTemp <= 28) {

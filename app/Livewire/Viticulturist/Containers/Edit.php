@@ -3,57 +3,69 @@
 namespace App\Livewire\Viticulturist\Containers;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
-use App\Models\ContainerType;
 use App\Models\ContainerMaterial;
 use App\Models\ContainerRoom;
+use App\Models\ContainerType;
 use App\Models\UnitOfMeasurement;
-use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
-use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Edit extends Component
 {
     use WithFileUploads, WithRoleAwareRedirect, WithToastNotifications;
 
     public Container $container;
-    
+
     // Básicos
     public $name = '';
+
     public $serial_number = '';
+
     public $description = '';
-    
+
     // Tipo y Material
     public $type_id = '';
+
     public $material_id = '';
+
     public $oak_type = '';
+
     public $toast_type = '';
-    
+
     // Capacidad
     public $capacity = '';
+
     public $quantity = 1;
+
     public $unit_of_measurement_id = '';
-    
+
     // Ubicación
     public $container_room_id = '';
+
     public $x_position = '';
+
     public $y_position = '';
-    
+
     // Mantenimiento
     public $purchase_date = '';
+
     public $next_maintenance_date = '';
+
     public $supplier_name = '';
-    
+
     // Fotos
     public $photos = [];
+
     public $existingPhotos = [];
 
     public function mount($id)
     {
         $this->container = Container::where('user_id', Auth::id())->findOrFail($id);
-        
+
         // Cargar datos existentes
         $this->name = $this->container->name;
         $this->serial_number = $this->container->serial_number;
@@ -72,32 +84,12 @@ class Edit extends Component
         $this->existingPhotos = $this->container->photos ?? [];
     }
 
-    protected function rules()
-    {
-        return [
-            'name' => 'required|string|max:255',
-            'serial_number' => 'nullable|string|max:100|unique:containers,serial_number,' . $this->container->id,
-            'description' => 'nullable|string|max:1000',
-            'type_id' => 'required|integer',
-            'material_id' => 'required|integer',
-            'oak_type' => 'nullable|string|max:255',
-            'toast_type' => 'nullable|in:light,medium,medium_plus,heavy',
-            'capacity' => 'required|numeric|min:1',
-            'quantity' => 'nullable|integer|min:1',
-            'unit_of_measurement_id' => 'required|integer',
-            'container_room_id' => ['nullable', Rule::exists('container_rooms', 'id')->where('user_id', Auth::id())],
-            'purchase_date' => 'nullable|date|before_or_equal:today',
-            'next_maintenance_date' => 'nullable|date|after:today',
-            'supplier_name' => 'nullable|string|max:255',
-            'photos.*' => 'nullable|image|max:2048',
-        ];
-    }
-
     public function save()
     {
         // Validar que no se reduzca capacidad si está ocupado
         if ($this->capacity < $this->container->used_capacity) {
             $this->addError('capacity', __('No puedes reducir la capacidad a :capacity L porque hay :used L ocupados.', ['capacity' => number_format($this->capacity, 2), 'used' => number_format($this->container->used_capacity, 2)]));
+
             return;
         }
 
@@ -105,7 +97,7 @@ class Edit extends Component
 
         try {
             $photoPaths = $this->existingPhotos;
-            
+
             // Subir nuevas fotos
             if ($this->photos) {
                 foreach ($this->photos as $photo) {
@@ -134,14 +126,15 @@ class Edit extends Component
             ]);
 
             $this->toastSuccess(__('Contenedor actualizado correctamente.'));
+
             return $this->viticulturistRoleRedirect('containers.show', $this->container->id);
-            
+
         } catch (\Exception $e) {
             \Log::error('Error al actualizar contenedor', [
                 'error' => $e->getMessage(),
                 'container_id' => $this->container->id,
             ]);
-            
+
             $this->toastError(__('Error al actualizar el contenedor. Por favor, intenta de nuevo.'));
         }
     }
@@ -162,5 +155,26 @@ class Edit extends Component
             'containerRooms' => $containerRooms,
             'unitsOfMeasurement' => $unitsOfMeasurement,
         ])->layout('layouts.app');
+    }
+
+    protected function rules()
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'serial_number' => 'nullable|string|max:100|unique:containers,serial_number,'.$this->container->id,
+            'description' => 'nullable|string|max:1000',
+            'type_id' => 'required|integer',
+            'material_id' => 'required|integer',
+            'oak_type' => 'nullable|string|max:255',
+            'toast_type' => 'nullable|in:light,medium,medium_plus,heavy',
+            'capacity' => 'required|numeric|min:1',
+            'quantity' => 'nullable|integer|min:1',
+            'unit_of_measurement_id' => 'required|integer',
+            'container_room_id' => ['nullable', Rule::exists('container_rooms', 'id')->where('user_id', Auth::id())],
+            'purchase_date' => 'nullable|date|before_or_equal:today',
+            'next_maintenance_date' => 'nullable|date|after:today',
+            'supplier_name' => 'nullable|string|max:255',
+            'photos.*' => 'nullable|image|max:2048',
+        ];
     }
 }

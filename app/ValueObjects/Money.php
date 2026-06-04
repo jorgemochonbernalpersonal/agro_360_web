@@ -14,6 +14,14 @@ class Money
     }
 
     /**
+     * Convertir a string
+     */
+    public function __toString(): string
+    {
+        return $this->format();
+    }
+
+    /**
      * Crear desde string
      */
     public static function fromString(string $value, string $currency = 'EUR'): self
@@ -35,6 +43,7 @@ class Money
     public function add(Money $other): self
     {
         $this->ensureSameCurrency($other);
+
         return new self($this->amount + $other->amount, $this->currency);
     }
 
@@ -44,6 +53,7 @@ class Money
     public function subtract(Money $other): self
     {
         $this->ensureSameCurrency($other);
+
         return new self($this->amount - $other->amount, $this->currency);
     }
 
@@ -63,6 +73,7 @@ class Money
         if ($divisor === 0.0) {
             throw new \InvalidArgumentException(__('No se puede dividir por cero.'));
         }
+
         return new self($this->amount / $divisor, $this->currency);
     }
 
@@ -88,6 +99,7 @@ class Money
     public function isGreaterThan(Money $other): bool
     {
         $this->ensureSameCurrency($other);
+
         return $this->amount > $other->amount;
     }
 
@@ -97,6 +109,7 @@ class Money
     public function isLessThan(Money $other): bool
     {
         $this->ensureSameCurrency($other);
+
         return $this->amount < $other->amount;
     }
 
@@ -105,7 +118,7 @@ class Money
      */
     public function equals(Money $other): bool
     {
-        return $this->currency === $other->currency 
+        return $this->currency === $other->currency
             && abs($this->amount - $other->amount) < 0.01;
     }
 
@@ -122,15 +135,7 @@ class Money
      */
     public function format(int $decimals = 2): string
     {
-        return number_format($this->amount, $decimals, ',', '.') . ' ' . $this->currency;
-    }
-
-    /**
-     * Convertir a string
-     */
-    public function __toString(): string
-    {
-        return $this->format();
+        return number_format($this->amount, $decimals, ',', '.').' '.$this->currency;
     }
 
     /**

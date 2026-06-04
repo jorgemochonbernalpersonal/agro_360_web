@@ -10,16 +10,17 @@ use Illuminate\Support\Facades\DB;
 
 class SendRegulatoryDeadlineReminders extends Command
 {
-    protected $signature   = 'agro:regulatory-reminders {--dry-run : Muestra qué enviaría sin enviar nada}';
-    protected $description = 'Envía recordatorios de plazos INFOVI a bodegas y productores';
-
     private const REMIND_DAYS = [7, 1];
+
+    protected $signature = 'agro:regulatory-reminders {--dry-run : Muestra qué enviaría sin enviar nada}';
+
+    protected $description = 'Envía recordatorios de plazos INFOVI a bodegas y productores';
 
     public function handle(): int
     {
         $dryRun = $this->option('dry-run');
-        $today  = now()->startOfDay();
-        $sent   = 0;
+        $today = now()->startOfDay();
+        $sent = 0;
 
         $users = User::whereIn('role', ['winery', 'producer'])
             ->where('can_login', true)
@@ -27,14 +28,14 @@ class SendRegulatoryDeadlineReminders extends Command
             ->get(['id', 'name', 'email', 'role']);
 
         foreach ($users as $user) {
-            $isLarge   = $this->isLargeProducer($user->id);
+            $isLarge = $this->isLargeProducer($user->id);
             $deadlines = $this->buildDeadlines($isLarge, $today);
 
             foreach ($deadlines as $deadline) {
                 $deadlineDate = Carbon::parse($deadline['date']);
-                $daysLeft     = (int) $today->diffInDays($deadlineDate, false);
+                $daysLeft = (int) $today->diffInDays($deadlineDate, false);
 
-                if (!in_array($daysLeft, self::REMIND_DAYS)) {
+                if (! in_array($daysLeft, self::REMIND_DAYS)) {
                     continue;
                 }
 
@@ -45,15 +46,16 @@ class SendRegulatoryDeadlineReminders extends Command
 
                 if ($dryRun) {
                     $this->line("[DRY-RUN] {$user->email} — {$deadline['label']} ({$daysLeft}d)");
+
                     continue;
                 }
 
                 $user->notify(new RegulatoryDeadlineNotification(
                     deadlineLabel: $deadline['label'],
-                    deadlineDate:  $deadline['date'],
-                    daysLeft:      $daysLeft,
-                    producerType:  $isLarge ? 'gran' : 'pequeño',
-                    deadlineType:  $deadline['type'],
+                    deadlineDate: $deadline['date'],
+                    daysLeft: $daysLeft,
+                    producerType: $isLarge ? 'gran' : 'pequeño',
+                    deadlineType: $deadline['type'],
                 ));
 
                 $sent++;
@@ -62,6 +64,7 @@ class SendRegulatoryDeadlineReminders extends Command
         }
 
         $this->info("Recordatorios enviados: {$sent}");
+
         return self::SUCCESS;
     }
 
@@ -87,29 +90,30 @@ class SendRegulatoryDeadlineReminders extends Command
     {
         if ($isLarge) {
             $nextMonth = $today->copy()->addMonth()->startOfMonth();
+
             return [[
                 'label' => __('Declaración mensual :month', ['month' => $nextMonth->translatedFormat('F Y')]),
-                'date'  => $nextMonth->copy()->setDay(19)->toDateString(),
-                'type'  => 'monthly',
+                'date' => $nextMonth->copy()->setDay(19)->toDateString(),
+                'type' => 'monthly',
             ]];
         }
 
-        $deadlines  = [];
+        $deadlines = [];
         $candidates = [
-            $today->year . '-08-19',
-            $today->year . '-12-19',
-            ($today->year + 1) . '-08-19',
-            ($today->year + 1) . '-12-19',
+            $today->year.'-08-19',
+            $today->year.'-12-19',
+            ($today->year + 1).'-08-19',
+            ($today->year + 1).'-12-19',
         ];
 
         foreach ($candidates as $d) {
             if ($d >= $today->toDateString()) {
-                $date  = Carbon::parse($d);
+                $date = Carbon::parse($d);
                 $month = $date->month === 12 ? 'noviembre' : 'julio';
                 $deadlines[] = [
                     'label' => __('Declaración ampliada :month :year', ['month' => $month, 'year' => $date->year]),
-                    'date'  => $d,
-                    'type'  => 'semi_annual',
+                    'date' => $d,
+                    'type' => 'semi_annual',
                 ];
                 if (count($deadlines) >= 2) {
                     break;

@@ -20,8 +20,9 @@ class WineryWineTransfersSeeder extends Seeder
         $now = now();
 
         $unitId = $this->getLitrosUnitId();
-        if (!$unitId) {
+        if (! $unitId) {
             $this->command->warn('No se encontró unidad "Litros" en units_of_measurement.');
+
             return;
         }
 
@@ -39,6 +40,7 @@ class WineryWineTransfersSeeder extends Seeder
 
         if (empty($allContainers) || empty($wines)) {
             $this->command->warn('Faltan vinos o contenedores.');
+
             return;
         }
 
@@ -48,9 +50,9 @@ class WineryWineTransfersSeeder extends Seeder
         foreach ($wines as $wine) {
             $numTransfers = match ($wine->status) {
                 'in_progress' => 2,
-                'aged'        => 3,
-                'bottled'     => 1,
-                default       => 1,
+                'aged' => 3,
+                'bottled' => 1,
+                default => 1,
             };
 
             $types = ['racking', 'racking', 'top_up', 'blending'];
@@ -66,38 +68,38 @@ class WineryWineTransfersSeeder extends Seeder
                     $toId = $allContainers[($cidx + 1) % count($allContainers)];
                 }
 
-                $type     = $types[$i % count($types)];
-                $daysAgo  = ($numTransfers - $i) * 15 + mt_rand(1, 10);
+                $type = $types[$i % count($types)];
+                $daysAgo = ($numTransfers - $i) * 15 + mt_rand(1, 10);
                 $quantity = round(mt_rand(800, 5000) + mt_rand(0, 999) / 1000, 3);
 
                 $rows[] = [
-                    'wine_id'               => $wine->id,
-                    'from_container_id'     => $fromId,
-                    'to_container_id'       => $toId,
-                    'quantity'              => $quantity,
-                    'unit_of_measurement_id'=> $unitId,
-                    'transfer_type'         => $type,
-                    'transfer_date'         => now()->subDays($daysAgo)->format('Y-m-d'),
-                    'notes'                 => $this->noteForType($type, $i),
-                    'created_by'            => self::WINERY_USER_ID,
-                    'created_at'            => $now,
-                    'updated_at'            => $now,
+                    'wine_id' => $wine->id,
+                    'from_container_id' => $fromId,
+                    'to_container_id' => $toId,
+                    'quantity' => $quantity,
+                    'unit_of_measurement_id' => $unitId,
+                    'transfer_type' => $type,
+                    'transfer_date' => now()->subDays($daysAgo)->format('Y-m-d'),
+                    'notes' => $this->noteForType($type, $i),
+                    'created_by' => self::WINERY_USER_ID,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
             }
         }
 
         DB::table('wine_transfers')->insert($rows);
 
-        $this->command->info('✅ Traslados de vino: ' . count($rows) . ' registros');
+        $this->command->info('✅ Traslados de vino: '.count($rows).' registros');
     }
 
     private function noteForType(string $type, int $i): ?string
     {
         return match ($type) {
-            'racking'  => $i === 0 ? 'Primer trasiego post-fermentación. Separación de lías gruesas.' : 'Trasiego de limpieza.',
-            'top_up'   => 'Relleno para compensar evaporación. Merma natural de bodega.',
+            'racking' => $i === 0 ? 'Primer trasiego post-fermentación. Separación de lías gruesas.' : 'Trasiego de limpieza.',
+            'top_up' => 'Relleno para compensar evaporación. Merma natural de bodega.',
             'blending' => 'Mezcla de lotes para homogeneizar perfil organoléptico.',
-            default    => null,
+            default => null,
         };
     }
 

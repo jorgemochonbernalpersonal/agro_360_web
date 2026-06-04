@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Viticulturist\Settings;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Tax;
 use App\Models\UserTax;
-use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Taxes extends Component
 {
@@ -23,13 +23,6 @@ class Taxes extends Component
         $this->loadUserTaxes();
     }
 
-    protected function loadUserTaxes(): void
-    {
-        $userTaxes = UserTax::where('user_id', Auth::id())->get();
-        $this->enabledTaxIds = $userTaxes->pluck('tax_id')->map(fn($id) => (int) $id)->toArray();
-        $this->defaultTaxId  = (int) ($userTaxes->firstWhere('is_default', true)?->tax_id ?? 0) ?: null;
-    }
-
     /**
      * Activar o desactivar un impuesto para el usuario.
      * Si se desactiva el que era defecto, se asigna el primero habilitado restante.
@@ -41,13 +34,14 @@ class Taxes extends Component
         if (in_array($taxId, $this->enabledTaxIds, true)) {
             // Deshabilitar
             UserTax::where('user_id', $userId)->where('tax_id', $taxId)->delete();
-            $this->enabledTaxIds = array_values(array_filter($this->enabledTaxIds, fn($id) => $id !== $taxId));
+            $this->enabledTaxIds = array_values(array_filter($this->enabledTaxIds, fn ($id) => $id !== $taxId));
 
             // Si era el defecto, reasignar al primero restante
             if ($this->defaultTaxId === $taxId) {
                 $this->defaultTaxId = null;
                 if (! empty($this->enabledTaxIds)) {
                     $this->setDefault($this->enabledTaxIds[0]);
+
                     return;
                 }
             }
@@ -64,6 +58,7 @@ class Taxes extends Component
             // Si es el primero, marcarlo como defecto automáticamente
             if ($this->defaultTaxId === null) {
                 $this->setDefault($taxId);
+
                 return;
             }
 
@@ -109,5 +104,12 @@ class Taxes extends Component
         return view('livewire.viticulturist.settings.taxes', [
             'taxes' => $taxes,
         ])->layout('layouts.app');
+    }
+
+    protected function loadUserTaxes(): void
+    {
+        $userTaxes = UserTax::where('user_id', Auth::id())->get();
+        $this->enabledTaxIds = $userTaxes->pluck('tax_id')->map(fn ($id) => (int) $id)->toArray();
+        $this->defaultTaxId = (int) ($userTaxes->firstWhere('is_default', true)?->tax_id ?? 0) ?: null;
     }
 }

@@ -26,7 +26,8 @@ class Show extends Component
     public User $viticulturist;
 
     public bool $showAssignWineryModal = false;
-    public ?int $assignWineryId        = null;
+
+    public ?int $assignWineryId = null;
 
     public function mount(User $viticulturist): void
     {
@@ -45,8 +46,9 @@ class Show extends Component
             ->where('viticulturist_id', $this->viticulturist->id)
             ->firstOrFail();
 
-        if (!$this->viticulturist->can_login) {
+        if (! $this->viticulturist->can_login) {
             $this->toastError(__('El viticultor aún no ha activado su cuenta.'));
+
             return;
         }
 
@@ -57,6 +59,7 @@ class Show extends Component
 
         if ($existing) {
             $this->toastError(__('Ya existe una solicitud activa o aprobada para este viticultor.'));
+
             return;
         }
 
@@ -116,15 +119,16 @@ class Show extends Component
 
         if ($already) {
             $this->toastError(__('El viticultor ya está asignado a esa bodega.'));
+
             return;
         }
 
         WineryViticulturist::create([
-            'winery_id'        => $this->assignWineryId,
+            'winery_id' => $this->assignWineryId,
             'viticulturist_id' => $this->viticulturist->id,
-            'supervisor_id'    => $doId,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'assigned_by'      => $doId,
+            'supervisor_id' => $doId,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'assigned_by' => $doId,
         ]);
 
         $this->showAssignWineryModal = false;
@@ -149,7 +153,7 @@ class Show extends Component
 
     public function removeFromPool(): void
     {
-        $doId     = Auth::id();
+        $doId = Auth::id();
         $relation = SupervisorViticulturist::where('supervisor_id', $doId)
             ->where('viticulturist_id', $this->viticulturist->id)
             ->firstOrFail();
@@ -171,18 +175,18 @@ class Show extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        $supervisorId      = Auth::id();
-        $viticulturistId   = $this->viticulturist->id;
+        $supervisorId = Auth::id();
+        $viticulturistId = $this->viticulturist->id;
 
         // Parcelas activas
         $plots = Plot::where('viticulturist_id', $viticulturistId)
             ->where('active', true)
-            ->with(['municipality', 'plantings' => fn($q) => $q->where('status', 'active')->with('grapeVariety')])
+            ->with(['municipality', 'plantings' => fn ($q) => $q->where('status', 'active')->with('grapeVariety')])
             ->orderBy('name')
             ->get();
 
-        $totalArea   = $plots->sum('area');
-        $totalPlots  = $plots->count();
+        $totalArea = $plots->sum('area');
+        $totalPlots = $plots->count();
 
         // Bodegas a las que está asignado dentro del DO de este supervisor
         $wineryRelations = WineryViticulturist::where('supervisor_id', $supervisorId)
@@ -198,7 +202,7 @@ class Show extends Component
 
         $hasNotebookAccess = $supervisorRelation?->hasNotebookAccess() ?? false;
 
-        $pendingNotebookRequest = !$hasNotebookAccess
+        $pendingNotebookRequest = ! $hasNotebookAccess
             ? NotebookAccessRequest::where('supervisor_id', $supervisorId)
                 ->where('viticulturist_id', $viticulturistId)
                 ->where('status', NotebookAccessRequest::STATUS_PENDING)
@@ -237,8 +241,8 @@ class Show extends Component
             ->get();
 
         // Alertas PAC: parcelas sin área elegible
-        $plotsWithoutPac = $plots->filter(fn($p) => is_null($p->pac_eligible_area))->count();
-        $lockedPlots     = $plots->filter(fn($p) => $p->is_locked)->count();
+        $plotsWithoutPac = $plots->filter(fn ($p) => is_null($p->pac_eligible_area))->count();
+        $lockedPlots = $plots->filter(fn ($p) => $p->is_locked)->count();
 
         // Bodegas del DO no asignadas todavía a este viticultor (para el modal)
         $assignedWineryIds = $wineryRelations->pluck('winery_id');
@@ -246,26 +250,26 @@ class Show extends Component
             ->whereNotIn('winery_id', $assignedWineryIds)
             ->with('winery:id,name')
             ->get()
-            ->map(fn($r) => $r->winery)
+            ->map(fn ($r) => $r->winery)
             ->filter()
             ->sortBy('name')
             ->values();
 
         return view('livewire.supervisor.oversight.growers.show', [
-            'plots'                  => $plots,
-            'totalArea'              => $totalArea,
-            'totalPlots'             => $totalPlots,
-            'wineryRelations'        => $wineryRelations,
-            'hasNotebookAccess'      => $hasNotebookAccess,
+            'plots' => $plots,
+            'totalArea' => $totalArea,
+            'totalPlots' => $totalPlots,
+            'wineryRelations' => $wineryRelations,
+            'hasNotebookAccess' => $hasNotebookAccess,
             'pendingNotebookRequest' => $pendingNotebookRequest,
-            'supervisorRelation'     => $supervisorRelation,
-            'recentActivities'       => $recentActivities,
-            'activityCounts'         => $activityCounts,
-            'certifications'         => $certifications,
-            'inspections'            => $inspections,
-            'plotsWithoutPac'        => $plotsWithoutPac,
-            'lockedPlots'            => $lockedPlots,
-            'availableWineries'      => $availableWineries,
+            'supervisorRelation' => $supervisorRelation,
+            'recentActivities' => $recentActivities,
+            'activityCounts' => $activityCounts,
+            'certifications' => $certifications,
+            'inspections' => $inspections,
+            'plotsWithoutPac' => $plotsWithoutPac,
+            'lockedPlots' => $lockedPlots,
+            'availableWineries' => $availableWineries,
         ]);
     }
 }

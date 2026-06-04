@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +44,7 @@ class SigpacUseSeeder extends Seeder
                 ['description' => $use['description']]
             );
         }
-        
+
         $this->command->info('✅ Usos SIGPAC creados/actualizados correctamente.');
     }
 }

@@ -14,8 +14,10 @@ use Livewire\Component;
 class Index extends Component
 {
     public string $filterCampaign = '';
-    public string $filterPlot     = '';
-    public string $filterWine     = '';
+
+    public string $filterPlot = '';
+
+    public string $filterWine = '';
 
     public function mount(): void
     {
@@ -29,7 +31,7 @@ class Index extends Component
 
     public function render()
     {
-        $userId    = Auth::id();
+        $userId = Auth::id();
         $campaigns = Campaign::where('viticulturist_id', $userId)
             ->orderByDesc('year')
             ->get(['id', 'name', 'year']);
@@ -47,11 +49,11 @@ class Index extends Component
 
         return view('livewire.producer.full-traceability.index', [
             'campaigns' => $campaigns,
-            'plots'     => $plots,
-            'wines'     => $wines,
+            'plots' => $plots,
+            'wines' => $wines,
             'traceData' => $traceData,
         ])->layout('layouts.app', [
-            'title'       => __('Trazabilidad Cepa a Botella'),
+            'title' => __('Trazabilidad Cepa a Botella'),
             'description' => __('Flujo completo desde la parcela hasta el producto final'),
         ]);
     }
@@ -118,9 +120,9 @@ class Index extends Component
             ->get();
 
         $wineStats = [
-            'total_wines'  => $winesData->count(),
+            'total_wines' => $winesData->count(),
             'total_volume' => $winesData->sum('current_volume'),
-            'types'        => $winesData->groupBy('wine_type')->map->count()->toArray(),
+            'types' => $winesData->groupBy('wine_type')->map->count()->toArray(),
         ];
 
         // ── Paso 4: Productos finales (lotes) ───────────────────────────
@@ -157,13 +159,13 @@ class Index extends Component
             ->get();
 
         return [
-            'fieldStats'     => $fieldStats,
+            'fieldStats' => $fieldStats,
             'receptionStats' => $receptionStats,
-            'batches'        => $batches,
-            'winesData'      => $winesData,
-            'wineStats'      => $wineStats,
-            'productStats'   => $productStats,
-            'flowByPlot'     => $flowByPlot,
+            'batches' => $batches,
+            'winesData' => $winesData,
+            'wineStats' => $wineStats,
+            'productStats' => $productStats,
+            'flowByPlot' => $flowByPlot,
         ];
     }
 }

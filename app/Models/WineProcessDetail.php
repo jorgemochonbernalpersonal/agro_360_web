@@ -5,36 +5,30 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class WineProcessDetail extends Model
 {
     const PROCESS_TYPES = [
         'destemming_crushing' => 'Despalillado / Estrujado',
-        'pressing'            => 'Prensado',
-        'settling'            => 'Desfangado',
-        'fermentation'        => 'Fermentación alcohólica',
-        'maceration'          => 'Maceración',
-        'malolactic'          => 'Fermentación maloláctica',
-        'aging'               => 'Crianza',
-        'racking'             => 'Trasiego',
-        'blending'            => 'Mezcla / Coupage',
-        'fining'              => 'Clarificación / Colaje',
-        'filtration'          => 'Filtrado',
-        'cold_stabilization'  => 'Estabilización tartárica',
-        'bottling'            => 'Embotellado',
-        'enrichment'          => 'Enriquecimiento (chaptalización)',
-        'concentration'       => 'Concentración de mosto',
-        'acidification'       => 'Acidificación',
-        'desacidification'    => 'Desacidificación',
-        'sulfitation'         => 'Sulfitado',
-        'other'               => 'Otro',
+        'pressing' => 'Prensado',
+        'settling' => 'Desfangado',
+        'fermentation' => 'Fermentación alcohólica',
+        'maceration' => 'Maceración',
+        'malolactic' => 'Fermentación maloláctica',
+        'aging' => 'Crianza',
+        'racking' => 'Trasiego',
+        'blending' => 'Mezcla / Coupage',
+        'fining' => 'Clarificación / Colaje',
+        'filtration' => 'Filtrado',
+        'cold_stabilization' => 'Estabilización tartárica',
+        'bottling' => 'Embotellado',
+        'enrichment' => 'Enriquecimiento (chaptalización)',
+        'concentration' => 'Concentración de mosto',
+        'acidification' => 'Acidificación',
+        'desacidification' => 'Desacidificación',
+        'sulfitation' => 'Sulfitado',
+        'other' => 'Otro',
     ];
-
-    public static function processTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::PROCESS_TYPES);
-    }
 
     protected $fillable = [
         'wine_id',
@@ -51,9 +45,14 @@ class WineProcessDetail extends Model
 
     protected $casts = [
         'start_date' => 'date',
-        'end_date'   => 'date',
-        'quantity'   => 'decimal:3',
+        'end_date' => 'date',
+        'quantity' => 'decimal:3',
     ];
+
+    public static function processTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PROCESS_TYPES);
+    }
 
     public function wine(): BelongsTo
     {

@@ -22,15 +22,15 @@ class PlotPlantingResource extends JsonResource
             'plant_spacing' => (float) $this->plant_spacing,
             'row_spacing' => (float) $this->row_spacing,
             'planting_year' => $this->planting_year,
-            'grape_variety' => $this->whenLoaded('grapeVariety', fn() => [
+            'grape_variety' => $this->whenLoaded('grapeVariety', fn () => [
                 'id' => $this->grapeVariety->id,
                 'name' => $this->grapeVariety->name,
             ]),
-            'training_system' => $this->whenLoaded('trainingSystem', fn() => [
+            'training_system' => $this->whenLoaded('trainingSystem', fn () => [
                 'id' => $this->trainingSystem->id,
                 'name' => $this->trainingSystem->name,
             ]),
-            'certification' => $this->whenLoaded('certification', fn() => [
+            'certification' => $this->whenLoaded('certification', fn () => [
                 'id' => $this->certification->id,
                 'name' => $this->certification->name,
             ]),

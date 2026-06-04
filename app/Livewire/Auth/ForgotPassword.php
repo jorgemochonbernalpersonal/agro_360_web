@@ -2,18 +2,18 @@
 
 namespace App\Livewire\Auth;
 
+use App\Livewire\Concerns\WithToastNotifications;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\RateLimiter;
-
-use App\Livewire\Concerns\WithToastNotifications;
 
 class ForgotPassword extends Component
 {
     use WithToastNotifications;
+
     public $email = '';
 
     protected $rules = [
@@ -23,10 +23,10 @@ class ForgotPassword extends Component
     public function sendResetLink()
     {
         // Rate limiting: por IP
-        $key = 'forgot-password.' . request()->ip();
+        $key = 'forgot-password.'.request()->ip();
         $maxAttempts = app()->environment('production') ? 5 : 100;
         $decaySeconds = app()->environment('production') ? 60 : 10;
-        
+
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
@@ -46,11 +46,11 @@ class ForgotPassword extends Component
 
             if ($status === Password::RESET_LINK_SENT) {
                 $message = __('Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico.');
-                
+
                 if (app()->environment('local')) {
                     Log::info('Password reset link sent', ['email' => $this->email]);
                 }
-                
+
                 $this->toastSuccess($message);
                 $this->email = ''; // Limpiar el campo
             } else {
@@ -66,7 +66,7 @@ class ForgotPassword extends Component
                 'environment' => app()->environment(),
                 'trace' => app()->environment('local') ? $e->getTraceAsString() : 'Trace hidden in production',
             ]);
-            
+
             // En desarrollo, mostrar el error detallado
             if (app()->environment('local')) {
                 $this->toastError(__('Error al enviar el correo: :error. Revisa los logs y MailHog.', ['error' => $e->getMessage()]));

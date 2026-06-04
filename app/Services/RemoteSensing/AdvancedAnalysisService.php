@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Advanced Remote Sensing Analysis Service
- * 
+ *
  * Aggregates all advanced functionalities:
  * - LAI (Leaf Area Index) for yield prediction
  * - GNDVI/Chlorophyll for nitrogen status
@@ -37,18 +37,18 @@ class AdvancedAnalysisService
     /**
      * Perform complete advanced analysis on plot
      *
-     * @param Plot $plot
      * @param bool $forceRefresh Skip cache
+     *
      * @return array Complete analysis results
      */
     public function analyzeAdvanced(Plot $plot, bool $forceRefresh = false): array
     {
         // Check cache first
-        if (!$forceRefresh) {
+        if (! $forceRefresh) {
             $cached = $this->cacheService->get(
                 sprintf('advanced_analysis_plot_%d', $plot->id)
             );
-            
+
             if ($cached) {
                 return $cached;
             }
@@ -57,8 +57,8 @@ class AdvancedAnalysisService
         try {
             // Get current and historical data
             $current = $this->repository->getLatestForPlot($plot);
-            
-            if (!$current) {
+
+            if (! $current) {
                 return $this->getEmptyAnalysis('No hay datos disponibles');
             }
 
@@ -73,19 +73,19 @@ class AdvancedAnalysisService
                 'plot_name' => $plot->name,
                 'analyzed_at' => now()->toIso8601String(),
                 'data_date' => $current->image_date->toIso8601String(),
-                
+
                 // 1. LAI Analysis
                 'lai' => $this->analyzeLAI($plot, $current, $historical),
-                
+
                 // 2. Chlorophyll/Nitrogen Analysis
                 'chlorophyll' => $this->analyzeChlorophyll($current),
-                
+
                 // 3. Maturity Analysis
                 'maturity' => $this->analyzeMaturity($plot, $current, $historical),
-                
+
                 // 4. Anomaly Detection
                 'anomalies' => $this->detectAnomalies($current, $historical),
-                
+
                 // Summary and recommendations
                 'summary' => [],
                 'priority_actions' => [],
@@ -114,18 +114,30 @@ class AdvancedAnalysisService
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return $this->getEmptyAnalysis('Error en el análisis: ' . $e->getMessage());
+            return $this->getEmptyAnalysis('Error en el análisis: '.$e->getMessage());
         }
     }
 
     /**
+     * Clear cache for a plot
+     */
+    public function clearCache(Plot $plot): void
+    {
+        $this->cacheService->forget(
+            sprintf('advanced_analysis_plot_%d', $plot->id)
+        );
+    }
+
+    /**
      * Analyze LAI and yield prediction
+     *
+     * @param mixed $historical
      */
     private function analyzeLAI(Plot $plot, PlotRemoteSensing $current, $historical): array
     {
         $lai = $this->laiCalculator->calculateFromNDVI($current->ndvi_mean);
         $classification = $this->laiCalculator->classifyLAI($lai);
-        
+
         // Get last year data if available
         $lastYearData = $historical->first(function ($record) {
             return $record->image_date->between(
@@ -171,13 +183,13 @@ class AdvancedAnalysisService
         // For now, we estimate GNDVI from NDVI (simplified)
         // In production with Sentinel-2, you'd use actual green band
         $gndvi = $current->ndvi_mean * 0.95; // GNDVI is typically slightly lower
-        
+
         $chlorophyllPercent = $this->chlorophyllCalculator->estimateChlorophyllContent($gndvi);
         $diagnosis = $this->chlorophyllCalculator->diagnoseNutritionalStatus(
             $gndvi,
             $current->ndvi_mean
         );
-        
+
         $nitrogenNeed = $this->chlorophyllCalculator->calculateNitrogenNeed($gndvi);
 
         return [
@@ -190,6 +202,8 @@ class AdvancedAnalysisService
 
     /**
      * Analyze maturity and harvest prediction
+     *
+     * @param mixed $historical
      */
     private function analyzeMaturity(Plot $plot, PlotRemoteSensing $current, $historical): array
     {
@@ -201,13 +215,13 @@ class AdvancedAnalysisService
                 $gdd += $dailyGDD;
             }
         }
-        
+
         // Estimate veraison date (typically mid-July to early August)
         $veraison = Carbon::create(now()->year, 7, 20);
-        
+
         // Get historical NDVI array
         $historicalNDVI = $historical->pluck('ndvi_mean')->filter()->toArray();
-        
+
         // Get weather history for quality assessment
         $weatherHistory = $historical->map(function ($record) {
             return [
@@ -239,6 +253,8 @@ class AdvancedAnalysisService
 
     /**
      * Detect anomalies
+     *
+     * @param mixed $historical
      */
     private function detectAnomalies(PlotRemoteSensing $current, $historical): array
     {
@@ -376,7 +392,7 @@ class AdvancedAnalysisService
         }
 
         // Sort by priority
-        usort($actions, fn($a, $b) => $a['priority'] <=> $b['priority']);
+        usort($actions, fn ($a, $b) => $a['priority'] <=> $b['priority']);
 
         return array_slice($actions, 0, 5); // Top 5 actions
     }
@@ -431,15 +447,5 @@ class AdvancedAnalysisService
             'summary' => [],
             'priority_actions' => [],
         ];
-    }
-
-    /**
-     * Clear cache for a plot
-     */
-    public function clearCache(Plot $plot): void
-    {
-        $this->cacheService->forget(
-            sprintf('advanced_analysis_plot_%d', $plot->id)
-        );
     }
 }

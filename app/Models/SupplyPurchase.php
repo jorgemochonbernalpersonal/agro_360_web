@@ -25,24 +25,11 @@ class SupplyPurchase extends Model
     ];
 
     protected $casts = [
-        'invoice_date'   => 'date',
-        'quantity'       => 'decimal:3',
+        'invoice_date' => 'date',
+        'quantity' => 'decimal:3',
         'price_per_unit' => 'decimal:4',
-        'total_cost'     => 'decimal:2',
+        'total_cost' => 'decimal:2',
     ];
-
-    protected static function booted(): void
-    {
-        // Al crear una compra, incrementar el stock del insumo
-        static::created(function (SupplyPurchase $purchase) {
-            $purchase->supply->increment('current_stock', $purchase->quantity);
-        });
-
-        // Al eliminar una compra, decrementar el stock
-        static::deleted(function (SupplyPurchase $purchase) {
-            $purchase->supply->decrement('current_stock', $purchase->quantity);
-        });
-    }
 
     public function supply(): BelongsTo
     {
@@ -57,5 +44,18 @@ class SupplyPurchase extends Model
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
+    }
+
+    protected static function booted(): void
+    {
+        // Al crear una compra, incrementar el stock del insumo
+        static::created(function (SupplyPurchase $purchase) {
+            $purchase->supply->increment('current_stock', $purchase->quantity);
+        });
+
+        // Al eliminar una compra, decrementar el stock
+        static::deleted(function (SupplyPurchase $purchase) {
+            $purchase->supply->decrement('current_stock', $purchase->quantity);
+        });
     }
 }

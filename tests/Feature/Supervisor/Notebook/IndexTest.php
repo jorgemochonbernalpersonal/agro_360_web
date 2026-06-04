@@ -53,9 +53,9 @@ class IndexTest extends SupervisorTestCase
             ->call('requestAccess');
 
         $this->assertDatabaseHas('notebook_access_requests', [
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'status' => NotebookAccessRequest::STATUS_PENDING,
         ]);
     }
 
@@ -65,10 +65,10 @@ class IndexTest extends SupervisorTestCase
         $viticulturist = $this->makeViticulturistForDo($supervisor, $winery);
 
         NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         $this->actingAs($supervisor);
@@ -90,10 +90,10 @@ class IndexTest extends SupervisorTestCase
         $viticulturist = $this->makeViticulturistForDo($supervisor, $winery);
 
         NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now(),
         ]);
 
         $this->actingAs($supervisor);
@@ -115,11 +115,11 @@ class IndexTest extends SupervisorTestCase
         $viticulturist = $this->makeViticulturistForDo($supervisor, $winery);
 
         NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_REJECTED,
-            'requested_at'     => now()->subDays(7),
-            'responded_at'     => now()->subDays(5),
+            'status' => NotebookAccessRequest::STATUS_REJECTED,
+            'requested_at' => now()->subDays(7),
+            'responded_at' => now()->subDays(5),
         ]);
 
         $this->actingAs($supervisor);
@@ -130,9 +130,9 @@ class IndexTest extends SupervisorTestCase
             ->call('requestAccess');
 
         $this->assertDatabaseHas('notebook_access_requests', [
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'status' => NotebookAccessRequest::STATUS_PENDING,
         ]);
         $this->assertSame(1, NotebookAccessRequest::where('supervisor_id', $supervisor->id)
             ->where('viticulturist_id', $viticulturist->id)
@@ -144,20 +144,20 @@ class IndexTest extends SupervisorTestCase
 
     public function test_supervisor_can_revoke_own_request(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         SupervisorViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'assigned_by'      => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         $request = NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now(),
         ]);
 
         $this->actingAs($supervisor);
@@ -170,15 +170,15 @@ class IndexTest extends SupervisorTestCase
 
     public function test_supervisor_cannot_revoke_another_supervisors_request(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
-        $viticulturist   = User::factory()->create(['role' => 'viticulturist']);
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         $request = NotebookAccessRequest::create([
-            'supervisor_id'    => $otherSupervisor->id,
+            'supervisor_id' => $otherSupervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now(),
         ]);
 
         $this->actingAs($supervisor);
@@ -193,29 +193,28 @@ class IndexTest extends SupervisorTestCase
 
     public function test_list_shows_only_own_requests(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
-        $viticulturist   = User::factory()->create(['role' => 'viticulturist']);
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         $ownRequest = NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         $otherRequest = NotebookAccessRequest::create([
-            'supervisor_id'    => $otherSupervisor->id,
+            'supervisor_id' => $otherSupervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         $this->actingAs($supervisor);
 
         Livewire::test(NotebookIndex::class)
-            ->assertViewHas('requests', fn($requests) =>
-                $requests->contains('id', $ownRequest->id) &&
+            ->assertViewHas('requests', fn ($requests) => $requests->contains('id', $ownRequest->id) &&
                 ! $requests->contains('id', $otherRequest->id)
             );
     }
@@ -225,28 +224,27 @@ class IndexTest extends SupervisorTestCase
     public function test_stats_reflect_own_requests_by_status(): void
     {
         $supervisor = $this->makeSupervisor();
-        $vit1       = User::factory()->create(['role' => 'viticulturist']);
-        $vit2       = User::factory()->create(['role' => 'viticulturist']);
+        $vit1 = User::factory()->create(['role' => 'viticulturist']);
+        $vit2 = User::factory()->create(['role' => 'viticulturist']);
 
         NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $vit1->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
         NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $vit2->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now(),
         ]);
 
         $this->actingAs($supervisor);
 
         Livewire::test(NotebookIndex::class)
-            ->assertViewHas('stats', fn($stats) =>
-                $stats['total']    === 2 &&
-                $stats['pending']  === 1 &&
+            ->assertViewHas('stats', fn ($stats) => $stats['total'] === 2 &&
+                $stats['pending'] === 1 &&
                 $stats['approved'] === 1 &&
                 $stats['rejected'] === 0
             );
@@ -257,28 +255,27 @@ class IndexTest extends SupervisorTestCase
     public function test_filter_by_pending_status(): void
     {
         $supervisor = $this->makeSupervisor();
-        $vit1       = User::factory()->create(['role' => 'viticulturist']);
-        $vit2       = User::factory()->create(['role' => 'viticulturist']);
+        $vit1 = User::factory()->create(['role' => 'viticulturist']);
+        $vit2 = User::factory()->create(['role' => 'viticulturist']);
 
         $pending = NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $vit1->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
         $approved = NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $vit2->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now(),
         ]);
 
         $this->actingAs($supervisor);
 
         Livewire::test(NotebookIndex::class)
             ->set('filterStatus', 'pending')
-            ->assertViewHas('requests', fn($requests) =>
-                $requests->contains('id', $pending->id) &&
+            ->assertViewHas('requests', fn ($requests) => $requests->contains('id', $pending->id) &&
                 ! $requests->contains('id', $approved->id)
             );
     }
@@ -302,23 +299,23 @@ class IndexTest extends SupervisorTestCase
     private function makeViticulturistForDo(User $supervisor, User $winery): User
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
-            'can_login'         => true,
+            'role' => 'viticulturist',
+            'can_login' => true,
             'email_verified_at' => now(),
         ]);
 
         SupervisorViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'assigned_by'      => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         return $viticulturist;

@@ -17,6 +17,7 @@ class AppSetting extends Model
     {
         return Cache::remember("app_setting:{$key}", 300, function () use ($key, $default) {
             $row = static::where('key', $key)->first();
+
             return $row ? $row->value : $default;
         });
     }
@@ -30,6 +31,7 @@ class AppSetting extends Model
     public static function getBool(string $key, bool $default = false): bool
     {
         $value = static::get($key);
+
         return $value === null ? $default : filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 }

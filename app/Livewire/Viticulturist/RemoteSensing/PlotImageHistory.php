@@ -9,8 +9,11 @@ use Livewire\Component;
 class PlotImageHistory extends Component
 {
     public Plot $plot;
+
     public $history = [];
+
     public int $months = 12;
+
     public ?int $selectedIndex = null;
 
     public function mount(Plot $plot)
@@ -21,10 +24,10 @@ class PlotImageHistory extends Component
 
     public function loadHistory()
     {
-        $service = new ImageHistoryService();
+        $service = new ImageHistoryService;
         $this->history = $service->getHistory($this->plot, $this->months)->toArray();
-        
-        if (!empty($this->history)) {
+
+        if (! empty($this->history)) {
             $this->selectedIndex = 0;
         }
     }

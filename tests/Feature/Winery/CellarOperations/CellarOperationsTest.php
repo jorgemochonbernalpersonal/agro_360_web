@@ -44,7 +44,7 @@ class CellarOperationsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('cellar_operations', [
-            'user_id'        => $this->winery->id,
+            'user_id' => $this->winery->id,
             'operation_type' => $firstType,
         ]);
     }
@@ -52,10 +52,10 @@ class CellarOperationsTest extends WineryTestCase
     public function test_edit_saves_changes(): void
     {
         $operation = CellarOperation::create([
-            'user_id'        => $this->winery->id,
+            'user_id' => $this->winery->id,
             'operation_type' => array_key_first(CellarOperation::OPERATION_TYPES),
             'operation_date' => now()->toDateString(),
-            'status'         => array_key_first(CellarOperation::STATUSES),
+            'status' => array_key_first(CellarOperation::STATUSES),
         ]);
 
         $newType = array_key_last(CellarOperation::OPERATION_TYPES);
@@ -66,7 +66,7 @@ class CellarOperationsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('cellar_operations', [
-            'id'             => $operation->id,
+            'id' => $operation->id,
             'operation_type' => $newType,
         ]);
     }
@@ -74,10 +74,10 @@ class CellarOperationsTest extends WineryTestCase
     public function test_other_winery_cannot_edit(): void
     {
         $operation = CellarOperation::create([
-            'user_id'        => $this->winery->id,
+            'user_id' => $this->winery->id,
             'operation_type' => array_key_first(CellarOperation::OPERATION_TYPES),
             'operation_date' => now()->toDateString(),
-            'status'         => array_key_first(CellarOperation::STATUSES),
+            'status' => array_key_first(CellarOperation::STATUSES),
         ]);
 
         $this->actingAs($this->makeOtherWinery())

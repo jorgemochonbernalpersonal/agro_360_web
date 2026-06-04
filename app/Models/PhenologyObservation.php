@@ -7,6 +7,35 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PhenologyObservation extends Model
 {
+    /** Orden cronológico natural de los estadios */
+    public const EVENTS = [
+        'budbreak' => 'Desborre',
+        'shoot_growth' => 'Crecimiento del pámpano',
+        'flowering' => 'Floración',
+        'fruit_set' => 'Cuajado',
+        'veraison' => 'Envero',
+        'pre_harvest' => 'Pre-vendimia',
+        'harvest' => 'Vendimia',
+    ];
+
+    public const SOURCES = [
+        'manual' => 'Observación en campo',
+        'sensor' => 'Sensor IoT',
+        'model' => 'Modelo predictivo',
+        'auto' => 'Detección automática',
+    ];
+
+    /** Códigos BBCH estándar para la vid */
+    public const BBCH_CODES = [
+        'budbreak' => 7,
+        'shoot_growth' => 16,
+        'flowering' => 65,
+        'fruit_set' => 71,
+        'veraison' => 81,
+        'pre_harvest' => 85,
+        'harvest' => 89,
+    ];
+
     protected $fillable = [
         'plot_planting_id',
         'campaign_id',
@@ -22,22 +51,11 @@ class PhenologyObservation extends Model
     ];
 
     protected $casts = [
-        'obs_date'                => 'date',
-        'confidence'              => 'integer',
+        'obs_date' => 'date',
+        'confidence' => 'integer',
         'degree_days_accumulated' => 'decimal:2',
-        'bbch_code'               => 'integer',
-        'active'                  => 'boolean',
-    ];
-
-    /** Orden cronológico natural de los estadios */
-    public const EVENTS = [
-        'budbreak'     => 'Desborre',
-        'shoot_growth' => 'Crecimiento del pámpano',
-        'flowering'    => 'Floración',
-        'fruit_set'    => 'Cuajado',
-        'veraison'     => 'Envero',
-        'pre_harvest'  => 'Pre-vendimia',
-        'harvest'      => 'Vendimia',
+        'bbch_code' => 'integer',
+        'active' => 'boolean',
     ];
 
     public static function eventOptions(): array
@@ -45,28 +63,10 @@ class PhenologyObservation extends Model
         return array_map(fn ($v) => __($v), static::EVENTS);
     }
 
-    public const SOURCES = [
-        'manual' => 'Observación en campo',
-        'sensor' => 'Sensor IoT',
-        'model'  => 'Modelo predictivo',
-        'auto'   => 'Detección automática',
-    ];
-
     public static function sourceOptions(): array
     {
         return array_map(fn ($v) => __($v), static::SOURCES);
     }
-
-    /** Códigos BBCH estándar para la vid */
-    public const BBCH_CODES = [
-        'budbreak'     => 7,
-        'shoot_growth' => 16,
-        'flowering'    => 65,
-        'fruit_set'    => 71,
-        'veraison'     => 81,
-        'pre_harvest'  => 85,
-        'harvest'      => 89,
-    ];
 
     public function plotPlanting(): BelongsTo
     {
@@ -100,10 +100,13 @@ class PhenologyObservation extends Model
 
     /**
      * Devuelve las observaciones ordenadas por el orden natural fenológico
+     *
+     * @param mixed $query
      */
     public function scopeChronological($query)
     {
         $order = array_keys(self::EVENTS);
-        return $query->orderByRaw('FIELD(event, ' . implode(',', array_map(fn($e) => "'{$e}'", $order)) . ')');
+
+        return $query->orderByRaw('FIELD(event, '.implode(',', array_map(fn ($e) => "'{$e}'", $order)).')');
     }
 }

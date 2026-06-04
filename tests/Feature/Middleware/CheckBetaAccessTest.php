@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Middleware;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Subscription;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CheckBetaAccessTest extends TestCase
 {
@@ -18,14 +18,14 @@ class CheckBetaAccessTest extends TestCase
             'role' => User::ROLE_VITICULTURIST,
         ]);
         $user->grantBetaAccess();
-        
+
         // Simular beta expirada
         Carbon::setTestNow('2026-07-01 00:00:01');
-        
+
         $response = $this->actingAs($user)->get(route('viticulturist.dashboard'));
-        
+
         $response->assertRedirect(route('beta.expired'));
-        
+
         Carbon::setTestNow(); // Reset
     }
 
@@ -36,10 +36,10 @@ class CheckBetaAccessTest extends TestCase
             'email_verified_at' => now(),
         ]);
         $user->grantBetaAccess();
-        
+
         // Simular beta expirada
         Carbon::setTestNow('2026-07-01 00:00:01');
-        
+
         // Crear suscripción activa que expira DESPUÉS de la fecha mockeada
         Subscription::create([
             'user_id' => $user->id,
@@ -49,15 +49,15 @@ class CheckBetaAccessTest extends TestCase
             'starts_at' => now(),
             'ends_at' => now()->addMonth(), // 2026-08-01
         ]);
-        
+
         // Obtener usuario fresco desde DB antes de actingAs
         $freshUser = User::find($user->id);
-        
+
         $this->assertTrue($freshUser->hasActiveSubscription());
         $response = $this->actingAs($freshUser)->get(route('viticulturist.dashboard'));
-        
+
         $response->assertOk(); // ✅ Acceso permitido
-        
+
         Carbon::setTestNow(); // Reset
     }
 
@@ -65,14 +65,14 @@ class CheckBetaAccessTest extends TestCase
     {
         $user = User::factory()->create();
         $user->grantBetaAccess();
-        
+
         Carbon::setTestNow('2026-07-01 00:00:01');
-        
+
         $response = $this->actingAs($user)->get(route('beta.expired'));
-        
+
         $response->assertOk();
         $response->assertSee('Tu período de beta ha finalizado');
-        
+
         Carbon::setTestNow(); // Reset
     }
 
@@ -83,24 +83,23 @@ class CheckBetaAccessTest extends TestCase
             'email_verified_at' => now(),
         ]);
         $user->grantBetaAccess();
-        
+
         // Simular beta expirada
         Carbon::setTestNow('2026-07-01 00:00:01');
-        
+
         // Probar diferentes rutas protegidas por check.beta
         $routes = [
             route('viticulturist.dashboard'),
             route('plots.index'),
             route('sigpac.codes'),
         ];
-        
+
         foreach ($routes as $route) {
             $response = $this->actingAs($user)->get($route);
             $this->assertEquals(302, $response->status(), "Route {$route} should redirect");
             $this->assertEquals(route('beta.expired'), $response->headers->get('Location'));
         }
-        
+
         Carbon::setTestNow(); // Reset
     }
 }
-

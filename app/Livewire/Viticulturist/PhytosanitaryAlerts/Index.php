@@ -8,25 +8,34 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $currentTab      = 'active';
-    public string $search          = '';
+    public string $currentTab = 'active';
+
+    public string $search = '';
+
     public string $filterAlertType = '';
-    public string $filterSeverity  = '';
+
+    public string $filterSeverity = '';
 
     protected $queryString = [
-        'currentTab'      => ['as' => 'tab',      'except' => 'active'],
-        'search'          => ['as' => 'q',         'except' => ''],
+        'currentTab' => ['as' => 'tab',      'except' => 'active'],
+        'search' => ['as' => 'q',         'except' => ''],
         'filterAlertType' => ['as' => 'type',      'except' => ''],
-        'filterSeverity'  => ['as' => 'severity',  'except' => ''],
+        'filterSeverity' => ['as' => 'severity',  'except' => ''],
     ];
 
-    public function updatingSearch(): void          { $this->resetPage(); }
-    public function updatingFilterAlertType(): void { $this->resetPage(); }
-    public function updatingFilterSeverity(): void  { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'filterAlertType' => '', 'filterSeverity' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingFilterAlertType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterSeverity(): void
+    {
+        $this->resetPage();
     }
 
     public function switchTab(string $tab): void
@@ -53,6 +62,11 @@ class Index extends AbstractIndex
         $this->toastSuccess(__('Alerta eliminada.'));
     }
 
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'filterAlertType' => '', 'filterSeverity' => ''];
+    }
+
     protected function baseQuery(): Builder
     {
         return PhytosanitaryAlert::where('viticulturist_id', $this->viticulturistId())
@@ -63,9 +77,9 @@ class Index extends AbstractIndex
     {
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('title', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%')
-                  ->orWhere('affected_area', 'like', '%' . $this->search . '%');
+                $q->where('title', 'like', '%'.$this->search.'%')
+                    ->orWhere('description', 'like', '%'.$this->search.'%')
+                    ->orWhere('affected_area', 'like', '%'.$this->search.'%');
             });
         }
         if ($this->filterAlertType) {
@@ -76,30 +90,37 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['alert_date', 'desc']; }
-    protected function perPage(): int          { return 16; }
+    protected function defaultOrderBy(): array
+    {
+        return ['alert_date', 'desc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 16;
+    }
 
     protected function viewData(mixed $entries): array
     {
-        $userId    = $this->viticulturistId();
+        $userId = $this->viticulturistId();
         $baseQuery = PhytosanitaryAlert::where('viticulturist_id', $userId);
-        $activeQ   = (clone $baseQuery)->where('active', true);
+        $activeQ = (clone $baseQuery)->where('active', true);
 
         $stats = [
-            'active'   => $activeQ->count(),
+            'active' => $activeQ->count(),
             'archived' => (clone $baseQuery)->where('active', false)->count(),
             'critical' => (clone $activeQ)->where('severity', 'critica')->count(),
-            'expired'  => (clone $activeQ)
+            'expired' => (clone $activeQ)
                 ->whereNotNull('expiry_date')
                 ->whereDate('expiry_date', '<', now())
                 ->count(),
         ];
 
         return [
-            'entries'    => $entries,
+            'entries' => $entries,
             'alertTypes' => PhytosanitaryAlert::alertTypeOptions(),
             'severities' => PhytosanitaryAlert::severityOptions(),
-            'stats'      => $stats,
+            'stats' => $stats,
         ];
     }
 }

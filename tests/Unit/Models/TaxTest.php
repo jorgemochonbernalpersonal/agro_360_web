@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\InvoiceItem;
 use App\Models\Tax;
 use App\Models\User;
-use App\Models\InvoiceItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -242,4 +242,3 @@ class TaxTest extends TestCase
         $this->assertEquals(5, $pivot->order);
     }
 }
-

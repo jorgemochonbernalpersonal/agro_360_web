@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable()->comment('Descripción y características');
             $table->boolean('active')->default(true)->comment('Si está activa');
             $table->timestamps();
-            
+
             $table->index('active');
             $table->index('color');
         });

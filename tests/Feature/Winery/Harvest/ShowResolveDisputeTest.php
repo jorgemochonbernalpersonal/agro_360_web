@@ -3,7 +3,6 @@
 namespace Tests\Feature\Winery\Harvest;
 
 use App\Livewire\Winery\Harvest\Reception\Show;
-use App\Models\Container;
 use App\Models\Harvest;
 use App\Models\HarvestDelivery;
 use Illuminate\Support\Facades\Notification;
@@ -16,6 +15,7 @@ class ShowResolveDisputeTest extends WineryTestCase
     use CreatesDeliveryScenario;
 
     private Harvest $reception;
+
     private HarvestDelivery $delivery;
 
     protected function setUp(): void
@@ -29,10 +29,10 @@ class ShowResolveDisputeTest extends WineryTestCase
 
         $this->delivery = $this->makeDelivery(['delivered_kg' => 1000]);
         $this->delivery->update([
-            'harvest_id'           => $this->reception->id,
-            'status'               => 'disputed',
-            'discrepancy_kg'       => 200,
-            'dispute_note'         => 'No estoy de acuerdo con el peso recibido',
+            'harvest_id' => $this->reception->id,
+            'status' => 'disputed',
+            'discrepancy_kg' => 200,
+            'dispute_note' => 'No estoy de acuerdo con el peso recibido',
             'dispute_submitted_at' => now(),
         ]);
     }
@@ -47,8 +47,8 @@ class ShowResolveDisputeTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvest_deliveries', [
-            'id'                      => $this->delivery->id,
-            'status'                  => 'resolved',
+            'id' => $this->delivery->id,
+            'status' => 'resolved',
             'dispute_resolution_note' => 'Hemos revisado el albarán y acordamos el peso de bodega',
         ]);
 
@@ -100,9 +100,9 @@ class ShowResolveDisputeTest extends WineryTestCase
     {
         // Close the dispute first
         $this->delivery->update([
-            'status'                  => 'resolved',
+            'status' => 'resolved',
             'dispute_resolution_note' => 'Primera resolución',
-            'dispute_resolved_at'     => now(),
+            'dispute_resolved_at' => now(),
         ]);
 
         Livewire::test(Show::class, ['harvest' => $this->reception])
@@ -119,7 +119,7 @@ class ShowResolveDisputeTest extends WineryTestCase
     {
         // Delivery is disputed but viticulturist hasn't submitted a dispute note yet
         $this->delivery->update([
-            'dispute_note'         => null,
+            'dispute_note' => null,
             'dispute_submitted_at' => null,
         ]);
 

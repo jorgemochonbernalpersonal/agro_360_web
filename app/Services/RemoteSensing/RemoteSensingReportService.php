@@ -4,7 +4,6 @@ namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
 
 class RemoteSensingReportService
 {
@@ -22,7 +21,7 @@ class RemoteSensingReportService
         $latestData = $service->getLatestData($plot);
         $historicalData = $service->getHistoricalData($plot, $days);
 
-        if (!$latestData) {
+        if (! $latestData) {
             return ['success' => false, 'error' => __('No data available')];
         }
 
@@ -38,10 +37,10 @@ class RemoteSensingReportService
             ->setPaper('a4', 'portrait');
 
         $filename = sprintf('remote_sensing_%s_%s.pdf', $plot->id, now()->format('Y-m-d_His'));
-        $path = storage_path('app/reports/' . $filename);
+        $path = storage_path('app/reports/'.$filename);
 
         // Ensure directory exists
-        if (!file_exists(dirname($path))) {
+        if (! file_exists(dirname($path))) {
             mkdir(dirname($path), 0755, true);
         }
 
@@ -70,10 +69,10 @@ class RemoteSensingReportService
             ->setPaper('a4', 'landscape');
 
         $filename = sprintf('period_analysis_%s_%s.pdf', $plot->id, now()->format('Y-m-d_His'));
-        $path = storage_path('app/reports/' . $filename);
+        $path = storage_path('app/reports/'.$filename);
 
         // Ensure directory exists
-        if (!file_exists(dirname($path))) {
+        if (! file_exists(dirname($path))) {
             mkdir(dirname($path), 0755, true);
         }
 
@@ -87,7 +86,64 @@ class RemoteSensingReportService
     }
 
     /**
+     * Generate comparison report for two plots
+     */
+    public function generateComparisonReport(Plot $plot1, Plot $plot2, int $days = 30): array
+    {
+        $service = new NasaEarthdataService(
+            app(\App\Repositories\PlotRemoteSensingRepository::class),
+            app(RemoteSensingCacheService::class),
+            app(RateLimitService::class)
+        );
+
+        $data1 = $service->getHistoricalData($plot1, $days);
+        $data2 = $service->getHistoricalData($plot2, $days);
+
+        $data = [
+            'plot1' => $plot1,
+            'plot2' => $plot2,
+            'data1' => $data1,
+            'data2' => $data2,
+            'stats1' => $this->calculateStats($data1),
+            'stats2' => $this->calculateStats($data2),
+            'generated_at' => now()->format('d/m/Y H:i'),
+        ];
+
+        $pdf = Pdf::loadView('reports.remote-sensing-comparison', $data)
+            ->setPaper('a4', 'landscape');
+
+        $filename = sprintf('comparison_%s_vs_%s_%s.pdf', $plot1->id, $plot2->id, now()->format('Y-m-d_His'));
+        $path = storage_path('app/reports/'.$filename);
+
+        if (! file_exists(dirname($path))) {
+            mkdir(dirname($path), 0755, true);
+        }
+
+        $pdf->save($path);
+
+        return [
+            'success' => true,
+            'pdf_path' => $path,
+            'filename' => $filename,
+        ];
+    }
+
+    /**
+     * Download report
+     */
+    public function downloadReport(string $path)
+    {
+        if (! file_exists($path)) {
+            throw new \Exception(__('Report file not found'));
+        }
+
+        return response()->download($path)->deleteFileAfterSend(true);
+    }
+
+    /**
      * Calculate statistics from historical data
+     *
+     * @param mixed $historicalData
      */
     private function calculateStats($historicalData): array
     {
@@ -126,10 +182,12 @@ class RemoteSensingReportService
     private function standardDeviation(array $values): float
     {
         $count = count($values);
-        if ($count <= 1) return 0;
+        if ($count <= 1) {
+            return 0;
+        }
 
         $mean = array_sum($values) / $count;
-        $variance = array_sum(array_map(fn($x) => pow($x - $mean, 2), $values)) / $count;
+        $variance = array_sum(array_map(fn ($x) => pow($x - $mean, 2), $values)) / $count;
 
         return sqrt($variance);
     }
@@ -140,73 +198,25 @@ class RemoteSensingReportService
     private function determineTrend(array $values): string
     {
         $count = count($values);
-        if ($count < 2) return 'stable';
+        if ($count < 2) {
+            return 'stable';
+        }
 
-        $first = array_slice($values, 0, (int)($count / 3));
-        $last = array_slice($values, -1 * (int)($count / 3));
+        $first = array_slice($values, 0, (int) ($count / 3));
+        $last = array_slice($values, -1 * (int) ($count / 3));
 
         $avgFirst = array_sum($first) / count($first);
         $avgLast = array_sum($last) / count($last);
 
         $change = $avgLast - $avgFirst;
 
-        if ($change > 0.05) return 'increasing';
-        if ($change < -0.05) return 'decreasing';
+        if ($change > 0.05) {
+            return 'increasing';
+        }
+        if ($change < -0.05) {
+            return 'decreasing';
+        }
+
         return 'stable';
-    }
-
-    /**
-     * Generate comparison report for two plots
-     */
-    public function generateComparisonReport(Plot $plot1, Plot $plot2, int $days = 30): array
-    {
-        $service = new NasaEarthdataService(
-            app(\App\Repositories\PlotRemoteSensingRepository::class),
-            app(RemoteSensingCacheService::class),
-            app(RateLimitService::class)
-        );
-
-        $data1 = $service->getHistoricalData($plot1, $days);
-        $data2 = $service->getHistoricalData($plot2, $days);
-
-        $data = [
-            'plot1' => $plot1,
-            'plot2' => $plot2,
-            'data1' => $data1,
-            'data2' => $data2,
-            'stats1' => $this->calculateStats($data1),
-            'stats2' => $this->calculateStats($data2),
-            'generated_at' => now()->format('d/m/Y H:i'),
-        ];
-
-        $pdf = Pdf::loadView('reports.remote-sensing-comparison', $data)
-            ->setPaper('a4', 'landscape');
-
-        $filename = sprintf('comparison_%s_vs_%s_%s.pdf', $plot1->id, $plot2->id, now()->format('Y-m-d_His'));
-        $path = storage_path('app/reports/' . $filename);
-
-        if (!file_exists(dirname($path))) {
-            mkdir(dirname($path), 0755, true);
-        }
-
-        $pdf->save($path);
-
-        return [
-            'success' => true,
-            'pdf_path' => $path,
-            'filename' => $filename,
-        ];
-    }
-
-    /**
-     * Download report
-     */
-    public function downloadReport(string $path)
-    {
-        if (!file_exists($path)) {
-            throw new \Exception(__('Report file not found'));
-        }
-
-        return response()->download($path)->deleteFileAfterSend(true);
     }
 }

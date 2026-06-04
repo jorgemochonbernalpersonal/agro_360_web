@@ -9,25 +9,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class WinerySupply extends Model
 {
     const SUPPLY_TYPES = [
-        'cleaning'   => 'Limpieza',
-        'sulfiting'  => 'Sulfitado / SO₂',
-        'fining'     => 'Clarificación / Colaje',
+        'cleaning' => 'Limpieza',
+        'sulfiting' => 'Sulfitado / SO₂',
+        'fining' => 'Clarificación / Colaje',
         'filtration' => 'Filtración',
-        'yeast'      => 'Levaduras',
-        'nutrient'   => 'Nutrientes de fermentación',
-        'enzyme'     => 'Enzimas',
-        'tannin'     => 'Taninos enológicos',
-        'acid'       => 'Acidificantes / Desacidificantes',
-        'sugar'      => 'Azúcares (chapitalización)',
-        'analysis'   => 'Análisis de laboratorio',
-        'packaging'  => 'Material de packaging',
-        'other'      => 'Otro',
+        'yeast' => 'Levaduras',
+        'nutrient' => 'Nutrientes de fermentación',
+        'enzyme' => 'Enzimas',
+        'tannin' => 'Taninos enológicos',
+        'acid' => 'Acidificantes / Desacidificantes',
+        'sugar' => 'Azúcares (chapitalización)',
+        'analysis' => 'Análisis de laboratorio',
+        'packaging' => 'Material de packaging',
+        'other' => 'Otro',
     ];
-
-    public static function supplyTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::SUPPLY_TYPES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -43,11 +38,16 @@ class WinerySupply extends Model
     ];
 
     protected $casts = [
-        'current_stock'   => 'decimal:3',
+        'current_stock' => 'decimal:3',
         'min_stock_alert' => 'decimal:3',
-        'expiry_date'     => 'date',
-        'active'          => 'boolean',
+        'expiry_date' => 'date',
+        'active' => 'boolean',
     ];
+
+    public static function supplyTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SUPPLY_TYPES);
+    }
 
     public function user(): BelongsTo
     {

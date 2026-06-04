@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -81,13 +80,13 @@ return new class extends Migration
      */
     protected function addIndexes(string $table, array $columns): void
     {
-        if (!Schema::hasTable($table)) {
+        if (! Schema::hasTable($table)) {
             return;
         }
 
         foreach ($columns as $column) {
             $indexName = "{$table}_{$column}_index";
-            
+
             try {
                 DB::statement("CREATE INDEX {$indexName} ON {$table}({$column})");
             } catch (\Exception $e) {
@@ -101,12 +100,12 @@ return new class extends Migration
      */
     protected function addCompositeIndex(string $table, array $columns, string $indexName): void
     {
-        if (!Schema::hasTable($table)) {
+        if (! Schema::hasTable($table)) {
             return;
         }
 
         $columnsList = implode(', ', $columns);
-        
+
         try {
             DB::statement("CREATE INDEX {$indexName} ON {$table}({$columnsList})");
         } catch (\Exception $e) {

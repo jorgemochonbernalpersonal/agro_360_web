@@ -13,17 +13,21 @@ use Illuminate\Validation\Rule;
 
 class Create extends AbstractCreate
 {
-    public string $name  = '';
-    public string $dni   = '';
+    public string $name = '';
+
+    public string $dni = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $notes = '';
 
     protected function rules(): array
     {
         return [
-            'name'  => ['required', 'string', 'max:255'],
-            'dni'   => ['nullable', 'string', 'max:20', Rule::unique('users', 'dni')->where('can_login', true)],
+            'name' => ['required', 'string', 'max:255'],
+            'dni' => ['nullable', 'string', 'max:20', Rule::unique('users', 'dni')->where('can_login', true)],
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:20'],
             'notes' => ['nullable', 'string', 'max:1000'],
@@ -33,21 +37,21 @@ class Create extends AbstractCreate
     protected function messages(): array
     {
         return [
-            'name.required'  => __('El nombre es obligatorio.'),
-            'dni.unique'     => __('Ya existe un usuario con este DNI.'),
-            'email.unique'   => __('Ya existe un usuario con este email.'),
+            'name.required' => __('El nombre es obligatorio.'),
+            'dni.unique' => __('Ya existe un usuario con este DNI.'),
+            'email.unique' => __('Ya existe un usuario con este email.'),
         ];
     }
 
     protected function performCreate(): void
     {
         $user = User::create([
-            'name'      => $this->name,
-            'email'     => $this->email ?: ('viticultores.' . Str::uuid() . '@noemail.agro365.es'),
-            'dni'       => $this->dni ?: null,
-            'role'      => 'viticulturist',
+            'name' => $this->name,
+            'email' => $this->email ?: ('viticultores.'.Str::uuid().'@noemail.agro365.es'),
+            'dni' => $this->dni ?: null,
+            'role' => 'viticulturist',
             'can_login' => false,
-            'password'  => Hash::make(Str::random(40)),
+            'password' => Hash::make(Str::random(40)),
         ]);
 
         if ($this->phone) {
@@ -55,16 +59,16 @@ class Create extends AbstractCreate
         }
 
         WineryViticulturist::create([
-            'winery_id'        => $this->wineryId(),
+            'winery_id' => $this->wineryId(),
             'viticulturist_id' => $user->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->wineryId(),
-            'notes'            => $this->notes ?: null,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->wineryId(),
+            'notes' => $this->notes ?: null,
         ]);
 
         // Inherit beta from winery if active (same end date)
         $winery = User::find($this->wineryId());
-        if ($winery?->isBetaUser() && !$winery->betaExpired() && !$user->is_beta_user) {
+        if ($winery?->isBetaUser() && ! $winery->betaExpired() && ! $user->is_beta_user) {
             $user->grantBetaAccess($winery->beta_ends_at);
         }
 
@@ -72,8 +76,8 @@ class Create extends AbstractCreate
         if ($this->email) {
             $plainToken = Str::random(64);
             $user->update([
-                'invitation_token'      => hash('sha256', $plainToken),
-                'invitation_sent_at'    => now(),
+                'invitation_token' => hash('sha256', $plainToken),
+                'invitation_sent_at' => now(),
                 'invitation_expires_at' => now()->addDays(7),
             ]);
             $user->notify(new ViticulturistInvitationNotification(Auth::user(), $plainToken));

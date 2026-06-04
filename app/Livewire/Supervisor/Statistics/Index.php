@@ -4,7 +4,6 @@ namespace App\Livewire\Supervisor\Statistics;
 
 use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
-use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -15,7 +14,7 @@ class Index extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        $doId        = Auth::id();
+        $doId = Auth::id();
         $currentYear = now()->year;
 
         $wineryIds = SupervisorWinery::where('supervisor_id', $doId)
@@ -27,7 +26,7 @@ class Index extends Component
 
         // ── Top-level stats ───────────────────────────────────────────────────
 
-        $totalWineries       = $wineryIds->count();
+        $totalWineries = $wineryIds->count();
         $totalViticulturists = $poolIds->count();
 
         $totalPlotAreaHa = (float) DB::table('plots')
@@ -49,9 +48,9 @@ class Index extends Component
             ->get();
 
         $poolComposition = [
-            'active'  => $poolUsers->filter(fn ($u) => $u->can_login)->count(),
-            'invited' => $poolUsers->filter(fn ($u) => !$u->can_login && $u->invitation_token && $u->invitation_expires_at && now()->lt($u->invitation_expires_at))->count(),
-            'ghost'   => $poolUsers->filter(fn ($u) => !$u->can_login && (!$u->invitation_token || (bool)($u->invitation_expires_at && now()->gt($u->invitation_expires_at))))->count(),
+            'active' => $poolUsers->filter(fn ($u) => $u->can_login)->count(),
+            'invited' => $poolUsers->filter(fn ($u) => ! $u->can_login && $u->invitation_token && $u->invitation_expires_at && now()->lt($u->invitation_expires_at))->count(),
+            'ghost' => $poolUsers->filter(fn ($u) => ! $u->can_login && (! $u->invitation_token || (bool) ($u->invitation_expires_at && now()->gt($u->invitation_expires_at))))->count(),
         ];
 
         $notebookAccessCount = SupervisorViticulturist::where('supervisor_id', $doId)
@@ -124,18 +123,18 @@ class Index extends Component
             ->get();
 
         return view('livewire.supervisor.statistics.index', [
-            'totalWineries'         => $totalWineries,
-            'totalViticulturists'   => $totalViticulturists,
-            'totalPlotAreaHa'       => $totalPlotAreaHa,
+            'totalWineries' => $totalWineries,
+            'totalViticulturists' => $totalViticulturists,
+            'totalPlotAreaHa' => $totalPlotAreaHa,
             'totalKgCurrentVintage' => $totalKgCurrentVintage,
-            'currentYear'           => $currentYear,
-            'poolComposition'       => $poolComposition,
-            'notebookAccessCount'   => $notebookAccessCount,
-            'plotStats'             => $plotStats,
-            'organicPct'            => $organicPct,
-            'topVarieties'          => $topVarieties,
-            'activityBreakdown'     => $activityBreakdown,
-            'harvestByVintage'      => $harvestByVintage,
+            'currentYear' => $currentYear,
+            'poolComposition' => $poolComposition,
+            'notebookAccessCount' => $notebookAccessCount,
+            'plotStats' => $plotStats,
+            'organicPct' => $organicPct,
+            'topVarieties' => $topVarieties,
+            'activityBreakdown' => $activityBreakdown,
+            'harvestByVintage' => $harvestByVintage,
         ]);
     }
 }

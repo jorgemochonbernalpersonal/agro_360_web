@@ -10,14 +10,19 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithToastNotifications, WithReadOnlyGuard;
+    use WithReadOnlyGuard, WithToastNotifications;
 
-    public bool   $showModal  = false;
-    public ?int   $editingId  = null;
-    public string $title      = '';
-    public string $body       = '';
-    public string $category   = '';
-    public int    $sort_order = 0;
+    public bool $showModal = false;
+
+    public ?int $editingId = null;
+
+    public string $title = '';
+
+    public string $body = '';
+
+    public string $category = '';
+
+    public int $sort_order = 0;
 
     public function openCreate(): void
     {
@@ -28,13 +33,13 @@ class Index extends Component
 
     public function openEdit(int $id): void
     {
-        $r              = CannedResponse::findOrFail($id);
-        $this->editingId  = $id;
-        $this->title      = $r->title;
-        $this->body       = $r->body;
-        $this->category   = $r->category ?? '';
+        $r = CannedResponse::findOrFail($id);
+        $this->editingId = $id;
+        $this->title = $r->title;
+        $this->body = $r->body;
+        $this->category = $r->category ?? '';
         $this->sort_order = $r->sort_order;
-        $this->showModal  = true;
+        $this->showModal = true;
         $this->resetValidation();
     }
 
@@ -50,20 +55,20 @@ class Index extends Component
         }
 
         $this->validate([
-            'title'    => 'required|string|max:120',
-            'body'     => 'required|string',
+            'title' => 'required|string|max:120',
+            'body' => 'required|string',
             'category' => 'nullable|string|max:50',
         ], [
             'title.required' => __('El título es obligatorio.'),
-            'body.required'  => __('El cuerpo es obligatorio.'),
+            'body.required' => __('El cuerpo es obligatorio.'),
         ]);
 
         $data = [
-            'title'      => $this->title,
-            'body'       => $this->body,
-            'category'   => $this->category ?: null,
+            'title' => $this->title,
+            'body' => $this->body,
+            'category' => $this->category ?: null,
             'sort_order' => $this->sort_order,
-            'admin_id'   => Auth::id(),
+            'admin_id' => Auth::id(),
         ];
 
         if ($this->editingId) {
@@ -89,10 +94,10 @@ class Index extends Component
 
     public function render()
     {
-        if (!\Illuminate\Support\Facades\Schema::hasTable('canned_responses')) {
+        if (! \Illuminate\Support\Facades\Schema::hasTable('canned_responses')) {
             return view('livewire.admin.canned-responses.index', ['responses' => collect(), 'categories' => collect()])
                 ->layout('layouts.app', [
-                    'title'       => __('Respuestas Rápidas - Admin - Agro365'),
+                    'title' => __('Respuestas Rápidas - Admin - Agro365'),
                     'description' => __('Gestiona plantillas de respuesta para tickets de soporte'),
                 ]);
         }
@@ -106,7 +111,7 @@ class Index extends Component
 
         return view('livewire.admin.canned-responses.index', compact('responses', 'categories'))
             ->layout('layouts.app', [
-                'title'       => __('Respuestas Rápidas - Admin - Agro365'),
+                'title' => __('Respuestas Rápidas - Admin - Agro365'),
                 'description' => __('Gestiona plantillas de respuesta para tickets de soporte'),
             ]);
     }

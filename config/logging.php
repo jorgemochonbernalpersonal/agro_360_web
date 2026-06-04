@@ -90,7 +90,7 @@ return [
             'days' => (int) env('LOG_DAILY_DAYS', 60), // Errores se mantienen más tiempo
             'replace_placeholders' => true,
         ],
-        
+
         // Canal específico para eventos de seguridad
         'security' => [
             'driver' => 'daily',

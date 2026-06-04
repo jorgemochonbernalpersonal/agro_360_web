@@ -8,32 +8,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineCost extends Model
 {
     const CATEGORIES = [
-        'additives'            => 'Aditivos enológicos',
-        'bottling'             => 'Embotellado y packaging',
-        'labeling'             => 'Etiquetado',
-        'analysis'             => 'Análisis de laboratorio',
-        'oenologist'           => 'Honorarios enólogo',
-        'container_maintenance'=> 'Mantenimiento contenedores',
-        'transport'            => 'Transporte y logística',
-        'storage'              => 'Almacenamiento y crianza',
-        'other'                => 'Otros costes',
+        'additives' => 'Aditivos enológicos',
+        'bottling' => 'Embotellado y packaging',
+        'labeling' => 'Etiquetado',
+        'analysis' => 'Análisis de laboratorio',
+        'oenologist' => 'Honorarios enólogo',
+        'container_maintenance' => 'Mantenimiento contenedores',
+        'transport' => 'Transporte y logística',
+        'storage' => 'Almacenamiento y crianza',
+        'other' => 'Otros costes',
     ];
 
-    public static function categoryOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::CATEGORIES);
-    }
-
     const CATEGORY_COLORS = [
-        'additives'            => 'blue',
-        'bottling'             => 'violet',
-        'labeling'             => 'rose',
-        'analysis'             => 'cyan',
-        'oenologist'           => 'indigo',
-        'container_maintenance'=> 'orange',
-        'transport'            => 'amber',
-        'storage'              => 'emerald',
-        'other'                => 'zinc',
+        'additives' => 'blue',
+        'bottling' => 'violet',
+        'labeling' => 'rose',
+        'analysis' => 'cyan',
+        'oenologist' => 'indigo',
+        'container_maintenance' => 'orange',
+        'transport' => 'amber',
+        'storage' => 'emerald',
+        'other' => 'zinc',
     ];
 
     protected $fillable = [
@@ -50,9 +45,14 @@ class WineCost extends Model
     ];
 
     protected $casts = [
-        'amount'    => 'decimal:2',
+        'amount' => 'decimal:2',
         'cost_date' => 'date',
     ];
+
+    public static function categoryOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CATEGORIES);
+    }
 
     public function wine(): BelongsTo
     {

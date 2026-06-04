@@ -12,29 +12,10 @@ use Tests\Feature\ViticulturistTestCase;
 
 class CreateTest extends ViticulturistTestCase
 {
-    private function makeHarvest(int $viticulturistId): Harvest
-    {
-        $campaign = Campaign::getOrCreateActiveForYear($viticulturistId);
-
-        $activity = AgriculturalActivity::create([
-            'viticulturist_id' => $viticulturistId,
-            'campaign_id'      => $campaign->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => '2024-09-15',
-        ]);
-
-        return Harvest::create([
-            'activity_id'        => $activity->id,
-            'harvest_start_date' => '2024-09-15',
-            'total_weight'       => 5000,
-            'status'             => 'active',
-        ]);
-    }
-
     public function test_can_create_marketed_harvest(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $harvest       = $this->makeHarvest($viticulturist->id);
+        $harvest = $this->makeHarvest($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -49,7 +30,7 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('marketed_harvests', [
             'viticulturist_id' => $viticulturist->id,
-            'harvest_id'       => $harvest->id,
+            'harvest_id' => $harvest->id,
             'destination_type' => 'cooperative',
         ]);
     }
@@ -70,8 +51,8 @@ class CreateTest extends ViticulturistTestCase
     public function test_harvest_must_belong_to_viticulturist(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $otherHarvest  = $this->makeHarvest($other->id);
+        $other = $this->makeOtherViticulturist();
+        $otherHarvest = $this->makeHarvest($other->id);
 
         $this->actingAs($viticulturist);
 
@@ -100,7 +81,7 @@ class CreateTest extends ViticulturistTestCase
     public function test_all_destination_types_accepted(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $harvest       = $this->makeHarvest($viticulturist->id);
+        $harvest = $this->makeHarvest($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -113,5 +94,24 @@ class CreateTest extends ViticulturistTestCase
                 ->call('save')
                 ->assertHasNoErrors(['destination_type']);
         }
+    }
+
+    private function makeHarvest(int $viticulturistId): Harvest
+    {
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturistId);
+
+        $activity = AgriculturalActivity::create([
+            'viticulturist_id' => $viticulturistId,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'harvest',
+            'activity_date' => '2024-09-15',
+        ]);
+
+        return Harvest::create([
+            'activity_id' => $activity->id,
+            'harvest_start_date' => '2024-09-15',
+            'total_weight' => 5000,
+            'status' => 'active',
+        ]);
     }
 }

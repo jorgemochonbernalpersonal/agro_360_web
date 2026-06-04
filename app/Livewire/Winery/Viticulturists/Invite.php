@@ -11,7 +11,7 @@ use Livewire\Component;
 
 class Invite extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public string $search = '';
 
@@ -26,30 +26,31 @@ class Invite extends Component
 
         if (mb_strlen(trim($this->search)) < 3) {
             $this->results = [];
+
             return;
         }
 
-        $wineryId      = Auth::id();
+        $wineryId = Auth::id();
         $alreadyLinked = WineryViticulturist::where('winery_id', $wineryId)
             ->pluck('viticulturist_id');
 
-        $term = '%' . mb_strtolower(trim($this->search)) . '%';
+        $term = '%'.mb_strtolower(trim($this->search)).'%';
 
         $this->results = User::where('role', 'viticulturist')
             ->where('can_login', true)
             ->whereNotIn('id', $alreadyLinked)
             ->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(dni, \'\')) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(IFNULL(dni, \'\')) LIKE ?', [$term]);
             })
             ->limit(10)
             ->get(['id', 'name', 'email', 'dni'])
-            ->map(fn(User $u) => [
-                'id'    => $u->id,
-                'name'  => $u->name,
+            ->map(fn (User $u) => [
+                'id' => $u->id,
+                'name' => $u->name,
                 'email' => $u->email,
-                'dni'   => $u->dni,
+                'dni' => $u->dni,
             ])
             ->toArray();
     }
@@ -76,6 +77,7 @@ class Invite extends Component
         if ($alreadyLinked) {
             $this->toastError(__('Este viticultor ya está vinculado a tu bodega.'));
             $this->confirmingId = null;
+
             return null;
         }
 
@@ -87,6 +89,7 @@ class Invite extends Component
         if ($alreadyLinkedOtherWinery) {
             $this->toastError(__('Este viticultor ya está vinculado a otra bodega.'));
             $this->confirmingId = null;
+
             return null;
         }
 
@@ -101,22 +104,22 @@ class Invite extends Component
 
         if ($selfRecord) {
             $selfRecord->update([
-                'winery_id'   => $wineryId,
-                'source'      => WineryViticulturist::SOURCE_OWN,
+                'winery_id' => $wineryId,
+                'source' => WineryViticulturist::SOURCE_OWN,
                 'assigned_by' => $wineryId,
             ]);
         } else {
             WineryViticulturist::create([
-                'winery_id'        => $wineryId,
+                'winery_id' => $wineryId,
                 'viticulturist_id' => $user->id,
-                'source'           => WineryViticulturist::SOURCE_OWN,
-                'assigned_by'      => $wineryId,
+                'source' => WineryViticulturist::SOURCE_OWN,
+                'assigned_by' => $wineryId,
             ]);
         }
 
         // Inherit beta from winery if active (same end date)
         $winery = Auth::user();
-        if ($winery->isBetaUser() && !$winery->betaExpired() && !$user->is_beta_user) {
+        if ($winery->isBetaUser() && ! $winery->betaExpired() && ! $user->is_beta_user) {
             $user->grantBetaAccess($winery->beta_ends_at);
         }
 

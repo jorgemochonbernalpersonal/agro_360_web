@@ -6,28 +6,45 @@ use App\Contracts\RemoteSensing\RemoteSensingProviderInterface;
 use App\Models\Plot;
 use App\Models\PlotRemoteSensing;
 use App\Repositories\PlotRemoteSensingRepository;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Collection;
-use Carbon\Carbon;
-use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * Service for NASA Earthdata API (100% FREE)
  * Uses MODIS/VIIRS NDVI data via AppEEARS API
- * 
+ *
  * Register free at: https://urs.earthdata.nasa.gov/
  */
 class NasaEarthdataService implements RemoteSensingProviderInterface
 {
     private ?NasaLSTService $lstService = null;
+
     private ?NasaAreaRequestService $areaService = null;
+
     private ?NasaVIIRSService $viirsService = null;
+
     private ?NasaSpectralBandsService $spectralService = null;
+
     private ?NasaLAIService $laiService = null;
+
     private ?NasaSMAPService $smapService = null;
+
     private ?NasaETService $etService = null;
+
+    private string $username;
+
+    private string $password;
+
+    private string $baseUrl = 'https://appeears.earthdatacloud.nasa.gov/api';
+
+    private string $ornlBaseUrl = 'https://modis.ornl.gov/rst/api/v1';
+
+    private bool $useMockData;
+
+    private ?string $token = null;
 
     public function __construct(
         private PlotRemoteSensingRepository $repository,
@@ -37,7 +54,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         $this->username = config('services.nasa_earthdata.username') ?? '';
         $this->password = config('services.nasa_earthdata.password') ?? '';
         $this->useMockData = config('services.nasa_earthdata.mock') ?? true;
-        
+
         // Initialize all NASA services
         $this->lstService = app(NasaLSTService::class);
         $this->areaService = app(NasaAreaRequestService::class);
@@ -47,24 +64,18 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         $this->smapService = app(NasaSMAPService::class);
         $this->etService = app(NasaETService::class);
     }
-    private string $username;
-    private string $password;
-    private string $baseUrl = 'https://appeears.earthdatacloud.nasa.gov/api';
-    private string $ornlBaseUrl = 'https://modis.ornl.gov/rst/api/v1';
-    private bool $useMockData;
-    private ?string $token = null;
 
     /**
      * Get the latest NDVI data for a plot
-     * 
+     *
      * @param array|null $coordinates Override ['lat'=>x,'lon'=>y] of the selected sigpac parcel (MultipartPlotSigpac)
      */
     public function getLatestData(Plot $plot, bool $forceRefresh = false, ?array $coordinates = null): ?PlotRemoteSensing
     {
         // Check database first if not forced
-        if (!$forceRefresh) {
+        if (! $forceRefresh) {
             $existing = $this->repository->getTodayForPlot($plot);
-            
+
             if ($existing) {
                 return $existing;
             }
@@ -82,15 +93,12 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
     /**
      * Fetch and store NDVI data (used by UpdatePlotNdviJob)
-     * 
-     * @param Plot $plot
-     * @return PlotRemoteSensing|null
      */
     public function fetchAndStoreNdvi(Plot $plot): ?PlotRemoteSensing
     {
         return $this->getLatestData($plot, true);
     }
-    
+
     /**
      * Clear all cached data for a plot
      */
@@ -115,7 +123,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         // If in mock mode and no data, generate and persist
         if ($this->useMockData && $existingData->isEmpty()) {
             $this->generateAndPersistMockHistorical($plot);
-            
+
             // Re-fetch from database
             return $this->repository->getHistoricalForPlot($plot, $days);
         }
@@ -124,8 +132,193 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     }
 
     /**
+     * Fetch enriched data (NDVI + LST + Area stats)
+     *
+     * @param bool       $includeArea  Whether to include area statistics
+     * @param array|null $coordinates  Coordinates of the selected sigpac parcel ['lat','lng']
+     * @param int|null   $plotSigpacId ID of MultipartPlotSigpac for polygon area
+     */
+    public function fetchEnrichedData(Plot $plot, bool $includeArea = false, ?array $coordinates = null, ?int $plotSigpacId = null): ?PlotRemoteSensing
+    {
+        $result = $this->getLatestData($plot, true, $coordinates);
+
+        if (! $result) {
+            return null;
+        }
+
+        try {
+            $token = $this->getAuthToken();
+
+            if (! $token) {
+                Log::warning('Cannot fetch enriched data without auth token');
+
+                return $result;
+            }
+
+            $lstData = $this->lstService->fetchLSTData($plot, $token, $coordinates);
+
+            if ($lstData) {
+                // Calculate CWSI if we have both LST and air temp
+                if ($lstData['lst_day'] && $result->temperature && $result->humidity) {
+                    $cwsi = $this->lstService->calculateCWSI(
+                        $lstData['lst_day'],
+                        $result->temperature,
+                        $result->humidity
+                    );
+                    $lstData['cwsi'] = $cwsi;
+                }
+
+                // Update with LST data
+                $result->update($lstData);
+            }
+
+            if ($includeArea) {
+                $areaStats = $this->areaService->requestAreaData($plot, $token, $plotSigpacId);
+
+                if ($areaStats && isset($areaStats['task_id'])) {
+                    // Store task ID in metadata for later retrieval
+                    $metadata = $result->metadata ?? [];
+                    $metadata['area_task_id'] = $areaStats['task_id'];
+                    $metadata['area_task_created'] = $areaStats['created_at'];
+                    $result->update(['metadata' => $metadata]);
+                }
+            }
+
+            return $result;
+
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch enriched data', [
+                'plot_id' => $plot->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return $result;
+        }
+    }
+
+    /**
+     * Get LST service instance
+     */
+    public function getLSTService(): NasaLSTService
+    {
+        return $this->lstService;
+    }
+
+    /**
+     * Get Area service instance
+     */
+    public function getAreaService(): NasaAreaRequestService
+    {
+        return $this->areaService;
+    }
+
+    /**
+     * Fetch ultra-enriched data (ALL NASA products)
+     *
+     * Includes:
+     * - VIIRS NDVI (better than MODIS)
+     * - Spectral bands (real GNDVI/NDRE)
+     * - Official LAI
+     * - LST
+     * - SMAP Soil Moisture
+     * - Official ET
+     * - Optional Area Request
+     *
+     * @param bool $includeArea Whether to include area statistics
+     */
+    public function fetchUltraEnrichedData(Plot $plot, bool $includeArea = false, ?int $plotSigpacId = null): ?PlotRemoteSensing
+    {
+        $token = $this->getAuthToken();
+
+        if (! $token) {
+            Log::warning('Cannot fetch ultra-enriched data without auth token');
+
+            return $this->getLatestData($plot);
+        }
+
+        try {
+            // Start with VIIRS NDVI (better than MODIS)
+            $viirsData = $this->viirsService->fetchVIIRSNDVI($plot, $token, $plotSigpacId);
+
+            // Fetch spectral bands for real indices
+            $spectralData = $this->spectralService->fetchSpectralBands($plot, $token, $plotSigpacId);
+
+            // Fetch official LAI
+            $laiData = $this->laiService->fetchOfficialLAI($plot, $token, $plotSigpacId);
+
+            // Fetch LST
+            $lstData = $this->lstService->fetchLSTData($plot, $token, null, $plotSigpacId);
+
+            // Fetch SMAP soil moisture
+            $smapData = $this->smapService->fetchSoilMoisture($plot, $token, $plotSigpacId);
+
+            // Fetch official ET
+            $etData = $this->etService->fetchEvapotranspiration($plot, $token, $plotSigpacId);
+
+            // Merge all data
+            $mergedData = array_merge(
+                $viirsData ?? [],
+                $spectralData ?? [],
+                $laiData ?? [],
+                $lstData ?? [],
+                $smapData ?? [],
+                $etData ?? []
+            );
+
+            // Extract image_date for unique key (services may not provide it)
+            $imageDate = isset($mergedData['image_date'])
+                ? Carbon::parse($mergedData['image_date'])
+                : Carbon::today();
+
+            // Prepare data for repository: map service keys to model columns, exclude image_date
+            $data = $this->prepareUltraEnrichedDataForStorage($plot, $mergedData, $imageDate);
+
+            // Store in database
+            $result = $this->repository->createOrUpdate($plot, $imageDate, $data);
+
+            // Area request (async) if requested
+            if ($includeArea && $result) {
+                $areaStats = $this->areaService->requestAreaData($plot, $token);
+
+                if ($areaStats && isset($areaStats['task_id'])) {
+                    $metadata = $result->metadata ?? [];
+                    $metadata['area_task_id'] = $areaStats['task_id'];
+                    $metadata['area_task_created'] = $areaStats['created_at'];
+                    $result->update(['metadata' => $metadata]);
+                }
+            }
+
+            return $result;
+
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch ultra-enriched data', [
+                'plot_id' => $plot->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return $this->getLatestData($plot);
+        }
+    }
+
+    /**
+     * Get all NASA services (for external use)
+     */
+    public function getAllServices(): array
+    {
+        return [
+            'lst' => $this->lstService,
+            'area' => $this->areaService,
+            'viirs' => $this->viirsService,
+            'spectral' => $this->spectralService,
+            'lai' => $this->laiService,
+            'smap' => $this->smapService,
+            'et' => $this->etService,
+        ];
+    }
+
+    /**
      * Fetch NDVI data from NASA API or generate mock
-     * 
+     *
      * @param array|null $coordinates Override for the selected sigpac parcel ['lat','lng'|'lon']
      */
     private function fetchNdviData(Plot $plot, ?array $coordinates = null): ?array
@@ -135,7 +328,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         }
 
         // Check rate limit before making request
-        if (!$this->rateLimitService->canMakeNasaRequest()) {
+        if (! $this->rateLimitService->canMakeNasaRequest()) {
             Log::warning('NASA API rate limit reached — using estimated data', [
                 'plot_id' => $plot->id,
                 'usage' => $this->rateLimitService->getUsage('nasa'),
@@ -150,7 +343,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
             // Cache 24h — MODIS updates every 16 days
             $cacheKey = "ornl_modis_{$plot->id}";
-            $cached   = Cache::get($cacheKey);
+            $cached = Cache::get($cacheKey);
             if ($cached !== null) {
                 return $cached;
             }
@@ -158,18 +351,18 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             // ORNL DAAC MODIS Subset API (synchronous, no auth required)
             // MOD13Q1 is a 16-day composite with 2-3 week publication lag,
             // so we look back 35 days to ensure the latest composite is included.
-            $startDate   = now()->subDays(35);
-            $startJulian = 'A' . $startDate->format('Y') . str_pad($startDate->dayOfYear, 3, '0', STR_PAD_LEFT);
-            $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $startDate = now()->subDays(35);
+            $startJulian = 'A'.$startDate->format('Y').str_pad($startDate->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian = 'A'.now()->format('Y').str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             $response = Http::timeout(30)
                 ->get("{$this->ornlBaseUrl}/MOD13Q1/subset", [
-                    'latitude'     => $bbox['lat'],
-                    'longitude'    => $bbox['lon'],
-                    'startDate'    => $startJulian,
-                    'endDate'      => $endJulian,
+                    'latitude' => $bbox['lat'],
+                    'longitude' => $bbox['lon'],
+                    'startDate' => $startJulian,
+                    'endDate' => $endJulian,
                     'kmAboveBelow' => 0,
-                    'kmLeftRight'  => 0,
+                    'kmLeftRight' => 0,
                 ]);
 
             // Record successful API call
@@ -178,24 +371,26 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             if ($response->successful()) {
                 $result = $this->parseOrnlResponse($response->json());
                 Cache::put($cacheKey, $result, now()->addHours(24));
+
                 return $result;
             }
 
             Log::warning('ORNL DAAC MODIS API request failed — using estimated data', [
-                'status'  => $response->status(),
+                'status' => $response->status(),
                 'plot_id' => $plot->id,
-                'lat'     => $bbox['lat'],
-                'lon'     => $bbox['lon'],
-                'body'    => substr($response->body(), 0, 200),
+                'lat' => $bbox['lat'],
+                'lon' => $bbox['lon'],
+                'body' => substr($response->body(), 0, 200),
             ]);
 
             $fallback = $this->generateMockData($plot);
             Cache::put($cacheKey, $fallback, now()->addHour());
+
             return $fallback;
 
         } catch (\Exception $e) {
             Log::warning('NASA Earthdata API error — using estimated data', [
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'plot_id' => $plot->id,
             ]);
 
@@ -214,9 +409,10 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
         $cacheKey = $this->cacheService->getNasaTokenKey();
         $cached = Cache::get($cacheKey);
-        
+
         if ($cached) {
             $this->token = $cached;
+
             return $this->token;
         }
 
@@ -227,6 +423,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             if ($response->successful()) {
                 $this->token = $response->json('token');
                 Cache::put($cacheKey, $this->token, $this->cacheService->getNasaTokenTtl());
+
                 return $this->token;
             }
         } catch (\Exception $e) {
@@ -252,7 +449,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             ->firstWhere('band', '_250m_16_days_NDVI');
 
         $rawValue = $ndviSubset['data'][0] ?? null;
-        $scale    = (float) ($ndviSubset['scale'] ?? '0.0001');
+        $scale = (float) ($ndviSubset['scale'] ?? '0.0001');
 
         if ($rawValue === null || $rawValue <= $nodata) {
             $ndvi = 0.5; // fallback when pixel is cloud/nodata
@@ -265,12 +462,12 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         $imageDate = Carbon::parse($ndviSubset['calendar_date'] ?? now());
 
         return [
-            'ndvi_mean'      => round($ndvi, 3),
-            'ndvi_min'       => round($ndvi - 0.03, 3),
-            'ndvi_max'       => round($ndvi + 0.03, 3),
+            'ndvi_mean' => round($ndvi, 3),
+            'ndvi_min' => round($ndvi - 0.03, 3),
+            'ndvi_max' => round($ndvi + 0.03, 3),
             'cloud_coverage' => 0,
-            'image_date'     => $imageDate,
-            'image_source'   => __('NASA MODIS MOD13Q1 (ORNL DAAC)'),
+            'image_date' => $imageDate,
+            'image_source' => __('NASA MODIS MOD13Q1 (ORNL DAAC)'),
         ];
     }
 
@@ -330,7 +527,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     {
         $previous = $this->repository->getPreviousData($plot, $currentDate);
 
-        if (!$previous) {
+        if (! $previous) {
             return 'stable';
         }
 
@@ -362,16 +559,16 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         // Seasonal NDVI for vineyards
         $seasonalBase = $isCanary
             ? match (true) {
-                $month >= 6 && $month <= 9  => 0.68,  // Verano subtropical
+                $month >= 6 && $month <= 9 => 0.68,  // Verano subtropical
                 $month >= 10 || $month <= 2 => 0.48,  // Invierno suave (sin dormancia real)
-                default                     => 0.58,  // Primavera/Otoño
+                default => 0.58,  // Primavera/Otoño
             }
-            : match (true) {
-                $month >= 6 && $month <= 8  => 0.75,
-                $month >= 4 && $month <= 5  => 0.60,
-                $month >= 9 && $month <= 10 => 0.55,
-                default                     => 0.25,
-            };
+        : match (true) {
+            $month >= 6 && $month <= 8 => 0.75,
+            $month >= 4 && $month <= 5 => 0.60,
+            $month >= 9 && $month <= 10 => 0.55,
+            default => 0.25,
+        };
 
         // Add some randomness (but consistent for the same day)
         $variation = (mt_rand(-10, 10) / 100);
@@ -382,18 +579,18 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         // Stressed vegetation: -0.2 to 0.1
         $ndwiBase = $isCanary
             ? match (true) {
-                $month >= 6 && $month <= 9  => 0.10,  // Verano seco
+                $month >= 6 && $month <= 9 => 0.10,  // Verano seco
                 $month >= 10 || $month <= 2 => 0.20,  // Invierno más húmedo
-                default                     => 0.15,
+                default => 0.15,
             }
-            : match (true) {
-                $month >= 6 && $month <= 8  => 0.25,
-                $month >= 4 && $month <= 5  => 0.35,
-                $month >= 9 && $month <= 10 => 0.15,
-                default                     => 0.05,
-            };
+        : match (true) {
+            $month >= 6 && $month <= 8 => 0.25,
+            $month >= 4 && $month <= 5 => 0.35,
+            $month >= 9 && $month <= 10 => 0.15,
+            default => 0.05,
+        };
         $ndwi = $ndwiBase + (mt_rand(-15, 15) / 100);
-        
+
         // Reset random seed
         mt_srand();
 
@@ -436,16 +633,16 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
             $seasonalBase = $isCanary
                 ? match (true) {
-                    $month >= 6 && $month <= 9  => 0.68,
+                    $month >= 6 && $month <= 9 => 0.68,
                     $month >= 10 || $month <= 2 => 0.48,
-                    default                     => 0.58,
+                    default => 0.58,
                 }
-                : match (true) {
-                    $month >= 6 && $month <= 8  => 0.75,
-                    $month >= 4 && $month <= 5  => 0.60,
-                    $month >= 9 && $month <= 10 => 0.55,
-                    default                     => 0.25,
-                };
+            : match (true) {
+                $month >= 6 && $month <= 8 => 0.75,
+                $month >= 4 && $month <= 5 => 0.60,
+                $month >= 9 && $month <= 10 => 0.55,
+                default => 0.25,
+            };
 
             $variation = (mt_rand(-8, 8) / 100);
             $ndvi = max(0.1, min(0.9, $seasonalBase + $variation));
@@ -453,36 +650,36 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             // NDWI varies with season
             $ndwiBase = $isCanary
                 ? match (true) {
-                    $month >= 6 && $month <= 9  => 0.10,
+                    $month >= 6 && $month <= 9 => 0.10,
                     $month >= 10 || $month <= 2 => 0.20,
-                    default                     => 0.15,
+                    default => 0.15,
                 }
-                : match (true) {
-                    $month >= 6 && $month <= 8  => 0.25,
-                    $month >= 4 && $month <= 5  => 0.35,
-                    $month >= 9 && $month <= 10 => 0.15,
-                    default                     => 0.05,
-                };
+            : match (true) {
+                $month >= 6 && $month <= 8 => 0.25,
+                $month >= 4 && $month <= 5 => 0.35,
+                $month >= 9 && $month <= 10 => 0.15,
+                default => 0.05,
+            };
             $ndwi = $ndwiBase + (mt_rand(-15, 15) / 100);
 
             // Temperature varies with season (Spain)
             $tempBase = $isCanary
                 ? match (true) {
-                    $month >= 6 && $month <= 9  => 28,
+                    $month >= 6 && $month <= 9 => 28,
                     $month >= 10 || $month <= 2 => 18,
-                    default                     => 22,
+                    default => 22,
                 }
-                : match (true) {
-                    $month >= 6 && $month <= 8  => 32,
-                    $month >= 4 && $month <= 5  => 20,
-                    $month >= 9 && $month <= 10 => 18,
-                    default                     => 8,
-                };
+            : match (true) {
+                $month >= 6 && $month <= 8 => 32,
+                $month >= 4 && $month <= 5 => 20,
+                $month >= 9 && $month <= 10 => 18,
+                default => 8,
+            };
             $temp = $tempBase + mt_rand(-5, 5);
-            
+
             // Calculate trend from previous data
             $trend = $this->calculateTrend($plot, $ndvi, $date);
-            
+
             // Reset seed
             mt_srand();
 
@@ -507,182 +704,11 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 'et0' => round(mt_rand(30, 70) / 10, 1),
             ]);
         }
-        
+
         Log::info('Mock historical data persisted', [
             'plot_id' => $plot->id,
             'records_created' => 20,
         ]);
-    }
-
-    /**
-     * Fetch enriched data (NDVI + LST + Area stats)
-     *
-     * @param Plot $plot
-     * @param bool $includeArea Whether to include area statistics
-     * @param array|null $coordinates Coordinates of the selected sigpac parcel ['lat','lng']
-     * @param int|null $plotSigpacId ID of MultipartPlotSigpac for polygon area
-     * @return PlotRemoteSensing|null
-     */
-    public function fetchEnrichedData(Plot $plot, bool $includeArea = false, ?array $coordinates = null, ?int $plotSigpacId = null): ?PlotRemoteSensing
-    {
-        $result = $this->getLatestData($plot, true, $coordinates);
-
-        if (!$result) {
-            return null;
-        }
-
-        try {
-            $token = $this->getAuthToken();
-
-            if (!$token) {
-                Log::warning('Cannot fetch enriched data without auth token');
-                return $result;
-            }
-
-            $lstData = $this->lstService->fetchLSTData($plot, $token, $coordinates);
-
-            if ($lstData) {
-                // Calculate CWSI if we have both LST and air temp
-                if ($lstData['lst_day'] && $result->temperature && $result->humidity) {
-                    $cwsi = $this->lstService->calculateCWSI(
-                        $lstData['lst_day'],
-                        $result->temperature,
-                        $result->humidity
-                    );
-                    $lstData['cwsi'] = $cwsi;
-                }
-
-                // Update with LST data
-                $result->update($lstData);
-            }
-
-            if ($includeArea) {
-                $areaStats = $this->areaService->requestAreaData($plot, $token, $plotSigpacId);
-                
-                if ($areaStats && isset($areaStats['task_id'])) {
-                    // Store task ID in metadata for later retrieval
-                    $metadata = $result->metadata ?? [];
-                    $metadata['area_task_id'] = $areaStats['task_id'];
-                    $metadata['area_task_created'] = $areaStats['created_at'];
-                    $result->update(['metadata' => $metadata]);
-                }
-            }
-
-            return $result;
-
-        } catch (\Exception $e) {
-            Log::error('Failed to fetch enriched data', [
-                'plot_id' => $plot->id,
-                'error' => $e->getMessage(),
-            ]);
-            
-            return $result;
-        }
-    }
-
-    /**
-     * Get LST service instance
-     */
-    public function getLSTService(): NasaLSTService
-    {
-        return $this->lstService;
-    }
-
-    /**
-     * Get Area service instance
-     */
-    public function getAreaService(): NasaAreaRequestService
-    {
-        return $this->areaService;
-    }
-
-    /**
-     * Fetch ultra-enriched data (ALL NASA products)
-     * 
-     * Includes:
-     * - VIIRS NDVI (better than MODIS)
-     * - Spectral bands (real GNDVI/NDRE)
-     * - Official LAI
-     * - LST
-     * - SMAP Soil Moisture
-     * - Official ET
-     * - Optional Area Request
-     * 
-     * @param Plot $plot
-     * @param bool $includeArea Whether to include area statistics
-     * @return PlotRemoteSensing|null
-     */
-    public function fetchUltraEnrichedData(Plot $plot, bool $includeArea = false, ?int $plotSigpacId = null): ?PlotRemoteSensing
-    {
-        $token = $this->getAuthToken();
-
-        if (!$token) {
-            Log::warning('Cannot fetch ultra-enriched data without auth token');
-            return $this->getLatestData($plot);
-        }
-
-        try {
-            // Start with VIIRS NDVI (better than MODIS)
-            $viirsData = $this->viirsService->fetchVIIRSNDVI($plot, $token, $plotSigpacId);
-
-            // Fetch spectral bands for real indices
-            $spectralData = $this->spectralService->fetchSpectralBands($plot, $token, $plotSigpacId);
-
-            // Fetch official LAI
-            $laiData = $this->laiService->fetchOfficialLAI($plot, $token, $plotSigpacId);
-
-            // Fetch LST
-            $lstData = $this->lstService->fetchLSTData($plot, $token, null, $plotSigpacId);
-
-            // Fetch SMAP soil moisture
-            $smapData = $this->smapService->fetchSoilMoisture($plot, $token, $plotSigpacId);
-
-            // Fetch official ET
-            $etData = $this->etService->fetchEvapotranspiration($plot, $token, $plotSigpacId);
-
-            // Merge all data
-            $mergedData = array_merge(
-                $viirsData ?? [],
-                $spectralData ?? [],
-                $laiData ?? [],
-                $lstData ?? [],
-                $smapData ?? [],
-                $etData ?? []
-            );
-
-            // Extract image_date for unique key (services may not provide it)
-            $imageDate = isset($mergedData['image_date'])
-                ? Carbon::parse($mergedData['image_date'])
-                : Carbon::today();
-
-            // Prepare data for repository: map service keys to model columns, exclude image_date
-            $data = $this->prepareUltraEnrichedDataForStorage($plot, $mergedData, $imageDate);
-
-            // Store in database
-            $result = $this->repository->createOrUpdate($plot, $imageDate, $data);
-
-            // Area request (async) if requested
-            if ($includeArea && $result) {
-                $areaStats = $this->areaService->requestAreaData($plot, $token);
-                
-                if ($areaStats && isset($areaStats['task_id'])) {
-                    $metadata = $result->metadata ?? [];
-                    $metadata['area_task_id'] = $areaStats['task_id'];
-                    $metadata['area_task_created'] = $areaStats['created_at'];
-                    $result->update(['metadata' => $metadata]);
-                }
-            }
-
-            return $result;
-
-        } catch (\Exception $e) {
-            Log::error('Failed to fetch ultra-enriched data', [
-                'plot_id' => $plot->id,
-                'error' => $e->getMessage(),
-            ]);
-            
-            return $this->getLatestData($plot);
-        }
     }
 
     /**
@@ -717,21 +743,5 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         }
 
         return $data;
-    }
-
-    /**
-     * Get all NASA services (for external use)
-     */
-    public function getAllServices(): array
-    {
-        return [
-            'lst' => $this->lstService,
-            'area' => $this->areaService,
-            'viirs' => $this->viirsService,
-            'spectral' => $this->spectralService,
-            'lai' => $this->laiService,
-            'smap' => $this->smapService,
-            'et' => $this->etService,
-        ];
     }
 }

@@ -9,17 +9,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeCertification(int $viticulturistId, bool $active = true, array $overrides = []): Certification
-    {
-        return Certification::create(array_merge([
-            'viticulturist_id'   => $viticulturistId,
-            'certification_type' => 'ecologico',
-            'certifying_body'    => 'CAAE',
-            'issue_date'         => '2023-01-01',
-            'active'             => $active,
-        ], $overrides));
-    }
-
     public function test_index_shows_active_certifications(): void
     {
         $v = $this->makeViticulturist();
@@ -31,7 +20,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_archive_sets_active_false(): void
     {
-        $v    = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $cert = $this->makeCertification($v->id);
         $this->actingAs($v);
 
@@ -42,7 +31,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_unarchive_restores_record(): void
     {
-        $v    = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $cert = $this->makeCertification($v->id, false);
         $this->actingAs($v);
 
@@ -75,7 +64,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_delete_removes_archived_record(): void
     {
-        $v    = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $cert = $this->makeCertification($v->id, false);
         $this->actingAs($v);
 
@@ -88,9 +77,9 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_cannot_archive_other_viticulturists_certification(): void
     {
-        $v     = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $other = $this->makeOtherViticulturist();
-        $cert  = $this->makeCertification($v->id);
+        $cert = $this->makeCertification($v->id);
         $this->actingAs($other);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -103,12 +92,23 @@ class IndexTest extends ViticulturistTestCase
         $v = $this->makeViticulturist();
         // expired cert
         $this->makeCertification($v->id, true, [
-            'issue_date'  => '2020-01-01',
+            'issue_date' => '2020-01-01',
             'expiry_date' => '2021-01-01',
         ]);
         $this->actingAs($v);
 
         // Just verify the component renders without errors
         Livewire::test(Index::class)->assertOk();
+    }
+
+    private function makeCertification(int $viticulturistId, bool $active = true, array $overrides = []): Certification
+    {
+        return Certification::create(array_merge([
+            'viticulturist_id' => $viticulturistId,
+            'certification_type' => 'ecologico',
+            'certifying_body' => 'CAAE',
+            'issue_date' => '2023-01-01',
+            'active' => $active,
+        ], $overrides));
     }
 }

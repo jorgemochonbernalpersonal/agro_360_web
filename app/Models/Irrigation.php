@@ -26,12 +26,12 @@ class Irrigation extends Model
     ];
 
     protected $casts = [
-        'water_volume'           => 'decimal:3',
-        'duration_minutes'       => 'integer',
-        'soil_moisture_before'   => 'decimal:2',
-        'soil_moisture_after'    => 'decimal:2',
-        'flow_rate'              => 'decimal:2',
-        'is_fertirrigation'      => 'boolean',
+        'water_volume' => 'decimal:3',
+        'duration_minutes' => 'integer',
+        'soil_moisture_before' => 'decimal:2',
+        'soil_moisture_after' => 'decimal:2',
+        'flow_rate' => 'decimal:2',
+        'is_fertirrigation' => 'boolean',
         'fertilizer_dose_per_ha' => 'decimal:2',
     ];
 

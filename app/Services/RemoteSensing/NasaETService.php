@@ -5,17 +5,18 @@ namespace App\Services\RemoteSensing;
 use App\Models\Plot;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * NASA Official Evapotranspiration Service
- * 
+ *
  * MOD16A2 - More accurate than Open-Meteo for specific vegetation types
  */
 class NasaETService
 {
     private string $baseUrl;
+
     private bool $useMockData;
+
     private RateLimitService $rateLimitService;
 
     public function __construct(RateLimitService $rateLimitService)
@@ -34,24 +35,24 @@ class NasaETService
             return $this->generateMockET($plot);
         }
 
-        if (!$this->rateLimitService->canMakeNasaRequest()) {
+        if (! $this->rateLimitService->canMakeNasaRequest()) {
             return $this->generateMockET($plot);
         }
 
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $plotSigpacId);
-            $startJulian = 'A' . now()->subDays(8)->format('Y') . str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
-            $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $startJulian = 'A'.now()->subDays(8)->format('Y').str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian = 'A'.now()->format('Y').str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             // MOD16A2: MODIS ET 500m, 8-day
             $response = Http::timeout(30)
                 ->get('https://modis.ornl.gov/rst/api/v1/MOD16A2/subset', [
-                    'latitude'     => $coords['lat'],
-                    'longitude'    => $coords['lon'],
-                    'startDate'    => $startJulian,
-                    'endDate'      => $endJulian,
+                    'latitude' => $coords['lat'],
+                    'longitude' => $coords['lon'],
+                    'startDate' => $startJulian,
+                    'endDate' => $endJulian,
                     'kmAboveBelow' => 0,
-                    'kmLeftRight'  => 0,
+                    'kmLeftRight' => 0,
                 ]);
 
             $this->rateLimitService->recordNasaRequest();
@@ -61,45 +62,19 @@ class NasaETService
             }
 
             Log::warning('NASA ET API failed — using estimated data', [
-                'status'  => $response->status(),
+                'status' => $response->status(),
                 'plot_id' => $plot->id,
-                'body'    => substr($response->body(), 0, 200),
+                'body' => substr($response->body(), 0, 200),
             ]);
 
         } catch (\Exception $e) {
             Log::warning('NASA ET API error — using estimated data', [
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'plot_id' => $plot->id,
             ]);
         }
 
         return $this->generateMockET($plot);
-    }
-
-    /**
-     * Parse ET response
-     */
-    private function parseETResponse(array $response): array
-    {
-        $nodata = $response['header']['NODATA_value'] ?? 32767;
-        $subset = collect($response['subset'] ?? []);
-
-        $etBand  = $subset->firstWhere('band', 'ET_500m');
-        $petBand = $subset->firstWhere('band', 'PET_500m');
-
-        $etRaw  = $etBand['data'][0]  ?? null;
-        $petRaw = $petBand['data'][0] ?? null;
-
-        // Scale 0.1 (kg/m²/8day = mm/8day), NODATA typically 32767
-        $et8day  = ($etRaw  !== null && $etRaw  != $nodata && $etRaw  > 0) ? $etRaw  * 0.1 : null;
-        $pet8day = ($petRaw !== null && $petRaw != $nodata && $petRaw > 0) ? $petRaw * 0.1 : null;
-
-        return [
-            'et_daily'  => $et8day  ? round($et8day  / 8, 2) : null,
-            'pet_daily' => $pet8day ? round($pet8day / 8, 2) : null,
-            'et_8day'   => $et8day  ? round($et8day, 1)      : null,
-            'et_source' => __('NASA MODIS MOD16A2.061'),
-        ];
     }
 
     /**
@@ -109,7 +84,7 @@ class NasaETService
     {
         $diff = abs($nasaET - $openMeteoET);
         $percentDiff = ($diff / $openMeteoET) * 100;
-        
+
         if ($percentDiff < 10) {
             $status = 'consistent';
             $message = __('NASA y Open-Meteo coinciden');
@@ -149,7 +124,7 @@ class NasaETService
         }
 
         $kc = $et / $pet;
-        
+
         // Typical Kc for vineyards: 0.3-0.7
         if ($kc < 0.3) {
             $status = 'low';
@@ -178,6 +153,32 @@ class NasaETService
     }
 
     /**
+     * Parse ET response
+     */
+    private function parseETResponse(array $response): array
+    {
+        $nodata = $response['header']['NODATA_value'] ?? 32767;
+        $subset = collect($response['subset'] ?? []);
+
+        $etBand = $subset->firstWhere('band', 'ET_500m');
+        $petBand = $subset->firstWhere('band', 'PET_500m');
+
+        $etRaw = $etBand['data'][0] ?? null;
+        $petRaw = $petBand['data'][0] ?? null;
+
+        // Scale 0.1 (kg/m²/8day = mm/8day), NODATA typically 32767
+        $et8day = ($etRaw !== null && $etRaw != $nodata && $etRaw > 0) ? $etRaw * 0.1 : null;
+        $pet8day = ($petRaw !== null && $petRaw != $nodata && $petRaw > 0) ? $petRaw * 0.1 : null;
+
+        return [
+            'et_daily' => $et8day ? round($et8day / 8, 2) : null,
+            'pet_daily' => $pet8day ? round($pet8day / 8, 2) : null,
+            'et_8day' => $et8day ? round($et8day, 1) : null,
+            'et_source' => __('NASA MODIS MOD16A2.061'),
+        ];
+    }
+
+    /**
      * Generate mock ET
      */
     private function generateMockET(Plot $plot, ?array $coords = null): array
@@ -192,27 +193,27 @@ class NasaETService
         // Seasonal ET for vineyards (mm/day)
         if ($isCanary) {
             if ($month >= 6 && $month <= 9) {
-                $etBase  = 5.0;
+                $etBase = 5.0;
                 $petBase = 7.0;
             } elseif ($month >= 10 || $month <= 2) {
-                $etBase  = 2.5;
+                $etBase = 2.5;
                 $petBase = 4.0;
             } else {
-                $etBase  = 3.5;
+                $etBase = 3.5;
                 $petBase = 5.5;
             }
         } else {
             if ($month >= 6 && $month <= 8) {
-                $etBase  = 4.5;
+                $etBase = 4.5;
                 $petBase = 6.0;
             } elseif ($month >= 4 && $month <= 5) {
-                $etBase  = 2.8;
+                $etBase = 2.8;
                 $petBase = 4.5;
             } elseif ($month >= 9 && $month <= 10) {
-                $etBase  = 2.0;
+                $etBase = 2.0;
                 $petBase = 3.5;
             } else {
-                $etBase  = 0.8;
+                $etBase = 0.8;
                 $petBase = 1.5;
             }
         }
@@ -229,5 +230,4 @@ class NasaETService
             'et_source' => __('NASA MODIS MOD16A2.061 (Mock)'),
         ];
     }
-
 }

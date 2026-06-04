@@ -6,33 +6,36 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
 use App\Models\GrapeReceptionBatch;
-use App\Models\PlotPlanting;
 use App\Models\WineryViticulturist;
 use App\Models\WineryYieldForecast;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Index extends Component
 {
     use WithToastNotifications;
-    public string $search              = '';
-    public string $campaignFilter      = '';
+
+    public string $search = '';
+
+    public string $campaignFilter = '';
+
     public string $viticulturistFilter = '';
-    public string $varietyFilter       = '';
-    public string $alertFilter         = ''; // 'exceeded' | 'at_risk' | ''
+
+    public string $varietyFilter = '';
+
+    public string $alertFilter = ''; // 'exceeded' | 'at_risk' | ''
 
     protected $queryString = [
-        'search'              => ['except' => ''],
-        'campaignFilter'      => ['except' => ''],
+        'search' => ['except' => ''],
+        'campaignFilter' => ['except' => ''],
         'viticulturistFilter' => ['except' => ''],
-        'varietyFilter'       => ['except' => ''],
-        'alertFilter'         => ['except' => ''],
+        'varietyFilter' => ['except' => ''],
+        'alertFilter' => ['except' => ''],
     ];
 
     public function mount(): void
     {
-        if (!$this->campaignFilter) {
+        if (! $this->campaignFilter) {
             $campaign = Campaign::forViticulturist(Auth::id())
                 ->where('active', true)
                 ->first();
@@ -42,11 +45,15 @@ class Index extends Component
         }
     }
 
-    public function updatingSearch(): void              { }
-    public function updatingCampaignFilter(): void      { }
-    public function updatingViticulturistFilter(): void { }
-    public function updatingVarietyFilter(): void       { }
-    public function updatingAlertFilter(): void         { }
+    public function updatingSearch(): void {}
+
+    public function updatingCampaignFilter(): void {}
+
+    public function updatingViticulturistFilter(): void {}
+
+    public function updatingVarietyFilter(): void {}
+
+    public function updatingAlertFilter(): void {}
 
     public function closeBatch(int $batchId): void
     {
@@ -64,7 +71,7 @@ class Index extends Component
 
     public function render()
     {
-        $wineryId  = Auth::id();
+        $wineryId = Auth::id();
         $campaigns = Campaign::forViticulturist($wineryId)->orderBy('year', 'desc')->get();
 
         $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
@@ -79,17 +86,17 @@ class Index extends Component
             $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
         }
 
-        $campaign    = $this->campaignFilter ? $campaigns->firstWhere('id', $this->campaignFilter) : null;
+        $campaign = $this->campaignFilter ? $campaigns->firstWhere('id', $this->campaignFilter) : null;
         $vintageYear = $campaign?->year ?? now()->year;
 
         // ── Fuentes de datos ──────────────────────────────────────────────
 
         // 1. Batches reales (recepciones ya iniciadas)
         $batchQuery = GrapeReceptionBatch::with([
-                'viticulturist:id,name',
-                'plotPlanting.grapeVariety',
-                'plotPlanting.plot',
-            ])
+            'viticulturist:id,name',
+            'plotPlanting.grapeVariety',
+            'plotPlanting.plot',
+        ])
             ->where('winery_id', $wineryId)
             ->where('vintage_year', $vintageYear);
 
@@ -97,14 +104,14 @@ class Index extends Component
             $batchQuery->where('viticulturist_id', $this->viticulturistFilter);
         }
 
-        $batches = $batchQuery->get()->keyBy(fn($b) => $b->plot_planting_id . '_' . $b->campaign_id);
+        $batches = $batchQuery->get()->keyBy(fn ($b) => $b->plot_planting_id.'_'.$b->campaign_id);
 
         // 2. Forecasts de bodega (confirmados y borradores)
         $forecastQuery = WineryYieldForecast::with([
-                'viticulturist:id,name',
-                'plotPlanting.grapeVariety',
-                'plotPlanting.plot',
-            ])
+            'viticulturist:id,name',
+            'plotPlanting.grapeVariety',
+            'plotPlanting.plot',
+        ])
             ->where('winery_id', $wineryId)
             ->where('vintage_year', $vintageYear);
 
@@ -116,15 +123,14 @@ class Index extends Component
             $forecastQuery->where('viticulturist_id', $this->viticulturistFilter);
         }
 
-        $forecasts = $forecastQuery->get()->keyBy(fn($f) => $f->plot_planting_id . '_' . $f->campaign_id);
+        $forecasts = $forecastQuery->get()->keyBy(fn ($f) => $f->plot_planting_id.'_'.$f->campaign_id);
 
         // 3. Aforos del viticultor (EstimatedYield confirmados para esta añada)
         $viticulturistIds = $linkedViticulturists->pluck('id');
 
         $estimatedYieldQuery = EstimatedYield::with(['plotPlanting'])
-            ->whereHas('campaign', fn($q) => $q->where('year', $vintageYear))
-            ->whereHas('plotPlanting.plot', fn($q) =>
-                $q->whereIn('viticulturist_id', $viticulturistIds)
+            ->whereHas('campaign', fn ($q) => $q->where('year', $vintageYear))
+            ->whereHas('plotPlanting.plot', fn ($q) => $q->whereIn('viticulturist_id', $viticulturistIds)
             )
             ->where('status', 'confirmed');
 
@@ -135,24 +141,26 @@ class Index extends Component
 
         $keys = $batches->keys()->merge($forecasts->keys())->unique();
 
-        $rows = $keys->map(function ($key) use ($batches, $forecasts, $estimatedYields, $campaign, $vintageYear) {
-            $batch    = $batches->get($key);
+        $rows = $keys->map(function ($key) use ($batches, $forecasts, $estimatedYields, $vintageYear) {
+            $batch = $batches->get($key);
             $forecast = $forecasts->get($key);
 
             // Resolver planting y viticulturist desde cualquiera de las dos fuentes
-            $source      = $batch ?? $forecast;
-            $planting    = $source?->plotPlanting;
+            $source = $batch ?? $forecast;
+            $planting = $source?->plotPlanting;
             $viticulturist = $source?->viticulturist;
 
-            if (!$planting) return null;
+            if (! $planting) {
+                return null;
+            }
 
-            $plantingId      = $planting->id;
-            $estimatedYield  = $estimatedYields->get($plantingId);
+            $plantingId = $planting->id;
+            $estimatedYield = $estimatedYields->get($plantingId);
 
-            $pacLimit       = $planting->effectiveHarvestLimitKg($vintageYear);
-            $forecastKg     = $forecast?->status === 'confirmed' ? (float) $forecast->estimated_kg : null;
-            $viticEstimate  = $estimatedYield ? (float) $estimatedYield->estimated_total_yield : null;
-            $receivedKg     = $batch ? (float) $batch->total_weight_kg : 0;
+            $pacLimit = $planting->effectiveHarvestLimitKg($vintageYear);
+            $forecastKg = $forecast?->status === 'confirmed' ? (float) $forecast->estimated_kg : null;
+            $viticEstimate = $estimatedYield ? (float) $estimatedYield->estimated_total_yield : null;
+            $receivedKg = $batch ? (float) $batch->total_weight_kg : 0;
 
             // Límite operativo: forecast confirmado vs PAC (el menor)
             $opLimit = $forecastKg !== null && $pacLimit !== null
@@ -167,72 +175,71 @@ class Index extends Component
                 ? round(($receivedKg / $pacLimit) * 100, 1)
                 : null;
 
-            $exceeded   = $opLimit !== null && $receivedKg > $opLimit;
+            $exceeded = $opLimit !== null && $receivedKg > $opLimit;
             $exceededPac = $pacLimit !== null && $receivedKg > $pacLimit;
-            $atRisk     = !$exceeded && $pctOfOpLimit !== null && $pctOfOpLimit >= 80;
+            $atRisk = ! $exceeded && $pctOfOpLimit !== null && $pctOfOpLimit >= 80;
 
             return [
-                'key'              => $key,
-                'viticulturist'    => $viticulturist,
-                'planting'         => $planting,
-                'variety'          => $planting->grapeVariety?->name ?? $planting->name ?? '—',
-                'plot'             => $planting->plot?->name ?? '—',
-                'area'             => $planting->area_planted ? (float) $planting->area_planted : null,
-                'pac_limit'        => $pacLimit,
-                'vitic_estimate'   => $viticEstimate,
-                'forecast_kg'      => $forecastKg,
-                'forecast_status'  => $forecast?->status,
-                'op_limit'         => $opLimit,
-                'received_kg'      => $receivedKg,
-                'pct_op_limit'     => $pctOfOpLimit,
-                'pct_pac'          => $pctOfPac,
-                'remaining'        => $opLimit !== null ? max(0, $opLimit - $receivedKg) : null,
-                'exceeded'         => $exceeded,
-                'exceeded_pac'     => $exceededPac,
-                'at_risk'          => $atRisk,
-                'batch_id'         => $batch?->id,
-                'batch_status'     => $batch?->status,
+                'key' => $key,
+                'viticulturist' => $viticulturist,
+                'planting' => $planting,
+                'variety' => $planting->grapeVariety?->name ?? $planting->name ?? '—',
+                'plot' => $planting->plot?->name ?? '—',
+                'area' => $planting->area_planted ? (float) $planting->area_planted : null,
+                'pac_limit' => $pacLimit,
+                'vitic_estimate' => $viticEstimate,
+                'forecast_kg' => $forecastKg,
+                'forecast_status' => $forecast?->status,
+                'op_limit' => $opLimit,
+                'received_kg' => $receivedKg,
+                'pct_op_limit' => $pctOfOpLimit,
+                'pct_pac' => $pctOfPac,
+                'remaining' => $opLimit !== null ? max(0, $opLimit - $receivedKg) : null,
+                'exceeded' => $exceeded,
+                'exceeded_pac' => $exceededPac,
+                'at_risk' => $atRisk,
+                'batch_id' => $batch?->id,
+                'batch_status' => $batch?->status,
             ];
         })
-        ->filter()
-        ->values();
+            ->filter()
+            ->values();
 
         // ── Filtros adicionales ───────────────────────────────────────────
 
         if ($this->search) {
             $term = mb_strtolower($this->search);
-            $rows = $rows->filter(fn($r) =>
-                str_contains(mb_strtolower($r['viticulturist']?->name ?? ''), $term) ||
+            $rows = $rows->filter(fn ($r) => str_contains(mb_strtolower($r['viticulturist']?->name ?? ''), $term) ||
                 str_contains(mb_strtolower($r['variety']), $term) ||
                 str_contains(mb_strtolower($r['plot']), $term)
             )->values();
         }
 
         if ($this->varietyFilter) {
-            $rows = $rows->filter(fn($r) => str_contains(
+            $rows = $rows->filter(fn ($r) => str_contains(
                 mb_strtolower($r['variety']),
                 mb_strtolower($this->varietyFilter)
             ))->values();
         }
 
         if ($this->alertFilter === 'exceeded') {
-            $rows = $rows->filter(fn($r) => $r['exceeded'] || $r['exceeded_pac'])->values();
+            $rows = $rows->filter(fn ($r) => $r['exceeded'] || $r['exceeded_pac'])->values();
         } elseif ($this->alertFilter === 'at_risk') {
-            $rows = $rows->filter(fn($r) => $r['at_risk'])->values();
+            $rows = $rows->filter(fn ($r) => $r['at_risk'])->values();
         }
 
         // ── Stats globales ────────────────────────────────────────────────
 
         $allRows = $rows; // ya filtrados
         $stats = [
-            'total_plantings'    => $allRows->count(),
-            'total_received_kg'  => $allRows->sum('received_kg'),
-            'total_forecast_kg'  => $allRows->sum('forecast_kg'),
-            'total_pac_kg'       => $allRows->sum('pac_limit'),
+            'total_plantings' => $allRows->count(),
+            'total_received_kg' => $allRows->sum('received_kg'),
+            'total_forecast_kg' => $allRows->sum('forecast_kg'),
+            'total_pac_kg' => $allRows->sum('pac_limit'),
             'total_vitic_est_kg' => $allRows->sum('vitic_estimate'),
-            'exceeded_count'     => $allRows->where('exceeded', true)->count(),
-            'at_risk_count'      => $allRows->where('at_risk', true)->count(),
-            'viticulturists'     => $allRows->pluck('viticulturist.id')->unique()->filter()->count(),
+            'exceeded_count' => $allRows->where('exceeded', true)->count(),
+            'at_risk_count' => $allRows->where('at_risk', true)->count(),
+            'viticulturists' => $allRows->pluck('viticulturist.id')->unique()->filter()->count(),
         ];
 
         // Variedades únicas para filtro
@@ -248,30 +255,31 @@ class Index extends Component
         $historicalYears = $historicalBatches->pluck('vintage_year')->unique()->sort()->values();
 
         $historicalRows = $historicalBatches
-            ->groupBy(fn($b) => $b->viticulturist_id . '_' . $b->plot_planting_id)
+            ->groupBy(fn ($b) => $b->viticulturist_id.'_'.$b->plot_planting_id)
             ->map(function ($batches) use ($historicalYears) {
                 $first = $batches->first();
                 $byYear = $batches->keyBy('vintage_year');
+
                 return [
                     'viticulturist_name' => $first->viticulturist?->name ?? '—',
-                    'variety'            => $first->plotPlanting?->grapeVariety?->name ?? '—',
-                    'years'              => $historicalYears->mapWithKeys(
-                        fn($y) => [$y => (float) ($byYear->get($y)?->total_weight_kg ?? 0)]
+                    'variety' => $first->plotPlanting?->grapeVariety?->name ?? '—',
+                    'years' => $historicalYears->mapWithKeys(
+                        fn ($y) => [$y => (float) ($byYear->get($y)?->total_weight_kg ?? 0)]
                     ),
                 ];
             })
             ->values();
 
         return view('livewire.winery.harvest.summary.index', [
-            'rows'                 => $rows,
-            'stats'                => $stats,
-            'campaigns'            => $campaigns,
+            'rows' => $rows,
+            'stats' => $stats,
+            'campaigns' => $campaigns,
             'linkedViticulturists' => $linkedViticulturists,
-            'varieties'            => $varieties,
-            'campaign'             => $campaign,
-            'vintageYear'          => $vintageYear,
-            'historicalYears'      => $historicalYears,
-            'historicalRows'       => $historicalRows,
+            'varieties' => $varieties,
+            'campaign' => $campaign,
+            'vintageYear' => $vintageYear,
+            'historicalYears' => $historicalYears,
+            'historicalRows' => $historicalRows,
         ])->layout('layouts.app');
     }
 }

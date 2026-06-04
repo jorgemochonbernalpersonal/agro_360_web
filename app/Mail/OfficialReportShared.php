@@ -5,9 +5,9 @@ namespace App\Mail;
 use App\Models\OfficialReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
 
 class OfficialReportShared extends Mailable
@@ -15,7 +15,9 @@ class OfficialReportShared extends Mailable
     use Queueable, SerializesModels;
 
     public $report;
+
     public $customMessage; // Renombrado de $message para evitar conflicto con variable reservada de Laravel
+
     public $senderName;
 
     /**
@@ -34,7 +36,7 @@ class OfficialReportShared extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '📄 ' . $this->senderName . ' te ha compartido un informe oficial',
+            subject: '📄 '.$this->senderName.' te ha compartido un informe oficial',
         );
     }
 
@@ -58,7 +60,7 @@ class OfficialReportShared extends Mailable
         // Adjuntar el PDF
         if ($this->report->pdf_path && $this->report->pdfExists()) {
             // Si el path es relativo (usando Storage), usar fromStorage
-            if (!str_starts_with($this->report->pdf_path, storage_path())) {
+            if (! str_starts_with($this->report->pdf_path, storage_path())) {
                 return [
                     Attachment::fromStorageDisk('local', $this->report->pdf_path)
                         ->as($this->report->pdf_filename)
@@ -73,7 +75,7 @@ class OfficialReportShared extends Mailable
                 ];
             }
         }
-        
+
         return [];
     }
 }

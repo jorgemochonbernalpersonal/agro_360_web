@@ -23,9 +23,9 @@ class ContainerMaintenanceController extends Controller
 
         $request->validate([
             'container_id' => 'nullable|integer',
-            'status'       => 'nullable|string|in:' . implode(',', array_keys(ContainerMaintenance::STATUSES)),
-            'type'         => 'nullable|string|in:' . implode(',', array_keys(ContainerMaintenance::TYPES)),
-            'per_page'     => 'nullable|integer|min:1|max:100',
+            'status' => 'nullable|string|in:'.implode(',', array_keys(ContainerMaintenance::STATUSES)),
+            'type' => 'nullable|string|in:'.implode(',', array_keys(ContainerMaintenance::TYPES)),
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = ContainerMaintenance::whereHas(
@@ -42,7 +42,7 @@ class ContainerMaintenanceController extends Controller
             $query->where('maintenance_type', $request->type);
         }
 
-        $perPage      = $this->resolvePerPage($request, 20, 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $maintenances = $query->orderByDesc('scheduled_date')->paginate($perPage);
 
         // Status counts
@@ -57,15 +57,15 @@ class ContainerMaintenanceController extends Controller
         return response()->json([
             'data' => ContainerMaintenanceResource::collection($maintenances),
             'meta' => [
-                'total'        => $maintenances->total(),
-                'per_page'     => $maintenances->perPage(),
+                'total' => $maintenances->total(),
+                'per_page' => $maintenances->perPage(),
                 'current_page' => $maintenances->currentPage(),
-                'last_page'    => $maintenances->lastPage(),
-                'scheduled'    => (int) $counts->scheduled,
-                'in_progress'  => (int) $counts->in_progress,
-                'completed'    => (int) $counts->completed,
-                'types'        => ContainerMaintenance::typeOptions(),
-                'statuses'     => ContainerMaintenance::statusOptions(),
+                'last_page' => $maintenances->lastPage(),
+                'scheduled' => (int) $counts->scheduled,
+                'in_progress' => (int) $counts->in_progress,
+                'completed' => (int) $counts->completed,
+                'types' => ContainerMaintenance::typeOptions(),
+                'statuses' => ContainerMaintenance::statusOptions(),
             ],
         ]);
     }
@@ -92,40 +92,40 @@ class ContainerMaintenanceController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'container_id'          => 'required|integer|exists:containers,id',
-            'maintenance_type'      => 'required|string|in:' . implode(',', array_keys(ContainerMaintenance::TYPES)),
-            'maintenance_name'      => 'required|string|max:255',
-            'scheduled_date'        => 'nullable|date',
-            'performed_date'        => 'nullable|date',
+            'container_id' => 'required|integer|exists:containers,id',
+            'maintenance_type' => 'required|string|in:'.implode(',', array_keys(ContainerMaintenance::TYPES)),
+            'maintenance_name' => 'required|string|max:255',
+            'scheduled_date' => 'nullable|date',
+            'performed_date' => 'nullable|date',
             'next_maintenance_date' => 'nullable|date',
-            'status'                => 'nullable|string|in:' . implode(',', array_keys(ContainerMaintenance::STATUSES)),
-            'cost'                  => 'nullable|numeric|min:0',
-            'performed_by'          => 'nullable|string|max:255',
-            'notes'                 => 'nullable|string|max:2000',
+            'status' => 'nullable|string|in:'.implode(',', array_keys(ContainerMaintenance::STATUSES)),
+            'cost' => 'nullable|numeric|min:0',
+            'performed_by' => 'nullable|string|max:255',
+            'notes' => 'nullable|string|max:2000',
             // Insumos usados
-            'supplies'                           => 'nullable|array|max:20',
-            'supplies.*.winery_supply_id'        => 'nullable|integer|exists:winery_supplies,id',
-            'supplies.*.supply_name'             => 'nullable|string|max:255',
-            'supplies.*.quantity_used'           => 'nullable|numeric|min:0',
-            'supplies.*.unit_of_measurement_id'  => 'nullable|integer|exists:unit_of_measurements,id',
-            'supplies.*.cost'                    => 'nullable|numeric|min:0',
-            'supplies.*.notes'                   => 'nullable|string|max:500',
+            'supplies' => 'nullable|array|max:20',
+            'supplies.*.winery_supply_id' => 'nullable|integer|exists:winery_supplies,id',
+            'supplies.*.supply_name' => 'nullable|string|max:255',
+            'supplies.*.quantity_used' => 'nullable|numeric|min:0',
+            'supplies.*.unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
+            'supplies.*.cost' => 'nullable|numeric|min:0',
+            'supplies.*.notes' => 'nullable|string|max:500',
             // Residuos generados
-            'wastes'                              => 'nullable|array|max:10',
-            'wastes.*.container_waste_type_id'   => 'nullable|integer|exists:container_waste_types,id',
-            'wastes.*.custom_waste_type'         => 'nullable|string|max:100',
-            'wastes.*.waste_date'                => 'nullable|date',
-            'wastes.*.quantity'                  => 'nullable|numeric|min:0',
-            'wastes.*.unit_of_measurement_id'    => 'nullable|integer|exists:unit_of_measurements,id',
-            'wastes.*.disposal_method'           => 'nullable|string|max:255',
-            'wastes.*.cost'                      => 'nullable|numeric|min:0',
-            'wastes.*.notes'                     => 'nullable|string|max:500',
+            'wastes' => 'nullable|array|max:10',
+            'wastes.*.container_waste_type_id' => 'nullable|integer|exists:container_waste_types,id',
+            'wastes.*.custom_waste_type' => 'nullable|string|max:100',
+            'wastes.*.waste_date' => 'nullable|date',
+            'wastes.*.quantity' => 'nullable|numeric|min:0',
+            'wastes.*.unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
+            'wastes.*.disposal_method' => 'nullable|string|max:255',
+            'wastes.*.cost' => 'nullable|numeric|min:0',
+            'wastes.*.notes' => 'nullable|string|max:500',
         ]);
 
         Container::where('user_id', $user->id)->findOrFail($validated['container_id']);
 
         $suppliesData = $validated['supplies'] ?? [];
-        $wastesData   = $validated['wastes'] ?? [];
+        $wastesData = $validated['wastes'] ?? [];
         unset($validated['supplies'], $validated['wastes']);
 
         $maintenance = DB::transaction(function () use ($validated, $suppliesData, $wastesData) {
@@ -137,26 +137,26 @@ class ContainerMaintenanceController extends Controller
             foreach ($suppliesData as $s) {
                 ContainerMaintenanceSupply::create([
                     'container_maintenance_id' => $maintenance->id,
-                    'winery_supply_id'         => $s['winery_supply_id'] ?? null,
-                    'supply_name'              => $s['supply_name'] ?? null,
-                    'quantity_used'            => $s['quantity_used'] ?? null,
-                    'unit_of_measurement_id'   => $s['unit_of_measurement_id'] ?? null,
-                    'cost'                     => $s['cost'] ?? null,
-                    'notes'                    => $s['notes'] ?? null,
+                    'winery_supply_id' => $s['winery_supply_id'] ?? null,
+                    'supply_name' => $s['supply_name'] ?? null,
+                    'quantity_used' => $s['quantity_used'] ?? null,
+                    'unit_of_measurement_id' => $s['unit_of_measurement_id'] ?? null,
+                    'cost' => $s['cost'] ?? null,
+                    'notes' => $s['notes'] ?? null,
                 ]);
             }
 
             foreach ($wastesData as $w) {
                 ContainerMaintenanceWaste::create([
                     'container_maintenance_id' => $maintenance->id,
-                    'container_waste_type_id'  => $w['container_waste_type_id'] ?? null,
-                    'custom_waste_type'        => $w['custom_waste_type'] ?? null,
-                    'waste_date'               => $w['waste_date'] ?? null,
-                    'quantity'                 => $w['quantity'] ?? null,
-                    'unit_of_measurement_id'   => $w['unit_of_measurement_id'] ?? null,
-                    'disposal_method'          => $w['disposal_method'] ?? null,
-                    'cost'                     => $w['cost'] ?? null,
-                    'notes'                    => $w['notes'] ?? null,
+                    'container_waste_type_id' => $w['container_waste_type_id'] ?? null,
+                    'custom_waste_type' => $w['custom_waste_type'] ?? null,
+                    'waste_date' => $w['waste_date'] ?? null,
+                    'quantity' => $w['quantity'] ?? null,
+                    'unit_of_measurement_id' => $w['unit_of_measurement_id'] ?? null,
+                    'disposal_method' => $w['disposal_method'] ?? null,
+                    'cost' => $w['cost'] ?? null,
+                    'notes' => $w['notes'] ?? null,
                 ]);
             }
 
@@ -166,7 +166,7 @@ class ContainerMaintenanceController extends Controller
         $maintenance->load(['container', 'supplies', 'wastes']);
 
         return response()->json([
-            'data'    => new ContainerMaintenanceResource($maintenance),
+            'data' => new ContainerMaintenanceResource($maintenance),
             'message' => __('Mantenimiento registrado correctamente.'),
         ], 201);
     }
@@ -183,15 +183,15 @@ class ContainerMaintenanceController extends Controller
         )->findOrFail($id);
 
         $validated = $request->validate([
-            'maintenance_type'      => 'sometimes|string|in:' . implode(',', array_keys(ContainerMaintenance::TYPES)),
-            'maintenance_name'      => 'sometimes|string|max:255',
-            'scheduled_date'        => 'sometimes|nullable|date',
-            'performed_date'        => 'sometimes|nullable|date',
+            'maintenance_type' => 'sometimes|string|in:'.implode(',', array_keys(ContainerMaintenance::TYPES)),
+            'maintenance_name' => 'sometimes|string|max:255',
+            'scheduled_date' => 'sometimes|nullable|date',
+            'performed_date' => 'sometimes|nullable|date',
             'next_maintenance_date' => 'sometimes|nullable|date',
-            'status'                => 'sometimes|string|in:' . implode(',', array_keys(ContainerMaintenance::STATUSES)),
-            'cost'                  => 'sometimes|nullable|numeric|min:0',
-            'performed_by'          => 'sometimes|nullable|string|max:255',
-            'notes'                 => 'sometimes|nullable|string|max:2000',
+            'status' => 'sometimes|string|in:'.implode(',', array_keys(ContainerMaintenance::STATUSES)),
+            'cost' => 'sometimes|nullable|numeric|min:0',
+            'performed_by' => 'sometimes|nullable|string|max:255',
+            'notes' => 'sometimes|nullable|string|max:2000',
         ]);
 
         $maintenance->update($validated);
@@ -232,23 +232,23 @@ class ContainerMaintenanceController extends Controller
         )->findOrFail($id);
 
         $validated = $request->validate([
-            'performed_date'        => 'nullable|date',
+            'performed_date' => 'nullable|date',
             'next_maintenance_date' => 'nullable|date',
-            'cost'                  => 'nullable|numeric|min:0',
-            'performed_by'          => 'nullable|string|max:255',
-            'notes'                 => 'nullable|string|max:2000',
+            'cost' => 'nullable|numeric|min:0',
+            'performed_by' => 'nullable|string|max:255',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         $maintenance->update([
             ...$validated,
-            'status'         => 'completed',
+            'status' => 'completed',
             'performed_date' => $validated['performed_date'] ?? now()->toDateString(),
         ]);
 
         $maintenance->load(['container', 'supplies', 'wastes']);
 
         return response()->json([
-            'data'    => new ContainerMaintenanceResource($maintenance),
+            'data' => new ContainerMaintenanceResource($maintenance),
             'message' => __('Mantenimiento completado correctamente.'),
         ]);
     }
@@ -262,7 +262,7 @@ class ContainerMaintenanceController extends Controller
 
         Container::where('user_id', $user->id)->findOrFail($containerId);
 
-        $perPage      = $this->resolvePerPage($request, 20, 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $maintenances = ContainerMaintenance::where('container_id', $containerId)
             ->with(['supplies', 'wastes'])
             ->orderByDesc('scheduled_date')
@@ -271,10 +271,10 @@ class ContainerMaintenanceController extends Controller
         return response()->json([
             'data' => ContainerMaintenanceResource::collection($maintenances),
             'meta' => [
-                'total'        => $maintenances->total(),
-                'per_page'     => $maintenances->perPage(),
+                'total' => $maintenances->total(),
+                'per_page' => $maintenances->perPage(),
                 'current_page' => $maintenances->currentPage(),
-                'last_page'    => $maintenances->lastPage(),
+                'last_page' => $maintenances->lastPage(),
             ],
         ]);
     }

@@ -11,18 +11,6 @@ use Tests\Feature\SupervisorTestCase;
 
 class ViticulturistAssignmentTest extends SupervisorTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    /** Añade un viticultor al pool del supervisor */
-    private function addToPool(User $supervisor, User $viticulturist): void
-    {
-        SupervisorViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
-            'viticulturist_id' => $viticulturist->id,
-            'assigned_by'      => $supervisor->id,
-        ]);
-    }
-
     // ── asignar ───────────────────────────────────────────────────────────────
 
     public function test_supervisor_can_assign_pool_viticulturist_to_winery(): void
@@ -37,10 +25,10 @@ class ViticulturistAssignmentTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
         ]);
     }
 
@@ -81,11 +69,11 @@ class ViticulturistAssignmentTest extends SupervisorTestCase
         $this->addToPool($supervisor, $vit);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -94,25 +82,25 @@ class ViticulturistAssignmentTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseMissing('winery_viticulturist', [
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $vit->id,
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
         ]);
     }
 
     public function test_supervisor_cannot_unassign_viticulturist_from_another_supervisor(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
         $vit = User::factory()->create(['role' => 'viticulturist']);
 
         // Asignado por OTRO supervisor
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $otherSupervisor->id,
-            'assigned_by'      => $otherSupervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $otherSupervisor->id,
+            'assigned_by' => $otherSupervisor->id,
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -142,11 +130,11 @@ class ViticulturistAssignmentTest extends SupervisorTestCase
         $this->addToPool($supervisor, $vit);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         // Aparece en la tabla de asignados pero NO en el pool (available)
@@ -154,5 +142,16 @@ class ViticulturistAssignmentTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Show::class, ['winery' => $winery])
             ->assertViewHas('poolViticulturists', fn ($pool) => $pool->doesntContain('id', $vit->id));
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    /** Añade un viticultor al pool del supervisor */
+    private function addToPool(User $supervisor, User $viticulturist): void
+    {
+        SupervisorViticulturist::create([
+            'supervisor_id' => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+            'assigned_by' => $supervisor->id,
+        ]);
     }
 }

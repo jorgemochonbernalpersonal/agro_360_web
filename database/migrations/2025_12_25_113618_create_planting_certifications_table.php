@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('status', ['active', 'expired', 'suspended', 'pending'])->default('active');
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             $table->index(['plot_planting_id', 'status']);
             $table->index('expiry_date');
         });

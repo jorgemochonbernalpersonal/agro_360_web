@@ -2,14 +2,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * Actualiza las foreign keys de harvest_stocks y harvests para que apunten a containers
      * en lugar de harvest_containers.
      */
@@ -19,8 +19,8 @@ return new class extends Migration
         // Establecer a NULL los container_id que no existen en la tabla containers
         if (Schema::hasTable('harvest_stocks')) {
             $existingContainerIds = DB::table('containers')->pluck('id')->toArray();
-            
-            if (!empty($existingContainerIds)) {
+
+            if (! empty($existingContainerIds)) {
                 // Establecer a NULL los container_id que no existen en containers
                 DB::table('harvest_stocks')
                     ->whereNotNull('container_id')
@@ -37,8 +37,8 @@ return new class extends Migration
         // PASO 2: Limpiar registros huérfanos en harvests
         if (Schema::hasTable('harvests')) {
             $existingContainerIds = DB::table('containers')->pluck('id')->toArray();
-            
-            if (!empty($existingContainerIds)) {
+
+            if (! empty($existingContainerIds)) {
                 // Establecer a NULL los container_id que no existen en containers
                 DB::table('harvests')
                     ->whereNotNull('container_id')
@@ -63,8 +63,8 @@ return new class extends Migration
                 AND COLUMN_NAME = 'container_id' 
                 AND REFERENCED_TABLE_NAME IS NOT NULL
             ");
-            
-            if (!empty($foreignKeys)) {
+
+            if (! empty($foreignKeys)) {
                 Schema::table('harvest_stocks', function (Blueprint $table) {
                     // Intentar eliminar la foreign key antigua (puede tener diferentes nombres)
                     try {
@@ -97,8 +97,8 @@ return new class extends Migration
                 AND COLUMN_NAME = 'container_id' 
                 AND REFERENCED_TABLE_NAME IS NOT NULL
             ");
-            
-            if (!empty($foreignKeys)) {
+
+            if (! empty($foreignKeys)) {
                 Schema::table('harvests', function (Blueprint $table) {
                     // Intentar eliminar la foreign key antigua
                     try {
@@ -151,4 +151,3 @@ return new class extends Migration
         });
     }
 };
-

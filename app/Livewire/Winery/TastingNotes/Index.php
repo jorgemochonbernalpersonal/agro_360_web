@@ -9,26 +9,34 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search     = '';
+    public string $search = '';
+
     public string $wineFilter = '';
 
     protected $queryString = [
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'wineFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void    { $this->resetPage(); }
-    public function updatingWineFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'wineFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingWineFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
     {
         WineTastingNote::where('user_id', $this->wineryId())->findOrFail($id)->delete();
         $this->toastSuccess(__('Nota de cata eliminada.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'wineFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -40,10 +48,10 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(IFNULL(evaluator_name,\'\')) LIKE ?', [$term])
-                  ->orWhereHas('wine', fn($w) => $w->whereRaw('LOWER(name) LIKE ?', [$term]));
+                    ->orWhereHas('wine', fn ($w) => $w->whereRaw('LOWER(name) LIKE ?', [$term]));
             });
         }
 
@@ -57,9 +65,15 @@ class Index extends AbstractIndex
         $query->orderByDesc('evaluation_date')->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['evaluation_date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['evaluation_date', 'desc'];
+    }
 
-    protected function perPage(): int { return 20; }
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -67,7 +81,7 @@ class Index extends AbstractIndex
 
         return [
             'tastingNotes' => $entries,
-            'wines'        => $wines,
+            'wines' => $wines,
         ];
     }
 }

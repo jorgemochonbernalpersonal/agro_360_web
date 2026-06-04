@@ -14,32 +14,43 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
 
-    public string $wine_id             = '';
-    public string $evaluation_date     = '';
-    public string $evaluator_name      = '';
-    public string $oenologist_id       = '';
+    public string $wine_id = '';
+
+    public string $evaluation_date = '';
+
+    public string $evaluator_name = '';
+
+    public string $oenologist_id = '';
 
     // Visual
-    public string $visual_color     = '';
-    public string $visual_clarity   = '';
+    public string $visual_color = '';
+
+    public string $visual_clarity = '';
+
     public string $visual_intensity = '';
 
     // Olfativo
-    public string $aroma_intensity    = '';
-    public string $aroma_descriptors  = '';
+    public string $aroma_intensity = '';
+
+    public string $aroma_descriptors = '';
 
     // Gustativo
     public string $palate_acidity = '';
+
     public string $palate_tannins = '';
-    public string $palate_body    = '';
-    public string $palate_finish  = '';
+
+    public string $palate_body = '';
+
+    public string $palate_finish = '';
 
     // Valoración
-    public string $overall_score      = '';
+    public string $overall_score = '';
+
     public string $overall_conclusion = '';
-    public string $notes              = '';
+
+    public string $notes = '';
 
     public function mount(): void
     {
@@ -69,28 +80,6 @@ class Create extends Component
         unset($this->selectedWine);
     }
 
-    protected function rules(): array
-    {
-        return [
-            'wine_id'             => $this->ownedWineRule(),
-            'evaluation_date'     => ['required', 'date'],
-            'evaluator_name'      => ['nullable', 'string', 'max:255'],
-            'oenologist_id'       => $this->ownedOenologistRule(),
-            'visual_color'        => ['nullable', 'string', 'max:100'],
-            'visual_clarity'      => ['nullable', 'in:' . implode(',', array_keys(WineTastingNote::VISUAL_CLARITY))],
-            'visual_intensity'    => ['nullable', 'in:' . implode(',', array_keys(WineTastingNote::VISUAL_INTENSITY))],
-            'aroma_intensity'     => ['nullable', 'in:' . implode(',', array_keys(WineTastingNote::AROMA_INTENSITY))],
-            'aroma_descriptors'   => ['nullable', 'string'],
-            'palate_acidity'      => ['nullable', 'in:' . implode(',', array_keys(WineTastingNote::PALATE_LEVEL))],
-            'palate_tannins'      => ['nullable', 'in:' . implode(',', array_keys(WineTastingNote::PALATE_LEVEL))],
-            'palate_body'         => ['nullable', 'in:' . implode(',', array_keys(WineTastingNote::PALATE_BODY))],
-            'palate_finish'       => ['nullable', 'in:' . implode(',', array_keys(WineTastingNote::PALATE_FINISH))],
-            'overall_score'       => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'overall_conclusion'  => ['nullable', 'string'],
-            'notes'               => ['nullable', 'string'],
-        ];
-    }
-
     public function save(): void
     {
         $data = $this->validate();
@@ -98,24 +87,24 @@ class Create extends Component
         Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
 
         WineTastingNote::create([
-            'user_id'            => Auth::id(),
-            'wine_id'            => $data['wine_id'],
-            'oenologist_id'      => $data['oenologist_id'] ?: null,
-            'evaluation_date'    => $data['evaluation_date'],
-            'evaluator_name'     => $data['evaluator_name'] ?: null,
-            'visual_color'       => $data['visual_color'] ?: null,
-            'visual_clarity'     => $data['visual_clarity'] ?: null,
-            'visual_intensity'   => $data['visual_intensity'] ?: null,
-            'aroma_intensity'    => $data['aroma_intensity'] ?: null,
-            'aroma_descriptors'  => $data['aroma_descriptors'] ?: null,
-            'palate_acidity'     => $data['palate_acidity'] ?: null,
-            'palate_tannins'     => $data['palate_tannins'] ?: null,
-            'palate_body'        => $data['palate_body'] ?: null,
-            'palate_finish'      => $data['palate_finish'] ?: null,
-            'overall_score'      => $data['overall_score'] ?: null,
+            'user_id' => Auth::id(),
+            'wine_id' => $data['wine_id'],
+            'oenologist_id' => $data['oenologist_id'] ?: null,
+            'evaluation_date' => $data['evaluation_date'],
+            'evaluator_name' => $data['evaluator_name'] ?: null,
+            'visual_color' => $data['visual_color'] ?: null,
+            'visual_clarity' => $data['visual_clarity'] ?: null,
+            'visual_intensity' => $data['visual_intensity'] ?: null,
+            'aroma_intensity' => $data['aroma_intensity'] ?: null,
+            'aroma_descriptors' => $data['aroma_descriptors'] ?: null,
+            'palate_acidity' => $data['palate_acidity'] ?: null,
+            'palate_tannins' => $data['palate_tannins'] ?: null,
+            'palate_body' => $data['palate_body'] ?: null,
+            'palate_finish' => $data['palate_finish'] ?: null,
+            'overall_score' => $data['overall_score'] ?: null,
             'overall_conclusion' => $data['overall_conclusion'] ?: null,
-            'notes'              => $data['notes'] ?: null,
-            'created_by'         => Auth::id(),
+            'notes' => $data['notes'] ?: null,
+            'created_by' => Auth::id(),
         ]);
 
         $this->toastSuccess(__('Nota de cata registrada correctamente.'));
@@ -125,15 +114,37 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.tasting-notes.create', [
-            'visualClarityOptions'  => WineTastingNote::visualClarityOptions(),
-            'visualIntensityOptions'=> WineTastingNote::visualIntensityOptions(),
+            'visualClarityOptions' => WineTastingNote::visualClarityOptions(),
+            'visualIntensityOptions' => WineTastingNote::visualIntensityOptions(),
             'aromaIntensityOptions' => WineTastingNote::aromaIntensityOptions(),
-            'palateLevelOptions'    => WineTastingNote::palateLevelOptions(),
-            'palateBodyOptions'     => WineTastingNote::palateBodyOptions(),
-            'palateFinishOptions'   => WineTastingNote::palateFinishOptions(),
-            'wines'                 => $this->wines,
-            'oenologists'           => $this->oenologists,
-            'selectedWine'          => $this->selectedWine,
+            'palateLevelOptions' => WineTastingNote::palateLevelOptions(),
+            'palateBodyOptions' => WineTastingNote::palateBodyOptions(),
+            'palateFinishOptions' => WineTastingNote::palateFinishOptions(),
+            'wines' => $this->wines,
+            'oenologists' => $this->oenologists,
+            'selectedWine' => $this->selectedWine,
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'wine_id' => $this->ownedWineRule(),
+            'evaluation_date' => ['required', 'date'],
+            'evaluator_name' => ['nullable', 'string', 'max:255'],
+            'oenologist_id' => $this->ownedOenologistRule(),
+            'visual_color' => ['nullable', 'string', 'max:100'],
+            'visual_clarity' => ['nullable', 'in:'.implode(',', array_keys(WineTastingNote::VISUAL_CLARITY))],
+            'visual_intensity' => ['nullable', 'in:'.implode(',', array_keys(WineTastingNote::VISUAL_INTENSITY))],
+            'aroma_intensity' => ['nullable', 'in:'.implode(',', array_keys(WineTastingNote::AROMA_INTENSITY))],
+            'aroma_descriptors' => ['nullable', 'string'],
+            'palate_acidity' => ['nullable', 'in:'.implode(',', array_keys(WineTastingNote::PALATE_LEVEL))],
+            'palate_tannins' => ['nullable', 'in:'.implode(',', array_keys(WineTastingNote::PALATE_LEVEL))],
+            'palate_body' => ['nullable', 'in:'.implode(',', array_keys(WineTastingNote::PALATE_BODY))],
+            'palate_finish' => ['nullable', 'in:'.implode(',', array_keys(WineTastingNote::PALATE_FINISH))],
+            'overall_score' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'overall_conclusion' => ['nullable', 'string'],
+            'notes' => ['nullable', 'string'],
+        ];
     }
 }

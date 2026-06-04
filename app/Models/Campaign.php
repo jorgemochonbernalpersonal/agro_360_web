@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 class Campaign extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'year',
@@ -69,6 +70,8 @@ class Campaign extends Model
 
     /**
      * Scope para filtrar campañas activas
+     *
+     * @param mixed $query
      */
     public function scopeActive($query)
     {
@@ -77,6 +80,8 @@ class Campaign extends Model
 
     /**
      * Scope para filtrar por año
+     *
+     * @param mixed $query
      */
     public function scopeForYear($query, int $year)
     {
@@ -85,6 +90,8 @@ class Campaign extends Model
 
     /**
      * Scope para filtrar por viticultor
+     *
+     * @param mixed $query
      */
     public function scopeForViticulturist($query, int $viticulturistId)
     {
@@ -111,7 +118,7 @@ class Campaign extends Model
      * Usa transacción con lockForUpdate para prevenir duplicados en requests concurrentes.
      * Retorna null si hay algún error (ej: tabla no existe).
      */
-    public static function getOrCreateActiveForYear(int $viticulturistId, int $year = null): ?self
+    public static function getOrCreateActiveForYear(int $viticulturistId, ?int $year = null): ?self
     {
         $year = $year ?? now()->year;
 
@@ -136,17 +143,18 @@ class Campaign extends Model
 
                 if ($campaign) {
                     $campaign->activate();
+
                     return $campaign;
                 }
 
                 // Crear nueva campaña y desactivar el resto en la misma transacción
                 $campaign = static::create([
-                    'name'             => "Campaña {$year}",
-                    'year'             => $year,
+                    'name' => "Campaña {$year}",
+                    'year' => $year,
                     'viticulturist_id' => $viticulturistId,
-                    'start_date'       => now()->startOfYear(),
-                    'end_date'         => now()->endOfYear(),
-                    'active'           => true,
+                    'start_date' => now()->startOfYear(),
+                    'end_date' => now()->endOfYear(),
+                    'active' => true,
                 ]);
 
                 static::where('viticulturist_id', $viticulturistId)
@@ -157,10 +165,10 @@ class Campaign extends Model
             });
         } catch (\Exception $e) {
             \Log::error('Error al obtener/crear campaña activa', [
-                'error'            => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'viticulturist_id' => $viticulturistId,
-                'year'             => $year,
-                'trace'            => $e->getTraceAsString(),
+                'year' => $year,
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return null;

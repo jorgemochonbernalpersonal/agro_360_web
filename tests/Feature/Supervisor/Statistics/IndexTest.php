@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Supervisor\Statistics;
 
-use App\Models\SupervisorWinery;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Livewire\Livewire;
@@ -33,7 +32,7 @@ class IndexTest extends SupervisorTestCase
     public function test_viticulturist_cannot_access_statistics_index(): void
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
@@ -56,21 +55,21 @@ class IndexTest extends SupervisorTestCase
 
     public function test_statistics_counts_only_own_bodegas_and_viticultors(): void
     {
-        [$supervisor, $winery]           = $this->makeSupervisorWithWinery();
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         // Viticulturist assigned to this supervisor only
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         $this->actingAs($supervisor);

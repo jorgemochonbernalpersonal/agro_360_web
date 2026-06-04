@@ -25,7 +25,7 @@ class VerifactuController extends Controller
         }
 
         $perPage = $this->resolvePerPage($request, 20, 100);
-        $items   = $query->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         // Count pending invoices not yet in VeriFactu
         $pendingCount = Invoice::where('user_id', $user->id)
@@ -36,12 +36,12 @@ class VerifactuController extends Controller
         return response()->json([
             'data' => $items->map(fn ($r) => $this->format($r)),
             'meta' => [
-                'total'             => $items->total(),
-                'per_page'          => $items->perPage(),
-                'current_page'      => $items->currentPage(),
-                'last_page'         => $items->lastPage(),
-                'pending_invoices'  => $pendingCount,
-                'statuses'          => VerifactuRecord::STATUSES,
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
+                'current_page' => $items->currentPage(),
+                'last_page' => $items->lastPage(),
+                'pending_invoices' => $pendingCount,
+                'statuses' => VerifactuRecord::STATUSES,
             ],
         ]);
     }
@@ -74,13 +74,13 @@ class VerifactuController extends Controller
         $record = VerifactuRecord::updateOrCreate(
             ['invoice_id' => $invoice->id],
             [
-                'user_id'           => $user->id,
+                'user_id' => $user->id,
                 'submission_status' => 'queued',
             ]
         );
 
         return response()->json([
-            'data'    => $this->format($record->fresh(['invoice'])),
+            'data' => $this->format($record->fresh(['invoice'])),
             'message' => __('Factura encolada para envío a VeriFactu.'),
         ], 201);
     }
@@ -107,22 +107,22 @@ class VerifactuController extends Controller
     private function format(VerifactuRecord $r): array
     {
         return [
-            'id'                => $r->id,
-            'invoice_id'        => $r->invoice_id,
-            'invoice_number'    => $r->invoice?->invoice_number,
-            'invoice_date'      => $r->invoice?->invoice_date?->toDateString(),
-            'invoice_amount'    => $r->invoice ? (float) $r->invoice->total_amount : null,
+            'id' => $r->id,
+            'invoice_id' => $r->invoice_id,
+            'invoice_number' => $r->invoice?->invoice_number,
+            'invoice_date' => $r->invoice?->invoice_date?->toDateString(),
+            'invoice_amount' => $r->invoice ? (float) $r->invoice->total_amount : null,
             'submission_status' => $r->submission_status,
-            'status_label'      => $r->status_label,
-            'submitted_at'      => $r->submitted_at?->toIso8601String(),
-            'accepted_at'       => $r->accepted_at?->toIso8601String(),
-            'rejected_at'       => $r->rejected_at?->toIso8601String(),
-            'aeat_csv'          => $r->aeat_csv,
-            'qr_data'           => $r->qr_data,
-            'response_code'     => $r->response_code,
-            'response_message'  => $r->response_message,
-            'error_details'     => $r->error_details,
-            'created_at'        => $r->created_at->toIso8601String(),
+            'status_label' => $r->status_label,
+            'submitted_at' => $r->submitted_at?->toIso8601String(),
+            'accepted_at' => $r->accepted_at?->toIso8601String(),
+            'rejected_at' => $r->rejected_at?->toIso8601String(),
+            'aeat_csv' => $r->aeat_csv,
+            'qr_data' => $r->qr_data,
+            'response_code' => $r->response_code,
+            'response_message' => $r->response_message,
+            'error_details' => $r->error_details,
+            'created_at' => $r->created_at->toIso8601String(),
         ];
     }
 }

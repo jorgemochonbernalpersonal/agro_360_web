@@ -30,27 +30,28 @@ class LockOldActivities extends Command
     {
         $days = (int) $this->option('days');
         $dryRun = $this->option('dry-run');
-        
+
         $this->info("🔒 Bloqueando actividades con más de {$days} días...");
-        
+
         if ($dryRun) {
             $this->warn('⚠️  MODO SIMULACIÓN - No se realizarán cambios');
         }
 
         // Buscar actividades desbloqueadas con más de X días
         $cutoffDate = now()->subDays($days);
-        
+
         $activities = AgriculturalActivity::where('is_locked', false)
             ->where('activity_date', '<=', $cutoffDate)
             ->get();
 
         if ($activities->isEmpty()) {
             $this->info('✅ No hay actividades para bloquear.');
+
             return 0;
         }
 
         $this->info("📊 Encontradas {$activities->count()} actividades para bloquear:");
-        
+
         // Mostrar tabla con resumen
         $tableData = [];
         foreach ($activities as $activity) {
@@ -62,7 +63,7 @@ class LockOldActivities extends Command
                 'Días' => $activity->activity_date->diffInDays(now()),
             ];
         }
-        
+
         $this->table(
             ['ID', 'Fecha', 'Tipo', 'Parcela', 'Días Antigüedad'],
             $tableData
@@ -70,12 +71,14 @@ class LockOldActivities extends Command
 
         if ($dryRun) {
             $this->info('✅ Simulación completada. Usa el comando sin --dry-run para aplicar cambios.');
+
             return 0;
         }
 
         // Confirmar antes de bloquear
-        if (!$this->confirm('¿Deseas bloquear estas actividades?', true)) {
+        if (! $this->confirm('¿Deseas bloquear estas actividades?', true)) {
             $this->warn('❌ Operación cancelada.');
+
             return 0;
         }
 
@@ -101,9 +104,9 @@ class LockOldActivities extends Command
         $this->newLine(2);
 
         // Resumen
-        $this->info("✅ Proceso completado:");
+        $this->info('✅ Proceso completado:');
         $this->info("   - Bloqueadas: {$locked}");
-        
+
         if ($errors > 0) {
             $this->error("   - Errores: {$errors}");
         }

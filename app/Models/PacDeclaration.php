@@ -8,6 +8,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PacDeclaration extends Model
 {
+    public const STATUS_DRAFT = 'draft';
+
+    public const STATUS_SUBMITTED = 'submitted';
+
+    public const STATUS_APPROVED = 'approved';
+
+    public const STATUS_REJECTED = 'rejected';
+
+    public const ECO_SCHEMES = [
+        'cover_crops' => 'Cubiertas vegetales',
+        'no_tillage' => 'Mínimo/no laboreo',
+        'organic' => 'Producción ecológica',
+        'integrated_pest_mgmt' => 'Gestión integrada de plagas',
+        'reduced_phyto' => 'Reducción de fitosanitarios',
+        'biodiversity' => 'Elementos de biodiversidad',
+        'precision_fertilization' => 'Fertilización de precisión',
+    ];
+
     protected $fillable = [
         'viticulturist_id',
         'year',
@@ -24,21 +42,6 @@ class PacDeclaration extends Model
         'submitted_at' => 'datetime',
         'total_declared_area' => 'decimal:3',
         'total_eligible_area' => 'decimal:3',
-    ];
-
-    public const STATUS_DRAFT     = 'draft';
-    public const STATUS_SUBMITTED = 'submitted';
-    public const STATUS_APPROVED  = 'approved';
-    public const STATUS_REJECTED  = 'rejected';
-
-    public const ECO_SCHEMES = [
-        'cover_crops'           => 'Cubiertas vegetales',
-        'no_tillage'            => 'Mínimo/no laboreo',
-        'organic'               => 'Producción ecológica',
-        'integrated_pest_mgmt'  => 'Gestión integrada de plagas',
-        'reduced_phyto'         => 'Reducción de fitosanitarios',
-        'biodiversity'          => 'Elementos de biodiversidad',
-        'precision_fertilization' => 'Fertilización de precisión',
     ];
 
     public static function ecoSchemeOptions(): array
@@ -71,23 +74,23 @@ class PacDeclaration extends Model
 
     public function statusLabel(): string
     {
-        return __(match($this->status) {
-            self::STATUS_DRAFT     => 'Borrador',
+        return __(match ($this->status) {
+            self::STATUS_DRAFT => 'Borrador',
             self::STATUS_SUBMITTED => 'Presentada',
-            self::STATUS_APPROVED  => 'Aprobada',
-            self::STATUS_REJECTED  => 'Rechazada',
-            default                => $this->status,
+            self::STATUS_APPROVED => 'Aprobada',
+            self::STATUS_REJECTED => 'Rechazada',
+            default => $this->status,
         });
     }
 
     public function statusColor(): string
     {
-        return match($this->status) {
-            self::STATUS_DRAFT     => 'amber',
+        return match ($this->status) {
+            self::STATUS_DRAFT => 'amber',
             self::STATUS_SUBMITTED => 'blue',
-            self::STATUS_APPROVED  => 'green',
-            self::STATUS_REJECTED  => 'red',
-            default                => 'zinc',
+            self::STATUS_APPROVED => 'green',
+            self::STATUS_REJECTED => 'red',
+            default => 'zinc',
         };
     }
 

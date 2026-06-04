@@ -48,7 +48,7 @@ class ExternalGrapeTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('external_grapes', [
-            'user_id'       => $this->winery->id,
+            'user_id' => $this->winery->id,
             'supplier_name' => 'Proveedor SA',
         ]);
     }
@@ -56,13 +56,13 @@ class ExternalGrapeTest extends WineryTestCase
     public function test_edit_saves_changes(): void
     {
         $grape = ExternalGrape::create([
-            'user_id'         => $this->winery->id,
-            'supplier_name'   => 'Test Proveedor',
-            'grape_type'      => 'grapes',
+            'user_id' => $this->winery->id,
+            'supplier_name' => 'Test Proveedor',
+            'grape_type' => 'grapes',
             'total_weight_kg' => 500,
-            'used_weight_kg'  => 0,
-            'entry_date'      => today(),
-            'status'          => 'available',
+            'used_weight_kg' => 0,
+            'entry_date' => today(),
+            'status' => 'available',
         ]);
 
         Livewire::test(Edit::class, ['grape' => $grape])
@@ -71,7 +71,7 @@ class ExternalGrapeTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('external_grapes', [
-            'id'            => $grape->id,
+            'id' => $grape->id,
             'supplier_name' => 'Nuevo Proveedor',
         ]);
     }
@@ -81,13 +81,13 @@ class ExternalGrapeTest extends WineryTestCase
         $otherWinery = $this->makeOtherWinery();
 
         $grape = ExternalGrape::create([
-            'user_id'         => $this->winery->id,
-            'supplier_name'   => 'Test Proveedor',
-            'grape_type'      => 'grapes',
+            'user_id' => $this->winery->id,
+            'supplier_name' => 'Test Proveedor',
+            'grape_type' => 'grapes',
             'total_weight_kg' => 500,
-            'used_weight_kg'  => 0,
-            'entry_date'      => today(),
-            'status'          => 'available',
+            'used_weight_kg' => 0,
+            'entry_date' => today(),
+            'status' => 'available',
         ]);
 
         $this->actingAs($otherWinery)

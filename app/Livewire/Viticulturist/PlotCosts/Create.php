@@ -15,13 +15,21 @@ class Create extends Component
     use WithRoleAwareRedirect, WithToastNotifications;
 
     public string $plot_id = '';
+
     public string $campaign_id = '';
+
     public string $category = 'other';
+
     public string $description = '';
+
     public string $amount = '';
+
     public string $cost_date = '';
+
     public string $supplier = '';
+
     public string $invoice_reference = '';
+
     public string $notes = '';
 
     public function mount(): void
@@ -36,21 +44,6 @@ class Create extends Component
         }
     }
 
-    protected function rules(): array
-    {
-        return [
-            'plot_id'           => $this->plotOwnershipRule(false),
-            'campaign_id'       => $this->campaignOwnershipRule(false),
-            'category'          => 'required|in:' . implode(',', array_keys(PlotCost::CATEGORIES)),
-            'description'       => 'required|string|max:255',
-            'amount'            => 'required|numeric|min:0.01',
-            'cost_date'         => 'required|date',
-            'supplier'          => 'nullable|string|max:255',
-            'invoice_reference' => 'nullable|string|max:100',
-            'notes'             => 'nullable|string',
-        ];
-    }
-
     public function save(): mixed
     {
         $data = $this->validate();
@@ -58,8 +51,8 @@ class Create extends Component
         PlotCost::create([
             ...$data,
             'viticulturist_id' => Auth::id(),
-            'plot_id'          => $this->plot_id ?: null,
-            'campaign_id'      => $this->campaign_id ?: null,
+            'plot_id' => $this->plot_id ?: null,
+            'campaign_id' => $this->campaign_id ?: null,
         ]);
 
         $this->toastSuccess(__('Coste registrado correctamente.'));
@@ -72,9 +65,24 @@ class Create extends Component
         $user = Auth::user();
 
         return view('livewire.viticulturist.plot-costs.create', [
-            'plots'      => Plot::where('viticulturist_id', $user->id)->orderBy('name')->get(),
-            'campaigns'  => Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get(),
+            'plots' => Plot::where('viticulturist_id', $user->id)->orderBy('name')->get(),
+            'campaigns' => Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get(),
             'categories' => PlotCost::categoryOptions(),
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'plot_id' => $this->plotOwnershipRule(false),
+            'campaign_id' => $this->campaignOwnershipRule(false),
+            'category' => 'required|in:'.implode(',', array_keys(PlotCost::CATEGORIES)),
+            'description' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0.01',
+            'cost_date' => 'required|date',
+            'supplier' => 'nullable|string|max:255',
+            'invoice_reference' => 'nullable|string|max:100',
+            'notes' => 'nullable|string',
+        ];
     }
 }

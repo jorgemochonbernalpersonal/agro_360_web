@@ -17,8 +17,11 @@ class InvoiceOwnershipTest extends TestCase
     use RefreshDatabase;
 
     private User $viticulturist;
+
     private User $otherUser;
+
     private Client $ownClient;
+
     private Client $foreignClient;
 
     protected function setUp(): void
@@ -26,36 +29,24 @@ class InvoiceOwnershipTest extends TestCase
         parent::setUp();
 
         $this->viticulturist = User::factory()->create([
-            'role'               => 'viticulturist',
-            'email_verified_at'  => now(),
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
         ]);
 
         $this->otherUser = User::factory()->create([
-            'role'               => 'viticulturist',
-            'email_verified_at'  => now(),
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
         ]);
 
         $this->ownClient = Client::factory()->individual()->create([
             'user_id' => $this->viticulturist->id,
-            'active'  => true,
+            'active' => true,
         ]);
 
         $this->foreignClient = Client::factory()->individual()->create([
             'user_id' => $this->otherUser->id,
-            'active'  => true,
+            'active' => true,
         ]);
-    }
-
-    // ── Regla de ownership de client_id (idéntica en Create y Edit) ──────────
-
-    private function makeClientOwnershipRule(): \Closure
-    {
-        $userId = $this->viticulturist->id;
-        return function ($attribute, $value, $fail) use ($userId) {
-            if ($value && !\App\Models\Client::where('id', $value)->where('user_id', $userId)->exists()) {
-                $fail('El cliente seleccionado no es válido.');
-            }
-        };
     }
 
     public function test_viticulturist_invoice_create_rejects_foreign_client(): void
@@ -80,7 +71,7 @@ class InvoiceOwnershipTest extends TestCase
             ['client_id' => ['required', $this->makeClientOwnershipRule()]]
         );
 
-        $this->assertFalse($validator->fails(), 'Own client should pass: ' . $validator->errors()->first('client_id'));
+        $this->assertFalse($validator->fails(), 'Own client should pass: '.$validator->errors()->first('client_id'));
     }
 
     public function test_viticulturist_invoice_edit_rejects_foreign_client(): void
@@ -105,7 +96,7 @@ class InvoiceOwnershipTest extends TestCase
             ['client_id' => ['required', $this->makeClientOwnershipRule()]]
         );
 
-        $this->assertFalse($validator->fails(), 'Own client should pass: ' . $validator->errors()->first('client_id'));
+        $this->assertFalse($validator->fails(), 'Own client should pass: '.$validator->errors()->first('client_id'));
     }
 
     // ── Cross-user: otro viticultor no puede usar clientes ajenos ─────────────
@@ -116,7 +107,7 @@ class InvoiceOwnershipTest extends TestCase
 
         $otherUserId = $this->otherUser->id;
         $rule = function ($attribute, $value, $fail) use ($otherUserId) {
-            if ($value && !\App\Models\Client::where('id', $value)->where('user_id', $otherUserId)->exists()) {
+            if ($value && ! \App\Models\Client::where('id', $value)->where('user_id', $otherUserId)->exists()) {
                 $fail('El cliente seleccionado no es válido.');
             }
         };
@@ -127,5 +118,18 @@ class InvoiceOwnershipTest extends TestCase
         );
 
         $this->assertTrue($validator->fails());
+    }
+
+    // ── Regla de ownership de client_id (idéntica en Create y Edit) ──────────
+
+    private function makeClientOwnershipRule(): \Closure
+    {
+        $userId = $this->viticulturist->id;
+
+        return function ($attribute, $value, $fail) use ($userId) {
+            if ($value && ! \App\Models\Client::where('id', $value)->where('user_id', $userId)->exists()) {
+                $fail('El cliente seleccionado no es válido.');
+            }
+        };
     }
 }

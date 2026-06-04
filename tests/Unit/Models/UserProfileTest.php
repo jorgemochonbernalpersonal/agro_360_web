@@ -2,14 +2,14 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\UserProfile;
-use App\Models\User;
 use App\Models\Province;
+use App\Models\User;
+use App\Models\UserProfile;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
 
 class UserProfileTest extends TestCase
 {
@@ -119,4 +119,3 @@ class UserProfileTest extends TestCase
         $this->assertEquals($user->id, $profile1->user_id);
     }
 }
-

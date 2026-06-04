@@ -10,18 +10,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makePlan(int $viticulturistId, int $campaignId, string $status = 'draft', array $overrides = []): FertilizationPlan
-    {
-        return FertilizationPlan::create(array_merge([
-            'viticulturist_id' => $viticulturistId,
-            'campaign_id'      => $campaignId,
-            'plan_year'        => 2024,
-            'nitrate_zone'     => false,
-            'status'           => $status,
-            'active'           => true,
-        ], $overrides));
-    }
-
     public function test_index_shows_plans(): void
     {
         $v = $this->makeViticulturist();
@@ -34,8 +22,8 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_activate_sets_status_to_active(): void
     {
-        $v    = $this->makeViticulturist();
-        $c    = Campaign::getOrCreateActiveForYear($v->id);
+        $v = $this->makeViticulturist();
+        $c = Campaign::getOrCreateActiveForYear($v->id);
         $plan = $this->makePlan($v->id, $c->id, 'draft');
         $this->actingAs($v);
 
@@ -46,15 +34,15 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_archive_sets_status_to_archived_without_touching_active_flag(): void
     {
-        $v    = $this->makeViticulturist();
-        $c    = Campaign::getOrCreateActiveForYear($v->id);
+        $v = $this->makeViticulturist();
+        $c = Campaign::getOrCreateActiveForYear($v->id);
         $plan = $this->makePlan($v->id, $c->id, 'active');
         $this->actingAs($v);
 
         Livewire::test(Index::class)->call('archive', $plan->id);
 
         $this->assertDatabaseHas('fertilization_plans', [
-            'id'     => $plan->id,
+            'id' => $plan->id,
             'status' => 'archived',
             'active' => true,  // active flag must remain true
         ]);
@@ -62,8 +50,8 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_delete_removes_draft_plan(): void
     {
-        $v    = $this->makeViticulturist();
-        $c    = Campaign::getOrCreateActiveForYear($v->id);
+        $v = $this->makeViticulturist();
+        $c = Campaign::getOrCreateActiveForYear($v->id);
         $plan = $this->makePlan($v->id, $c->id, 'draft');
         $this->actingAs($v);
 
@@ -74,8 +62,8 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_cannot_delete_active_plan(): void
     {
-        $v    = $this->makeViticulturist();
-        $c    = Campaign::getOrCreateActiveForYear($v->id);
+        $v = $this->makeViticulturist();
+        $c = Campaign::getOrCreateActiveForYear($v->id);
         $plan = $this->makePlan($v->id, $c->id, 'active');
         $this->actingAs($v);
 
@@ -86,10 +74,10 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_cannot_archive_other_viticulturists_plan(): void
     {
-        $v     = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $other = $this->makeOtherViticulturist();
-        $c     = Campaign::getOrCreateActiveForYear($v->id);
-        $plan  = $this->makePlan($v->id, $c->id);
+        $c = Campaign::getOrCreateActiveForYear($v->id);
+        $plan = $this->makePlan($v->id, $c->id);
         $this->actingAs($other);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -108,5 +96,17 @@ class IndexTest extends ViticulturistTestCase
 
         // All 3 are active=true, just different statuses — all visible
         Livewire::test(Index::class)->assertOk();
+    }
+
+    private function makePlan(int $viticulturistId, int $campaignId, string $status = 'draft', array $overrides = []): FertilizationPlan
+    {
+        return FertilizationPlan::create(array_merge([
+            'viticulturist_id' => $viticulturistId,
+            'campaign_id' => $campaignId,
+            'plan_year' => 2024,
+            'nitrate_zone' => false,
+            'status' => $status,
+            'active' => true,
+        ], $overrides));
     }
 }

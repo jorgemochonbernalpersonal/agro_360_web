@@ -51,8 +51,8 @@ class SuppliersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('suppliers', [
-            'user_id'  => $this->winery->id,
-            'name'     => 'Proveedor Test',
+            'user_id' => $this->winery->id,
+            'name' => 'Proveedor Test',
             'category' => 'other',
         ]);
     }
@@ -60,10 +60,10 @@ class SuppliersTest extends WineryTestCase
     public function test_winery_can_edit_supplier(): void
     {
         $supplier = Supplier::create([
-            'user_id'  => $this->winery->id,
-            'name'     => 'Antiguo Nombre',
+            'user_id' => $this->winery->id,
+            'name' => 'Antiguo Nombre',
             'category' => 'other',
-            'active'   => true,
+            'active' => true,
         ]);
 
         Livewire::test(Edit::class, ['supplier' => $supplier])
@@ -72,7 +72,7 @@ class SuppliersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('suppliers', [
-            'id'   => $supplier->id,
+            'id' => $supplier->id,
             'name' => 'Nombre Actualizado',
         ]);
     }
@@ -80,10 +80,10 @@ class SuppliersTest extends WineryTestCase
     public function test_winery_cannot_edit_other_winery_supplier(): void
     {
         $supplier = Supplier::create([
-            'user_id'  => $this->winery->id,
-            'name'     => 'Proveedor Protegido',
+            'user_id' => $this->winery->id,
+            'name' => 'Proveedor Protegido',
             'category' => 'other',
-            'active'   => true,
+            'active' => true,
         ]);
 
         $otherWinery = $this->makeOtherWinery();
@@ -96,10 +96,10 @@ class SuppliersTest extends WineryTestCase
     public function test_winery_can_delete_supplier(): void
     {
         $supplier = Supplier::create([
-            'user_id'  => $this->winery->id,
-            'name'     => 'Proveedor a Eliminar',
+            'user_id' => $this->winery->id,
+            'name' => 'Proveedor a Eliminar',
             'category' => 'other',
-            'active'   => true,
+            'active' => true,
         ]);
 
         Livewire::test(Index::class)

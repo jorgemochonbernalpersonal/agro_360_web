@@ -12,31 +12,16 @@ class Pest extends Model
 {
     use HasFactory, HasTranslations;
 
-    public array $translatable = ['name', 'description', 'symptoms', 'lifecycle', 'prevention_methods'];
-
-    public function getTranslationLocales(): array
-    {
-        return ['es', 'en', 'ca', 'eu', 'gl'];
-    }
-
-    public function useFallbackLocale(): bool
-    {
-        return true;
-    }
-
     const CONTROL_METHOD_TYPES = ['biologico', 'cultural', 'fisico', 'quimico'];
 
     const CONTROL_METHOD_LABELS = [
         'biologico' => 'Control biológico',
-        'cultural'  => 'Control cultural',
-        'fisico'    => 'Control físico',
-        'quimico'   => 'Control químico',
+        'cultural' => 'Control cultural',
+        'fisico' => 'Control físico',
+        'quimico' => 'Control químico',
     ];
 
-    public static function controlMethodLabelOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::CONTROL_METHOD_LABELS);
-    }
+    public array $translatable = ['name', 'description', 'symptoms', 'lifecycle', 'prevention_methods'];
 
     protected $fillable = [
         'type',
@@ -54,11 +39,26 @@ class Pest extends Model
     ];
 
     protected $casts = [
-        'risk_months'     => 'array',
+        'risk_months' => 'array',
         'control_methods' => 'array',
-        'photos'          => 'array',
-        'active'          => 'boolean',
+        'photos' => 'array',
+        'active' => 'boolean',
     ];
+
+    public function getTranslationLocales(): array
+    {
+        return ['es', 'en', 'ca', 'eu', 'gl'];
+    }
+
+    public function useFallbackLocale(): bool
+    {
+        return true;
+    }
+
+    public static function controlMethodLabelOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CONTROL_METHOD_LABELS);
+    }
 
     /**
      * Productos fitosanitarios eficaces contra esta plaga
@@ -71,8 +71,8 @@ class Pest extends Model
             'pest_id',
             'product_id'
         )
-        ->withPivot('effectiveness_rating', 'notes')
-        ->withTimestamps();
+            ->withPivot('effectiveness_rating', 'notes')
+            ->withTimestamps();
     }
 
     /**
@@ -93,6 +93,8 @@ class Pest extends Model
 
     /**
      * Scope: Solo plagas activas
+     *
+     * @param mixed $query
      */
     public function scopeActive($query)
     {
@@ -101,6 +103,8 @@ class Pest extends Model
 
     /**
      * Scope: Filtrar por tipo
+     *
+     * @param mixed $query
      */
     public function scopeByType($query, string $type)
     {
@@ -109,11 +113,13 @@ class Pest extends Model
 
     /**
      * Scope: Plagas en período de riesgo
+     *
+     * @param mixed $query
      */
     public function scopeInRiskPeriod($query, ?int $month = null)
     {
         $month = $month ?? now()->month;
-        
+
         return $query->whereJsonContains('risk_months', $month);
     }
 
@@ -123,11 +129,11 @@ class Pest extends Model
     public function isInRiskPeriod(?int $month = null): bool
     {
         $month = $month ?? now()->month;
-        
-        if (!$this->risk_months) {
+
+        if (! $this->risk_months) {
             return false;
         }
-        
+
         return in_array($month, $this->risk_months);
     }
 
@@ -149,7 +155,7 @@ class Pest extends Model
         if ($this->scientific_name) {
             return "{$this->name} ({$this->scientific_name})";
         }
-        
+
         return $this->name;
     }
 
@@ -166,12 +172,12 @@ class Pest extends Model
      */
     public function getControlMethodLabelsAttribute(): array
     {
-        if (!$this->control_methods) {
+        if (! $this->control_methods) {
             return [];
         }
 
         return array_map(
-            fn($m) => __(self::CONTROL_METHOD_LABELS[$m] ?? $m),
+            fn ($m) => __(self::CONTROL_METHOD_LABELS[$m] ?? $m),
             $this->control_methods
         );
     }

@@ -131,5 +131,3 @@ class CampaignTest extends TestCase
         $this->assertTrue($campaign->fresh()->active);
     }
 }
-
-

@@ -19,9 +19,9 @@ class PlotCacheServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->createGeographyData();
-        $this->service = new PlotCacheService();
+        $this->service = new PlotCacheService;
         Cache::flush();
     }
 
@@ -119,7 +119,7 @@ class PlotCacheServiceTest extends TestCase
 
         // Debe estar en cache ahora
         $plots = $this->service->getUserPlots($user, ['plantings', 'province', 'municipality']);
-        
+
         $this->assertEquals(5, $plots->count());
     }
 }

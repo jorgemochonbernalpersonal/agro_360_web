@@ -18,10 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger('viticulturist_id');
             $table->unsignedBigInteger('winery_id'); // Se hará nullable después
             $table->timestamps();
-            
+
             $table->foreign('viticulturist_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('winery_id')->references('id')->on('users')->onDelete('cascade');
-            
+
             $table->index('viticulturist_id');
             $table->index('winery_id');
         });
@@ -35,4 +35,3 @@ return new class extends Migration
         Schema::dropIfExists('crews');
     }
 };
-

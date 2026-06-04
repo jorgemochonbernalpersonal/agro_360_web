@@ -27,8 +27,8 @@ class CampaignsTest extends WineryTestCase
     {
         $campaign = Campaign::factory()->create([
             'viticulturist_id' => $this->winery->id,
-            'year'             => 2024,
-            'name'             => 'Vendimia 2024',
+            'year' => 2024,
+            'name' => 'Vendimia 2024',
         ]);
 
         $this->get(route('winery.campaigns.index'))
@@ -59,8 +59,8 @@ class CampaignsTest extends WineryTestCase
 
         $this->assertDatabaseHas('campaigns', [
             'viticulturist_id' => $this->winery->id,
-            'name'             => 'Vendimia 2023',
-            'year'             => 2023,
+            'name' => 'Vendimia 2023',
+            'year' => 2023,
         ]);
     }
 
@@ -68,9 +68,9 @@ class CampaignsTest extends WineryTestCase
     {
         $campaign = Campaign::factory()->create([
             'viticulturist_id' => $this->winery->id,
-            'year'             => 2022,
-            'name'             => 'Vendimia 2022',
-            'locked_at'        => null,
+            'year' => 2022,
+            'name' => 'Vendimia 2022',
+            'locked_at' => null,
         ]);
 
         Livewire::test(Edit::class, ['campaign' => $campaign])
@@ -79,7 +79,7 @@ class CampaignsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('campaigns', [
-            'id'   => $campaign->id,
+            'id' => $campaign->id,
             'name' => 'Vendimia 2022 Actualizada',
         ]);
     }
@@ -88,8 +88,8 @@ class CampaignsTest extends WineryTestCase
     {
         $campaign = Campaign::factory()->create([
             'viticulturist_id' => $this->winery->id,
-            'year'             => 2021,
-            'locked_at'        => null,
+            'year' => 2021,
+            'locked_at' => null,
         ]);
 
         $otherWinery = $this->makeOtherWinery();
@@ -105,7 +105,7 @@ class CampaignsTest extends WineryTestCase
     {
         Campaign::factory()->create([
             'viticulturist_id' => $this->winery->id,
-            'year'             => 2020,
+            'year' => 2020,
         ]);
 
         Livewire::test(Create::class)
@@ -123,15 +123,15 @@ class CampaignsTest extends WineryTestCase
     {
         $campaign = Campaign::factory()->create([
             'viticulturist_id' => $this->winery->id,
-            'year'             => 2019,
-            'active'           => true,
+            'year' => 2019,
+            'active' => true,
         ]);
 
         Livewire::test(Index::class)
             ->call('toggleActive', $campaign->id);
 
         $this->assertDatabaseHas('campaigns', [
-            'id'     => $campaign->id,
+            'id' => $campaign->id,
             'active' => false,
         ]);
     }
@@ -142,7 +142,7 @@ class CampaignsTest extends WineryTestCase
     {
         $campaign = Campaign::factory()->create([
             'viticulturist_id' => $this->winery->id,
-            'year'             => 2018,
+            'year' => 2018,
         ]);
 
         Livewire::test(Index::class)
@@ -155,14 +155,14 @@ class CampaignsTest extends WineryTestCase
     {
         $campaign = Campaign::factory()->create([
             'viticulturist_id' => $this->winery->id,
-            'year'             => 2017,
+            'year' => 2017,
         ]);
 
         AgriculturalActivity::create([
             'viticulturist_id' => $this->winery->id,
-            'campaign_id'      => $campaign->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => now()->toDateString(),
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'harvest',
+            'activity_date' => now()->toDateString(),
         ]);
 
         Livewire::test(Index::class)

@@ -29,8 +29,9 @@ class ImportMunicipalitiesFromExcel extends Command
     {
         $filePath = $this->argument('file');
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             $this->error("El archivo no existe: {$filePath}");
+
             return 1;
         }
 
@@ -39,16 +40,19 @@ class ImportMunicipalitiesFromExcel extends Command
         if ($extension === 'xlsx' || $extension === 'xls') {
             $this->info('Archivo Excel detectado. Por favor, conviértelo a CSV primero.');
             $this->info('En Excel: Archivo > Guardar como > CSV (delimitado por comas)');
-            $this->info('O usa este comando después de convertir: php artisan municipalities:import-csv ' . str_replace(['.xlsx', '.xls'], '.csv', $filePath));
+            $this->info('O usa este comando después de convertir: php artisan municipalities:import-csv '.str_replace(['.xlsx', '.xls'], '.csv', $filePath));
+
             return 1;
         }
 
         if ($extension === 'csv') {
             $this->importFromCsv($filePath);
+
             return 0;
         }
 
         $this->error('Formato de archivo no soportado. Use CSV o Excel (convertido a CSV).');
+
         return 1;
     }
 
@@ -69,6 +73,7 @@ class ImportMunicipalitiesFromExcel extends Command
                 $normalized = strtolower(trim($h));
                 // Normalizar caracteres especiales
                 $normalized = str_replace(['ó', 'í', 'é', 'à', 'è', 'ò', 'ú', 'ü', 'ç'], ['o', 'i', 'e', 'a', 'e', 'o', 'u', 'u', 'c'], $normalized);
+
                 return $normalized;
             }, $headers);
 
@@ -80,6 +85,7 @@ class ImportMunicipalitiesFromExcel extends Command
             if ($codeIndex === false || $nameIndex === false) {
                 $this->error('El CSV debe tener al menos las columnas: code, name');
                 fclose($handle);
+
                 return;
             }
 
@@ -94,7 +100,7 @@ class ImportMunicipalitiesFromExcel extends Command
                     $name = trim($data[$nameIndex]);
 
                     // Prioridad 1: Usar la columna "Codi Província" si existe y tiene valor
-                    if ($provinceCodeIndex !== false && isset($data[$provinceCodeIndex]) && !empty(trim($data[$provinceCodeIndex]))) {
+                    if ($provinceCodeIndex !== false && isset($data[$provinceCodeIndex]) && ! empty(trim($data[$provinceCodeIndex]))) {
                         $provinceCode = trim($data[$provinceCodeIndex]);
                         // Normalizar a 2 dígitos (agregar cero a la izquierda si es necesario)
                         // Ejemplo: "5" -> "05", "6" -> "06"
@@ -106,7 +112,7 @@ class ImportMunicipalitiesFromExcel extends Command
                         $provinceCode = str_pad($provinceCode, 2, '0', STR_PAD_LEFT);
                     }
 
-                    if (!empty($code) && !empty($name) && !empty($provinceCode)) {
+                    if (! empty($code) && ! empty($name) && ! empty($provinceCode)) {
                         $municipalities[] = [
                             'code' => $code,
                             'name' => $name,
@@ -120,12 +126,14 @@ class ImportMunicipalitiesFromExcel extends Command
             fclose($handle);
         }
 
-        $this->info('Procesando ' . count($municipalities) . ' municipios...');
+        $this->info('Procesando '.count($municipalities).' municipios...');
         $this->processMunicipalities($municipalities, $provinces);
     }
 
     /**
      * Procesa e inserta los municipios
+     *
+     * @param mixed $provinces
      */
     private function processMunicipalities(array $municipalities, $provinces): void
     {
@@ -143,9 +151,10 @@ class ImportMunicipalitiesFromExcel extends Command
                 $provinceCode = $municipality['province_code'];
                 $province = $provinces->get($provinceCode);
 
-                if (!$province) {
+                if (! $province) {
                     $this->warn("\nProvincia no encontrada: {$provinceCode} para municipio: {$municipality['name']}");
                     $skipped++;
+
                     continue;
                 }
 
@@ -158,12 +167,12 @@ class ImportMunicipalitiesFromExcel extends Command
                 ];
             }
 
-            if (!empty($dataToInsert)) {
+            if (! empty($dataToInsert)) {
                 try {
                     DB::table('municipalities')->insertOrIgnore($dataToInsert);
                     $inserted += count($dataToInsert);
                 } catch (\Exception $e) {
-                    $this->error("\nError: " . $e->getMessage());
+                    $this->error("\nError: ".$e->getMessage());
                     $errors++;
                 }
             }
@@ -187,6 +196,7 @@ class ImportMunicipalitiesFromExcel extends Command
                 return $index;
             }
         }
+
         return false;
     }
 }

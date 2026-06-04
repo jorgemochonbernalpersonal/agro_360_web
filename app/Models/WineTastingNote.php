@@ -8,44 +8,70 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineTastingNote extends Model
 {
     const VISUAL_CLARITY = [
-        'brilliant'     => 'Brillante',
-        'clear'         => 'Limpio',
+        'brilliant' => 'Brillante',
+        'clear' => 'Limpio',
         'slightly_hazy' => 'Ligeramente turbio',
-        'hazy'          => 'Turbio',
+        'hazy' => 'Turbio',
     ];
 
     const VISUAL_INTENSITY = [
-        'pale'      => 'Pálido',
-        'medium'    => 'Medio',
-        'deep'      => 'Intenso',
+        'pale' => 'Pálido',
+        'medium' => 'Medio',
+        'deep' => 'Intenso',
         'very_deep' => 'Muy intenso',
     ];
 
     const AROMA_INTENSITY = [
-        'light'     => 'Ligero',
-        'medium'    => 'Medio',
-        'pronounced'=> 'Pronunciado',
-        'complex'   => 'Complejo',
+        'light' => 'Ligero',
+        'medium' => 'Medio',
+        'pronounced' => 'Pronunciado',
+        'complex' => 'Complejo',
     ];
 
     const PALATE_LEVEL = [
-        'low'          => 'Bajo',
+        'low' => 'Bajo',
         'medium_minus' => 'Medio-',
-        'medium'       => 'Medio',
-        'medium_plus'  => 'Medio+',
-        'high'         => 'Alto',
+        'medium' => 'Medio',
+        'medium_plus' => 'Medio+',
+        'high' => 'Alto',
     ];
 
     const PALATE_BODY = [
-        'light'  => 'Ligero',
+        'light' => 'Ligero',
         'medium' => 'Medio',
-        'full'   => 'Pleno',
+        'full' => 'Pleno',
     ];
 
     const PALATE_FINISH = [
-        'short'  => 'Corto',
+        'short' => 'Corto',
         'medium' => 'Medio',
-        'long'   => 'Largo',
+        'long' => 'Largo',
+    ];
+
+    protected $fillable = [
+        'user_id',
+        'wine_id',
+        'oenologist_id',
+        'evaluation_date',
+        'evaluator_name',
+        'visual_color',
+        'visual_clarity',
+        'visual_intensity',
+        'aroma_intensity',
+        'aroma_descriptors',
+        'palate_acidity',
+        'palate_tannins',
+        'palate_body',
+        'palate_finish',
+        'overall_score',
+        'overall_conclusion',
+        'notes',
+        'created_by',
+    ];
+
+    protected $casts = [
+        'evaluation_date' => 'date',
+        'overall_score' => 'decimal:1',
     ];
 
     public static function visualClarityOptions(): array
@@ -78,32 +104,6 @@ class WineTastingNote extends Model
         return array_map(fn ($v) => __($v), static::PALATE_FINISH);
     }
 
-    protected $fillable = [
-        'user_id',
-        'wine_id',
-        'oenologist_id',
-        'evaluation_date',
-        'evaluator_name',
-        'visual_color',
-        'visual_clarity',
-        'visual_intensity',
-        'aroma_intensity',
-        'aroma_descriptors',
-        'palate_acidity',
-        'palate_tannins',
-        'palate_body',
-        'palate_finish',
-        'overall_score',
-        'overall_conclusion',
-        'notes',
-        'created_by',
-    ];
-
-    protected $casts = [
-        'evaluation_date' => 'date',
-        'overall_score'   => 'decimal:1',
-    ];
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -129,17 +129,25 @@ class WineTastingNote extends Model
     public function getScoreBadgeColorAttribute(): string
     {
         $score = (float) $this->overall_score;
-        if ($score >= 90) return 'green';
-        if ($score >= 80) return 'blue';
-        if ($score >= 70) return 'yellow';
+        if ($score >= 90) {
+            return 'green';
+        }
+        if ($score >= 80) {
+            return 'blue';
+        }
+        if ($score >= 70) {
+            return 'yellow';
+        }
+
         return 'zinc';
     }
 
     public function getEvaluatorDisplayAttribute(): string
     {
         if ($this->oenologist) {
-            return $this->oenologist->surname . ', ' . $this->oenologist->name;
+            return $this->oenologist->surname.', '.$this->oenologist->name;
         }
+
         return $this->evaluator_name ?? '—';
     }
 

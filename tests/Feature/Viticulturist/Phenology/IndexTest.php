@@ -31,48 +31,6 @@ class IndexTest extends TestCase
         ]);
     }
 
-    private function makeViticulturistWithObservation(): array
-    {
-        $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ]);
-
-        $winery = User::factory()->create(['role' => 'winery']);
-        WineryViticulturist::create([
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
-        ]);
-
-        $plot    = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
-
-        $planting = PlotPlanting::create([
-            'plot_id'          => $plot->id,
-            'grape_variety_id' => $variety->id,
-            'area_planted'     => 1.5,
-            'status'           => 'active',
-            'density'          => 3000,
-        ]);
-
-        $campaign = Campaign::factory()->forViticulturist($viticulturist)->active()->create();
-
-        $observation = PhenologyObservation::create([
-            'plot_planting_id' => $planting->id,
-            'campaign_id'      => $campaign->id,
-            'viticulturist_id' => $viticulturist->id,
-            'event'            => 'flowering',
-            'obs_date'         => '2024-06-01',
-            'source'           => 'manual',
-            'confidence'       => 85,
-            'active'           => true,
-        ]);
-
-        return [$viticulturist, $planting, $campaign, $observation];
-    }
-
     public function test_index_without_filter_planting_id_redirects_to_plantings(): void
     {
         [$viticulturist] = $this->makeViticulturistWithObservation();
@@ -109,7 +67,7 @@ class IndexTest extends TestCase
         [$viticulturist, $planting, $campaign, $observation] = $this->makeViticulturistWithObservation();
 
         $other = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
@@ -120,5 +78,47 @@ class IndexTest extends TestCase
         Livewire::withQueryParams(['filter_planting_id' => $planting->id])
             ->test(\App\Livewire\Viticulturist\Phenology\Index::class)
             ->call('delete', $observation->id);
+    }
+
+    private function makeViticulturistWithObservation(): array
+    {
+        $viticulturist = User::factory()->create([
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
+        ]);
+
+        $winery = User::factory()->create(['role' => 'winery']);
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
+        ]);
+
+        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
+        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
+
+        $planting = PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $variety->id,
+            'area_planted' => 1.5,
+            'status' => 'active',
+            'density' => 3000,
+        ]);
+
+        $campaign = Campaign::factory()->forViticulturist($viticulturist)->active()->create();
+
+        $observation = PhenologyObservation::create([
+            'plot_planting_id' => $planting->id,
+            'campaign_id' => $campaign->id,
+            'viticulturist_id' => $viticulturist->id,
+            'event' => 'flowering',
+            'obs_date' => '2024-06-01',
+            'source' => 'manual',
+            'confidence' => 85,
+            'active' => true,
+        ]);
+
+        return [$viticulturist, $planting, $campaign, $observation];
     }
 }

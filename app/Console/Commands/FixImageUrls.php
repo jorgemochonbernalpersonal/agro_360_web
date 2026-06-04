@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class FixImageUrls extends Command
 {
@@ -31,7 +31,7 @@ class FixImageUrls extends Command
         $fixed = 0;
         $errors = 0;
 
-        $this->info("🔧 Fixing image URLs in Blade templates...");
+        $this->info('🔧 Fixing image URLs in Blade templates...');
 
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($viewsPath)
@@ -40,32 +40,32 @@ class FixImageUrls extends Command
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {
                 $filepath = $file->getPathname();
-                
+
                 $content = file_get_contents($filepath);
                 $originalContent = $content;
-                
+
                 // Replace url('images/...') with asset('images/...')
                 $content = preg_replace(
                     '/\{\{\s*url\([\'"]images\/([^\'"]+)[\'"]\)\s*\}\}/',
                     '{{ asset(\'images/$1\') }}',
                     $content
                 );
-                
+
                 // Also replace in JSON-LD and other contexts
                 $content = preg_replace(
                     '/url\([\'"]images\/([^\'"]+)[\'"]\)/',
                     'asset(\'images/$1\')',
                     $content
                 );
-                
+
                 if ($content !== $originalContent) {
                     $relativePath = str_replace($viewsPath, '', $filepath);
                     $this->line("📝 Fixing: $relativePath");
-                    
+
                     if (file_put_contents($filepath, $content) !== false) {
                         $fixed++;
                     } else {
-                        $this->error("  ❌ Error: Could not write to file");
+                        $this->error('  ❌ Error: Could not write to file');
                         $errors++;
                     }
                 }
@@ -73,11 +73,11 @@ class FixImageUrls extends Command
         }
 
         $this->newLine();
-        $this->info("========================================");
-        $this->info("📊 Summary:");
+        $this->info('========================================');
+        $this->info('📊 Summary:');
         $this->info("  ✅ Files fixed: $fixed");
         $this->info("  ❌ Errors: $errors");
-        $this->info("========================================");
+        $this->info('========================================');
 
         return Command::SUCCESS;
     }

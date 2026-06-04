@@ -11,7 +11,28 @@ use Livewire\WithPagination;
 
 abstract class AbstractIndex extends Component
 {
-    use WithToastNotifications, WithPagination;
+    use WithPagination, WithToastNotifications;
+
+    public function clearFilters(): void
+    {
+        foreach ($this->filterDefaults() as $property => $default) {
+            $this->$property = $default;
+        }
+        $this->resetPage();
+    }
+
+    public function render(): View
+    {
+        $query = $this->baseQuery();
+        $this->applyFilters($query);
+        $this->applyOrderBy($query);
+
+        $perPage = $this->perPage();
+        $entries = $perPage > 0 ? $query->paginate($perPage) : $query->get();
+
+        return view($this->resolveViewName(), $this->viewData($entries))
+            ->layout('layouts.app');
+    }
 
     /**
      * Base query scoped to the authenticated user.
@@ -59,27 +80,6 @@ abstract class AbstractIndex extends Component
         $dir === 'desc' ? $query->orderByDesc($col) : $query->orderBy($col);
     }
 
-    public function clearFilters(): void
-    {
-        foreach ($this->filterDefaults() as $property => $default) {
-            $this->$property = $default;
-        }
-        $this->resetPage();
-    }
-
-    public function render(): View
-    {
-        $query = $this->baseQuery();
-        $this->applyFilters($query);
-        $this->applyOrderBy($query);
-
-        $perPage = $this->perPage();
-        $entries = $perPage > 0 ? $query->paginate($perPage) : $query->get();
-
-        return view($this->resolveViewName(), $this->viewData($entries))
-            ->layout('layouts.app');
-    }
-
     /**
      * Derives the Blade view name from the component class namespace.
      * App\Livewire\Winery\Viticulturists\Index
@@ -89,8 +89,8 @@ abstract class AbstractIndex extends Component
     {
         $relative = str_replace('App\\Livewire\\', '', static::class);
 
-        return 'livewire.' . implode('.', array_map(
-            fn(string $part) => Str::kebab($part),
+        return 'livewire.'.implode('.', array_map(
+            fn (string $part) => Str::kebab($part),
             explode('\\', $relative),
         ));
     }

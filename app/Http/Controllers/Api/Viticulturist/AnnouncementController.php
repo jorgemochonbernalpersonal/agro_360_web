@@ -30,10 +30,10 @@ class AnnouncementController extends Controller
         return response()->json([
             'data' => AnnouncementResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }

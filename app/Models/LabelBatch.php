@@ -9,15 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class LabelBatch extends Model
 {
     const SOURCES = [
-        'own'         => 'Propio',
+        'own' => 'Propio',
         'do_assigned' => 'Asignado por DO',
-        'other'       => 'Otro',
+        'other' => 'Otro',
     ];
-
-    public static function sourceOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::SOURCES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -33,12 +28,17 @@ class LabelBatch extends Model
     ];
 
     protected $casts = [
-        'start_number'    => 'integer',
-        'end_number'      => 'integer',
-        'total_quantity'  => 'integer',
-        'used_quantity'   => 'integer',
+        'start_number' => 'integer',
+        'end_number' => 'integer',
+        'total_quantity' => 'integer',
+        'used_quantity' => 'integer',
         'wasted_quantity' => 'integer',
     ];
+
+    public static function sourceOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SOURCES);
+    }
 
     public function user(): BelongsTo
     {
@@ -69,7 +69,10 @@ class LabelBatch extends Model
 
     public function getUsagePercentAttribute(): float
     {
-        if ($this->total_quantity === 0) return 0;
+        if ($this->total_quantity === 0) {
+            return 0;
+        }
+
         return round(($this->used_quantity + $this->wasted_quantity) / $this->total_quantity * 100, 1);
     }
 

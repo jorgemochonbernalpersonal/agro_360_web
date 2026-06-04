@@ -8,20 +8,23 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search     = '';
+    public string $search = '';
+
     public string $yearFilter = '';
 
     protected $queryString = [
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'yearFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void    { $this->resetPage(); }
-    public function updatingYearFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'yearFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingYearFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function toggleActive(int $campaignId): void
@@ -45,11 +48,17 @@ class Index extends AbstractIndex
 
         if ($campaign->activities_count > 0) {
             $this->toastError(__('No se puede eliminar una campaña con recepciones registradas.'));
+
             return;
         }
 
         $campaign->delete();
         $this->toastSuccess(__('Campaña eliminada correctamente.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'yearFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -60,10 +69,10 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(description) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$term]);
             });
         }
 
@@ -77,9 +86,15 @@ class Index extends AbstractIndex
         $query->orderBy('year', 'desc');
     }
 
-    protected function defaultOrderBy(): array { return ['year', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['year', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -91,16 +106,16 @@ class Index extends AbstractIndex
 
         $base = Campaign::forViticulturist($this->wineryId());
         $stats = [
-            'total'    => (clone $base)->count(),
-            'active'   => (clone $base)->where('active', true)->count(),
+            'total' => (clone $base)->count(),
+            'active' => (clone $base)->where('active', true)->count(),
             'cerradas' => (clone $base)->where('active', false)->count(),
-            'locked'   => (clone $base)->whereNotNull('locked_at')->count(),
+            'locked' => (clone $base)->whereNotNull('locked_at')->count(),
         ];
 
         return [
             'campaigns' => $entries,
-            'years'     => $years,
-            'stats'     => $stats,
+            'years' => $years,
+            'stats' => $stats,
         ];
     }
 }

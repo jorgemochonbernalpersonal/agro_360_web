@@ -9,29 +9,20 @@ use Spatie\Translatable\HasTranslations;
 class GrapeVariety extends Model
 {
     use HasTranslations;
+
     const CROP_TYPES = [
-        'wine'  => 'Uva (vino)',
+        'wine' => 'Uva (vino)',
         'olive' => 'Aceituna (aceite)',
         'other' => 'Otro cultivo',
     ];
 
-    public static function cropTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::CROP_TYPES);
-    }
-
     const CROP_TYPE_ICONS = [
-        'wine'  => 'scissors',
+        'wine' => 'scissors',
         'olive' => 'sun',
         'other' => 'sparkles',
     ];
 
     public array $translatable = ['name', 'description'];
-
-    public function useFallbackLocale(): bool
-    {
-        return true;
-    }
 
     protected $fillable = [
         'name',
@@ -45,6 +36,16 @@ class GrapeVariety extends Model
     protected $casts = [
         'active' => 'boolean',
     ];
+
+    public static function cropTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CROP_TYPES);
+    }
+
+    public function useFallbackLocale(): bool
+    {
+        return true;
+    }
 
     /**
      * Plantaciones de esta variedad

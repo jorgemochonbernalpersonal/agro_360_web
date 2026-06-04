@@ -4,8 +4,6 @@ namespace Tests\Feature\Viticulturist\Subcontracting;
 
 use App\Livewire\Viticulturist\Subcontracting\Create;
 use App\Models\Campaign;
-use App\Models\Subcontracting;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -25,8 +23,8 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('subcontractings', [
             'viticulturist_id' => $viticulturist->id,
-            'company_name'     => 'Viticultores del Norte SL',
-            'service_type'     => 'harvesting',
+            'company_name' => 'Viticultores del Norte SL',
+            'service_type' => 'harvesting',
         ]);
     }
 

@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\HarvestContainer;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class HarvestContainerFactory extends Factory

@@ -21,17 +21,28 @@ class Index extends Component
         $this->health = $this->buildHealth();
     }
 
+    public function render()
+    {
+        return view('livewire.admin.health.index', [
+            'health' => $this->health,
+            'refreshedAt' => now(),
+        ])->layout('layouts.app', [
+            'title' => __('Salud del Sistema - Admin - Agro365'),
+            'description' => __('Estado de los servicios y métricas del sistema'),
+        ]);
+    }
+
     private function buildHealth(): array
     {
         return [
-            'queue'    => $this->checkQueue(),
+            'queue' => $this->checkQueue(),
             'database' => $this->checkDatabase(),
-            'cache'    => $this->checkCache(),
-            'disk'     => $this->checkDisk(),
+            'cache' => $this->checkCache(),
+            'disk' => $this->checkDisk(),
             'security' => $this->checkSecurity(),
-            'email'    => $this->checkEmail(),
-            'paypal'   => $this->checkPayPal(),
-            'app'      => $this->appInfo(),
+            'email' => $this->checkEmail(),
+            'paypal' => $this->checkPayPal(),
+            'app' => $this->appInfo(),
         ];
     }
 
@@ -39,18 +50,18 @@ class Index extends Component
     {
         try {
             $pending = DB::table('jobs')->count();
-            $failed  = DB::table('failed_jobs')->count();
+            $failed = DB::table('failed_jobs')->count();
 
-            $status = match(true) {
-                $failed > 0  => 'error',
+            $status = match (true) {
+                $failed > 0 => 'error',
                 $pending > 50 => 'warning',
-                default       => 'ok',
+                default => 'ok',
             };
 
             return [
-                'status'  => $status,
+                'status' => $status,
                 'pending' => $pending,
-                'failed'  => $failed,
+                'failed' => $failed,
             ];
         } catch (\Throwable) {
             return ['status' => 'error', 'pending' => null, 'failed' => null];
@@ -60,7 +71,7 @@ class Index extends Component
     private function checkDatabase(): array
     {
         try {
-            $start  = microtime(true);
+            $start = microtime(true);
             DB::select('SELECT 1');
             $latency = round((microtime(true) - $start) * 1000, 1);
 
@@ -69,17 +80,17 @@ class Index extends Component
                 FROM information_schema.tables
                 WHERE table_schema = DATABASE()
             ');
-            $sizeMb  = (float) ($sizeRow[0]->size ?? 0);
+            $sizeMb = (float) ($sizeRow[0]->size ?? 0);
 
-            $status = match(true) {
+            $status = match (true) {
                 $latency > 500 => 'warning',
-                default        => 'ok',
+                default => 'ok',
             };
 
             return [
-                'status'   => $status,
-                'latency'  => $latency,
-                'size_mb'  => $sizeMb,
+                'status' => $status,
+                'latency' => $latency,
+                'size_mb' => $sizeMb,
             ];
         } catch (\Throwable $e) {
             return ['status' => 'error', 'latency' => null, 'size_mb' => null, 'error' => $e->getMessage()];
@@ -89,7 +100,7 @@ class Index extends Component
     private function checkCache(): array
     {
         try {
-            $key = 'admin_health_check_' . now()->timestamp;
+            $key = 'admin_health_check_'.now()->timestamp;
             Cache::put($key, 'ok', 5);
             $val = Cache::get($key);
             Cache::forget($key);
@@ -102,39 +113,42 @@ class Index extends Component
 
     private function checkDisk(): array
     {
-        $path  = storage_path();
-        $free  = disk_free_space($path);
+        $path = storage_path();
+        $free = disk_free_space($path);
         $total = disk_total_space($path);
-        $used  = $total - $free;
-        $pct   = $total > 0 ? round($used / $total * 100, 1) : 0;
+        $used = $total - $free;
+        $pct = $total > 0 ? round($used / $total * 100, 1) : 0;
 
         $logsSize = $this->dirSize(storage_path('logs'));
-        $appSize  = $this->dirSize(storage_path('app'));
+        $appSize = $this->dirSize(storage_path('app'));
 
-        $status = match(true) {
+        $status = match (true) {
             $pct >= 90 => 'error',
             $pct >= 70 => 'warning',
-            default    => 'ok',
+            default => 'ok',
         };
 
         return [
-            'status'      => $status,
-            'used_gb'     => round($used  / 1024 ** 3, 2),
-            'total_gb'    => round($total / 1024 ** 3, 2),
-            'free_gb'     => round($free  / 1024 ** 3, 2),
-            'used_pct'    => $pct,
-            'logs_mb'     => round($logsSize / 1024 ** 2, 2),
-            'app_mb'      => round($appSize  / 1024 ** 2, 2),
+            'status' => $status,
+            'used_gb' => round($used / 1024 ** 3, 2),
+            'total_gb' => round($total / 1024 ** 3, 2),
+            'free_gb' => round($free / 1024 ** 3, 2),
+            'used_pct' => $pct,
+            'logs_mb' => round($logsSize / 1024 ** 2, 2),
+            'app_mb' => round($appSize / 1024 ** 2, 2),
         ];
     }
 
     private function dirSize(string $path): int
     {
         $size = 0;
-        if (!is_dir($path)) return 0;
+        if (! is_dir($path)) {
+            return 0;
+        }
         foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)) as $file) {
             $size += $file->getSize();
         }
+
         return $size;
     }
 
@@ -142,26 +156,26 @@ class Index extends Component
     {
         try {
             $last24h = SecurityEvent::where('created_at', '>=', now()->subHours(24))
-                ->selectRaw("COUNT(*) as total")
+                ->selectRaw('COUNT(*) as total')
                 ->selectRaw("SUM(CASE WHEN level IN ('alert','error','critical','emergency') THEN 1 ELSE 0 END) as alerts")
                 ->selectRaw("SUM(CASE WHEN level = 'warning' THEN 1 ELSE 0 END) as warnings")
                 ->selectRaw("SUM(CASE WHEN event = 'failed_login' THEN 1 ELSE 0 END) as failed_logins")
                 ->selectRaw("SUM(CASE WHEN event = 'account_locked' THEN 1 ELSE 0 END) as locked")
                 ->first();
 
-            $status = match(true) {
-                ($last24h->alerts ?? 0) > 0   => 'error',
+            $status = match (true) {
+                ($last24h->alerts ?? 0) > 0 => 'error',
                 ($last24h->warnings ?? 0) > 10 => 'warning',
-                default                        => 'ok',
+                default => 'ok',
             };
 
             return [
-                'status'        => $status,
-                'total'         => (int) ($last24h->total        ?? 0),
-                'alerts'        => (int) ($last24h->alerts       ?? 0),
-                'warnings'      => (int) ($last24h->warnings     ?? 0),
+                'status' => $status,
+                'total' => (int) ($last24h->total ?? 0),
+                'alerts' => (int) ($last24h->alerts ?? 0),
+                'warnings' => (int) ($last24h->warnings ?? 0),
                 'failed_logins' => (int) ($last24h->failed_logins ?? 0),
-                'locked'        => (int) ($last24h->locked        ?? 0),
+                'locked' => (int) ($last24h->locked ?? 0),
             ];
         } catch (\Throwable) {
             return ['status' => 'ok', 'total' => 0, 'alerts' => 0, 'warnings' => 0, 'failed_logins' => 0, 'locked' => 0];
@@ -178,7 +192,7 @@ class Index extends Component
                 return [
                     'status' => 'ok',
                     'driver' => $driver,
-                    'note'   => __('Driver local — sin conexión real'),
+                    'note' => __('Driver local — sin conexión real'),
                 ];
             }
 
@@ -186,16 +200,17 @@ class Index extends Component
             $port = (int) config("mail.mailers.{$driver}.port", 587);
 
             if ($host) {
-                $start  = microtime(true);
+                $start = microtime(true);
                 $socket = @fsockopen($host, $port, $errno, $errstr, 5);
-                $ms     = round((microtime(true) - $start) * 1000, 1);
+                $ms = round((microtime(true) - $start) * 1000, 1);
 
                 if ($socket) {
                     fclose($socket);
+
                     return [
-                        'status'  => 'ok',
-                        'driver'  => $driver,
-                        'host'    => $host . ':' . $port,
+                        'status' => 'ok',
+                        'driver' => $driver,
+                        'host' => $host.':'.$port,
                         'latency' => $ms,
                     ];
                 }
@@ -203,8 +218,8 @@ class Index extends Component
                 return [
                     'status' => 'error',
                     'driver' => $driver,
-                    'host'   => $host . ':' . $port,
-                    'error'  => $errstr ?: 'Sin conexión',
+                    'host' => $host.':'.$port,
+                    'error' => $errstr ?: 'Sin conexión',
                 ];
             }
 
@@ -220,25 +235,26 @@ class Index extends Component
             $mode = config('paypal.mode', config('services.paypal.mode', 'sandbox'));
             $host = $mode === 'live' ? 'api-m.paypal.com' : 'api-m.sandbox.paypal.com';
 
-            $start  = microtime(true);
-            $socket = @fsockopen('ssl://' . $host, 443, $errno, $errstr, 5);
-            $ms     = round((microtime(true) - $start) * 1000, 1);
+            $start = microtime(true);
+            $socket = @fsockopen('ssl://'.$host, 443, $errno, $errstr, 5);
+            $ms = round((microtime(true) - $start) * 1000, 1);
 
             if ($socket) {
                 fclose($socket);
+
                 return [
-                    'status'  => 'ok',
-                    'mode'    => $mode,
-                    'host'    => $host,
+                    'status' => 'ok',
+                    'mode' => $mode,
+                    'host' => $host,
                     'latency' => $ms,
                 ];
             }
 
             return [
                 'status' => 'error',
-                'mode'   => $mode,
-                'host'   => $host,
-                'error'  => $errstr ?: 'Sin conexión',
+                'mode' => $mode,
+                'host' => $host,
+                'error' => $errstr ?: 'Sin conexión',
             ];
         } catch (\Throwable $e) {
             return ['status' => 'error', 'mode' => '?', 'error' => $e->getMessage()];
@@ -248,25 +264,14 @@ class Index extends Component
     private function appInfo(): array
     {
         return [
-            'status'          => 'ok',
-            'php_version'     => phpversion(),
+            'status' => 'ok',
+            'php_version' => phpversion(),
             'laravel_version' => app()->version(),
-            'environment'     => app()->environment(),
-            'debug'           => config('app.debug'),
-            'timezone'        => config('app.timezone'),
-            'queue_driver'    => config('queue.default'),
-            'cache_driver'    => config('cache.default'),
+            'environment' => app()->environment(),
+            'debug' => config('app.debug'),
+            'timezone' => config('app.timezone'),
+            'queue_driver' => config('queue.default'),
+            'cache_driver' => config('cache.default'),
         ];
-    }
-
-    public function render()
-    {
-        return view('livewire.admin.health.index', [
-            'health'       => $this->health,
-            'refreshedAt'  => now(),
-        ])->layout('layouts.app', [
-            'title'       => __('Salud del Sistema - Admin - Agro365'),
-            'description' => __('Estado de los servicios y métricas del sistema'),
-        ]);
     }
 }

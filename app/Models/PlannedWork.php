@@ -8,6 +8,60 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class PlannedWork extends Model
 {
+    // ── Constantes ───────────────────────────────────────────────────────��───
+
+    public const CATEGORIES = [
+        'tratamiento' => 'Tratamiento Fitosanitario',
+        'fertilizacion' => 'Fertilización',
+        'riego' => 'Riego',
+        'labor_cultural' => 'Labor Cultural',
+        'poda' => 'Poda',
+        'vendimia' => 'Vendimia',
+        'observacion' => 'Observación',
+        'post_vendimia' => 'Post-Vendimia',
+        'otro' => 'Otro',
+    ];
+
+    public const PRIORITIES = [
+        'baja' => 'Baja',
+        'media' => 'Media',
+        'alta' => 'Alta',
+        'urgente' => 'Urgente',
+    ];
+
+    public const STATUSES = [
+        'pendiente' => 'Pendiente',
+        'en_progreso' => 'En progreso',
+        'completada' => 'Completada',
+        'cancelada' => 'Cancelada',
+    ];
+
+    public const PRIORITY_COLORS = [
+        'baja' => 'zinc',
+        'media' => 'blue',
+        'alta' => 'amber',
+        'urgente' => 'red',
+    ];
+
+    public const STATUS_COLORS = [
+        'pendiente' => 'amber',
+        'en_progreso' => 'blue',
+        'completada' => 'green',
+        'cancelada' => 'zinc',
+    ];
+
+    public const CATEGORY_ICONS = [
+        'tratamiento' => 'shield-exclamation',
+        'fertilizacion' => 'funnel',
+        'riego' => 'arrows-pointing-in',
+        'labor_cultural' => 'wrench-screwdriver',
+        'poda' => 'scissors',
+        'vendimia' => 'archive-box-arrow-down',
+        'observacion' => 'eye',
+        'post_vendimia' => 'archive-box',
+        'otro' => 'pencil-square',
+    ];
+
     protected $fillable = [
         'viticulturist_id',
         'campaign_id',
@@ -26,23 +80,9 @@ class PlannedWork extends Model
     ];
 
     protected $casts = [
-        'planned_date'     => 'date',
+        'planned_date' => 'date',
         'planned_end_date' => 'date',
-        'completed_at'     => 'datetime',
-    ];
-
-    // ── Constantes ───────────────────────────────────────────────────────��───
-
-    public const CATEGORIES = [
-        'tratamiento'    => 'Tratamiento Fitosanitario',
-        'fertilizacion'  => 'Fertilización',
-        'riego'          => 'Riego',
-        'labor_cultural' => 'Labor Cultural',
-        'poda'           => 'Poda',
-        'vendimia'       => 'Vendimia',
-        'observacion'    => 'Observación',
-        'post_vendimia'  => 'Post-Vendimia',
-        'otro'           => 'Otro',
+        'completed_at' => 'datetime',
     ];
 
     public static function categoryOptions(): array
@@ -50,55 +90,15 @@ class PlannedWork extends Model
         return array_map(fn ($v) => __($v), static::CATEGORIES);
     }
 
-    public const PRIORITIES = [
-        'baja'    => 'Baja',
-        'media'   => 'Media',
-        'alta'    => 'Alta',
-        'urgente' => 'Urgente',
-    ];
-
     public static function priorityOptions(): array
     {
         return array_map(fn ($v) => __($v), static::PRIORITIES);
     }
 
-    public const STATUSES = [
-        'pendiente'   => 'Pendiente',
-        'en_progreso' => 'En progreso',
-        'completada'  => 'Completada',
-        'cancelada'   => 'Cancelada',
-    ];
-
     public static function statusOptions(): array
     {
         return array_map(fn ($v) => __($v), static::STATUSES);
     }
-
-    public const PRIORITY_COLORS = [
-        'baja'    => 'zinc',
-        'media'   => 'blue',
-        'alta'    => 'amber',
-        'urgente' => 'red',
-    ];
-
-    public const STATUS_COLORS = [
-        'pendiente'   => 'amber',
-        'en_progreso' => 'blue',
-        'completada'  => 'green',
-        'cancelada'   => 'zinc',
-    ];
-
-    public const CATEGORY_ICONS = [
-        'tratamiento'    => 'shield-exclamation',
-        'fertilizacion'  => 'funnel',
-        'riego'          => 'arrows-pointing-in',
-        'labor_cultural' => 'wrench-screwdriver',
-        'poda'           => 'scissors',
-        'vendimia'       => 'archive-box-arrow-down',
-        'observacion'    => 'eye',
-        'post_vendimia'  => 'archive-box',
-        'otro'           => 'pencil-square',
-    ];
 
     // ── Relaciones ───────────────────────────────────────────────────────────
 
@@ -200,7 +200,7 @@ class PlannedWork extends Model
     public function markCompleted(): void
     {
         $this->update([
-            'status'       => 'completada',
+            'status' => 'completada',
             'completed_at' => now(),
         ]);
     }

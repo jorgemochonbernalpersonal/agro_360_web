@@ -9,22 +9,10 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeApplicator(int $viticulturistId, string $name = 'Aplicador Test'): FieldApplicator
-    {
-        return FieldApplicator::create([
-            'viticulturist_id' => $viticulturistId,
-            'name'             => $name,
-            'ropo_number'      => 'ROPO-' . uniqid(),
-            'ropo_category'    => 'qualified',
-            'is_advisor'       => false,
-            'active'           => true,
-        ]);
-    }
-
     public function test_index_shows_active_applicators(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id, 'Mi Aplicador');
+        $applicator = $this->makeApplicator($viticulturist->id, 'Mi Aplicador');
 
         $this->actingAs($viticulturist);
 
@@ -35,7 +23,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_deactivate_sets_active_to_false(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id);
+        $applicator = $this->makeApplicator($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -43,7 +31,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('deactivate', $applicator->id);
 
         $this->assertDatabaseHas('field_applicators', [
-            'id'     => $applicator->id,
+            'id' => $applicator->id,
             'active' => false,
         ]);
     }
@@ -51,7 +39,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_deactivated_applicator_disappears_from_list(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id, 'Aplicador a Dar de Baja');
+        $applicator = $this->makeApplicator($viticulturist->id, 'Aplicador a Dar de Baja');
 
         $this->actingAs($viticulturist);
 
@@ -63,8 +51,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_cannot_deactivate_other_viticulturists_applicator(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id);
+        $other = $this->makeOtherViticulturist();
+        $applicator = $this->makeApplicator($viticulturist->id);
 
         $this->actingAs($other);
 
@@ -77,12 +65,24 @@ class IndexTest extends ViticulturistTestCase
     public function test_applicators_from_other_viticulturist_not_visible(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id, 'Aplicador Ajeno');
+        $other = $this->makeOtherViticulturist();
+        $applicator = $this->makeApplicator($viticulturist->id, 'Aplicador Ajeno');
 
         $this->actingAs($other);
 
         Livewire::test(Index::class)
             ->assertDontSee('Aplicador Ajeno');
+    }
+
+    private function makeApplicator(int $viticulturistId, string $name = 'Aplicador Test'): FieldApplicator
+    {
+        return FieldApplicator::create([
+            'viticulturist_id' => $viticulturistId,
+            'name' => $name,
+            'ropo_number' => 'ROPO-'.uniqid(),
+            'ropo_category' => 'qualified',
+            'is_advisor' => false,
+            'active' => true,
+        ]);
     }
 }

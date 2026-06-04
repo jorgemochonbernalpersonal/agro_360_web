@@ -5,18 +5,22 @@ namespace App\Livewire\Viticulturist\Plots;
 use App\Models\Plot;
 use App\Models\PlotAuditLog;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class PlotAuditHistory extends Component
 {
     use WithPagination;
 
     public Plot $plot;
+
     public $filterUser = '';
+
     public $filterAction = '';
+
     public $filterDateFrom = '';
+
     public $filterDateTo = '';
 
     protected $queryString = [
@@ -26,14 +30,14 @@ class PlotAuditHistory extends Component
         'filterDateTo' => ['except' => ''],
     ];
 
-    public function mount(Plot $plot = null)
+    public function mount(?Plot $plot = null)
     {
-        if (!$plot) {
+        if (! $plot) {
             abort(404, __('Parcela no encontrada.'));
         }
-        
+
         // Verificar autorización
-        if (!Auth::user()->can('view', $plot)) {
+        if (! Auth::user()->can('view', $plot)) {
             abort(403, __('No tienes permiso para ver el historial de esta parcela.'));
         }
 
@@ -66,7 +70,7 @@ class PlotAuditHistory extends Component
         $logs = $query->paginate(10);
 
         // Obtener usuarios únicos que han modificado esta parcela
-        $users = User::whereIn('id', 
+        $users = User::whereIn('id',
             PlotAuditLog::where('plot_id', $this->plot->id)
                 ->distinct()
                 ->pluck('user_id')
@@ -105,7 +109,7 @@ class PlotAuditHistory extends Component
         if (isset($changes['old']) && isset($changes['new'])) {
             foreach ($changes['new'] as $field => $newValue) {
                 $oldValue = $changes['old'][$field] ?? null;
-                
+
                 if ($oldValue != $newValue) {
                     $diff[] = [
                         'field' => $this->getFieldLabel($field),
@@ -147,16 +151,19 @@ class PlotAuditHistory extends Component
         // Formatear IDs de relaciones
         if ($field === 'province_id' && $value) {
             $province = \App\Models\Province::find($value);
+
             return e($province ? $province->name : $value);
         }
 
         if ($field === 'municipality_id' && $value) {
             $municipality = \App\Models\Municipality::find($value);
+
             return e($municipality ? $municipality->name : $value);
         }
 
         if ($field === 'autonomous_community_id' && $value) {
             $community = \App\Models\AutonomousCommunity::find($value);
+
             return e($community ? $community->name : $value);
         }
 

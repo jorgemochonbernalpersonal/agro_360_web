@@ -3,8 +3,6 @@
 namespace App\Livewire\Supervisor\Oversight\Activity;
 
 use App\Models\AgriculturalActivity;
-use App\Models\Observation;
-use App\Models\Plot;
 use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -17,30 +15,45 @@ class Index extends Component
 {
     use WithPagination;
 
-    public string $filterVit    = '';
-    public string $filterType   = '';
-    public string $filterFrom   = '';
-    public string $filterTo     = '';
-    public bool   $onlyAlerts   = false;
+    public string $filterVit = '';
+
+    public string $filterType = '';
+
+    public string $filterFrom = '';
+
+    public string $filterTo = '';
+
+    public bool $onlyAlerts = false;
 
     protected $queryString = [
-        'filterVit'  => ['except' => ''],
+        'filterVit' => ['except' => ''],
         'filterType' => ['except' => ''],
         'filterFrom' => ['except' => ''],
-        'filterTo'   => ['except' => ''],
+        'filterTo' => ['except' => ''],
         'onlyAlerts' => ['except' => false],
     ];
 
-    public function updatingFilterVit(): void  { $this->resetPage(); }
-    public function updatingFilterType(): void { $this->resetPage(); }
-    public function updatingOnlyAlerts(): void { $this->resetPage(); }
+    public function updatingFilterVit(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingOnlyAlerts(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->filterVit  = '';
+        $this->filterVit = '';
         $this->filterType = '';
         $this->filterFrom = '';
-        $this->filterTo   = '';
+        $this->filterTo = '';
         $this->onlyAlerts = false;
         $this->resetPage();
     }
@@ -67,9 +80,9 @@ class Index extends Component
         $activeAlerts = DB::table('agricultural_activities as aa')
             ->join('observations as obs', 'obs.activity_id', '=', 'aa.id')
             ->whereIn('aa.viticulturist_id', $accessibleVitIds)
-            ->where(fn($q) => $q
+            ->where(fn ($q) => $q
                 ->where('obs.threshold_exceeded', true)
-                ->orWhere(fn($q2) => $q2
+                ->orWhere(fn ($q2) => $q2
                     ->whereNotNull('obs.follow_up_date')
                     ->whereDate('obs.follow_up_date', '<', now())
                 )
@@ -99,28 +112,28 @@ class Index extends Component
 
         if ($this->onlyAlerts) {
             $query->where('activity_type', 'observation')
-                  ->whereHas('observation', fn($q) => $q
-                      ->where('threshold_exceeded', true)
-                      ->orWhere(fn($q2) => $q2
-                          ->whereNotNull('follow_up_date')
-                          ->whereDate('follow_up_date', '<', now())
-                      )
-                  );
+                ->whereHas('observation', fn ($q) => $q
+                    ->where('threshold_exceeded', true)
+                    ->orWhere(fn ($q2) => $q2
+                        ->whereNotNull('follow_up_date')
+                        ->whereDate('follow_up_date', '<', now())
+                    )
+                );
         }
 
         $activities = $query->paginate(25);
 
-        $activityTypes      = AgriculturalActivity::activityTypes();
-        $totalWithAccess    = $accessibleVitIds->count();
-        $totalDo            = $allVitIds->count();
+        $activityTypes = AgriculturalActivity::activityTypes();
+        $totalWithAccess = $accessibleVitIds->count();
+        $totalDo = $allVitIds->count();
 
         return view('livewire.supervisor.oversight.activity.index', [
-            'activities'      => $activities,
-            'viticulturists'  => $viticulturists,
-            'activityTypes'   => $activityTypes,
-            'activeAlerts'    => $activeAlerts,
+            'activities' => $activities,
+            'viticulturists' => $viticulturists,
+            'activityTypes' => $activityTypes,
+            'activeAlerts' => $activeAlerts,
             'totalWithAccess' => $totalWithAccess,
-            'totalDo'         => $totalDo,
+            'totalDo' => $totalDo,
         ]);
     }
 }

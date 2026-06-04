@@ -15,7 +15,7 @@ class RequirePasswordChangeTest extends TestCase
     public function test_middleware_redirects_when_password_change_required(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => null,
@@ -49,7 +49,7 @@ class RequirePasswordChangeTest extends TestCase
     public function test_middleware_caches_result_in_session(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => null,
@@ -77,7 +77,7 @@ class RequirePasswordChangeTest extends TestCase
     public function test_middleware_clears_cache_after_password_change(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => null,
@@ -109,7 +109,7 @@ class RequirePasswordChangeTest extends TestCase
     public function test_middleware_allows_access_to_change_password_route(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => null,
@@ -128,4 +128,3 @@ class RequirePasswordChangeTest extends TestCase
             ->assertStatus(200);
     }
 }
-

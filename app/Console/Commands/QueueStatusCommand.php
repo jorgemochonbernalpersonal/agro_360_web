@@ -16,7 +16,7 @@ class QueueStatusCommand extends Command
         $pending = DB::table('jobs')->count();
         $failed = DB::table('failed_jobs')->count();
 
-        $this->info("📋 Estado de la cola:");
+        $this->info('📋 Estado de la cola:');
         $this->table(
             ['Cola', 'Cantidad'],
             [

@@ -20,7 +20,7 @@ trait HasBetaAccess
         return $this->is_beta_user
             && $this->beta_ends_at
             && $this->beta_ends_at->isPast()
-            && !$this->hasActiveSubscription();
+            && ! $this->hasActiveSubscription();
     }
 
     /**
@@ -28,7 +28,7 @@ trait HasBetaAccess
      */
     public function betaDaysRemaining(): int
     {
-        if (!$this->isBetaUser() || !$this->beta_ends_at) {
+        if (! $this->isBetaUser() || ! $this->beta_ends_at) {
             return 0;
         }
 
@@ -43,16 +43,16 @@ trait HasBetaAccess
      * Activar acceso beta.
      * Si el usuario es una bodega, cascada beta a sus viticultores vinculados.
      *
-     * @param  \Carbon\Carbon|null  $endsAt  Fecha fin heredada (para cascada desde bodega).
-     *                                        Si null, usa now()+3 meses.
+     * @param \Carbon\Carbon|null $endsAt Fecha fin heredada (para cascada desde bodega).
+     *                                    Si null, usa now()+3 meses.
      */
     public function grantBetaAccess(?\Carbon\Carbon $endsAt = null): void
     {
         $betaEndsAt = $endsAt ?? now()->addMonths(3)->endOfDay();
 
         $this->update([
-            'is_beta_user'        => true,
-            'beta_ends_at'        => $betaEndsAt,
+            'is_beta_user' => true,
+            'beta_ends_at' => $betaEndsAt,
             'beta_access_granted' => true,
         ]);
 
@@ -65,8 +65,8 @@ trait HasBetaAccess
                 \App\Models\User::whereIn('id', $viticulturistIds)
                     ->where('is_beta_user', false)
                     ->update([
-                        'is_beta_user'        => true,
-                        'beta_ends_at'        => $betaEndsAt,
+                        'is_beta_user' => true,
+                        'beta_ends_at' => $betaEndsAt,
                         'beta_access_granted' => true,
                     ]);
             }
@@ -79,7 +79,7 @@ trait HasBetaAccess
     public function hasActiveAccess(): bool
     {
         // Beta activo
-        if ($this->isBetaUser() && !$this->betaExpired()) {
+        if ($this->isBetaUser() && ! $this->betaExpired()) {
             return true;
         }
 

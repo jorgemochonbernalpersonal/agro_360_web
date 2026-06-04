@@ -8,6 +8,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ContainerMaintenance extends Model
 {
+    const TYPES = [
+        'cleaning' => 'Limpieza',
+        'sulfuring' => 'Sulfitado',
+        'inspection' => 'Inspección',
+        'repair' => 'Reparación',
+        'tartrate_removal' => 'Desconfitado (tartratos)',
+        'other' => 'Otro',
+    ];
+
+    const STATUSES = [
+        'scheduled' => 'Programado',
+        'in_progress' => 'En curso',
+        'in_review' => 'En revisión',
+        'approved' => 'Aprobado',
+        'completed' => 'Completado',
+        'cancelled' => 'Cancelado',
+    ];
+
     protected $fillable = [
         'container_id',
         'maintenance_type',
@@ -22,28 +40,10 @@ class ContainerMaintenance extends Model
     ];
 
     protected $casts = [
-        'scheduled_date'       => 'date',
-        'performed_date'       => 'date',
-        'next_maintenance_date'=> 'date',
-        'cost'                 => 'decimal:2',
-    ];
-
-    const TYPES = [
-        'cleaning'         => 'Limpieza',
-        'sulfuring'        => 'Sulfitado',
-        'inspection'       => 'Inspección',
-        'repair'           => 'Reparación',
-        'tartrate_removal' => 'Desconfitado (tartratos)',
-        'other'            => 'Otro',
-    ];
-
-    const STATUSES = [
-        'scheduled'  => 'Programado',
-        'in_progress'=> 'En curso',
-        'in_review'  => 'En revisión',
-        'approved'   => 'Aprobado',
-        'completed'  => 'Completado',
-        'cancelled'  => 'Cancelado',
+        'scheduled_date' => 'date',
+        'performed_date' => 'date',
+        'next_maintenance_date' => 'date',
+        'cost' => 'decimal:2',
     ];
 
     public static function typeOptions(): array

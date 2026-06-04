@@ -15,69 +15,43 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class Index extends AbstractIndex
 {
-    public string $search       = '';
+    public string $search = '';
+
     public string $sourceFilter = '';
+
     public string $statusFilter = '';
 
     // ── D.O. pool modal ───────────────────────────────────────────────────────
-    public bool   $showDOModal = false;
-    public string $doSearch    = '';
+    public bool $showDOModal = false;
+
+    public string $doSearch = '';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
+        'search' => ['except' => ''],
         'sourceFilter' => ['except' => ''],
         'statusFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void       { $this->resetPage(); }
-    public function updatingSourceFilter(): void { $this->resetPage(); }
-    public function updatingStatusFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'sourceFilter' => '', 'statusFilter' => ''];
+        $this->resetPage();
     }
 
-    protected function baseQuery(): Builder
+    public function updatingSourceFilter(): void
     {
-        return WineryViticulturist::where('winery_id', $this->wineryId())
-            ->with(['viticulturist' => fn($q) => $q->withCount('plots')->select([
-                'id', 'name', 'email', 'can_login', 'email_verified_at',
-                'invitation_token', 'invitation_sent_at', 'invitation_expires_at',
-            ])]);
+        $this->resetPage();
     }
 
-    protected function applyFilters(Builder $query): void
+    public function updatingStatusFilter(): void
     {
-        if ($this->search) {
-            $search = '%' . mb_strtolower($this->search) . '%';
-            $query->whereHas('viticulturist', fn($q) =>
-                $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$search])
-            );
-        }
-
-        if ($this->sourceFilter) {
-            $query->where('source', $this->sourceFilter);
-        }
-
-        if ($this->statusFilter === 'active') {
-            $query->whereHas('viticulturist', fn($q) => $q->where('can_login', true));
-        } elseif ($this->statusFilter === 'pending') {
-            $query->whereHas('viticulturist', fn($q) => $q->where('can_login', false));
-        }
-    }
-
-    protected function defaultOrderBy(): array
-    {
-        return ['created_at', 'desc'];
+        $this->resetPage();
     }
 
     // ── D.O. pool actions ─────────────────────────────────────────────────────
 
     public function openDOModal(): void
     {
-        $this->doSearch    = '';
+        $this->doSearch = '';
         $this->showDOModal = true;
     }
 
@@ -88,7 +62,7 @@ class Index extends AbstractIndex
 
     public function assignFromDO(int $viticulturistId): void
     {
-        $wineryId      = $this->wineryId();
+        $wineryId = $this->wineryId();
         $supervisorIds = SupervisorWinery::where('winery_id', $wineryId)->pluck('supervisor_id');
 
         $sv = SupervisorViticulturist::where('viticulturist_id', $viticulturistId)
@@ -98,15 +72,16 @@ class Index extends AbstractIndex
         // Idempotent — no duplicate
         if (WineryViticulturist::where('winery_id', $wineryId)->where('viticulturist_id', $viticulturistId)->exists()) {
             $this->closeDOModal();
+
             return;
         }
 
         WineryViticulturist::create([
-            'winery_id'        => $wineryId,
+            'winery_id' => $wineryId,
             'viticulturist_id' => $viticulturistId,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $sv->supervisor_id,
-            'assigned_by'      => Auth::id(),
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $sv->supervisor_id,
+            'assigned_by' => Auth::id(),
         ]);
 
         $this->closeDOModal();
@@ -153,17 +128,17 @@ class Index extends AbstractIndex
             ->firstOrFail();
 
         // Idempotent: skip if already linked
-        if (!WineryViticulturist::where('winery_id', $wineryId)->where('viticulturist_id', $joinRequest->viticulturist_id)->exists()) {
+        if (! WineryViticulturist::where('winery_id', $wineryId)->where('viticulturist_id', $joinRequest->viticulturist_id)->exists()) {
             WineryViticulturist::create([
-                'winery_id'        => $wineryId,
+                'winery_id' => $wineryId,
                 'viticulturist_id' => $joinRequest->viticulturist_id,
-                'source'           => WineryViticulturist::SOURCE_SELF,
-                'assigned_by'      => Auth::id(),
+                'source' => WineryViticulturist::SOURCE_SELF,
+                'assigned_by' => Auth::id(),
             ]);
         }
 
         $joinRequest->update([
-            'status'       => WineryJoinRequest::STATUS_APPROVED,
+            'status' => WineryJoinRequest::STATUS_APPROVED,
             'responded_at' => now(),
         ]);
 
@@ -180,7 +155,7 @@ class Index extends AbstractIndex
             ->firstOrFail();
 
         $joinRequest->update([
-            'status'       => WineryJoinRequest::STATUS_REJECTED,
+            'status' => WineryJoinRequest::STATUS_REJECTED,
             'responded_at' => now(),
         ]);
 
@@ -195,24 +170,63 @@ class Index extends AbstractIndex
     {
         return Excel::download(
             new ViticulturistExport($this->wineryId()),
-            'viticultores_' . now()->format('Y-m-d') . '.xlsx'
+            'viticultores_'.now()->format('Y-m-d').'.xlsx'
         );
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'sourceFilter' => '', 'statusFilter' => ''];
+    }
+
+    protected function baseQuery(): Builder
+    {
+        return WineryViticulturist::where('winery_id', $this->wineryId())
+            ->with(['viticulturist' => fn ($q) => $q->withCount('plots')->select([
+                'id', 'name', 'email', 'can_login', 'email_verified_at',
+                'invitation_token', 'invitation_sent_at', 'invitation_expires_at',
+            ])]);
+    }
+
+    protected function applyFilters(Builder $query): void
+    {
+        if ($this->search) {
+            $search = '%'.mb_strtolower($this->search).'%';
+            $query->whereHas('viticulturist', fn ($q) => $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                ->orWhereRaw('LOWER(email) LIKE ?', [$search])
+            );
+        }
+
+        if ($this->sourceFilter) {
+            $query->where('source', $this->sourceFilter);
+        }
+
+        if ($this->statusFilter === 'active') {
+            $query->whereHas('viticulturist', fn ($q) => $q->where('can_login', true));
+        } elseif ($this->statusFilter === 'pending') {
+            $query->whereHas('viticulturist', fn ($q) => $q->where('can_login', false));
+        }
+    }
+
+    protected function defaultOrderBy(): array
+    {
+        return ['created_at', 'desc'];
     }
 
     // ── View data ─────────────────────────────────────────────────────────────
 
     protected function viewData(mixed $entries): array
     {
-        $wineryId      = $this->wineryId();
-        $base          = WineryViticulturist::where('winery_id', $wineryId);
+        $wineryId = $this->wineryId();
+        $base = WineryViticulturist::where('winery_id', $wineryId);
         $supervisorIds = SupervisorWinery::where('winery_id', $wineryId)->pluck('supervisor_id');
 
         $stats = [
-            'total'         => (clone $base)->count(),
-            'active'        => (clone $base)->whereHas('viticulturist', fn($q) => $q->where('can_login', true))->count(),
-            'pending'       => (clone $base)->whereHas('viticulturist', fn($q) => $q->where('can_login', false))->count(),
-            'own'           => (clone $base)->where('source', 'own')->count(),
-            'supervisor'    => (clone $base)->where('source', 'supervisor')->count(),
+            'total' => (clone $base)->count(),
+            'active' => (clone $base)->whereHas('viticulturist', fn ($q) => $q->where('can_login', true))->count(),
+            'pending' => (clone $base)->whereHas('viticulturist', fn ($q) => $q->where('can_login', false))->count(),
+            'own' => (clone $base)->where('source', 'own')->count(),
+            'supervisor' => (clone $base)->where('source', 'supervisor')->count(),
             'with_notebook' => (clone $base)->where('notebook_access', true)->count(),
         ];
 
@@ -230,10 +244,9 @@ class Index extends AbstractIndex
                 ]);
 
             if ($this->doSearch) {
-                $s = '%' . mb_strtolower($this->doSearch) . '%';
-                $poolQuery->whereHas('viticulturist', fn($q) =>
-                    $q->whereRaw('LOWER(name) LIKE ?', [$s])
-                      ->orWhereRaw('LOWER(email) LIKE ?', [$s])
+                $s = '%'.mb_strtolower($this->doSearch).'%';
+                $poolQuery->whereHas('viticulturist', fn ($q) => $q->whereRaw('LOWER(name) LIKE ?', [$s])
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$s])
                 );
             }
 
@@ -247,11 +260,11 @@ class Index extends AbstractIndex
             ->get();
 
         return [
-            'relations'      => $entries,
-            'stats'          => $stats,
+            'relations' => $entries,
+            'stats' => $stats,
             'hasSupervisors' => $supervisorIds->isNotEmpty(),
-            'doPool'         => $doPool,
-            'joinRequests'   => $joinRequests,
+            'doPool' => $doPool,
+            'joinRequests' => $joinRequests,
         ];
     }
 }

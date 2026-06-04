@@ -4,10 +4,10 @@ namespace App\Livewire\Payment;
 
 use App\Models\Payment;
 use App\Models\Subscription;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Illuminate\Support\Facades\Log;
+use Livewire\Component;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class Process extends Component
 {
@@ -16,8 +16,9 @@ class Process extends Component
         $user = Auth::user();
         $pendingData = session('pending_subscription');
 
-        if (!$pendingData) {
+        if (! $pendingData) {
             session()->flash('error', __('No se encontró información de pago pendiente.'));
+
             return redirect()->route('subscription.manage');
         }
 
@@ -29,8 +30,8 @@ class Process extends Component
 
             // Obtener el order ID de la sesión o del request
             $orderId = request()->get('token') ?? $pendingData['payment_id'] ?? null;
-            
-            if (!$orderId) {
+
+            if (! $orderId) {
                 // Buscar el pago pendiente
                 $payment = Payment::where('id', $pendingData['payment_id'])
                     ->where('user_id', $user->id)
@@ -42,7 +43,7 @@ class Process extends Component
                 }
             }
 
-            if (!$orderId) {
+            if (! $orderId) {
                 throw new \Exception(__('No se encontró el ID de la orden de pago.'));
             }
 
@@ -65,8 +66,8 @@ class Process extends Component
 
                     // Crear o actualizar la suscripción
                     $startsAt = now();
-                    $endsAt = $pendingData['plan_type'] === 'yearly' 
-                        ? $startsAt->copy()->addYear() 
+                    $endsAt = $pendingData['plan_type'] === 'yearly'
+                        ? $startsAt->copy()->addYear()
                         : $startsAt->copy()->addMonth();
 
                     // Cancelar suscripciones anteriores
@@ -89,12 +90,13 @@ class Process extends Component
 
                     session()->forget('pending_subscription');
                     session()->flash('message', __('¡Pago completado! Tu suscripción está activa.'));
-                    
+
                     return redirect()->route('subscription.manage');
                 }
             }
 
             session()->flash('error', __('El pago no se completó correctamente.'));
+
             return redirect()->route('subscription.manage');
         } catch (\Exception $e) {
             Log::error('Error processing PayPal payment', [
@@ -104,6 +106,7 @@ class Process extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
             session()->flash('error', __('Error al procesar el pago: :message', ['message' => $e->getMessage()]));
+
             return redirect()->route('subscription.manage');
         }
     }
@@ -112,6 +115,7 @@ class Process extends Component
     {
         session()->forget('pending_subscription');
         session()->flash('message', __('Pago cancelado.'));
+
         return redirect()->route('subscription.manage');
     }
 

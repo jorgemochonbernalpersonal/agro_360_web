@@ -18,23 +18,23 @@ class PlantingRightsValidator
         $requiresAuthorization = $planting->planting_year && $planting->planting_year >= 2016;
 
         if ($requiresAuthorization) {
-            if (!$planting->planting_authorization) {
+            if (! $planting->planting_authorization) {
                 $errors[] = sprintf(
                     'Plantaciones desde 2016 requieren autorización. Año de plantación: %s',
                     $planting->planting_year
                 );
             }
 
-            if (!$planting->authorization_date) {
+            if (! $planting->authorization_date) {
                 $warnings[] = 'Falta fecha de autorización';
             }
 
-            if (!$planting->right_type) {
+            if (! $planting->right_type) {
                 $warnings[] = 'Falta tipo de derecho (nueva/replantación/conversión)';
             }
 
             // Si es replantación, debe tener fecha de arranque
-            if ($planting->right_type === 'replantacion' && !$planting->uprooting_date) {
+            if ($planting->right_type === 'replantacion' && ! $planting->uprooting_date) {
                 $warnings[] = 'Las replantaciones deben indicar fecha de arranque';
             }
         }

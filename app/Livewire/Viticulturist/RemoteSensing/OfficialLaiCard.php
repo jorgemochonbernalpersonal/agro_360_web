@@ -9,20 +9,27 @@ use Livewire\Component;
 class OfficialLaiCard extends Component
 {
     public Plot $plot;
+
     public ?int $sigpacId = null;
+
     public ?array $laiData = null;
+
     public ?array $fparData = null;
+
     public ?array $yieldEstimate = null;
+
     public bool $loading = false;
+
     public ?string $error = null;
-    
+
     // Historical date selector
     public ?string $selectedDate = null;
+
     public array $availableDates = [];
 
     public function mount(Plot $plot, ?int $sigpacId = null)
     {
-        $this->plot     = $plot;
+        $this->plot = $plot;
         $this->sigpacId = $sigpacId;
         $this->loadAvailableDates();
         $this->loadData();
@@ -35,10 +42,10 @@ class OfficialLaiCard extends Component
             $query->where('multipart_plot_sigpac_id', $this->sigpacId);
         }
         $dates = $query->orderBy('image_date', 'desc')->limit(30)
-            ->pluck('image_date')->map(fn($d) => $d->format('Y-m-d'))->toArray();
+            ->pluck('image_date')->map(fn ($d) => $d->format('Y-m-d'))->toArray();
 
         $this->availableDates = $dates;
-        if (empty($this->selectedDate) && !empty($dates)) {
+        if (empty($this->selectedDate) && ! empty($dates)) {
             $this->selectedDate = $dates[0];
         }
     }
@@ -64,8 +71,9 @@ class OfficialLaiCard extends Component
 
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
-            if (!$remoteSensing) {
+            if (! $remoteSensing) {
                 $this->error = __('Sin datos para este recinto. Haz clic en "Actualizar Sentinel-2" para cargarlos.');
+
                 return;
             }
 
@@ -79,8 +87,8 @@ class OfficialLaiCard extends Component
             $classification = $laiService->classifyLAI($lai);
 
             $this->laiData = array_merge([
-                'value'  => $lai,
-                'date'   => $remoteSensing->image_date->format('d/m/Y'),
+                'value' => $lai,
+                'date' => $remoteSensing->image_date->format('d/m/Y'),
                 'source' => $remoteSensing->lai ? 'NASA MODIS (Oficial)' : 'Estimado desde Sentinel-2 NDVI',
             ], $classification);
 

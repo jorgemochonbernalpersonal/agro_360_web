@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\PlotAlertPreference;
-use App\Services\RemoteSensing\NasaEarthdataService;
 use App\Notifications\RemoteSensingAlertNotification;
+use App\Services\RemoteSensing\NasaEarthdataService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -38,14 +38,14 @@ class CheckRemoteSensingAlerts extends Command
         $alertsSent = 0;
 
         foreach ($preferences as $pref) {
-            if (!$pref->plot || !$pref->user) {
+            if (! $pref->plot || ! $pref->user) {
                 continue;
             }
 
             try {
                 $data = $service->getLatestData($pref->plot);
 
-                if (!$data || $data->ndvi_mean >= $pref->ndvi_threshold) {
+                if (! $data || $data->ndvi_mean >= $pref->ndvi_threshold) {
                     continue;
                 }
 
@@ -53,6 +53,7 @@ class CheckRemoteSensingAlerts extends Command
 
                 if (Cache::has($cacheKey)) {
                     $this->line("Skipped {$pref->plot->name} / {$pref->user->name} — cooldown active");
+
                     continue;
                 }
 
@@ -69,7 +70,7 @@ class CheckRemoteSensingAlerts extends Command
                 $alertsSent++;
 
             } catch (\Exception $e) {
-                Log::error("Error checking alert for plot {$pref->plot_id} / user {$pref->user_id}: " . $e->getMessage());
+                Log::error("Error checking alert for plot {$pref->plot_id} / user {$pref->user_id}: ".$e->getMessage());
                 $this->error("Error: plot {$pref->plot_id} / user {$pref->user_id}");
             }
         }

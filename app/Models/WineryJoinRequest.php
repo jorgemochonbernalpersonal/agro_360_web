@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WineryJoinRequest extends Model
 {
-    protected $table = 'winery_join_requests';
+    public const STATUS_PENDING = 'pending';
 
-    public const STATUS_PENDING  = 'pending';
     public const STATUS_APPROVED = 'approved';
+
     public const STATUS_REJECTED = 'rejected';
+
+    protected $table = 'winery_join_requests';
 
     protected $fillable = [
         'viticulturist_id',

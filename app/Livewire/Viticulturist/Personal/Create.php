@@ -3,26 +3,28 @@
 namespace App\Livewire\Viticulturist\Personal;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Crew;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
+
     public $name = '';
+
     public $description = '';
+
     public $winery_id = '';
 
     public function mount()
     {
-        if (!Auth::user()->can('create', Crew::class)) {
+        if (! Auth::user()->can('create', Crew::class)) {
             abort(403, __('No tienes permiso para crear cuadrillas.'));
         }
 
@@ -34,32 +36,6 @@ class Create extends Component
         if ($wineries->count() === 1) {
             $this->winery_id = $wineries->first()->id;
         }
-    }
-
-    protected function rules(): array
-    {
-        $user = Auth::user();
-
-        return [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'winery_id' => [
-                'nullable',
-                'exists:users,id',
-                function ($attribute, $value, $fail) use ($user) {
-                    if ($value) {
-                        // Solo validar si se proporciona winery_id
-                        $exists = WineryViticulturist::where('viticulturist_id', $user->id)
-                            ->where('winery_id', $value)
-                            ->exists();
-
-                        if (!$exists) {
-                            $fail(__('No estás asignado a esta bodega.'));
-                        }
-                    }
-                },
-            ],
-        ];
     }
 
     public function save()
@@ -79,6 +55,7 @@ class Create extends Component
             });
 
             $this->toastSuccess(__('Cuadrilla creada correctamente.'));
+
             return $this->viticulturistRoleRedirect('personal.index');
         } catch (\Exception $e) {
             Log::error('Error al crear cuadrilla', [
@@ -89,6 +66,7 @@ class Create extends Component
             ]);
 
             $this->toastError(__('Error al crear la cuadrilla. Por favor, intenta de nuevo.'));
+
             return;
         }
     }
@@ -104,5 +82,31 @@ class Create extends Component
         return view('livewire.viticulturist.personal.create', [
             'wineries' => $wineries,
         ]);
+    }
+
+    protected function rules(): array
+    {
+        $user = Auth::user();
+
+        return [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'winery_id' => [
+                'nullable',
+                'exists:users,id',
+                function ($attribute, $value, $fail) use ($user) {
+                    if ($value) {
+                        // Solo validar si se proporciona winery_id
+                        $exists = WineryViticulturist::where('viticulturist_id', $user->id)
+                            ->where('winery_id', $value)
+                            ->exists();
+
+                        if (! $exists) {
+                            $fail(__('No estás asignado a esta bodega.'));
+                        }
+                    }
+                },
+            ],
+        ];
     }
 }

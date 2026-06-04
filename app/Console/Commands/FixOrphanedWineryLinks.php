@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 class FixOrphanedWineryLinks extends Command
 {
     protected $signature = 'fix:orphaned-winery-links {--dry-run : Solo mostrar, no borrar}';
+
     protected $description = 'Elimina WineryViticulturist huerfanos: winery_id NULL (bug registro) o apuntando a user inexistente';
 
     public function handle(): int
@@ -27,7 +28,7 @@ class FixOrphanedWineryLinks extends Command
                 $this->line("  ID:{$link->id} | {$link->viticulturist?->email} | source:{$link->source}");
             }
 
-            if (!$dryRun) {
+            if (! $dryRun) {
                 $this->cleanup($nullWinery);
                 $totalCleaned += $nullWinery->count();
             }
@@ -45,7 +46,7 @@ class FixOrphanedWineryLinks extends Command
                 $this->line("  ID:{$link->id} | {$link->viticulturist?->email} | winery_id:{$link->winery_id} (NO EXISTE) | source:{$link->source}");
             }
 
-            if (!$dryRun) {
+            if (! $dryRun) {
                 $this->cleanup($orphaned);
                 $totalCleaned += $orphaned->count();
             }
@@ -53,6 +54,7 @@ class FixOrphanedWineryLinks extends Command
 
         if ($nullWinery->isEmpty() && $orphaned->isEmpty()) {
             $this->info('Todo limpio. No hay links huerfanos.');
+
             return 0;
         }
 

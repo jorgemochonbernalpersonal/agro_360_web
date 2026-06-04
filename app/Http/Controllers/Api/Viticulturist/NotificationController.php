@@ -17,7 +17,7 @@ class NotificationController extends Controller
 
         $request->validate([
             'unread_only' => 'nullable|boolean',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = $user->notifications()->orderByDesc('created_at');
@@ -29,21 +29,21 @@ class NotificationController extends Controller
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
         $data = $items->getCollection()->map(fn ($n) => [
-            'id'         => $n->id,
-            'type'       => class_basename($n->type),
-            'data'       => $n->data,
-            'read_at'    => $n->read_at?->toIso8601String(),
+            'id' => $n->id,
+            'type' => class_basename($n->type),
+            'data' => $n->data,
+            'read_at' => $n->read_at?->toIso8601String(),
             'created_at' => $n->created_at->toIso8601String(),
         ]);
 
         return response()->json([
-            'data'         => $data,
+            'data' => $data,
             'unread_count' => $user->unreadNotifications()->count(),
-            'meta'         => [
-                'total'        => $items->total(),
+            'meta' => [
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }

@@ -3,17 +3,16 @@
 namespace Tests\Unit\Jobs;
 
 use App\Jobs\GenerateOfficialReportJob;
-use App\Models\OfficialReport;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Tests\WithGeographyData;
 
 /**
  * Tests optimizados del GenerateOfficialReportJob
- * 
+ *
  * Nota: Estos tests verifican la lógica básica del Job sin generar PDFs reales.
  * Los tests de integración completa (con PDFs) se realizan en Feature tests.
  */
@@ -30,7 +29,7 @@ class GenerateOfficialReportJobTest extends TestCase
 
         // Configurar Storage fake
         Storage::fake('local');
-        
+
         // Fake Mail para no enviar emails reales
         Mail::fake();
     }

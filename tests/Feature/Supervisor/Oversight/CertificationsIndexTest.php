@@ -4,33 +4,12 @@ namespace Tests\Feature\Supervisor\Oversight;
 
 use App\Livewire\Supervisor\Oversight\Certifications\Index;
 use App\Models\Certification;
-use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
 class CertificationsIndexTest extends SupervisorTestCase
 {
-    private function makeSupervisorWithViticulturist(): array
-    {
-        $supervisor    = $this->makeSupervisor();
-        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
-
-        return [$supervisor, $viticulturist];
-    }
-
-    private function makeCert(User $viticulturist, array $attrs = []): Certification
-    {
-        return Certification::create(array_merge([
-            'viticulturist_id'   => $viticulturist->id,
-            'certification_type' => 'ecologico',
-            'certifying_body'    => 'Organismo Certificador',
-            'active'             => true,
-            'issue_date'         => now()->subYear(),
-            'expiry_date'        => now()->addYear(),
-        ], $attrs));
-    }
-
     // ── carga básica ──────────────────────────────────────────────────────
 
     public function test_index_loads_for_supervisor(): void
@@ -57,8 +36,8 @@ class CertificationsIndexTest extends SupervisorTestCase
 
     public function test_does_not_show_certifications_of_unrelated_viticulturists(): void
     {
-        $supervisor  = $this->makeSupervisor();
-        $outsideVit  = User::factory()->create(['role' => 'viticulturist', 'name' => 'VitAjeno Test']);
+        $supervisor = $this->makeSupervisor();
+        $outsideVit = User::factory()->create(['role' => 'viticulturist', 'name' => 'VitAjeno Test']);
 
         $this->makeCert($outsideVit, ['certifying_body' => 'OrganismoAjeno']);
 
@@ -140,7 +119,7 @@ class CertificationsIndexTest extends SupervisorTestCase
     public function test_filter_by_viticulturist(): void
     {
         [$supervisor, $vit1] = $this->makeSupervisorWithViticulturist();
-        $vit2                = $this->makeViticulturistForSupervisor($supervisor);
+        $vit2 = $this->makeViticulturistForSupervisor($supervisor);
 
         $this->makeCert($vit1, ['certifying_body' => 'OrganismoVit1']);
         $this->makeCert($vit2, ['certifying_body' => 'OrganismoVit2']);
@@ -163,5 +142,25 @@ class CertificationsIndexTest extends SupervisorTestCase
             ->call('clearFilters')
             ->assertSet('filterType', '')
             ->assertSet('filterStatus', '');
+    }
+
+    private function makeSupervisorWithViticulturist(): array
+    {
+        $supervisor = $this->makeSupervisor();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+
+        return [$supervisor, $viticulturist];
+    }
+
+    private function makeCert(User $viticulturist, array $attrs = []): Certification
+    {
+        return Certification::create(array_merge([
+            'viticulturist_id' => $viticulturist->id,
+            'certification_type' => 'ecologico',
+            'certifying_body' => 'Organismo Certificador',
+            'active' => true,
+            'issue_date' => now()->subYear(),
+            'expiry_date' => now()->addYear(),
+        ], $attrs));
     }
 }

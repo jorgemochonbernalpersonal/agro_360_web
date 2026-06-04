@@ -21,24 +21,27 @@ class UserManagementTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $otherAdmin;
+
     private User $winery;
+
     private User $viticulturist;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->admin       = User::factory()->create(['role' => 'admin', 'email_verified_at' => now(), 'can_login' => true]);
-        $this->otherAdmin  = User::factory()->create(['role' => 'admin', 'email_verified_at' => now(), 'can_login' => true]);
-        $this->winery      = User::factory()->create(['role' => 'winery', 'email_verified_at' => now(), 'is_beta_user' => false]);
+        $this->admin = User::factory()->create(['role' => 'admin', 'email_verified_at' => now(), 'can_login' => true]);
+        $this->otherAdmin = User::factory()->create(['role' => 'admin', 'email_verified_at' => now(), 'can_login' => true]);
+        $this->winery = User::factory()->create(['role' => 'winery', 'email_verified_at' => now(), 'is_beta_user' => false]);
         $this->viticulturist = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now(), 'is_beta_user' => false]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
     }
 

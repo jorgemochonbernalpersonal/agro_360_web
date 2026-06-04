@@ -19,31 +19,31 @@ class HarvestReceptionController extends Controller
         $wineryId = Auth::id();
         $harvests = $this->buildQuery($wineryId, $request)->get();
 
-        $campaign     = $request->campaign
+        $campaign = $request->campaign
             ? Campaign::find($request->campaign)
             : null;
         $campaignYear = $campaign?->year;
 
         $activeHarvests = $harvests->where('status', 'active');
         $stats = [
-            'total_kg'        => $activeHarvests->sum(fn($h) => (float) $h->total_weight),
-            'total_count'     => $activeHarvests->count(),
-            'disqualified_kg' => $activeHarvests->where('disqualified', true)->sum(fn($h) => (float) $h->total_weight),
-            'viticulturists'  => $activeHarvests->map(fn($h) => $h->batch?->viticulturist_id)->unique()->filter()->count(),
+            'total_kg' => $activeHarvests->sum(fn ($h) => (float) $h->total_weight),
+            'total_count' => $activeHarvests->count(),
+            'disqualified_kg' => $activeHarvests->where('disqualified', true)->sum(fn ($h) => (float) $h->total_weight),
+            'viticulturists' => $activeHarvests->map(fn ($h) => $h->batch?->viticulturist_id)->unique()->filter()->count(),
         ];
 
         $pdf = Pdf::loadView('reports.harvest-reception', [
-            'harvests'     => $harvests,
-            'stats'        => $stats,
+            'harvests' => $harvests,
+            'stats' => $stats,
             'campaignYear' => $campaignYear,
-            'wineryName'   => Auth::user()->name,
+            'wineryName' => Auth::user()->name,
         ])
-        ->setPaper('A4', 'landscape')
-        ->setOption('defaultFont', 'DejaVu Sans')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isRemoteEnabled', false);
+            ->setPaper('A4', 'landscape')
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', false);
 
-        $filename = 'recepciones_uva_' . now()->format('Y-m-d') . '.pdf';
+        $filename = 'recepciones_uva_'.now()->format('Y-m-d').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -51,14 +51,14 @@ class HarvestReceptionController extends Controller
     public function exportExcel(Request $request)
     {
         $wineryId = Auth::id();
-        $filename = 'recepciones_uva_' . now()->format('Y-m-d') . '.xlsx';
+        $filename = 'recepciones_uva_'.now()->format('Y-m-d').'.xlsx';
 
         return Excel::download(
             new HarvestReceptionExport(
-                wineryId:             $wineryId,
-                campaignFilter:       $request->campaign ?? '',
-                viticulturistFilter:  $request->viticulturist ?? '',
-                disqualifiedFilter:   $request->disqualified ?? '',
+                wineryId: $wineryId,
+                campaignFilter: $request->campaign ?? '',
+                viticulturistFilter: $request->viticulturist ?? '',
+                disqualifiedFilter: $request->disqualified ?? '',
             ),
             $filename
         );
@@ -77,15 +77,15 @@ class HarvestReceptionController extends Controller
         ]);
 
         $pdf = Pdf::loadView('reports.harvest-reception-single', [
-            'harvest'    => $harvest,
+            'harvest' => $harvest,
             'wineryName' => Auth::user()->name,
         ])
-        ->setPaper('A4', 'portrait')
-        ->setOption('defaultFont', 'DejaVu Sans')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isRemoteEnabled', false);
+            ->setPaper('A4', 'portrait')
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', false);
 
-        $filename = 'recepcion_' . $harvest->id . '_' . now()->format('Y-m-d') . '.pdf';
+        $filename = 'recepcion_'.$harvest->id.'_'.now()->format('Y-m-d').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -100,14 +100,12 @@ class HarvestReceptionController extends Controller
         ])->where('winery_id', $wineryId);
 
         if ($request->campaign) {
-            $query->whereHas('batch', fn(Builder $q) =>
-                $q->where('campaign_id', $request->campaign)
+            $query->whereHas('batch', fn (Builder $q) => $q->where('campaign_id', $request->campaign)
             );
         }
 
         if ($request->viticulturist) {
-            $query->whereHas('batch', fn(Builder $q) =>
-                $q->where('viticulturist_id', $request->viticulturist)
+            $query->whereHas('batch', fn (Builder $q) => $q->where('viticulturist_id', $request->viticulturist)
             );
         }
 

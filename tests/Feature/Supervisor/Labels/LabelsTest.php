@@ -25,18 +25,18 @@ class LabelsTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_labels', [
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'batch_number'       => 'LOTE-001',
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'batch_number' => 'LOTE-001',
             'quantity_requested' => 500,
-            'status'             => DoLabel::STATUS_PENDING,
+            'status' => DoLabel::STATUS_PENDING,
         ]);
     }
 
     public function test_supervisor_cannot_create_label_for_unlinked_winery(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
@@ -47,7 +47,7 @@ class LabelsTest extends SupervisorTestCase
 
         $this->assertDatabaseMissing('do_labels', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
+            'winery_id' => $winery->id,
         ]);
     }
 
@@ -58,12 +58,12 @@ class LabelsTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $label = DoLabel::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => now()->year,
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => now()->year,
             'quantity_requested' => 200,
-            'status'             => DoLabel::STATUS_PENDING,
-            'requested_at'       => now(),
+            'status' => DoLabel::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -72,7 +72,7 @@ class LabelsTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_labels', [
-            'id'     => $label->id,
+            'id' => $label->id,
             'status' => DoLabel::STATUS_APPROVED,
         ]);
     }
@@ -84,12 +84,12 @@ class LabelsTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $label = DoLabel::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => now()->year,
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => now()->year,
             'quantity_requested' => 300,
-            'status'             => DoLabel::STATUS_APPROVED,
-            'requested_at'       => now(),
+            'status' => DoLabel::STATUS_APPROVED,
+            'requested_at' => now(),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -98,10 +98,10 @@ class LabelsTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_labels', [
-            'id'              => $label->id,
-            'status'          => DoLabel::STATUS_ISSUED,
+            'id' => $label->id,
+            'status' => DoLabel::STATUS_ISSUED,
             'quantity_issued' => 300,
-            'quantity_stock'  => 300,
+            'quantity_stock' => 300,
         ]);
     }
 
@@ -112,12 +112,12 @@ class LabelsTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $label = DoLabel::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => now()->year,
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => now()->year,
             'quantity_requested' => 100,
-            'status'             => DoLabel::STATUS_PENDING,
-            'requested_at'       => now(),
+            'status' => DoLabel::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -126,7 +126,7 @@ class LabelsTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_labels', [
-            'id'     => $label->id,
+            'id' => $label->id,
             'status' => DoLabel::STATUS_CANCELLED,
         ]);
     }
@@ -136,15 +136,15 @@ class LabelsTest extends SupervisorTestCase
     public function test_another_supervisor_cannot_modify_labels(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         $label = DoLabel::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => now()->year,
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => now()->year,
             'quantity_requested' => 100,
-            'status'             => DoLabel::STATUS_PENDING,
-            'requested_at'       => now(),
+            'status' => DoLabel::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);

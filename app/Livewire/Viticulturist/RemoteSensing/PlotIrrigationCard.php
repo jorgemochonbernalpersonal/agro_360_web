@@ -9,6 +9,7 @@ use Livewire\Component;
 class PlotIrrigationCard extends Component
 {
     public Plot $plot;
+
     public array $recommendation = [];
 
     public function mount(Plot $plot)
@@ -19,7 +20,7 @@ class PlotIrrigationCard extends Component
 
     public function loadRecommendation()
     {
-        $service = new IrrigationRecommendationService();
+        $service = new IrrigationRecommendationService;
         $this->recommendation = $service->getRecommendation($this->plot);
     }
 

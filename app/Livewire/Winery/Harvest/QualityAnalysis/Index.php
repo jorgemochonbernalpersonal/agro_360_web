@@ -10,17 +10,18 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public string $campaignFilter      = '';
+    public string $campaignFilter = '';
+
     public string $viticulturistFilter = '';
 
     protected $queryString = [
-        'campaignFilter'      => ['except' => ''],
+        'campaignFilter' => ['except' => ''],
         'viticulturistFilter' => ['except' => ''],
     ];
 
     public function mount(): void
     {
-        if (!$this->campaignFilter) {
+        if (! $this->campaignFilter) {
             $campaign = Campaign::forViticulturist(Auth::id())->where('active', true)->first();
             if ($campaign) {
                 $this->campaignFilter = (string) $campaign->id;
@@ -51,11 +52,11 @@ class Index extends Component
             ->where('disqualified', false);
 
         if ($this->campaignFilter) {
-            $query->whereHas('batch', fn($q) => $q->where('campaign_id', $this->campaignFilter));
+            $query->whereHas('batch', fn ($q) => $q->where('campaign_id', $this->campaignFilter));
         }
 
         if ($this->viticulturistFilter) {
-            $query->whereHas('batch', fn($q) => $q->where('viticulturist_id', $this->viticulturistFilter));
+            $query->whereHas('batch', fn ($q) => $q->where('viticulturist_id', $this->viticulturistFilter));
         }
 
         $harvests = $query->get();
@@ -63,9 +64,10 @@ class Index extends Component
         // ── Por viticultor ────────────────────────────────────────────────────
 
         $byViticulturist = $harvests
-            ->groupBy(fn($h) => $h->batch?->viticulturist_id ?? 'unknown')
+            ->groupBy(fn ($h) => $h->batch?->viticulturist_id ?? 'unknown')
             ->map(function ($group) {
                 $name = $group->first()->batch?->viticulturist?->name ?? '—';
+
                 return $this->buildQualityStats($name, $group);
             })
             ->sortByDesc('total_kg')
@@ -74,7 +76,7 @@ class Index extends Component
         // ── Por variedad ──────────────────────────────────────────────────────
 
         $byVariety = $harvests
-            ->groupBy(fn($h) => $h->plotPlanting?->grapeVariety?->name ?? '—')
+            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety?->name ?? '—')
             ->map(function ($group, $variety) {
                 return $this->buildQualityStats($variety, $group);
             })
@@ -84,15 +86,15 @@ class Index extends Component
         // ── Stats globales ────────────────────────────────────────────────────
 
         $withAlcohol = $harvests->whereNotNull('potential_alcohol');
-        $withBaume   = $harvests->whereNotNull('baume_degree');
+        $withBaume = $harvests->whereNotNull('baume_degree');
         $withAcidity = $harvests->whereNotNull('acidity_level');
 
         $globalStats = [
-            'total_kg'      => $harvests->sum(fn($h) => (float) $h->total_weight),
+            'total_kg' => $harvests->sum(fn ($h) => (float) $h->total_weight),
             'total_entries' => $harvests->count(),
-            'avg_alcohol'   => $withAlcohol->count() ? round($withAlcohol->avg(fn($h) => $h->potential_alcohol), 2) : null,
-            'avg_baume'     => $withBaume->count()   ? round($withBaume->avg(fn($h) => $h->baume_degree), 2)      : null,
-            'avg_acidity'   => $withAcidity->count() ? round($withAcidity->avg(fn($h) => $h->acidity_level), 2)   : null,
+            'avg_alcohol' => $withAlcohol->count() ? round($withAlcohol->avg(fn ($h) => $h->potential_alcohol), 2) : null,
+            'avg_baume' => $withBaume->count() ? round($withBaume->avg(fn ($h) => $h->baume_degree), 2) : null,
+            'avg_acidity' => $withAcidity->count() ? round($withAcidity->avg(fn ($h) => $h->acidity_level), 2) : null,
         ];
 
         // ── Comparativa multi-añada ───────────────────────────────────────────
@@ -105,7 +107,7 @@ class Index extends Component
             ->get();
 
         $compYears = $allForComparison
-            ->map(fn($h) => $h->batch?->vintage_year)
+            ->map(fn ($h) => $h->batch?->vintage_year)
             ->filter()
             ->unique()
             ->sort()
@@ -114,24 +116,25 @@ class Index extends Component
         $comparison = collect();
         if ($compYears->count() >= 2) {
             $comparison = $allForComparison
-                ->groupBy(fn($h) => $h->batch?->viticulturist_id ?? 'unknown')
+                ->groupBy(fn ($h) => $h->batch?->viticulturist_id ?? 'unknown')
                 ->map(function ($group) use ($compYears) {
-                    $name  = $group->first()->batch?->viticulturist?->name ?? '—';
-                    $byYear = $group->groupBy(fn($h) => $h->batch?->vintage_year);
+                    $name = $group->first()->batch?->viticulturist?->name ?? '—';
+                    $byYear = $group->groupBy(fn ($h) => $h->batch?->vintage_year);
+
                     return [
-                        'name'  => $name,
-                        'years' => $compYears->mapWithKeys(fn($y) => [
+                        'name' => $name,
+                        'years' => $compYears->mapWithKeys(fn ($y) => [
                             $y => [
                                 'alcohol' => $byYear->has($y)
-                                    ? round($byYear->get($y)->avg(fn($h) => $h->potential_alcohol), 2)
+                                    ? round($byYear->get($y)->avg(fn ($h) => $h->potential_alcohol), 2)
                                     : null,
-                                'baume'   => $byYear->has($y)
-                                    ? round($byYear->get($y)->whereNotNull('baume_degree')->avg(fn($h) => $h->baume_degree), 2)
+                                'baume' => $byYear->has($y)
+                                    ? round($byYear->get($y)->whereNotNull('baume_degree')->avg(fn ($h) => $h->baume_degree), 2)
                                     : null,
                                 'acidity' => $byYear->has($y)
-                                    ? round($byYear->get($y)->whereNotNull('acidity_level')->avg(fn($h) => $h->acidity_level), 2)
+                                    ? round($byYear->get($y)->whereNotNull('acidity_level')->avg(fn ($h) => $h->acidity_level), 2)
                                     : null,
-                                'kg'      => round($byYear->get($y)?->sum(fn($h) => (float) $h->total_weight) ?? 0, 0),
+                                'kg' => round($byYear->get($y)?->sum(fn ($h) => (float) $h->total_weight) ?? 0, 0),
                             ],
                         ]),
                     ];
@@ -141,23 +144,23 @@ class Index extends Component
         }
 
         return view('livewire.winery.harvest.quality-analysis.index', [
-            'byViticulturist'      => $byViticulturist,
-            'byVariety'            => $byVariety,
-            'globalStats'          => $globalStats,
-            'campaigns'            => $campaigns,
+            'byViticulturist' => $byViticulturist,
+            'byVariety' => $byVariety,
+            'globalStats' => $globalStats,
+            'campaigns' => $campaigns,
             'linkedViticulturists' => $linkedViticulturists,
-            'comparison'           => $comparison,
-            'compYears'            => $compYears,
+            'comparison' => $comparison,
+            'compYears' => $compYears,
         ])->layout('layouts.app');
     }
 
     protected function buildQualityStats(string $label, $group): array
     {
         $withAlcohol = $group->whereNotNull('potential_alcohol');
-        $withBaume   = $group->whereNotNull('baume_degree');
-        $withBrix    = $group->whereNotNull('brix_degree');
+        $withBaume = $group->whereNotNull('baume_degree');
+        $withBrix = $group->whereNotNull('brix_degree');
         $withAcidity = $group->whereNotNull('acidity_level');
-        $withPh      = $group->whereNotNull('ph_level');
+        $withPh = $group->whereNotNull('ph_level');
 
         $healthDist = $group->whereNotNull('health_status')
             ->groupBy('health_status')
@@ -165,14 +168,14 @@ class Index extends Component
             ->sortDesc();
 
         return [
-            'label'       => $label,
-            'total_kg'    => $group->sum(fn($h) => (float) $h->total_weight),
-            'count'       => $group->count(),
-            'avg_alcohol' => $withAlcohol->count() ? round($withAlcohol->avg(fn($h) => $h->potential_alcohol), 2) : null,
-            'avg_baume'   => $withBaume->count()   ? round($withBaume->avg(fn($h) => $h->baume_degree), 2)        : null,
-            'avg_brix'    => $withBrix->count()    ? round($withBrix->avg(fn($h) => $h->brix_degree), 2)          : null,
-            'avg_acidity' => $withAcidity->count() ? round($withAcidity->avg(fn($h) => $h->acidity_level), 2)     : null,
-            'avg_ph'      => $withPh->count()      ? round($withPh->avg(fn($h) => $h->ph_level), 2)               : null,
+            'label' => $label,
+            'total_kg' => $group->sum(fn ($h) => (float) $h->total_weight),
+            'count' => $group->count(),
+            'avg_alcohol' => $withAlcohol->count() ? round($withAlcohol->avg(fn ($h) => $h->potential_alcohol), 2) : null,
+            'avg_baume' => $withBaume->count() ? round($withBaume->avg(fn ($h) => $h->baume_degree), 2) : null,
+            'avg_brix' => $withBrix->count() ? round($withBrix->avg(fn ($h) => $h->brix_degree), 2) : null,
+            'avg_acidity' => $withAcidity->count() ? round($withAcidity->avg(fn ($h) => $h->acidity_level), 2) : null,
+            'avg_ph' => $withPh->count() ? round($withPh->avg(fn ($h) => $h->ph_level), 2) : null,
             'health_dist' => $healthDist,
         ];
     }

@@ -2,19 +2,23 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\Harvest;
-use App\Models\Container;
 use App\Models\EstimatedYield;
-use Livewire\Component;
+use App\Models\Harvest;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class ShowHarvest extends Component
 {
     public $harvest;
+
     public $harvest_id;
+
     public $container; // Un solo contenedor
+
     public $estimatedYield;
+
     public $harvestLimitInfo = null;
+
     public $totalHarvestedInCampaign = 0;
 
     public function mount($harvest)
@@ -27,21 +31,21 @@ class ShowHarvest extends Component
     {
         $user = Auth::user();
 
-        $this->harvest = Harvest::whereHas('activity', function($q) use ($user) {
+        $this->harvest = Harvest::whereHas('activity', function ($q) use ($user) {
             $q->where('viticulturist_id', $user->id);
         })
-        ->with([
-            'activity.plot',
-            'activity.campaign',
-            'activity.crew',
-            'activity.crewMember.viticulturist',
-            'activity.machinery',
-            'plotPlanting.grapeVariety',
-            'container',
-            'editor',
-            'grapeReception',
-        ])
-        ->findOrFail($this->harvest_id);
+            ->with([
+                'activity.plot',
+                'activity.campaign',
+                'activity.crew',
+                'activity.crewMember.viticulturist',
+                'activity.machinery',
+                'plotPlanting.grapeVariety',
+                'container',
+                'editor',
+                'grapeReception',
+            ])
+            ->findOrFail($this->harvest_id);
 
         // Cargar rendimiento estimado si existe
         if ($this->harvest->plot_planting_id && $this->harvest->activity->campaign_id) {
@@ -88,4 +92,3 @@ class ShowHarvest extends Component
             ->layout('layouts.app');
     }
 }
-

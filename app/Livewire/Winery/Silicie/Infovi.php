@@ -20,50 +20,41 @@ use Livewire\Component;
  */
 class Infovi extends Component
 {
-    public string $filterCampaign       = ''; // e.g. "2025" = campaña 2025/2026
-    public bool   $showCategoryBreakdown = false;
-
     // INFOVI wine type codes (AICA nomenclature)
     const WINE_CATEGORIES = [
-        'red'        => 'Vino tinto tranquilo',
-        'white'      => 'Vino blanco tranquilo',
-        'rose'       => 'Vino rosado tranquilo',
-        'sparkling'  => 'Vino espumoso',
-        'fortified'  => 'Vino licoroso / generoso',
-        'sweet'      => 'Vino dulce natural',
+        'red' => 'Vino tinto tranquilo',
+        'white' => 'Vino blanco tranquilo',
+        'rose' => 'Vino rosado tranquilo',
+        'sparkling' => 'Vino espumoso',
+        'fortified' => 'Vino licoroso / generoso',
+        'sweet' => 'Vino dulce natural',
         'semi_sweet' => 'Vino semidulce',
-        'other'      => 'Otros vinos',
+        'other' => 'Otros vinos',
     ];
 
     // INFOVI category breakdown — three buckets as declared in AICA forms
     // Maps to wines.category (VdM | IGP | DO | DOCa | vino_de_pago)
     const PROTECTION_LEVELS = [
-        'DO'  => 'Denominación de Origen (DO/DOCa/Pago)',
+        'DO' => 'Denominación de Origen (DO/DOCa/Pago)',
         'IGP' => 'Indicación Geográfica Protegida (IGP)',
         'VdM' => 'Vino de Mesa / Sin indicación geográfica',
     ];
 
-    // Map wines.category values → INFOVI bucket
-    private function categoryBucket(?string $cat): string
-    {
-        return match ($cat) {
-            'DO', 'DOCa', 'vino_de_pago' => 'DO',
-            'IGP'                         => 'IGP',
-            default                       => 'VdM',
-        };
-    }
-
     // Bottle format in ml → for HL calculation from invoice items
     const BOTTLE_ML = [
-        '187'  => 187,
-        '375'  => 375,
-        '500'  => 500,
-        '750'  => 750,
+        '187' => 187,
+        '375' => 375,
+        '500' => 500,
+        '750' => 750,
         '1000' => 1000,
         '1500' => 1500,
         '3000' => 3000,
         '5000' => 5000,
     ];
+
+    public string $filterCampaign = ''; // e.g. "2025" = campaña 2025/2026
+
+    public bool $showCategoryBreakdown = false;
 
     public function mount(): void
     {
@@ -85,17 +76,17 @@ class Infovi extends Component
 
         // Campaign date range: Aug 1 of $campaign → Jul 31 of $campaign+1
         $campaignStart = "{$campaign}-08-01";
-        $campaignEnd   = ($campaign + 1) . "-07-31";
+        $campaignEnd = ($campaign + 1).'-07-31';
 
-        $org       = Auth::user()->organization;
+        $org = Auth::user()->organization;
         $threshold = $this->buildThreshold($wineryId);
 
-        $existencias  = $this->buildCuadroExistencias($wineryId, $campaign);
-        $produccion   = $this->buildCuadroProduccion($wineryId, $campaign);
-        $ventas       = $this->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd);
-        $entradas     = $this->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd);
+        $existencias = $this->buildCuadroExistencias($wineryId, $campaign);
+        $produccion = $this->buildCuadroProduccion($wineryId, $campaign);
+        $ventas = $this->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd);
+        $entradas = $this->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd);
         $balanceSheet = $this->buildBalanceSheet($wineryId, $campaign, $campaignStart, $campaignEnd);
-        $mosto        = $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd);
+        $mosto = $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd);
 
         // Available campaigns (based on harvest vintages)
         $campaigns = DB::table('harvests')
@@ -117,6 +108,16 @@ class Infovi extends Component
             'campaign', 'campaignStart', 'campaignEnd',
             'org', 'threshold', 'campaigns'
         ));
+    }
+
+    // Map wines.category values → INFOVI bucket
+    private function categoryBucket(?string $cat): string
+    {
+        return match ($cat) {
+            'DO', 'DOCa', 'vino_de_pago' => 'DO',
+            'IGP' => 'IGP',
+            default => 'VdM',
+        };
     }
 
     // ── Threshold detection ───────────────────────────────────────────────
@@ -143,48 +144,48 @@ class Infovi extends Component
             ->pluck('hl', 'vintage');
 
         $campaigns = $vintageHl->count();
-        $avgHl     = $campaigns > 0 ? round($vintageHl->sum() / $campaigns, 1) : 0;
-        $isLarge   = $avgHl >= 1000;
+        $avgHl = $campaigns > 0 ? round($vintageHl->sum() / $campaigns, 1) : 0;
+        $isLarge = $avgHl >= 1000;
 
         return [
-            'avg_hl'    => $avgHl,
+            'avg_hl' => $avgHl,
             'campaigns' => $campaigns,
-            'is_large'  => $isLarge,
-            'by_vintage'=> $vintageHl,
+            'is_large' => $isLarge,
+            'by_vintage' => $vintageHl,
             'next_deadlines' => $this->buildDeadlines($isLarge),
         ];
     }
 
     private function buildDeadlines(bool $isLarge): array
     {
-        $now       = now();
+        $now = now();
         $deadlines = [];
 
         if ($isLarge) {
             // Monthly: 1st–19th of each month for previous month's data
             $nextMonth = $now->copy()->addMonth()->startOfMonth();
             $deadlines[] = [
-                'label' => 'Declaración mensual ' . $nextMonth->translatedFormat('F Y'),
-                'date'  => $nextMonth->copy()->setDay(19)->toDateString(),
-                'type'  => 'monthly',
+                'label' => 'Declaración mensual '.$nextMonth->translatedFormat('F Y'),
+                'date' => $nextMonth->copy()->setDay(19)->toDateString(),
+                'type' => 'monthly',
             ];
         } else {
             // Pequeño productor: Aug 1–19 (datos julio) y Dec 1–19 (datos noviembre)
             // Order matters: nearest deadline first
             $candidates = [
-                now()->year . '-08-19',
-                now()->year . '-12-19',
-                (now()->year + 1) . '-08-19',
-                (now()->year + 1) . '-12-19',
+                now()->year.'-08-19',
+                now()->year.'-12-19',
+                (now()->year + 1).'-08-19',
+                (now()->year + 1).'-12-19',
             ];
             foreach ($candidates as $d) {
                 if ($d >= $now->toDateString()) {
-                    $date  = \Carbon\Carbon::parse($d);
+                    $date = \Carbon\Carbon::parse($d);
                     $month = $date->month === 12 ? 'noviembre' : 'julio';
                     $deadlines[] = [
-                        'label' => 'Declaración ampliada ' . $month . ' ' . $date->year,
-                        'date'  => $d,
-                        'type'  => 'semi_annual',
+                        'label' => 'Declaración ampliada '.$month.' '.$date->year,
+                        'date' => $d,
+                        'type' => 'semi_annual',
                     ];
                     if (count($deadlines) >= 2) {
                         break;
@@ -208,7 +209,7 @@ class Infovi extends Component
         $snapshotDate = DB::table('wine_stock_snapshots')
             ->where('user_id', $wineryId)
             ->whereDate('snapshot_date', '>=', "{$campaign}-08-01")
-            ->whereDate('snapshot_date', '<=', ($campaign + 1) . "-07-31")
+            ->whereDate('snapshot_date', '<=', ($campaign + 1).'-07-31')
             ->orderByDesc('snapshot_date')
             ->value('snapshot_date');
 
@@ -273,11 +274,11 @@ class Infovi extends Component
         }
 
         $result = [];
-        $total  = 0;
+        $total = 0;
 
         foreach (self::WINE_CATEGORIES as $type => $label) {
             $row = $rows->firstWhere('wine_type', $type);
-            $hl  = $row ? round((float) $row->hl, 3) : 0;
+            $hl = $row ? round((float) $row->hl, 3) : 0;
 
             // Build category sub-breakdown (DO/IGP/VdM buckets)
             $categories = [];
@@ -286,25 +287,25 @@ class Infovi extends Component
                     $catRow = $categoryRows->first(fn ($r) => $r->wine_type === $type && $r->infovi_bucket === $lvl);
                     $categories[$lvl] = [
                         'label' => $lvlLabel,
-                        'hl'    => $catRow ? round((float) $catRow->hl, 3) : 0,
+                        'hl' => $catRow ? round((float) $catRow->hl, 3) : 0,
                     ];
                 }
             }
 
             $result[] = [
-                'type'       => $type,
-                'label'      => $label,
-                'hl'         => $hl,
+                'type' => $type,
+                'label' => $label,
+                'hl' => $hl,
                 'wine_count' => $row->wine_count ?? 0,
-                'source'     => $snapshotDate ? 'snapshot' : 'live',
+                'source' => $snapshotDate ? 'snapshot' : 'live',
                 'categories' => $categories,
             ];
             $total += $hl;
         }
 
         return [
-            'rows'          => $result,
-            'total_hl'      => round($total, 3),
+            'rows' => $result,
+            'total_hl' => round($total, 3),
             'snapshot_date' => $snapshotDate,
         ];
     }
@@ -350,11 +351,11 @@ class Infovi extends Component
             : collect();
 
         $result = [];
-        $total  = 0;
+        $total = 0;
 
         foreach (self::WINE_CATEGORIES as $type => $label) {
             $row = $rows->firstWhere('wine_type', $type);
-            $hl  = $row ? round((float) $row->hl, 3) : 0;
+            $hl = $row ? round((float) $row->hl, 3) : 0;
 
             $categories = [];
             if ($this->showCategoryBreakdown) {
@@ -362,15 +363,15 @@ class Infovi extends Component
                     $catRow = $categoryRows->first(fn ($r) => $r->wine_type === $type && $r->infovi_bucket === $lvl);
                     $categories[$lvl] = [
                         'label' => $lvlLabel,
-                        'hl'    => $catRow ? round((float) $catRow->hl, 3) : 0,
+                        'hl' => $catRow ? round((float) $catRow->hl, 3) : 0,
                     ];
                 }
             }
 
             $result[] = [
-                'type'       => $type,
-                'label'      => $label,
-                'hl'         => $hl,
+                'type' => $type,
+                'label' => $label,
+                'hl' => $hl,
                 'wine_count' => $row->wine_count ?? 0,
                 'categories' => $categories,
             ];
@@ -378,7 +379,7 @@ class Infovi extends Component
         }
 
         return [
-            'rows'     => $result,
+            'rows' => $result,
             'total_hl' => round($total, 3),
         ];
     }
@@ -432,30 +433,30 @@ class Infovi extends Component
             ->whereNull('ii.wine_lot_id')
             ->count();
 
-        $result       = [];
-        $totalHl      = 0;
+        $result = [];
+        $totalHl = 0;
         $totalBottles = 0;
 
         foreach (self::WINE_CATEGORIES as $type => $label) {
-            $row      = $lotRows->firstWhere('wine_type', $type);
-            $hl       = $row ? round((float) $row->hl, 3) : 0;
-            $bottles  = $row ? (int) $row->bottles : 0;
+            $row = $lotRows->firstWhere('wine_type', $type);
+            $hl = $row ? round((float) $row->hl, 3) : 0;
+            $bottles = $row ? (int) $row->bottles : 0;
             $result[] = [
-                'type'    => $type,
-                'label'   => $label,
-                'hl'      => $hl,
+                'type' => $type,
+                'label' => $label,
+                'hl' => $hl,
                 'bottles' => $bottles,
             ];
-            $totalHl      += $hl;
+            $totalHl += $hl;
             $totalBottles += $bottles;
         }
 
         return [
-            'rows'             => $result,
-            'total_hl'         => round($totalHl, 3),
-            'total_bottles'    => $totalBottles,
-            'total_invoices'   => (int) ($invoiceTotals->total_invoices ?? 0),
-            'total_amount'     => (float) ($invoiceTotals->total_amount ?? 0),
+            'rows' => $result,
+            'total_hl' => round($totalHl, 3),
+            'total_bottles' => $totalBottles,
+            'total_invoices' => (int) ($invoiceTotals->total_invoices ?? 0),
+            'total_amount' => (float) ($invoiceTotals->total_amount ?? 0),
             'unknown_hl_items' => $unknownHlCount,
         ];
     }
@@ -487,9 +488,9 @@ class Infovi extends Component
             ->get();
 
         return [
-            'kg_propia'      => (float) $kgPropia,
-            'kg_comprada'    => (float) ($externas->firstWhere('grape_type', 'grapes')?->total_kg ?? 0),
-            'hl_mosto'       => round((float) ($externas->firstWhere('grape_type', 'must')?->total_kg ?? 0) / 100, 3),
+            'kg_propia' => (float) $kgPropia,
+            'kg_comprada' => (float) ($externas->firstWhere('grape_type', 'grapes')?->total_kg ?? 0),
+            'hl_mosto' => round((float) ($externas->firstWhere('grape_type', 'must')?->total_kg ?? 0) / 100, 3),
             'hl_vino_granel' => round((float) ($externas->firstWhere('grape_type', 'bulk_wine')?->total_kg ?? 0) / 100, 3),
         ];
     }
@@ -599,20 +600,20 @@ class Infovi extends Component
         // ── Build per-type rows ───────────────────────────────────────────
         $result = [];
         $totals = [
-            'apertura'    => 0,
-            'producido'   => 0,
-            'comprado'    => $compradoTotal, // not splittable by type
-            'vendido'     => 0,
-            'perdido'     => 0,
+            'apertura' => 0,
+            'producido' => 0,
+            'comprado' => $compradoTotal, // not splittable by type
+            'vendido' => 0,
+            'perdido' => 0,
             'cierre_calc' => 0,
             'cierre_real' => null,
         ];
 
         foreach (self::WINE_CATEGORIES as $type => $label) {
-            $apertura   = round((float) ($aperturaByType[$type] ?? 0), 3);
-            $producido  = round((float) ($producidoByType[$type] ?? 0), 3);
-            $vendido    = round((float) ($vendidoByType[$type] ?? 0), 3);
-            $perdido    = round((float) ($perdidoByType[$type] ?? 0), 3);
+            $apertura = round((float) ($aperturaByType[$type] ?? 0), 3);
+            $producido = round((float) ($producidoByType[$type] ?? 0), 3);
+            $vendido = round((float) ($vendidoByType[$type] ?? 0), 3);
+            $perdido = round((float) ($perdidoByType[$type] ?? 0), 3);
             // comprado not split by type — shown as 0 per row, total in footer
             $cierreCalc = round($apertura + $producido - $vendido - $perdido, 3);
             $cierreReal = isset($cierreRealByType[$type])
@@ -625,10 +626,10 @@ class Infovi extends Component
                 'vendido', 'perdido', 'cierreCalc', 'cierreReal', 'delta'
             ) + ['cierre_calc' => $cierreCalc, 'cierre_real' => $cierreReal];
 
-            $totals['apertura']    += $apertura;
-            $totals['producido']   += $producido;
-            $totals['vendido']     += $vendido;
-            $totals['perdido']     += $perdido;
+            $totals['apertura'] += $apertura;
+            $totals['producido'] += $producido;
+            $totals['vendido'] += $vendido;
+            $totals['perdido'] += $perdido;
             $totals['cierre_calc'] += $cierreCalc;
             if ($cierreReal !== null) {
                 $totals['cierre_real'] = ($totals['cierre_real'] ?? 0) + $cierreReal;
@@ -645,9 +646,9 @@ class Infovi extends Component
         }
 
         return [
-            'rows'             => $result,
-            'totals'           => $totals,
-            'comprado_total'   => $compradoTotal,
+            'rows' => $result,
+            'totals' => $totals,
+            'comprado_total' => $compradoTotal,
             'opening_snapshot' => $openingSnapshotDate,
             'closing_snapshot' => $closingSnapshotDate,
         ];
@@ -736,17 +737,17 @@ class Infovi extends Component
         $cierreCalc = round($apertura + $producido + $comprado - $vendido - $perdido, 3);
 
         return [
-            'apertura'        => $apertura,
-            'producido'       => $producido,
-            'comprado'        => $comprado,
-            'vendido'         => $vendido,
-            'perdido'         => $perdido,
-            'cierre_calc'     => $cierreCalc,
-            'cierre_real'     => $cierreReal,
-            'delta'           => $cierreReal !== null ? round($cierreReal - $cierreCalc, 3) : null,
-            'opening_snapshot'=> $openingDate,
-            'closing_snapshot'=> $closingDate,
-            'has_data'        => ($producido + $comprado + $apertura) > 0,
+            'apertura' => $apertura,
+            'producido' => $producido,
+            'comprado' => $comprado,
+            'vendido' => $vendido,
+            'perdido' => $perdido,
+            'cierre_calc' => $cierreCalc,
+            'cierre_real' => $cierreReal,
+            'delta' => $cierreReal !== null ? round($cierreReal - $cierreCalc, 3) : null,
+            'opening_snapshot' => $openingDate,
+            'closing_snapshot' => $closingDate,
+            'has_data' => ($producido + $comprado + $apertura) > 0,
         ];
     }
 }

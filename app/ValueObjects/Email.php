@@ -7,9 +7,17 @@ class Email
     public function __construct(
         public readonly string $address
     ) {
-        if (!filter_var($address, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($address, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException("Email inválido: {$address}");
         }
+    }
+
+    /**
+     * Convertir a string
+     */
+    public function __toString(): string
+    {
+        return $this->address;
     }
 
     /**
@@ -54,17 +62,9 @@ class Email
         $domain = $parts[1];
 
         if (strlen($local) <= 2) {
-            return substr($local, 0, 1) . '***@' . $domain;
+            return substr($local, 0, 1).'***@'.$domain;
         }
 
-        return substr($local, 0, 2) . '***@' . $domain;
-    }
-
-    /**
-     * Convertir a string
-     */
-    public function __toString(): string
-    {
-        return $this->address;
+        return substr($local, 0, 2).'***@'.$domain;
     }
 }

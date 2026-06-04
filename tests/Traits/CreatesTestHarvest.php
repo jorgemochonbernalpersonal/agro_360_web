@@ -2,13 +2,13 @@
 
 namespace Tests\Traits;
 
-use App\Models\User;
-use App\Models\Harvest;
-use App\Models\Container;
-use App\Models\HarvestStock;
-use App\Models\ContainerCurrentState;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
+use App\Models\Container;
+use App\Models\ContainerCurrentState;
+use App\Models\Harvest;
+use App\Models\HarvestStock;
+use App\Models\User;
 
 trait CreatesTestHarvest
 {
@@ -28,11 +28,11 @@ trait CreatesTestHarvest
         $plot = \App\Models\Plot::create([
             'viticulturist_id' => $user->id,
             'name' => 'Parcela Test',
-            'reference' => 'TEST-' . rand(100, 999),
+            'reference' => 'TEST-'.rand(100, 999),
             'area' => 10.5,
             'active' => true,
         ]);
-        
+
         // Create planting for the plot
         $grapeVariety = \App\Models\GrapeVariety::firstOrCreate(
             ['code' => 'TEMP'],

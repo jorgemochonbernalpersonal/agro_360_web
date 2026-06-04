@@ -80,7 +80,7 @@ class InventoryExport implements FromCollection, WithHeadings, WithMapping, With
                 'font' => ['bold' => true],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => '4CAF50']
+                    'startColor' => ['rgb' => '4CAF50'],
                 ],
                 'font' => ['color' => ['rgb' => 'FFFFFF'], 'bold' => true],
             ],
@@ -89,6 +89,6 @@ class InventoryExport implements FromCollection, WithHeadings, WithMapping, With
 
     public function title(): string
     {
-        return 'Inventario ' . now()->format('d-m-Y');
+        return 'Inventario '.now()->format('d-m-Y');
     }
 }

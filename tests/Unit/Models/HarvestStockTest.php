@@ -2,15 +2,15 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\HarvestStock;
-use App\Models\Harvest;
-use App\Models\Container;
-use App\Models\User;
-use App\Models\InvoiceItem;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\Container;
+use App\Models\Harvest;
+use App\Models\HarvestStock;
+use App\Models\InvoiceItem;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Models\Campaign;
+use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
 use Database\Seeders\MunicipalitySeeder;
 use Database\Seeders\ProvinceSeeder;
@@ -775,4 +775,3 @@ class HarvestStockTest extends TestCase
         $this->assertIsNumeric($stock->available_qty);
     }
 }
-

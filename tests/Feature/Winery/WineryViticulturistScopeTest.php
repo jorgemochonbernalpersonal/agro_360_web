@@ -23,6 +23,7 @@ use Tests\Feature\WineryTestCase;
 class WineryViticulturistScopeTest extends WineryTestCase
 {
     protected User $winery;
+
     protected User $creator;   // viticulturist linked to $winery
 
     protected function setUp(): void
@@ -34,49 +35,17 @@ class WineryViticulturistScopeTest extends WineryTestCase
         $this->winery = $this->makeWinery();
 
         $this->creator = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
         // Vinculamos creator a la bodega (source=own)
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->creator->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
-    }
-
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeViticulturistInWinery(User $winery, string $source = WineryViticulturist::SOURCE_OWN, ?User $parent = null): User
-    {
-        $v = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
-
-        WineryViticulturist::create([
-            'winery_id'              => $winery->id,
-            'viticulturist_id'       => $v->id,
-            'source'                 => $source,
-            'assigned_by'            => $winery->id,
-            'parent_viticulturist_id' => $parent?->id,
-        ]);
-
-        return $v;
-    }
-
-    private function makeSubViticulturist(User $creator, ?User $winery = null): User
-    {
-        $v = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
-
-        WineryViticulturist::create([
-            'winery_id'              => $winery?->id,
-            'viticulturist_id'       => $v->id,
-            'source'                 => WineryViticulturist::SOURCE_VITICULTURIST,
-            'parent_viticulturist_id' => $creator->id,
-            'assigned_by'            => $creator->id,
-        ]);
-
-        return $v;
     }
 
     // ── scopeVisibleTo ────────────────────────────────────────────────────────
@@ -140,7 +109,7 @@ class WineryViticulturistScopeTest extends WineryTestCase
     public function test_sub_viticulturist_created_by_someone_else_is_not_visible_to_creator(): void
     {
         $otherCreator = $this->makeViticulturistInWinery($this->winery, WineryViticulturist::SOURCE_OWN);
-        $subOfOther   = $this->makeSubViticulturist($otherCreator, $this->winery);
+        $subOfOther = $this->makeSubViticulturist($otherCreator, $this->winery);
 
         // creator NO creó a subOfOther, pero comparte bodega → sí visible por rama 3
         // Este test verifica que la rama 1 (solo mis creados) no interfiere con la 3
@@ -167,21 +136,21 @@ class WineryViticulturistScopeTest extends WineryTestCase
         // viewer: viticultor sin bodega previa, lo vincularemos via supervisor
         $viewer = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $viewer->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         // poolVitic: otro viticultor del mismo supervisor en la misma bodega
         $poolVitic = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $poolVitic->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         // Forzar recarga del atributo cacheado de supervisor
@@ -263,5 +232,37 @@ class WineryViticulturistScopeTest extends WineryTestCase
         $relation = WineryViticulturist::where('viticulturist_id', $own->id)->firstOrFail();
 
         $this->assertFalse($relation->isVisibleTo($this->winery));
+    }
+
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeViticulturistInWinery(User $winery, string $source = WineryViticulturist::SOURCE_OWN, ?User $parent = null): User
+    {
+        $v = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
+
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $v->id,
+            'source' => $source,
+            'assigned_by' => $winery->id,
+            'parent_viticulturist_id' => $parent?->id,
+        ]);
+
+        return $v;
+    }
+
+    private function makeSubViticulturist(User $creator, ?User $winery = null): User
+    {
+        $v = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
+
+        WineryViticulturist::create([
+            'winery_id' => $winery?->id,
+            'viticulturist_id' => $v->id,
+            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
+            'parent_viticulturist_id' => $creator->id,
+            'assigned_by' => $creator->id,
+        ]);
+
+        return $v;
     }
 }

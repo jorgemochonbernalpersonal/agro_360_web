@@ -21,10 +21,10 @@ class WineLabeling extends Model
     ];
 
     protected $casts = [
-        'labeling_date'   => 'date',
+        'labeling_date' => 'date',
         'quantity_labeled' => 'integer',
-        'from_number'     => 'integer',
-        'to_number'       => 'integer',
+        'from_number' => 'integer',
+        'to_number' => 'integer',
     ];
 
     public function user(): BelongsTo
@@ -54,8 +54,11 @@ class WineLabeling extends Model
 
     public function getLabelRangeAttribute(): ?string
     {
-        if (! $this->from_number || ! $this->to_number) return null;
-        return number_format($this->from_number) . ' – ' . number_format($this->to_number);
+        if (! $this->from_number || ! $this->to_number) {
+            return null;
+        }
+
+        return number_format($this->from_number).' – '.number_format($this->to_number);
     }
 
     public function scopeForUser($query, int $userId)

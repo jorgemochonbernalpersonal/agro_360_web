@@ -185,4 +185,3 @@ class DigitalSignatureTest extends TestCase
         $this->assertInstanceOf(\Carbon\Carbon::class, $signature->updated_at);
     }
 }
-

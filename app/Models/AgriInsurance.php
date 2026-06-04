@@ -10,6 +10,31 @@ class AgriInsurance extends Model
 {
     use HasFactory;
 
+    public const COVERAGE_TYPES = [
+        'frost' => 'Heladas',
+        'hail' => 'Pedrisco',
+        'drought' => 'Sequía',
+        'flood' => 'Inundación',
+        'fire' => 'Incendio',
+        'pest' => 'Plagas',
+        'comprehensive' => 'Seguro integral (multirriesgo)',
+        'other' => 'Otro',
+    ];
+
+    public const STATUSES = [
+        'pending' => 'Pendiente',
+        'active' => 'Activo',
+        'expired' => 'Vencido',
+        'cancelled' => 'Cancelado',
+    ];
+
+    public const STATUS_COLORS = [
+        'pending' => 'amber',
+        'active' => 'green',
+        'expired' => 'zinc',
+        'cancelled' => 'red',
+    ];
+
     protected $fillable = [
         'viticulturist_id',
         'policy_number',
@@ -28,36 +53,11 @@ class AgriInsurance extends Model
     ];
 
     protected $casts = [
-        'start_date'      => 'date',
-        'end_date'        => 'date',
-        'insured_amount'  => 'decimal:2',
-        'premium'         => 'decimal:2',
-        'subsidy_amount'  => 'decimal:2',
-    ];
-
-    public const COVERAGE_TYPES = [
-        'frost'         => 'Heladas',
-        'hail'          => 'Pedrisco',
-        'drought'       => 'Sequía',
-        'flood'         => 'Inundación',
-        'fire'          => 'Incendio',
-        'pest'          => 'Plagas',
-        'comprehensive' => 'Seguro integral (multirriesgo)',
-        'other'         => 'Otro',
-    ];
-
-    public const STATUSES = [
-        'pending'   => 'Pendiente',
-        'active'    => 'Activo',
-        'expired'   => 'Vencido',
-        'cancelled' => 'Cancelado',
-    ];
-
-    public const STATUS_COLORS = [
-        'pending'   => 'amber',
-        'active'    => 'green',
-        'expired'   => 'zinc',
-        'cancelled' => 'red',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'insured_amount' => 'decimal:2',
+        'premium' => 'decimal:2',
+        'subsidy_amount' => 'decimal:2',
     ];
 
     public function viticulturist(): BelongsTo

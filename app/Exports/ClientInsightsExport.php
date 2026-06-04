@@ -3,7 +3,6 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromArray;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -11,13 +10,13 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class ClientInsightsExport implements FromArray, WithStyles, WithTitle
 {
     public function __construct(
-        protected array  $pivot,
+        protected array $pivot,
         protected string $metric,
     ) {}
 
     public function array(): array
     {
-        $months  = $this->pivot['months'];
+        $months = $this->pivot['months'];
         $clients = $this->pivot['clients'];
         $colTots = $this->pivot['colTotals'];
 
@@ -63,7 +62,7 @@ class ClientInsightsExport implements FromArray, WithStyles, WithTitle
                 'font' => ['bold' => true],
                 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => 'dcfce7']],
             ],
-            'A1:A' . $lastRow => ['font' => ['bold' => true]],
+            'A1:A'.$lastRow => ['font' => ['bold' => true]],
         ];
     }
 
@@ -76,7 +75,8 @@ class ClientInsightsExport implements FromArray, WithStyles, WithTitle
     {
         [$year, $month] = explode('-', $ym);
         $names = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-        return ($names[(int) $month] ?? $month) . ' ' . $year;
+
+        return ($names[(int) $month] ?? $month).' '.$year;
     }
 
     private function fmt(float $val): string

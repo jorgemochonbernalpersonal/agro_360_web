@@ -14,8 +14,8 @@ class MobileVerifyEmailNotification extends VerifyEmailNotification
             'verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             [
-                'id'       => $notifiable->getKey(),
-                'hash'     => sha1($notifiable->getEmailForVerification()),
+                'id' => $notifiable->getKey(),
+                'hash' => sha1($notifiable->getEmailForVerification()),
                 'platform' => 'mobile',
             ]
         );

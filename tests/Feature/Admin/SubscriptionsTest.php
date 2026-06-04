@@ -19,13 +19,14 @@ class SubscriptionsTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $winery;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->admin  = User::factory()->create(['role' => 'admin',  'email_verified_at' => now()]);
+        $this->admin = User::factory()->create(['role' => 'admin',  'email_verified_at' => now()]);
         $this->winery = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
     }
 
@@ -56,11 +57,10 @@ class SubscriptionsTest extends TestCase
         $this->actingAs($this->admin);
 
         Livewire::test(SubscriptionsIndex::class)
-            ->assertViewHas('stats', fn($stats) =>
-                $stats['total']     === 3 &&
-                $stats['active']    === 1 &&
+            ->assertViewHas('stats', fn ($stats) => $stats['total'] === 3 &&
+                $stats['active'] === 1 &&
                 $stats['cancelled'] === 1 &&
-                $stats['expired']   === 1
+                $stats['expired'] === 1
             );
     }
 
@@ -68,15 +68,14 @@ class SubscriptionsTest extends TestCase
 
     public function test_filter_by_active_status_shows_only_active(): void
     {
-        $active    = Subscription::factory()->active()->create(['user_id' => $this->winery->id]);
+        $active = Subscription::factory()->active()->create(['user_id' => $this->winery->id]);
         $cancelled = Subscription::factory()->cancelled()->create(['user_id' => $this->winery->id]);
 
         $this->actingAs($this->admin);
 
         Livewire::test(SubscriptionsIndex::class)
             ->set('filterStatus', 'active')
-            ->assertViewHas('subscriptions', fn($subs) =>
-                $subs->contains('id', $active->id) &&
+            ->assertViewHas('subscriptions', fn ($subs) => $subs->contains('id', $active->id) &&
                 ! $subs->contains('id', $cancelled->id)
             );
     }
@@ -84,14 +83,13 @@ class SubscriptionsTest extends TestCase
     public function test_filter_by_monthly_plan(): void
     {
         $monthly = Subscription::factory()->create(['user_id' => $this->winery->id, 'plan_type' => 'monthly']);
-        $yearly  = Subscription::factory()->create(['user_id' => $this->winery->id, 'plan_type' => 'yearly']);
+        $yearly = Subscription::factory()->create(['user_id' => $this->winery->id, 'plan_type' => 'yearly']);
 
         $this->actingAs($this->admin);
 
         Livewire::test(SubscriptionsIndex::class)
             ->set('filterPlan', 'monthly')
-            ->assertViewHas('subscriptions', fn($subs) =>
-                $subs->contains('id', $monthly->id) &&
+            ->assertViewHas('subscriptions', fn ($subs) => $subs->contains('id', $monthly->id) &&
                 ! $subs->contains('id', $yearly->id)
             );
     }
@@ -108,8 +106,7 @@ class SubscriptionsTest extends TestCase
 
         Livewire::test(SubscriptionsIndex::class)
             ->set('search', 'Juan')
-            ->assertViewHas('subscriptions', fn($subs) =>
-                $subs->contains('id', $subA->id) &&
+            ->assertViewHas('subscriptions', fn ($subs) => $subs->contains('id', $subA->id) &&
                 ! $subs->contains('id', $subB->id)
             );
     }
@@ -126,8 +123,7 @@ class SubscriptionsTest extends TestCase
 
         Livewire::test(SubscriptionsIndex::class)
             ->set('search', 'test@example.com')
-            ->assertViewHas('subscriptions', fn($subs) =>
-                $subs->contains('id', $subA->id) &&
+            ->assertViewHas('subscriptions', fn ($subs) => $subs->contains('id', $subA->id) &&
                 ! $subs->contains('id', $subB->id)
             );
     }
@@ -168,7 +164,7 @@ class SubscriptionsTest extends TestCase
         $userA = User::factory()->create(['role' => 'viticulturist']);
         $userB = User::factory()->create(['role' => 'viticulturist']);
 
-        $match   = Subscription::factory()->active()->create(['user_id' => $userA->id, 'plan_type' => 'monthly']);
+        $match = Subscription::factory()->active()->create(['user_id' => $userA->id, 'plan_type' => 'monthly']);
         $noMatch = Subscription::factory()->active()->create(['user_id' => $userB->id, 'plan_type' => 'yearly']);
 
         $this->actingAs($this->admin);
@@ -176,8 +172,7 @@ class SubscriptionsTest extends TestCase
         Livewire::test(SubscriptionsIndex::class)
             ->set('filterStatus', 'active')
             ->set('filterPlan', 'monthly')
-            ->assertViewHas('subscriptions', fn($subs) =>
-                $subs->contains('id', $match->id) &&
+            ->assertViewHas('subscriptions', fn ($subs) => $subs->contains('id', $match->id) &&
                 ! $subs->contains('id', $noMatch->id)
             );
     }

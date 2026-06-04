@@ -28,13 +28,13 @@ class AgriculturalActivityPolicy
 
     /**
      * Determinar si el usuario puede crear actividades.
-     * 
+     *
      * @param Plot|null $plot Parcela opcional para validar propiedad
      */
     public function create(User $user, ?Plot $plot = null): bool
     {
         // Solo viticultores pueden crear actividades
-        if (!$user->hasViticulturistAccess()) {
+        if (! $user->hasViticulturistAccess()) {
             return false;
         }
 
@@ -52,7 +52,7 @@ class AgriculturalActivityPolicy
      */
     public function update(User $user, AgriculturalActivity $activity): bool
     {
-        return $activity->viticulturist_id === $user->id && !$activity->is_locked;
+        return $activity->viticulturist_id === $user->id && ! $activity->is_locked;
     }
 
     /**
@@ -61,6 +61,6 @@ class AgriculturalActivityPolicy
      */
     public function delete(User $user, AgriculturalActivity $activity): bool
     {
-        return $activity->viticulturist_id === $user->id && !$activity->is_locked;
+        return $activity->viticulturist_id === $user->id && ! $activity->is_locked;
     }
 }

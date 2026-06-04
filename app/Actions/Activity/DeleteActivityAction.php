@@ -14,7 +14,7 @@ class DeleteActivityAction
     public function execute(AgriculturalActivity $activity): bool
     {
         // Verificar autorización
-        if (!Auth::user()->can('delete', $activity)) {
+        if (! Auth::user()->can('delete', $activity)) {
             throw new \Exception(__('No tienes permiso para eliminar esta actividad.'));
         }
 

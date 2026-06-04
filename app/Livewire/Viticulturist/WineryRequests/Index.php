@@ -15,14 +15,16 @@ class Index extends Component
     use WithToastNotifications;
 
     public string $searchQuery = '';
-    public string $message     = '';
-    public bool   $showSearch  = false;
+
+    public string $message = '';
+
+    public bool $showSearch = false;
 
     public function openSearch(): void
     {
         $this->searchQuery = '';
-        $this->message     = '';
-        $this->showSearch  = true;
+        $this->message = '';
+        $this->showSearch = true;
     }
 
     public function closeSearch(): void
@@ -49,13 +51,13 @@ class Index extends Component
 
         $exclude = $alreadyLinked->merge($alreadyRequested)->unique();
 
-        $like = '%' . mb_strtolower($term) . '%';
+        $like = '%'.mb_strtolower($term).'%';
 
         return User::where('role', User::ROLE_WINERY)
             ->whereNotIn('id', $exclude)
             ->where(function ($q) use ($like) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$like])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$like]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$like]);
             })
             ->orderBy('name')
             ->limit(10)
@@ -76,6 +78,7 @@ class Index extends Component
 
         if ($alreadyLinked) {
             $this->toastError(__('Ya estás vinculado a esta bodega.'));
+
             return;
         }
 
@@ -87,6 +90,7 @@ class Index extends Component
 
         if ($existing) {
             $this->toastError(__('Ya tienes una solicitud activa con esta bodega.'));
+
             return;
         }
 
@@ -97,8 +101,8 @@ class Index extends Component
         WineryJoinRequest::updateOrCreate(
             ['viticulturist_id' => $viticulturistId, 'winery_id' => $wineryId],
             [
-                'status'       => WineryJoinRequest::STATUS_PENDING,
-                'message'      => $this->message ?: null,
+                'status' => WineryJoinRequest::STATUS_PENDING,
+                'message' => $this->message ?: null,
                 'requested_at' => now(),
                 'responded_at' => null,
             ]
@@ -106,11 +110,11 @@ class Index extends Component
 
         $winery->notify(new WineryJoinRequestedNotification(Auth::user()));
 
-        $this->showSearch  = false;
+        $this->showSearch = false;
         $this->searchQuery = '';
-        $this->message     = '';
+        $this->message = '';
 
-        $this->toastSuccess(__('Solicitud enviada a ') . $winery->name . '.');
+        $this->toastSuccess(__('Solicitud enviada a ').$winery->name.'.');
     }
 
     public function cancelRequest(int $requestId): void
@@ -125,7 +129,7 @@ class Index extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Solicitudes de Bodega - Agro365',
+        'title' => 'Solicitudes de Bodega - Agro365',
         'description' => 'Solicita vincularte a una bodega para colaborar en la gestión de tus vendimias.',
     ])]
     public function render()
@@ -153,7 +157,7 @@ class Index extends Component
         $wineries = $this->showSearch ? $this->searchWineries() : [];
 
         return view('livewire.viticulturist.winery-requests.index', [
-            'pending'  => $pending,
+            'pending' => $pending,
             'approved' => $approved,
             'rejected' => $rejected,
             'wineries' => $wineries,

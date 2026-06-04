@@ -9,37 +9,38 @@ use App\Models\SigpacCode;
 use App\Models\SigpacUse;
 use App\Models\User;
 use App\Services\Exporters\SiexCsvExporter;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
 use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class SiexCsvExporterTest extends TestCase
 {
     use RefreshDatabase;
 
     protected SiexCsvExporter $exporter;
+
     protected User $user;
+
     protected OfficialReport $report;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Seed de localización requerido por los factories de Plot
         $this->seed([
             AutonomousCommunitySeeder::class,
             ProvinceSeeder::class,
             MunicipalitySeeder::class,
         ]);
-        
+
         Storage::fake('local');
-        $this->exporter = new SiexCsvExporter();
-        
+        $this->exporter = new SiexCsvExporter;
+
         // Crear usuario de prueba
         $this->user = User::factory()->create([
             'name' => 'Test Viticultor',
@@ -153,7 +154,7 @@ class SiexCsvExporterTest extends TestCase
             'viticulturist_id' => $this->user->id,
             'area' => 3.0,
         ]);
-        
+
         $plot->sigpacCodes()->attach($sigpacCode->id);
 
         // Crear actividades
@@ -206,7 +207,7 @@ class SiexCsvExporterTest extends TestCase
 
         // Verificar delimitador punto y coma
         $this->assertStringContainsString(';', $csvContent);
-        
+
         // Verificar UTF-8 BOM
         $this->assertStringStartsWith("\xEF\xBB\xBF", $csvContent);
     }

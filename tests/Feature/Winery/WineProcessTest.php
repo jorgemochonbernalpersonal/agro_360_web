@@ -21,6 +21,7 @@ use Tests\Feature\WineryTestCase;
 class WineProcessTest extends WineryTestCase
 {
     private User $winery;
+
     private Wine $wine;
 
     protected function setUp(): void
@@ -31,37 +32,10 @@ class WineProcessTest extends WineryTestCase
         $this->actingAs($this->winery);
 
         $this->wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Vino Test',
+            'user_id' => $this->winery->id,
+            'name' => 'Vino Test',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
-        ]);
-    }
-
-    // ── Helper ────────────────────────────────────────────────────────────────
-
-    private function makeProcess(array $attrs = []): WineProcessDetail
-    {
-        return WineProcessDetail::create(array_merge([
-            'wine_id'      => $this->wine->id,
-            'process_type' => 'fermentation',
-            'start_date'   => now()->toDateString(),
-            'created_by'   => $this->winery->id,
-        ], $attrs));
-    }
-
-    private function makeContainer(): Container
-    {
-        $type = ContainerType::firstOrCreate(['name' => 'Depósito Inox']);
-
-        return Container::create([
-            'user_id'       => $this->winery->id,
-            'name'          => 'Cuba Process',
-            'type_id'       => $type->id,
-            'capacity'      => 5000,
-            'unit'          => 'litros',
-            'used_capacity' => 0,
-            'archived'      => false,
+            'status' => 'in_progress',
         ]);
     }
 
@@ -76,7 +50,7 @@ class WineProcessTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_process_details', [
-            'wine_id'      => $this->wine->id,
+            'wine_id' => $this->wine->id,
             'process_type' => 'fermentation',
         ]);
     }
@@ -93,7 +67,7 @@ class WineProcessTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_process_details', [
-            'wine_id'      => $this->wine->id,
+            'wine_id' => $this->wine->id,
             'process_type' => 'aging',
             'container_id' => $container->id,
         ]);
@@ -162,7 +136,7 @@ class WineProcessTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_process_details', [
-            'id'           => $process->id,
+            'id' => $process->id,
             'process_type' => 'settling',
         ]);
     }
@@ -197,10 +171,10 @@ class WineProcessTest extends WineryTestCase
     public function test_process_of_wrong_wine_returns_404(): void
     {
         $otherWine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Otro Vino',
+            'user_id' => $this->winery->id,
+            'name' => 'Otro Vino',
             'wine_type' => 'white',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         $process = $this->makeProcess(); // belongs to $this->wine
@@ -208,5 +182,32 @@ class WineProcessTest extends WineryTestCase
         // Mounting Edit with mismatched wine/process should abort 404
         Livewire::test(Edit::class, ['wine' => $otherWine, 'process' => $process])
             ->assertStatus(404);
+    }
+
+    // ── Helper ────────────────────────────────────────────────────────────────
+
+    private function makeProcess(array $attrs = []): WineProcessDetail
+    {
+        return WineProcessDetail::create(array_merge([
+            'wine_id' => $this->wine->id,
+            'process_type' => 'fermentation',
+            'start_date' => now()->toDateString(),
+            'created_by' => $this->winery->id,
+        ], $attrs));
+    }
+
+    private function makeContainer(): Container
+    {
+        $type = ContainerType::firstOrCreate(['name' => 'Depósito Inox']);
+
+        return Container::create([
+            'user_id' => $this->winery->id,
+            'name' => 'Cuba Process',
+            'type_id' => $type->id,
+            'capacity' => 5000,
+            'unit' => 'litros',
+            'used_capacity' => 0,
+            'archived' => false,
+        ]);
     }
 }

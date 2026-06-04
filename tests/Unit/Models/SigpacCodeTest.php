@@ -34,13 +34,13 @@ class SigpacCodeTest extends TestCase
     {
         $fields = [
             'code_autonomous_community' => '13',
-            'code_province'             => '28',
-            'code_municipality'         => '079',
-            'code_aggregate'            => '0',
-            'code_zone'                 => '0',
-            'code_polygon'              => '12',
-            'code_plot'                 => '00045',
-            'code_enclosure'            => '003',
+            'code_province' => '28',
+            'code_municipality' => '079',
+            'code_aggregate' => '0',
+            'code_zone' => '0',
+            'code_polygon' => '12',
+            'code_plot' => '00045',
+            'code_enclosure' => '003',
         ];
 
         $code = SigpacCode::buildCodeFromFields($fields);
@@ -55,13 +55,13 @@ class SigpacCodeTest extends TestCase
     {
         $fields = [
             'code_autonomous_community' => '1',   // 1 dígito -> '01'
-            'code_province'             => '8',   // 1 dígito -> '08'
-            'code_municipality'         => '79',  // 2 dígitos -> '079'
-            'code_aggregate'            => '0',   // 1 dígito -> '000'
-            'code_zone'                 => '0',   // 1 dígito -> '000'
-            'code_polygon'              => '2',   // 1 dígito -> '002'
-            'code_plot'                 => '45',  // 2 dígitos -> '00045'
-            'code_enclosure'            => '3',   // 1 dígito -> '003'
+            'code_province' => '8',   // 1 dígito -> '08'
+            'code_municipality' => '79',  // 2 dígitos -> '079'
+            'code_aggregate' => '0',   // 1 dígito -> '000'
+            'code_zone' => '0',   // 1 dígito -> '000'
+            'code_polygon' => '2',   // 1 dígito -> '002'
+            'code_plot' => '45',  // 2 dígitos -> '00045'
+            'code_enclosure' => '3',   // 1 dígito -> '003'
         ];
 
         $code = SigpacCode::buildCodeFromFields($fields);
@@ -75,13 +75,13 @@ class SigpacCodeTest extends TestCase
     {
         $fields = [
             'code_autonomous_community' => '13',
-            'code_province'             => '28',
-            'code_municipality'         => '079',
-            'code_aggregate'            => '999',  // 3 dígitos — caso que antes fallaba
-            'code_zone'                 => '5',
-            'code_polygon'              => '125',  // 3 dígitos — caso que antes fallaba
-            'code_plot'                 => '00100',
-            'code_enclosure'            => '001',
+            'code_province' => '28',
+            'code_municipality' => '079',
+            'code_aggregate' => '999',  // 3 dígitos — caso que antes fallaba
+            'code_zone' => '5',
+            'code_polygon' => '125',  // 3 dígitos — caso que antes fallaba
+            'code_plot' => '00100',
+            'code_enclosure' => '001',
         ];
 
         $code = SigpacCode::buildCodeFromFields($fields);
@@ -95,13 +95,13 @@ class SigpacCodeTest extends TestCase
     {
         $fields = [
             'code_autonomous_community' => '13',
-            'code_province'             => '28',
-            'code_municipality'         => '079',
+            'code_province' => '28',
+            'code_municipality' => '079',
             // code_aggregate faltante -> '000'
-            'code_zone'                 => '0',
-            'code_polygon'              => '12',
-            'code_plot'                 => '00045',
-            'code_enclosure'            => '003',
+            'code_zone' => '0',
+            'code_polygon' => '12',
+            'code_plot' => '00045',
+            'code_enclosure' => '003',
         ];
 
         $code = SigpacCode::buildCodeFromFields($fields);
@@ -113,13 +113,13 @@ class SigpacCodeTest extends TestCase
     {
         $fields = [
             'code_autonomous_community' => '13',
-            'code_province'             => '28',
-            'code_municipality'         => '079',
-            'code_aggregate'            => '',  // Vacío -> '000'
-            'code_zone'                 => '0',
-            'code_polygon'              => '12',
-            'code_plot'                 => '00045',
-            'code_enclosure'            => '003',
+            'code_province' => '28',
+            'code_municipality' => '079',
+            'code_aggregate' => '',  // Vacío -> '000'
+            'code_zone' => '0',
+            'code_polygon' => '12',
+            'code_plot' => '00045',
+            'code_enclosure' => '003',
         ];
 
         $code = SigpacCode::buildCodeFromFields($fields);
@@ -161,14 +161,14 @@ class SigpacCodeTest extends TestCase
         $parsed = SigpacCode::parseSigpacCode('13-28-079-000-000-012-00045-003');
 
         $this->assertEquals('132807900000001200045003', $parsed['code']);
-        $this->assertEquals('13',     $parsed['code_autonomous_community']);
-        $this->assertEquals('28',     $parsed['code_province']);
-        $this->assertEquals('079',    $parsed['code_municipality']);
-        $this->assertEquals('000',    $parsed['code_aggregate']);
-        $this->assertEquals('000',    $parsed['code_zone']);
-        $this->assertEquals('012',    $parsed['code_polygon']);
-        $this->assertEquals('00045',  $parsed['code_plot']);
-        $this->assertEquals('003',    $parsed['code_enclosure']);
+        $this->assertEquals('13', $parsed['code_autonomous_community']);
+        $this->assertEquals('28', $parsed['code_province']);
+        $this->assertEquals('079', $parsed['code_municipality']);
+        $this->assertEquals('000', $parsed['code_aggregate']);
+        $this->assertEquals('000', $parsed['code_zone']);
+        $this->assertEquals('012', $parsed['code_polygon']);
+        $this->assertEquals('00045', $parsed['code_plot']);
+        $this->assertEquals('003', $parsed['code_enclosure']);
     }
 
     public function test_parse_sigpac_code_handles_edge_cases(): void
@@ -229,7 +229,7 @@ class SigpacCodeTest extends TestCase
 
     public function test_formatted_code_returns_na_for_null_code(): void
     {
-        $sigpacCode = new SigpacCode();
+        $sigpacCode = new SigpacCode;
         $sigpacCode->code = null;
 
         $this->assertEquals('N/A', $sigpacCode->formatted_code);
@@ -260,8 +260,8 @@ class SigpacCodeTest extends TestCase
     public function test_full_code_constructs_from_fields_when_code_missing(): void
     {
         $sigpacCode = SigpacCode::create([
-            'code_polygon'   => '12',
-            'code_plot'      => '00045',
+            'code_polygon' => '12',
+            'code_plot' => '00045',
             'code_enclosure' => '003',
         ]);
 
@@ -277,15 +277,15 @@ class SigpacCodeTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         $sigpacCode = SigpacCode::create([
-            'code'                      => '132807900000001200045003',
+            'code' => '132807900000001200045003',
             'code_autonomous_community' => '13',
-            'code_province'             => '28',
-            'code_municipality'         => '079',
-            'code_aggregate'            => '0',
-            'code_zone'                 => '0',
-            'code_polygon'              => '12',
-            'code_plot'                 => '00045',
-            'code_enclosure'            => '003',
+            'code_province' => '28',
+            'code_municipality' => '079',
+            'code_aggregate' => '0',
+            'code_zone' => '0',
+            'code_polygon' => '12',
+            'code_plot' => '00045',
+            'code_enclosure' => '003',
         ]);
 
         $plot1 = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
@@ -303,15 +303,15 @@ class SigpacCodeTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         $sigpacCode = SigpacCode::create([
-            'code'                      => '132807900000001200045003',
+            'code' => '132807900000001200045003',
             'code_autonomous_community' => '13',
-            'code_province'             => '28',
-            'code_municipality'         => '079',
-            'code_aggregate'            => '0',
-            'code_zone'                 => '0',
-            'code_polygon'              => '12',
-            'code_plot'                 => '00045',
-            'code_enclosure'            => '003',
+            'code_province' => '28',
+            'code_municipality' => '079',
+            'code_aggregate' => '0',
+            'code_zone' => '0',
+            'code_polygon' => '12',
+            'code_plot' => '00045',
+            'code_enclosure' => '003',
         ]);
 
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();

@@ -12,24 +12,6 @@ use Tests\Feature\SupervisorTestCase;
 
 class ActivityIndexTest extends SupervisorTestCase
 {
-    private function makeSetup(bool $cuadernoAccess = true): array
-    {
-        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
-
-        WineryViticulturist::create([
-            'winery_id'           => $winery->id,
-            'viticulturist_id'    => $viticulturist->id,
-            'source'              => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'       => $supervisor->id,
-            'assigned_by'         => $supervisor->id,
-            'notebook_access'     => $cuadernoAccess,
-            'notebook_granted_at' => $cuadernoAccess ? now() : null,
-        ]);
-
-        return [$supervisor, $viticulturist, $winery];
-    }
-
     // ── carga básica ──────────────────────────────────────────────────────
 
     public function test_index_loads_for_supervisor(): void
@@ -88,7 +70,7 @@ class ActivityIndexTest extends SupervisorTestCase
     {
         $supervisor = $this->makeSupervisor();
         $outsideVit = User::factory()->create(['role' => 'viticulturist']);
-        $plot       = $this->makePlot($outsideVit);
+        $plot = $this->makePlot($outsideVit);
 
         AgriculturalActivity::factory()
             ->forViticulturist($outsideVit)
@@ -162,11 +144,11 @@ class ActivityIndexTest extends SupervisorTestCase
             ->create(['activity_type' => 'observation', 'notes' => 'Alerta plagas']);
 
         Observation::create([
-            'activity_id'              => $actAlert->id,
-            'threshold_exceeded'       => true,
+            'activity_id' => $actAlert->id,
+            'threshold_exceeded' => true,
             'affected_area_percentage' => 35.0,
-            'observation_type'         => 'pest',
-            'description'              => 'Plaga detectada',
+            'observation_type' => 'pest',
+            'description' => 'Plaga detectada',
         ]);
 
         $actNormal = AgriculturalActivity::factory()
@@ -175,10 +157,10 @@ class ActivityIndexTest extends SupervisorTestCase
             ->create(['activity_type' => 'observation', 'notes' => 'Observación normal']);
 
         Observation::create([
-            'activity_id'        => $actNormal->id,
+            'activity_id' => $actNormal->id,
             'threshold_exceeded' => false,
-            'observation_type'   => 'general',
-            'description'        => 'Sin incidencias',
+            'observation_type' => 'general',
+            'description' => 'Sin incidencias',
         ]);
 
         Livewire::actingAs($supervisor)
@@ -200,12 +182,12 @@ class ActivityIndexTest extends SupervisorTestCase
             ->create(['activity_type' => 'observation']);
 
         Observation::create([
-            'activity_id'              => $act->id,
-            'threshold_exceeded'       => false,
-            'follow_up_date'           => now()->subDays(3),
+            'activity_id' => $act->id,
+            'threshold_exceeded' => false,
+            'follow_up_date' => now()->subDays(3),
             'affected_area_percentage' => 10.0,
-            'observation_type'         => 'general',
-            'description'              => 'Seguimiento vencido',
+            'observation_type' => 'general',
+            'description' => 'Seguimiento vencido',
         ]);
 
         Livewire::actingAs($supervisor)
@@ -224,5 +206,23 @@ class ActivityIndexTest extends SupervisorTestCase
             ->call('clearFilters')
             ->assertSet('filterType', '')
             ->assertSet('onlyAlerts', false);
+    }
+
+    private function makeSetup(bool $cuadernoAccess = true): array
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
+            'notebook_access' => $cuadernoAccess,
+            'notebook_granted_at' => $cuadernoAccess ? now() : null,
+        ]);
+
+        return [$supervisor, $viticulturist, $winery];
     }
 }

@@ -36,8 +36,8 @@ class CreateTest extends TestCase
             ->assertRedirect(route('viticulturist.machinery.index'));
 
         $this->assertDatabaseHas('machinery', [
-            'name'             => 'Tractor Test',
-            'type'             => 'Tractor',
+            'name' => 'Tractor Test',
+            'type' => 'Tractor',
             'viticulturist_id' => $viticulturist->id,
         ]);
     }

@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class OfficialReport extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'report_type',
@@ -84,7 +85,7 @@ class OfficialReport extends Model
             // Código de 32 caracteres alfanuméricos
             $code = strtoupper(Str::random(32));
         } while (self::where('verification_code', $code)->exists());
-        
+
         return $code;
     }
 
@@ -97,44 +98,45 @@ class OfficialReport extends Model
         do {
             // Generar un hash SHA-256 temporal único
             // Usamos timestamp + random bytes para garantizar unicidad
-            $tempData = now()->timestamp . Str::random(32) . uniqid('', true);
+            $tempData = now()->timestamp.Str::random(32).uniqid('', true);
             $tempHash = hash('sha256', $tempData);
         } while (self::where('signature_hash', $tempHash)->exists());
-        
+
         return $tempHash;
     }
 
     /**
      * Generar hash de firma basado en contenido del informe
-     * 
+     *
      * @param array $data Datos del informe a firmar
+     *
      * @return array ['hash' => string, 'nonce' => string, 'version' => string]
      */
     public static function generateSignatureHash(array $data): array
     {
         // Añadir nonce único para prevenir replay attacks
-        if (!isset($data['nonce'])) {
+        if (! isset($data['nonce'])) {
             $data['nonce'] = bin2hex(random_bytes(16));
         }
-        
+
         // Añadir versión de firma para compatibilidad futura
-        if (!isset($data['signature_version'])) {
+        if (! isset($data['signature_version'])) {
             $data['signature_version'] = config('reports.signature_version', '1.0');
         }
-        
+
         // Ordenar arrays recursivamente para garantizar hash consistente
         // Esto previene falsos positivos de "modificado" por orden de arrays
         $data = self::sortArraysRecursively($data);
-        
+
         // Crear string único del contenido
         $content = json_encode($data, JSON_UNESCAPED_UNICODE);
-        
+
         // Añadir APP_KEY para mayor seguridad
         $secretKey = config('app.key');
-        
+
         // Generar hash SHA-256
-        $hash = hash('sha256', $content . $secretKey);
-        
+        $hash = hash('sha256', $content.$secretKey);
+
         return [
             'hash' => $hash,
             'nonce' => $data['nonce'],
@@ -143,45 +145,15 @@ class OfficialReport extends Model
     }
 
     /**
-     * Ordenar arrays recursivamente para hash consistente
-     * 
-     * @param mixed $data
-     * @return mixed
-     */
-    protected static function sortArraysRecursively($data)
-    {
-        if (!is_array($data)) {
-            return $data;
-        }
-        
-        // Ordenar por claves
-        ksort($data);
-        
-        // Procesar cada valor
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                // Si es array numérico (lista), ordenar valores
-                if (array_keys($value) === range(0, count($value) - 1)) {
-                    sort($value);
-                }
-                // Recursión para arrays anidados
-                $data[$key] = self::sortArraysRecursively($value);
-            }
-        }
-        
-        return $data;
-    }
-
-    /**
      * Verificar si un hash coincide con los datos
-     * 
-     * @param array $data Datos a verificar
+     *
+     * @param array  $data Datos a verificar
      * @param string $hash Hash a comparar
-     * @return bool
      */
     public static function verifySignatureHash(array $data, string $hash): bool
     {
         $result = self::generateSignatureHash($data);
+
         return hash_equals($result['hash'], $hash);
     }
 
@@ -220,45 +192,44 @@ class OfficialReport extends Model
      * Verificar si el informe puede ser invalidado
      * Por seguridad, solo se pueden invalidar informes recientes
      * El número de días se configura en config/reports.php
-     * 
-     * @return bool
      */
     public function canBeInvalidated(): bool
     {
         $maxDaysToInvalidate = config('reports.max_days_to_invalidate', 30);
         $daysSinceSigned = $this->signed_at->diffInDays(now());
-        
+
         return $daysSinceSigned <= $maxDaysToInvalidate;
     }
 
     /**
      * Obtener días restantes para poder invalidar
-     * 
+     *
      * @return int|null Retorna null si ya no se puede invalidar
      */
     public function getDaysRemainingToInvalidate(): ?int
     {
-        if (!$this->canBeInvalidated()) {
+        if (! $this->canBeInvalidated()) {
             return null;
         }
-        
+
         $maxDaysToInvalidate = config('reports.max_days_to_invalidate', 30);
         $daysSinceSigned = $this->signed_at->diffInDays(now());
-        
+
         return max(0, $maxDaysToInvalidate - $daysSinceSigned);
     }
 
     /**
      * Invalidar informe
-     * 
-     * @param string $reason Motivo de invalidación
+     *
+     * @param string   $reason Motivo de invalidación
      * @param int|null $userId ID del usuario que invalida
+     *
      * @throws \Exception Si el informe no puede ser invalidado
      */
     public function invalidate(string $reason, ?int $userId = null): void
     {
         // Verificar si se puede invalidar
-        if (!$this->canBeInvalidated()) {
+        if (! $this->canBeInvalidated()) {
             $maxDays = config('reports.max_days_to_invalidate', 30);
             throw new \Exception("Este informe no puede ser invalidado. Solo se pueden invalidar informes con menos de {$maxDays} días desde su firma.");
         }
@@ -312,6 +283,7 @@ class OfficialReport extends Model
     public function getReportTypeNameAttribute(): string
     {
         $types = config('reports.types', []);
+
         return $types[$this->report_type]['name'] ?? 'Informe';
     }
 
@@ -321,6 +293,7 @@ class OfficialReport extends Model
     public function getReportIconAttribute(): string
     {
         $types = config('reports.types', []);
+
         return $types[$this->report_type]['icon'] ?? '📄';
     }
 
@@ -330,23 +303,23 @@ class OfficialReport extends Model
     public function getReportTypeDescriptionAttribute(): string
     {
         $types = config('reports.types', []);
+
         return $types[$this->report_type]['description'] ?? '';
     }
 
     /**
      * Obtener tipos de informes disponibles
-     * 
+     *
      * @param bool $onlyImplemented Filtrar solo tipos implementados
-     * @return array
      */
     public static function getAvailableTypes(bool $onlyImplemented = true): array
     {
         $types = config('reports.types', []);
-        
+
         if ($onlyImplemented) {
-            return array_filter($types, fn($type) => $type['implemented'] ?? false);
+            return array_filter($types, fn ($type) => $type['implemented'] ?? false);
         }
-        
+
         return $types;
     }
 
@@ -355,19 +328,19 @@ class OfficialReport extends Model
      */
     public function getFormattedPdfSizeAttribute(): string
     {
-        if (!$this->pdf_size) {
+        if (! $this->pdf_size) {
             return 'N/A';
         }
 
         $bytes = $this->pdf_size;
-        
+
         if ($bytes >= 1048576) {
-            return number_format($bytes / 1048576, 2) . ' MB';
+            return number_format($bytes / 1048576, 2).' MB';
         } elseif ($bytes >= 1024) {
-            return number_format($bytes / 1024, 2) . ' KB';
+            return number_format($bytes / 1024, 2).' KB';
         }
-        
-        return $bytes . ' B';
+
+        return $bytes.' B';
     }
 
     /**
@@ -375,12 +348,12 @@ class OfficialReport extends Model
      */
     public function pdfExists(): bool
     {
-        if (!$this->pdf_path) {
+        if (! $this->pdf_path) {
             return false;
         }
 
         // Si el path es relativo (usando Storage), verificar con Storage
-        if (!str_starts_with($this->pdf_path, storage_path())) {
+        if (! str_starts_with($this->pdf_path, storage_path())) {
             return \Storage::disk('local')->exists($this->pdf_path);
         }
 
@@ -393,13 +366,15 @@ class OfficialReport extends Model
      */
     public function getShortHashAttribute(): string
     {
-        return substr($this->signature_hash, 0, 16) . '...';
+        return substr($this->signature_hash, 0, 16).'...';
     }
 
     /**
      * ========================================
      * SCOPES
      * ========================================
+     *
+     * @param mixed $query
      */
 
     /**
@@ -412,6 +387,8 @@ class OfficialReport extends Model
 
     /**
      * Filtrar por tipo de informe
+     *
+     * @param mixed $query
      */
     public function scopeOfType($query, string $type)
     {
@@ -420,42 +397,83 @@ class OfficialReport extends Model
 
     /**
      * Filtrar solo informes válidos
+     *
+     * @param mixed $query
      */
     public function scopeValid($query)
     {
         return $query->where('is_valid', true)
-                     ->whereNull('invalidated_at');
+            ->whereNull('invalidated_at');
     }
 
     /**
      * Filtrar solo informes invalidados
+     *
+     * @param mixed $query
      */
     public function scopeInvalid($query)
     {
         return $query->where('is_valid', false)
-                     ->orWhereNotNull('invalidated_at');
+            ->orWhereNotNull('invalidated_at');
     }
 
     /**
      * Filtrar por rango de fechas del periodo
+     *
+     * @param mixed $query
+     * @param mixed $startDate
+     * @param mixed $endDate
      */
     public function scopeInPeriod($query, $startDate, $endDate)
     {
         return $query->where(function ($q) use ($startDate, $endDate) {
             $q->whereBetween('period_start', [$startDate, $endDate])
-              ->orWhereBetween('period_end', [$startDate, $endDate])
-              ->orWhere(function ($q2) use ($startDate, $endDate) {
-                  $q2->where('period_start', '<=', $startDate)
-                     ->where('period_end', '>=', $endDate);
-              });
+                ->orWhereBetween('period_end', [$startDate, $endDate])
+                ->orWhere(function ($q2) use ($startDate, $endDate) {
+                    $q2->where('period_start', '<=', $startDate)
+                        ->where('period_end', '>=', $endDate);
+                });
         });
     }
 
     /**
      * Ordenar por más reciente
+     *
+     * @param mixed $query
      */
     public function scopeRecent($query)
     {
         return $query->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Ordenar arrays recursivamente para hash consistente
+     *
+     * @param mixed $data
+     *
+     * @return mixed
+     */
+    protected static function sortArraysRecursively($data)
+    {
+        if (! is_array($data)) {
+            return $data;
+        }
+
+        // Ordenar por claves
+        ksort($data);
+
+        // Procesar cada valor
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                // Si es array numérico (lista), ordenar valores
+                if (array_keys($value) === range(0, count($value) - 1)) {
+                    sort($value);
+                }
+                // Recursión para arrays anidados
+                $data[$key] = self::sortArraysRecursively($value);
+            }
+        }
+
+        return $data;
     }
 }

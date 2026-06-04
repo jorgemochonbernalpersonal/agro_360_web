@@ -12,21 +12,6 @@ class ApiRoleMiddlewareTest extends TestCase
 {
     use RefreshDatabase;
 
-    // ── Tests directos sobre el middleware (sin controllers) ──────────────────
-    // Evitan que las policies de los controllers enmascaren el comportamiento del middleware
-
-    private function runMiddleware(User $user, string ...$roles): \Symfony\Component\HttpFoundation\Response
-    {
-        $request = Request::create('/api/v1/test');
-        $request->setUserResolver(fn () => $user);
-
-        return (new ApiRole())->handle(
-            $request,
-            fn () => response()->json(['ok' => true]),
-            ...$roles
-        );
-    }
-
     public function test_middleware_blocks_wrong_role_directly(): void
     {
         $user = User::factory()->viticulturist()->create(['can_login' => true]);
@@ -196,5 +181,20 @@ class ApiRoleMiddlewareTest extends TestCase
                 ->getJson('/api/v1/me')
                 ->assertStatus(200);
         }
+    }
+
+    // ── Tests directos sobre el middleware (sin controllers) ──────────────────
+    // Evitan que las policies de los controllers enmascaren el comportamiento del middleware
+
+    private function runMiddleware(User $user, string ...$roles): \Symfony\Component\HttpFoundation\Response
+    {
+        $request = Request::create('/api/v1/test');
+        $request->setUserResolver(fn () => $user);
+
+        return (new ApiRole)->handle(
+            $request,
+            fn () => response()->json(['ok' => true]),
+            ...$roles
+        );
     }
 }

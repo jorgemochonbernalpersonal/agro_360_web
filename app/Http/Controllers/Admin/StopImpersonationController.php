@@ -16,15 +16,16 @@ class StopImpersonationController extends Controller
         $targetUserId = Auth::id();
 
         // Solo funciona si hay una sesión de impersonación activa
-        if (!$adminId || !session()->has('impersonating')) {
+        if (! $adminId || ! session()->has('impersonating')) {
             abort(403);
         }
 
         $admin = User::find($adminId);
 
-        if (!$admin || !$admin->isAdmin()) {
+        if (! $admin || ! $admin->isAdmin()) {
             session()->forget(['impersonating', 'admin_id', 'admin_name', 'impersonation_started_at']);
             Auth::logout();
+
             return redirect()->route('login');
         }
 

@@ -45,7 +45,7 @@ class BottlingAuthorizationsTest extends WineryTestCase
 
     public function test_winery_can_create_bottling_authorization(): void
     {
-        $firstType   = array_key_first(BottlingAuthorization::AUTHORIZATION_TYPES);
+        $firstType = array_key_first(BottlingAuthorization::AUTHORIZATION_TYPES);
         $firstStatus = array_key_first(BottlingAuthorization::STATUSES);
 
         Livewire::test(Create::class)
@@ -56,23 +56,23 @@ class BottlingAuthorizationsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('bottling_authorizations', [
-            'user_id'              => $this->winery->id,
+            'user_id' => $this->winery->id,
             'authorization_number' => 'AUTH-2026-001',
-            'authorization_type'   => $firstType,
-            'status'               => $firstStatus,
+            'authorization_type' => $firstType,
+            'status' => $firstStatus,
         ]);
     }
 
     public function test_winery_can_edit_bottling_authorization(): void
     {
-        $firstType   = array_key_first(BottlingAuthorization::AUTHORIZATION_TYPES);
+        $firstType = array_key_first(BottlingAuthorization::AUTHORIZATION_TYPES);
         $firstStatus = array_key_first(BottlingAuthorization::STATUSES);
 
         $authorization = BottlingAuthorization::create([
-            'user_id'              => $this->winery->id,
+            'user_id' => $this->winery->id,
             'authorization_number' => 'AUTH-OLD',
-            'authorization_type'   => $firstType,
-            'status'               => $firstStatus,
+            'authorization_type' => $firstType,
+            'status' => $firstStatus,
         ]);
 
         Livewire::test(Edit::class, ['bottlingAuthorization' => $authorization])
@@ -81,21 +81,21 @@ class BottlingAuthorizationsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('bottling_authorizations', [
-            'id'                   => $authorization->id,
+            'id' => $authorization->id,
             'authorization_number' => 'AUTH-NEW',
         ]);
     }
 
     public function test_winery_cannot_edit_other_winery_bottling_authorization(): void
     {
-        $firstType   = array_key_first(BottlingAuthorization::AUTHORIZATION_TYPES);
+        $firstType = array_key_first(BottlingAuthorization::AUTHORIZATION_TYPES);
         $firstStatus = array_key_first(BottlingAuthorization::STATUSES);
 
         $authorization = BottlingAuthorization::create([
-            'user_id'              => $this->winery->id,
+            'user_id' => $this->winery->id,
             'authorization_number' => 'AUTH-PROT',
-            'authorization_type'   => $firstType,
-            'status'               => $firstStatus,
+            'authorization_type' => $firstType,
+            'status' => $firstStatus,
         ]);
 
         $otherWinery = $this->makeOtherWinery();
@@ -107,14 +107,14 @@ class BottlingAuthorizationsTest extends WineryTestCase
 
     public function test_winery_can_delete_bottling_authorization(): void
     {
-        $firstType   = array_key_first(BottlingAuthorization::AUTHORIZATION_TYPES);
+        $firstType = array_key_first(BottlingAuthorization::AUTHORIZATION_TYPES);
         $firstStatus = array_key_first(BottlingAuthorization::STATUSES);
 
         $authorization = BottlingAuthorization::create([
-            'user_id'              => $this->winery->id,
+            'user_id' => $this->winery->id,
             'authorization_number' => 'AUTH-DEL',
-            'authorization_type'   => $firstType,
-            'status'               => $firstStatus,
+            'authorization_type' => $firstType,
+            'status' => $firstStatus,
         ]);
 
         Livewire::test(Index::class)

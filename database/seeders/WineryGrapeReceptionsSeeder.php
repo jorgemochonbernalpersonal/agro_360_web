@@ -19,21 +19,23 @@ use Illuminate\Support\Facades\Hash;
  */
 class WineryGrapeReceptionsSeeder extends Seeder
 {
-    private const WINERY_USER_ID   = 1;
+    private const WINERY_USER_ID = 1;
+
     private const DEMO_EMAIL_SUFFIX = '@viticultor.agro365.demo';
 
     // ── Geografía (Gran Canaria) ─────────────────────────────────────────────────
-    private const AC_ID       = 5;    // Canarias
+    private const AC_ID = 5;    // Canarias
+
     private const PROVINCE_ID = 14;   // Las Palmas
 
     private const MUN_DB_IDS = [
-        'Agaete'   => 5243,
+        'Agaete' => 5243,
         'Artenara' => 5246,
-        'Arucas'   => 5247,
-        'Firgas'   => 5249,
-        'Gáldar'   => 5250,
-        'Guía'     => 5251,
-        'Ingenio'  => 5253,
+        'Arucas' => 5247,
+        'Firgas' => 5249,
+        'Gáldar' => 5250,
+        'Guía' => 5251,
+        'Ingenio' => 5253,
     ];
 
     private const PREFIJOS = ['Finca', 'Parcela', 'Viña', 'Viñedo', 'Pago', 'Suerte', 'Lote'];
@@ -42,64 +44,64 @@ class WineryGrapeReceptionsSeeder extends Seeder
 
     private const VITICULTURISTS = [
         [
-            'name'      => 'Pedro González Álvarez',
-            'email'     => 'pedro.gonzalez@viticultor.agro365.demo',
-            'plots'     => [
+            'name' => 'Pedro González Álvarez',
+            'email' => 'pedro.gonzalez@viticultor.agro365.demo',
+            'plots' => [
                 ['name' => 'Finca Las Cumbres',   'area' => 2.850, 'varieties' => ['Listán Negro', 'Negramoll']],
                 ['name' => 'Parcela El Carrizal', 'area' => 1.320, 'varieties' => ['Vijariego Negro']],
             ],
         ],
         [
-            'name'      => 'María Suárez Cabrera',
-            'email'     => 'maria.suarez@viticultor.agro365.demo',
-            'plots'     => [
+            'name' => 'María Suárez Cabrera',
+            'email' => 'maria.suarez@viticultor.agro365.demo',
+            'plots' => [
                 ['name' => 'Viña La Caldera',     'area' => 1.750, 'varieties' => ['Listán Blanco', 'Marmajuelo']],
-                ['name' => 'Parcela Montaña Alta','area' => 0.980, 'varieties' => ['Malvasía Volcánica']],
+                ['name' => 'Parcela Montaña Alta', 'area' => 0.980, 'varieties' => ['Malvasía Volcánica']],
             ],
         ],
         [
-            'name'      => 'José Luis Hernández Ramos',
-            'email'     => 'joseluis.hernandez@viticultor.agro365.demo',
-            'plots'     => [
+            'name' => 'José Luis Hernández Ramos',
+            'email' => 'joseluis.hernandez@viticultor.agro365.demo',
+            'plots' => [
                 ['name' => 'Finca El Rincón',     'area' => 3.200, 'varieties' => ['Listán Negro', 'Listán Blanco']],
                 ['name' => 'Viña Las Palomeras',  'area' => 1.600, 'varieties' => ['Negramoll', 'Gual']],
             ],
         ],
         [
-            'name'      => 'Carmen Falcón Betancor',
-            'email'     => 'carmen.falcon@viticultor.agro365.demo',
-            'plots'     => [
-                ['name' => 'Parcela Agaete Norte','area' => 1.200, 'varieties' => ['Malvasía Volcánica', 'Gual']],
-                ['name' => 'Finca Barranco Hondo','area' => 0.750, 'varieties' => ['Listán Blanco']],
+            'name' => 'Carmen Falcón Betancor',
+            'email' => 'carmen.falcon@viticultor.agro365.demo',
+            'plots' => [
+                ['name' => 'Parcela Agaete Norte', 'area' => 1.200, 'varieties' => ['Malvasía Volcánica', 'Gual']],
+                ['name' => 'Finca Barranco Hondo', 'area' => 0.750, 'varieties' => ['Listán Blanco']],
             ],
         ],
         [
-            'name'      => 'Antonio Medina Santana',
-            'email'     => 'antonio.medina@viticultor.agro365.demo',
-            'plots'     => [
+            'name' => 'Antonio Medina Santana',
+            'email' => 'antonio.medina@viticultor.agro365.demo',
+            'plots' => [
                 ['name' => 'Viña Los Berrazales',  'area' => 2.100, 'varieties' => ['Listán Negro', 'Malvasía Volcánica']],
                 ['name' => 'Parcela La Aldea Alta', 'area' => 1.450, 'varieties' => ['Negramoll']],
             ],
         ],
         [
-            'name'      => 'Laura Déniz Rodríguez',
-            'email'     => 'laura.deniz@viticultor.agro365.demo',
-            'plots'     => [
+            'name' => 'Laura Déniz Rodríguez',
+            'email' => 'laura.deniz@viticultor.agro365.demo',
+            'plots' => [
                 ['name' => 'Finca Tamadaba',      'area' => 1.900, 'varieties' => ['Vijariego Negro', 'Marmajuelo']],
-                ['name' => 'Parcela Cruz de Tejeda','area' => 1.050, 'varieties' => ['Gual']],
+                ['name' => 'Parcela Cruz de Tejeda', 'area' => 1.050, 'varieties' => ['Gual']],
             ],
         ],
     ];
 
     // Parámetros base por variedad
     private const VARIETY_PARAMS = [
-        'Listán Negro'       => ['color' => 'red',   'code' => 'LN',  'baume' => 13.0, 'brix' => 23.5, 'ph' => 3.42, 'acid' => 5.9, 'price' => 0.90],
-        'Negramoll'          => ['color' => 'red',   'code' => 'NGM', 'baume' => 13.3, 'brix' => 24.1, 'ph' => 3.48, 'acid' => 5.6, 'price' => 0.95],
-        'Vijariego Negro'    => ['color' => 'red',   'code' => 'VJN', 'baume' => 13.8, 'brix' => 25.0, 'ph' => 3.52, 'acid' => 5.3, 'price' => 1.20],
-        'Listán Blanco'      => ['color' => 'white', 'code' => 'LB',  'baume' => 12.5, 'brix' => 22.5, 'ph' => 3.38, 'acid' => 6.2, 'price' => 0.88],
+        'Listán Negro' => ['color' => 'red',   'code' => 'LN',  'baume' => 13.0, 'brix' => 23.5, 'ph' => 3.42, 'acid' => 5.9, 'price' => 0.90],
+        'Negramoll' => ['color' => 'red',   'code' => 'NGM', 'baume' => 13.3, 'brix' => 24.1, 'ph' => 3.48, 'acid' => 5.6, 'price' => 0.95],
+        'Vijariego Negro' => ['color' => 'red',   'code' => 'VJN', 'baume' => 13.8, 'brix' => 25.0, 'ph' => 3.52, 'acid' => 5.3, 'price' => 1.20],
+        'Listán Blanco' => ['color' => 'white', 'code' => 'LB',  'baume' => 12.5, 'brix' => 22.5, 'ph' => 3.38, 'acid' => 6.2, 'price' => 0.88],
         'Malvasía Volcánica' => ['color' => 'white', 'code' => 'MV',  'baume' => 12.8, 'brix' => 23.2, 'ph' => 3.40, 'acid' => 6.0, 'price' => 1.35],
-        'Marmajuelo'         => ['color' => 'white', 'code' => 'MRM', 'baume' => 12.0, 'brix' => 21.8, 'ph' => 3.32, 'acid' => 6.8, 'price' => 0.92],
-        'Gual'               => ['color' => 'white', 'code' => 'GUL', 'baume' => 13.0, 'brix' => 23.5, 'ph' => 3.42, 'acid' => 6.1, 'price' => 1.10],
+        'Marmajuelo' => ['color' => 'white', 'code' => 'MRM', 'baume' => 12.0, 'brix' => 21.8, 'ph' => 3.32, 'acid' => 6.8, 'price' => 0.92],
+        'Gual' => ['color' => 'white', 'code' => 'GUL', 'baume' => 13.0, 'brix' => 23.5, 'ph' => 3.42, 'acid' => 6.1, 'price' => 1.10],
     ];
 
     // ─────────────────────────────────────────────────────────────────────────────
@@ -116,8 +118,9 @@ class WineryGrapeReceptionsSeeder extends Seeder
             ->first()
             ?? DB::table('provinces')->first();
 
-        if (!$province) {
+        if (! $province) {
             $this->command->warn('  ⚠️  No hay provincias en la base de datos. Saltando recepciones de uva.');
+
             return;
         }
 
@@ -131,8 +134,9 @@ class WineryGrapeReceptionsSeeder extends Seeder
             ?? DB::table('municipalities')->where('province_id', $province->id)->first()
             ?? DB::table('municipalities')->first();
 
-        if (!$municipality) {
+        if (! $municipality) {
             $this->command->warn('  ⚠️  No hay municipios en la base de datos. Saltando recepciones de uva.');
+
             return;
         }
 
@@ -150,6 +154,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
 
         if (empty($viticulturistIds)) {
             $this->command->warn('  ⚠️  No se pudieron crear viticultores demo.');
+
             return;
         }
 
@@ -157,38 +162,38 @@ class WineryGrapeReceptionsSeeder extends Seeder
         $wineryCampaigns = $this->ensureWineryCampaigns($now);
 
         // ── Create batches and harvests ───────────────────────────────────────────
-        $containers   = DB::table('containers')
+        $containers = DB::table('containers')
             ->where('user_id', self::WINERY_USER_ID)
             ->where('archived', false)
             ->pluck('id')
             ->toArray();
 
         $totalHarvests = 0;
-        $totalBatches  = 0;
+        $totalBatches = 0;
         $cidx = 0;
 
         foreach ($viticulturistIds as $vitData) {
-            $vitId      = $vitData['user_id'];
-            $plantings  = $vitData['plantings'];  // [{id, variety_name, variety_params, area}]
+            $vitId = $vitData['user_id'];
+            $plantings = $vitData['plantings'];  // [{id, variety_name, variety_params, area}]
 
             foreach ([2023, 2024, 2025] as $vintage) {
                 $campaignId = $wineryCampaigns[$vintage] ?? null;
-                if (!$campaignId) {
+                if (! $campaignId) {
                     continue;
                 }
 
                 foreach ($plantings as $planting) {
                     // One batch per (winery + plot_planting + campaign) — unique constraint
                     $batchId = DB::table('grape_reception_batches')->insertGetId([
-                        'winery_id'          => self::WINERY_USER_ID,
-                        'viticulturist_id'   => $vitId,
-                        'plot_planting_id'   => $planting['id'],
-                        'campaign_id'        => $campaignId,
-                        'vintage_year'       => $vintage,
-                        'total_weight_kg'    => 0,
-                        'status'             => $vintage < 2025 ? 'invoiced' : 'open',
-                        'created_at'         => $now,
-                        'updated_at'         => $now,
+                        'winery_id' => self::WINERY_USER_ID,
+                        'viticulturist_id' => $vitId,
+                        'plot_planting_id' => $planting['id'],
+                        'campaign_id' => $campaignId,
+                        'vintage_year' => $vintage,
+                        'total_weight_kg' => 0,
+                        'status' => $vintage < 2025 ? 'invoiced' : 'open',
+                        'created_at' => $now,
+                        'updated_at' => $now,
                     ]);
                     $totalBatches++;
 
@@ -196,47 +201,47 @@ class WineryGrapeReceptionsSeeder extends Seeder
                     $numReceptions = $this->receptionsForVintage($vintage);
 
                     for ($r = 0; $r < $numReceptions; $r++) {
-                        $params  = $planting['variety_params'];
-                        $area    = (float) $planting['area'];
-                        $weight  = $this->harvestWeight($area, $vintage, $r);
+                        $params = $planting['variety_params'];
+                        $area = (float) $planting['area'];
+                        $weight = $this->harvestWeight($area, $vintage, $r);
                         $quality = $this->qualityParams($params, $vintage, $cidx);
 
                         $pricePerKg = round($params['price'] + ($cidx % 3) * 0.02, 4);
                         $totalValue = round($weight * $pricePerKg, 3);
-                        $daysAgo    = $this->harvestDaysAgo($vintage, $r);
+                        $daysAgo = $this->harvestDaysAgo($vintage, $r);
 
-                        $containerId = !empty($containers) ? $containers[$cidx % count($containers)] : null;
+                        $containerId = ! empty($containers) ? $containers[$cidx % count($containers)] : null;
 
                         DB::table('harvests')->insertGetId([
-                            'winery_id'              => self::WINERY_USER_ID,
-                            'batch_id'               => $batchId,
-                            'plot_planting_id'       => $planting['id'],
-                            'container_id'           => $containerId,
-                            'harvest_start_date'     => now()->subDays($daysAgo)->toDateString(),
-                            'total_weight'           => $weight,
-                            'vintage'                => $vintage,
-                            'yield_per_hectare'      => $area > 0 ? round($weight / $area, 3) : null,
-                            'baume_degree'           => $quality['baume'],
-                            'brix_degree'            => $quality['brix'],
-                            'ph_level'               => $quality['ph'],
-                            'acidity_level'          => $quality['acid'],
-                            'potential_alcohol'      => $quality['alcohol'],
-                            'color_rating'           => $quality['color_rating'],
-                            'aroma_rating'           => $quality['aroma_rating'],
-                            'health_status'          => $quality['health'],
-                            'destination_type'       => 'winery',
-                            'destination'            => 'Bodega Agaete',
-                            'price_per_kg'           => $pricePerKg,
-                            'total_value'            => $totalValue,
-                            'harvest_ticket_number'  => 'REC-' . $vintage . '-' . str_pad($cidx + 1, 4, '0', STR_PAD_LEFT),
-                            'sanitary_state_grapes'  => $quality['sanitary_grapes'],
-                            'sanitary_state_botrytis'=> $quality['botrytis'],
-                            'sanitary_state_oidium'  => $quality['oidium'],
-                            'status'                 => 'active',
-                            'disqualified'           => false,
-                            'notes'                  => $this->receptionNote($planting['variety_name'], $vintage, $quality['health']),
-                            'created_at'             => $now,
-                            'updated_at'             => $now,
+                            'winery_id' => self::WINERY_USER_ID,
+                            'batch_id' => $batchId,
+                            'plot_planting_id' => $planting['id'],
+                            'container_id' => $containerId,
+                            'harvest_start_date' => now()->subDays($daysAgo)->toDateString(),
+                            'total_weight' => $weight,
+                            'vintage' => $vintage,
+                            'yield_per_hectare' => $area > 0 ? round($weight / $area, 3) : null,
+                            'baume_degree' => $quality['baume'],
+                            'brix_degree' => $quality['brix'],
+                            'ph_level' => $quality['ph'],
+                            'acidity_level' => $quality['acid'],
+                            'potential_alcohol' => $quality['alcohol'],
+                            'color_rating' => $quality['color_rating'],
+                            'aroma_rating' => $quality['aroma_rating'],
+                            'health_status' => $quality['health'],
+                            'destination_type' => 'winery',
+                            'destination' => 'Bodega Agaete',
+                            'price_per_kg' => $pricePerKg,
+                            'total_value' => $totalValue,
+                            'harvest_ticket_number' => 'REC-'.$vintage.'-'.str_pad($cidx + 1, 4, '0', STR_PAD_LEFT),
+                            'sanitary_state_grapes' => $quality['sanitary_grapes'],
+                            'sanitary_state_botrytis' => $quality['botrytis'],
+                            'sanitary_state_oidium' => $quality['oidium'],
+                            'status' => 'active',
+                            'disqualified' => false,
+                            'notes' => $this->receptionNote($planting['variety_name'], $vintage, $quality['health']),
+                            'created_at' => $now,
+                            'updated_at' => $now,
                         ]);
 
                         // Update batch accumulated weight
@@ -265,19 +270,20 @@ class WineryGrapeReceptionsSeeder extends Seeder
         $ids = [];
         foreach (self::VARIETY_PARAMS as $name => $params) {
             $id = DB::table('grape_varieties')->where('name', $name)->value('id');
-            if (!$id) {
+            if (! $id) {
                 $id = DB::table('grape_varieties')->insertGetId([
-                    'name'        => $name,
-                    'code'        => $params['code'],
-                    'color'       => $params['color'],
+                    'name' => $name,
+                    'code' => $params['code'],
+                    'color' => $params['color'],
                     'description' => "Variedad autóctona canaria — {$name}",
-                    'active'      => true,
-                    'created_at'  => $now,
-                    'updated_at'  => $now,
+                    'active' => true,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             }
             $ids[$name] = $id;
         }
+
         return $ids;
     }
 
@@ -294,20 +300,21 @@ class WineryGrapeReceptionsSeeder extends Seeder
                 ->where('viticulturist_id', self::WINERY_USER_ID)
                 ->where('year', $year)
                 ->value('id');
-            if (!$campId) {
+            if (! $campId) {
                 $campId = DB::table('campaigns')->insertGetId([
-                    'name'              => "Vendimia {$year}",
-                    'year'              => $year,
-                    'viticulturist_id'  => self::WINERY_USER_ID,
-                    'start_date'        => "{$year}-08-01",
-                    'end_date'          => "{$year}-11-30",
-                    'active'            => $active,
-                    'created_at'        => $now,
-                    'updated_at'        => $now,
+                    'name' => "Vendimia {$year}",
+                    'year' => $year,
+                    'viticulturist_id' => self::WINERY_USER_ID,
+                    'start_date' => "{$year}-08-01",
+                    'end_date' => "{$year}-11-30",
+                    'active' => $active,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             }
             $campaigns[$year] = $campId;
         }
+
         return $campaigns;
     }
 
@@ -325,15 +332,15 @@ class WineryGrapeReceptionsSeeder extends Seeder
                 ->where('email', $vitDef['email'])
                 ->value('id');
 
-            if (!$userId) {
+            if (! $userId) {
                 $userId = DB::table('users')->insertGetId([
-                    'name'              => $vitDef['name'],
-                    'email'             => $vitDef['email'],
+                    'name' => $vitDef['name'],
+                    'email' => $vitDef['email'],
                     'email_verified_at' => $now,
-                    'password'          => Hash::make('agro365-demo'),
-                    'role'              => 'viticulturist',
-                    'created_at'        => $now,
-                    'updated_at'        => $now,
+                    'password' => Hash::make('agro365-demo'),
+                    'role' => 'viticulturist',
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             }
 
@@ -342,16 +349,16 @@ class WineryGrapeReceptionsSeeder extends Seeder
                 ->where('viticulturist_id', $userId)
                 ->exists();
 
-            if (!$linked) {
+            if (! $linked) {
                 DB::table('winery_viticulturist')->insert([
-                    'winery_id'           => self::WINERY_USER_ID,
-                    'viticulturist_id'    => $userId,
-                    'assigned_by'         => self::WINERY_USER_ID,
-                    'source'              => 'own',
-                    'notebook_access'     => true,
+                    'winery_id' => self::WINERY_USER_ID,
+                    'viticulturist_id' => $userId,
+                    'assigned_by' => self::WINERY_USER_ID,
+                    'source' => 'own',
+                    'notebook_access' => true,
                     'notebook_granted_at' => $now,
-                    'created_at'          => $now,
-                    'updated_at'          => $now,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             } else {
                 DB::table('winery_viticulturist')
@@ -366,30 +373,30 @@ class WineryGrapeReceptionsSeeder extends Seeder
                     ->where('viticulturist_id', $userId)
                     ->where('year', $year)
                     ->value('id');
-                if (!$campId) {
+                if (! $campId) {
                     $campId = DB::table('campaigns')->insertGetId([
-                        'name'             => "Campaña {$year}",
-                        'year'             => $year,
+                        'name' => "Campaña {$year}",
+                        'year' => $year,
                         'viticulturist_id' => $userId,
-                        'start_date'       => "{$year}-08-01",
-                        'end_date'         => "{$year}-11-30",
-                        'active'           => $active,
-                        'created_at'       => $now,
-                        'updated_at'       => $now,
+                        'start_date' => "{$year}-08-01",
+                        'end_date' => "{$year}-11-30",
+                        'active' => $active,
+                        'created_at' => $now,
+                        'updated_at' => $now,
                     ]);
                 }
                 $campaigns[$year] = $campId;
             }
 
             $configs[] = [
-                'user_id'   => $userId,
-                'vitDef'    => $vitDef,
+                'user_id' => $userId,
+                'vitDef' => $vitDef,
                 'campaigns' => $campaigns,
             ];
         }
 
         // ── Pass 2: 460 SIGPAC plots distributed round-robin among viticulturists ─
-        $userIds     = array_column($configs, 'user_id');
+        $userIds = array_column($configs, 'user_id');
         $userPlotIds = $this->createSigpacPlotsForViticulturists(
             $userIds, $province, $community, $municipality, $now
         );
@@ -397,14 +404,14 @@ class WineryGrapeReceptionsSeeder extends Seeder
         // ── Pass 3: plantings for first 2 SIGPAC plots per viticulturist ────────
         $result = [];
         foreach ($configs as $config) {
-            $userId    = $config['user_id'];
-            $vitDef    = $config['vitDef'];
+            $userId = $config['user_id'];
+            $vitDef = $config['vitDef'];
             $myPlotIds = $userPlotIds[$userId] ?? [];
 
             $plantings = [];
             foreach ($vitDef['plots'] as $plotIdx => $plotDef) {
                 $plotId = $myPlotIds[$plotIdx] ?? null;
-                if (!$plotId) {
+                if (! $plotId) {
                     continue;
                 }
 
@@ -412,7 +419,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
 
                 foreach ($plotDef['varieties'] as $varietyName) {
                     $varietyId = $varietyIds[$varietyName] ?? null;
-                    if (!$varietyId) {
+                    if (! $varietyId) {
                         continue;
                     }
 
@@ -421,33 +428,33 @@ class WineryGrapeReceptionsSeeder extends Seeder
                         ->where('grape_variety_id', $varietyId)
                         ->value('id');
 
-                    if (!$plantingId) {
+                    if (! $plantingId) {
                         $harvestLimitKg = round($areaPerVariety * mt_rand(7000, 8500));
                         $plantingId = DB::table('plot_plantings')->insertGetId([
-                            'plot_id'          => $plotId,
+                            'plot_id' => $plotId,
                             'grape_variety_id' => $varietyId,
-                            'area_planted'     => $areaPerVariety,
-                            'planting_year'    => mt_rand(2005, 2018),
+                            'area_planted' => $areaPerVariety,
+                            'planting_year' => mt_rand(2005, 2018),
                             'harvest_limit_kg' => $harvestLimitKg,
-                            'status'           => 'active',
-                            'irrigated'        => false,
-                            'created_at'       => $now,
-                            'updated_at'       => $now,
+                            'status' => 'active',
+                            'irrigated' => false,
+                            'created_at' => $now,
+                            'updated_at' => $now,
                         ]);
                     }
 
                     $plantings[] = [
-                        'id'             => $plantingId,
-                        'variety_name'   => $varietyName,
+                        'id' => $plantingId,
+                        'variety_name' => $varietyName,
                         'variety_params' => self::VARIETY_PARAMS[$varietyName],
-                        'area'           => $areaPerVariety,
+                        'area' => $areaPerVariety,
                     ];
                 }
             }
 
             $result[] = [
-                'user_id'   => $userId,
-                'name'      => $vitDef['name'],
+                'user_id' => $userId,
+                'name' => $vitDef['name'],
                 'plantings' => $plantings,
                 'campaigns' => $config['campaigns'],
             ];
@@ -461,27 +468,27 @@ class WineryGrapeReceptionsSeeder extends Seeder
      * round-robin entre los viticultores dados. Crea plot, sigpac_code (idempotente),
      * plot_geometry y multipart_plot_sigpac para cada recinto.
      *
-     * @return array<int,int[]>  [ userId => [plotId, ...], ... ]
+     * @return array<int,int[]> [ userId => [plotId, ...], ... ]
      */
     private function createSigpacPlotsForViticulturists(
-        array  $userIds,
+        array $userIds,
         object $province,
         object $community,
         object $municipality,
         \Carbon\Carbon $now
     ): array {
         $jsonPath = database_path('seeders/data/sigpac_gran_canaria.json');
-        $recs     = json_decode(file_get_contents($jsonPath), true);
+        $recs = json_decode(file_get_contents($jsonPath), true);
 
         $userPlotIds = array_fill_keys($userIds, []);
-        $count       = count($userIds);
+        $count = count($userIds);
 
         foreach ($recs as $index => $rec) {
-            $userId  = $userIds[$index % $count];
+            $userId = $userIds[$index % $count];
             $ineCode = $rec['ine_code'];
-            $polygon   = str_pad($rec['polygon'],  3, '0', STR_PAD_LEFT);
-            $parcel    = str_pad($rec['parcel'],   5, '0', STR_PAD_LEFT);
-            $enclosure = str_pad($rec['recinto'],  3, '0', STR_PAD_LEFT);
+            $polygon = str_pad($rec['polygon'], 3, '0', STR_PAD_LEFT);
+            $parcel = str_pad($rec['parcel'], 5, '0', STR_PAD_LEFT);
+            $enclosure = str_pad($rec['recinto'], 3, '0', STR_PAD_LEFT);
 
             $code = sprintf(
                 '05%02d%03d000000%03d%05d%03d',
@@ -494,60 +501,60 @@ class WineryGrapeReceptionsSeeder extends Seeder
 
             // sigpac_code — idempotente: puede existir del ViticulturistDemoSeeder
             $existing = DB::table('sigpac_code')
-                ->where('code_province',     '35')
+                ->where('code_province', '35')
                 ->where('code_municipality', str_pad($ineCode, 3, '0', STR_PAD_LEFT))
-                ->where('code_polygon',      $polygon)
-                ->where('code_plot',         $parcel)
-                ->where('code_enclosure',    $enclosure)
+                ->where('code_polygon', $polygon)
+                ->where('code_plot', $parcel)
+                ->where('code_enclosure', $enclosure)
                 ->first();
 
             $sigpacId = $existing
                 ? $existing->id
                 : DB::table('sigpac_code')->insertGetId([
                     'code_autonomous_community' => '05',
-                    'code_province'             => '35',
-                    'code_municipality'         => str_pad($ineCode, 3, '0', STR_PAD_LEFT),
-                    'code_aggregate'            => '000',
-                    'code_zone'                 => '000',
-                    'code_polygon'              => $polygon,
-                    'code_plot'                 => $parcel,
-                    'code_enclosure'            => $enclosure,
-                    'code'                      => $code,
-                    'created_at'                => $now,
-                    'updated_at'                => $now,
+                    'code_province' => '35',
+                    'code_municipality' => str_pad($ineCode, 3, '0', STR_PAD_LEFT),
+                    'code_aggregate' => '000',
+                    'code_zone' => '000',
+                    'code_polygon' => $polygon,
+                    'code_plot' => $parcel,
+                    'code_enclosure' => $enclosure,
+                    'code' => $code,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
 
             // plot_geometry con WKT real
             $geomId = DB::table('plot_geometry')->insertGetId([
-                'coordinates' => DB::raw("ST_GeomFromText('" . $rec['wkt'] . "', 4326)"),
-                'centroid'    => DB::raw("ST_Centroid(ST_GeomFromText('" . $rec['wkt'] . "', 4326))"),
-                'created_at'  => $now,
-                'updated_at'  => $now,
+                'coordinates' => DB::raw("ST_GeomFromText('".$rec['wkt']."', 4326)"),
+                'centroid' => DB::raw("ST_Centroid(ST_GeomFromText('".$rec['wkt']."', 4326))"),
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
-            $prefijo  = self::PREFIJOS[$index % count(self::PREFIJOS)];
+            $prefijo = self::PREFIJOS[$index % count(self::PREFIJOS)];
             $munShort = explode(' ', $rec['mun_name'])[0];
-            $plotName = "{$prefijo} {$munShort} " . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            $munDbId  = self::MUN_DB_IDS[$rec['mun_name']] ?? $municipality->id;
+            $plotName = "{$prefijo} {$munShort} ".str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            $munDbId = self::MUN_DB_IDS[$rec['mun_name']] ?? $municipality->id;
 
             $plotId = DB::table('plots')->insertGetId([
-                'name'                    => $plotName,
-                'viticulturist_id'        => $userId,
-                'area'                    => $rec['area_ha'] > 0 ? $rec['area_ha'] : round(mt_rand(10, 350) / 100, 2),
-                'active'                  => true,
+                'name' => $plotName,
+                'viticulturist_id' => $userId,
+                'area' => $rec['area_ha'] > 0 ? $rec['area_ha'] : round(mt_rand(10, 350) / 100, 2),
+                'active' => true,
                 'autonomous_community_id' => $community->id,
-                'province_id'             => $province->id,
-                'municipality_id'         => $munDbId,
-                'created_at'              => $now,
-                'updated_at'              => $now,
+                'province_id' => $province->id,
+                'municipality_id' => $munDbId,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
             DB::table('multipart_plot_sigpac')->insert([
-                'plot_id'          => $plotId,
-                'sigpac_code_id'   => $sigpacId,
+                'plot_id' => $plotId,
+                'sigpac_code_id' => $sigpacId,
                 'plot_geometry_id' => $geomId,
-                'created_at'       => $now,
-                'updated_at'       => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
             $userPlotIds[$userId][] = $plotId;
@@ -576,6 +583,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
             2025 => mt_rand(3000, 6000),
         };
         $weight = round($area * $baseYield / 1.0, 1);
+
         return round(max(200, $weight), 1);
     }
 
@@ -584,41 +592,41 @@ class WineryGrapeReceptionsSeeder extends Seeder
         // Vintage variation: 2024 was an excellent year, 2023 average, 2025 pending
         $vintageOffset = match ($vintage) {
             2023 => -0.1,
-            2024 =>  0.2,
-            2025 =>  0.0,
+            2024 => 0.2,
+            2025 => 0.0,
         };
 
         $variation = (($idx % 7) - 3) * 0.05; // ±0.15 variation
 
-        $baume   = round(max(10.0, $params['baume'] + $vintageOffset + $variation), 2);
-        $brix    = round(max(18.0, $params['brix']  + $vintageOffset * 2 + $variation * 2), 2);
-        $ph      = round(max(2.9, $params['ph']     + $variation * 0.1), 2);
-        $acid    = round(max(3.5, $params['acid']   - $variation * 0.3), 2);
+        $baume = round(max(10.0, $params['baume'] + $vintageOffset + $variation), 2);
+        $brix = round(max(18.0, $params['brix'] + $vintageOffset * 2 + $variation * 2), 2);
+        $ph = round(max(2.9, $params['ph'] + $variation * 0.1), 2);
+        $acid = round(max(3.5, $params['acid'] - $variation * 0.3), 2);
         $alcohol = round($baume * 1.035, 2);
 
         // Ratings based on baume
         $colorRating = $baume >= 13.5 ? 'excelente' : ($baume >= 12.5 ? 'bueno' : 'aceptable');
-        $aromaRating = $brix  >= 24.0 ? 'excelente' : ($brix  >= 22.0 ? 'bueno' : 'aceptable');
+        $aromaRating = $brix >= 24.0 ? 'excelente' : ($brix >= 22.0 ? 'bueno' : 'aceptable');
 
         // Health status: mostly sano, occasional daño_leve
-        $health  = ($idx % 9 === 0) ? 'daño_leve' : 'sano';
+        $health = ($idx % 9 === 0) ? 'daño_leve' : 'sano';
 
         // Sanitary state (0-100% affected)
         $botrytis = $health === 'sano' ? round(mt_rand(0, 3) / 10, 1) : round(mt_rand(5, 15) / 10, 1);
-        $oidium   = round(mt_rand(0, 2) / 10, 1);
+        $oidium = round(mt_rand(0, 2) / 10, 1);
 
         return [
-            'baume'          => $baume,
-            'brix'           => $brix,
-            'ph'             => $ph,
-            'acid'           => $acid,
-            'alcohol'        => $alcohol,
-            'color_rating'   => $colorRating,
-            'aroma_rating'   => $aromaRating,
-            'health'         => $health,
-            'sanitary_grapes'=> $health === 'sano' ? 100.0 : round(mt_rand(82, 95) / 1.0, 1),
-            'botrytis'       => $botrytis,
-            'oidium'         => $oidium,
+            'baume' => $baume,
+            'brix' => $brix,
+            'ph' => $ph,
+            'acid' => $acid,
+            'alcohol' => $alcohol,
+            'color_rating' => $colorRating,
+            'aroma_rating' => $aromaRating,
+            'health' => $health,
+            'sanitary_grapes' => $health === 'sano' ? 100.0 : round(mt_rand(82, 95) / 1.0, 1),
+            'botrytis' => $botrytis,
+            'oidium' => $oidium,
         ];
     }
 
@@ -674,7 +682,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
         // Remove winery_viticulturist links only for THIS seeder's 6 demo viticulturists.
         // Do NOT delete all links — WineryViticulturistsSeeder also creates links for winery_id=1.
         $demoVitIdsForLink = DB::table('users')
-            ->where('email', 'LIKE', '%' . self::DEMO_EMAIL_SUFFIX)
+            ->where('email', 'LIKE', '%'.self::DEMO_EMAIL_SUFFIX)
             ->pluck('id');
 
         if ($demoVitIdsForLink->isNotEmpty()) {
@@ -686,7 +694,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
 
         // Demo viticulturist infrastructure
         $demoUserIds = DB::table('users')
-            ->where('email', 'LIKE', '%' . self::DEMO_EMAIL_SUFFIX)
+            ->where('email', 'LIKE', '%'.self::DEMO_EMAIL_SUFFIX)
             ->pluck('id');
 
         if ($demoUserIds->isNotEmpty()) {

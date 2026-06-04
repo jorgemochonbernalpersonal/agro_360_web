@@ -6,18 +6,19 @@ use App\Models\Plot;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * NASA Spectral Bands Service
- * 
+ *
  * Fetches raw spectral reflectance bands to calculate custom indices
  * Eliminates need for mocks - all calculations from real satellite data
  */
 class NasaSpectralBandsService
 {
     private string $baseUrl;
+
     private bool $useMockData;
+
     private RateLimitService $rateLimitService;
 
     public function __construct(RateLimitService $rateLimitService)
@@ -36,23 +37,23 @@ class NasaSpectralBandsService
             return $this->generateMockBands($plot);
         }
 
-        if (!$this->rateLimitService->canMakeNasaRequest()) {
+        if (! $this->rateLimitService->canMakeNasaRequest()) {
             return $this->generateMockBands($plot);
         }
 
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $plotSigpacId);
-            $startJulian = 'A' . now()->subDays(8)->format('Y') . str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
-            $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $startJulian = 'A'.now()->subDays(8)->format('Y').str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian = 'A'.now()->format('Y').str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             $response = Http::timeout(30)
                 ->get('https://modis.ornl.gov/rst/api/v1/VNP09A1/subset', [
-                    'latitude'     => $coords['lat'],
-                    'longitude'    => $coords['lon'],
-                    'startDate'    => $startJulian,
-                    'endDate'      => $endJulian,
+                    'latitude' => $coords['lat'],
+                    'longitude' => $coords['lon'],
+                    'startDate' => $startJulian,
+                    'endDate' => $endJulian,
                     'kmAboveBelow' => 0,
-                    'kmLeftRight'  => 0,
+                    'kmLeftRight' => 0,
                 ]);
 
             $this->rateLimitService->recordNasaRequest();
@@ -62,14 +63,14 @@ class NasaSpectralBandsService
             }
 
             Log::warning('NASA Spectral Bands API failed — using estimated data', [
-                'status'  => $response->status(),
+                'status' => $response->status(),
                 'plot_id' => $plot->id,
-                'body'    => substr($response->body(), 0, 200),
+                'body' => substr($response->body(), 0, 200),
             ]);
 
         } catch (\Exception $e) {
             Log::warning('NASA Spectral Bands API error — using estimated data', [
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'plot_id' => $plot->id,
             ]);
         }
@@ -78,42 +79,11 @@ class NasaSpectralBandsService
     }
 
     /**
-     * Parse spectral bands response
-     */
-    private function parseSpectralResponse(array $response): array
-    {
-        $nodata = $response['header']['NODATA_value'] ?? -28672;
-        $subset = collect($response['subset'] ?? []);
-
-        $getBand = function (string $name) use ($subset, $nodata): ?float {
-            $band = $subset->firstWhere('band', $name);
-            $raw  = $band['data'][0] ?? null;
-            return ($raw !== null && $raw != $nodata && $raw > -1000)
-                ? $raw * 0.0001
-                : null;
-        };
-
-        $red   = $getBand('SurfReflect_I1');
-        $nir   = $getBand('SurfReflect_I2');
-        $blue  = $getBand('SurfReflect_M3');
-        $green = $getBand('SurfReflect_M4');
-
-        $indices = $this->calculateIndicesFromBands($red, $nir, $blue, $green);
-
-        return array_merge([
-            'red_band'   => $red,
-            'nir_band'   => $nir,
-            'blue_band'  => $blue,
-            'green_band' => $green,
-        ], $indices);
-    }
-
-    /**
      * Calculate all vegetation indices from raw bands
      */
     public function calculateIndicesFromBands(?float $red, ?float $nir, ?float $blue, ?float $green): array
     {
-        if (!$red || !$nir) {
+        if (! $red || ! $nir) {
             return [];
         }
 
@@ -180,6 +150,7 @@ class NasaSpectralBandsService
     {
         // Approximation: Red-edge is between red and NIR
         $redEdge = ($red + $nir) / 2;
+
         return ($nir - $redEdge) / ($nir + $redEdge);
     }
 
@@ -190,7 +161,7 @@ class NasaSpectralBandsService
     {
         // Empirical relationship: Chlorophyll (μg/cm²) = 100 * GNDVI + 20
         $chlorophyll = (100 * $gndvi) + 20;
-        
+
         if ($gndvi < 0.3) {
             $status = 'deficient';
             $label = __('Deficiente');
@@ -224,6 +195,38 @@ class NasaSpectralBandsService
     }
 
     /**
+     * Parse spectral bands response
+     */
+    private function parseSpectralResponse(array $response): array
+    {
+        $nodata = $response['header']['NODATA_value'] ?? -28672;
+        $subset = collect($response['subset'] ?? []);
+
+        $getBand = function (string $name) use ($subset, $nodata): ?float {
+            $band = $subset->firstWhere('band', $name);
+            $raw = $band['data'][0] ?? null;
+
+            return ($raw !== null && $raw != $nodata && $raw > -1000)
+                ? $raw * 0.0001
+                : null;
+        };
+
+        $red = $getBand('SurfReflect_I1');
+        $nir = $getBand('SurfReflect_I2');
+        $blue = $getBand('SurfReflect_M3');
+        $green = $getBand('SurfReflect_M4');
+
+        $indices = $this->calculateIndicesFromBands($red, $nir, $blue, $green);
+
+        return array_merge([
+            'red_band' => $red,
+            'nir_band' => $nir,
+            'blue_band' => $blue,
+            'green_band' => $green,
+        ], $indices);
+    }
+
+    /**
      * Generate mock spectral bands
      */
     private function generateMockBands(Plot $plot, ?array $coords = null): array
@@ -238,28 +241,28 @@ class NasaSpectralBandsService
         // Typical vineyard reflectances
         if ($isCanary) {
             if ($month >= 4 && $month <= 10) {
-                $red   = 0.025 + (mt_rand(0, 15) / 1000);
-                $nir   = 0.48  + (mt_rand(0, 30) / 1000);
-                $green = 0.07  + (mt_rand(0, 15) / 1000);
-                $blue  = 0.015 + (mt_rand(0, 8)  / 1000);
+                $red = 0.025 + (mt_rand(0, 15) / 1000);
+                $nir = 0.48 + (mt_rand(0, 30) / 1000);
+                $green = 0.07 + (mt_rand(0, 15) / 1000);
+                $blue = 0.015 + (mt_rand(0, 8) / 1000);
             } else {
                 // Canary winter: still active, not dormant
-                $red   = 0.04  + (mt_rand(0, 15) / 1000);
-                $nir   = 0.35  + (mt_rand(0, 30) / 1000);
-                $green = 0.09  + (mt_rand(0, 15) / 1000);
-                $blue  = 0.025 + (mt_rand(0, 8)  / 1000);
+                $red = 0.04 + (mt_rand(0, 15) / 1000);
+                $nir = 0.35 + (mt_rand(0, 30) / 1000);
+                $green = 0.09 + (mt_rand(0, 15) / 1000);
+                $blue = 0.025 + (mt_rand(0, 8) / 1000);
             }
         } else {
             if ($month >= 4 && $month <= 10) {
-                $red   = 0.03  + (mt_rand(0, 20) / 1000);
-                $nir   = 0.45  + (mt_rand(0, 30) / 1000);
-                $green = 0.08  + (mt_rand(0, 20) / 1000);
-                $blue  = 0.02  + (mt_rand(0, 10) / 1000);
+                $red = 0.03 + (mt_rand(0, 20) / 1000);
+                $nir = 0.45 + (mt_rand(0, 30) / 1000);
+                $green = 0.08 + (mt_rand(0, 20) / 1000);
+                $blue = 0.02 + (mt_rand(0, 10) / 1000);
             } else {
-                $red   = 0.08  + (mt_rand(0, 20) / 1000);
-                $nir   = 0.25  + (mt_rand(0, 30) / 1000);
-                $green = 0.10  + (mt_rand(0, 20) / 1000);
-                $blue  = 0.04  + (mt_rand(0, 10) / 1000);
+                $red = 0.08 + (mt_rand(0, 20) / 1000);
+                $nir = 0.25 + (mt_rand(0, 30) / 1000);
+                $green = 0.10 + (mt_rand(0, 20) / 1000);
+                $blue = 0.04 + (mt_rand(0, 10) / 1000);
             }
         }
 
@@ -274,5 +277,4 @@ class NasaSpectralBandsService
             'green' => round($green, 4),
         ], $indices);
     }
-
 }

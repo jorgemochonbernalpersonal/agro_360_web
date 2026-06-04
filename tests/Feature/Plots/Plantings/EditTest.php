@@ -29,38 +29,6 @@ class EditTest extends TestCase
         ]);
     }
 
-    private function makeViticulturistWithPlanting(): array
-    {
-        $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ]);
-
-        $winery = User::factory()->create(['role' => 'winery']);
-        WineryViticulturist::create([
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
-        ]);
-
-        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
-
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
-
-        $planting = PlotPlanting::create([
-            'plot_id'          => $plot->id,
-            'grape_variety_id' => $variety->id,
-            'area_planted'     => 2.0,
-            'status'           => 'active',
-            'vine_count'       => 4000,
-        ]);
-
-        $planting->refresh(); // pick up DB defaults (irrigated, active…)
-
-        return [$viticulturist, $plot, $planting];
-    }
-
     public function test_viticulturist_can_edit_own_planting(): void
     {
         [$viticulturist, $plot, $planting] = $this->makeViticulturistWithPlanting();
@@ -78,10 +46,10 @@ class EditTest extends TestCase
             ->assertRedirect(route('plots.show', $plot));
 
         $this->assertDatabaseHas('plot_plantings', [
-            'id'               => $planting->id,
+            'id' => $planting->id,
             'grape_variety_id' => $variety->id,
-            'planting_year'    => 2018,
-            'vine_count'       => 6000,
+            'planting_year' => 2018,
+            'vine_count' => 6000,
         ]);
     }
 
@@ -90,7 +58,7 @@ class EditTest extends TestCase
         [$viticulturist, $plot, $planting] = $this->makeViticulturistWithPlanting();
 
         $other = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
@@ -127,10 +95,10 @@ class EditTest extends TestCase
             ->call('update');
 
         $this->assertDatabaseHas('plot_plantings', [
-            'id'                     => $planting->id,
+            'id' => $planting->id,
             'planting_authorization' => 'AUTH-2024-XYZ',
-            'right_type'             => 'replantacion',
-            'designation_of_origin'  => 'Ribera del Duero DO',
+            'right_type' => 'replantacion',
+            'designation_of_origin' => 'Ribera del Duero DO',
         ]);
     }
 
@@ -146,45 +114,6 @@ class EditTest extends TestCase
             ->assertHasErrors(['area_planted']);
     }
 
-    // ── Helpers adicionales ───────────────────────────────────────────────────
-
-    private function makeWineryWithOwnViticulturistAndPlanting(): array
-    {
-        $winery = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        WineryViticulturist::create([
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
-        ]);
-        $plot    = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
-        $planting = PlotPlanting::create([
-            'plot_id'          => $plot->id,
-            'grape_variety_id' => $variety->id,
-            'area_planted'     => 2.0,
-            'status'           => 'active',
-        ]);
-        $planting->refresh();
-        return [$winery, $plot, $planting];
-    }
-
-    private function makeProducerWithPlanting(): array
-    {
-        $producer = User::factory()->create(['role' => 'producer', 'email_verified_at' => now()]);
-        $plot     = Plot::factory()->create(['viticulturist_id' => $producer->id]);
-        $variety  = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
-        $planting = PlotPlanting::create([
-            'plot_id'          => $plot->id,
-            'grape_variety_id' => $variety->id,
-            'area_planted'     => 1.5,
-            'status'           => 'active',
-        ]);
-        $planting->refresh();
-        return [$producer, $plot, $planting];
-    }
-
     // ── Filtrado de variedades por crop_type según rol ────────────────────────
 
     public function test_winery_variety_dropdown_contains_only_wine_varieties(): void
@@ -198,7 +127,7 @@ class EditTest extends TestCase
 
         Livewire::test(\App\Livewire\Plots\Plantings\Edit::class, ['planting' => $planting])
             ->assertViewHas('wineryOnly', true)
-            ->assertViewHas('grapeVarieties', fn ($v) => !$v->contains('id', $olive->id));
+            ->assertViewHas('grapeVarieties', fn ($v) => ! $v->contains('id', $olive->id));
     }
 
     public function test_producer_variety_dropdown_contains_all_crop_types(): void
@@ -211,5 +140,78 @@ class EditTest extends TestCase
         Livewire::test(\App\Livewire\Plots\Plantings\Edit::class, ['planting' => $planting])
             ->assertViewHas('wineryOnly', false)
             ->assertViewHas('grapeVarieties', fn ($v) => $v->contains('id', $olive->id));
+    }
+
+    private function makeViticulturistWithPlanting(): array
+    {
+        $viticulturist = User::factory()->create([
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
+        ]);
+
+        $winery = User::factory()->create(['role' => 'winery']);
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
+        ]);
+
+        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
+
+        $planting = PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $variety->id,
+            'area_planted' => 2.0,
+            'status' => 'active',
+            'vine_count' => 4000,
+        ]);
+
+        $planting->refresh(); // pick up DB defaults (irrigated, active…)
+
+        return [$viticulturist, $plot, $planting];
+    }
+
+    // ── Helpers adicionales ───────────────────────────────────────────────────
+
+    private function makeWineryWithOwnViticulturistAndPlanting(): array
+    {
+        $winery = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
+        ]);
+        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
+        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        $planting = PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $variety->id,
+            'area_planted' => 2.0,
+            'status' => 'active',
+        ]);
+        $planting->refresh();
+
+        return [$winery, $plot, $planting];
+    }
+
+    private function makeProducerWithPlanting(): array
+    {
+        $producer = User::factory()->create(['role' => 'producer', 'email_verified_at' => now()]);
+        $plot = Plot::factory()->create(['viticulturist_id' => $producer->id]);
+        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        $planting = PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $variety->id,
+            'area_planted' => 1.5,
+            'status' => 'active',
+        ]);
+        $planting->refresh();
+
+        return [$producer, $plot, $planting];
     }
 }

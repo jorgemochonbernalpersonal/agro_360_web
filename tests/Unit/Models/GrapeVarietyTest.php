@@ -98,9 +98,9 @@ class GrapeVarietyTest extends TestCase
         GrapeVariety::query()->delete();
 
         $variety = GrapeVariety::create([
-            'name'   => 'VariedadTest',
-            'code'   => 'VT01',
-            'color'  => 'red',
+            'name' => 'VariedadTest',
+            'code' => 'VT01',
+            'color' => 'red',
             'active' => true,
         ]);
 
@@ -111,8 +111,8 @@ class GrapeVarietyTest extends TestCase
     {
         GrapeVariety::query()->delete();
 
-        $wine  = GrapeVariety::create(['name' => 'UvaVino',   'code' => 'UV', 'color' => 'red',  'active' => true, 'crop_type' => 'wine']);
-        $olive = GrapeVariety::create(['name' => 'Aceituna',  'code' => 'AC', 'color' => 'white','active' => true, 'crop_type' => 'olive']);
+        $wine = GrapeVariety::create(['name' => 'UvaVino',   'code' => 'UV', 'color' => 'red',  'active' => true, 'crop_type' => 'wine']);
+        $olive = GrapeVariety::create(['name' => 'Aceituna',  'code' => 'AC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
         $other = GrapeVariety::create(['name' => 'OtroCult',  'code' => 'OC', 'color' => 'rose', 'active' => true, 'crop_type' => 'other']);
 
         $results = GrapeVariety::wine()->pluck('id');
@@ -126,8 +126,8 @@ class GrapeVarietyTest extends TestCase
     {
         GrapeVariety::query()->delete();
 
-        $wine  = GrapeVariety::create(['name' => 'UvaVino',  'code' => 'UV', 'color' => 'red',  'active' => true, 'crop_type' => 'wine']);
-        $olive = GrapeVariety::create(['name' => 'Aceituna', 'code' => 'AC', 'color' => 'white','active' => true, 'crop_type' => 'olive']);
+        $wine = GrapeVariety::create(['name' => 'UvaVino',  'code' => 'UV', 'color' => 'red',  'active' => true, 'crop_type' => 'wine']);
+        $olive = GrapeVariety::create(['name' => 'Aceituna', 'code' => 'AC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
 
         $oliveResults = GrapeVariety::byCropType('olive')->pluck('id');
 
@@ -139,27 +139,25 @@ class GrapeVarietyTest extends TestCase
     {
         GrapeVariety::query()->delete();
 
-        $wine  = GrapeVariety::create(['name' => 'UvaVino',  'code' => 'UV', 'color' => 'red',  'active' => true, 'crop_type' => 'wine']);
-        $olive = GrapeVariety::create(['name' => 'Aceituna', 'code' => 'AC', 'color' => 'white','active' => true, 'crop_type' => 'olive']);
+        $wine = GrapeVariety::create(['name' => 'UvaVino',  'code' => 'UV', 'color' => 'red',  'active' => true, 'crop_type' => 'wine']);
+        $olive = GrapeVariety::create(['name' => 'Aceituna', 'code' => 'AC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
         $other = GrapeVariety::create(['name' => 'OtroCult', 'code' => 'OC', 'color' => 'rose', 'active' => true, 'crop_type' => 'other']);
 
-        $this->assertEquals('Uva (vino)',        $wine->crop_type_label);
+        $this->assertEquals('Uva (vino)', $wine->crop_type_label);
         $this->assertEquals('Aceituna (aceite)', $olive->crop_type_label);
-        $this->assertEquals('Otro cultivo',      $other->crop_type_label);
+        $this->assertEquals('Otro cultivo', $other->crop_type_label);
     }
 
     public function test_crop_type_icon_attribute_returns_correct_icon(): void
     {
         GrapeVariety::query()->delete();
 
-        $wine  = GrapeVariety::create(['name' => 'UvaVino',  'code' => 'UV', 'color' => 'red',  'active' => true, 'crop_type' => 'wine']);
-        $olive = GrapeVariety::create(['name' => 'Aceituna', 'code' => 'AC', 'color' => 'white','active' => true, 'crop_type' => 'olive']);
+        $wine = GrapeVariety::create(['name' => 'UvaVino',  'code' => 'UV', 'color' => 'red',  'active' => true, 'crop_type' => 'wine']);
+        $olive = GrapeVariety::create(['name' => 'Aceituna', 'code' => 'AC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
         $other = GrapeVariety::create(['name' => 'OtroCult', 'code' => 'OC', 'color' => 'rose', 'active' => true, 'crop_type' => 'other']);
 
         $this->assertEquals('scissors', $wine->crop_type_icon);
-        $this->assertEquals('sun',      $olive->crop_type_icon);
-        $this->assertEquals('leaf',     $other->crop_type_icon);
+        $this->assertEquals('sun', $olive->crop_type_icon);
+        $this->assertEquals('leaf', $other->crop_type_icon);
     }
 }
-
-

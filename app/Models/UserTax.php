@@ -39,6 +39,8 @@ class UserTax extends Model
 
     /**
      * Scope para impuesto por defecto del usuario
+     *
+     * @param mixed $query
      */
     public function scopeDefault($query)
     {

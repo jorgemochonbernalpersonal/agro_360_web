@@ -12,7 +12,7 @@ class ApiRateLimiter
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next, string $maxAttempts = '60', string $decayMinutes = '1'): Response
     {
@@ -25,9 +25,9 @@ class ApiRateLimiter
                 'message' => 'Too many requests. Please try again later.',
                 'retry_after' => $seconds,
             ], 429)
-            ->header('Retry-After', $seconds)
-            ->header('X-RateLimit-Limit', $maxAttempts)
-            ->header('X-RateLimit-Remaining', 0);
+                ->header('Retry-After', $seconds)
+                ->header('X-RateLimit-Limit', $maxAttempts)
+                ->header('X-RateLimit-Remaining', 0);
         }
 
         RateLimiter::hit($key, (int) $decayMinutes * 60);

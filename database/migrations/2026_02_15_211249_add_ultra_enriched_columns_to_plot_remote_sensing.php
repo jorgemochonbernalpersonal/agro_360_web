@@ -21,7 +21,7 @@ return new class extends Migration
                 ->comment('Green band reflectance');
             $table->decimal('blue_band', 6, 4)->nullable()->after('green_band')
                 ->comment('Blue band reflectance');
-            
+
             // Additional vegetation indices (from real spectral bands)
             $table->decimal('msr', 6, 4)->nullable()->after('ndre')
                 ->comment('Modified Simple Ratio');
@@ -29,25 +29,25 @@ return new class extends Migration
                 ->comment('Chlorophyll Index Green');
             $table->decimal('arvi', 6, 4)->nullable()->after('ci_green')
                 ->comment('Atmospherically Resistant VI');
-            
+
             // Official LAI data
             $table->decimal('fpar', 5, 3)->nullable()->after('lai')
                 ->comment('Fraction of PAR (0-1)');
             $table->integer('lai_quality')->nullable()->after('fpar')
                 ->comment('LAI quality flag from MODIS');
-            
+
             // SMAP Soil Moisture
             $table->decimal('soil_moisture_surface_smap', 5, 2)->nullable()->after('soil_moisture')
                 ->comment('SMAP surface soil moisture (%)');
             $table->decimal('soil_moisture_rootzone_smap', 5, 2)->nullable()->after('soil_moisture_surface_smap')
                 ->comment('SMAP rootzone soil moisture (%)');
-            
+
             // Official ET
             $table->decimal('et_nasa', 6, 2)->nullable()->after('et0')
                 ->comment('NASA official ET (mm/day)');
             $table->decimal('pet_nasa', 6, 2)->nullable()->after('et_nasa')
                 ->comment('NASA Potential ET (mm/day)');
-            
+
             // Indexes for queries
             $table->index('fpar', 'idx_fpar');
             $table->index(['satellite', 'image_date'], 'idx_satellite_date');
@@ -62,7 +62,7 @@ return new class extends Migration
         Schema::table('plot_remote_sensing', function (Blueprint $table) {
             $table->dropIndex('idx_fpar');
             $table->dropIndex('idx_satellite_date');
-            
+
             $table->dropColumn([
                 'red_band',
                 'nir_band',

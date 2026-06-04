@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\CrewMember;
-use App\Models\PostHarvestTreatment;
 
 class AgriculturalActivity extends Model
 {
@@ -17,24 +15,14 @@ class AgriculturalActivity extends Model
     const ACTIVITY_TYPES = [
         'phytosanitary' => 'Tratamiento fitosanitario',
         'fertilization' => 'Fertilización',
-        'irrigation'    => 'Riego',
-        'cultural'      => 'Labor cultural',
-        'observation'   => 'Observación',
-        'harvest'       => 'Cosecha',
-        'pruning'       => 'Poda',
-        'phenology'     => 'Observación fenológica',
-        'post_harvest'  => 'Tratamiento post-vendimia',
+        'irrigation' => 'Riego',
+        'cultural' => 'Labor cultural',
+        'observation' => 'Observación',
+        'harvest' => 'Cosecha',
+        'pruning' => 'Poda',
+        'phenology' => 'Observación fenológica',
+        'post_harvest' => 'Tratamiento post-vendimia',
     ];
-
-    public static function activityTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::ACTIVITY_TYPES);
-    }
-
-    public static function activityTypes(): array
-    {
-        return static::activityTypeOptions();
-    }
 
     protected $fillable = [
         'plot_id',
@@ -62,6 +50,16 @@ class AgriculturalActivity extends Model
         'is_locked' => 'boolean',
         'locked_at' => 'datetime',
     ];
+
+    public static function activityTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ACTIVITY_TYPES);
+    }
+
+    public static function activityTypes(): array
+    {
+        return static::activityTypeOptions();
+    }
 
     /**
      * Parcela donde se realizó la actividad
@@ -232,11 +230,11 @@ class AgriculturalActivity extends Model
      */
     public function unlock(): void
     {
-        if (!$this->is_locked) {
+        if (! $this->is_locked) {
             return;
         }
 
-        if (!\Illuminate\Support\Facades\Auth::user()?->isAdmin()) {
+        if (! \Illuminate\Support\Facades\Auth::user()?->isAdmin()) {
             throw new \RuntimeException('Solo los administradores pueden desbloquear actividades.');
         }
 
@@ -251,6 +249,8 @@ class AgriculturalActivity extends Model
 
     /**
      * Scope para filtrar por tipo de actividad
+     *
+     * @param mixed $query
      */
     public function scopeOfType($query, string $type)
     {
@@ -259,6 +259,8 @@ class AgriculturalActivity extends Model
 
     /**
      * Scope para filtrar actividades del viticultor
+     *
+     * @param mixed $query
      */
     public function scopeForViticulturist($query, int $viticulturistId)
     {
@@ -267,6 +269,8 @@ class AgriculturalActivity extends Model
 
     /**
      * Scope para filtrar por usuario (alias genérico de forViticulturist)
+     *
+     * @param mixed $query
      */
     public function scopeForUser($query, int $userId)
     {
@@ -275,6 +279,8 @@ class AgriculturalActivity extends Model
 
     /**
      * Scope para filtrar por parcela
+     *
+     * @param mixed $query
      */
     public function scopeForPlot($query, int $plotId)
     {
@@ -283,6 +289,8 @@ class AgriculturalActivity extends Model
 
     /**
      * Scope para filtrar por campaña
+     *
+     * @param mixed $query
      */
     public function scopeForCampaign($query, int $campaignId)
     {
@@ -291,6 +299,8 @@ class AgriculturalActivity extends Model
 
     /**
      * Scope para filtrar por plantación
+     *
+     * @param mixed $query
      */
     public function scopeForPlanting($query, int $plotPlantingId)
     {

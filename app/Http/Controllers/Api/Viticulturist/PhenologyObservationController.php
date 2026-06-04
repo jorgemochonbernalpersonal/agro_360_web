@@ -20,9 +20,9 @@ class PhenologyObservationController extends Controller
 
         $request->validate([
             'campaign_id' => 'nullable|integer',
-            'event'       => 'nullable|string',
-            'search'      => 'nullable|string|max:100',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'event' => 'nullable|string',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = PhenologyObservation::where('viticulturist_id', $user->id)
@@ -46,10 +46,10 @@ class PhenologyObservationController extends Controller
         return response()->json([
             'data' => PhenologyObservationResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -60,15 +60,15 @@ class PhenologyObservationController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'plot_planting_id'        => 'required|integer|exists:plot_plantings,id',
-            'campaign_id'             => 'nullable|integer|exists:campaigns,id',
-            'event'                   => 'required|in:budbreak,shoot_growth,flowering,fruit_set,veraison,pre_harvest,harvest',
-            'obs_date'                => 'required|date',
-            'source'                  => 'nullable|string|in:manual,sensor,model,auto',
-            'confidence'              => 'nullable|integer|min:0|max:100',
+            'plot_planting_id' => 'required|integer|exists:plot_plantings,id',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'event' => 'required|in:budbreak,shoot_growth,flowering,fruit_set,veraison,pre_harvest,harvest',
+            'obs_date' => 'required|date',
+            'source' => 'nullable|string|in:manual,sensor,model,auto',
+            'confidence' => 'nullable|integer|min:0|max:100',
             'degree_days_accumulated' => 'nullable|numeric|min:0',
-            'bbch_code'               => 'nullable|integer|min:0|max:99',
-            'notes'                   => 'nullable|string|max:2000',
+            'bbch_code' => 'nullable|integer|min:0|max:99',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (empty($validated['campaign_id'])) {
@@ -80,15 +80,15 @@ class PhenologyObservationController extends Controller
         $record = PhenologyObservation::updateOrCreate(
             [
                 'plot_planting_id' => $validated['plot_planting_id'],
-                'campaign_id'      => $validated['campaign_id'],
-                'event'            => $validated['event'],
+                'campaign_id' => $validated['campaign_id'],
+                'event' => $validated['event'],
             ],
             [...$validated, 'viticulturist_id' => $user->id, 'active' => true]
         );
         $record->load(['plotPlanting.plot', 'plotPlanting.grapeVariety', 'campaign']);
 
         return response()->json([
-            'data'    => new PhenologyObservationResource($record),
+            'data' => new PhenologyObservationResource($record),
             'message' => __('Observación fenológica registrada correctamente.'),
         ], 201);
     }

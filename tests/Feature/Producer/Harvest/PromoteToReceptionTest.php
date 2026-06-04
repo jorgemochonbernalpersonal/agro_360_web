@@ -21,10 +21,13 @@ use Tests\Feature\ProducerTestCase;
  */
 class PromoteToReceptionTest extends ProducerTestCase
 {
-    private User        $producer;
-    private Plot        $plot;
+    private User $producer;
+
+    private Plot $plot;
+
     private PlotPlanting $planting;
-    private Container   $container;
+
+    private Container $container;
 
     protected function setUp(): void
     {
@@ -39,51 +42,28 @@ class PromoteToReceptionTest extends ProducerTestCase
 
         $this->plot = Plot::create([
             'viticulturist_id' => $this->producer->id,
-            'name'             => 'Parcela PromoteTest',
-            'reference'        => 'PM-001',
-            'area'             => 2.0,
-            'active'           => true,
+            'name' => 'Parcela PromoteTest',
+            'reference' => 'PM-001',
+            'area' => 2.0,
+            'active' => true,
         ]);
 
         $this->planting = PlotPlanting::create([
-            'plot_id'          => $this->plot->id,
+            'plot_id' => $this->plot->id,
             'grape_variety_id' => $grapeVariety->id,
-            'area_planted'     => 2.0,
-            'planting_year'    => now()->year - 5,
-            'status'           => 'active',
+            'area_planted' => 2.0,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
         ]);
 
         $this->container = Container::create([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Depósito Cosecha',
-            'unit'          => 'kg',
-            'capacity'      => 10000,
+            'user_id' => $this->producer->id,
+            'name' => 'Depósito Cosecha',
+            'unit' => 'kg',
+            'capacity' => 10000,
             'used_capacity' => 0,
-            'archived'      => false,
+            'archived' => false,
         ]);
-    }
-
-    // ── Helper ────────────────────────────────────────────────────────────────
-
-    private function makeNotebookHarvest(float $weight = 500): Harvest
-    {
-        $campaign = Campaign::getOrCreateActiveForYear($this->producer->id, now()->year);
-
-        $activity = AgriculturalActivity::create([
-            'plot_id'          => $this->plot->id,
-            'viticulturist_id' => $this->producer->id,
-            'campaign_id'      => $campaign->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => now()->toDateString(),
-        ]);
-
-        return Harvest::withoutEvents(fn () => Harvest::create([
-            'activity_id'        => $activity->id,
-            'plot_planting_id'   => $this->planting->id,
-            'harvest_start_date' => now()->toDateString(),
-            'total_weight'       => $weight,
-            'status'             => 'active',
-        ]));
     }
 
     // ── happy path ────────────────────────────────────────────────────────────
@@ -104,8 +84,8 @@ class PromoteToReceptionTest extends ProducerTestCase
         // A winery-side Harvest (winery_id set) should have been created
         $this->assertDatabaseHas('harvests', [
             'notebook_harvest_id' => $notebookHarvest->id,
-            'winery_id'           => $this->producer->id,
-            'total_weight'        => 800,
+            'winery_id' => $this->producer->id,
+            'total_weight' => 800,
         ]);
     }
 
@@ -181,12 +161,12 @@ class PromoteToReceptionTest extends ProducerTestCase
         $this->actingAs($this->producer);
 
         $smallContainer = Container::create([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Depósito Pequeño',
-            'unit'          => 'kg',
-            'capacity'      => 100,
+            'user_id' => $this->producer->id,
+            'name' => 'Depósito Pequeño',
+            'unit' => 'kg',
+            'capacity' => 100,
             'used_capacity' => 90,
-            'archived'      => false,
+            'archived' => false,
         ]);
 
         $notebookHarvest = $this->makeNotebookHarvest(500);
@@ -203,7 +183,7 @@ class PromoteToReceptionTest extends ProducerTestCase
 
     public function test_non_producer_cannot_access(): void
     {
-        $viticulturist   = $this->makeViticulturist();
+        $viticulturist = $this->makeViticulturist();
         $notebookHarvest = $this->makeNotebookHarvest();
 
         // Route is guarded by role:producer middleware — viticulturists are rejected
@@ -212,5 +192,28 @@ class PromoteToReceptionTest extends ProducerTestCase
 
         $this->actingAs($viticulturist)
             ->get(route('producer.digital-notebook.harvest.promote', $notebookHarvest));
+    }
+
+    // ── Helper ────────────────────────────────────────────────────────────────
+
+    private function makeNotebookHarvest(float $weight = 500): Harvest
+    {
+        $campaign = Campaign::getOrCreateActiveForYear($this->producer->id, now()->year);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $this->plot->id,
+            'viticulturist_id' => $this->producer->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'harvest',
+            'activity_date' => now()->toDateString(),
+        ]);
+
+        return Harvest::withoutEvents(fn () => Harvest::create([
+            'activity_id' => $activity->id,
+            'plot_planting_id' => $this->planting->id,
+            'harvest_start_date' => now()->toDateString(),
+            'total_weight' => $weight,
+            'status' => 'active',
+        ]));
     }
 }

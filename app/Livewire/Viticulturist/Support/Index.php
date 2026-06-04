@@ -2,20 +2,24 @@
 
 namespace App\Livewire\Viticulturist\Support;
 
-use App\Models\SupportTicket;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\SupportTicket;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
     public $search = '';
+
     public $filterStatus = 'all';
+
     public $filterType = 'all';
+
     public $selectedTicket = null;
+
     public $newComment = '';
 
     protected $queryString = ['search', 'filterStatus', 'filterType'];
@@ -44,8 +48,9 @@ class Index extends Component
             'newComment' => 'required|string|min:3',
         ]);
 
-        if (!$this->selectedTicket) {
+        if (! $this->selectedTicket) {
             $this->toastError(__('No hay ticket seleccionado.'));
+
             return;
         }
 
@@ -63,16 +68,16 @@ class Index extends Component
     public function render()
     {
         $user = Auth::user();
-        
+
         $query = SupportTicket::with(['user', 'assignedTo'])
             ->forUser($user->id)
             ->latest();
 
         // Filtrar por búsqueda
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('title', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->where('title', 'like', '%'.$this->search.'%')
+                    ->orWhere('description', 'like', '%'.$this->search.'%');
             });
         }
 

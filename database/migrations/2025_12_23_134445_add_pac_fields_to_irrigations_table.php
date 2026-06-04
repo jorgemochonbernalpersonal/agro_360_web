@@ -15,10 +15,10 @@ return new class extends Migration
             // Campos PAC obligatorios para riego
             $table->string('water_source', 100)->nullable()->after('irrigation_method')
                 ->comment('Origen del agua: pozo, embalse, acequia, río, etc.');
-            
+
             $table->string('water_concession', 100)->nullable()->after('water_source')
                 ->comment('Número de concesión o autorización de agua');
-            
+
             $table->decimal('flow_rate', 10, 2)->nullable()->after('water_concession')
                 ->comment('Caudal de riego en litros/hora');
         });

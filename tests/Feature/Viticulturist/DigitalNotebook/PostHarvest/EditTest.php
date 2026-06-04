@@ -15,66 +15,14 @@ use Tests\Feature\ViticulturistTestCase;
 
 class EditTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makePlot($viticulturist): Plot
-    {
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
-        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
-        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
-
-        return Plot::factory()->create([
-            'viticulturist_id'        => $viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
-        ]);
-    }
-
-    private function makeCampaign($viticulturist): Campaign
-    {
-        return Campaign::factory()->active()->create([
-            'viticulturist_id' => $viticulturist->id,
-            'year'             => now()->year,
-        ]);
-    }
-
-    private function makeActivityWithTreatment($viticulturist, Plot $plot, Campaign $campaign): AgriculturalActivity
-    {
-        $activity = AgriculturalActivity::create([
-            'viticulturist_id'   => $viticulturist->id,
-            'plot_id'            => $plot->id,
-            'campaign_id'        => $campaign->id,
-            'activity_type'      => 'post_harvest',
-            'activity_date'      => now()->format('Y-m-d'),
-            'phenological_stage' => 'Caída de hoja',
-            'crew_member_id'     => null,
-            'is_locked'          => false,
-        ]);
-
-        PostHarvestTreatment::create([
-            'activity_id'            => $activity->id,
-            'application_type'       => 'copper_treatment',
-            'treated_area_ha'        => 2.5,
-            'dose_per_hectare'       => 3.0,
-            'dose_unit'              => 'kg/ha',
-            'water_volume_liters'    => 300.0,
-            'reentry_interval_hours' => 24,
-            'notes'                  => null,
-        ]);
-
-        return $activity->load('postHarvestTreatment');
-    }
-
     // ── mount: campos precargados ──────────────────────────────────────────────
 
     public function test_mount_fills_all_fields_from_existing_treatment(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -91,9 +39,9 @@ class EditTest extends ViticulturistTestCase
     public function test_can_update_treatment(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -107,7 +55,7 @@ class EditTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.digital-notebook.post-harvest.index'));
 
         $this->assertDatabaseHas('post_harvest_treatments', [
-            'activity_id'      => $activity->id,
+            'activity_id' => $activity->id,
             'application_type' => 'sulfur_treatment',
         ]);
     }
@@ -117,9 +65,9 @@ class EditTest extends ViticulturistTestCase
     public function test_can_update_reentry_interval(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -137,9 +85,9 @@ class EditTest extends ViticulturistTestCase
     public function test_can_clear_reentry_interval_to_null(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -159,9 +107,9 @@ class EditTest extends ViticulturistTestCase
     public function test_application_type_required_on_update(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -176,9 +124,9 @@ class EditTest extends ViticulturistTestCase
     public function test_treated_area_required_on_update(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -193,9 +141,9 @@ class EditTest extends ViticulturistTestCase
     public function test_reentry_interval_max_168_on_update(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -212,9 +160,9 @@ class EditTest extends ViticulturistTestCase
     public function test_policy_denies_update_for_locked_activity(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
 
         $activity->update([
             'is_locked' => true,
@@ -232,13 +180,64 @@ class EditTest extends ViticulturistTestCase
     public function test_policy_denies_update_for_other_viticulturist(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
+        $other = $this->makeViticulturist();
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithTreatment($viticulturist, $plot, $campaign);
 
         $this->assertFalse(
             $other->can('update', $activity)
         );
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makePlot($viticulturist): Plot
+    {
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
+        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
+
+        return Plot::factory()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
+        ]);
+    }
+
+    private function makeCampaign($viticulturist): Campaign
+    {
+        return Campaign::factory()->active()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'year' => now()->year,
+        ]);
+    }
+
+    private function makeActivityWithTreatment($viticulturist, Plot $plot, Campaign $campaign): AgriculturalActivity
+    {
+        $activity = AgriculturalActivity::create([
+            'viticulturist_id' => $viticulturist->id,
+            'plot_id' => $plot->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'post_harvest',
+            'activity_date' => now()->format('Y-m-d'),
+            'phenological_stage' => 'Caída de hoja',
+            'crew_member_id' => null,
+            'is_locked' => false,
+        ]);
+
+        PostHarvestTreatment::create([
+            'activity_id' => $activity->id,
+            'application_type' => 'copper_treatment',
+            'treated_area_ha' => 2.5,
+            'dose_per_hectare' => 3.0,
+            'dose_unit' => 'kg/ha',
+            'water_volume_liters' => 300.0,
+            'reentry_interval_hours' => 24,
+            'notes' => null,
+        ]);
+
+        return $activity->load('postHarvestTreatment');
     }
 }

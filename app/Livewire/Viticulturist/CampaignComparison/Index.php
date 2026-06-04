@@ -13,7 +13,9 @@ use Livewire\Component;
 class Index extends Component
 {
     public string $campaignA = '';
+
     public string $campaignB = '';
+
     public string $filterPlot = '';
 
     public function mount(): void
@@ -29,9 +31,9 @@ class Index extends Component
 
     public function render()
     {
-        $userId    = Auth::id();
+        $userId = Auth::id();
         $campaigns = $this->getUserCampaigns();
-        $plots     = Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']);
+        $plots = Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']);
 
         $dataA = $this->campaignA ? $this->buildCampaignData((int) $this->campaignA, $userId) : null;
         $dataB = $this->campaignB ? $this->buildCampaignData((int) $this->campaignB, $userId) : null;
@@ -40,10 +42,10 @@ class Index extends Component
         $campaignBModel = $this->campaignB ? $campaigns->find($this->campaignB) : null;
 
         return view('livewire.viticulturist.campaign-comparison.index', [
-            'campaigns'      => $campaigns,
-            'plots'          => $plots,
-            'dataA'          => $dataA,
-            'dataB'          => $dataB,
+            'campaigns' => $campaigns,
+            'plots' => $plots,
+            'dataA' => $dataA,
+            'dataB' => $dataB,
             'campaignAModel' => $campaignAModel,
             'campaignBModel' => $campaignBModel,
         ]);
@@ -114,10 +116,10 @@ class Index extends Component
             ->get();
 
         return [
-            'harvest'          => $harvestStats,
-            'activityCounts'   => $activityCounts,
-            'totalActivities'  => $totalActivities,
-            'perPlot'          => $perPlot,
+            'harvest' => $harvestStats,
+            'activityCounts' => $activityCounts,
+            'totalActivities' => $totalActivities,
+            'perPlot' => $perPlot,
         ];
     }
 }

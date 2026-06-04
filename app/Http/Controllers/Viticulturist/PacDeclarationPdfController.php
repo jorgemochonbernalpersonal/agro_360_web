@@ -19,16 +19,16 @@ class PacDeclarationPdfController extends Controller
 
         app()->setLocale('es');
         $pdf = Pdf::loadView('reports.pac-declaration', [
-            'declaration'   => $declaration,
+            'declaration' => $declaration,
             'viticulturist' => $declaration->viticulturist,
             'ecoSchemesMap' => PacDeclaration::ECO_SCHEMES,
         ])
-        ->setPaper('A4', 'portrait')
-        ->setOption('defaultFont', 'DejaVu Sans')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isRemoteEnabled', false);
+            ->setPaper('A4', 'portrait')
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', false);
 
-        $filename = 'declaracion_pac_' . $declaration->year . '.pdf';
+        $filename = 'declaracion_pac_'.$declaration->year.'.pdf';
 
         return $pdf->download($filename);
     }

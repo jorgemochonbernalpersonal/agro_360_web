@@ -27,7 +27,9 @@ use Tests\Feature\ViticulturistTestCase;
 class WithdrawalPeriodsTest extends ViticulturistTestCase
 {
     private User $viticulturist;
+
     private Campaign $campaign;
+
     private Plot $plot;
 
     protected function setUp(): void
@@ -38,57 +40,19 @@ class WithdrawalPeriodsTest extends ViticulturistTestCase
 
         $this->campaign = Campaign::factory()->active()->create([
             'viticulturist_id' => $this->viticulturist->id,
-            'year'             => now()->year,
+            'year' => now()->year,
         ]);
 
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
         $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
         $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
 
         $this->plot = Plot::factory()->create([
-            'viticulturist_id'        => $this->viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
-        ]);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makePlanting(): PlotPlanting
-    {
-        return PlotPlanting::create([
-            'plot_id'      => $this->plot->id,
-            'area_planted' => 2.0,
-            'status'       => 'active',
-        ]);
-    }
-
-    /**
-     * Crea un tratamiento fitosanitario en la parcela con producto y plazo de seguridad.
-     */
-    private function createTreatment(int $withdrawalDays, Carbon $applicationDate): void
-    {
-        $product = PhytosanitaryProduct::create([
-            'user_id'               => $this->viticulturist->id,
-            'name'                  => "Producto test {$withdrawalDays}d",
-            'registration_number'   => 'ES-' . str_pad(rand(1, 99999999), 8, '0', STR_PAD_LEFT),
-            'withdrawal_period_days' => $withdrawalDays,
-            'active'                => true,
-        ]);
-
-        $activity = AgriculturalActivity::create([
-            'plot_id'          => $this->plot->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'campaign_id'      => $this->campaign->id,
-            'activity_type'    => 'phytosanitary',
-            'activity_date'    => $applicationDate->format('Y-m-d'),
-        ]);
-
-        PhytosanitaryTreatment::create([
-            'activity_id' => $activity->id,
-            'product_id'  => $product->id,
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
         ]);
     }
 
@@ -171,16 +135,16 @@ class WithdrawalPeriodsTest extends ViticulturistTestCase
         $this->createTreatment(15, now()->subDays(3));
 
         // Crear otra parcela sin tratamientos
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
         $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
         $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
 
         $otherPlot = Plot::factory()->create([
-            'viticulturist_id'        => $this->viticulturist->id,
+            'viticulturist_id' => $this->viticulturist->id,
             'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
         ]);
         PlotPlanting::create(['plot_id' => $otherPlot->id, 'area_planted' => 1.0, 'status' => 'active']);
         PlotPlanting::create(['plot_id' => $otherPlot->id, 'area_planted' => 1.0, 'status' => 'active']);
@@ -279,7 +243,7 @@ class WithdrawalPeriodsTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('harvests', [
             'total_weight' => 1000,
-            'status'       => 'active',
+            'status' => 'active',
         ]);
     }
 
@@ -318,5 +282,43 @@ class WithdrawalPeriodsTest extends ViticulturistTestCase
 
         // 0 días → safe_date = hoy → isFuture() = false → sin warning
         $component->assertSet('hasActiveWithdrawal', false);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makePlanting(): PlotPlanting
+    {
+        return PlotPlanting::create([
+            'plot_id' => $this->plot->id,
+            'area_planted' => 2.0,
+            'status' => 'active',
+        ]);
+    }
+
+    /**
+     * Crea un tratamiento fitosanitario en la parcela con producto y plazo de seguridad.
+     */
+    private function createTreatment(int $withdrawalDays, Carbon $applicationDate): void
+    {
+        $product = PhytosanitaryProduct::create([
+            'user_id' => $this->viticulturist->id,
+            'name' => "Producto test {$withdrawalDays}d",
+            'registration_number' => 'ES-'.str_pad(rand(1, 99999999), 8, '0', STR_PAD_LEFT),
+            'withdrawal_period_days' => $withdrawalDays,
+            'active' => true,
+        ]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $this->plot->id,
+            'viticulturist_id' => $this->viticulturist->id,
+            'campaign_id' => $this->campaign->id,
+            'activity_type' => 'phytosanitary',
+            'activity_date' => $applicationDate->format('Y-m-d'),
+        ]);
+
+        PhytosanitaryTreatment::create([
+            'activity_id' => $activity->id,
+            'product_id' => $product->id,
+        ]);
     }
 }

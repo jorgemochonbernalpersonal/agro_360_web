@@ -40,4 +40,3 @@ trait WithToastNotifications
         session()->flash('warning', $message);
     }
 }
-

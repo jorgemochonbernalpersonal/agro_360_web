@@ -16,6 +16,21 @@ class SupervisorWinery extends Model
         'assigned_by',
     ];
 
+    public function supervisor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'supervisor_id');
+    }
+
+    public function winery(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'winery_id');
+    }
+
+    public function assignedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_by');
+    }
+
     protected static function booted(): void
     {
         $flush = function (SupervisorWinery $sw) {
@@ -32,7 +47,7 @@ class SupervisorWinery extends Model
                 ->where('supervisor_id', $sw->supervisor_id)
                 ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
                 ->update([
-                    'source'      => WineryViticulturist::SOURCE_OWN,
+                    'source' => WineryViticulturist::SOURCE_OWN,
                     'supervisor_id' => null,
                 ]);
 
@@ -49,20 +64,5 @@ class SupervisorWinery extends Model
         });
 
         static::deleted($flush);
-    }
-
-    public function supervisor(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'supervisor_id');
-    }
-
-    public function winery(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'winery_id');
-    }
-
-    public function assignedBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'assigned_by');
     }
 }

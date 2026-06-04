@@ -26,17 +26,19 @@ class MultipartPlotSigpacObserver
 
     private function recalculate(?int $municipalityId): void
     {
-        if (! $municipalityId) return;
+        if (! $municipalityId) {
+            return;
+        }
 
         $result = DB::selectOne(
-            "SELECT AVG(ST_Y(pg.centroid)) AS lat,
+            'SELECT AVG(ST_Y(pg.centroid)) AS lat,
                     AVG(ST_X(pg.centroid)) AS lng
              FROM   multipart_plot_sigpac mps
              JOIN   plot_geometry         pg ON mps.plot_geometry_id = pg.id
              JOIN   plots                 p  ON mps.plot_id          = p.id
              WHERE  p.municipality_id = ?
                AND  p.active          = 1
-               AND  pg.centroid IS NOT NULL",
+               AND  pg.centroid IS NOT NULL',
             [$municipalityId]
         );
 

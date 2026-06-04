@@ -4,7 +4,6 @@ namespace Tests\Feature\Supervisor\Inspection;
 
 use App\Livewire\Supervisor\Inspection\Index as InspectionIndex;
 use App\Models\DoInspection;
-use App\Models\WineryViticulturist;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -23,13 +22,13 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $inspection = DoInspection::create([
-            'supervisor_id'    => $supervisor->id,
-            'subject_type'     => 'winery',
-            'subject_id'       => $winery->id,
-            'inspection_date'  => '2024-05-10',
-            'notes'            => 'Nota inicial',
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
+            'inspection_date' => '2024-05-10',
+            'notes' => 'Nota inicial',
             'reference_number' => 'INSP-001',
-            'result'           => DoInspection::RESULT_PENDING,
+            'result' => DoInspection::RESULT_PENDING,
         ]);
 
         $this->actingAs($supervisor);
@@ -49,9 +48,9 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => now()->toDateString(),
         ]);
 
@@ -72,9 +71,9 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => '2024-01-01',
         ]);
 
@@ -104,11 +103,11 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => now()->toDateString(),
-            'status'          => DoInspection::STATUS_COMPLETED,
+            'status' => DoInspection::STATUS_COMPLETED,
         ]);
 
         $this->actingAs($supervisor);
@@ -132,9 +131,9 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => now()->toDateString(),
         ]);
 
@@ -152,9 +151,9 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => now()->toDateString(),
         ]);
 
@@ -173,12 +172,12 @@ class EditTest extends SupervisorTestCase
     public function test_cannot_edit_another_supervisors_inspection(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $otherSupervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $otherSupervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => now()->toDateString(),
         ]);
 

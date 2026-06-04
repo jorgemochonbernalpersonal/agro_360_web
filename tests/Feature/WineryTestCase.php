@@ -19,7 +19,7 @@ abstract class WineryTestCase extends TestCase
     protected function makeWinery(): User
     {
         return User::factory()->create([
-            'role'              => 'winery',
+            'role' => 'winery',
             'email_verified_at' => now(),
         ]);
     }
@@ -27,7 +27,7 @@ abstract class WineryTestCase extends TestCase
     protected function makeOtherWinery(): User
     {
         return User::factory()->create([
-            'role'              => 'winery',
+            'role' => 'winery',
             'email_verified_at' => now(),
         ]);
     }

@@ -21,7 +21,7 @@ class ReportGenerationFailedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '❌ Error al Generar Informe - ' . $this->report->report_type_name,
+            subject: '❌ Error al Generar Informe - '.$this->report->report_type_name,
         );
     }
 

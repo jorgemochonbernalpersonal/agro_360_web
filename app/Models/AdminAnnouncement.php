@@ -13,7 +13,7 @@ class AdminAnnouncement extends Model
     ];
 
     protected $casts = [
-        'is_active'  => 'boolean',
+        'is_active' => 'boolean',
         'expires_at' => 'datetime',
     ];
 
@@ -27,27 +27,27 @@ class AdminAnnouncement extends Model
         return $query->where('is_active', true)
             ->where(function ($q) {
                 $q->whereNull('expires_at')
-                  ->orWhere('expires_at', '>', now());
+                    ->orWhere('expires_at', '>', now());
             });
     }
 
     public function typeColor(): string
     {
-        return match($this->type) {
+        return match ($this->type) {
             'warning' => 'amber',
             'success' => 'green',
-            'danger'  => 'red',
-            default   => 'blue',
+            'danger' => 'red',
+            default => 'blue',
         };
     }
 
     public function typeIcon(): string
     {
-        return match($this->type) {
+        return match ($this->type) {
             'warning' => 'exclamation-triangle',
             'success' => 'check-circle',
-            'danger'  => 'x-circle',
-            default   => 'information-circle',
+            'danger' => 'x-circle',
+            default => 'information-circle',
         };
     }
 }

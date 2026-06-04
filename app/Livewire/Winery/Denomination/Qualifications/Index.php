@@ -12,21 +12,21 @@ class Index extends Component
 {
     use WithPagination;
 
-    public bool   $embedded      = false;
-    public string $resultFilter  = '';
+    public bool $embedded = false;
+
+    public string $resultFilter = '';
+
     public string $vintageFilter = '';
 
-    protected function queryString(): array
+    public function updatingResultFilter(): void
     {
-        if ($this->embedded) return [];
-        return [
-            'resultFilter'  => ['except' => ''],
-            'vintageFilter' => ['except' => ''],
-        ];
+        $this->resetPage();
     }
 
-    public function updatingResultFilter(): void { $this->resetPage(); }
-    public function updatingVintageFilter(): void { $this->resetPage(); }
+    public function updatingVintageFilter(): void
+    {
+        $this->resetPage();
+    }
 
     #[Layout('layouts.app')]
     public function render()
@@ -50,9 +50,9 @@ class Index extends Component
             ->pluck('total', 'result');
 
         $counts = [
-            'all'          => $resultCounts->sum(),
-            'pending'      => $resultCounts->get('pending', 0),
-            'qualified'    => $resultCounts->get('qualified', 0),
+            'all' => $resultCounts->sum(),
+            'pending' => $resultCounts->get('pending', 0),
+            'qualified' => $resultCounts->get('qualified', 0),
             'disqualified' => $resultCounts->get('disqualified', 0),
         ];
 
@@ -60,12 +60,24 @@ class Index extends Component
             ->select('vintage')->distinct()->orderByDesc('vintage')->pluck('vintage');
 
         return view('livewire.winery.denomination.qualifications.index', [
-            'qualifications'    => $qualifications,
-            'counts'            => $counts,
+            'qualifications' => $qualifications,
+            'counts' => $counts,
             'availableVintages' => $availableVintages,
-            'resultLabels'      => DoQualification::resultLabelOptions(),
-            'resultColors'      => DoQualification::RESULT_COLORS,
-            'colorLabels'       => DoQualification::colorLabelOptions(),
+            'resultLabels' => DoQualification::resultLabelOptions(),
+            'resultColors' => DoQualification::RESULT_COLORS,
+            'colorLabels' => DoQualification::colorLabelOptions(),
         ]);
+    }
+
+    protected function queryString(): array
+    {
+        if ($this->embedded) {
+            return [];
+        }
+
+        return [
+            'resultFilter' => ['except' => ''],
+            'vintageFilter' => ['except' => ''],
+        ];
     }
 }

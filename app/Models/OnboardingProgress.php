@@ -7,27 +7,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OnboardingProgress extends Model
 {
-    protected $table = 'onboarding_progress';
-
-    protected $fillable = [
-        'user_id',
-        'step',
-        'completed_at',
-        'skipped',
-    ];
-
-    protected $casts = [
-        'completed_at' => 'datetime',
-        'skipped' => 'boolean',
-    ];
-
     /**
      * Pasos del onboarding enfocados en datos maestros esenciales
      * Estos son los mínimos necesarios para poder trabajar en la app
      */
     public const STEP_REVIEW_CAMPAIGN = 'review_campaign';
+
     public const STEP_CREATE_PLOT = 'create_plot';
+
     public const STEP_ADD_PRODUCTS = 'add_products';
+
     public const STEP_REGISTER_ACTIVITY = 'register_activity';
 
     /**
@@ -45,11 +34,15 @@ class OnboardingProgress extends Model
     ];
 
     // Winery onboarding steps
-    public const STEP_WINERY_FISCAL        = 'winery_fiscal_data';
-    public const STEP_WINERY_CONTAINERS    = 'winery_add_containers';
+    public const STEP_WINERY_FISCAL = 'winery_fiscal_data';
+
+    public const STEP_WINERY_CONTAINERS = 'winery_add_containers';
+
     public const STEP_WINERY_VITICULTURIST = 'winery_link_viticulturist';
-    public const STEP_WINERY_HARVEST       = 'winery_first_harvest';
-    public const STEP_WINERY_WINE          = 'winery_first_wine';
+
+    public const STEP_WINERY_HARVEST = 'winery_first_harvest';
+
+    public const STEP_WINERY_WINE = 'winery_first_wine';
 
     public const WINERY_STEPS = [
         self::STEP_WINERY_FISCAL,        // 1. Datos fiscales / configuración
@@ -60,8 +53,10 @@ class OnboardingProgress extends Model
     ];
 
     // Supervisor (Denomination of Origin) onboarding steps
-    public const STEP_SUPERVISOR_PROFILE         = 'supervisor_configure_profile';
-    public const STEP_SUPERVISOR_ADD_WINERY      = 'supervisor_add_winery';
+    public const STEP_SUPERVISOR_PROFILE = 'supervisor_configure_profile';
+
+    public const STEP_SUPERVISOR_ADD_WINERY = 'supervisor_add_winery';
+
     public const STEP_SUPERVISOR_ADD_VITICULTURIST = 'supervisor_add_viticulturist';
 
     public const SUPERVISOR_STEPS = [
@@ -71,10 +66,14 @@ class OnboardingProgress extends Model
     ];
 
     // Producer onboarding steps (campo + bodega combinados)
-    public const STEP_PRODUCER_FISCAL    = 'winery_fiscal_data';       // Reutiliza winery step
-    public const STEP_PRODUCER_PLOT      = 'create_plot';              // Reutiliza viticulturist step
+    public const STEP_PRODUCER_FISCAL = 'winery_fiscal_data';       // Reutiliza winery step
+
+    public const STEP_PRODUCER_PLOT = 'create_plot';              // Reutiliza viticulturist step
+
     public const STEP_PRODUCER_CONTAINER = 'winery_add_containers';    // Reutiliza winery step
-    public const STEP_PRODUCER_ACTIVITY  = 'register_activity';        // Reutiliza viticulturist step
+
+    public const STEP_PRODUCER_ACTIVITY = 'register_activity';        // Reutiliza viticulturist step
+
     public const STEP_PRODUCER_RECEPTION = 'winery_first_harvest';     // Reutiliza winery step
 
     public const PRODUCER_STEPS = [
@@ -83,6 +82,20 @@ class OnboardingProgress extends Model
         self::STEP_PRODUCER_CONTAINER,  // 3. Primer contenedor (bodega)
         self::STEP_PRODUCER_ACTIVITY,   // 4. Primera actividad de campo
         self::STEP_PRODUCER_RECEPTION,  // 5. Primera recepción (bodega)
+    ];
+
+    protected $table = 'onboarding_progress';
+
+    protected $fillable = [
+        'user_id',
+        'step',
+        'completed_at',
+        'skipped',
+    ];
+
+    protected $casts = [
+        'completed_at' => 'datetime',
+        'skipped' => 'boolean',
     ];
 
     /**
@@ -165,7 +178,7 @@ class OnboardingProgress extends Model
     {
         foreach (self::ALL_STEPS as $step) {
             $progress = static::getOrCreate($userId, $step);
-            if (!$progress->isCompleted()) {
+            if (! $progress->isCompleted()) {
                 $progress->markAsSkipped();
             }
         }

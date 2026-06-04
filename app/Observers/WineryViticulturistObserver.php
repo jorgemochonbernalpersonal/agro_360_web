@@ -26,11 +26,11 @@ class WineryViticulturistObserver
 
         ViticulturistAssignment::updateOrCreate(
             [
-                'viticulturist_id'   => $rel->viticulturist_id,
+                'viticulturist_id' => $rel->viticulturist_id,
                 'organization_id' => $orgId,
             ],
             [
-                'assigned_by_org_id'  => $orgId,
+                'assigned_by_org_id' => $orgId,
                 'assigned_by_user_id' => $rel->assigned_by,
             ]
         );
@@ -50,11 +50,11 @@ class WineryViticulturistObserver
             if ($winery?->organization_id) {
                 ViticulturistAssignment::updateOrCreate(
                     [
-                        'viticulturist_id'   => $rel->viticulturist_id,
+                        'viticulturist_id' => $rel->viticulturist_id,
                         'organization_id' => $winery->organization_id,
                     ],
                     [
-                        'assigned_by_org_id'  => $winery->organization_id,
+                        'assigned_by_org_id' => $winery->organization_id,
                         'assigned_by_user_id' => $rel->assigned_by,
                     ]
                 );
@@ -63,7 +63,7 @@ class WineryViticulturistObserver
             return;
         }
 
-        if (!$rel->wasChanged(['notebook_access', 'notebook_granted_at', 'notebook_revoked_at'])) {
+        if (! $rel->wasChanged(['notebook_access', 'notebook_granted_at', 'notebook_revoked_at'])) {
             return;
         }
 
@@ -77,12 +77,12 @@ class WineryViticulturistObserver
             ->where('organization_id', $orgId)
             ->first();
 
-        if (!$assignment) {
+        if (! $assignment) {
             return;
         }
 
         $assignment->update([
-            'notebook_access'     => $rel->notebook_access ?? false,
+            'notebook_access' => $rel->notebook_access ?? false,
             'notebook_granted_at' => $rel->notebook_granted_at,
             'notebook_revoked_at' => $rel->notebook_revoked_at,
         ]);

@@ -20,7 +20,7 @@ class Index extends Component
     public function render()
     {
         $viticulturistId = Auth::id();
-        $year            = (int) ($this->yearFilter ?: now()->year);
+        $year = (int) ($this->yearFilter ?: now()->year);
 
         // Declaración PAC del año seleccionado
         $declaration = PacDeclaration::forViticulturist($viticulturistId)
@@ -59,17 +59,17 @@ class Index extends Component
             ->pluck('year')
             ->toArray();
 
-        if (!in_array(now()->year, $availableYears)) {
+        if (! in_array(now()->year, $availableYears)) {
             array_unshift($availableYears, now()->year);
         }
 
         return view('livewire.viticulturist.pac.eco-schemes.index', [
-            'declaration'    => $declaration,
-            'ecoSchemes'     => PacDeclaration::ECO_SCHEMES,
-            'declaredSchemes'=> $declaredSchemes,
-            'evidence'       => $evidence,
+            'declaration' => $declaration,
+            'ecoSchemes' => PacDeclaration::ECO_SCHEMES,
+            'declaredSchemes' => $declaredSchemes,
+            'evidence' => $evidence,
             'availableYears' => $availableYears,
-            'year'           => $year,
+            'year' => $year,
         ])->layout('layouts.app');
     }
 
@@ -80,17 +80,22 @@ class Index extends Component
         // cover_crops — labores culturales tipo cubierta/acolchado/siembra
         $coverKeywords = ['cubierta', 'acolchado', 'siembra', 'cobertura', 'grass', 'herbac'];
         $coverCount = $activities->filter(function ($a) use ($coverKeywords) {
-            if ($a->activity_type !== 'cultural' || !$a->culturalWork) return false;
+            if ($a->activity_type !== 'cultural' || ! $a->culturalWork) {
+                return false;
+            }
             $type = strtolower($a->culturalWork->work_type ?? '');
             foreach ($coverKeywords as $kw) {
-                if (str_contains($type, $kw)) return true;
+                if (str_contains($type, $kw)) {
+                    return true;
+                }
             }
+
             return false;
         })->count();
         $evidence['cover_crops'] = [
-            'count'   => $coverCount,
-            'status'  => $coverCount > 0 ? 'ok' : 'missing',
-            'detail'  => $coverCount > 0
+            'count' => $coverCount,
+            'status' => $coverCount > 0 ? 'ok' : 'missing',
+            'detail' => $coverCount > 0
                 ? "{$coverCount} labor(es) de cubierta vegetal registrada(s)"
                 : 'No se encontraron labores de cubierta vegetal en el cuaderno',
         ];
@@ -98,17 +103,22 @@ class Index extends Component
         // no_tillage — ausencia de labores de laboreo intensivo
         $tillageKeywords = ['laboreo', 'arado', 'subsolado', 'cultivador'];
         $tillageCount = $activities->filter(function ($a) use ($tillageKeywords) {
-            if ($a->activity_type !== 'cultural' || !$a->culturalWork) return false;
+            if ($a->activity_type !== 'cultural' || ! $a->culturalWork) {
+                return false;
+            }
             $type = strtolower($a->culturalWork->work_type ?? '');
             foreach ($tillageKeywords as $kw) {
-                if (str_contains($type, $kw)) return true;
+                if (str_contains($type, $kw)) {
+                    return true;
+                }
             }
+
             return false;
         })->count();
         $evidence['no_tillage'] = [
-            'count'   => $tillageCount,
-            'status'  => $tillageCount === 0 ? 'ok' : 'warning',
-            'detail'  => $tillageCount === 0
+            'count' => $tillageCount,
+            'status' => $tillageCount === 0 ? 'ok' : 'warning',
+            'detail' => $tillageCount === 0
                 ? 'No se registraron labores de laboreo intensivo'
                 : "{$tillageCount} labor(es) de laboreo encontrada(s) — revisar compatibilidad con el eco-régimen",
         ];
@@ -116,9 +126,9 @@ class Index extends Component
         // organic — parcelas con is_organic = true
         $organicPlots = $plots->where('is_organic', true)->count();
         $evidence['organic'] = [
-            'count'   => $organicPlots,
-            'status'  => $organicPlots > 0 ? 'ok' : 'missing',
-            'detail'  => $organicPlots > 0
+            'count' => $organicPlots,
+            'status' => $organicPlots > 0 ? 'ok' : 'missing',
+            'detail' => $organicPlots > 0
                 ? "{$organicPlots} parcela(s) marcada(s) como producción ecológica"
                 : 'Ninguna parcela tiene la bandera de producción ecológica activada',
         ];
@@ -127,34 +137,34 @@ class Index extends Component
         $phytoCount = $activities->where('activity_type', 'phytosanitary')->count();
         $phytoLimit = max(1, $plots->count() * 4); // heurístico: 4 tratamientos/año/parcela
         $evidence['reduced_phyto'] = [
-            'count'   => $phytoCount,
-            'status'  => $phytoCount <= $phytoLimit ? 'ok' : 'warning',
-            'detail'  => "{$phytoCount} tratamiento(s) fitosanitario(s) registrado(s) en {$year}",
+            'count' => $phytoCount,
+            'status' => $phytoCount <= $phytoLimit ? 'ok' : 'warning',
+            'detail' => "{$phytoCount} tratamiento(s) fitosanitario(s) registrado(s) en {$year}",
         ];
 
         // integrated_pest_mgmt — mezcla de labores + observaciones
         $obsCount = $activities->where('activity_type', 'observation')->count();
         $evidence['integrated_pest_mgmt'] = [
-            'count'   => $obsCount,
-            'status'  => $obsCount >= 2 ? 'ok' : ($obsCount > 0 ? 'warning' : 'missing'),
-            'detail'  => $obsCount > 0
+            'count' => $obsCount,
+            'status' => $obsCount >= 2 ? 'ok' : ($obsCount > 0 ? 'warning' : 'missing'),
+            'detail' => $obsCount > 0
                 ? "{$obsCount} observación(es) / seguimiento registrado(s)"
                 : 'Sin observaciones de seguimiento de plagas en el cuaderno',
         ];
 
         // biodiversity — difícil de verificar desde cuaderno, marcamos como informativo
         $evidence['biodiversity'] = [
-            'count'   => null,
-            'status'  => 'info',
-            'detail'  => __('No verificable automáticamente — requiere inspección en campo'),
+            'count' => null,
+            'status' => 'info',
+            'detail' => __('No verificable automáticamente — requiere inspección en campo'),
         ];
 
         // precision_fertilization — fertilizaciones registradas
         $fertCount = $activities->where('activity_type', 'fertilization')->count();
         $evidence['precision_fertilization'] = [
-            'count'   => $fertCount,
-            'status'  => $fertCount > 0 ? 'ok' : 'missing',
-            'detail'  => $fertCount > 0
+            'count' => $fertCount,
+            'status' => $fertCount > 0 ? 'ok' : 'missing',
+            'detail' => $fertCount > 0
                 ? "{$fertCount} fertilización(es) registrada(s) con datos de dosis"
                 : 'Sin fertilizaciones registradas en el cuaderno para este año',
         ];

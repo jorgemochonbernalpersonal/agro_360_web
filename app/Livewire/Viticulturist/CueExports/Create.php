@@ -9,23 +9,27 @@ use App\Models\Exploitation;
 class Create extends AbstractCreate
 {
     public string $exploitation_id = '';
-    public int    $campaign_year   = 0;
-    public string $period_type     = 'annual';
-    public string $from_date       = '';
-    public string $to_date         = '';
+
+    public int $campaign_year = 0;
+
+    public string $period_type = 'annual';
+
+    public string $from_date = '';
+
+    public string $to_date = '';
 
     public function mount(): void
     {
         $this->campaign_year = now()->year;
-        $this->from_date     = now()->startOfYear()->format('Y-m-d');
-        $this->to_date       = now()->endOfYear()->format('Y-m-d');
+        $this->from_date = now()->startOfYear()->format('Y-m-d');
+        $this->to_date = now()->endOfYear()->format('Y-m-d');
     }
 
     public function updatedPeriodType(string $value): void
     {
         if ($value === 'annual') {
             $this->from_date = now()->setYear($this->campaign_year)->startOfYear()->format('Y-m-d');
-            $this->to_date   = now()->setYear($this->campaign_year)->endOfYear()->format('Y-m-d');
+            $this->to_date = now()->setYear($this->campaign_year)->endOfYear()->format('Y-m-d');
         }
     }
 
@@ -33,7 +37,7 @@ class Create extends AbstractCreate
     {
         if ($this->period_type === 'annual' && $value >= 2000) {
             $this->from_date = now()->setYear($value)->startOfYear()->format('Y-m-d');
-            $this->to_date   = now()->setYear($value)->endOfYear()->format('Y-m-d');
+            $this->to_date = now()->setYear($value)->endOfYear()->format('Y-m-d');
         }
     }
 
@@ -41,10 +45,10 @@ class Create extends AbstractCreate
     {
         return [
             'exploitation_id' => 'required|exists:exploitations,id',
-            'campaign_year'   => 'required|integer|min:2000|max:' . (now()->year + 1),
-            'period_type'     => 'required|in:annual,quarterly',
-            'from_date'       => 'required|date',
-            'to_date'         => 'required|date|after_or_equal:from_date',
+            'campaign_year' => 'required|integer|min:2000|max:'.(now()->year + 1),
+            'period_type' => 'required|in:annual,quarterly',
+            'from_date' => 'required|date',
+            'to_date' => 'required|date|after_or_equal:from_date',
         ];
     }
 
@@ -54,13 +58,13 @@ class Create extends AbstractCreate
             ->findOrFail($this->exploitation_id);
 
         CueExport::create([
-            'exploitation_id'  => $exploitation->id,
+            'exploitation_id' => $exploitation->id,
             'viticulturist_id' => $this->viticulturistId(),
-            'campaign_year'    => $this->campaign_year,
-            'period_type'      => $this->period_type,
-            'from_date'        => $this->from_date,
-            'to_date'          => $this->to_date,
-            'status'           => 'draft',
+            'campaign_year' => $this->campaign_year,
+            'period_type' => $this->period_type,
+            'from_date' => $this->from_date,
+            'to_date' => $this->to_date,
+            'status' => 'draft',
         ]);
     }
 

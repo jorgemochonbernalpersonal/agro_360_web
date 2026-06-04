@@ -12,19 +12,6 @@ class CheckCanLoginMiddlewareTest extends TestCase
 {
     use RefreshDatabase;
 
-    // ── Tests directos sobre el middleware (sin pasar por el auth guard) ──────
-
-    private function runMiddleware(User $user): \Symfony\Component\HttpFoundation\Response
-    {
-        $request = Request::create('/api/v1/test');
-        $request->setUserResolver(fn () => $user);
-
-        return (new CheckCanLogin())->handle(
-            $request,
-            fn () => response()->json(['ok' => true])
-        );
-    }
-
     public function test_middleware_blocks_disabled_user_directly(): void
     {
         $user = User::factory()->create(['can_login' => false]);
@@ -63,7 +50,7 @@ class CheckCanLoginMiddlewareTest extends TestCase
         $request = Request::create('/api/v1/test');
         $request->setUserResolver(fn () => null);
 
-        $response = (new CheckCanLogin())->handle(
+        $response = (new CheckCanLogin)->handle(
             $request,
             fn () => response()->json(['ok' => true])
         );
@@ -73,7 +60,7 @@ class CheckCanLoginMiddlewareTest extends TestCase
 
     public function test_disabled_user_gets_403_on_protected_routes(): void
     {
-        $user  = User::factory()->create(['can_login' => false]);
+        $user = User::factory()->create(['can_login' => false]);
         $token = $user->createToken('mobile')->plainTextToken;
 
         $this->withToken($token)
@@ -96,7 +83,7 @@ class CheckCanLoginMiddlewareTest extends TestCase
 
     public function test_enabled_user_can_access_protected_routes(): void
     {
-        $user  = User::factory()->create(['can_login' => true]);
+        $user = User::factory()->create(['can_login' => true]);
         $token = $user->createToken('mobile')->plainTextToken;
 
         $this->withToken($token)
@@ -106,7 +93,7 @@ class CheckCanLoginMiddlewareTest extends TestCase
 
     public function test_user_disabled_after_login_has_tokens_revoked_on_next_request(): void
     {
-        $user  = User::factory()->create(['can_login' => true]);
+        $user = User::factory()->create(['can_login' => true]);
         $token = $user->createToken('mobile')->plainTextToken;
         $user->createToken('tablet');
 
@@ -129,5 +116,18 @@ class CheckCanLoginMiddlewareTest extends TestCase
     public function test_unauthenticated_request_returns_401_not_403(): void
     {
         $this->getJson('/api/v1/me')->assertStatus(401);
+    }
+
+    // ── Tests directos sobre el middleware (sin pasar por el auth guard) ──────
+
+    private function runMiddleware(User $user): \Symfony\Component\HttpFoundation\Response
+    {
+        $request = Request::create('/api/v1/test');
+        $request->setUserResolver(fn () => $user);
+
+        return (new CheckCanLogin)->handle(
+            $request,
+            fn () => response()->json(['ok' => true])
+        );
     }
 }

@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::table('phytosanitary_products', function (Blueprint $table) {
             // Hacer obligatorio el número de registro (Real Decreto 1311/2012)
             $table->string('registration_number', 100)->nullable(false)->change();
-            
+
             // Hacer obligatorio el plazo de seguridad (seguridad alimentaria)
             $table->integer('withdrawal_period_days')->nullable(false)->default(0)->change();
-            
+
             // Añadir fecha de caducidad del registro y estado
             $table->date('registration_expiry_date')->nullable()->after('registration_number');
             $table->enum('registration_status', ['active', 'expired', 'revoked'])

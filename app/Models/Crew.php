@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Model;
 
 class Crew extends Model
 {
@@ -49,6 +49,9 @@ class Crew extends Model
 
     /**
      * Scope para filtrar por viticultor líder
+     *
+     * @param mixed $query
+     * @param mixed $viticulturistId
      */
     public function scopeForViticulturist($query, $viticulturistId)
     {
@@ -57,6 +60,9 @@ class Crew extends Model
 
     /**
      * Scope para filtrar por bodega
+     *
+     * @param mixed $query
+     * @param mixed $wineryId
      */
     public function scopeForWinery($query, $wineryId)
     {

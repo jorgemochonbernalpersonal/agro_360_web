@@ -4,7 +4,6 @@ namespace Tests\Feature\Viticulturist\EnergyUsages;
 
 use App\Livewire\Viticulturist\EnergyUsages\Create;
 use App\Models\Campaign;
-use App\Models\EnergyUsage;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -27,9 +26,9 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('energy_usages', [
             'viticulturist_id' => $viticulturist->id,
-            'energy_type'      => 'diesel',
-            'unit'             => 'liters',
-            'active'           => true,
+            'energy_type' => 'diesel',
+            'unit' => 'liters',
+            'active' => true,
         ]);
     }
 

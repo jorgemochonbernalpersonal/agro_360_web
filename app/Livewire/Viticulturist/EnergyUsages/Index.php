@@ -9,13 +9,15 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $currentTab       = 'active';
-    public string $filterCampaign   = '';
+    public string $currentTab = 'active';
+
+    public string $filterCampaign = '';
+
     public string $filterEnergyType = '';
 
     protected $queryString = [
-        'currentTab'       => ['as' => 'tab',     'except' => 'active'],
-        'filterCampaign'   => ['as' => 'campaign', 'except' => ''],
+        'currentTab' => ['as' => 'tab',     'except' => 'active'],
+        'filterCampaign' => ['as' => 'campaign', 'except' => ''],
         'filterEnergyType' => ['as' => 'type',     'except' => ''],
     ];
 
@@ -27,12 +29,14 @@ class Index extends AbstractIndex
         }
     }
 
-    public function updatingFilterCampaign(): void   { $this->resetPage(); }
-    public function updatingFilterEnergyType(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingFilterCampaign(): void
     {
-        return ['filterCampaign' => '', 'filterEnergyType' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingFilterEnergyType(): void
+    {
+        $this->resetPage();
     }
 
     public function switchTab(string $tab): void
@@ -53,6 +57,11 @@ class Index extends AbstractIndex
         $this->toastSuccess(__('Registro restaurado.'));
     }
 
+    protected function filterDefaults(): array
+    {
+        return ['filterCampaign' => '', 'filterEnergyType' => ''];
+    }
+
     protected function baseQuery(): Builder
     {
         return EnergyUsage::where('viticulturist_id', $this->viticulturistId())
@@ -69,17 +78,23 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['date', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
-        $userId    = $this->viticulturistId();
+        $userId = $this->viticulturistId();
         $baseQuery = EnergyUsage::where('viticulturist_id', $userId);
 
         $stats = [
-            'active'   => (clone $baseQuery)->where('active', true)->count(),
+            'active' => (clone $baseQuery)->where('active', true)->count(),
             'archived' => (clone $baseQuery)->where('active', false)->count(),
         ];
 
@@ -91,11 +106,11 @@ class Index extends AbstractIndex
             : 0;
 
         return [
-            'entries'     => $entries,
-            'campaigns'   => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
+            'entries' => $entries,
+            'campaigns' => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
             'energyTypes' => EnergyUsage::energyTypeOptions(),
-            'stats'       => $stats,
-            'co2Total'    => $co2Total,
+            'stats' => $stats,
+            'co2Total' => $co2Total,
         ];
     }
 }

@@ -18,8 +18,8 @@ class AgriInsuranceController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'status'   => 'nullable|string|in:pending,active,expired,cancelled',
-            'search'   => 'nullable|string|max:100',
+            'status' => 'nullable|string|in:pending,active,expired,cancelled',
+            'search' => 'nullable|string|max:100',
             'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
@@ -34,7 +34,7 @@ class AgriInsuranceController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('policy_number', 'like', "%{$term}%")
-                  ->orWhere('insurance_company', 'like', "%{$term}%");
+                    ->orWhere('insurance_company', 'like', "%{$term}%");
             });
         }
 
@@ -43,10 +43,10 @@ class AgriInsuranceController extends Controller
         return response()->json([
             'data' => AgriInsuranceResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -59,29 +59,29 @@ class AgriInsuranceController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'policy_number'     => 'nullable|string|max:100',
+            'policy_number' => 'nullable|string|max:100',
             'insurance_company' => 'required|string|max:255',
-            'coverage_type'     => 'required|string|in:frost,hail,drought,flood,fire,pest,comprehensive,other',
-            'start_date'        => 'required|date',
-            'end_date'          => 'required|date|after_or_equal:start_date',
-            'insured_amount'    => 'nullable|numeric|min:0',
-            'premium'           => 'nullable|numeric|min:0',
-            'subsidy_amount'    => 'nullable|numeric|min:0',
-            'status'            => 'nullable|string|in:pending,active,expired,cancelled',
-            'agent_name'        => 'nullable|string|max:255',
-            'agent_phone'       => 'nullable|string|max:50',
-            'covered_plots'     => 'nullable|string|max:2000',
-            'notes'             => 'nullable|string|max:2000',
+            'coverage_type' => 'required|string|in:frost,hail,drought,flood,fire,pest,comprehensive,other',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'insured_amount' => 'nullable|numeric|min:0',
+            'premium' => 'nullable|numeric|min:0',
+            'subsidy_amount' => 'nullable|numeric|min:0',
+            'status' => 'nullable|string|in:pending,active,expired,cancelled',
+            'agent_name' => 'nullable|string|max:255',
+            'agent_phone' => 'nullable|string|max:50',
+            'covered_plots' => 'nullable|string|max:2000',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         $record = AgriInsurance::create([
             ...$validated,
             'viticulturist_id' => $user->id,
-            'status'           => $validated['status'] ?? 'pending',
+            'status' => $validated['status'] ?? 'pending',
         ]);
 
         return response()->json([
-            'data'    => new AgriInsuranceResource($record),
+            'data' => new AgriInsuranceResource($record),
             'message' => __('Seguro agrario registrado correctamente.'),
         ], 201);
     }

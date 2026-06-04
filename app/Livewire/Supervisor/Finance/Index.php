@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Supervisor\Finance;
 
+use App\Models\Subscription;
 use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
-use App\Models\Subscription;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -75,17 +75,17 @@ class Index extends Component
 
         $tabs = [
             'subscriptions' => ['label' => __('Suscripciones viticultores'), 'count' => $viticulturistIds->count()],
-            'wineries'      => ['label' => __('Recepciones bodegas'),        'count' => $wineryIds->count()],
+            'wineries' => ['label' => __('Recepciones bodegas'),        'count' => $wineryIds->count()],
         ];
 
         return view('livewire.supervisor.finance.index', [
-            'tabs'                 => $tabs,
-            'activeSubscriptions'  => $activeSubscriptions,
-            'monthlyRevenue'       => $monthlyRevenue,
-            'yearlyRevenue'        => $yearlyRevenue,
-            'subscriptions'        => $subscriptions,
+            'tabs' => $tabs,
+            'activeSubscriptions' => $activeSubscriptions,
+            'monthlyRevenue' => $monthlyRevenue,
+            'yearlyRevenue' => $yearlyRevenue,
+            'subscriptions' => $subscriptions,
             'harvestValueByWinery' => $harvestValueByWinery,
-            'currentYear'          => now()->year,
+            'currentYear' => now()->year,
         ]);
     }
 }

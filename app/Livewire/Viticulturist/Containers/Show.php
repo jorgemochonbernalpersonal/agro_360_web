@@ -3,13 +3,13 @@
 namespace App\Livewire\Viticulturist\Containers;
 
 use App\Models\Container;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Show extends Component
 {
     public Container $container;
-    
+
     public function mount($id)
     {
         $this->container = Container::where('user_id', Auth::id())
@@ -20,8 +20,8 @@ class Show extends Component
     public function getOccupancyColorClass()
     {
         $percentage = $this->container->getOccupancyPercentage();
-        
-        return match(true) {
+
+        return match (true) {
             $percentage >= 90 => 'bg-red-500',
             $percentage >= 70 => 'bg-orange-500',
             $percentage >= 50 => 'bg-yellow-500',
@@ -34,15 +34,15 @@ class Show extends Component
         if ($this->container->archived) {
             return 'bg-gray-500 text-white';
         }
-        
+
         if ($this->container->isFull()) {
             return 'bg-red-500 text-white';
         }
-        
+
         if ($this->container->isEmpty()) {
             return 'bg-blue-500 text-white';
         }
-        
+
         return 'bg-green-500 text-white';
     }
 
@@ -51,47 +51,47 @@ class Show extends Component
         if ($this->container->archived) {
             return __('Archivado');
         }
-        
+
         if ($this->container->isFull()) {
             return __('Lleno');
         }
-        
+
         if ($this->container->isEmpty()) {
             return __('Vacío');
         }
-        
+
         return __('Disponible');
     }
 
     public function getMaintenanceWarning()
     {
-        if (!$this->container->next_maintenance_date) {
+        if (! $this->container->next_maintenance_date) {
             return null;
         }
-        
+
         $daysUntil = now()->diffInDays($this->container->next_maintenance_date, false);
-        
+
         if ($daysUntil < 0) {
             return [
                 'type' => 'danger',
-                'message' => __('Mantenimiento vencido hace ') . abs($daysUntil) . ' días',
+                'message' => __('Mantenimiento vencido hace ').abs($daysUntil).' días',
             ];
         }
-        
+
         if ($daysUntil <= 7) {
             return [
                 'type' => 'warning',
-                'message' => __('Mantenimiento en ') . $daysUntil . ' días',
+                'message' => __('Mantenimiento en ').$daysUntil.' días',
             ];
         }
-        
+
         if ($daysUntil <= 30) {
             return [
                 'type' => 'info',
-                'message' => __('Mantenimiento en ') . $daysUntil . ' días',
+                'message' => __('Mantenimiento en ').$daysUntil.' días',
             ];
         }
-        
+
         return null;
     }
 

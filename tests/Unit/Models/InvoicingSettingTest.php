@@ -14,7 +14,7 @@ class InvoicingSettingTest extends TestCase
     public function test_invoicing_setting_belongs_to_user(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -54,7 +54,7 @@ class InvoicingSettingTest extends TestCase
         ]);
 
         $results = InvoicingSetting::forUser($user1->id)->get();
-        
+
         $this->assertCount(1, $results);
         $this->assertEquals($setting1->id, $results->first()->id);
     }
@@ -62,7 +62,7 @@ class InvoicingSettingTest extends TestCase
     public function test_generate_invoice_code_returns_formatted_code(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-2025-',
@@ -81,7 +81,7 @@ class InvoicingSettingTest extends TestCase
     public function test_generate_invoice_code_increments_counter(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -102,7 +102,7 @@ class InvoicingSettingTest extends TestCase
     public function test_generate_invoice_code_replaces_year_variable(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-{YEAR}-',
@@ -122,7 +122,7 @@ class InvoicingSettingTest extends TestCase
     public function test_generate_invoice_code_replaces_month_and_day_variables(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => '{YEAR}-{MONTH}-{DAY}-',
@@ -145,7 +145,7 @@ class InvoicingSettingTest extends TestCase
     public function test_generate_delivery_note_code_returns_formatted_code(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -164,7 +164,7 @@ class InvoicingSettingTest extends TestCase
     public function test_increment_invoice_counter_increments_value(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -183,7 +183,7 @@ class InvoicingSettingTest extends TestCase
     public function test_increment_delivery_note_counter_increments_value(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -202,7 +202,7 @@ class InvoicingSettingTest extends TestCase
     public function test_reset_invoice_counter_resets_to_one(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -223,7 +223,7 @@ class InvoicingSettingTest extends TestCase
     public function test_reset_delivery_note_counter_resets_to_one(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -244,7 +244,7 @@ class InvoicingSettingTest extends TestCase
     public function test_check_year_reset_resets_invoice_counter_when_enabled_and_year_changed(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -266,7 +266,7 @@ class InvoicingSettingTest extends TestCase
     public function test_check_year_reset_does_not_reset_when_disabled(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -288,7 +288,7 @@ class InvoicingSettingTest extends TestCase
     public function test_get_invoice_preview_returns_formatted_preview(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-{YEAR}-',
@@ -309,7 +309,7 @@ class InvoicingSettingTest extends TestCase
     public function test_get_delivery_note_preview_returns_formatted_preview(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $setting = InvoicingSetting::create([
             'user_id' => $user->id,
             'invoice_prefix' => 'FAC-',
@@ -376,4 +376,3 @@ class InvoicingSettingTest extends TestCase
         $this->assertStringContainsString('FAC-', $setting->invoice_prefix);
     }
 }
-

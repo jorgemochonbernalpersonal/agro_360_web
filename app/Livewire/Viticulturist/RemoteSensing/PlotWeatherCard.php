@@ -12,12 +12,19 @@ use Livewire\Component;
 class PlotWeatherCard extends Component
 {
     public Plot $plot;
+
     public array $weather = [];
+
     public array $soil = [];
+
     public array $solar = [];
+
     public array $forecast = [];
+
     public bool $isLoading = false;
+
     public bool $showForecast = false;
+
     public string $error = '';
 
     public function mount(Plot $plot)
@@ -31,7 +38,7 @@ class PlotWeatherCard extends Component
         $this->isLoading = true;
         $this->error = '';
 
-        $service = new WeatherService();
+        $service = new WeatherService;
 
         // 1. Fetch Weather Data
         try {
@@ -63,7 +70,7 @@ class PlotWeatherCard extends Component
                 'error' => $e->getMessage(),
             ]);
         }
-        
+
         // General error state only if everything critical failed or to show a toast
         if (empty($this->weather) && empty($this->soil) && empty($this->solar)) {
             $this->error = __('No se pudieron cargar los datos meteorológicos.');
@@ -74,10 +81,10 @@ class PlotWeatherCard extends Component
 
     public function toggleForecast()
     {
-        $this->showForecast = !$this->showForecast;
-        
+        $this->showForecast = ! $this->showForecast;
+
         if ($this->showForecast && empty($this->forecast)) {
-            $service = new WeatherService();
+            $service = new WeatherService;
             $result = $service->getForecast($this->plot, 7);
             $this->forecast = $result['forecast'] ?? [];
         }
@@ -99,10 +106,10 @@ class PlotWeatherCard extends Component
     {
         $moisture = $this->soil['soil_moisture'] ?? 50;
         $et0 = $this->solar['et0'] ?? 3;
-        
+
         // Simple stress calculation
         $stressIndex = ($et0 * 10) - $moisture;
-        
+
         return match (true) {
             $stressIndex <= 0 => ['status' => 'optimal', 'emoji' => '💧', 'text' => __('Óptimo'), 'color' => 'text-green-600'],
             $stressIndex <= 20 => ['status' => 'mild', 'emoji' => '💦', 'text' => __('Leve'), 'color' => 'text-yellow-600'],

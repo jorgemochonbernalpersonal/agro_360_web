@@ -20,6 +20,7 @@ trait WithViticulturistValidation
     /**
      * Validates that a plot belongs to the authenticated user.
      * Legacy name kept for backward compatibility with existing components.
+     *
      * @deprecated Use plotOwnershipRule() from WithOwnershipRules instead.
      */
     protected function validatePlotOwnership(int $plotId): Plot
@@ -31,6 +32,7 @@ trait WithViticulturistValidation
 
     /**
      * Validates that the user can create agricultural activities.
+     *
      * @deprecated Move authorization logic to policies.
      */
     protected function authorizeCreateActivity(): void
@@ -77,9 +79,11 @@ trait WithViticulturistValidation
 
         foreach ($selectedIds as $plotId) {
             $plot = $plots->get($plotId);
-            if (! $plot) continue;
+            if (! $plot) {
+                continue;
+            }
 
-            $plotArea     = (float) ($plot->area ?? 0);
+            $plotArea = (float) ($plot->area ?? 0);
             $declaredArea = (float) ($items[$plotId]['declared_area'] ?? 0);
             $eligibleArea = (float) ($items[$plotId]['eligible_area'] ?? 0);
 

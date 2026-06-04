@@ -12,6 +12,7 @@ class SignaturePasswordReset extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+
     public $resetData;
 
     /**

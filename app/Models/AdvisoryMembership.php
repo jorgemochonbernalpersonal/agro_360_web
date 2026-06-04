@@ -11,17 +11,12 @@ class AdvisoryMembership extends Model
     use HasFactory;
 
     const SPECIALTIES = [
-        'phytosanitary'  => 'Asesor fitosanitario (PI)',
-        'agronomy'       => 'Agronomía general',
-        'oenology'       => 'Enología',
+        'phytosanitary' => 'Asesor fitosanitario (PI)',
+        'agronomy' => 'Agronomía general',
+        'oenology' => 'Enología',
         'sustainability' => 'Sostenibilidad / Certificaciones',
-        'other'          => 'Otro',
+        'other' => 'Otro',
     ];
-
-    public static function specialtyOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::SPECIALTIES);
-    }
 
     protected $fillable = [
         'viticulturist_id',
@@ -38,6 +33,11 @@ class AdvisoryMembership extends Model
     protected $casts = [
         'active' => 'boolean',
     ];
+
+    public static function specialtyOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SPECIALTIES);
+    }
 
     public function viticulturist(): BelongsTo
     {

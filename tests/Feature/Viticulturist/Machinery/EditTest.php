@@ -24,12 +24,12 @@ class EditTest extends TestCase
         $type = MachineryType::firstOrCreate(['name' => 'Tractor'], ['active' => true]);
 
         $machinery = Machinery::create([
-            'name'              => 'Tractor Original',
-            'type'              => 'Tractor',
+            'name' => 'Tractor Original',
+            'type' => 'Tractor',
             'machinery_type_id' => $type->id,
-            'viticulturist_id'  => $viticulturist->id,
-            'active'            => true,
-            'is_rented'         => false,
+            'viticulturist_id' => $viticulturist->id,
+            'active' => true,
+            'is_rented' => false,
         ]);
 
         $this->actingAs($viticulturist);
@@ -43,7 +43,7 @@ class EditTest extends TestCase
             ->assertRedirect(route('viticulturist.machinery.index'));
 
         $this->assertDatabaseHas('machinery', [
-            'id'   => $machinery->id,
+            'id' => $machinery->id,
             'name' => 'Tractor Actualizado',
             'year' => now()->year,
         ]);
@@ -59,12 +59,12 @@ class EditTest extends TestCase
         $type = MachineryType::firstOrCreate(['name' => 'Tractor'], ['active' => true]);
 
         $machinery = Machinery::create([
-            'name'              => 'Tractor Original',
-            'type'              => 'Tractor',
+            'name' => 'Tractor Original',
+            'type' => 'Tractor',
             'machinery_type_id' => $type->id,
-            'viticulturist_id'  => $viticulturist->id,
-            'active'            => true,
-            'is_rented'         => false,
+            'viticulturist_id' => $viticulturist->id,
+            'active' => true,
+            'is_rented' => false,
         ]);
 
         $this->actingAs($viticulturist);

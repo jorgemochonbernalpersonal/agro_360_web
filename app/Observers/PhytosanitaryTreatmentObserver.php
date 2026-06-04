@@ -38,12 +38,12 @@ class PhytosanitaryTreatmentObserver
      */
     protected function consumeStock(PhytosanitaryTreatment $treatment): void
     {
-        if (!$treatment->total_dose || !$treatment->product_id) {
+        if (! $treatment->total_dose || ! $treatment->product_id) {
             return;
         }
 
         $user = $treatment->activity->viticulturist ?? $treatment->activity->user;
-        if (!$user) {
+        if (! $user) {
             return;
         }
 
@@ -66,7 +66,7 @@ class PhytosanitaryTreatmentObserver
 
             $toConsume = min($remaining, $available);
             $plotName = $treatment->activity->plot->name ?? 'N/A';
-            $stock->consume($toConsume, $treatment, 
+            $stock->consume($toConsume, $treatment,
                 "Tratamiento en parcela: {$plotName}");
 
             $remaining -= $toConsume;
@@ -94,7 +94,7 @@ class PhytosanitaryTreatmentObserver
     protected function adjustStockForTreatment(PhytosanitaryTreatment $treatment, float $difference): void
     {
         $user = $treatment->activity->viticulturist ?? $treatment->activity->user;
-        if (!$user) {
+        if (! $user) {
             return;
         }
 
@@ -112,4 +112,3 @@ class PhytosanitaryTreatmentObserver
         }
     }
 }
-

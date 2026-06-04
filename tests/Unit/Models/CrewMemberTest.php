@@ -12,7 +12,7 @@ class CrewMemberTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_isIndividual_returns_true_when_crew_id_is_null(): void
+    public function test_is_individual_returns_true_when_crew_id_is_null(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $worker = User::factory()->create(['role' => 'viticulturist']);
@@ -26,7 +26,7 @@ class CrewMemberTest extends TestCase
         $this->assertTrue($member->isIndividual());
     }
 
-    public function test_isIndividual_returns_false_when_has_crew(): void
+    public function test_is_individual_returns_false_when_has_crew(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $worker = User::factory()->create(['role' => 'viticulturist']);
@@ -44,7 +44,7 @@ class CrewMemberTest extends TestCase
         $this->assertFalse($member->isIndividual());
     }
 
-    public function test_scopeIndividual_filters_correctly(): void
+    public function test_scope_individual_filters_correctly(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $worker1 = User::factory()->create(['role' => 'viticulturist']);
@@ -76,7 +76,7 @@ class CrewMemberTest extends TestCase
         $this->assertEquals($viticulturist->id, $individual->first()->viticulturist_id);
     }
 
-    public function test_scopeForViticulturist_filters_correctly(): void
+    public function test_scope_for_viticulturist_filters_correctly(): void
     {
         $viticulturist1 = User::factory()->create(['role' => 'viticulturist']);
         $viticulturist2 = User::factory()->create(['role' => 'viticulturist']);
@@ -149,4 +149,3 @@ class CrewMemberTest extends TestCase
         $this->assertEquals($viticulturist->id, $member->assignedBy->id);
     }
 }
-

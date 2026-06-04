@@ -44,18 +44,18 @@ class ContainerHistoryController extends Controller
 
         return response()->json([
             'container' => [
-                'id'                 => $container->id,
-                'name'               => $container->name,
-                'capacity'           => (float) $container->capacity,
-                'used_capacity'      => (float) $container->getTotalUsed(),
-                'occupancy_percent'  => $container->getOccupancyPercentage(),
+                'id' => $container->id,
+                'name' => $container->name,
+                'capacity' => (float) $container->capacity,
+                'used_capacity' => (float) $container->getTotalUsed(),
+                'occupancy_percent' => $container->getOccupancyPercentage(),
             ],
             'data' => $history->map(fn ($h) => $this->formatEntry($h)),
             'meta' => [
-                'total'        => $history->total(),
-                'per_page'     => $history->perPage(),
+                'total' => $history->total(),
+                'per_page' => $history->perPage(),
                 'current_page' => $history->currentPage(),
-                'last_page'    => $history->lastPage(),
+                'last_page' => $history->lastPage(),
             ],
         ]);
     }
@@ -92,7 +92,7 @@ class ContainerHistoryController extends Controller
             ->orderBy('month')
             ->get()
             ->map(fn ($r) => [
-                'month'      => $r->month,
+                'month' => $r->month,
                 'net_volume' => (float) $r->net_volume,
                 'operations' => (int) $r->operations,
             ]);
@@ -107,12 +107,12 @@ class ContainerHistoryController extends Controller
             ->limit(10)
             ->get()
             ->map(fn ($r) => [
-                'wine_id'      => $r->wine_id,
-                'wine_name'    => $r->wine?->name,
+                'wine_id' => $r->wine_id,
+                'wine_name' => $r->wine?->name,
                 'vintage_year' => $r->wine?->vintage_year,
-                'wine_type'    => $r->wine?->wine_type,
+                'wine_type' => $r->wine?->wine_type,
                 'total_volume' => (float) $r->total_volume,
-                'operations'   => (int) $r->operations,
+                'operations' => (int) $r->operations,
             ]);
 
         // Último y próximo mantenimiento
@@ -123,24 +123,24 @@ class ContainerHistoryController extends Controller
 
         return response()->json([
             'container' => [
-                'id'                => $container->id,
-                'name'              => $container->name,
-                'type'              => $container->containerType?->name,
-                'room'              => $container->containerRoom?->name,
-                'capacity'          => (float) $container->capacity,
-                'used_capacity'     => (float) $container->getTotalUsed(),
+                'id' => $container->id,
+                'name' => $container->name,
+                'type' => $container->containerType?->name,
+                'room' => $container->containerRoom?->name,
+                'capacity' => (float) $container->capacity,
+                'used_capacity' => (float) $container->getTotalUsed(),
                 'occupancy_percent' => $container->getOccupancyPercentage(),
-                'is_empty'          => $container->isEmpty(),
-                'is_full'           => $container->isFull(),
-                'next_maintenance'  => $container->next_maintenance_date?->toDateString(),
-                'last_maintenance'  => $lastMaintenance?->start_date?->toDateString(),
+                'is_empty' => $container->isEmpty(),
+                'is_full' => $container->isFull(),
+                'next_maintenance' => $container->next_maintenance_date?->toDateString(),
+                'last_maintenance' => $lastMaintenance?->start_date?->toDateString(),
             ],
             'summary' => [
                 'total_operations' => array_sum(array_column($byType->toArray(), 'count')),
-                'by_type'          => $byType,
+                'by_type' => $byType,
             ],
             'volume_by_month' => $volumeByMonth,
-            'wines_history'   => $wines,
+            'wines_history' => $wines,
         ]);
     }
 
@@ -158,26 +158,27 @@ class ContainerHistoryController extends Controller
             ->with(['containerType', 'containerRoom'])
             ->get();
 
-        $total     = $containers->count();
-        $capacity  = $containers->sum(fn ($c) => (float) $c->capacity);
-        $used      = $containers->sum(fn ($c) => (float) $c->getTotalUsed());
-        $empty     = $containers->filter(fn ($c) => $c->isEmpty())->count();
-        $critical  = $containers->filter(fn ($c) => $c->getOccupancyPercentage() >= 90)->count();
-        $warning   = $containers->filter(fn ($c) => $c->getOccupancyPercentage() >= 75 && $c->getOccupancyPercentage() < 90)->count();
+        $total = $containers->count();
+        $capacity = $containers->sum(fn ($c) => (float) $c->capacity);
+        $used = $containers->sum(fn ($c) => (float) $c->getTotalUsed());
+        $empty = $containers->filter(fn ($c) => $c->isEmpty())->count();
+        $critical = $containers->filter(fn ($c) => $c->getOccupancyPercentage() >= 90)->count();
+        $warning = $containers->filter(fn ($c) => $c->getOccupancyPercentage() >= 75 && $c->getOccupancyPercentage() < 90)->count();
 
         // Agrupación por sala
         $byRoom = $containers->groupBy(fn ($c) => $c->container_room_id ?? 0)
             ->map(function ($group) {
-                $first    = $group->first();
+                $first = $group->first();
                 $capacity = $group->sum(fn ($c) => (float) $c->capacity);
-                $used     = $group->sum(fn ($c) => (float) $c->getTotalUsed());
+                $used = $group->sum(fn ($c) => (float) $c->getTotalUsed());
+
                 return [
-                    'room_id'          => $first->container_room_id,
-                    'room_name'        => $first->containerRoom?->name ?? 'Sin sala',
-                    'count'            => $group->count(),
-                    'capacity'         => $capacity,
-                    'used'             => $used,
-                    'occupancy_percent'=> $capacity > 0 ? round($used / $capacity * 100, 1) : 0,
+                    'room_id' => $first->container_room_id,
+                    'room_name' => $first->containerRoom?->name ?? 'Sin sala',
+                    'count' => $group->count(),
+                    'capacity' => $capacity,
+                    'used' => $used,
+                    'occupancy_percent' => $capacity > 0 ? round($used / $capacity * 100, 1) : 0,
                 ];
             })->values();
 
@@ -185,11 +186,12 @@ class ContainerHistoryController extends Controller
         $byType = $containers->groupBy(fn ($c) => $c->type_id)
             ->map(function ($group) {
                 $first = $group->first();
+
                 return [
-                    'type_id'   => $first->type_id,
+                    'type_id' => $first->type_id,
                     'type_name' => $first->containerType?->name ?? 'Sin tipo',
-                    'count'     => $group->count(),
-                    'capacity'  => $group->sum(fn ($c) => (float) $c->capacity),
+                    'count' => $group->count(),
+                    'capacity' => $group->sum(fn ($c) => (float) $c->capacity),
                 ];
             })->values();
 
@@ -201,24 +203,24 @@ class ContainerHistoryController extends Controller
             ->orderBy('next_maintenance_date')
             ->get(['id', 'name', 'next_maintenance_date'])
             ->map(fn ($c) => [
-                'id'   => $c->id,
+                'id' => $c->id,
                 'name' => $c->name,
                 'next_maintenance' => $c->next_maintenance_date?->toDateString(),
-                'days_until'       => (int) now()->diffInDays($c->next_maintenance_date, false),
+                'days_until' => (int) now()->diffInDays($c->next_maintenance_date, false),
             ]);
 
         return response()->json([
             'overview' => [
-                'total'            => $total,
-                'total_capacity'   => $capacity,
-                'total_used'       => $used,
-                'occupancy_percent'=> $capacity > 0 ? round($used / $capacity * 100, 1) : 0,
-                'empty'            => $empty,
-                'critical'         => $critical,
-                'warning'          => $warning,
+                'total' => $total,
+                'total_capacity' => $capacity,
+                'total_used' => $used,
+                'occupancy_percent' => $capacity > 0 ? round($used / $capacity * 100, 1) : 0,
+                'empty' => $empty,
+                'critical' => $critical,
+                'warning' => $warning,
             ],
-            'by_room'         => $byRoom,
-            'by_type'         => $byType,
+            'by_room' => $byRoom,
+            'by_type' => $byType,
             'maintenance_due' => $maintenanceDue,
         ]);
     }
@@ -226,18 +228,18 @@ class ContainerHistoryController extends Controller
     private function formatEntry(ContainerHistory $h): array
     {
         return [
-            'id'             => $h->id,
+            'id' => $h->id,
             'operation_type' => $h->operation_type,
-            'description'    => $h->getOperationDescription(),
-            'wine_id'        => $h->wine_id,
-            'wine_name'      => $h->wine?->name,
-            'harvest_id'     => $h->harvest_id,
-            'quantity'       => (float) $h->quantity,
-            'is_inbound'     => $h->isInbound(),
-            'start_date'     => $h->start_date?->toIso8601String(),
-            'end_date'       => $h->end_date?->toIso8601String(),
-            'created_by'     => $h->creator?->name,
-            'has_subproducts'=> $h->has_subproducts,
+            'description' => $h->getOperationDescription(),
+            'wine_id' => $h->wine_id,
+            'wine_name' => $h->wine?->name,
+            'harvest_id' => $h->harvest_id,
+            'quantity' => (float) $h->quantity,
+            'is_inbound' => $h->isInbound(),
+            'start_date' => $h->start_date?->toIso8601String(),
+            'end_date' => $h->end_date?->toIso8601String(),
+            'created_by' => $h->creator?->name,
+            'has_subproducts' => $h->has_subproducts,
         ];
     }
 }

@@ -19,7 +19,7 @@ class CampaignFactory extends Factory
     public function definition(): array
     {
         $year = fake()->numberBetween(2020, now()->year);
-        
+
         return [
             'name' => "Campaña {$year}",
             'year' => $year,

@@ -68,4 +68,3 @@ class ToastNotificationsTest extends TestCase
             ->assertDispatched('toast', type: 'warning', message: 'Advertencia');
     }
 }
-

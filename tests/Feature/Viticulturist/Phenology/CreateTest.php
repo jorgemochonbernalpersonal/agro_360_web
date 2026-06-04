@@ -31,38 +31,6 @@ class CreateTest extends TestCase
         ]);
     }
 
-    private function makeViticulturistWithPlantingAndCampaign(): array
-    {
-        $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ]);
-
-        $winery = User::factory()->create(['role' => 'winery']);
-        WineryViticulturist::create([
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
-        ]);
-
-        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
-
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
-
-        $planting = PlotPlanting::create([
-            'plot_id'          => $plot->id,
-            'grape_variety_id' => $variety->id,
-            'area_planted'     => 1.5,
-            'status'           => 'active',
-            'density'          => 3000,
-        ]);
-
-        $campaign = Campaign::factory()->forViticulturist($viticulturist)->active()->create();
-
-        return [$viticulturist, $planting, $campaign];
-    }
-
     public function test_viticulturist_can_create_observation(): void
     {
         [$viticulturist, $planting, $campaign] = $this->makeViticulturistWithPlantingAndCampaign();
@@ -81,8 +49,8 @@ class CreateTest extends TestCase
 
         $this->assertDatabaseHas('phenology_observations', [
             'plot_planting_id' => $planting->id,
-            'campaign_id'      => $campaign->id,
-            'event'            => 'budbreak',
+            'campaign_id' => $campaign->id,
+            'event' => 'budbreak',
             'viticulturist_id' => $viticulturist->id,
         ]);
     }
@@ -116,13 +84,13 @@ class CreateTest extends TestCase
         // Crear observación previa
         PhenologyObservation::create([
             'plot_planting_id' => $planting->id,
-            'campaign_id'      => $campaign->id,
+            'campaign_id' => $campaign->id,
             'viticulturist_id' => $viticulturist->id,
-            'event'            => 'veraison',
-            'obs_date'         => '2024-08-01',
-            'source'           => 'manual',
-            'confidence'       => 70,
-            'active'           => true,
+            'event' => 'veraison',
+            'obs_date' => '2024-08-01',
+            'source' => 'manual',
+            'confidence' => 70,
+            'active' => true,
         ]);
 
         $this->actingAs($viticulturist);
@@ -139,9 +107,9 @@ class CreateTest extends TestCase
         // No debe duplicar la observación
         $this->assertDatabaseCount('phenology_observations', 1);
         $this->assertDatabaseHas('phenology_observations', [
-            'event'      => 'veraison',
-            'obs_date'   => '2024-08-10',
-            'source'     => 'sensor',
+            'event' => 'veraison',
+            'obs_date' => '2024-08-10',
+            'source' => 'sensor',
             'confidence' => 95,
         ]);
     }
@@ -190,5 +158,37 @@ class CreateTest extends TestCase
             ->set('confidence', 150)
             ->call('save')
             ->assertHasErrors(['confidence']);
+    }
+
+    private function makeViticulturistWithPlantingAndCampaign(): array
+    {
+        $viticulturist = User::factory()->create([
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
+        ]);
+
+        $winery = User::factory()->create(['role' => 'winery']);
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
+        ]);
+
+        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
+
+        $planting = PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $variety->id,
+            'area_planted' => 1.5,
+            'status' => 'active',
+            'density' => 3000,
+        ]);
+
+        $campaign = Campaign::factory()->forViticulturist($viticulturist)->active()->create();
+
+        return [$viticulturist, $planting, $campaign];
     }
 }

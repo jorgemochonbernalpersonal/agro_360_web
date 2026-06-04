@@ -6,7 +6,6 @@ use App\Models\Campaign;
 use App\Models\Harvest;
 use App\Models\Plot;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -15,18 +14,31 @@ class Index extends Component
     use WithPagination;
 
     public string $filterCampaign = '';
-    public string $filterPlot     = '';
-    public string $search         = '';
+
+    public string $filterPlot = '';
+
+    public string $search = '';
 
     protected $queryString = [
         'filterCampaign' => ['as' => 'campaign', 'except' => ''],
-        'filterPlot'     => ['as' => 'plot',     'except' => ''],
-        'search'         => ['as' => 'q',        'except' => ''],
+        'filterPlot' => ['as' => 'plot',     'except' => ''],
+        'search' => ['as' => 'q',        'except' => ''],
     ];
 
-    public function updatingSearch(): void         { $this->resetPage(); }
-    public function updatingFilterCampaign(): void { $this->resetPage(); }
-    public function updatingFilterPlot(): void     { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterCampaign(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterPlot(): void
+    {
+        $this->resetPage();
+    }
 
     public function mount(): void
     {
@@ -68,10 +80,10 @@ class Index extends Component
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('p.name', 'like', "%{$this->search}%")
-                  ->orWhere('harvests.destination', 'like', "%{$this->search}%")
-                  ->orWhere('harvests.buyer_name', 'like', "%{$this->search}%")
-                  ->orWhere('harvests.transport_document_number', 'like', "%{$this->search}%")
-                  ->orWhere('gv.name', 'like', "%{$this->search}%");
+                    ->orWhere('harvests.destination', 'like', "%{$this->search}%")
+                    ->orWhere('harvests.buyer_name', 'like', "%{$this->search}%")
+                    ->orWhere('harvests.transport_document_number', 'like', "%{$this->search}%")
+                    ->orWhere('gv.name', 'like', "%{$this->search}%");
             });
         }
 
@@ -98,10 +110,10 @@ class Index extends Component
         ')->first();
 
         return view('livewire.viticulturist.grape-traceability.index', [
-            'entries'   => $entries,
-            'stats'     => $stats,
+            'entries' => $entries,
+            'stats' => $stats,
             'campaigns' => Campaign::where('viticulturist_id', $userId)->orderByDesc('year')->get(['id', 'name', 'year']),
-            'plots'     => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']),
+            'plots' => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']),
         ]);
     }
 }

@@ -38,6 +38,7 @@ class CleanDuplicateRemoteSensingData extends Command
 
         if ($duplicates->isEmpty()) {
             $this->info('✅ No duplicates found!');
+
             return self::SUCCESS;
         }
 

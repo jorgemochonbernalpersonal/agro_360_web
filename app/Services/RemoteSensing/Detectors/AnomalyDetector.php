@@ -3,12 +3,11 @@
 namespace App\Services\RemoteSensing\Detectors;
 
 use App\Models\PlotRemoteSensing;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 /**
  * Anomaly Detection System for Remote Sensing Data
- * 
+ *
  * Detects unusual patterns that may indicate:
  * - Disease outbreaks
  * - Pest infestations
@@ -20,15 +19,19 @@ class AnomalyDetector
 {
     // Thresholds for anomaly detection
     private const NDVI_DROP_THRESHOLD = 15;        // % drop to trigger alert
+
     private const RAPID_CHANGE_DAYS = 7;            // Days to consider "rapid"
+
     private const STATISTICAL_SIGMA = 2.0;          // Standard deviations for outlier
+
     private const MIN_HISTORICAL_POINTS = 10;       // Minimum data points needed
 
     /**
      * Detect all types of anomalies
      *
-     * @param PlotRemoteSensing $current Current observation
-     * @param Collection $historical Historical observations (last 90 days)
+     * @param PlotRemoteSensing $current    Current observation
+     * @param Collection        $historical Historical observations (last 90 days)
+     *
      * @return array Detected anomalies
      */
     public function detectAnomalies(
@@ -63,11 +66,33 @@ class AnomalyDetector
         }
 
         return [
-            'has_anomalies' => !empty($anomalies),
+            'has_anomalies' => ! empty($anomalies),
             'count' => count($anomalies),
             'anomalies' => $anomalies,
             'risk_level' => $this->calculateRiskLevel($anomalies),
         ];
+    }
+
+    /**
+     * Generate alert message for user notification
+     */
+    public function generateAlertMessage(array $anomaly): string
+    {
+        return sprintf(
+            "⚠️ [%s] %s\n%s\n\nAcción recomendada: %s",
+            strtoupper($anomaly['severity']),
+            $anomaly['title'],
+            $anomaly['description'],
+            $anomaly['recommended_actions'][0] ?? 'Revisar la parcela'
+        );
+    }
+
+    /**
+     * Check if anomaly should trigger immediate notification
+     */
+    public function shouldNotify(array $anomaly): bool
+    {
+        return in_array($anomaly['severity'], ['critical', 'high']);
     }
 
     /**
@@ -84,13 +109,13 @@ class AnomalyDetector
 
         // Get recent baseline (7-14 days ago)
         $recentBaseline = $historical
-            ->filter(fn($d) => $d->image_date && $d->image_date->between(
+            ->filter(fn ($d) => $d->image_date && $d->image_date->between(
                 now()->subDays(14),
                 now()->subDays(7)
             ))
             ->avg('ndvi_mean');
 
-        if (!$recentBaseline) {
+        if (! $recentBaseline) {
             return null;
         }
 
@@ -202,14 +227,14 @@ class AnomalyDetector
 
         foreach ($metrics as $metric) {
             $values = $historical->pluck($metric)->filter()->values();
-            
+
             if ($values->count() < self::MIN_HISTORICAL_POINTS) {
                 continue;
             }
 
             $mean = $values->avg();
             $stdDev = $this->calculateStdDev($values->toArray());
-            
+
             if ($stdDev === 0.0) {
                 continue;
             }
@@ -309,11 +334,10 @@ class AnomalyDetector
 
         // Get same period last year (±2 weeks)
         $lastYearPeriod = $historical
-            ->filter(fn($d) => 
-                $d->image_date && $d->image_date->between(
-                    now()->subYear()->subWeeks(2),
-                    now()->subYear()->addWeeks(2)
-                )
+            ->filter(fn ($d) => $d->image_date && $d->image_date->between(
+                now()->subYear()->subWeeks(2),
+                now()->subYear()->addWeeks(2)
+            )
             );
 
         if ($lastYearPeriod->isEmpty()) {
@@ -358,7 +382,7 @@ class AnomalyDetector
     {
         // High standard deviation = heterogeneous field
         // Could indicate drainage issues, disease patches, soil variability
-        
+
         if ($data->ndvi_stddev > 0.15) {
             return [
                 'type' => 'spatial_heterogeneity',
@@ -407,8 +431,8 @@ class AnomalyDetector
             return 'none';
         }
 
-        $criticalCount = count(array_filter($anomalies, fn($a) => $a['severity'] === 'critical'));
-        $highCount = count(array_filter($anomalies, fn($a) => $a['severity'] === 'high'));
+        $criticalCount = count(array_filter($anomalies, fn ($a) => $a['severity'] === 'critical'));
+        $highCount = count(array_filter($anomalies, fn ($a) => $a['severity'] === 'high'));
 
         return match (true) {
             $criticalCount > 0 => 'critical',
@@ -424,14 +448,14 @@ class AnomalyDetector
     private function calculateStdDev(array $values): float
     {
         $count = count($values);
-        
+
         if ($count === 0) {
             return 0.0;
         }
 
         $mean = array_sum($values) / $count;
         $variance = array_sum(array_map(
-            fn($x) => pow($x - $mean, 2),
+            fn ($x) => pow($x - $mean, 2),
             $values
         )) / $count;
 
@@ -451,27 +475,5 @@ class AnomalyDetector
             'soil_moisture_mean' => __('Humedad del Suelo'),
             default => $metric,
         };
-    }
-
-    /**
-     * Generate alert message for user notification
-     */
-    public function generateAlertMessage(array $anomaly): string
-    {
-        return sprintf(
-            "⚠️ [%s] %s\n%s\n\nAcción recomendada: %s",
-            strtoupper($anomaly['severity']),
-            $anomaly['title'],
-            $anomaly['description'],
-            $anomaly['recommended_actions'][0] ?? 'Revisar la parcela'
-        );
-    }
-
-    /**
-     * Check if anomaly should trigger immediate notification
-     */
-    public function shouldNotify(array $anomaly): bool
-    {
-        return in_array($anomaly['severity'], ['critical', 'high']);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Livewire\Subscription\Manage;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])
     ->prefix('subscription')
@@ -14,4 +14,3 @@ Route::middleware(['auth', 'verified'])
 Route::middleware(['auth', 'verified'])
     ->get('/pricing', fn () => redirect()->route('subscription.manage'))
     ->name('pricing');
-

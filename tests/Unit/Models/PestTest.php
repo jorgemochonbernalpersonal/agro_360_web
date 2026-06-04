@@ -15,10 +15,10 @@ class PestTest extends TestCase
     public function test_risk_months_is_cast_to_array(): void
     {
         $pest = Pest::create([
-            'type'        => 'pest',
-            'name'        => 'Test Plaga',
+            'type' => 'pest',
+            'name' => 'Test Plaga',
             'risk_months' => [5, 6, 7],
-            'active'      => true,
+            'active' => true,
         ]);
 
         $this->assertIsArray($pest->risk_months);
@@ -28,8 +28,8 @@ class PestTest extends TestCase
     public function test_active_is_cast_to_boolean(): void
     {
         $pest = Pest::create([
-            'type'   => 'disease',
-            'name'   => 'Test Enfermedad',
+            'type' => 'disease',
+            'name' => 'Test Enfermedad',
             'active' => true,
         ]);
 
@@ -40,10 +40,10 @@ class PestTest extends TestCase
     public function test_control_methods_is_cast_to_array(): void
     {
         $pest = Pest::create([
-            'type'            => 'pest',
-            'name'            => 'Polilla Test',
+            'type' => 'pest',
+            'name' => 'Polilla Test',
             'control_methods' => ['biologico', 'cultural', 'quimico'],
-            'active'          => true,
+            'active' => true,
         ]);
 
         $this->assertIsArray($pest->control_methods);
@@ -55,8 +55,8 @@ class PestTest extends TestCase
     public function test_control_methods_nullable(): void
     {
         $pest = Pest::create([
-            'type'   => 'disease',
-            'name'   => 'Sin Métodos',
+            'type' => 'disease',
+            'name' => 'Sin Métodos',
             'active' => true,
         ]);
 
@@ -68,10 +68,10 @@ class PestTest extends TestCase
     public function test_is_in_risk_period_returns_true_when_month_in_array(): void
     {
         $pest = Pest::create([
-            'type'        => 'pest',
-            'name'        => 'Araña Roja',
+            'type' => 'pest',
+            'name' => 'Araña Roja',
             'risk_months' => [6, 7, 8, 9],
-            'active'      => true,
+            'active' => true,
         ]);
 
         $this->assertTrue($pest->isInRiskPeriod(7));
@@ -80,10 +80,10 @@ class PestTest extends TestCase
     public function test_is_in_risk_period_returns_false_when_month_not_in_array(): void
     {
         $pest = Pest::create([
-            'type'        => 'pest',
-            'name'        => 'Araña Roja',
+            'type' => 'pest',
+            'name' => 'Araña Roja',
             'risk_months' => [6, 7, 8, 9],
-            'active'      => true,
+            'active' => true,
         ]);
 
         $this->assertFalse($pest->isInRiskPeriod(1));
@@ -92,8 +92,8 @@ class PestTest extends TestCase
     public function test_is_in_risk_period_returns_false_when_no_risk_months(): void
     {
         $pest = Pest::create([
-            'type'   => 'disease',
-            'name'   => 'Sin Meses',
+            'type' => 'disease',
+            'name' => 'Sin Meses',
             'active' => true,
         ]);
 
@@ -132,10 +132,10 @@ class PestTest extends TestCase
     public function test_full_name_includes_scientific_name(): void
     {
         $pest = Pest::create([
-            'type'            => 'pest',
-            'name'            => 'Polilla del Racimo',
+            'type' => 'pest',
+            'name' => 'Polilla del Racimo',
             'scientific_name' => 'Lobesia botrana',
-            'active'          => true,
+            'active' => true,
         ]);
 
         $this->assertEquals('Polilla del Racimo (Lobesia botrana)', $pest->full_name);
@@ -144,8 +144,8 @@ class PestTest extends TestCase
     public function test_full_name_without_scientific_name(): void
     {
         $pest = Pest::create([
-            'type'   => 'pest',
-            'name'   => 'Sin Nombre Científico',
+            'type' => 'pest',
+            'name' => 'Sin Nombre Científico',
             'active' => true,
         ]);
 
@@ -171,10 +171,10 @@ class PestTest extends TestCase
     public function test_control_method_labels_returns_readable_labels(): void
     {
         $pest = Pest::create([
-            'type'            => 'pest',
-            'name'            => 'Con Métodos',
+            'type' => 'pest',
+            'name' => 'Con Métodos',
             'control_methods' => ['biologico', 'quimico'],
-            'active'          => true,
+            'active' => true,
         ]);
 
         $labels = $pest->control_method_labels;

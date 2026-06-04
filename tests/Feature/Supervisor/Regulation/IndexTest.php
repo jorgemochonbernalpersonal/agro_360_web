@@ -32,7 +32,7 @@ class IndexTest extends SupervisorTestCase
     public function test_viticulturist_cannot_access_regulation_index(): void
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 

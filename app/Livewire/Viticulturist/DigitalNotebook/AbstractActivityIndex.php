@@ -2,56 +2,43 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Plot;
-use App\Livewire\Concerns\WithToastNotifications;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 abstract class AbstractActivityIndex extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public string $currentTab    = 'unlocked'; // 'unlocked' | 'locked'
-    public string $search        = '';
-    public string $plotFilter    = '';
+    public string $currentTab = 'unlocked'; // 'unlocked' | 'locked'
+
+    public string $search = '';
+
+    public string $plotFilter = '';
+
     public string $campaignFilter = '';
 
     protected $queryString = [
-        'currentTab'     => ['as' => 'tab',      'except' => 'unlocked'],
-        'search'         => ['except' => ''],
-        'plotFilter'     => ['except' => ''],
+        'currentTab' => ['as' => 'tab',      'except' => 'unlocked'],
+        'search' => ['except' => ''],
+        'plotFilter' => ['except' => ''],
         'campaignFilter' => ['except' => ''],
     ];
-
-    // ── Subclass contract ─────────────────────────────────────────────────────
-
-    abstract protected function activityType(): string;
-    abstract protected function pageTitle(): string;
-    abstract protected function pageDescription(): string;
-    abstract protected function createRoute(): string;
-    abstract protected function editRouteSuffix(): string;
-
-    protected function editRouteName(): string
-    {
-        $prefix = Auth::user()?->isProducer() ? 'producer' : 'viticulturist';
-        return "{$prefix}.{$this->editRouteSuffix()}";
-    }
-    abstract protected function typeIcon(): string;
-    abstract protected function typeBadgeColor(): string;
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     public function mount(): void
     {
-        if (!Auth::user()->can('viewAny', AgriculturalActivity::class)) {
+        if (! Auth::user()->can('viewAny', AgriculturalActivity::class)) {
             abort(403, __('No tienes permiso para ver actividades agrícolas.'));
         }
 
         // Pre-select the active campaign
-        if (!$this->campaignFilter) {
+        if (! $this->campaignFilter) {
             $campaign = Campaign::forViticulturist(Auth::id())
                 ->where('active', true)
                 ->first();
@@ -69,14 +56,25 @@ abstract class AbstractActivityIndex extends Component
         $this->resetPage();
     }
 
-    public function updatingSearch(): void        { $this->resetPage(); }
-    public function updatingPlotFilter(): void    { $this->resetPage(); }
-    public function updatingCampaignFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPlotFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingCampaignFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->search         = '';
-        $this->plotFilter     = '';
+        $this->search = '';
+        $this->plotFilter = '';
         $this->campaignFilter = '';
         $this->resetPage();
     }
@@ -85,13 +83,15 @@ abstract class AbstractActivityIndex extends Component
     {
         $activity = AgriculturalActivity::forViticulturist(Auth::id())->findOrFail($activityId);
 
-        if (!Auth::user()->can('delete', $activity)) {
+        if (! Auth::user()->can('delete', $activity)) {
             $this->toastError(__('No tienes permiso para eliminar esta actividad.'));
+
             return;
         }
 
         if ($activity->isLocked()) {
             $this->toastError(__('No se puede eliminar una actividad bloqueada. Las actividades se bloquean automáticamente para cumplimiento PAC.'));
+
             return;
         }
 
@@ -100,9 +100,9 @@ abstract class AbstractActivityIndex extends Component
             $this->toastSuccess(__('Actividad eliminada correctamente.'));
         } catch (\Exception $e) {
             \Log::error('Error al eliminar actividad', [
-                'error'       => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'activity_id' => $activityId,
-                'user_id'     => Auth::id(),
+                'user_id' => Auth::id(),
             ]);
             $this->toastError(__('Error al eliminar la actividad. Por favor, intenta de nuevo.'));
         }
@@ -134,10 +134,10 @@ abstract class AbstractActivityIndex extends Component
 
         // Search
         if ($this->search) {
-            $s = '%' . strtolower($this->search) . '%';
+            $s = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($s) {
                 $q->whereRaw('LOWER(notes) LIKE ?', [$s])
-                  ->orWhereHas('plot', fn ($pq) => $pq->whereRaw('LOWER(name) LIKE ?', [$s]));
+                    ->orWhereHas('plot', fn ($pq) => $pq->whereRaw('LOWER(name) LIKE ?', [$s]));
             });
         }
 
@@ -156,7 +156,7 @@ abstract class AbstractActivityIndex extends Component
 
         $stats = [
             'unlocked' => (int) ($statsRow->unlocked ?? 0),
-            'locked'   => (int) ($statsRow->locked   ?? 0),
+            'locked' => (int) ($statsRow->locked ?? 0),
         ];
 
         $plots = Plot::forUser($user)
@@ -170,24 +170,47 @@ abstract class AbstractActivityIndex extends Component
             ->get();
 
         return view('livewire.viticulturist.digital-notebook.activity-index', [
-            'activities'      => $activities,
-            'stats'           => $stats,
-            'plots'           => $plots,
-            'campaigns'       => $campaigns,
-            'pageTitle'       => $this->pageTitle(),
+            'activities' => $activities,
+            'stats' => $stats,
+            'plots' => $plots,
+            'campaigns' => $campaigns,
+            'pageTitle' => $this->pageTitle(),
             'pageDescription' => $this->pageDescription(),
-            'createRoute'     => $this->createRoute(),
-            'editRouteName'   => $this->editRouteName(),
-            'activityType'    => $this->activityType(),
-            'typeIcon'        => $this->typeIcon(),
-            'typeBg'          => $this->typeBgClass(),
-            'typeIconColor'   => $this->typeIconColorClass(),
-            'typeBadgeColor'  => $this->typeBadgeColor(),
+            'createRoute' => $this->createRoute(),
+            'editRouteName' => $this->editRouteName(),
+            'activityType' => $this->activityType(),
+            'typeIcon' => $this->typeIcon(),
+            'typeBg' => $this->typeBgClass(),
+            'typeIconColor' => $this->typeIconColorClass(),
+            'typeBadgeColor' => $this->typeBadgeColor(),
         ])->layout('layouts.app', [
-            'title'       => $this->pageTitle() . ' - Agro365',
+            'title' => $this->pageTitle().' - Agro365',
             'description' => $this->pageDescription(),
         ]);
     }
+
+    // ── Subclass contract ─────────────────────────────────────────────────────
+
+    abstract protected function activityType(): string;
+
+    abstract protected function pageTitle(): string;
+
+    abstract protected function pageDescription(): string;
+
+    abstract protected function createRoute(): string;
+
+    abstract protected function editRouteSuffix(): string;
+
+    protected function editRouteName(): string
+    {
+        $prefix = Auth::user()?->isProducer() ? 'producer' : 'viticulturist';
+
+        return "{$prefix}.{$this->editRouteSuffix()}";
+    }
+
+    abstract protected function typeIcon(): string;
+
+    abstract protected function typeBadgeColor(): string;
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -198,41 +221,41 @@ abstract class AbstractActivityIndex extends Component
         return array_merge($base, match ($this->activityType()) {
             'phytosanitary' => ['phytosanitaryTreatment.product', 'phytosanitaryTreatment.pest'],
             'fertilization' => ['fertilization'],
-            'irrigation'    => ['irrigation'],
-            'cultural'      => ['culturalWork'],
-            'observation'   => ['observation'],
-            'harvest'       => ['harvest'],
-            'pruning'       => ['culturalWork'],
-            'post_harvest'  => ['postHarvestTreatment.product'],
-            default         => [],
+            'irrigation' => ['irrigation'],
+            'cultural' => ['culturalWork'],
+            'observation' => ['observation'],
+            'harvest' => ['harvest'],
+            'pruning' => ['culturalWork'],
+            'post_harvest' => ['postHarvestTreatment.product'],
+            default => [],
         });
     }
 
     protected function typeBgClass(): string
     {
         return match ($this->typeBadgeColor()) {
-            'red'    => 'bg-red-50',
-            'blue'   => 'bg-blue-50',
-            'cyan'   => 'bg-cyan-50',
+            'red' => 'bg-red-50',
+            'blue' => 'bg-blue-50',
+            'cyan' => 'bg-cyan-50',
             'yellow' => 'bg-amber-50',
-            'lime'   => 'bg-lime-50',
+            'lime' => 'bg-lime-50',
             'indigo' => 'bg-indigo-50',
             'purple' => 'bg-purple-50',
-            default  => 'bg-zinc-100',
+            default => 'bg-zinc-100',
         };
     }
 
     protected function typeIconColorClass(): string
     {
         return match ($this->typeBadgeColor()) {
-            'red'    => 'text-red-600',
-            'blue'   => 'text-blue-600',
-            'cyan'   => 'text-cyan-600',
+            'red' => 'text-red-600',
+            'blue' => 'text-blue-600',
+            'cyan' => 'text-cyan-600',
             'yellow' => 'text-amber-600',
-            'lime'   => 'text-lime-600',
+            'lime' => 'text-lime-600',
             'indigo' => 'text-indigo-600',
             'purple' => 'text-purple-600',
-            default  => 'text-zinc-500',
+            default => 'text-zinc-500',
         };
     }
 }

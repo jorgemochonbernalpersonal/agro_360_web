@@ -28,12 +28,12 @@ class ProductStockService
      * Used for 'deliver' and 'cancel' actions where the invoice already exists.
      * Locks each product_lot row within the active transaction.
      *
-     * @param  string  $action  'deliver' | 'cancel'
+     * @param string $action 'deliver' | 'cancel'
      */
     public static function moveForInvoice(Invoice $invoice, string $action): void
     {
         foreach ($invoice->items as $item) {
-            if ($item->concept_type !== 'wine' || !$item->wine_lot_id) {
+            if ($item->concept_type !== 'wine' || ! $item->wine_lot_id) {
                 continue;
             }
 
@@ -60,10 +60,10 @@ class ProductStockService
     private static function apply(Invoice $invoice, InvoiceItem $item, ProductLot $lot, float $qty, string $action): void
     {
         match ($action) {
-            'create'  => self::onCreate($invoice, $item, $lot, $qty),
+            'create' => self::onCreate($invoice, $item, $lot, $qty),
             'deliver' => self::onDeliver($invoice, $item, $lot, $qty),
-            'cancel'  => self::onCancel($invoice, $item, $lot, $qty),
-            default   => throw new RuntimeException("Unknown stock action: {$action}"),
+            'cancel' => self::onCancel($invoice, $item, $lot, $qty),
+            default => throw new RuntimeException("Unknown stock action: {$action}"),
         };
     }
 
@@ -138,14 +138,14 @@ class ProductStockService
         string $to
     ): void {
         InvoiceStockMovement::create([
-            'invoice_id'      => $invoice->id,
+            'invoice_id' => $invoice->id,
             'invoice_item_id' => $item->id,
-            'wine_lot_id'     => $lot->id,
-            'user_id'         => Auth::id(),
-            'qty'             => $qty,
-            'action'          => $action,
-            'from_bucket'     => $from,
-            'to_bucket'       => $to,
+            'wine_lot_id' => $lot->id,
+            'user_id' => Auth::id(),
+            'qty' => $qty,
+            'action' => $action,
+            'from_bucket' => $from,
+            'to_bucket' => $to,
         ]);
     }
 }

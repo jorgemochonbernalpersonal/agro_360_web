@@ -9,17 +9,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeMembership(int $viticulturistId, string $advisorName = 'Asesor Test'): AdvisoryMembership
-    {
-        return AdvisoryMembership::create([
-            'viticulturist_id' => $viticulturistId,
-            'advisor_name'     => $advisorName,
-            'license_number'   => 'LIC-' . uniqid(),
-            'specialty'        => 'phytosanitary',
-            'active'           => true,
-        ]);
-    }
-
     public function test_index_shows_active_memberships(): void
     {
         $viticulturist = $this->makeViticulturist();
@@ -34,7 +23,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_deactivate_sets_active_to_false(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $membership    = $this->makeMembership($viticulturist->id);
+        $membership = $this->makeMembership($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -42,7 +31,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('deactivate', $membership->id);
 
         $this->assertDatabaseHas('advisory_memberships', [
-            'id'     => $membership->id,
+            'id' => $membership->id,
             'active' => false,
         ]);
     }
@@ -50,7 +39,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_deactivated_disappears_from_list(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $membership    = $this->makeMembership($viticulturist->id, 'Asesor a Dar de Baja');
+        $membership = $this->makeMembership($viticulturist->id, 'Asesor a Dar de Baja');
 
         $this->actingAs($viticulturist);
 
@@ -62,8 +51,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_cannot_deactivate_other_viticulturists_membership(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $membership    = $this->makeMembership($viticulturist->id);
+        $other = $this->makeOtherViticulturist();
+        $membership = $this->makeMembership($viticulturist->id);
 
         $this->actingAs($other);
 
@@ -71,5 +60,16 @@ class IndexTest extends ViticulturistTestCase
 
         Livewire::test(Index::class)
             ->call('deactivate', $membership->id);
+    }
+
+    private function makeMembership(int $viticulturistId, string $advisorName = 'Asesor Test'): AdvisoryMembership
+    {
+        return AdvisoryMembership::create([
+            'viticulturist_id' => $viticulturistId,
+            'advisor_name' => $advisorName,
+            'license_number' => 'LIC-'.uniqid(),
+            'specialty' => 'phytosanitary',
+            'active' => true,
+        ]);
     }
 }

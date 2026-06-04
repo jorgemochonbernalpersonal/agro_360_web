@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('user_profiles', function (Blueprint $table) {
             // Eliminar columna province (texto)
             $table->dropColumn('province');
-            
+
             // Agregar columna province_id (foreign key)
             $table->foreignId('province_id')->nullable()->after('postal_code')->constrained('provinces')->onDelete('set null');
         });

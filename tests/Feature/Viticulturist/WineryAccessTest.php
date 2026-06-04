@@ -14,7 +14,9 @@ use Tests\Feature\ViticulturistTestCase;
 class WineryAccessTest extends ViticulturistTestCase
 {
     protected User $viticulturist;
+
     protected User $winery;
+
     protected WineryViticulturist $relation;
 
     protected function setUp(): void
@@ -22,17 +24,17 @@ class WineryAccessTest extends ViticulturistTestCase
         parent::setUp();
 
         $this->viticulturist = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
         ]);
 
         $this->winery = User::factory()->create(['role' => 'winery']);
 
         $this->relation = WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         $this->actingAs($this->viticulturist);
@@ -43,10 +45,10 @@ class WineryAccessTest extends ViticulturistTestCase
     public function test_viticulturist_can_approve_pending_request(): void
     {
         $request = NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Index::class)
@@ -54,24 +56,24 @@ class WineryAccessTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('notebook_access_requests', [
-            'id'     => $request->id,
+            'id' => $request->id,
             'status' => NotebookAccessRequest::STATUS_APPROVED,
         ]);
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'notebook_access'  => true,
+            'notebook_access' => true,
         ]);
     }
 
     public function test_approve_sets_responded_at(): void
     {
         $request = NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Index::class)->call('approve', $request->id);
@@ -82,10 +84,10 @@ class WineryAccessTest extends ViticulturistTestCase
     public function test_reject_sets_responded_at(): void
     {
         $request = NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Index::class)->call('reject', $request->id);
@@ -98,10 +100,10 @@ class WineryAccessTest extends ViticulturistTestCase
         Notification::fake();
 
         $request = NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Index::class)->call('approve', $request->id);
@@ -118,10 +120,10 @@ class WineryAccessTest extends ViticulturistTestCase
         Notification::fake();
 
         $request = NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Index::class)->call('reject', $request->id);
@@ -140,11 +142,11 @@ class WineryAccessTest extends ViticulturistTestCase
         $this->relation->grantNotebookAccess();
 
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now()->subDay(),
-            'responded_at'     => now()->subDay(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now()->subDay(),
+            'responded_at' => now()->subDay(),
         ]);
 
         Livewire::test(Index::class)->call('revoke', $this->winery->id);
@@ -160,17 +162,17 @@ class WineryAccessTest extends ViticulturistTestCase
     {
         $otherViticulturist = $this->makeOtherViticulturist();
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $otherViticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         $request = NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $otherViticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         // Acting as $this->viticulturist — component guards with firstOrFail on viticulturist_id
@@ -184,10 +186,10 @@ class WineryAccessTest extends ViticulturistTestCase
     public function test_viticulturist_can_reject_pending_request(): void
     {
         $request = NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Index::class)
@@ -195,7 +197,7 @@ class WineryAccessTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('notebook_access_requests', [
-            'id'     => $request->id,
+            'id' => $request->id,
             'status' => NotebookAccessRequest::STATUS_REJECTED,
         ]);
     }
@@ -203,18 +205,18 @@ class WineryAccessTest extends ViticulturistTestCase
     public function test_reject_does_not_grant_notebook_access(): void
     {
         $request = NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Index::class)->call('reject', $request->id);
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'notebook_access'  => false,
+            'notebook_access' => false,
         ]);
     }
 
@@ -222,17 +224,17 @@ class WineryAccessTest extends ViticulturistTestCase
     {
         $otherViticulturist = $this->makeOtherViticulturist();
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $otherViticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         $request = NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $otherViticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -247,11 +249,11 @@ class WineryAccessTest extends ViticulturistTestCase
         $this->relation->grantNotebookAccess();
 
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now()->subDay(),
-            'responded_at'     => now()->subDay(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now()->subDay(),
+            'responded_at' => now()->subDay(),
         ]);
 
         Livewire::test(Index::class)
@@ -259,9 +261,9 @@ class WineryAccessTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'notebook_access'  => false,
+            'notebook_access' => false,
         ]);
     }
 
@@ -270,19 +272,19 @@ class WineryAccessTest extends ViticulturistTestCase
         $this->relation->grantNotebookAccess();
 
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now()->subDay(),
-            'responded_at'     => now()->subDay(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now()->subDay(),
+            'responded_at' => now()->subDay(),
         ]);
 
         Livewire::test(Index::class)->call('revoke', $this->winery->id);
 
         $this->assertDatabaseHas('notebook_access_requests', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_REJECTED,
+            'status' => NotebookAccessRequest::STATUS_REJECTED,
         ]);
     }
 
@@ -301,10 +303,10 @@ class WineryAccessTest extends ViticulturistTestCase
     public function test_index_renders_with_pending_requests(): void
     {
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Index::class)

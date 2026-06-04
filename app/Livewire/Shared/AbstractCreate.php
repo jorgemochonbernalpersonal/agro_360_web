@@ -11,7 +11,22 @@ use Livewire\Component;
 
 abstract class AbstractCreate extends Component
 {
-    use WithToastNotifications, WithOwnershipRules;
+    use WithOwnershipRules, WithToastNotifications;
+
+    public function save(): mixed
+    {
+        $this->validate();
+        $this->performCreate();
+        $this->toastSuccess($this->successMessage());
+
+        return redirect()->route($this->resolveIndexRoute());
+    }
+
+    public function render(): View
+    {
+        return view($this->resolveViewName(), $this->viewData())
+            ->layout('layouts.app');
+    }
 
     abstract protected function rules(): array;
 
@@ -24,15 +39,6 @@ abstract class AbstractCreate extends Component
     protected function viewData(): array
     {
         return [];
-    }
-
-    public function save(): mixed
-    {
-        $this->validate();
-        $this->performCreate();
-        $this->toastSuccess($this->successMessage());
-
-        return redirect()->route($this->resolveIndexRoute());
     }
 
     /**
@@ -54,18 +60,12 @@ abstract class AbstractCreate extends Component
         return $route;
     }
 
-    public function render(): View
-    {
-        return view($this->resolveViewName(), $this->viewData())
-            ->layout('layouts.app');
-    }
-
     protected function resolveViewName(): string
     {
         $relative = str_replace('App\\Livewire\\', '', static::class);
 
-        return 'livewire.' . implode('.', array_map(
-            fn(string $part) => Str::kebab($part),
+        return 'livewire.'.implode('.', array_map(
+            fn (string $part) => Str::kebab($part),
             explode('\\', $relative),
         ));
     }

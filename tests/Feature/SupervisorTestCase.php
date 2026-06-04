@@ -23,21 +23,21 @@ abstract class SupervisorTestCase extends TestCase
     protected function makeSupervisorWithWinery(): array
     {
         $supervisor = User::factory()->create([
-            'role'              => 'supervisor',
+            'role' => 'supervisor',
             'email_verified_at' => now(),
-            'can_login'         => true,
+            'can_login' => true,
         ]);
 
         $winery = User::factory()->create([
-            'role'              => 'winery',
+            'role' => 'winery',
             'email_verified_at' => now(),
-            'can_login'         => true,
+            'can_login' => true,
         ]);
 
         SupervisorWinery::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $supervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         return [$supervisor, $winery];
@@ -46,18 +46,18 @@ abstract class SupervisorTestCase extends TestCase
     protected function makeSupervisor(): User
     {
         return User::factory()->create([
-            'role'              => 'supervisor',
+            'role' => 'supervisor',
             'email_verified_at' => now(),
-            'can_login'         => true,
+            'can_login' => true,
         ]);
     }
 
     protected function makeWinery(): User
     {
         return User::factory()->create([
-            'role'              => 'winery',
+            'role' => 'winery',
             'email_verified_at' => now(),
-            'can_login'         => true,
+            'can_login' => true,
         ]);
     }
 
@@ -67,14 +67,14 @@ abstract class SupervisorTestCase extends TestCase
     protected function makeViticulturistForSupervisor(User $supervisor): User
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
         SupervisorViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'assigned_by'      => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         return $viticulturist;
@@ -85,16 +85,16 @@ abstract class SupervisorTestCase extends TestCase
      */
     protected function makePlot(User $viticulturist, array $attrs = []): Plot
     {
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
         $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
         $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
 
         return Plot::factory()->create(array_merge([
-            'viticulturist_id'        => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
         ], $attrs));
     }
 }

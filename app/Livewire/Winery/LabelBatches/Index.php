@@ -9,23 +9,31 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search     = '';
+    public string $search = '';
+
     public string $wineFilter = '';
+
     public string $sourceFilter = '';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'wineFilter'   => ['except' => ''],
+        'search' => ['except' => ''],
+        'wineFilter' => ['except' => ''],
         'sourceFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void      { $this->resetPage(); }
-    public function updatingWineFilter(): void  { $this->resetPage(); }
-    public function updatingSourceFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'wineFilter' => '', 'sourceFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingWineFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSourceFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
@@ -34,11 +42,17 @@ class Index extends AbstractIndex
 
         if (! $batch->canDelete()) {
             $this->toastError(__('No se puede eliminar un lote con etiquetas usadas o mermas registradas.'));
+
             return;
         }
 
         $batch->delete();
         $this->toastSuccess(__('Lote de etiquetas eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'wineFilter' => '', 'sourceFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -49,7 +63,7 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->whereRaw('LOWER(name) LIKE ?', [$term]);
         }
 
@@ -67,9 +81,15 @@ class Index extends AbstractIndex
         $query->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['id', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['id', 'desc'];
+    }
 
-    protected function perPage(): int { return 20; }
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -77,7 +97,7 @@ class Index extends AbstractIndex
 
         return [
             'batches' => $entries,
-            'wines'   => $wines,
+            'wines' => $wines,
             'sources' => LabelBatch::SOURCES,
         ];
     }

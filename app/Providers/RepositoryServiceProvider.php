@@ -15,11 +15,11 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         // Registrar repositorios como singletons
         $this->app->singleton(PlotRepository::class, function ($app) {
-            return new PlotRepository();
+            return new PlotRepository;
         });
 
         $this->app->singleton(AgriculturalActivityRepository::class, function ($app) {
-            return new AgriculturalActivityRepository();
+            return new AgriculturalActivityRepository;
         });
     }
 

@@ -10,7 +10,6 @@ use App\Models\AutonomousCommunity;
 use App\Models\Municipality;
 use App\Models\Plot;
 use App\Models\Province;
-use App\Models\SigpacCode;
 use App\Services\SigpacGeometryService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,11 +18,14 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithListing, WithToastNotifications, WithUserPreferences, GeneratesCatastroGeometry;
+    use GeneratesCatastroGeometry, WithListing, WithToastNotifications, WithUserPreferences;
 
     public $filterAutonomousCommunity = '';
+
     public $filterProvince = '';
+
     public $filterMunicipality = '';
+
     public $auditPlotId = null;
 
     protected $queryString = [
@@ -37,15 +39,15 @@ class Index extends Component
         $user = Auth::user();
         $plot = Plot::forUser($user)->findOrFail($plotId);
 
-        if (!$user->can('update', $plot)) {
+        if (! $user->can('update', $plot)) {
             abort(403);
         }
 
         $wasActive = $plot->active;
-        $newActiveState = !$wasActive;
+        $newActiveState = ! $wasActive;
 
         $plot->update([
-            'active' => $newActiveState
+            'active' => $newActiveState,
         ]);
 
         if ($newActiveState) {
@@ -98,16 +100,16 @@ class Index extends Component
                 'orientation:id,name',
                 'topography:id,name',
                 'sigpacCodes:id,code,code_autonomous_community,code_province,code_municipality,code_aggregate,code_zone,code_polygon,code_plot,code_enclosure',
-                'multiplePlotSigpacs' => function($q) {
+                'multiplePlotSigpacs' => function ($q) {
                     $q->with([
                         'sigpacCode:id,code,code_autonomous_community,code_province,code_municipality,code_aggregate,code_zone,code_polygon,code_plot,code_enclosure',
-                        'plotGeometry'
+                        'plotGeometry',
                     ])->orderBy('id');
-                }
+                },
             ]);
 
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->whereRaw('LOWER(name) LIKE ?', [$search]);
         }
 
@@ -142,12 +144,12 @@ class Index extends Component
         // Estadísticas
         $baseQuery = Plot::forUser(Auth::user());
         $stats = [
-            'total'         => (clone $baseQuery)->count(),
-            'active'        => (clone $baseQuery)->where('active', true)->count(),
-            'inactive'      => (clone $baseQuery)->where('active', false)->count(),
-            'total_area'    => (clone $baseQuery)->sum('area') ?? 0,
-            'with_sigpac'   => (clone $baseQuery)->whereHas('sigpacCodes')->count(),
-            'with_geometry' => (clone $baseQuery)->whereHas('multiplePlotSigpacs', fn($q) => $q->whereNotNull('plot_geometry_id'))->count(),
+            'total' => (clone $baseQuery)->count(),
+            'active' => (clone $baseQuery)->where('active', true)->count(),
+            'inactive' => (clone $baseQuery)->where('active', false)->count(),
+            'total_area' => (clone $baseQuery)->sum('area') ?? 0,
+            'with_sigpac' => (clone $baseQuery)->whereHas('sigpacCodes')->count(),
+            'with_geometry' => (clone $baseQuery)->whereHas('multiplePlotSigpacs', fn ($q) => $q->whereNotNull('plot_geometry_id'))->count(),
         ];
 
         $auditPlot = $this->auditPlotId
@@ -155,12 +157,12 @@ class Index extends Component
             : null;
 
         return view('livewire.plots.index', [
-            'plots'              => $plots,
-            'stats'              => $stats,
+            'plots' => $plots,
+            'stats' => $stats,
             'autonomousCommunities' => $this->autonomousCommunities,
-            'provinces'          => $this->provinces,
-            'municipalities'     => $this->municipalities,
-            'auditPlot'          => $auditPlot,
+            'provinces' => $this->provinces,
+            'municipalities' => $this->municipalities,
+            'auditPlot' => $auditPlot,
         ])->layout('layouts.app', [
             'title' => __('Gestión de Parcelas - Agro365'),
             'description' => __('Administra y visualiza todas tus parcelas agrícolas. Control total de viñedos con integración SIGPAC.'),
@@ -181,7 +183,7 @@ class Index extends Component
             })
                 ->orderBy('name')
                 ->get()
-                ->mapWithKeys(fn($ca) => [$ca->id => $ca->name]);
+                ->mapWithKeys(fn ($ca) => [$ca->id => $ca->name]);
         });
     }
 
@@ -190,7 +192,7 @@ class Index extends Component
      */
     public function getProvincesProperty()
     {
-        if (!$this->filterAutonomousCommunity) {
+        if (! $this->filterAutonomousCommunity) {
             return collect();
         }
 
@@ -206,7 +208,7 @@ class Index extends Component
                 })
                 ->orderBy('name')
                 ->get()
-                ->mapWithKeys(fn($prov) => [$prov->id => $prov->name]);
+                ->mapWithKeys(fn ($prov) => [$prov->id => $prov->name]);
         });
     }
 
@@ -215,7 +217,7 @@ class Index extends Component
      */
     public function getMunicipalitiesProperty()
     {
-        if (!$this->filterProvince) {
+        if (! $this->filterProvince) {
             return collect();
         }
 
@@ -231,7 +233,7 @@ class Index extends Component
                 })
                 ->orderBy('name')
                 ->get()
-                ->mapWithKeys(fn($mun) => [$mun->id => $mun->name]);
+                ->mapWithKeys(fn ($mun) => [$mun->id => $mun->name]);
         });
     }
 
@@ -240,13 +242,13 @@ class Index extends Component
      */
     public function getMunicipalityHasGeometryProperty(): bool
     {
-        if (!$this->filterMunicipality) {
+        if (! $this->filterMunicipality) {
             return false;
         }
 
         return Plot::forUser(Auth::user())
             ->where('municipality_id', $this->filterMunicipality)
-            ->whereHas('multiplePlotSigpacs', fn($q) => $q->whereNotNull('plot_geometry_id'))
+            ->whereHas('multiplePlotSigpacs', fn ($q) => $q->whereNotNull('plot_geometry_id'))
             ->exists();
     }
 
@@ -287,8 +289,9 @@ class Index extends Component
     {
         $plot = Plot::findOrFail($plotId);
 
-        if (!Auth::user()->can('update', $plot)) {
+        if (! Auth::user()->can('update', $plot)) {
             $this->toastError(__('No tienes permiso para modificar esta parcela.'));
+
             return;
         }
 
@@ -300,6 +303,7 @@ class Index extends Component
 
         if ($sigpacCodes->isEmpty()) {
             $this->toastError(__('Esta parcela no tiene códigos SIGPAC asociados.'));
+
             return;
         }
 
@@ -315,15 +319,17 @@ class Index extends Component
                 try {
                     $wkt = $service->fetchWkt($sigpacCode);
 
-                    if (!$wkt) {
+                    if (! $wkt) {
                         $errorCount++;
                         $errors[] = "No se pudieron obtener coordenadas para el código {$sigpacCode->code}";
+
                         continue;
                     }
 
-                    if (!preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
+                    if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
                         $errorCount++;
                         $errors[] = "Formato de coordenadas inválido para el código {$sigpacCode->code}";
+
                         continue;
                     }
 
@@ -331,7 +337,7 @@ class Index extends Component
                     $successCount++;
                 } catch (\Exception $e) {
                     $errorCount++;
-                    $errors[] = "Error procesando código {$sigpacCode->code}: " . $e->getMessage();
+                    $errors[] = "Error procesando código {$sigpacCode->code}: ".$e->getMessage();
                     Log::error('Error generating map for sigpac code', [
                         'sigpac_code_id' => $sigpacCode->id,
                         'plot_id' => $plotId,
@@ -351,7 +357,7 @@ class Index extends Component
             }
 
             if ($errorCount > 0) {
-                $errorMessage = "Error al generar {$errorCount} mapa(s). " . implode(' ', array_slice($errors, 0, 3));
+                $errorMessage = "Error al generar {$errorCount} mapa(s). ".implode(' ', array_slice($errors, 0, 3));
                 $this->toastError($errorMessage);
             }
         } catch (\Exception $e) {
@@ -367,8 +373,9 @@ class Index extends Component
 
     public function generateAllMapsForMunicipality()
     {
-        if (!$this->filterMunicipality) {
+        if (! $this->filterMunicipality) {
             $this->toastError(__('Debes seleccionar un municipio primero.'));
+
             return;
         }
 
@@ -378,7 +385,7 @@ class Index extends Component
         $plotsWithoutGeometry = Plot::forUser($user)
             ->where('municipality_id', $this->filterMunicipality)
             ->whereHas('sigpacCodes')
-            ->whereDoesntHave('multiplePlotSigpacs', function($q) {
+            ->whereDoesntHave('multiplePlotSigpacs', function ($q) {
                 $q->whereNotNull('plot_geometry_id');
             })
             ->with(['sigpacCodes'])
@@ -386,6 +393,7 @@ class Index extends Component
 
         if ($plotsWithoutGeometry->isEmpty()) {
             $this->toastInfo(__('Todas las parcelas de este municipio ya tienen mapas generados.'));
+
             return;
         }
 
@@ -406,13 +414,15 @@ class Index extends Component
                     try {
                         $wkt = $service->fetchWkt($sigpacCode);
 
-                        if (!$wkt) {
+                        if (! $wkt) {
                             $errorCount++;
+
                             continue;
                         }
 
-                        if (!preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
+                        if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
                             $errorCount++;
+
                             continue;
                         }
 

@@ -3,7 +3,6 @@
 namespace App\Services\Reports;
 
 use App\Models\OfficialReport;
-use Illuminate\Support\Facades\Log;
 
 class DigitalSignatureService
 {
@@ -73,18 +72,29 @@ class DigitalSignatureService
 
         // Detectar navegador
         $browser = __('Unknown');
-        if (str_contains($userAgent, 'Chrome')) $browser = __('Chrome');
-        elseif (str_contains($userAgent, 'Firefox')) $browser = __('Firefox');
-        elseif (str_contains($userAgent, 'Safari')) $browser = __('Safari');
-        elseif (str_contains($userAgent, 'Edge')) $browser = __('Edge');
+        if (str_contains($userAgent, 'Chrome')) {
+            $browser = __('Chrome');
+        } elseif (str_contains($userAgent, 'Firefox')) {
+            $browser = __('Firefox');
+        } elseif (str_contains($userAgent, 'Safari')) {
+            $browser = __('Safari');
+        } elseif (str_contains($userAgent, 'Edge')) {
+            $browser = __('Edge');
+        }
 
         // Detectar SO
         $os = __('Unknown');
-        if (str_contains($userAgent, 'Windows')) $os = __('Windows');
-        elseif (str_contains($userAgent, 'Mac')) $os = 'macOS';
-        elseif (str_contains($userAgent, 'Linux')) $os = __('Linux');
-        elseif (str_contains($userAgent, 'Android')) $os = __('Android');
-        elseif (str_contains($userAgent, 'iOS')) $os = 'iOS';
+        if (str_contains($userAgent, 'Windows')) {
+            $os = __('Windows');
+        } elseif (str_contains($userAgent, 'Mac')) {
+            $os = 'macOS';
+        } elseif (str_contains($userAgent, 'Linux')) {
+            $os = __('Linux');
+        } elseif (str_contains($userAgent, 'Android')) {
+            $os = __('Android');
+        } elseif (str_contains($userAgent, 'iOS')) {
+            $os = 'iOS';
+        }
 
         return [
             'browser' => $browser,

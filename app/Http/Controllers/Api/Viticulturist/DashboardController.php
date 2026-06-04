@@ -18,9 +18,9 @@ class DashboardController extends Controller
         $user = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403, 'Acceso denegado.');
 
-        $userId      = $user->id;
+        $userId = $user->id;
         $currentYear = now()->year;
-        $cacheKey    = "vit_dashboard:{$userId}:{$currentYear}";
+        $cacheKey = "vit_dashboard:{$userId}:{$currentYear}";
 
         // Cache de 60 s — evita ejecutar 5 queries en cada carga del mobile
         $data = Cache::remember($cacheKey, 60, function () use ($userId, $currentYear) {
@@ -42,41 +42,41 @@ class DashboardController extends Controller
             $harvestStats = Harvest::whereHas(
                 'batch', fn ($q) => $q->where('viticulturist_id', $userId)
             )
-            ->whereYear('harvest_start_date', $currentYear)
-            ->where('status', 'active')
-            ->selectRaw('COUNT(*) as count, SUM(total_weight) as total_kg')
-            ->first();
+                ->whereYear('harvest_start_date', $currentYear)
+                ->where('status', 'active')
+                ->selectRaw('COUNT(*) as count, SUM(total_weight) as total_kg')
+                ->first();
 
             $pendingActivities = AgriculturalActivity::where('viticulturist_id', $userId)
                 ->whereBetween('activity_date', [now()->startOfWeek(), now()->endOfWeek()])
                 ->count();
 
-            $totalArea   = (float) ($plotStats->total_area ?? 0);
+            $totalArea = (float) ($plotStats->total_area ?? 0);
             $organicArea = (float) ($plotStats->organic_area ?? 0);
 
             return [
                 'campaign_year' => $currentYear,
                 'plots' => [
-                    'total'        => (int) ($plotStats->total ?? 0),
-                    'total_area'   => round($totalArea, 2),
+                    'total' => (int) ($plotStats->total ?? 0),
+                    'total_area' => round($totalArea, 2),
                     'organic_area' => round($organicArea, 2),
                 ],
                 'active_campaign' => $activeCampaign ? [
-                    'id'   => $activeCampaign->id,
+                    'id' => $activeCampaign->id,
                     'name' => $activeCampaign->name,
                     'year' => $activeCampaign->year,
                 ] : null,
                 'harvests' => [
-                    'count'    => (int) ($harvestStats->count ?? 0),
+                    'count' => (int) ($harvestStats->count ?? 0),
                     'total_kg' => (float) ($harvestStats->total_kg ?? 0),
                 ],
                 'pending_activities_this_week' => $pendingActivities,
                 'recent_activities' => $recentActivities->map(fn ($a) => [
-                    'id'        => $a->id,
-                    'type'      => $a->activity_type,
-                    'date'      => $a->activity_date?->toDateString(),
+                    'id' => $a->id,
+                    'type' => $a->activity_type,
+                    'date' => $a->activity_date?->toDateString(),
                     'plot_name' => $a->plot?->name,
-                    'notes'     => $a->notes,
+                    'notes' => $a->notes,
                 ])->all(),
             ];
         });

@@ -14,7 +14,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class ProductSaleInvoiceExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     public function __construct(
-        protected int    $userId,
+        protected int $userId,
         protected string $dateFrom,
         protected string $dateTo,
     ) {}
@@ -52,12 +52,12 @@ class ProductSaleInvoiceExport implements FromCollection, WithHeadings, WithMapp
     public function map($invoice): array
     {
         $statusMap = ['draft' => __('Borrador'), 'sent' => __('Emitida'), 'cancelled' => __('Cancelada')];
-        $delivMap  = ['pending' => __('Pendiente'), 'delivered' => __('Entregada'), 'cancelled' => __('Cancelada')];
-        $payMap    = ['unpaid' => __('Pendiente'), 'partial' => __('Parcial'), 'paid' => __('Cobrada')];
+        $delivMap = ['pending' => __('Pendiente'), 'delivered' => __('Entregada'), 'cancelled' => __('Cancelada')];
+        $payMap = ['unpaid' => __('Pendiente'), 'partial' => __('Parcial'), 'paid' => __('Cobrada')];
 
         $products = $invoice->items
             ->filter(fn ($i) => $i->concept_type === 'wine')
-            ->map(fn ($i) => $i->name . ' ×' . number_format((float) $i->quantity, 0))
+            ->map(fn ($i) => $i->name.' ×'.number_format((float) $i->quantity, 0))
             ->implode(', ');
 
         return [
@@ -83,7 +83,7 @@ class ProductSaleInvoiceExport implements FromCollection, WithHeadings, WithMapp
             1 => [
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => [
-                    'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '16a34a'],
                 ],
             ],

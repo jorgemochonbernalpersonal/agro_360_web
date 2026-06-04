@@ -42,7 +42,7 @@ class ContainerRoomsTest extends WineryTestCase
 
         $this->assertDatabaseHas('container_rooms', [
             'user_id' => $this->winery->id,
-            'name'    => 'Sala Norte',
+            'name' => 'Sala Norte',
         ]);
     }
 
@@ -50,7 +50,7 @@ class ContainerRoomsTest extends WineryTestCase
     {
         $room = ContainerRoom::create([
             'user_id' => $this->winery->id,
-            'name'    => 'Test Room',
+            'name' => 'Test Room',
         ]);
 
         Livewire::test(Edit::class, ['room' => $room])
@@ -59,7 +59,7 @@ class ContainerRoomsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('container_rooms', [
-            'id'   => $room->id,
+            'id' => $room->id,
             'name' => 'Sala Sur',
         ]);
     }
@@ -70,7 +70,7 @@ class ContainerRoomsTest extends WineryTestCase
 
         $room = ContainerRoom::create([
             'user_id' => $this->winery->id,
-            'name'    => 'Sala Privada',
+            'name' => 'Sala Privada',
         ]);
 
         $this->actingAs($otherWinery)

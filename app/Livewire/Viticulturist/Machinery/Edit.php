@@ -3,12 +3,12 @@
 namespace App\Livewire\Viticulturist\Machinery;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Machinery;
 use App\Models\MachineryType;
-use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 use Livewire\WithFileUploads;
 
 class Edit extends Component
@@ -16,29 +16,45 @@ class Edit extends Component
     use WithFileUploads, WithRoleAwareRedirect, WithToastNotifications;
 
     public Machinery $machinery;
-    
+
     public $name = '';
+
     public $machinery_type_id = '';
+
     public $brand = '';
+
     public $model = '';
+
     public $serial_number = '';
+
     public $year = '';
+
     public $purchase_date = '';
+
     public $purchase_price = '';
+
     public $current_value = '';
+
     public $roma_registration = '';
+
     public $is_rented = false;
+
     public $capacity = '';
+
     public $last_revision_date = '';
+
     public $image;
+
     public $current_image = '';
+
     public $notes = '';
+
     public $active = true;
 
     public function mount(Machinery $machinery)
     {
         // Validar autorización
-        if (!Auth::user()->can('update', $machinery)) {
+        if (! Auth::user()->can('update', $machinery)) {
             abort(403, __('No tienes permiso para editar esta maquinaria.'));
         }
 
@@ -61,28 +77,6 @@ class Edit extends Component
         $this->active = $machinery->active;
     }
 
-    protected function rules(): array
-    {
-        return [
-            'name' => 'required|string|max:255',
-            'machinery_type_id' => 'required|exists:machinery_types,id',
-            'brand' => 'nullable|string|max:255',
-            'model' => 'nullable|string|max:255',
-            'serial_number' => 'nullable|string|max:255',
-            'year' => 'nullable|integer|min:1900|max:' . (now()->year + 1),
-            'purchase_date' => 'nullable|date',
-            'purchase_price' => 'nullable|numeric|min:0',
-            'current_value' => 'nullable|numeric|min:0',
-            'roma_registration' => 'nullable|string|max:255',
-            'is_rented' => 'boolean',
-            'capacity' => 'nullable|string|max:255',
-            'last_revision_date' => 'nullable|date',
-            'image' => 'nullable|image|max:2048',
-            'notes' => 'nullable|string',
-            'active' => 'boolean',
-        ];
-    }
-
     public function save()
     {
         $this->validate();
@@ -90,7 +84,7 @@ class Edit extends Component
         $user = Auth::user();
 
         try {
-            DB::transaction(function () use ($user) {
+            DB::transaction(function () {
                 $typeName = null;
 
                 if ($this->machinery_type_id) {
@@ -98,7 +92,7 @@ class Edit extends Component
                     $typeName = $type?->name;
                 }
                 $imagePath = $this->current_image;
-                
+
                 // Si hay una nueva imagen, guardarla y eliminar la anterior
                 if ($this->image) {
                     // Eliminar imagen anterior si existe
@@ -130,6 +124,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess(__('Maquinaria actualizada correctamente.'));
+
             return $this->viticulturistRoleRedirect('machinery.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar maquinaria', [
@@ -140,6 +135,7 @@ class Edit extends Component
             ]);
 
             $this->toastError(__('Error al actualizar la maquinaria. Por favor, intenta de nuevo.'));
+
             return;
         }
     }
@@ -151,8 +147,30 @@ class Edit extends Component
             ->get();
 
         return view('livewire.viticulturist.machinery.edit', [
-                'machineryTypes' => $types,
-            ])
+            'machineryTypes' => $types,
+        ])
             ->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'machinery_type_id' => 'required|exists:machinery_types,id',
+            'brand' => 'nullable|string|max:255',
+            'model' => 'nullable|string|max:255',
+            'serial_number' => 'nullable|string|max:255',
+            'year' => 'nullable|integer|min:1900|max:'.(now()->year + 1),
+            'purchase_date' => 'nullable|date',
+            'purchase_price' => 'nullable|numeric|min:0',
+            'current_value' => 'nullable|numeric|min:0',
+            'roma_registration' => 'nullable|string|max:255',
+            'is_rented' => 'boolean',
+            'capacity' => 'nullable|string|max:255',
+            'last_revision_date' => 'nullable|date',
+            'image' => 'nullable|image|max:2048',
+            'notes' => 'nullable|string',
+            'active' => 'boolean',
+        ];
     }
 }

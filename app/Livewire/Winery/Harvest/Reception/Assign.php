@@ -13,10 +13,11 @@ use Livewire\Component;
 
 class Assign extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public Harvest $harvest;
-    public string  $container_id = '';
+
+    public string $container_id = '';
 
     public function mount(Harvest $harvest): void
     {
@@ -44,20 +45,22 @@ class Assign extends Component
             'container_id.required' => __('Selecciona un contenedor.'),
         ]);
 
-        $wineryId  = Auth::id();
+        $wineryId = Auth::id();
         $container = Container::where('user_id', $wineryId)->findOrFail((int) $this->container_id);
 
         if ($this->harvest->container_id === $container->id) {
             $this->toastError(__('Este contenedor ya está asignado a esta recepción.'));
+
             return null;
         }
 
         // Validate available capacity on the target container (always, whether assigning or reassigning)
         $weight = (float) $this->harvest->total_weight;
-        if (!$container->hasAvailableCapacity($weight)) {
+        if (! $container->hasAvailableCapacity($weight)) {
             $available = number_format($container->getAvailableCapacity(), 0);
-            $required  = number_format($weight, 0);
+            $required = number_format($weight, 0);
             $this->addError('container_id', __('Capacidad insuficiente. Disponible: :available kg, Necesario: :required kg.', ['available' => $available, 'required' => $required]));
+
             return null;
         }
 
@@ -65,6 +68,7 @@ class Assign extends Component
         $this->harvest->update(['container_id' => $container->id]);
 
         $this->toastSuccess("Recepción asignada al contenedor «{$container->name}».");
+
         return $this->roleRedirect('grape-reception.index');
     }
 
@@ -82,7 +86,7 @@ class Assign extends Component
 
         return view('livewire.winery.harvest.reception.assign', [
             'availableContainers' => $availableContainers,
-            'typesById'           => $typesById,
+            'typesById' => $typesById,
         ])->layout('layouts.app');
     }
 }

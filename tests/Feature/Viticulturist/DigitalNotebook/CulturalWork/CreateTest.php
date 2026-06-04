@@ -15,31 +15,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class CreateTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makePlot($viticulturist): Plot
-    {
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
-        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
-        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
-
-        return Plot::factory()->create([
-            'viticulturist_id'        => $viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
-        ]);
-    }
-
-    private function makeCampaign($viticulturist): Campaign
-    {
-        return Campaign::factory()->active()->create([
-            'viticulturist_id' => $viticulturist->id,
-            'year'             => now()->year,
-        ]);
-    }
-
     // ── mount ──────────────────────────────────────────────────────────────────
 
     public function test_component_renders(): void
@@ -184,20 +159,20 @@ class CreateTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.digital-notebook.cultural.index'));
 
         $this->assertDatabaseHas('agricultural_activities', [
-            'viticulturist_id'   => $viticulturist->id,
-            'activity_type'      => 'cultural',
-            'plot_id'            => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'activity_type' => 'cultural',
+            'plot_id' => $plot->id,
             'phenological_stage' => 'Desarrollo vegetativo',
         ]);
 
         $activity = AgriculturalActivity::where([
             'viticulturist_id' => $viticulturist->id,
-            'activity_type'    => 'cultural',
+            'activity_type' => 'cultural',
         ])->first();
 
         $this->assertDatabaseHas('cultural_works', [
             'activity_id' => $activity->id,
-            'work_type'   => 'deshojado',
+            'work_type' => 'deshojado',
             'workers_count' => 3,
         ]);
     }
@@ -227,13 +202,13 @@ class CreateTest extends ViticulturistTestCase
 
         $activity = AgriculturalActivity::where([
             'viticulturist_id' => $viticulturist->id,
-            'activity_type'    => 'cultural',
+            'activity_type' => 'cultural',
         ])->first();
 
         $this->assertDatabaseHas('cultural_works', [
-            'activity_id'                 => $activity->id,
-            'work_type'                   => 'poda',
-            'pruning_type'               => 'guyot',
+            'activity_id' => $activity->id,
+            'work_type' => 'poda',
+            'pruning_type' => 'guyot',
             'productive_buds_per_hectare' => 45000,
         ]);
     }
@@ -260,7 +235,7 @@ class CreateTest extends ViticulturistTestCase
 
         $activity = AgriculturalActivity::where([
             'viticulturist_id' => $viticulturist->id,
-            'activity_type'    => 'cultural',
+            'activity_type' => 'cultural',
         ])->first();
 
         $culturalWork = CulturalWork::where('activity_id', $activity->id)->first();
@@ -273,9 +248,33 @@ class CreateTest extends ViticulturistTestCase
     public function test_policy_denies_create_for_other_viticulturist_plot(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $plot          = $this->makePlot($viticulturist);
+        $other = $this->makeOtherViticulturist();
+        $plot = $this->makePlot($viticulturist);
 
         $this->assertFalse($other->can('create-activity', $plot));
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makePlot($viticulturist): Plot
+    {
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
+        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
+
+        return Plot::factory()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
+        ]);
+    }
+
+    private function makeCampaign($viticulturist): Campaign
+    {
+        return Campaign::factory()->active()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'year' => now()->year,
+        ]);
     }
 }

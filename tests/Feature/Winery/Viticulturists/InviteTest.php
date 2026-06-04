@@ -48,9 +48,9 @@ class InviteTest extends WineryTestCase
     public function test_search_finds_by_email(): void
     {
         User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
-            'email'     => 'viticultor@example.com',
+            'email' => 'viticultor@example.com',
         ]);
 
         $component = Livewire::test(Invite::class)
@@ -64,10 +64,10 @@ class InviteTest extends WineryTestCase
         $linked = User::factory()->create(['role' => 'viticulturist', 'can_login' => true, 'name' => 'Luis Linked']);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $linked->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         $component = Livewire::test(Invite::class)
@@ -107,10 +107,10 @@ class InviteTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
     }
 
@@ -119,10 +119,10 @@ class InviteTest extends WineryTestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist', 'can_login' => true]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         Livewire::test(Invite::class)
@@ -137,10 +137,10 @@ class InviteTest extends WineryTestCase
 
         // Registro self-registered sin bodega
         $selfRecord = WineryViticulturist::create([
-            'winery_id'        => null,
+            'winery_id' => null,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SELF,
-            'assigned_by'      => null,
+            'source' => WineryViticulturist::SOURCE_SELF,
+            'assigned_by' => null,
         ]);
 
         Livewire::test(Invite::class)

@@ -24,7 +24,7 @@ class CrewController extends Controller
             ->orderBy('name');
 
         if ($request->filled('search')) {
-            $query->where('name', 'LIKE', '%' . $request->search . '%');
+            $query->where('name', 'LIKE', '%'.$request->search.'%');
         }
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
@@ -32,10 +32,10 @@ class CrewController extends Controller
         return response()->json([
             'data' => CrewResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -46,14 +46,14 @@ class CrewController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
         ]);
 
         $record = \App\Models\Crew::create([...$validated, 'viticulturist_id' => $user->id]);
 
         return response()->json([
-            'data'    => $record,
+            'data' => $record,
             'message' => __('Cuadrilla registrada correctamente.'),
         ], 201);
     }

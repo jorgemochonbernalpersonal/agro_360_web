@@ -18,40 +18,12 @@ class EditTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function makeViticulturist(): User
-    {
-        return User::factory()->create([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ]);
-    }
-
-    /**
-     * Creates a sub-viticulturist (ghost) owned by the given parent.
-     */
-    private function makeSubViticulturist(User $parent): User
-    {
-        $sub = User::factory()->create([
-            'role'      => 'viticulturist',
-            'can_login' => false,
-        ]);
-
-        WineryViticulturist::create([
-            'viticulturist_id'        => $sub->id,
-            'source'                  => WineryViticulturist::SOURCE_VITICULTURIST,
-            'parent_viticulturist_id' => $parent->id,
-            'assigned_by'             => $parent->id,
-        ]);
-
-        return $sub;
-    }
-
     // ── field population ──────────────────────────────────────────────────────
 
     public function test_edit_form_populates_with_current_values(): void
     {
         $parent = $this->makeViticulturist();
-        $sub    = $this->makeSubViticulturist($parent);
+        $sub = $this->makeSubViticulturist($parent);
 
         $this->actingAs($parent);
 
@@ -65,7 +37,7 @@ class EditTest extends TestCase
     public function test_can_update_name_and_email(): void
     {
         $parent = $this->makeViticulturist();
-        $sub    = $this->makeSubViticulturist($parent);
+        $sub = $this->makeSubViticulturist($parent);
 
         $this->actingAs($parent);
 
@@ -85,7 +57,7 @@ class EditTest extends TestCase
     public function test_save_requires_name(): void
     {
         $parent = $this->makeViticulturist();
-        $sub    = $this->makeSubViticulturist($parent);
+        $sub = $this->makeSubViticulturist($parent);
 
         $this->actingAs($parent);
 
@@ -97,8 +69,8 @@ class EditTest extends TestCase
 
     public function test_email_must_be_unique(): void
     {
-        $parent   = $this->makeViticulturist();
-        $sub      = $this->makeSubViticulturist($parent);
+        $parent = $this->makeViticulturist();
+        $sub = $this->makeSubViticulturist($parent);
         $existing = $this->makeViticulturist(); // has its own email
 
         $this->actingAs($parent);
@@ -114,13 +86,41 @@ class EditTest extends TestCase
 
     public function test_cannot_edit_sub_viticulturist_owned_by_another(): void
     {
-        $parent      = $this->makeViticulturist();
+        $parent = $this->makeViticulturist();
         $otherParent = $this->makeViticulturist();
-        $sub         = $this->makeSubViticulturist($otherParent);
+        $sub = $this->makeSubViticulturist($otherParent);
 
         $this->actingAs($parent);
 
         Livewire::test(Edit::class, ['viticulturist' => $sub])
             ->assertStatus(403);
+    }
+
+    private function makeViticulturist(): User
+    {
+        return User::factory()->create([
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
+        ]);
+    }
+
+    /**
+     * Creates a sub-viticulturist (ghost) owned by the given parent.
+     */
+    private function makeSubViticulturist(User $parent): User
+    {
+        $sub = User::factory()->create([
+            'role' => 'viticulturist',
+            'can_login' => false,
+        ]);
+
+        WineryViticulturist::create([
+            'viticulturist_id' => $sub->id,
+            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
+            'parent_viticulturist_id' => $parent->id,
+            'assigned_by' => $parent->id,
+        ]);
+
+        return $sub;
     }
 }

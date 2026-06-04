@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class MultipartPlotSigpac extends Model
 {
     protected $table = 'multipart_plot_sigpac';
-    
+
     protected $fillable = [
         'plot_id',
         'sigpac_code_id',
         'plot_geometry_id',
         'source',
     ];
-    
+
     /**
      * Parcela relacionada
      */
@@ -23,7 +23,7 @@ class MultipartPlotSigpac extends Model
     {
         return $this->belongsTo(Plot::class);
     }
-    
+
     /**
      * Código SIGPAC relacionado
      */
@@ -31,7 +31,7 @@ class MultipartPlotSigpac extends Model
     {
         return $this->belongsTo(SigpacCode::class, 'sigpac_code_id');
     }
-    
+
     /**
      * Geometría de la parcela
      */

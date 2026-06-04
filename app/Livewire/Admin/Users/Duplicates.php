@@ -10,7 +10,7 @@ use Livewire\Component;
 
 class Duplicates extends Component
 {
-    use WithToastNotifications, WithReadOnlyGuard;
+    use WithReadOnlyGuard, WithToastNotifications;
 
     public string $mode = 'email'; // email | name
 
@@ -20,11 +20,12 @@ class Duplicates extends Component
             return;
         }
 
-        $keep   = User::findOrFail($keepId);
+        $keep = User::findOrFail($keepId);
         $delete = User::findOrFail($deleteId);
 
         if ($keep->isAdmin() || $delete->isAdmin()) {
             $this->toastError(__('No se pueden fusionar cuentas de administrador.'));
+
             return;
         }
 
@@ -78,7 +79,7 @@ class Duplicates extends Component
 
         return view('livewire.admin.users.duplicates', compact('groups'))
             ->layout('layouts.app', [
-                'title'       => __('Duplicados - Admin - Agro365'),
+                'title' => __('Duplicados - Admin - Agro365'),
                 'description' => __('Detección y fusión de cuentas duplicadas'),
             ]);
     }

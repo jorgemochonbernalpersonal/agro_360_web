@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamp('locked_at')->nullable()->after('is_locked');
             $table->foreignId('locked_by')->nullable()->constrained('users')->onDelete('set null')->after('locked_at');
             $table->string('lock_reason')->nullable()->after('locked_by');
-            
+
             $table->index('is_locked');
         });
     }

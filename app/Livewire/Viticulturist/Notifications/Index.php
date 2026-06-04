@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Viticulturist\Notifications;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Livewire\Concerns\WithToastNotifications;
 
 class Index extends Component
 {
@@ -51,11 +51,11 @@ class Index extends Component
         }
 
         $notifications = $query->latest()->paginate(20);
-        $unreadCount   = Auth::user()->unreadNotifications()->count();
+        $unreadCount = Auth::user()->unreadNotifications()->count();
 
         return view('livewire.viticulturist.notifications.index', [
             'notifications' => $notifications,
-            'unreadCount'   => $unreadCount,
+            'unreadCount' => $unreadCount,
         ])->layout('layouts.app');
     }
 }

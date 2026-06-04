@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Subscription;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,7 +14,7 @@ class SubscriptionTest extends TestCase
     public function test_user_can_check_active_subscription(): void
     {
         $user = User::factory()->create();
-        
+
         Subscription::factory()->create([
             'user_id' => $user->id,
             'status' => 'active',
@@ -35,7 +35,7 @@ class SubscriptionTest extends TestCase
     public function test_expired_subscription_is_not_active(): void
     {
         $user = User::factory()->create();
-        
+
         Subscription::factory()->create([
             'user_id' => $user->id,
             'status' => 'expired',

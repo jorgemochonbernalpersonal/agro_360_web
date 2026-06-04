@@ -2,11 +2,10 @@
 
 namespace App\Livewire\Admin\Support;
 
-use App\Models\CannedResponse;
-use App\Models\SupportTicket;
-use App\Models\User;
 use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\CannedResponse;
+use App\Models\SupportTicket;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -14,40 +13,63 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
+    use WithPagination, WithReadOnlyGuard, WithToastNotifications;
 
-    public $search          = '';
-    public $filterStatus    = 'all';
-    public $filterType      = 'all';
-    public $filterPriority  = 'all';
-    public $selectedTicket    = null;
-    public $newComment        = '';
-    public bool $isInternal   = false;   // nota interna del ticket abierto
-    public $assignTo          = '';
+    public $search = '';
+
+    public $filterStatus = 'all';
+
+    public $filterType = 'all';
+
+    public $filterPriority = 'all';
+
+    public $selectedTicket = null;
+
+    public $newComment = '';
+
+    public bool $isInternal = false;   // nota interna del ticket abierto
+
+    public $assignTo = '';
 
     protected $queryString = [
         'search', 'filterStatus', 'filterType', 'filterPriority',
     ];
 
-    public function updatingSearch()         { $this->resetPage(); }
-    public function updatingFilterStatus()   { $this->resetPage(); }
-    public function updatingFilterType()     { $this->resetPage(); }
-    public function updatingFilterPriority() { $this->resetPage(); }
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterType()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterPriority()
+    {
+        $this->resetPage();
+    }
+
     public function selectTicket($ticketId)
     {
         $this->selectedTicket = SupportTicket::with(['user', 'comments.user', 'assignedTo'])
             ->findOrFail($ticketId);
-        $this->newComment  = '';
-        $this->isInternal  = false;
-        $this->assignTo    = $this->selectedTicket->assigned_to ?? '';
+        $this->newComment = '';
+        $this->isInternal = false;
+        $this->assignTo = $this->selectedTicket->assigned_to ?? '';
     }
 
     public function closeTicketDetail()
     {
         $this->selectedTicket = null;
-        $this->newComment     = '';
-        $this->isInternal     = false;
-        $this->assignTo       = '';
+        $this->newComment = '';
+        $this->isInternal = false;
+        $this->assignTo = '';
     }
 
     public function assignTicket()
@@ -56,8 +78,9 @@ class Index extends Component
             return;
         }
 
-        if (!$this->selectedTicket) {
+        if (! $this->selectedTicket) {
             $this->toastError(__('No hay ticket seleccionado.'));
+
             return;
         }
 
@@ -66,11 +89,11 @@ class Index extends Component
         $this->selectedTicket = $this->selectedTicket->fresh(['assignedTo']);
 
         SecurityLogger::logSecurityEvent('support_ticket_assigned', [
-            'admin_id'      => Auth::id(),
-            'ticket_id'     => $this->selectedTicket->id,
-            'ticket_title'  => $this->selectedTicket->title,
-            'from_user_id'  => $previousAssignee,
-            'to_user_id'    => $this->assignTo ?: null,
+            'admin_id' => Auth::id(),
+            'ticket_id' => $this->selectedTicket->id,
+            'ticket_title' => $this->selectedTicket->title,
+            'from_user_id' => $previousAssignee,
+            'to_user_id' => $this->assignTo ?: null,
         ]);
 
         $this->toastSuccess(__('Ticket asignado correctamente.'));
@@ -82,8 +105,9 @@ class Index extends Component
             return;
         }
 
-        if (!$this->selectedTicket) {
+        if (! $this->selectedTicket) {
             $this->toastError(__('No hay ticket seleccionado.'));
+
             return;
         }
 
@@ -99,11 +123,11 @@ class Index extends Component
         $this->selectedTicket = $this->selectedTicket->fresh();
 
         SecurityLogger::logSecurityEvent('support_ticket_status_changed', [
-            'admin_id'     => Auth::id(),
-            'ticket_id'    => $this->selectedTicket->id,
+            'admin_id' => Auth::id(),
+            'ticket_id' => $this->selectedTicket->id,
             'ticket_title' => $this->selectedTicket->title,
-            'from_status'  => $previousStatus,
-            'to_status'    => $status,
+            'from_status' => $previousStatus,
+            'to_status' => $status,
         ]);
 
         $this->toastSuccess(__('Estado del ticket actualizado.'));
@@ -116,17 +140,17 @@ class Index extends Component
         }
 
         $ticket = SupportTicket::findOrFail($ticketId);
-        $title  = $ticket->title;
+        $title = $ticket->title;
 
         if ($this->selectedTicket && $this->selectedTicket->id === $ticketId) {
             $this->closeTicketDetail();
         }
 
         SecurityLogger::logSecurityEvent('support_ticket_deleted', [
-            'admin_id'     => Auth::id(),
-            'ticket_id'    => $ticketId,
+            'admin_id' => Auth::id(),
+            'ticket_id' => $ticketId,
             'ticket_title' => $title,
-            'user_id'      => $ticket->user_id,
+            'user_id' => $ticket->user_id,
         ]);
 
         $ticket->delete();
@@ -149,32 +173,33 @@ class Index extends Component
 
         $this->validate(['newComment' => 'required|string|min:3']);
 
-        if (!$this->selectedTicket) {
+        if (! $this->selectedTicket) {
             $this->toastError(__('No hay ticket seleccionado.'));
+
             return;
         }
 
         $this->selectedTicket->comments()->create([
-            'user_id'     => auth()->id(),
-            'comment'     => $this->newComment,
+            'user_id' => auth()->id(),
+            'comment' => $this->newComment,
             'is_internal' => $this->isInternal,
         ]);
 
-        $wasInternal          = $this->isInternal;
-        $this->newComment     = '';
-        $this->isInternal     = false;
+        $wasInternal = $this->isInternal;
+        $this->newComment = '';
+        $this->isInternal = false;
         $this->selectedTicket = $this->selectedTicket->fresh(['comments.user']);
         $this->toastSuccess($wasInternal ? __('Nota interna añadida.') : __('Comentario añadido.'));
     }
 
     public function exportCsv()
     {
-        $tickets  = SupportTicket::with('user')->latest()->get();
-        $filename = 'tickets_' . now()->format('Y-m-d_H-i-s') . '.csv';
+        $tickets = SupportTicket::with('user')->latest()->get();
+        $filename = 'tickets_'.now()->format('Y-m-d_H-i-s').'.csv';
 
         return response()->streamDownload(function () use ($tickets) {
             $handle = fopen('php://output', 'w');
-            fputs($handle, "\xEF\xBB\xBF");
+            fwrite($handle, "\xEF\xBB\xBF");
             fputcsv($handle, ['ID', 'Título', 'Usuario', 'Email', 'Estado', 'Prioridad', 'Tipo', 'Creado']);
 
             foreach ($tickets as $ticket) {
@@ -200,12 +225,12 @@ class Index extends Component
 
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('title', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('user', function ($q) {
-                      $q->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('email', 'like', '%' . $this->search . '%');
-                  });
+                $q->where('title', 'like', '%'.$this->search.'%')
+                    ->orWhere('description', 'like', '%'.$this->search.'%')
+                    ->orWhereHas('user', function ($q) {
+                        $q->where('name', 'like', '%'.$this->search.'%')
+                            ->orWhere('email', 'like', '%'.$this->search.'%');
+                    });
             });
         }
 
@@ -229,11 +254,11 @@ class Index extends Component
 
         $realBase = SupportTicket::query();
         $stats = [
-            'total'       => $realBase->count(),
-            'open'        => (clone $realBase)->open()->count(),
+            'total' => $realBase->count(),
+            'open' => (clone $realBase)->open()->count(),
             'in_progress' => (clone $realBase)->where('status', 'in_progress')->count(),
-            'resolved'    => (clone $realBase)->where('status', 'resolved')->count(),
-            'closed'      => (clone $realBase)->where('status', 'closed')->count(),
+            'resolved' => (clone $realBase)->where('status', 'resolved')->count(),
+            'closed' => (clone $realBase)->where('status', 'closed')->count(),
         ];
 
         $cannedResponses = \Illuminate\Support\Facades\Schema::hasTable('canned_responses')
@@ -241,11 +266,11 @@ class Index extends Component
             : collect();
 
         return view('livewire.admin.support.index', [
-            'tickets'         => $tickets,
-            'stats'           => $stats,
+            'tickets' => $tickets,
+            'stats' => $stats,
             'cannedResponses' => $cannedResponses,
         ])->layout('layouts.app', [
-            'title'       => __('Tickets de Soporte - Admin - Agro365'),
+            'title' => __('Tickets de Soporte - Admin - Agro365'),
             'description' => __('Gestiona todos los tickets de soporte del sistema'),
         ]);
     }

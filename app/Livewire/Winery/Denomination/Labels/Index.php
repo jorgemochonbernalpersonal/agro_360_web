@@ -12,21 +12,21 @@ class Index extends Component
 {
     use WithPagination;
 
-    public bool   $embedded      = false;
-    public string $statusFilter  = '';
+    public bool $embedded = false;
+
+    public string $statusFilter = '';
+
     public string $vintageFilter = '';
 
-    protected function queryString(): array
+    public function updatingStatusFilter(): void
     {
-        if ($this->embedded) return [];
-        return [
-            'statusFilter'  => ['except' => ''],
-            'vintageFilter' => ['except' => ''],
-        ];
+        $this->resetPage();
     }
 
-    public function updatingStatusFilter(): void { $this->resetPage(); }
-    public function updatingVintageFilter(): void { $this->resetPage(); }
+    public function updatingVintageFilter(): void
+    {
+        $this->resetPage();
+    }
 
     #[Layout('layouts.app')]
     public function render()
@@ -50,21 +50,33 @@ class Index extends Component
             ->pluck('total', 'status');
 
         $counts = [
-            'all'      => $statusCounts->sum(),
-            'pending'  => $statusCounts->get('pending', 0),
+            'all' => $statusCounts->sum(),
+            'pending' => $statusCounts->get('pending', 0),
             'approved' => $statusCounts->get('approved', 0),
-            'issued'   => $statusCounts->get('issued', 0),
+            'issued' => $statusCounts->get('issued', 0),
         ];
 
         $availableVintages = DoLabel::forWinery($wineryId)
             ->select('vintage')->distinct()->orderByDesc('vintage')->pluck('vintage');
 
         return view('livewire.winery.denomination.labels.index', [
-            'labels'            => $labels,
-            'counts'            => $counts,
+            'labels' => $labels,
+            'counts' => $counts,
             'availableVintages' => $availableVintages,
-            'statusLabels'      => DoLabel::statusLabelOptions(),
-            'statusColors'      => DoLabel::STATUS_COLORS,
+            'statusLabels' => DoLabel::statusLabelOptions(),
+            'statusColors' => DoLabel::STATUS_COLORS,
         ]);
+    }
+
+    protected function queryString(): array
+    {
+        if ($this->embedded) {
+            return [];
+        }
+
+        return [
+            'statusFilter' => ['except' => ''],
+            'vintageFilter' => ['except' => ''],
+        ];
     }
 }

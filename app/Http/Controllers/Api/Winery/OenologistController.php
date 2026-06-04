@@ -24,16 +24,16 @@ class OenologistController extends Controller
 
         return response()->json([
             'data' => $oenologists->map(fn ($o) => [
-                'id'             => $o->id,
-                'name'           => $o->name,
-                'surname'        => $o->surname,
-                'full_name'      => $o->full_name,
+                'id' => $o->id,
+                'name' => $o->name,
+                'surname' => $o->surname,
+                'full_name' => $o->full_name,
                 'license_number' => $o->license_number,
-                'email'          => $o->email,
-                'phone'          => $o->phone,
-                'active'         => $o->active,
-                'notes'          => $o->notes,
-                'created_at'     => $o->created_at->toIso8601String(),
+                'email' => $o->email,
+                'phone' => $o->phone,
+                'active' => $o->active,
+                'notes' => $o->notes,
+                'created_at' => $o->created_at->toIso8601String(),
             ]),
         ]);
     }
@@ -44,38 +44,38 @@ class OenologistController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'name'           => 'required|string|max:100',
-            'surname'        => 'nullable|string|max:100',
+            'name' => 'required|string|max:100',
+            'surname' => 'nullable|string|max:100',
             'license_number' => 'nullable|string|max:50',
-            'email'          => 'nullable|email|max:150',
-            'phone'          => 'nullable|string|max:30',
-            'active'         => 'nullable|boolean',
-            'notes'          => 'nullable|string|max:1000',
+            'email' => 'nullable|email|max:150',
+            'phone' => 'nullable|string|max:30',
+            'active' => 'nullable|boolean',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         $oenologist = Oenologist::create([...$validated, 'user_id' => $user->id, 'active' => $validated['active'] ?? true]);
 
         return response()->json([
-            'data'    => ['id' => $oenologist->id, 'full_name' => $oenologist->full_name, ...$oenologist->toArray()],
+            'data' => ['id' => $oenologist->id, 'full_name' => $oenologist->full_name, ...$oenologist->toArray()],
             'message' => __('Enólogo creado correctamente.'),
         ], 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
-        $user        = $request->user();
+        $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
         $oenologist = Oenologist::forUser($user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'name'           => 'sometimes|string|max:100',
-            'surname'        => 'sometimes|nullable|string|max:100',
+            'name' => 'sometimes|string|max:100',
+            'surname' => 'sometimes|nullable|string|max:100',
             'license_number' => 'sometimes|nullable|string|max:50',
-            'email'          => 'sometimes|nullable|email|max:150',
-            'phone'          => 'sometimes|nullable|string|max:30',
-            'active'         => 'sometimes|boolean',
-            'notes'          => 'sometimes|nullable|string|max:1000',
+            'email' => 'sometimes|nullable|email|max:150',
+            'phone' => 'sometimes|nullable|string|max:30',
+            'active' => 'sometimes|boolean',
+            'notes' => 'sometimes|nullable|string|max:1000',
         ]);
 
         $oenologist->update($validated);

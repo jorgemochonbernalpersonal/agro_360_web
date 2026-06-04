@@ -28,7 +28,7 @@ class RoleAccessTest extends DuskTestCase
                 $browser->visit($url)
                     ->waitFor('body', 5)
                     ->assertPathIs('/login')
-                    ->screenshot('guest-blocked-' . str_replace('/', '-', trim($url, '/')));
+                    ->screenshot('guest-blocked-'.str_replace('/', '-', trim($url, '/')));
             }
         });
     }

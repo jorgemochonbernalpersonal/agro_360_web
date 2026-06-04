@@ -5,7 +5,6 @@ namespace App\Livewire\Producer\IntegratedEstate;
 use App\Models\PhenologyObservation;
 use App\Models\Plot;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -13,9 +12,11 @@ class PlotTable extends Component
 {
     use WithPagination;
 
-    public int    $campaignId  = 0;
-    public int    $plotFilter  = 0;
-    public string $search      = '';
+    public int $campaignId = 0;
+
+    public int $plotFilter = 0;
+
+    public string $search = '';
 
     public function mount(int $campaignId = 0, int $plotFilter = 0): void
     {
@@ -47,7 +48,7 @@ class PlotTable extends Component
         }
 
         if ($this->search !== '') {
-            $query->where('name', 'like', '%' . $this->search . '%');
+            $query->where('name', 'like', '%'.$this->search.'%');
         }
 
         $paginatedPlots = $query->paginate(15);
@@ -68,7 +69,7 @@ class PlotTable extends Component
             : collect();
 
         return view('livewire.producer.integrated-estate.plot-table', [
-            'paginatedPlots'  => $paginatedPlots,
+            'paginatedPlots' => $paginatedPlots,
             'latestPhenology' => $latestPhenology,
         ]);
     }

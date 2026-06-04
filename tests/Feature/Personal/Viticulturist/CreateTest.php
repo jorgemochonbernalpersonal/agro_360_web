@@ -5,7 +5,6 @@ namespace Tests\Feature\Personal\Viticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -33,7 +32,7 @@ class CreateTest extends TestCase
             ->set('name', 'Nuevo Viticultor')
             ->set('email', 'nuevo@example.com')
             ->call('save');
-        
+
         // El componente redirige a la descarga del PDF, verificar que la redirección ocurrió
         $component->assertRedirect();
 
@@ -157,4 +156,3 @@ class CreateTest extends TestCase
         ]);
     }
 }
-

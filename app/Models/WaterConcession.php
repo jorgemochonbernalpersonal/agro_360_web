@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WaterConcession extends Model
 {
+    const CONCESSION_TYPES = [
+        'superficial' => 'Aguas superficiales',
+        'subterranea' => 'Aguas subterráneas',
+        'comunidad_regantes' => 'Comunidad de regantes',
+        'otro' => 'Otro',
+    ];
+
     protected $fillable = [
         'viticulturist_id', 'campaign_id',
         'concession_type', 'concession_number', 'water_body', 'authority',
@@ -17,18 +24,11 @@ class WaterConcession extends Model
 
     protected $casts = [
         'concession_date' => 'date',
-        'expiry_date'     => 'date',
-        'max_volume_m3'   => 'decimal:3',
-        'used_volume_m3'  => 'decimal:3',
-        'surface_ha'      => 'decimal:4',
-        'active'          => 'boolean',
-    ];
-
-    const CONCESSION_TYPES = [
-        'superficial'        => 'Aguas superficiales',
-        'subterranea'        => 'Aguas subterráneas',
-        'comunidad_regantes' => 'Comunidad de regantes',
-        'otro'               => 'Otro',
+        'expiry_date' => 'date',
+        'max_volume_m3' => 'decimal:3',
+        'used_volume_m3' => 'decimal:3',
+        'surface_ha' => 'decimal:4',
+        'active' => 'boolean',
     ];
 
     public function viticulturist(): BelongsTo
@@ -54,7 +54,7 @@ class WaterConcession extends Model
     public function getIsExpiringSoonAttribute(): bool
     {
         return $this->expiry_date
-            && !$this->expiry_date->isPast()
+            && ! $this->expiry_date->isPast()
             && now()->diffInDays($this->expiry_date) <= 90;
     }
 }

@@ -41,6 +41,7 @@ class WineryContainerMaintenancesSeeder extends Seeder
 
         if (empty($containers)) {
             $this->command->warn('No hay contenedores. Ejecuta WineryContainersSeeder primero.');
+
             return;
         }
 
@@ -48,33 +49,33 @@ class WineryContainerMaintenancesSeeder extends Seeder
 
         for ($i = 0; $i < 450; $i++) {
             $container = $containers[$i % count($containers)];
-            $mType     = self::MAINTENANCE_TYPES[$i % count(self::MAINTENANCE_TYPES)];
+            $mType = self::MAINTENANCE_TYPES[$i % count(self::MAINTENANCE_TYPES)];
 
             // Distribuir fechas: énfasis en 2025-2026
-            $daysAgo       = 365 - (int)round($i * 365 / 449);   // de 365 a 0 días atrás
+            $daysAgo = 365 - (int) round($i * 365 / 449);   // de 365 a 0 días atrás
             $scheduledDate = now()->subDays($daysAgo)->format('Y-m-d');
-            $isCompleted   = $daysAgo > 3;
-            $status        = $isCompleted ? 'completed' : (($i % 4 === 0) ? 'cancelled' : 'scheduled');
+            $isCompleted = $daysAgo > 3;
+            $status = $isCompleted ? 'completed' : (($i % 4 === 0) ? 'cancelled' : 'scheduled');
 
             $performedDate = $isCompleted ? now()->subDays(max(0, $daysAgo - 1))->format('Y-m-d') : null;
-            $nextDate      = $isCompleted ? now()->addDays(180 - ($i % 90))->format('Y-m-d') : null;
-            $cost          = $isCompleted
+            $nextDate = $isCompleted ? now()->addDays(180 - ($i % 90))->format('Y-m-d') : null;
+            $cost = $isCompleted
                 ? round($mType[2][0] + ($i % ($mType[2][1] - $mType[2][0] + 1)), 2)
                 : null;
 
             $rows[] = [
-                'container_id'          => $container->id,
-                'maintenance_type'      => $mType[0],
-                'maintenance_name'      => $mType[1],
-                'scheduled_date'        => $scheduledDate,
-                'performed_date'        => $performedDate,
+                'container_id' => $container->id,
+                'maintenance_type' => $mType[0],
+                'maintenance_name' => $mType[1],
+                'scheduled_date' => $scheduledDate,
+                'performed_date' => $performedDate,
                 'next_maintenance_date' => $nextDate,
-                'status'                => $status,
-                'cost'                  => $cost,
-                'performed_by'          => $isCompleted ? $mType[3] : null,
-                'notes'                 => "Mantenimiento Nº " . ($i + 1) . ". Contenedor ID {$container->id}.",
-                'created_at'            => $now,
-                'updated_at'            => $now,
+                'status' => $status,
+                'cost' => $cost,
+                'performed_by' => $isCompleted ? $mType[3] : null,
+                'notes' => 'Mantenimiento Nº '.($i + 1).". Contenedor ID {$container->id}.",
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -82,8 +83,8 @@ class WineryContainerMaintenancesSeeder extends Seeder
             DB::table('container_maintenances')->insert($chunk);
         }
 
-        $completed = count(array_filter($rows, fn($r) => $r['status'] === 'completed'));
-        $this->command->info("✅ Mantenimientos de contenedores: " . count($rows) . " registros ({$completed} completados)");
+        $completed = count(array_filter($rows, fn ($r) => $r['status'] === 'completed'));
+        $this->command->info('✅ Mantenimientos de contenedores: '.count($rows)." registros ({$completed} completados)");
     }
 
     private function cleanup(): void

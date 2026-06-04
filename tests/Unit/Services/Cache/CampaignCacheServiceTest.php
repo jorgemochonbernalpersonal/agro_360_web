@@ -19,9 +19,9 @@ class CampaignCacheServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->createGeographyData();
-        $this->service = new CampaignCacheService();
+        $this->service = new CampaignCacheService;
         Cache::flush();
     }
 
@@ -32,7 +32,7 @@ class CampaignCacheServiceTest extends TestCase
 
         // Primera llamada - no cacheado
         $stats1 = $this->service->getStats($campaign);
-        
+
         // Segunda llamada - debe venir de cache
         $stats2 = $this->service->getStats($campaign);
 
@@ -62,7 +62,7 @@ class CampaignCacheServiceTest extends TestCase
 
         // Cachear
         $this->service->getStats($campaign);
-        
+
         // Verificar que existe en cache
         $this->assertTrue(Cache::has("campaign_{$campaign->id}_stats"));
 
@@ -106,16 +106,16 @@ class CampaignCacheServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $user->id]);
-        
+
         // Crear actividades de diferentes tipos
         $plot = \App\Models\Plot::factory()->create(['viticulturist_id' => $user->id]);
-        
+
         \App\Models\AgriculturalActivity::factory()->create([
             'plot_id' => $plot->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
         ]);
-        
+
         \App\Models\AgriculturalActivity::factory()->create([
             'plot_id' => $plot->id,
             'campaign_id' => $campaign->id,

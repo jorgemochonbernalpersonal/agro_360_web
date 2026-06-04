@@ -10,37 +10,55 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search            = '';
-    public string $filterRecordType  = '';
-    public string $filterPlot        = '';
-    public string $filterCampaign    = '';
+    public string $search = '';
+
+    public string $filterRecordType = '';
+
+    public string $filterPlot = '';
+
+    public string $filterCampaign = '';
 
     protected $queryString = [
-        'search'           => ['as' => 'q',        'except' => ''],
+        'search' => ['as' => 'q',        'except' => ''],
         'filterRecordType' => ['as' => 'type',     'except' => ''],
-        'filterPlot'       => ['as' => 'plot',     'except' => ''],
-        'filterCampaign'   => ['as' => 'campaign', 'except' => ''],
+        'filterPlot' => ['as' => 'plot',     'except' => ''],
+        'filterCampaign' => ['as' => 'campaign', 'except' => ''],
     ];
 
-    public function updatingSearch(): void           { $this->resetPage(); }
-    public function updatingFilterRecordType(): void { $this->resetPage(); }
-    public function updatingFilterPlot(): void       { $this->resetPage(); }
-    public function updatingFilterCampaign(): void   { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return [
-            'search'           => '',
-            'filterRecordType' => '',
-            'filterPlot'       => '',
-            'filterCampaign'   => '',
-        ];
+        $this->resetPage();
+    }
+
+    public function updatingFilterRecordType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterPlot(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterCampaign(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
     {
         $this->findOwned(BiodiversityRecord::class, $id)->delete();
         $this->toastSuccess(__('Registro eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return [
+            'search' => '',
+            'filterRecordType' => '',
+            'filterPlot' => '',
+            'filterCampaign' => '',
+        ];
     }
 
     protected function baseQuery(): Builder
@@ -53,9 +71,9 @@ class Index extends AbstractIndex
     {
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('description', 'like', '%' . $this->search . '%')
-                  ->orWhere('species', 'like', '%' . $this->search . '%')
-                  ->orWhere('notes', 'like', '%' . $this->search . '%');
+                $q->where('description', 'like', '%'.$this->search.'%')
+                    ->orWhere('species', 'like', '%'.$this->search.'%')
+                    ->orWhere('notes', 'like', '%'.$this->search.'%');
             });
         }
         if ($this->filterRecordType) {
@@ -69,28 +87,34 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['record_date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['record_date', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
         $userId = $this->viticulturistId();
-        $base   = BiodiversityRecord::where('viticulturist_id', $userId);
+        $base = BiodiversityRecord::where('viticulturist_id', $userId);
 
         $stats = [
-            'total'         => (clone $base)->count(),
+            'total' => (clone $base)->count(),
             'total_area_m2' => (clone $base)->sum('area_m2'),
-            'types_count'   => (clone $base)->distinct('record_type')->count('record_type'),
-            'plots_count'   => (clone $base)->distinct('plot_id')->count('plot_id'),
+            'types_count' => (clone $base)->distinct('record_type')->count('record_type'),
+            'plots_count' => (clone $base)->distinct('plot_id')->count('plot_id'),
         ];
 
         return [
-            'entries'     => $entries,
+            'entries' => $entries,
             'recordTypes' => BiodiversityRecord::recordTypeOptions(),
-            'plots'       => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']),
-            'campaigns'   => Campaign::forViticulturist($userId)->orderByDesc('year')->get(['id', 'name', 'year']),
-            'stats'       => $stats,
+            'plots' => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']),
+            'campaigns' => Campaign::forViticulturist($userId)->orderByDesc('year')->get(['id', 'name', 'year']),
+            'stats' => $stats,
         ];
     }
 }

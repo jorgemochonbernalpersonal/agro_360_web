@@ -46,9 +46,9 @@ class PaymentConfirmation extends Notification implements ShouldQueue
             ->greeting('¡Pago recibido!')
             ->line(__('Hemos recibido tu pago correctamente.'))
             ->line('**Detalles del pago:**')
-            ->line('- Monto: €' . number_format($this->payment->amount, 2))
-            ->line('- Plan: ' . $this->payment->plan_type)
-            ->line('- ID de transacción: ' . $this->payment->paypal_order_id)
+            ->line('- Monto: €'.number_format($this->payment->amount, 2))
+            ->line('- Plan: '.$this->payment->plan_type)
+            ->line('- ID de transacción: '.$this->payment->paypal_order_id)
             ->action(__('Ver mis suscripciones'), AppLink::url(url('/dashboard/subscriptions'), 'agro365://home'))
             ->line(__('Gracias por confiar en Agro365.'));
     }

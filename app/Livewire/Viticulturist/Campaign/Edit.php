@@ -2,28 +2,34 @@
 
 namespace App\Livewire\Viticulturist\Campaign;
 
-use App\Models\Campaign;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
+use App\Models\Campaign;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class Edit extends Component
 {
     use WithToastNotifications;
+
     public Campaign $campaign;
-    
+
     public $name = '';
+
     public $year = '';
+
     public $start_date = '';
+
     public $end_date = '';
+
     public $description = '';
+
     public $active = false;
 
     public function mount(Campaign $campaign)
     {
         // Validar autorización
-        if (!Auth::user()->can('update', $campaign)) {
+        if (! Auth::user()->can('update', $campaign)) {
             abort(403, __('No tienes permiso para editar esta campaña.'));
         }
 
@@ -34,18 +40,6 @@ class Edit extends Component
         $this->end_date = $campaign->end_date?->format('Y-m-d') ?? '';
         $this->description = $campaign->description ?? '';
         $this->active = $campaign->active;
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'name' => 'required|string|max:255',
-            'year' => 'required|integer|min:2000|max:' . (now()->year + 5),
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'description' => 'nullable|string',
-            'active' => 'boolean',
-        ];
     }
 
     public function save()
@@ -62,13 +56,14 @@ class Edit extends Component
 
         if ($existingCampaign) {
             $this->addError('year', __('Ya existe otra campaña para el año :year.', ['year' => $this->year]));
+
             return;
         }
 
         try {
             $wasActive = (bool) $this->campaign->active;
 
-            DB::transaction(function () use ($user) {
+            DB::transaction(function () {
                 $this->campaign->update([
                     'name' => $this->name,
                     'year' => $this->year,
@@ -78,23 +73,25 @@ class Edit extends Component
                 ]);
 
                 // Si se marca como activa, activarla
-                if ($this->active && !$this->campaign->active) {
+                if ($this->active && ! $this->campaign->active) {
                     $this->campaign->activate();
-                } elseif (!$this->active && $this->campaign->active) {
+                } elseif (! $this->active && $this->campaign->active) {
                     // Si se desmarca, solo desactivar (no activar otra)
                     $this->campaign->update(['active' => false]);
                 }
             });
 
-            $justActivated = $this->active && !$wasActive;
+            $justActivated = $this->active && ! $wasActive;
             if ($justActivated) {
                 session()->flash('campaign_activated', __('Campaña :year activada. Ya puedes registrar actividades.', ['year' => $this->campaign->year]));
                 $route = $user->isProducer() ? route('producer.digital-notebook.estimated-yields.index') : route('viticulturist.digital-notebook');
+
                 return $this->redirect($route, navigate: true);
             }
 
             $this->toastSuccess(__('Campaña actualizada correctamente.'));
             $route = $user->isProducer() ? route('producer.campaign.index') : route('viticulturist.campaign.index');
+
             return $this->redirect($route, navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar campaña', [
@@ -105,6 +102,7 @@ class Edit extends Component
             ]);
 
             $this->toastError(__('Error al actualizar la campaña. Por favor, intenta de nuevo.'));
+
             return;
         }
     }
@@ -113,5 +111,17 @@ class Edit extends Component
     {
         return view('livewire.viticulturist.campaign.edit')
             ->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'year' => 'required|integer|min:2000|max:'.(now()->year + 5),
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'description' => 'nullable|string',
+            'active' => 'boolean',
+        ];
     }
 }

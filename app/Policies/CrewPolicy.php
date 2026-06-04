@@ -52,7 +52,6 @@ class CrewPolicy
         }
 
         // No permitir eliminar si tiene actividades asociadas
-        return !$crew->activities()->exists();
+        return ! $crew->activities()->exists();
     }
 }
-

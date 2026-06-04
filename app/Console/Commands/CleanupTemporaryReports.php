@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\OfficialReport;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CleanupTemporaryReports extends Command
 {
@@ -35,6 +35,7 @@ class CleanupTemporaryReports extends Command
 
         if ($tempReports->isEmpty()) {
             $this->info('✅ No se encontraron informes con signature_hash temporal.');
+
             return Command::SUCCESS;
         }
 
@@ -49,7 +50,7 @@ class CleanupTemporaryReports extends Command
                     $report->id,
                     $report->user->name ?? "ID: {$report->user_id}",
                     $report->report_type_name,
-                    $report->period_start->format('Y-m-d') . ' / ' . $report->period_end->format('Y-m-d'),
+                    $report->period_start->format('Y-m-d').' / '.$report->period_end->format('Y-m-d'),
                     $report->created_at->format('Y-m-d H:i:s'),
                     $report->pdfExists() ? '✅ Sí' : '❌ No',
                 ];
@@ -57,9 +58,10 @@ class CleanupTemporaryReports extends Command
         );
 
         // Confirmar eliminación
-        if (!$this->option('force')) {
-            if (!$this->confirm('¿Deseas eliminar estos informes? Esto también eliminará los PDFs asociados si existen.', false)) {
+        if (! $this->option('force')) {
+            if (! $this->confirm('¿Deseas eliminar estos informes? Esto también eliminará los PDFs asociados si existen.', false)) {
                 $this->info('Operación cancelada.');
+
                 return Command::SUCCESS;
             }
         }
@@ -73,7 +75,7 @@ class CleanupTemporaryReports extends Command
                 // Eliminar PDF si existe
                 if ($report->pdfExists() && $report->pdf_path) {
                     try {
-                        if (!str_starts_with($report->pdf_path, storage_path())) {
+                        if (! str_starts_with($report->pdf_path, storage_path())) {
                             Storage::disk('local')->delete($report->pdf_path);
                         } else {
                             if (file_exists($report->pdf_path)) {
@@ -108,8 +110,8 @@ class CleanupTemporaryReports extends Command
             }
         }
 
-        if (!empty($errors)) {
-            $this->warn("⚠️  Se encontraron " . count($errors) . " error(es) durante la eliminación:");
+        if (! empty($errors)) {
+            $this->warn('⚠️  Se encontraron '.count($errors).' error(es) durante la eliminación:');
             foreach ($errors as $error) {
                 $this->line("  - {$error}");
             }
@@ -126,4 +128,3 @@ class CleanupTemporaryReports extends Command
         return Command::SUCCESS;
     }
 }
-

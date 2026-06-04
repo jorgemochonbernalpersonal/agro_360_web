@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\User;
-use App\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -236,4 +236,3 @@ class SubscriptionTest extends TestCase
         $this->assertEquals('12.00', $subscription->amount);
     }
 }
-

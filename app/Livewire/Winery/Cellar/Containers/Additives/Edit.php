@@ -15,15 +15,21 @@ class Edit extends Component
 {
     use WithOwnershipRules, WithToastNotifications;
 
-    public Container              $container;
+    public Container $container;
+
     public ContainerAdditiveSupply $additive;
 
-    public string $winery_supply_id       = '';
-    public string $additive_name          = '';
-    public string $quantity               = '';
+    public string $winery_supply_id = '';
+
+    public string $additive_name = '';
+
+    public string $quantity = '';
+
     public string $unit_of_measurement_id = '';
-    public string $additive_date          = '';
-    public string $notes                  = '';
+
+    public string $additive_date = '';
+
+    public string $notes = '';
 
     public function mount(Container $container, ContainerAdditiveSupply $additive): void
     {
@@ -31,26 +37,14 @@ class Edit extends Component
         abort_if($additive->container_id !== $container->id, 404);
 
         $this->container = $container;
-        $this->additive  = $additive;
+        $this->additive = $additive;
 
-        $this->winery_supply_id       = (string) ($additive->winery_supply_id ?? '');
-        $this->additive_name          = $additive->additive_name ?? '';
-        $this->quantity               = (string) $additive->quantity;
+        $this->winery_supply_id = (string) ($additive->winery_supply_id ?? '');
+        $this->additive_name = $additive->additive_name ?? '';
+        $this->quantity = (string) $additive->quantity;
         $this->unit_of_measurement_id = (string) ($additive->unit_of_measurement_id ?? '');
-        $this->additive_date          = $additive->additive_date->toDateString();
-        $this->notes                  = $additive->notes ?? '';
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'winery_supply_id'       => $this->ownedWinerySupplyRule(false),
-            'additive_name'          => ['nullable', 'string', 'max:200'],
-            'quantity'               => ['required', 'numeric', 'min:0.001'],
-            'unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
-            'additive_date'          => ['required', 'date'],
-            'notes'                  => ['nullable', 'string'],
-        ];
+        $this->additive_date = $additive->additive_date->toDateString();
+        $this->notes = $additive->notes ?? '';
     }
 
     public function save(): void
@@ -58,12 +52,12 @@ class Edit extends Component
         $this->validate();
 
         $this->additive->update([
-            'winery_supply_id'       => $this->winery_supply_id ?: null,
-            'additive_name'          => $this->additive_name ?: null,
-            'quantity'               => $this->quantity,
+            'winery_supply_id' => $this->winery_supply_id ?: null,
+            'additive_name' => $this->additive_name ?: null,
+            'quantity' => $this->quantity,
             'unit_of_measurement_id' => $this->unit_of_measurement_id ?: null,
-            'additive_date'          => $this->additive_date,
-            'notes'                  => $this->notes ?: null,
+            'additive_date' => $this->additive_date,
+            'notes' => $this->notes ?: null,
         ]);
 
         $this->toastSuccess(__('Aditivo actualizado correctamente.'));
@@ -74,7 +68,19 @@ class Edit extends Component
     {
         return view('livewire.winery.cellar.containers.additives.edit', [
             'winerySupplies' => WinerySupply::where('user_id', Auth::id())->active()->orderBy('name')->get(),
-            'units'          => UnitOfMeasurement::orderBy('name')->get(),
+            'units' => UnitOfMeasurement::orderBy('name')->get(),
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'winery_supply_id' => $this->ownedWinerySupplyRule(false),
+            'additive_name' => ['nullable', 'string', 'max:200'],
+            'quantity' => ['required', 'numeric', 'min:0.001'],
+            'unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
+            'additive_date' => ['required', 'date'],
+            'notes' => ['nullable', 'string'],
+        ];
     }
 }

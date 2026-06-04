@@ -16,7 +16,7 @@ class RequireCompleteAccess
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('login');
         }
 
@@ -31,7 +31,7 @@ class RequireCompleteAccess
 
             return redirect()->route('subscription.manage')
                 ->with('upgrade_required', [
-                    'price'   => $price,
+                    'price' => $price,
                     'feature' => $request->route()?->getName() ?? $request->path(),
                 ]);
         }

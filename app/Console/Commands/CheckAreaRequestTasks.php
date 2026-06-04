@@ -35,6 +35,7 @@ class CheckAreaRequestTasks extends Command
 
         if ($records->isEmpty()) {
             $this->info('✅ No pending area tasks found');
+
             return Command::SUCCESS;
         }
 
@@ -42,9 +43,10 @@ class CheckAreaRequestTasks extends Command
         $this->newLine();
 
         $token = $this->service->getAuthToken();
-        
-        if (!$token) {
+
+        if (! $token) {
             $this->error('❌ Failed to authenticate with NASA API');
+
             return Command::FAILURE;
         }
 
@@ -55,8 +57,8 @@ class CheckAreaRequestTasks extends Command
 
         foreach ($records as $record) {
             $taskId = $record->metadata['area_task_id'] ?? null;
-            
-            if (!$taskId) {
+
+            if (! $taskId) {
                 continue;
             }
 
@@ -67,9 +69,10 @@ class CheckAreaRequestTasks extends Command
                 // Check task status
                 $status = $areaService->checkTaskStatus($taskId, $token);
 
-                if (!$status) {
-                    $this->warn("  ⚠️ Could not check status");
+                if (! $status) {
+                    $this->warn('  ⚠️ Could not check status');
                     $failed++;
+
                     continue;
                 }
 
@@ -77,7 +80,7 @@ class CheckAreaRequestTasks extends Command
 
                 if ($status['status'] === 'done') {
                     // Download data
-                    $this->line("  ⬇️ Downloading area data...");
+                    $this->line('  ⬇️ Downloading area data...');
                     $areaData = $areaService->downloadAreaData($taskId, $token);
 
                     if ($areaData) {
@@ -87,26 +90,26 @@ class CheckAreaRequestTasks extends Command
                             'data_source' => 'area',
                         ]);
 
-                        $this->info("  ✅ Area statistics saved");
+                        $this->info('  ✅ Area statistics saved');
                         $this->line("     Mean NDVI: {$areaData['mean']}");
                         $this->line("     CV: {$areaData['coefficient_variation']}%");
                         $completed++;
                     } else {
-                        $this->error("  ❌ Failed to download area data");
+                        $this->error('  ❌ Failed to download area data');
                         $failed++;
                     }
 
                 } elseif ($status['status'] === 'error') {
-                    $this->error("  ❌ Task failed on NASA side");
+                    $this->error('  ❌ Task failed on NASA side');
                     $failed++;
-                    
+
                     // Clear task ID to prevent re-checking
                     $metadata = $record->metadata;
                     unset($metadata['area_task_id']);
                     $record->update(['metadata' => $metadata]);
 
                 } else {
-                    $this->line("  ⏳ Still processing...");
+                    $this->line('  ⏳ Still processing...');
                     $pending++;
                 }
 

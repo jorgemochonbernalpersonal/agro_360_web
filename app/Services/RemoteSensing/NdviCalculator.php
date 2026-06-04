@@ -2,8 +2,6 @@
 
 namespace App\Services\RemoteSensing;
 
-use Illuminate\Support\Facades\Log;
-
 /**
  * Servicio para calcular índices vegetativos a partir de bandas espectrales
  */
@@ -12,58 +10,61 @@ class NdviCalculator
     /**
      * Calcular NDVI (Normalized Difference Vegetation Index)
      * NDVI = (NIR - RED) / (NIR + RED)
-     * 
+     *
      * @param float $nir Valor de banda NIR (B08 en Sentinel-2)
      * @param float $red Valor de banda RED (B04 en Sentinel-2)
+     *
      * @return float Valor NDVI entre -1 y 1
      */
     public function calculateNdvi(float $nir, float $red): float
     {
         $sum = $nir + $red;
-        
+
         if ($sum === 0.0) {
             return 0.0;
         }
-        
+
         return ($nir - $red) / $sum;
     }
 
     /**
      * Calcular NDWI (Normalized Difference Water Index)
      * NDWI = (GREEN - NIR) / (GREEN + NIR)
-     * 
+     *
      * @param float $green Valor de banda GREEN (B03 en Sentinel-2)
-     * @param float $nir Valor de banda NIR (B08 en Sentinel-2)
+     * @param float $nir   Valor de banda NIR (B08 en Sentinel-2)
+     *
      * @return float Valor NDWI entre -1 y 1
      */
     public function calculateNdwi(float $green, float $nir): float
     {
         $sum = $green + $nir;
-        
+
         if ($sum === 0.0) {
             return 0.0;
         }
-        
+
         return ($green - $nir) / $sum;
     }
 
     /**
      * Calcular EVI (Enhanced Vegetation Index)
      * EVI = 2.5 * (NIR - RED) / (NIR + 6*RED - 7.5*BLUE + 1)
-     * 
-     * @param float $nir Valor de banda NIR (B08 en Sentinel-2)
-     * @param float $red Valor de banda RED (B04 en Sentinel-2)
+     *
+     * @param float $nir  Valor de banda NIR (B08 en Sentinel-2)
+     * @param float $red  Valor de banda RED (B04 en Sentinel-2)
      * @param float $blue Valor de banda BLUE (B02 en Sentinel-2)
+     *
      * @return float Valor EVI
      */
     public function calculateEvi(float $nir, float $red, float $blue): float
     {
         $denominator = $nir + (6.0 * $red) - (7.5 * $blue) + 1.0;
-        
+
         if ($denominator === 0.0) {
             return 0.0;
         }
-        
+
         return 2.5 * (($nir - $red) / $denominator);
     }
 
@@ -71,46 +72,49 @@ class NdviCalculator
      * Calcular SAVI (Soil Adjusted Vegetation Index)
      * SAVI = ((NIR - RED) / (NIR + RED + L)) * (1 + L)
      * L = 0.5 (factor de corrección del suelo)
-     * 
+     *
      * @param float $nir Valor de banda NIR
      * @param float $red Valor de banda RED
-     * @param float $l Factor de corrección del suelo (default 0.5)
+     * @param float $l   Factor de corrección del suelo (default 0.5)
+     *
      * @return float Valor SAVI
      */
     public function calculateSavi(float $nir, float $red, float $l = 0.5): float
     {
         $sum = $nir + $red + $l;
-        
+
         if ($sum === 0.0) {
             return 0.0;
         }
-        
+
         return (($nir - $red) / $sum) * (1.0 + $l);
     }
 
     /**
      * Calcular NDMI (Normalized Difference Moisture Index)
      * NDMI = (NIR - SWIR) / (NIR + SWIR)
-     * 
-     * @param float $nir Valor de banda NIR (B08 en Sentinel-2)
+     *
+     * @param float $nir  Valor de banda NIR (B08 en Sentinel-2)
      * @param float $swir Valor de banda SWIR (B11 en Sentinel-2)
+     *
      * @return float Valor NDMI entre -1 y 1
      */
     public function calculateNdmi(float $nir, float $swir): float
     {
         $sum = $nir + $swir;
-        
+
         if ($sum === 0.0) {
             return 0.0;
         }
-        
+
         return ($nir - $swir) / $sum;
     }
 
     /**
      * Calcular todos los índices a partir de las bandas espectrales
-     * 
+     *
      * @param array $bands Array con las bandas: ['B02' => blue, 'B03' => green, 'B04' => red, 'B08' => nir, 'B11' => swir]
+     *
      * @return array Índices calculados
      */
     public function calculateAllIndices(array $bands): array
@@ -132,8 +136,9 @@ class NdviCalculator
 
     /**
      * Clasificar el estado de la vegetación basado en NDVI
-     * 
+     *
      * @param float $ndvi Valor NDVI
+     *
      * @return array Clasificación con estado, color y descripción
      */
     public function classifyVegetationHealth(float $ndvi): array
@@ -180,7 +185,7 @@ class NdviCalculator
 
     /**
      * Generar paleta de colores NDVI para visualización en mapa
-     * 
+     *
      * @return array Paleta de colores con rangos de NDVI
      */
     public function getNdviColorPalette(): array
@@ -201,8 +206,9 @@ class NdviCalculator
 
     /**
      * Obtener color para un valor NDVI específico
-     * 
+     *
      * @param float $ndvi Valor NDVI
+     *
      * @return string Color hexadecimal
      */
     public function getNdviColor(float $ndvi): string
@@ -212,14 +218,15 @@ class NdviCalculator
                 return $range['color'];
             }
         }
-        
+
         return '#808080'; // Gris por defecto
     }
 
     /**
      * Calcular estadísticas de un conjunto de valores NDVI
-     * 
+     *
      * @param array $values Array de valores NDVI
+     *
      * @return array Estadísticas: mean, min, max, stddev
      */
     public function calculateStatistics(array $values): array

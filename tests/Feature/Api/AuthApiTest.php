@@ -18,11 +18,11 @@ class AuthApiTest extends TestCase
     {
         // Usar gmail.com — tiene registros MX reales (requerido por email:rfc,dns)
         $response = $this->postJson('/api/v1/register', [
-            'name'                  => 'Test User',
-            'email'                 => 'testuser@gmail.com',
-            'password'              => 'Password123abc',
+            'name' => 'Test User',
+            'email' => 'testuser@gmail.com',
+            'password' => 'Password123abc',
             'password_confirmation' => 'Password123abc',
-            'role'                  => 'winery',
+            'role' => 'winery',
         ]);
 
         $response->assertStatus(201)
@@ -34,9 +34,9 @@ class AuthApiTest extends TestCase
     public function test_register_defaults_role_to_winery(): void
     {
         $response = $this->postJson('/api/v1/register', [
-            'name'                  => 'Test User',
-            'email'                 => 'testuser2@gmail.com',
-            'password'              => 'Password123abc',
+            'name' => 'Test User',
+            'email' => 'testuser2@gmail.com',
+            'password' => 'Password123abc',
             'password_confirmation' => 'Password123abc',
         ]);
 
@@ -46,9 +46,9 @@ class AuthApiTest extends TestCase
     public function test_register_rejects_weak_password(): void
     {
         $this->postJson('/api/v1/register', [
-            'name'                  => 'Test User',
-            'email'                 => 'test@example.com',
-            'password'              => 'password',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
             'password_confirmation' => 'password',
         ])->assertStatus(422)->assertJsonValidationErrors(['password']);
     }
@@ -56,9 +56,9 @@ class AuthApiTest extends TestCase
     public function test_register_rejects_password_without_uppercase(): void
     {
         $this->postJson('/api/v1/register', [
-            'name'                  => 'Test User',
-            'email'                 => 'test@example.com',
-            'password'              => 'password123abc',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password123abc',
             'password_confirmation' => 'password123abc',
         ])->assertStatus(422)->assertJsonValidationErrors(['password']);
     }
@@ -68,9 +68,9 @@ class AuthApiTest extends TestCase
         User::factory()->create(['email' => 'test@example.com']);
 
         $this->postJson('/api/v1/register', [
-            'name'                  => 'Another User',
-            'email'                 => 'test@example.com',
-            'password'              => 'Password123abc',
+            'name' => 'Another User',
+            'email' => 'test@example.com',
+            'password' => 'Password123abc',
             'password_confirmation' => 'Password123abc',
         ])->assertStatus(422)->assertJsonValidationErrors(['email']);
     }
@@ -78,11 +78,11 @@ class AuthApiTest extends TestCase
     public function test_register_rejects_invalid_role(): void
     {
         $this->postJson('/api/v1/register', [
-            'name'                  => 'Test User',
-            'email'                 => 'test@example.com',
-            'password'              => 'Password123abc',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'Password123abc',
             'password_confirmation' => 'Password123abc',
-            'role'                  => 'admin',
+            'role' => 'admin',
         ])->assertStatus(422)->assertJsonValidationErrors(['role']);
     }
 
@@ -91,13 +91,13 @@ class AuthApiTest extends TestCase
     public function test_login_returns_token_and_user(): void
     {
         User::factory()->create([
-            'email'     => 'test@example.com',
-            'password'  => Hash::make('Password123abc'),
+            'email' => 'test@example.com',
+            'password' => Hash::make('Password123abc'),
             'can_login' => true,
         ]);
 
         $this->postJson('/api/v1/login', [
-            'email'    => 'test@example.com',
+            'email' => 'test@example.com',
             'password' => 'Password123abc',
         ])->assertStatus(200)->assertJsonStructure(['token', 'expires_in', 'user']);
     }
@@ -105,12 +105,12 @@ class AuthApiTest extends TestCase
     public function test_login_rejects_wrong_password(): void
     {
         User::factory()->create([
-            'email'    => 'test@example.com',
+            'email' => 'test@example.com',
             'password' => Hash::make('Password123abc'),
         ]);
 
         $this->postJson('/api/v1/login', [
-            'email'    => 'test@example.com',
+            'email' => 'test@example.com',
             'password' => 'Wrongpassword1',
         ])->assertStatus(422)->assertJsonValidationErrors(['email']);
     }
@@ -118,7 +118,7 @@ class AuthApiTest extends TestCase
     public function test_login_rejects_nonexistent_user(): void
     {
         $this->postJson('/api/v1/login', [
-            'email'    => 'nobody@example.com',
+            'email' => 'nobody@example.com',
             'password' => 'Password123abc',
         ])->assertStatus(422)->assertJsonValidationErrors(['email']);
     }
@@ -126,13 +126,13 @@ class AuthApiTest extends TestCase
     public function test_login_rejects_disabled_user(): void
     {
         User::factory()->create([
-            'email'     => 'test@example.com',
-            'password'  => Hash::make('Password123abc'),
+            'email' => 'test@example.com',
+            'password' => Hash::make('Password123abc'),
             'can_login' => false,
         ]);
 
         $this->postJson('/api/v1/login', [
-            'email'    => 'test@example.com',
+            'email' => 'test@example.com',
             'password' => 'Password123abc',
         ])->assertStatus(403);
     }
@@ -140,15 +140,15 @@ class AuthApiTest extends TestCase
     public function test_login_replaces_existing_token_for_same_device(): void
     {
         $user = User::factory()->create([
-            'email'     => 'test@example.com',
-            'password'  => Hash::make('Password123abc'),
+            'email' => 'test@example.com',
+            'password' => Hash::make('Password123abc'),
             'can_login' => true,
         ]);
         $user->createToken('android');
 
         $this->postJson('/api/v1/login', [
-            'email'       => 'test@example.com',
-            'password'    => 'Password123abc',
+            'email' => 'test@example.com',
+            'password' => 'Password123abc',
             'device_name' => 'android',
         ])->assertStatus(200);
 
@@ -200,8 +200,8 @@ class AuthApiTest extends TestCase
 
         $this->assertDatabaseHas('user_profiles', [
             'user_id' => $user->id,
-            'phone'   => '600123456',
-            'city'    => 'Madrid',
+            'phone' => '600123456',
+            'city' => 'Madrid',
         ]);
     }
 
@@ -222,7 +222,7 @@ class AuthApiTest extends TestCase
 
     public function test_logout_revokes_current_token(): void
     {
-        $user  = User::factory()->create(['can_login' => true]);
+        $user = User::factory()->create(['can_login' => true]);
         $token = $user->createToken('mobile')->plainTextToken;
 
         $this->withToken($token)->postJson('/api/v1/logout')->assertStatus(200);
@@ -233,7 +233,7 @@ class AuthApiTest extends TestCase
 
     public function test_logout_only_revokes_current_token(): void
     {
-        $user  = User::factory()->create(['can_login' => true]);
+        $user = User::factory()->create(['can_login' => true]);
         $token = $user->createToken('mobile')->plainTextToken;
         $user->createToken('tablet');
 
@@ -247,7 +247,7 @@ class AuthApiTest extends TestCase
     public function test_logout_all_revokes_all_tokens(): void
     {
         $user = User::factory()->create(['can_login' => true]);
-        $t1   = $user->createToken('device1')->plainTextToken;
+        $t1 = $user->createToken('device1')->plainTextToken;
         $user->createToken('device2');
 
         $this->withToken($t1)->postJson('/api/v1/logout-all')->assertStatus(200);
@@ -259,7 +259,7 @@ class AuthApiTest extends TestCase
 
     public function test_refresh_returns_new_token(): void
     {
-        $user  = User::factory()->create(['can_login' => true]);
+        $user = User::factory()->create(['can_login' => true]);
         $token = $user->createToken('mobile')->plainTextToken;
 
         $response = $this->withToken($token)->postJson('/api/v1/refresh');
@@ -270,7 +270,7 @@ class AuthApiTest extends TestCase
 
     public function test_refresh_invalidates_old_token(): void
     {
-        $user  = User::factory()->create(['can_login' => true]);
+        $user = User::factory()->create(['can_login' => true]);
         $token = $user->createToken('mobile')->plainTextToken;
 
         // Extraer el ID del token (formato: "id|hash")
@@ -284,7 +284,7 @@ class AuthApiTest extends TestCase
 
     public function test_refresh_keeps_same_device_name(): void
     {
-        $user  = User::factory()->create(['can_login' => true]);
+        $user = User::factory()->create(['can_login' => true]);
         $token = $user->createToken('my-android')->plainTextToken;
 
         $this->withToken($token)->postJson('/api/v1/refresh');
@@ -296,15 +296,15 @@ class AuthApiTest extends TestCase
 
     public function test_change_password_succeeds_with_correct_current(): void
     {
-        $user  = User::factory()->create([
-            'password'  => Hash::make('OldPassword1'),
+        $user = User::factory()->create([
+            'password' => Hash::make('OldPassword1'),
             'can_login' => true,
         ]);
         $token = $user->createToken('mobile')->plainTextToken;
 
         $this->withToken($token)->postJson('/api/v1/change-password', [
-            'current_password'      => 'OldPassword1',
-            'password'              => 'NewPassword2',
+            'current_password' => 'OldPassword1',
+            'password' => 'NewPassword2',
             'password_confirmation' => 'NewPassword2',
         ])->assertStatus(200);
 
@@ -314,29 +314,29 @@ class AuthApiTest extends TestCase
     public function test_change_password_rejects_wrong_current(): void
     {
         $user = User::factory()->create([
-            'password'  => Hash::make('OldPassword1'),
+            'password' => Hash::make('OldPassword1'),
             'can_login' => true,
         ]);
 
         $this->actingAs($user, 'sanctum')->postJson('/api/v1/change-password', [
-            'current_password'      => 'WrongPassword1',
-            'password'              => 'NewPassword2',
+            'current_password' => 'WrongPassword1',
+            'password' => 'NewPassword2',
             'password_confirmation' => 'NewPassword2',
         ])->assertStatus(422)->assertJsonValidationErrors(['current_password']);
     }
 
     public function test_change_password_clears_password_must_reset_flag(): void
     {
-        $user  = User::factory()->create([
-            'password'            => Hash::make('OldPassword1'),
+        $user = User::factory()->create([
+            'password' => Hash::make('OldPassword1'),
             'password_must_reset' => true,
-            'can_login'           => true,
+            'can_login' => true,
         ]);
         $token = $user->createToken('mobile')->plainTextToken;
 
         $this->withToken($token)->postJson('/api/v1/change-password', [
-            'current_password'      => 'OldPassword1',
-            'password'              => 'NewPassword2',
+            'current_password' => 'OldPassword1',
+            'password' => 'NewPassword2',
             'password_confirmation' => 'NewPassword2',
         ]);
 
@@ -345,16 +345,16 @@ class AuthApiTest extends TestCase
 
     public function test_change_password_revokes_other_sessions(): void
     {
-        $user    = User::factory()->create([
-            'password'  => Hash::make('OldPassword1'),
+        $user = User::factory()->create([
+            'password' => Hash::make('OldPassword1'),
             'can_login' => true,
         ]);
         $current = $user->createToken('mobile')->plainTextToken;
         $user->createToken('tablet');
 
         $this->withToken($current)->postJson('/api/v1/change-password', [
-            'current_password'      => 'OldPassword1',
-            'password'              => 'NewPassword2',
+            'current_password' => 'OldPassword1',
+            'password' => 'NewPassword2',
             'password_confirmation' => 'NewPassword2',
         ]);
 
@@ -387,22 +387,22 @@ class AuthApiTest extends TestCase
         User::factory()->create(['email' => 'test@example.com']);
 
         $this->postJson('/api/v1/reset-password', [
-            'token'                 => 'invalid-token',
-            'email'                 => 'test@example.com',
-            'password'              => 'NewPassword1',
+            'token' => 'invalid-token',
+            'email' => 'test@example.com',
+            'password' => 'NewPassword1',
             'password_confirmation' => 'NewPassword1',
         ])->assertStatus(422);
     }
 
     public function test_reset_password_with_valid_token_updates_password(): void
     {
-        $user  = User::factory()->create(['email' => 'test@example.com', 'can_login' => true]);
+        $user = User::factory()->create(['email' => 'test@example.com', 'can_login' => true]);
         $token = Password::createToken($user);
 
         $this->postJson('/api/v1/reset-password', [
-            'token'                 => $token,
-            'email'                 => 'test@example.com',
-            'password'              => 'NewPassword1',
+            'token' => $token,
+            'email' => 'test@example.com',
+            'password' => 'NewPassword1',
             'password_confirmation' => 'NewPassword1',
         ])->assertStatus(200);
 
@@ -411,15 +411,15 @@ class AuthApiTest extends TestCase
 
     public function test_reset_password_revokes_all_tokens(): void
     {
-        $user  = User::factory()->create(['email' => 'test@example.com', 'can_login' => true]);
+        $user = User::factory()->create(['email' => 'test@example.com', 'can_login' => true]);
         $user->createToken('mobile');
         $user->createToken('tablet');
         $token = Password::createToken($user);
 
         $this->postJson('/api/v1/reset-password', [
-            'token'                 => $token,
-            'email'                 => 'test@example.com',
-            'password'              => 'NewPassword1',
+            'token' => $token,
+            'email' => 'test@example.com',
+            'password' => 'NewPassword1',
             'password_confirmation' => 'NewPassword1',
         ]);
 
@@ -432,13 +432,13 @@ class AuthApiTest extends TestCase
     {
         // 30 días = 2.592.000 segundos (no minutos)
         User::factory()->create([
-            'email'     => 'test@example.com',
-            'password'  => Hash::make('Password123abc'),
+            'email' => 'test@example.com',
+            'password' => Hash::make('Password123abc'),
             'can_login' => true,
         ]);
 
         $response = $this->postJson('/api/v1/login', [
-            'email'    => 'test@example.com',
+            'email' => 'test@example.com',
             'password' => 'Password123abc',
         ])->assertStatus(200);
 
@@ -447,7 +447,7 @@ class AuthApiTest extends TestCase
 
     public function test_expires_in_is_seconds_on_refresh(): void
     {
-        $user  = User::factory()->create(['can_login' => true]);
+        $user = User::factory()->create(['can_login' => true]);
         $token = $user->createToken('mobile')->plainTextToken;
 
         $response = $this->withToken($token)
@@ -462,16 +462,16 @@ class AuthApiTest extends TestCase
     public function test_login_rejects_unverified_email(): void
     {
         User::factory()->unverified()->create([
-            'email'     => 'test@example.com',
-            'password'  => Hash::make('Password123abc'),
+            'email' => 'test@example.com',
+            'password' => Hash::make('Password123abc'),
             'can_login' => true,
         ]);
 
         $this->postJson('/api/v1/login', [
-            'email'    => 'test@example.com',
+            'email' => 'test@example.com',
             'password' => 'Password123abc',
         ])->assertStatus(403)
-          ->assertJsonPath('email_unverified', true);
+            ->assertJsonPath('email_unverified', true);
     }
 
     // ── forgot-password usa notificación móvil dedicada ───────────────────────

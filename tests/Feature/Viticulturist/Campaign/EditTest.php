@@ -70,5 +70,3 @@ class EditTest extends TestCase
         $this->assertEquals(2026, $campaign2026->fresh()->year);
     }
 }
-
-

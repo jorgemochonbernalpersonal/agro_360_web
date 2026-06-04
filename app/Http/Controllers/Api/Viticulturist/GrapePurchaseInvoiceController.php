@@ -19,8 +19,8 @@ class GrapePurchaseInvoiceController extends Controller
 
         $request->validate([
             'payment_status' => 'nullable|string|in:unpaid,paid,overdue',
-            'search'         => 'nullable|string|max:100',
-            'per_page'       => 'nullable|integer|min:1|max:100',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = Invoice::where('viticulturist_id', $user->id)
@@ -43,10 +43,10 @@ class GrapePurchaseInvoiceController extends Controller
         return response()->json([
             'data' => GrapePurchaseInvoiceResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }

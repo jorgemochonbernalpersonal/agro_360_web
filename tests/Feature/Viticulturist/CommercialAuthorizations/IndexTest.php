@@ -9,16 +9,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeAuthorization(int $viticulturistId, string $type = 'do_registration'): CommercialAuthorization
-    {
-        return CommercialAuthorization::create([
-            'viticulturist_id'   => $viticulturistId,
-            'authorization_type' => $type,
-            'issue_date'         => '2024-01-01',
-            'active'             => true,
-        ]);
-    }
-
     public function test_index_shows_active_authorizations(): void
     {
         $viticulturist = $this->makeViticulturist();
@@ -34,7 +24,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_deactivate_sets_active_to_false(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $auth          = $this->makeAuthorization($viticulturist->id);
+        $auth = $this->makeAuthorization($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -42,7 +32,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('deactivate', $auth->id);
 
         $this->assertDatabaseHas('commercial_authorizations', [
-            'id'     => $auth->id,
+            'id' => $auth->id,
             'active' => false,
         ]);
     }
@@ -52,11 +42,11 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
         // Use a unique issuing_body so we can assert it disappears from the table rows
         CommercialAuthorization::create([
-            'viticulturist_id'   => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'authorization_type' => 'planting_right',
-            'issue_date'         => '2024-01-01',
-            'issuing_body'       => 'Organismo-Plantacion-Unico',
-            'active'             => true,
+            'issue_date' => '2024-01-01',
+            'issuing_body' => 'Organismo-Plantacion-Unico',
+            'active' => true,
         ]);
 
         $auth = CommercialAuthorization::where('issuing_body', 'Organismo-Plantacion-Unico')->first();
@@ -74,18 +64,18 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
 
         CommercialAuthorization::create([
-            'viticulturist_id'   => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'authorization_type' => 'do_registration',
-            'issue_date'         => '2024-01-01',
+            'issue_date' => '2024-01-01',
             'authorization_code' => 'CODE-DO-REG-001',
-            'active'             => true,
+            'active' => true,
         ]);
         CommercialAuthorization::create([
-            'viticulturist_id'   => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'authorization_type' => 'organic_certification',
-            'issue_date'         => '2024-01-01',
+            'issue_date' => '2024-01-01',
             'authorization_code' => 'CODE-ORGANIC-001',
-            'active'             => true,
+            'active' => true,
         ]);
 
         $this->actingAs($viticulturist);
@@ -99,8 +89,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_cannot_deactivate_other_viticulturists_authorization(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $auth          = $this->makeAuthorization($viticulturist->id);
+        $other = $this->makeOtherViticulturist();
+        $auth = $this->makeAuthorization($viticulturist->id);
 
         $this->actingAs($other);
 
@@ -108,5 +98,15 @@ class IndexTest extends ViticulturistTestCase
 
         Livewire::test(Index::class)
             ->call('deactivate', $auth->id);
+    }
+
+    private function makeAuthorization(int $viticulturistId, string $type = 'do_registration'): CommercialAuthorization
+    {
+        return CommercialAuthorization::create([
+            'viticulturist_id' => $viticulturistId,
+            'authorization_type' => $type,
+            'issue_date' => '2024-01-01',
+            'active' => true,
+        ]);
     }
 }

@@ -2,10 +2,9 @@
 
 namespace App\Livewire\Plots\Plantings;
 
-use App\Models\GrapeVariety;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -15,24 +14,44 @@ class Index extends Component
     use WithPagination, WithToastNotifications;
 
     public $currentTab = 'active'; // 'active', 'inactive'
+
     public $search = '';
+
     public $status = '';
+
     public $year = '';
+
     public $cropType = '';
+
     public $plotSearch = '';
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search'     => ['except' => ''],
-        'status'     => ['except' => ''],
-        'year'       => ['except' => ''],
-        'cropType'   => ['as' => 'crop', 'except' => ''],
+        'search' => ['except' => ''],
+        'status' => ['except' => ''],
+        'year' => ['except' => ''],
+        'cropType' => ['as' => 'crop', 'except' => ''],
     ];
 
-    public function updatingSearch()   { $this->resetPage(); }
-    public function updatingStatus()   { $this->resetPage(); }
-    public function updatingYear()     { $this->resetPage(); }
-    public function updatingCropType() { $this->resetPage(); }
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatus()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingYear()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingCropType()
+    {
+        $this->resetPage();
+    }
 
     public function switchTab($tab)
     {
@@ -46,7 +65,7 @@ class Index extends Component
         $visiblePlotIds = Plot::forUser($user)->pluck('id');
         $planting = PlotPlanting::whereIn('plot_id', $visiblePlotIds)->findOrFail($plantingId);
 
-        $newActiveState = !$planting->active;
+        $newActiveState = ! $planting->active;
         $planting->update(['active' => $newActiveState]);
 
         if ($newActiveState) {
@@ -64,9 +83,9 @@ class Index extends Component
 
     public function clearFilters()
     {
-        $this->search   = '';
-        $this->status   = '';
-        $this->year     = '';
+        $this->search = '';
+        $this->status = '';
+        $this->year = '';
         $this->cropType = '';
         $this->resetPage();
     }
@@ -78,26 +97,25 @@ class Index extends Component
 
         // Winery puro (sin acceso de viticultor) solo ve variedades de uva/vino.
         // Viticulturist y producer ven todos los tipos de cultivo.
-        $wineryOnly = $user->hasWineryAccess() && !$user->hasViticulturistAccess();
+        $wineryOnly = $user->hasWineryAccess() && ! $user->hasViticulturistAccess();
 
         $query = PlotPlanting::with(['plot.viticulturist', 'plot.municipality', 'grapeVariety', 'trainingSystem'])
             ->whereIn('plot_id', $visiblePlotIds);
 
         if ($wineryOnly) {
-            $query->whereHas('grapeVariety', fn($q) => $q->where('crop_type', 'wine'));
+            $query->whereHas('grapeVariety', fn ($q) => $q->where('crop_type', 'wine'));
         } elseif ($this->cropType !== '') {
-            $query->whereHas('grapeVariety', fn($q) => $q->where('crop_type', $this->cropType));
+            $query->whereHas('grapeVariety', fn ($q) => $q->where('crop_type', $this->cropType));
         }
 
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereHas('plot', fn($sub) => $sub->whereRaw('LOWER(name) LIKE ?', [$search]))
-                  ->orWhereHas('grapeVariety', fn($sub) =>
-                      $sub->whereRaw('LOWER(name) LIKE ?', [$search])
-                          ->orWhereRaw('LOWER(code) LIKE ?', [$search])
-                  );
+                    ->orWhereHas('plot', fn ($sub) => $sub->whereRaw('LOWER(name) LIKE ?', [$search]))
+                    ->orWhereHas('grapeVariety', fn ($sub) => $sub->whereRaw('LOWER(name) LIKE ?', [$search])
+                        ->orWhereRaw('LOWER(code) LIKE ?', [$search])
+                    );
             });
         }
 
@@ -119,7 +137,7 @@ class Index extends Component
 
         $baseQuery = PlotPlanting::whereIn('plot_id', $visiblePlotIds);
         if ($wineryOnly) {
-            $baseQuery->whereHas('grapeVariety', fn($q) => $q->where('crop_type', 'wine'));
+            $baseQuery->whereHas('grapeVariety', fn ($q) => $q->where('crop_type', 'wine'));
         }
 
         $years = (clone $baseQuery)
@@ -129,23 +147,22 @@ class Index extends Component
             ->pluck('planting_year');
 
         $stats = [
-            'total'      => (clone $baseQuery)->count(),
-            'active'     => (clone $baseQuery)->where('active', true)->count(),
-            'inactive'   => (clone $baseQuery)->where('active', false)->count(),
+            'total' => (clone $baseQuery)->count(),
+            'active' => (clone $baseQuery)->where('active', true)->count(),
+            'inactive' => (clone $baseQuery)->where('active', false)->count(),
             'total_area' => (clone $baseQuery)->sum('area_planted'),
         ];
 
         $selectablePlots = Plot::forUser($user)
             ->where('active', true)
-            ->when($this->plotSearch, fn($q) =>
-                $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($this->plotSearch) . '%'])
+            ->when($this->plotSearch, fn ($q) => $q->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($this->plotSearch).'%'])
             )
             ->orderBy('name')
             ->get(['id', 'name']);
 
         return view('livewire.plots.plantings.index', compact('plantings', 'years', 'stats', 'wineryOnly', 'selectablePlots'))
             ->layout('layouts.app', [
-                'title'       => __('Plantaciones - Agro365'),
+                'title' => __('Plantaciones - Agro365'),
                 'description' => __('Gestiona las plantaciones de tus parcelas. Variedades de uva, años de plantación, hectáreas y estado de cada viñedo.'),
             ]);
     }

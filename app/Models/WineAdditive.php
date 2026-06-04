@@ -21,7 +21,7 @@ class WineAdditive extends Model
     ];
 
     protected $casts = [
-        'quantity'         => 'decimal:3',
+        'quantity' => 'decimal:3',
         'application_date' => 'date',
     ];
 

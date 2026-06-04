@@ -13,7 +13,9 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class MovementsExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     protected $userId;
+
     protected $dateFrom;
+
     protected $dateTo;
 
     public function __construct(int $userId, $dateFrom = null, $dateTo = null)
@@ -78,7 +80,7 @@ class MovementsExport implements FromCollection, WithHeadings, WithMapping, With
                 'font' => ['bold' => true],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => '2196F3']
+                    'startColor' => ['rgb' => '2196F3'],
                 ],
                 'font' => ['color' => ['rgb' => 'FFFFFF'], 'bold' => true],
             ],

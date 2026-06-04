@@ -13,7 +13,7 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         $type = $this->faker->randomElement(['individual', 'company']);
-        
+
         return [
             'user_id' => User::factory(),
             'client_type' => $type,

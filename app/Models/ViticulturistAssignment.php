@@ -20,7 +20,7 @@ class ViticulturistAssignment extends Model
     ];
 
     protected $casts = [
-        'notebook_access'     => 'boolean',
+        'notebook_access' => 'boolean',
         'notebook_granted_at' => 'datetime',
         'notebook_revoked_at' => 'datetime',
     ];
@@ -52,7 +52,7 @@ class ViticulturistAssignment extends Model
     public function grantNotebookAccess(): void
     {
         $this->update([
-            'notebook_access'     => true,
+            'notebook_access' => true,
             'notebook_granted_at' => now(),
             'notebook_revoked_at' => null,
         ]);
@@ -61,7 +61,7 @@ class ViticulturistAssignment extends Model
     public function revokeNotebookAccess(): void
     {
         $this->update([
-            'notebook_access'     => false,
+            'notebook_access' => false,
             'notebook_revoked_at' => now(),
         ]);
     }
@@ -92,6 +92,6 @@ class ViticulturistAssignment extends Model
 
     public function scopeAssignedByDO($query)
     {
-        return $query->whereHas('assignedByOrg', fn($q) => $q->where('type', Organization::TYPE_DENOMINATION));
+        return $query->whereHas('assignedByOrg', fn ($q) => $q->where('type', Organization::TYPE_DENOMINATION));
     }
 }

@@ -27,11 +27,11 @@ class ResidueAnalysis extends Model
     ];
 
     protected $casts = [
-        'analysis_date'    => 'date',
-        'sample_date'      => 'date',
-        'results'          => 'array',
-        'overall_compliant'=> 'boolean',
-        'active'           => 'boolean',
+        'analysis_date' => 'date',
+        'sample_date' => 'date',
+        'results' => 'array',
+        'overall_compliant' => 'boolean',
+        'active' => 'boolean',
     ];
 
     public function campaign(): BelongsTo

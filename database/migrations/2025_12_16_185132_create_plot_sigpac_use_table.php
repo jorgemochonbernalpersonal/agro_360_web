@@ -32,4 +32,3 @@ return new class extends Migration
         Schema::dropIfExists('plot_sigpac_use');
     }
 };
-

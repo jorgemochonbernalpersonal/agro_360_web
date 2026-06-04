@@ -13,67 +13,17 @@ use Tests\Feature\SupervisorTestCase;
 
 class StatisticsDataTest extends SupervisorTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeViticulturistForStats(User $supervisor, ?User $winery = null): User
-    {
-        $vit = User::factory()->create(['role' => 'viticulturist']);
-
-        // Always in supervisor pool
-        SupervisorViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
-            'viticulturist_id' => $vit->id,
-            'assigned_by'      => $supervisor->id,
-        ]);
-
-        // Optionally linked to a winery
-        if ($winery) {
-            WineryViticulturist::create([
-                'supervisor_id'    => $supervisor->id,
-                'winery_id'        => $winery->id,
-                'viticulturist_id' => $vit->id,
-                'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-                'assigned_by'      => $supervisor->id,
-            ]);
-        }
-
-        return $vit;
-    }
-
-    private function makeHarvest(User $winery, array $attrs = []): void
-    {
-        $activityId = DB::table('agricultural_activities')->insertGetId([
-            'viticulturist_id' => $winery->id,
-            'activity_type'    => 'observation',
-            'activity_date'    => now()->format('Y-m-d'),
-            'created_at'       => now(),
-            'updated_at'       => now(),
-        ]);
-
-        DB::table('harvests')->insert(array_merge([
-            'activity_id'        => $activityId,
-            'winery_id'          => $winery->id,
-            'harvest_start_date' => now()->format('Y-m-d'),
-            'total_weight'       => 1000,
-            'brix_degree'        => 22.0,
-            'vintage'            => now()->year,
-            'status'             => 'active',
-            'created_at'         => now(),
-            'updated_at'         => now(),
-        ], $attrs));
-    }
-
     // ── totals ────────────────────────────────────────────────────────────────
 
     public function test_total_wineries_counts_linked_wineries(): void
     {
         [$supervisor] = $this->makeSupervisorWithWinery();
-        $winery2      = $this->makeWinery();
+        $winery2 = $this->makeWinery();
 
         \App\Models\SupervisorWinery::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery2->id,
-            'assigned_by'   => $supervisor->id,
+            'winery_id' => $winery2->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -99,10 +49,10 @@ class StatisticsDataTest extends SupervisorTestCase
         // Viticulturist only in winery's own pool, not in supervisor pool
         $ownVit = User::factory()->create(['role' => 'viticulturist']);
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $ownVit->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -112,8 +62,8 @@ class StatisticsDataTest extends SupervisorTestCase
 
     public function test_total_viticulturists_isolated_from_other_supervisor(): void
     {
-        [$supervisor]          = $this->makeSupervisorWithWinery();
-        [$otherSupervisor]     = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
+        [$otherSupervisor] = $this->makeSupervisorWithWinery();
         $this->makeViticulturistForStats($otherSupervisor);
 
         Livewire::actingAs($supervisor)
@@ -150,7 +100,7 @@ class StatisticsDataTest extends SupervisorTestCase
 
     public function test_total_plot_area_isolated_from_other_supervisor(): void
     {
-        [$supervisor]                    = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $otherVit = $this->makeViticulturistForStats($otherSupervisor, $otherWinery);
@@ -188,7 +138,7 @@ class StatisticsDataTest extends SupervisorTestCase
 
     public function test_total_kg_excludes_other_supervisor_wineries(): void
     {
-        [$supervisor]                    = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $this->makeHarvest($otherWinery, ['total_weight' => 999, 'vintage' => now()->year]);
@@ -212,6 +162,7 @@ class StatisticsDataTest extends SupervisorTestCase
             ->assertViewHas('harvestByVintage', function ($rows) {
                 $r25 = $rows->firstWhere('vintage', 2025);
                 $r24 = $rows->firstWhere('vintage', 2024);
+
                 return $r25?->total_kg == 500
                     && $r24?->total_kg == 800
                     && $r25?->reception_count == 1
@@ -230,6 +181,7 @@ class StatisticsDataTest extends SupervisorTestCase
             ->test(Index::class)
             ->assertViewHas('harvestByVintage', function ($rows) {
                 $row = $rows->firstWhere('vintage', 2025);
+
                 return $row !== null && abs($row->avg_brix - 23.0) < 0.01;
             });
     }
@@ -248,15 +200,14 @@ class StatisticsDataTest extends SupervisorTestCase
 
         $invited = $this->makeViticulturistForStats($supervisor);
         $invited->update([
-            'can_login'             => false,
-            'invitation_token'      => 'token',
+            'can_login' => false,
+            'invitation_token' => 'token',
             'invitation_expires_at' => now()->addDays(5),
         ]);
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('poolComposition', fn ($c) =>
-                $c['active'] === 1 && $c['ghost'] === 1 && $c['invited'] === 1
+            ->assertViewHas('poolComposition', fn ($c) => $c['active'] === 1 && $c['ghost'] === 1 && $c['invited'] === 1
             );
     }
 
@@ -310,8 +261,7 @@ class StatisticsDataTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('plotStats', fn ($s) =>
-                (int) $s->total_plots === 2
+            ->assertViewHas('plotStats', fn ($s) => (int) $s->total_plots === 2
                 && (int) $s->organic_plots === 1
                 && abs($s->organic_area - 3.0) < 0.01
             );
@@ -326,7 +276,7 @@ class StatisticsDataTest extends SupervisorTestCase
         $plot = $this->makePlot($vit, ['area' => 5.0, 'active' => true]);
 
         $tempranillo = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['color' => 'red', 'active' => true]);
-        $garnacha    = GrapeVariety::firstOrCreate(['name' => 'Garnacha'],    ['color' => 'red', 'active' => true]);
+        $garnacha = GrapeVariety::firstOrCreate(['name' => 'Garnacha'], ['color' => 'red', 'active' => true]);
 
         DB::table('plot_plantings')->insert([
             ['plot_id' => $plot->id, 'grape_variety_id' => $tempranillo->id, 'area_planted' => 3.0, 'status' => 'active', 'active' => true, 'created_at' => now(), 'updated_at' => now()],
@@ -335,17 +285,16 @@ class StatisticsDataTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('topVarieties', fn ($rows) =>
-                $rows->first()?->variety_name === 'Tempranillo'
+            ->assertViewHas('topVarieties', fn ($rows) => $rows->first()?->variety_name === 'Tempranillo'
             );
     }
 
     public function test_top_varieties_excludes_other_supervisor_viticulturists(): void
     {
-        [$supervisor]      = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
         [$otherSupervisor] = $this->makeSupervisorWithWinery();
 
-        $otherVit  = $this->makeViticulturistForStats($otherSupervisor);
+        $otherVit = $this->makeViticulturistForStats($otherSupervisor);
         $otherPlot = $this->makePlot($otherVit, ['area' => 5.0, 'active' => true]);
 
         $variety = GrapeVariety::firstOrCreate(['name' => 'Ajena'], ['color' => 'white', 'active' => true]);
@@ -365,7 +314,7 @@ class StatisticsDataTest extends SupervisorTestCase
     public function test_activity_breakdown_counts_by_type_for_current_year(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $vit  = $this->makeViticulturistForStats($supervisor, $winery);
+        $vit = $this->makeViticulturistForStats($supervisor, $winery);
         $plot = $this->makePlot($vit, ['area' => 1.0, 'active' => true]);
 
         DB::table('agricultural_activities')->insert([
@@ -376,8 +325,7 @@ class StatisticsDataTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('activityBreakdown', fn ($rows) =>
-                $rows->firstWhere('activity_type', 'pruning')?->total == 2
+            ->assertViewHas('activityBreakdown', fn ($rows) => $rows->firstWhere('activity_type', 'pruning')?->total == 2
                 && $rows->firstWhere('activity_type', 'fertilization')?->total == 1
             );
     }
@@ -385,7 +333,7 @@ class StatisticsDataTest extends SupervisorTestCase
     public function test_activity_breakdown_excludes_previous_year_activities(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $vit  = $this->makeViticulturistForStats($supervisor, $winery);
+        $vit = $this->makeViticulturistForStats($supervisor, $winery);
         $plot = $this->makePlot($vit, ['area' => 1.0, 'active' => true]);
 
         DB::table('agricultural_activities')->insert([
@@ -402,10 +350,10 @@ class StatisticsDataTest extends SupervisorTestCase
 
     public function test_activity_breakdown_isolated_from_other_supervisor(): void
     {
-        [$supervisor]      = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
         [$otherSupervisor] = $this->makeSupervisorWithWinery();
 
-        $otherVit  = $this->makeViticulturistForStats($otherSupervisor);
+        $otherVit = $this->makeViticulturistForStats($otherSupervisor);
         $otherPlot = $this->makePlot($otherVit, ['area' => 1.0, 'active' => true]);
 
         DB::table('agricultural_activities')->insert([
@@ -418,5 +366,54 @@ class StatisticsDataTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->assertViewHas('activityBreakdown', fn ($rows) => $rows->isEmpty());
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeViticulturistForStats(User $supervisor, ?User $winery = null): User
+    {
+        $vit = User::factory()->create(['role' => 'viticulturist']);
+
+        // Always in supervisor pool
+        SupervisorViticulturist::create([
+            'supervisor_id' => $supervisor->id,
+            'viticulturist_id' => $vit->id,
+            'assigned_by' => $supervisor->id,
+        ]);
+
+        // Optionally linked to a winery
+        if ($winery) {
+            WineryViticulturist::create([
+                'supervisor_id' => $supervisor->id,
+                'winery_id' => $winery->id,
+                'viticulturist_id' => $vit->id,
+                'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+                'assigned_by' => $supervisor->id,
+            ]);
+        }
+
+        return $vit;
+    }
+
+    private function makeHarvest(User $winery, array $attrs = []): void
+    {
+        $activityId = DB::table('agricultural_activities')->insertGetId([
+            'viticulturist_id' => $winery->id,
+            'activity_type' => 'observation',
+            'activity_date' => now()->format('Y-m-d'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('harvests')->insert(array_merge([
+            'activity_id' => $activityId,
+            'winery_id' => $winery->id,
+            'harvest_start_date' => now()->format('Y-m-d'),
+            'total_weight' => 1000,
+            'brix_degree' => 22.0,
+            'vintage' => now()->year,
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ], $attrs));
     }
 }

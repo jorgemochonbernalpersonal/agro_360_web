@@ -5,8 +5,6 @@ namespace Tests\Feature\Supervisor\Requests;
 use App\Livewire\Supervisor\Requests\Index as SupervisorRequestsIndex;
 use App\Livewire\Winery\Denomination\Requests\Index as WineryRequestsIndex;
 use App\Models\SupervisorRequest;
-use App\Models\SupervisorWinery;
-use App\Models\User;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -33,10 +31,10 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
         // 1. Supervisor crea en estado DRAFT
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_QUALIFICATION,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
-            'title'         => 'Calificación Lote Q-2026',
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_QUALIFICATION,
+            'status' => SupervisorRequest::STATUS_DRAFT,
+            'title' => 'Calificación Lote Q-2026',
         ]);
 
         $this->assertSame(SupervisorRequest::STATUS_DRAFT, $req->status);
@@ -78,9 +76,9 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_LABEL_REQUEST,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_LABEL_REQUEST,
+            'status' => SupervisorRequest::STATUS_DRAFT,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -110,10 +108,10 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_CERTIFICATION,
-            'status'        => SupervisorRequest::STATUS_APPROVED,
-            'resolved_at'   => now(),
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_CERTIFICATION,
+            'status' => SupervisorRequest::STATUS_APPROVED,
+            'resolved_at' => now(),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -130,10 +128,10 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_NONCONFORMITY,
-            'status'        => SupervisorRequest::STATUS_REJECTED,
-            'resolved_at'   => now(),
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_NONCONFORMITY,
+            'status' => SupervisorRequest::STATUS_REJECTED,
+            'resolved_at' => now(),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -147,13 +145,13 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
     public function test_supervisor_cannot_archive_another_supervisors_request(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_CERTIFICATION,
-            'status'        => SupervisorRequest::STATUS_APPROVED,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_CERTIFICATION,
+            'status' => SupervisorRequest::STATUS_APPROVED,
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -168,14 +166,14 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
     public function test_winery_b_cannot_respond_to_winery_a_request(): void
     {
         [$supervisor, $wineryA] = $this->makeSupervisorWithWinery();
-        $wineryB                = $this->makeWinery();
+        $wineryB = $this->makeWinery();
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $wineryA->id,
-            'type'          => SupervisorRequest::TYPE_HARVEST_DECLARATION,
-            'status'        => SupervisorRequest::STATUS_PENDING,
-            'sent_at'       => now(),
+            'winery_id' => $wineryA->id,
+            'type' => SupervisorRequest::TYPE_HARVEST_DECLARATION,
+            'status' => SupervisorRequest::STATUS_PENDING,
+            'sent_at' => now(),
         ]);
 
         // forWinery(Auth::id()) → findOrFail will throw for wineryB
@@ -195,10 +193,10 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_LABEL_REQUEST,
-            'status'        => SupervisorRequest::STATUS_PENDING,
-            'sent_at'       => now(),
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_LABEL_REQUEST,
+            'status' => SupervisorRequest::STATUS_PENDING,
+            'sent_at' => now(),
         ]);
 
         Livewire::actingAs($winery)
@@ -215,7 +213,7 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
 
     public function test_can_be_sent_only_when_draft(): void
     {
-        $draft   = new SupervisorRequest(['status' => SupervisorRequest::STATUS_DRAFT]);
+        $draft = new SupervisorRequest(['status' => SupervisorRequest::STATUS_DRAFT]);
         $pending = new SupervisorRequest(['status' => SupervisorRequest::STATUS_PENDING]);
 
         $this->assertTrue($draft->canBeSentBySupervisor());
@@ -224,9 +222,9 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
 
     public function test_can_be_responded_only_when_pending(): void
     {
-        $pending   = new SupervisorRequest(['status' => SupervisorRequest::STATUS_PENDING]);
-        $inReview  = new SupervisorRequest(['status' => SupervisorRequest::STATUS_IN_REVIEW]);
-        $draft     = new SupervisorRequest(['status' => SupervisorRequest::STATUS_DRAFT]);
+        $pending = new SupervisorRequest(['status' => SupervisorRequest::STATUS_PENDING]);
+        $inReview = new SupervisorRequest(['status' => SupervisorRequest::STATUS_IN_REVIEW]);
+        $draft = new SupervisorRequest(['status' => SupervisorRequest::STATUS_DRAFT]);
 
         $this->assertTrue($pending->canBeRespondedByWinery());
         $this->assertFalse($inReview->canBeRespondedByWinery());
@@ -236,7 +234,7 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
     public function test_can_be_resolved_only_when_in_review(): void
     {
         $inReview = new SupervisorRequest(['status' => SupervisorRequest::STATUS_IN_REVIEW]);
-        $pending  = new SupervisorRequest(['status' => SupervisorRequest::STATUS_PENDING]);
+        $pending = new SupervisorRequest(['status' => SupervisorRequest::STATUS_PENDING]);
         $approved = new SupervisorRequest(['status' => SupervisorRequest::STATUS_APPROVED]);
 
         $this->assertTrue($inReview->canBeResolvedBySupervisor());
@@ -293,9 +291,9 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_QUALIFICATION,
-            'status'        => SupervisorRequest::STATUS_IN_REVIEW,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_QUALIFICATION,
+            'status' => SupervisorRequest::STATUS_IN_REVIEW,
         ]);
 
         $req->approve();
@@ -311,9 +309,9 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_LABEL_REQUEST,
-            'status'        => SupervisorRequest::STATUS_IN_REVIEW,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_LABEL_REQUEST,
+            'status' => SupervisorRequest::STATUS_IN_REVIEW,
         ]);
 
         $req->reject();
@@ -327,21 +325,21 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
 
     public function test_for_supervisor_scope_excludes_other_supervisor_requests(): void
     {
-        [$supervisor, $winery]   = $this->makeSupervisorWithWinery();
-        $otherSupervisor         = $this->makeSupervisor();
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $otherSupervisor = $this->makeSupervisor();
 
         SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_CERTIFICATION,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_CERTIFICATION,
+            'status' => SupervisorRequest::STATUS_DRAFT,
         ]);
 
         SupervisorRequest::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_CERTIFICATION,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_CERTIFICATION,
+            'status' => SupervisorRequest::STATUS_DRAFT,
         ]);
 
         $ids = SupervisorRequest::forSupervisor($supervisor->id)->pluck('supervisor_id');
@@ -352,20 +350,20 @@ class SupervisorRequestLifecycleTest extends SupervisorTestCase
     public function test_for_winery_scope_excludes_other_winery_requests(): void
     {
         [$supervisor, $wineryA] = $this->makeSupervisorWithWinery();
-        $wineryB                = $this->makeWinery();
+        $wineryB = $this->makeWinery();
 
         SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $wineryA->id,
-            'type'          => SupervisorRequest::TYPE_LABEL_REQUEST,
-            'status'        => SupervisorRequest::STATUS_PENDING,
+            'winery_id' => $wineryA->id,
+            'type' => SupervisorRequest::TYPE_LABEL_REQUEST,
+            'status' => SupervisorRequest::STATUS_PENDING,
         ]);
 
         SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $wineryB->id,
-            'type'          => SupervisorRequest::TYPE_LABEL_REQUEST,
-            'status'        => SupervisorRequest::STATUS_PENDING,
+            'winery_id' => $wineryB->id,
+            'type' => SupervisorRequest::TYPE_LABEL_REQUEST,
+            'status' => SupervisorRequest::STATUS_PENDING,
         ]);
 
         $ids = SupervisorRequest::forWinery($wineryA->id)->pluck('winery_id');

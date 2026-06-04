@@ -7,13 +7,12 @@ use App\Models\Harvest;
 use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class HarvestSummaryController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
-        $user   = $request->user();
+        $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
         $year = $request->integer('year', now()->year);
@@ -51,12 +50,12 @@ class HarvestSummaryController extends Controller
             ->orderByDesc('total_kg')
             ->get()
             ->map(fn ($r) => [
-                'viticulturist_id'   => $r->viticulturist_id,
+                'viticulturist_id' => $r->viticulturist_id,
                 'viticulturist_name' => $r->viticulturist_name,
-                'receptions'         => (int) $r->receptions,
-                'total_kg'           => (float) $r->total_kg,
-                'avg_baume'          => $r->avg_baume !== null ? round((float) $r->avg_baume, 2) : null,
-                'avg_price_per_kg'   => $r->avg_price_per_kg !== null ? round((float) $r->avg_price_per_kg, 4) : null,
+                'receptions' => (int) $r->receptions,
+                'total_kg' => (float) $r->total_kg,
+                'avg_baume' => $r->avg_baume !== null ? round((float) $r->avg_baume, 2) : null,
+                'avg_price_per_kg' => $r->avg_price_per_kg !== null ? round((float) $r->avg_price_per_kg, 4) : null,
             ]);
 
         // ── Recepciones por semana ────────────────────────────────────────────
@@ -68,8 +67,8 @@ class HarvestSummaryController extends Controller
             ->orderBy('week')
             ->get()
             ->map(fn ($r) => [
-                'week'     => (int) $r->week,
-                'count'    => (int) $r->count,
+                'week' => (int) $r->week,
+                'count' => (int) $r->count,
                 'total_kg' => (float) $r->total_kg,
             ]);
 
@@ -85,12 +84,12 @@ class HarvestSummaryController extends Controller
         return response()->json([
             'year' => $year,
             'totals' => [
-                'receptions'       => (int) ($totals->total_receptions ?? 0),
-                'total_kg'         => (float) ($totals->total_kg ?? 0),
-                'avg_baume'        => $totals->avg_baume !== null ? round((float) $totals->avg_baume, 2) : null,
-                'avg_brix'         => $totals->avg_brix !== null ? round((float) $totals->avg_brix, 2) : null,
-                'avg_ph'           => $totals->avg_ph !== null ? round((float) $totals->avg_ph, 2) : null,
-                'avg_acidity'      => $totals->avg_acidity !== null ? round((float) $totals->avg_acidity, 2) : null,
+                'receptions' => (int) ($totals->total_receptions ?? 0),
+                'total_kg' => (float) ($totals->total_kg ?? 0),
+                'avg_baume' => $totals->avg_baume !== null ? round((float) $totals->avg_baume, 2) : null,
+                'avg_brix' => $totals->avg_brix !== null ? round((float) $totals->avg_brix, 2) : null,
+                'avg_ph' => $totals->avg_ph !== null ? round((float) $totals->avg_ph, 2) : null,
+                'avg_acidity' => $totals->avg_acidity !== null ? round((float) $totals->avg_acidity, 2) : null,
                 'avg_price_per_kg' => $totals->avg_price_per_kg !== null ? round((float) $totals->avg_price_per_kg, 4) : null,
             ],
             'viticulturists' => [
@@ -98,7 +97,7 @@ class HarvestSummaryController extends Controller
                 'active' => $activeCount,
             ],
             'by_viticulturist' => $byViticulturist,
-            'by_week'          => $byWeek,
+            'by_week' => $byWeek,
         ]);
     }
 }

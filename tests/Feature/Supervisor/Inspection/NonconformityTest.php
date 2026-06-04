@@ -10,19 +10,6 @@ use Tests\Feature\SupervisorTestCase;
 
 class NonconformityTest extends SupervisorTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeInspection(int $supervisorId, int $subjectId, array $attrs = []): DoInspection
-    {
-        return DoInspection::create(array_merge([
-            'supervisor_id'   => $supervisorId,
-            'subject_type'    => 'winery',
-            'subject_id'      => $subjectId,
-            'inspection_date' => now()->format('Y-m-d'),
-            'result'          => DoInspection::RESULT_NON_COMPLIANT,
-        ], $attrs));
-    }
-
     // ── happy path ────────────────────────────────────────────────────────────
 
     public function test_creates_nonconformity_request_from_non_compliant_inspection(): void
@@ -37,9 +24,9 @@ class NonconformityTest extends SupervisorTestCase
 
         $this->assertDatabaseHas('supervisor_requests', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_NONCONFORMITY,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_NONCONFORMITY,
+            'status' => SupervisorRequest::STATUS_DRAFT,
         ]);
     }
 
@@ -110,15 +97,15 @@ class NonconformityTest extends SupervisorTestCase
 
     public function test_cannot_create_from_viticulturist_inspection(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'viticulturist',
-            'subject_id'      => $viticulturist->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'viticulturist',
+            'subject_id' => $viticulturist->id,
             'inspection_date' => now()->format('Y-m-d'),
-            'result'          => DoInspection::RESULT_NON_COMPLIANT,
+            'result' => DoInspection::RESULT_NON_COMPLIANT,
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -140,5 +127,17 @@ class NonconformityTest extends SupervisorTestCase
         Livewire::actingAs($other)
             ->test(Index::class)
             ->call('createNonconformityFromInspection', $inspection->id);
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeInspection(int $supervisorId, int $subjectId, array $attrs = []): DoInspection
+    {
+        return DoInspection::create(array_merge([
+            'supervisor_id' => $supervisorId,
+            'subject_type' => 'winery',
+            'subject_id' => $subjectId,
+            'inspection_date' => now()->format('Y-m-d'),
+            'result' => DoInspection::RESULT_NON_COMPLIANT,
+        ], $attrs));
     }
 }

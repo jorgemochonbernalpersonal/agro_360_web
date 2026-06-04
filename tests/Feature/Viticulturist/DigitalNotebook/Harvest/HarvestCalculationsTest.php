@@ -28,7 +28,9 @@ use Tests\Feature\ViticulturistTestCase;
 class HarvestCalculationsTest extends ViticulturistTestCase
 {
     private User $viticulturist;
+
     private Campaign $campaign;
+
     private Plot $plot;
 
     protected function setUp(): void
@@ -39,55 +41,20 @@ class HarvestCalculationsTest extends ViticulturistTestCase
 
         $this->campaign = Campaign::factory()->active()->create([
             'viticulturist_id' => $this->viticulturist->id,
-            'year'             => now()->year,
+            'year' => now()->year,
         ]);
 
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
         $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
         $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
 
         $this->plot = Plot::factory()->create([
-            'viticulturist_id'        => $this->viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
-        ]);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makePlanting(array $attrs = []): PlotPlanting
-    {
-        return PlotPlanting::create(array_merge([
-            'plot_id'      => $this->plot->id,
-            'area_planted' => 2.5,
-            'status'       => 'active',
-        ], $attrs));
-    }
-
-    /**
-     * Crea una cosecha previa (con withoutEvents para evitar observer side-effects)
-     */
-    private function createPriorHarvest(PlotPlanting $planting, float $weight, ?int $vintage = null): Harvest
-    {
-        $activity = AgriculturalActivity::create([
-            'plot_id'          => $this->plot->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'campaign_id'      => $this->campaign->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => now()->format('Y-m-d'),
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
         ]);
-
-        return Harvest::withoutEvents(fn () => Harvest::create([
-            'activity_id'        => $activity->id,
-            'plot_planting_id'   => $planting->id,
-            'harvest_start_date' => now()->format('Y-m-d'),
-            'vintage'            => $vintage ?? now()->year,
-            'total_weight'       => $weight,
-            'status'             => 'active',
-            'destination_type'   => 'self_consumption',
-        ]));
     }
 
     // ── calculateYield ───────────────────────────────────────────────────────
@@ -197,7 +164,7 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     {
         // Plantada en 2024, cosecha en 2026 → edad 2 → factor 0.0
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 2,
+            'planting_year' => now()->year - 2,
             'harvest_limit_kg' => 10000,
         ]);
 
@@ -209,7 +176,7 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     {
         // Plantada en 2023, cosecha en 2026 → edad 3 → factor 0.33
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 3,
+            'planting_year' => now()->year - 3,
             'harvest_limit_kg' => 10000,
         ]);
 
@@ -221,7 +188,7 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     {
         // Plantada en 2022, cosecha en 2026 → edad 4 → factor 0.75
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 4,
+            'planting_year' => now()->year - 4,
             'harvest_limit_kg' => 10000,
         ]);
 
@@ -233,7 +200,7 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     {
         // Plantada en 2015, cosecha en 2026 → edad 11 → factor 1.0
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 11,
+            'planting_year' => now()->year - 11,
             'harvest_limit_kg' => 10000,
         ]);
 
@@ -244,7 +211,7 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     public function test_effective_limit_null_when_no_harvest_limit_set(): void
     {
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 10,
+            'planting_year' => now()->year - 10,
             'harvest_limit_kg' => null,
         ]);
 
@@ -257,7 +224,7 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     public function test_control_panel_shows_harvest_limit_info(): void
     {
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 10,
+            'planting_year' => now()->year - 10,
             'harvest_limit_kg' => 8000,
         ]);
         // Need a second planting so auto-select doesn't fire on updatedPlotId
@@ -279,7 +246,7 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     public function test_control_panel_accounts_for_prior_harvests(): void
     {
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 10,
+            'planting_year' => now()->year - 10,
             'harvest_limit_kg' => 8000,
         ]);
         $this->makePlanting();
@@ -302,7 +269,7 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     {
         // Edad 3 → factor 33% → límite efectivo 3300 de 10000
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 3,
+            'planting_year' => now()->year - 3,
             'harvest_limit_kg' => 10000,
         ]);
         $this->makePlanting();
@@ -323,7 +290,7 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     public function test_control_panel_updates_when_weight_changes(): void
     {
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 10,
+            'planting_year' => now()->year - 10,
             'harvest_limit_kg' => 8000,
         ]);
         $this->makePlanting();
@@ -336,14 +303,14 @@ class HarvestCalculationsTest extends ViticulturistTestCase
         $harvestLimit = $component->get('harvestLimitInfo');
         $this->assertEquals(5000.0, $harvestLimit['new_total']);
         $this->assertEquals(3000.0, $harvestLimit['new_remaining']);
-        $this->assertEquals(62.5,   $harvestLimit['new_percentage']); // 5000/8000*100
+        $this->assertEquals(62.5, $harvestLimit['new_percentage']); // 5000/8000*100
         $this->assertFalse($harvestLimit['exceeds']);
     }
 
     public function test_control_panel_detects_limit_exceeded(): void
     {
         $planting = $this->makePlanting([
-            'planting_year'    => now()->year - 10,
+            'planting_year' => now()->year - 10,
             'harvest_limit_kg' => 5000,
         ]);
         $this->makePlanting();
@@ -381,20 +348,20 @@ class HarvestCalculationsTest extends ViticulturistTestCase
     {
         $planting = $this->makePlanting([
             'planting_year' => now()->year - 10,
-            'area_planted'  => 2.0,
+            'area_planted' => 2.0,
         ]);
         $this->makePlanting();
 
         // Crear un rendimiento estimado
         EstimatedYield::create([
-            'plot_planting_id'             => $planting->id,
-            'campaign_id'                  => $this->campaign->id,
-            'estimated_by'                 => $this->viticulturist->id,
-            'estimated_yield_per_hectare'  => 3000,
-            'estimated_total_yield'        => 6000, // 3000 × 2 ha
-            'estimation_date'              => now(),
-            'estimation_method'            => 'visual',
-            'status'                       => 'confirmed',
+            'plot_planting_id' => $planting->id,
+            'campaign_id' => $this->campaign->id,
+            'estimated_by' => $this->viticulturist->id,
+            'estimated_yield_per_hectare' => 3000,
+            'estimated_total_yield' => 6000, // 3000 × 2 ha
+            'estimation_date' => now(),
+            'estimation_method' => 'visual',
+            'status' => 'confirmed',
         ]);
 
         $component = Livewire::test(CreateHarvest::class)
@@ -421,12 +388,12 @@ class HarvestCalculationsTest extends ViticulturistTestCase
         $containerType = ContainerType::firstOrCreate(['name' => 'Depósito']);
 
         $container = Container::create([
-            'user_id'       => $this->viticulturist->id,
-            'name'          => 'Depósito Test',
-            'type_id'       => $containerType->id,
-            'capacity'      => 5000,
+            'user_id' => $this->viticulturist->id,
+            'name' => 'Depósito Test',
+            'type_id' => $containerType->id,
+            'capacity' => 5000,
             'used_capacity' => 2000,
-            'archived'      => false,
+            'archived' => false,
         ]);
 
         $component = Livewire::test(CreateHarvest::class)
@@ -436,5 +403,40 @@ class HarvestCalculationsTest extends ViticulturistTestCase
 
         // Available = 5000 - 2000 = 3000
         $component->assertSet('total_weight', 3000.0);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makePlanting(array $attrs = []): PlotPlanting
+    {
+        return PlotPlanting::create(array_merge([
+            'plot_id' => $this->plot->id,
+            'area_planted' => 2.5,
+            'status' => 'active',
+        ], $attrs));
+    }
+
+    /**
+     * Crea una cosecha previa (con withoutEvents para evitar observer side-effects)
+     */
+    private function createPriorHarvest(PlotPlanting $planting, float $weight, ?int $vintage = null): Harvest
+    {
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $this->plot->id,
+            'viticulturist_id' => $this->viticulturist->id,
+            'campaign_id' => $this->campaign->id,
+            'activity_type' => 'harvest',
+            'activity_date' => now()->format('Y-m-d'),
+        ]);
+
+        return Harvest::withoutEvents(fn () => Harvest::create([
+            'activity_id' => $activity->id,
+            'plot_planting_id' => $planting->id,
+            'harvest_start_date' => now()->format('Y-m-d'),
+            'vintage' => $vintage ?? now()->year,
+            'total_weight' => $weight,
+            'status' => 'active',
+            'destination_type' => 'self_consumption',
+        ]));
     }
 }

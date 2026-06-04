@@ -2,17 +2,17 @@
 
 namespace App\Livewire\Viticulturist;
 
-use App\Models\Invoice;
 use App\Models\Client;
 use App\Models\Harvest;
+use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class FinancialStats extends Component
 {
     public $period = 'year'; // year, month, quarter
+
     public $selectedYear;
 
     public function mount()
@@ -27,7 +27,7 @@ class FinancialStats extends Component
         // =======================
         // KPIs FINANCIEROS
         // =======================
-        
+
         // Total Facturado (año actual)
         $totalInvoiced = Invoice::forUser($user->id)
             ->whereYear('invoice_date', $this->selectedYear)
@@ -56,14 +56,14 @@ class FinancialStats extends Component
             ->whereYear('invoice_date', $this->selectedYear)
             ->where('payment_status', 'paid')
             ->sum('total_amount') ?? 0;
-        
+
         $collectionRate = $totalInvoiced > 0 ? ($paidAmount / $totalInvoiced) * 100 : 0;
 
         // Clientes activos (con facturas este año)
         $activeClients = Client::forUser($user->id)
-            ->whereHas('invoices', function($q) {
+            ->whereHas('invoices', function ($q) {
                 $q->whereYear('invoice_date', $this->selectedYear)
-                  ->where('status', '!=', 'cancelled');
+                    ->where('status', '!=', 'cancelled');
             })
             ->count();
 
@@ -72,7 +72,7 @@ class FinancialStats extends Component
             ->whereYear('invoice_date', $this->selectedYear)
             ->where('status', '!=', 'cancelled')
             ->count();
-        
+
         $averageInvoice = $invoiceCount > 0 ? $totalInvoiced / $invoiceCount : 0;
 
         // =======================
@@ -88,10 +88,10 @@ class FinancialStats extends Component
                 ->whereMonth('invoice_date', $month->month)
                 ->where('status', '!=', 'cancelled')
                 ->sum('total_amount') ?? 0;
-            
+
             $monthlyIncome[] = [
                 'month' => $month->format('M Y'),
-                'income' => $income
+                'income' => $income,
             ];
         }
 
@@ -99,14 +99,15 @@ class FinancialStats extends Component
         $topClients = Client::forUser($user->id)
             ->with('invoices')
             ->get()
-            ->map(function($client) {
+            ->map(function ($client) {
                 $client->total_invoiced = $client->invoices()
                     ->whereYear('invoice_date', $this->selectedYear)
                     ->where('status', '!=', 'cancelled')
                     ->sum('total_amount') ?? 0;
+
                 return $client;
             })
-            ->filter(function($client) {
+            ->filter(function ($client) {
                 return $client->total_invoiced > 0;
             })
             ->sortByDesc('total_invoiced')
@@ -114,21 +115,21 @@ class FinancialStats extends Component
             ->values();
 
         // Distribución de ventas por variedad
-        $salesByVariety = InvoiceItem::whereHas('invoice', function($q) use ($user) {
-                $q->forUser($user->id)
-                  ->whereYear('invoice_date', $this->selectedYear)
-                  ->where('status', '!=', 'cancelled');
-            })
+        $salesByVariety = InvoiceItem::whereHas('invoice', function ($q) use ($user) {
+            $q->forUser($user->id)
+                ->whereYear('invoice_date', $this->selectedYear)
+                ->where('status', '!=', 'cancelled');
+        })
             ->whereHas('harvest.plotPlanting.grapeVariety')
             ->with('harvest.plotPlanting.grapeVariety')
             ->get()
-            ->groupBy(function($item) {
+            ->groupBy(function ($item) {
                 return $item->harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad';
             })
-            ->map(function($items) {
+            ->map(function ($items) {
                 return [
                     'total' => $items->sum('total'),
-                    'weight' => $items->sum('quantity')
+                    'weight' => $items->sum('quantity'),
                 ];
             })
             ->sortByDesc('total');
@@ -143,32 +144,32 @@ class FinancialStats extends Component
             ->get();
 
         // Stock por variedad (usando el nuevo sistema de stock)
-        $stockByVariety = Harvest::whereHas('activity', function($q) use ($user) {
-                $q->where('viticulturist_id', $user->id);
-            })
+        $stockByVariety = Harvest::whereHas('activity', function ($q) use ($user) {
+            $q->where('viticulturist_id', $user->id);
+        })
             ->whereHas('plotPlanting.grapeVariety')
             ->with(['plotPlanting.grapeVariety', 'stockMovements'])
             ->get()
-            ->groupBy(function($harvest) {
+            ->groupBy(function ($harvest) {
                 return $harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad';
             })
-            ->map(function($harvests) {
+            ->map(function ($harvests) {
                 $available = 0;
                 $reserved = 0;
                 $sold = 0;
-                
+
                 foreach ($harvests as $harvest) {
                     $stock = $harvest->getCurrentStock();
                     $available += $stock['available'];
                     $reserved += $stock['reserved'];
                     $sold += $stock['sold'];
                 }
-                
+
                 return [
                     'available' => $available,
                     'reserved' => $reserved,
                     'sold' => $sold,
-                    'total' => $available + $reserved + $sold
+                    'total' => $available + $reserved + $sold,
                 ];
             });
 
@@ -178,8 +179,8 @@ class FinancialStats extends Component
             ->where('status', '!=', 'cancelled')
             ->sum('total_amount') ?? 0;
 
-        $growthPercentage = $previousYearIncome > 0 
-            ? (($totalInvoiced - $previousYearIncome) / $previousYearIncome) * 100 
+        $growthPercentage = $previousYearIncome > 0
+            ? (($totalInvoiced - $previousYearIncome) / $previousYearIncome) * 100
             : 0;
 
         return view('livewire.viticulturist.financial-stats', [
@@ -192,14 +193,14 @@ class FinancialStats extends Component
             'activeClients' => $activeClients,
             'averageInvoice' => $averageInvoice,
             'invoiceCount' => $invoiceCount,
-            
+
             // Gráficos
             'monthlyIncome' => $monthlyIncome,
             'topClients' => $topClients,
             'salesByVariety' => $salesByVariety,
             'upcomingInvoices' => $upcomingInvoices,
             'stockByVariety' => $stockByVariety,
-            
+
             // Comparativa
             'previousYearIncome' => $previousYearIncome,
             'growthPercentage' => $growthPercentage,

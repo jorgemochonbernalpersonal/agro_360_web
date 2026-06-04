@@ -8,7 +8,6 @@ use App\Models\Campaign;
 use App\Models\Container;
 use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
-use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\User;
 use App\Models\WineryViticulturist;
@@ -37,20 +36,20 @@ class GrapeReceptionController extends Controller
         if ($request->boolean('uninvoiced')) {
             $query->whereDoesntHave('invoiceItems', function ($q) {
                 $q->where('concept_type', 'harvest')
-                  ->whereHas('invoice', fn ($q2) => $q2->where('status', '!=', 'cancelled'));
+                    ->whereHas('invoice', fn ($q2) => $q2->where('status', '!=', 'cancelled'));
             });
         }
 
-        $perPage  = $this->resolvePerPage($request, 20, 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $harvests = $query->orderByDesc('harvest_start_date')->paginate($perPage);
 
         return response()->json([
             'data' => HarvestResource::collection($harvests->items()),
             'meta' => [
-                'total'        => $harvests->total(),
-                'per_page'     => $harvests->perPage(),
+                'total' => $harvests->total(),
+                'per_page' => $harvests->perPage(),
                 'current_page' => $harvests->currentPage(),
-                'last_page'    => $harvests->lastPage(),
+                'last_page' => $harvests->lastPage(),
             ],
         ]);
     }
@@ -77,25 +76,25 @@ class GrapeReceptionController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'viticulturist_id'      => 'required|integer|exists:users,id',
-            'total_weight'          => 'required|numeric|min:0.1',
-            'harvest_start_date'    => 'required|date',
-            'vintage_year'          => 'required|integer|min:2000|max:' . (now()->year + 1),
-            'plot_planting_id'      => 'required|integer|exists:plot_plantings,id',
-            'container_id'          => 'required|integer|exists:containers,id',
-            'baume_degree'          => 'nullable|numeric|between:0,25',
-            'brix_degree'           => 'nullable|numeric|between:0,40',
-            'ph_level'              => 'nullable|numeric|between:2,5',
-            'acidity_level'         => 'nullable|numeric|between:0,20',
-            'price_per_kg'          => 'nullable|numeric|min:0',
-            'notes'                 => 'nullable|string|max:1000',
+            'viticulturist_id' => 'required|integer|exists:users,id',
+            'total_weight' => 'required|numeric|min:0.1',
+            'harvest_start_date' => 'required|date',
+            'vintage_year' => 'required|integer|min:2000|max:'.(now()->year + 1),
+            'plot_planting_id' => 'required|integer|exists:plot_plantings,id',
+            'container_id' => 'required|integer|exists:containers,id',
+            'baume_degree' => 'nullable|numeric|between:0,25',
+            'brix_degree' => 'nullable|numeric|between:0,40',
+            'ph_level' => 'nullable|numeric|between:2,5',
+            'acidity_level' => 'nullable|numeric|between:0,20',
+            'price_per_kg' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string|max:1000',
             'harvest_ticket_number' => 'nullable|string|max:100',
-            'vehicle_plate'         => 'nullable|string|max:20',
+            'vehicle_plate' => 'nullable|string|max:20',
         ]);
 
         // Validate viticulturist is linked to this winery with notebook access granted
         $isSelf = $user->isProducer() && (int) $validated['viticulturist_id'] === $user->id;
-        if (!$isSelf) {
+        if (! $isSelf) {
             WineryViticulturist::where('winery_id', $user->id)
                 ->where('viticulturist_id', $validated['viticulturist_id'])
                 ->where('notebook_access', true)
@@ -108,43 +107,42 @@ class GrapeReceptionController extends Controller
 
         // Validate planting belongs to the viticulturist
         // Validate planting belongs to the viticulturist
-        $planting = PlotPlanting::whereHas('plot', fn ($q) =>
-            $q->where('viticulturist_id', $validated['viticulturist_id'])
+        $planting = PlotPlanting::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $validated['viticulturist_id'])
         )->findOrFail($validated['plot_planting_id']);
 
         $harvest = DB::transaction(function () use ($validated, $user, $planting) {
             $campaignYear = (int) $validated['vintage_year'];
-            $campaign     = Campaign::getOrCreateActiveForYear($user->id, $campaignYear);
+            $campaign = Campaign::getOrCreateActiveForYear($user->id, $campaignYear);
 
             $batch = GrapeReceptionBatch::firstOrCreate([
-                'winery_id'        => $user->id,
+                'winery_id' => $user->id,
                 'viticulturist_id' => $validated['viticulturist_id'],
-                'vintage_year'     => $campaignYear,
+                'vintage_year' => $campaignYear,
                 'plot_planting_id' => $planting->id,
-                'campaign_id'      => $campaign?->id,
+                'campaign_id' => $campaign?->id,
             ], [
-                'status'                => 'open',
-                'total_weight_kg'       => 0,
+                'status' => 'open',
+                'total_weight_kg' => 0,
                 'designation_of_origin' => $planting->designation_of_origin,
             ]);
 
             $harvest = Harvest::create([
-                'winery_id'             => $user->id,
-                'batch_id'              => $batch->id,
-                'plot_planting_id'      => $planting->id,
-                'harvest_start_date'    => $validated['harvest_start_date'],
-                'total_weight'          => $validated['total_weight'],
-                'container_id'          => $validated['container_id'],
-                'baume_degree'          => $validated['baume_degree'] ?? null,
-                'brix_degree'           => $validated['brix_degree'] ?? null,
-                'ph_level'              => $validated['ph_level'] ?? null,
-                'acidity_level'         => $validated['acidity_level'] ?? null,
-                'price_per_kg'          => $validated['price_per_kg'] ?? null,
-                'notes'                 => $validated['notes'] ?? null,
+                'winery_id' => $user->id,
+                'batch_id' => $batch->id,
+                'plot_planting_id' => $planting->id,
+                'harvest_start_date' => $validated['harvest_start_date'],
+                'total_weight' => $validated['total_weight'],
+                'container_id' => $validated['container_id'],
+                'baume_degree' => $validated['baume_degree'] ?? null,
+                'brix_degree' => $validated['brix_degree'] ?? null,
+                'ph_level' => $validated['ph_level'] ?? null,
+                'acidity_level' => $validated['acidity_level'] ?? null,
+                'price_per_kg' => $validated['price_per_kg'] ?? null,
+                'notes' => $validated['notes'] ?? null,
                 'harvest_ticket_number' => $validated['harvest_ticket_number'] ?? null,
-                'vehicle_plate'         => $validated['vehicle_plate'] ?? null,
-                'status'                => 'active',
-                'vintage'               => $campaignYear,
+                'vehicle_plate' => $validated['vehicle_plate'] ?? null,
+                'status' => 'active',
+                'vintage' => $campaignYear,
             ]);
 
             $batch->recalculateTotal();
@@ -167,15 +165,15 @@ class GrapeReceptionController extends Controller
         $harvest = Harvest::where('winery_id', $user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'total_weight'       => 'sometimes|numeric|min:0.1',
+            'total_weight' => 'sometimes|numeric|min:0.1',
             'harvest_start_date' => 'sometimes|date',
-            'container_id'       => 'nullable|integer',
-            'baume_degree'       => 'nullable|numeric|between:0,25',
-            'brix_degree'        => 'nullable|numeric|between:0,40',
-            'ph_level'           => 'nullable|numeric|between:2,5',
-            'acidity_level'      => 'nullable|numeric|between:0,20',
-            'price_per_kg'       => 'nullable|numeric|min:0',
-            'notes'              => 'nullable|string|max:1000',
+            'container_id' => 'nullable|integer',
+            'baume_degree' => 'nullable|numeric|between:0,25',
+            'brix_degree' => 'nullable|numeric|between:0,40',
+            'ph_level' => 'nullable|numeric|between:2,5',
+            'acidity_level' => 'nullable|numeric|between:0,20',
+            'price_per_kg' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         DB::transaction(function () use ($harvest, $validated) {
@@ -219,9 +217,8 @@ class GrapeReceptionController extends Controller
 
         // Solo viticultores con parcelas activas que tengan plantaciones activas
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
-            ->whereHas('viticulturist.plots', fn ($q) =>
-                $q->where('active', true)
-                  ->whereHas('plantings', fn ($p) => $p->where('status', 'active'))
+            ->whereHas('viticulturist.plots', fn ($q) => $q->where('active', true)
+                ->whereHas('plantings', fn ($p) => $p->where('status', 'active'))
             )
             ->pluck('viticulturist_id');
 

@@ -1,11 +1,11 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use App\Models\ContainerCurrentState;
 use App\Models\Harvest;
 use App\Models\HarvestStock;
-use App\Models\ContainerCurrentState;
 use App\Models\InvoiceItem;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -44,7 +44,7 @@ return new class extends Migration
     {
         $harvests = Harvest::with('activity', 'container')->get();
         $total = $harvests->count();
-        
+
         echo "Migrando {$total} cosechas...\n";
 
         foreach ($harvests as $index => $harvest) {
@@ -95,10 +95,10 @@ return new class extends Migration
                 }
 
                 if (($index + 1) % 10 == 0) {
-                    echo "  Procesadas " . ($index + 1) . "/{$total} cosechas...\n";
+                    echo '  Procesadas '.($index + 1)."/{$total} cosechas...\n";
                 }
             } catch (\Exception $e) {
-                echo "  ERROR en harvest {$harvest->id}: " . $e->getMessage() . "\n";
+                echo "  ERROR en harvest {$harvest->id}: ".$e->getMessage()."\n";
             }
         }
 
@@ -114,26 +114,27 @@ return new class extends Migration
         $invoiceItemIds = DB::table('invoice_items')
             ->whereNotNull('harvest_id')
             ->pluck('id');
-        
+
         $invoiceItems = InvoiceItem::withoutGlobalScopes()
             ->whereIn('id', $invoiceItemIds)
             ->with(['harvest.stockMovements', 'invoice'])
             ->get();
 
         $total = $invoiceItems->count();
-        
+
         echo "Migrando {$total} items de factura...\n";
 
         foreach ($invoiceItems as $index => $item) {
             try {
-                if (!$item->harvest) {
+                if (! $item->harvest) {
                     continue;
                 }
 
                 $lastStock = $item->harvest->stockMovements()->latest()->first();
-                
-                if (!$lastStock) {
+
+                if (! $lastStock) {
                     echo "  SKIP: No hay stock inicial para harvest {$item->harvest_id}\n";
+
                     continue;
                 }
 
@@ -147,10 +148,10 @@ return new class extends Migration
                 }
 
                 if (($index + 1) % 10 == 0) {
-                    echo "  Procesados " . ($index + 1) . "/{$total} items...\n";
+                    echo '  Procesados '.($index + 1)."/{$total} items...\n";
                 }
             } catch (\Exception $e) {
-                echo "  ERROR en invoice item {$item->id}: " . $e->getMessage() . "\n";
+                echo "  ERROR en invoice item {$item->id}: ".$e->getMessage()."\n";
             }
         }
 
@@ -159,6 +160,8 @@ return new class extends Migration
 
     /**
      * Crear reserva
+     *
+     * @param mixed $lastStock
      */
     protected function createReservation(InvoiceItem $item, $lastStock): void
     {
@@ -175,7 +178,7 @@ return new class extends Migration
             'sold_qty' => $lastStock->sold_qty,
             'gifted_qty' => $lastStock->gifted_qty,
             'lost_qty' => $lastStock->lost_qty,
-            'notes' => 'Migración automática - Reserva de factura #' . ($item->invoice->invoice_number ?? 'DRAFT'),
+            'notes' => 'Migración automática - Reserva de factura #'.($item->invoice->invoice_number ?? 'DRAFT'),
             'reference_number' => $item->invoice->invoice_number,
             'created_at' => $item->created_at,
             'updated_at' => $item->updated_at,
@@ -195,6 +198,8 @@ return new class extends Migration
 
     /**
      * Crear venta
+     *
+     * @param mixed $lastStock
      */
     protected function createSale(InvoiceItem $item, $lastStock): void
     {
@@ -211,7 +216,7 @@ return new class extends Migration
             'sold_qty' => $lastStock->sold_qty + $item->quantity,
             'gifted_qty' => $lastStock->gifted_qty,
             'lost_qty' => $lastStock->lost_qty,
-            'notes' => 'Migración automática - Venta de factura #' . $item->invoice->invoice_number,
+            'notes' => 'Migración automática - Venta de factura #'.$item->invoice->invoice_number,
             'reference_number' => $item->invoice->invoice_number,
             'created_at' => $item->created_at,
             'updated_at' => $item->updated_at,

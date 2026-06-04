@@ -20,9 +20,9 @@ class HarvestDeclarationController extends Controller
 
         $request->validate([
             'campaign_id' => 'nullable|integer',
-            'status'      => 'nullable|string|in:draft,submitted,accepted,rejected',
-            'search'      => 'nullable|string|max:100',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'status' => 'nullable|string|in:draft,submitted,accepted,rejected',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = HarvestDeclaration::forViticulturist($user->id)
@@ -43,10 +43,10 @@ class HarvestDeclarationController extends Controller
         return response()->json([
             'data' => HarvestDeclarationResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -57,15 +57,15 @@ class HarvestDeclarationController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'       => 'nullable|integer|exists:campaigns,id',
-            'declaration_year'  => 'required|integer|min:2000|max:2100',
-            'declaration_date'  => 'required|date',
-            'authority'         => 'nullable|string|max:255',
-            'reference_number'  => 'nullable|string|max:100',
-            'total_surface_ha'  => 'nullable|numeric|min:0',
-            'total_kg'          => 'nullable|numeric|min:0',
-            'status'            => 'nullable|string|max:50',
-            'notes'             => 'nullable|string|max:2000',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'declaration_year' => 'required|integer|min:2000|max:2100',
+            'declaration_date' => 'required|date',
+            'authority' => 'nullable|string|max:255',
+            'reference_number' => 'nullable|string|max:100',
+            'total_surface_ha' => 'nullable|numeric|min:0',
+            'total_kg' => 'nullable|numeric|min:0',
+            'status' => 'nullable|string|max:50',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (empty($validated['campaign_id'])) {
@@ -77,7 +77,7 @@ class HarvestDeclarationController extends Controller
         $record = \App\Models\HarvestDeclaration::create([...$validated, 'viticulturist_id' => $user->id, 'status' => $validated['status'] ?? 'draft', 'active' => true]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\HarvestDeclarationResource($record),
+            'data' => new \App\Http\Resources\Api\HarvestDeclarationResource($record),
             'message' => __('Declaración de cosecha registrada correctamente.'),
         ], 201);
     }

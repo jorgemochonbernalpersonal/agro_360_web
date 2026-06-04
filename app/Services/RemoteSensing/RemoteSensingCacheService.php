@@ -13,27 +13,38 @@ class RemoteSensingCacheService implements CacheServiceInterface
 {
     // Cache TTLs (Time To Live)
     private const TTL_WEATHER = 3600;        // 1 hour
+
     private const TTL_NDVI = 86400;          // 24 hours
+
     private const TTL_FORECAST = 7200;       // 2 hours
+
     private const TTL_SOIL = 3600;           // 1 hour
+
     private const TTL_SOLAR = 3600;          // 1 hour
+
     private const TTL_NASA_TOKEN = 86400;    // 24 hours
 
     // Cache key prefixes
     private const PREFIX = 'remote_sensing';
-    private const PREFIX_WEATHER = self::PREFIX . ':weather';
-    private const PREFIX_NDVI = self::PREFIX . ':ndvi';
-    private const PREFIX_FORECAST = self::PREFIX . ':forecast';
-    private const PREFIX_SOIL = self::PREFIX . ':soil';
-    private const PREFIX_SOLAR = self::PREFIX . ':solar';
-    private const PREFIX_NASA_TOKEN = self::PREFIX . ':nasa_token';
+
+    private const PREFIX_WEATHER = self::PREFIX.':weather';
+
+    private const PREFIX_NDVI = self::PREFIX.':ndvi';
+
+    private const PREFIX_FORECAST = self::PREFIX.':forecast';
+
+    private const PREFIX_SOIL = self::PREFIX.':soil';
+
+    private const PREFIX_SOLAR = self::PREFIX.':solar';
+
+    private const PREFIX_NASA_TOKEN = self::PREFIX.':nasa_token';
 
     /**
      * Get cache key for weather data
      */
     public function getWeatherKey(Plot $plot): string
     {
-        return self::PREFIX_WEATHER . ":{$plot->id}";
+        return self::PREFIX_WEATHER.":{$plot->id}";
     }
 
     /**
@@ -41,7 +52,7 @@ class RemoteSensingCacheService implements CacheServiceInterface
      */
     public function getNdviKey(Plot $plot): string
     {
-        return self::PREFIX_NDVI . ":latest:{$plot->id}";
+        return self::PREFIX_NDVI.":latest:{$plot->id}";
     }
 
     /**
@@ -49,7 +60,7 @@ class RemoteSensingCacheService implements CacheServiceInterface
      */
     public function getNdviHistoricalKey(Plot $plot): string
     {
-        return self::PREFIX_NDVI . ":historical:{$plot->id}";
+        return self::PREFIX_NDVI.":historical:{$plot->id}";
     }
 
     /**
@@ -57,7 +68,7 @@ class RemoteSensingCacheService implements CacheServiceInterface
      */
     public function getForecastKey(Plot $plot, int $days): string
     {
-        return self::PREFIX_FORECAST . ":{$plot->id}:{$days}";
+        return self::PREFIX_FORECAST.":{$plot->id}:{$days}";
     }
 
     /**
@@ -65,7 +76,7 @@ class RemoteSensingCacheService implements CacheServiceInterface
      */
     public function getSoilKey(Plot $plot): string
     {
-        return self::PREFIX_SOIL . ":{$plot->id}";
+        return self::PREFIX_SOIL.":{$plot->id}";
     }
 
     /**
@@ -73,7 +84,7 @@ class RemoteSensingCacheService implements CacheServiceInterface
      */
     public function getSolarKey(Plot $plot): string
     {
-        return self::PREFIX_SOLAR . ":{$plot->id}";
+        return self::PREFIX_SOLAR.":{$plot->id}";
     }
 
     /**
@@ -142,6 +153,8 @@ class RemoteSensingCacheService implements CacheServiceInterface
 
     /**
      * Put in cache with a custom key and TTL
+     *
+     * @param mixed $value
      */
     public function put(string $key, $value, int $ttl): void
     {
@@ -166,7 +179,7 @@ class RemoteSensingCacheService implements CacheServiceInterface
         Cache::forget($this->getNdviHistoricalKey($plot));
         Cache::forget($this->getSoilKey($plot));
         Cache::forget($this->getSolarKey($plot));
-        
+
         // Clear all forecast variants (1-7 days)
         for ($days = 1; $days <= 7; $days++) {
             Cache::forget($this->getForecastKey($plot, $days));
@@ -181,7 +194,7 @@ class RemoteSensingCacheService implements CacheServiceInterface
         Cache::forget($this->getWeatherKey($plot));
         Cache::forget($this->getSoilKey($plot));
         Cache::forget($this->getSolarKey($plot));
-        
+
         for ($days = 1; $days <= 7; $days++) {
             Cache::forget($this->getForecastKey($plot, $days));
         }

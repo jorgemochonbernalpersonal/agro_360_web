@@ -7,7 +7,6 @@ use App\Models\Campaign;
 use App\Models\Harvest;
 use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -40,12 +39,12 @@ class DashboardController extends Controller
         return response()->json([
             'campaign_year' => $currentYear,
             'supervised' => [
-                'wineries'       => $wineryIds->count(),
+                'wineries' => $wineryIds->count(),
                 'viticulturists' => $viticulturistIds->count(),
             ],
             'harvest_stats' => [
                 'receptions' => (int) ($harvestStats->receptions ?? 0),
-                'total_kg'   => (float) ($harvestStats->total_kg ?? 0),
+                'total_kg' => (float) ($harvestStats->total_kg ?? 0),
             ],
             'active_campaigns' => $activeCampaigns,
         ]);

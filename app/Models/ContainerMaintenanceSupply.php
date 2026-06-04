@@ -19,7 +19,7 @@ class ContainerMaintenanceSupply extends Model
 
     protected $casts = [
         'quantity_used' => 'decimal:3',
-        'cost'          => 'decimal:2',
+        'cost' => 'decimal:2',
     ];
 
     public function maintenance(): BelongsTo

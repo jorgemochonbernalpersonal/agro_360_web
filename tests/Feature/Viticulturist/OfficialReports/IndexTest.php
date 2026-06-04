@@ -4,31 +4,12 @@ namespace Tests\Feature\Viticulturist\OfficialReports;
 
 use App\Livewire\Viticulturist\OfficialReports\Index;
 use App\Models\OfficialReport;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makeReport(int $userId, array $overrides = []): OfficialReport
-    {
-        return OfficialReport::create(array_merge([
-            'user_id'           => $userId,
-            'report_type'       => 'phytosanitary_treatments',
-            'period_start'      => now()->subMonth()->toDateString(),
-            'period_end'        => now()->toDateString(),
-            'verification_code' => strtoupper(\Illuminate\Support\Str::random(32)),
-            'signature_hash'    => hash('sha256', uniqid()),
-            'is_valid'          => true,
-            'processing_status' => 'completed',
-            'signed_at'         => now(),
-            'signed_ip'         => '127.0.0.1',
-        ], $overrides));
-    }
-
     // ── Index listing ──────────────────────────────────────────────────────────
 
     public function test_index_shows_own_reports(): void
@@ -42,7 +23,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_index_does_not_show_other_users_reports(): void
     {
-        $v     = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $other = $this->makeOtherViticulturist();
         $this->makeReport($other->id, ['processing_status' => 'completed']);
         $this->actingAs($v);
@@ -60,9 +41,9 @@ class IndexTest extends ViticulturistTestCase
         $v = $this->makeViticulturist();
         $this->makeReport($v->id, ['is_valid' => true]);
         $this->makeReport($v->id, [
-            'is_valid'           => false,
+            'is_valid' => false,
             'invalidation_reason' => 'Error detectado.',
-            'invalidated_at'     => now(),
+            'invalidated_at' => now(),
         ]);
         $this->actingAs($v);
 
@@ -78,9 +59,9 @@ class IndexTest extends ViticulturistTestCase
         $v = $this->makeViticulturist();
         $this->makeReport($v->id, ['is_valid' => true]);
         $this->makeReport($v->id, [
-            'is_valid'           => false,
+            'is_valid' => false,
             'invalidation_reason' => 'Motivo de prueba.',
-            'invalidated_at'     => now(),
+            'invalidated_at' => now(),
         ]);
         $this->actingAs($v);
 
@@ -94,9 +75,9 @@ class IndexTest extends ViticulturistTestCase
     {
         $v = $this->makeViticulturist();
         $this->makeReport($v->id, [
-            'is_valid'           => false,
+            'is_valid' => false,
             'invalidation_reason' => 'Motivo de prueba.',
-            'invalidated_at'     => now(),
+            'invalidated_at' => now(),
         ]);
         $this->actingAs($v);
 
@@ -122,7 +103,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_open_invalidate_modal_for_own_valid_recent_report(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id, ['signed_at' => now()]);
         $this->actingAs($v);
 
@@ -134,8 +115,8 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_cannot_open_invalidate_modal_for_other_users_report(): void
     {
-        $v      = $this->makeViticulturist();
-        $other  = $this->makeOtherViticulturist();
+        $v = $this->makeViticulturist();
+        $other = $this->makeOtherViticulturist();
         $report = $this->makeReport($other->id, ['signed_at' => now()]);
         $this->actingAs($v);
 
@@ -146,12 +127,12 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_cannot_open_invalidate_modal_for_already_invalid_report(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id, [
-            'is_valid'           => false,
+            'is_valid' => false,
             'invalidation_reason' => 'Ya estaba invalidado.',
-            'invalidated_at'     => now(),
-            'signed_at'          => now(),
+            'invalidated_at' => now(),
+            'signed_at' => now(),
         ]);
         $this->actingAs($v);
 
@@ -162,7 +143,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_cannot_open_invalidate_modal_for_report_older_than_30_days(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id, [
             'signed_at' => now()->subDays(31),
         ]);
@@ -187,14 +168,14 @@ class IndexTest extends ViticulturistTestCase
             ->call('invalidateReport');
 
         $this->assertDatabaseHas('official_reports', [
-            'id'       => $report->id,
+            'id' => $report->id,
             'is_valid' => false,
         ]);
     }
 
     public function test_invalidate_report_requires_reason_min_10_chars(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id, ['signed_at' => now()]);
         $this->actingAs($v);
 
@@ -210,7 +191,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_invalidate_report_with_wrong_password_fails(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id, ['signed_at' => now()]);
         $this->actingAs($v);
 
@@ -226,7 +207,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_close_invalidate_modal_resets_state(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id, ['signed_at' => now()]);
         $this->actingAs($v);
 
@@ -243,7 +224,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_open_share_modal_for_own_report(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id);
         $this->actingAs($v);
 
@@ -255,8 +236,8 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_cannot_open_share_modal_for_other_users_report(): void
     {
-        $v      = $this->makeViticulturist();
-        $other  = $this->makeOtherViticulturist();
+        $v = $this->makeViticulturist();
+        $other = $this->makeOtherViticulturist();
         $report = $this->makeReport($other->id);
         $this->actingAs($v);
 
@@ -267,7 +248,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_share_report_validates_email(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id);
         $this->actingAs($v);
 
@@ -282,7 +263,7 @@ class IndexTest extends ViticulturistTestCase
     {
         Mail::fake();
 
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id);
         $this->actingAs($v);
 
@@ -300,7 +281,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_close_share_modal_resets_state(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id);
         $this->actingAs($v);
 
@@ -317,7 +298,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_open_preview_modal_for_own_report(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id);
         $this->actingAs($v);
 
@@ -329,8 +310,8 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_cannot_open_preview_modal_for_other_users_report(): void
     {
-        $v      = $this->makeViticulturist();
-        $other  = $this->makeOtherViticulturist();
+        $v = $this->makeViticulturist();
+        $other = $this->makeOtherViticulturist();
         $report = $this->makeReport($other->id);
         $this->actingAs($v);
 
@@ -343,7 +324,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_download_fails_when_report_not_completed(): void
     {
-        $v      = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $report = $this->makeReport($v->id, ['processing_status' => 'pending']);
         $this->actingAs($v);
 
@@ -355,13 +336,30 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_download_of_other_users_report_is_rejected(): void
     {
-        $v      = $this->makeViticulturist();
-        $other  = $this->makeOtherViticulturist();
+        $v = $this->makeViticulturist();
+        $other = $this->makeOtherViticulturist();
         $report = $this->makeReport($other->id, ['processing_status' => 'completed']);
         $this->actingAs($v);
 
         Livewire::test(Index::class)
             ->call('downloadInFormat', $report->id, 'pdf')
             ->assertOk(); // No exception, just error toast
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makeReport(int $userId, array $overrides = []): OfficialReport
+    {
+        return OfficialReport::create(array_merge([
+            'user_id' => $userId,
+            'report_type' => 'phytosanitary_treatments',
+            'period_start' => now()->subMonth()->toDateString(),
+            'period_end' => now()->toDateString(),
+            'verification_code' => strtoupper(\Illuminate\Support\Str::random(32)),
+            'signature_hash' => hash('sha256', uniqid()),
+            'is_valid' => true,
+            'processing_status' => 'completed',
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
+        ], $overrides));
     }
 }

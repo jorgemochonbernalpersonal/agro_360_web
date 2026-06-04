@@ -16,9 +16,9 @@ class CleanStaleInvitations extends Command
 
     public function handle(): int
     {
-        $days    = (int) $this->option('days');
-        $dryRun  = $this->option('dry-run');
-        $cutoff  = now()->subDays($days);
+        $days = (int) $this->option('days');
+        $dryRun = $this->option('dry-run');
+        $cutoff = now()->subDays($days);
 
         // Ghosts cuya invitación expiró hace más de $days días
         $stale = User::where('role', 'viticulturist')
@@ -29,12 +29,13 @@ class CleanStaleInvitations extends Command
 
         if ($stale->isEmpty()) {
             $this->info('No hay invitaciones caducadas que limpiar.');
+
             return self::SUCCESS;
         }
 
         $this->table(
             ['ID', 'Nombre', 'Email', 'Invitación enviada', 'Expiró'],
-            $stale->map(fn($u) => [
+            $stale->map(fn ($u) => [
                 $u->id,
                 $u->name,
                 $u->email,
@@ -45,24 +46,26 @@ class CleanStaleInvitations extends Command
 
         if ($dryRun) {
             $this->warn("Modo dry-run: {$stale->count()} invitaciones caducadas encontradas. Sin cambios.");
+
             return self::SUCCESS;
         }
 
-        if (!$this->confirm("¿Limpiar tokens de {$stale->count()} viticultor(es)? (Los usuarios NO se eliminan)")) {
+        if (! $this->confirm("¿Limpiar tokens de {$stale->count()} viticultor(es)? (Los usuarios NO se eliminan)")) {
             $this->info('Operación cancelada.');
+
             return self::SUCCESS;
         }
 
         $ids = $stale->pluck('id');
 
         User::whereIn('id', $ids)->update([
-            'invitation_token'      => null,
-            'invitation_sent_at'    => null,
+            'invitation_token' => null,
+            'invitation_sent_at' => null,
             'invitation_expires_at' => null,
         ]);
 
         Log::info('CleanStaleInvitations: tokens limpiados', [
-            'count'    => $stale->count(),
+            'count' => $stale->count(),
             'user_ids' => $ids->toArray(),
         ]);
 

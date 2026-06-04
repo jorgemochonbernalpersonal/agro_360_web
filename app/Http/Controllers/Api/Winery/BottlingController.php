@@ -25,7 +25,7 @@ class BottlingController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
-            'wine_id'  => 'nullable|integer',
+            'wine_id' => 'nullable|integer',
             'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
@@ -37,16 +37,16 @@ class BottlingController extends Controller
             $query->where('wine_id', $request->integer('wine_id'));
         }
 
-        $perPage    = $this->resolvePerPage($request, 20, 100);
-        $bottlings  = $query->paginate($perPage);
+        $perPage = $this->resolvePerPage($request, 20, 100);
+        $bottlings = $query->paginate($perPage);
 
         return response()->json([
             'data' => BottlingResource::collection($bottlings),
             'meta' => [
-                'total'        => $bottlings->total(),
-                'per_page'     => $bottlings->perPage(),
+                'total' => $bottlings->total(),
+                'per_page' => $bottlings->perPage(),
                 'current_page' => $bottlings->currentPage(),
-                'last_page'    => $bottlings->lastPage(),
+                'last_page' => $bottlings->lastPage(),
                 'bottle_formats' => WineBottling::bottleFormatOptions(),
             ],
         ]);
@@ -74,24 +74,24 @@ class BottlingController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'                 => 'required|integer|exists:wines,id',
-            'container_id'            => 'nullable|integer|exists:containers,id',
-            'wine_process_detail_id'  => 'nullable|integer|exists:wine_process_details,id',
-            'product_lot_id'          => 'nullable|integer|exists:wine_lots,id',
-            'oenologist_id'           => 'nullable|integer|exists:oenologists,id',
-            'bottling_date'           => 'required|date',
-            'bottle_format'           => 'required|string|in:' . implode(',', array_keys(WineBottling::BOTTLE_FORMATS)),
-            'quantity_bottles'        => 'required|integer|min:1',
-            'quantity_liters'         => 'required|numeric|min:0',
-            'lot_number'              => 'nullable|string|max:100',
-            'notes'                   => 'nullable|string|max:2000',
+            'wine_id' => 'required|integer|exists:wines,id',
+            'container_id' => 'nullable|integer|exists:containers,id',
+            'wine_process_detail_id' => 'nullable|integer|exists:wine_process_details,id',
+            'product_lot_id' => 'nullable|integer|exists:wine_lots,id',
+            'oenologist_id' => 'nullable|integer|exists:oenologists,id',
+            'bottling_date' => 'required|date',
+            'bottle_format' => 'required|string|in:'.implode(',', array_keys(WineBottling::BOTTLE_FORMATS)),
+            'quantity_bottles' => 'required|integer|min:1',
+            'quantity_liters' => 'required|numeric|min:0',
+            'lot_number' => 'nullable|string|max:100',
+            'notes' => 'nullable|string|max:2000',
             // Insumos usados en el embotellado
-            'supplies'                        => 'nullable|array|max:20',
-            'supplies.*.winery_supply_id'     => 'nullable|integer|exists:winery_supplies,id',
-            'supplies.*.supply_name'          => 'required_without:supplies.*.winery_supply_id|string|max:255',
-            'supplies.*.quantity'             => 'nullable|numeric|min:0',
+            'supplies' => 'nullable|array|max:20',
+            'supplies.*.winery_supply_id' => 'nullable|integer|exists:winery_supplies,id',
+            'supplies.*.supply_name' => 'required_without:supplies.*.winery_supply_id|string|max:255',
+            'supplies.*.quantity' => 'nullable|numeric|min:0',
             'supplies.*.unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-            'supplies.*.notes'                => 'nullable|string|max:500',
+            'supplies.*.notes' => 'nullable|string|max:500',
         ]);
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
@@ -112,18 +112,18 @@ class BottlingController extends Controller
         $bottling = DB::transaction(function () use ($validated, $suppliesData, $user) {
             $bottling = WineBottling::create([
                 ...$validated,
-                'user_id'    => $user->id,
+                'user_id' => $user->id,
                 'created_by' => $user->id,
             ]);
 
             foreach ($suppliesData as $supply) {
                 WineBottlingSupply::create([
-                    'wine_bottling_id'       => $bottling->id,
-                    'winery_supply_id'       => $supply['winery_supply_id'] ?? null,
-                    'supply_name'            => $supply['supply_name'] ?? null,
-                    'quantity'               => $supply['quantity'] ?? null,
+                    'wine_bottling_id' => $bottling->id,
+                    'winery_supply_id' => $supply['winery_supply_id'] ?? null,
+                    'supply_name' => $supply['supply_name'] ?? null,
+                    'quantity' => $supply['quantity'] ?? null,
                     'unit_of_measurement_id' => $supply['unit_of_measurement_id'] ?? null,
-                    'notes'                  => $supply['notes'] ?? null,
+                    'notes' => $supply['notes'] ?? null,
                 ]);
             }
 
@@ -135,7 +135,7 @@ class BottlingController extends Controller
         $bottling->load(['wine', 'container', 'productLot', 'oenologist', 'supplies']);
 
         return response()->json([
-            'data'    => new BottlingResource($bottling),
+            'data' => new BottlingResource($bottling),
             'message' => __('Embotellado registrado correctamente.'),
         ], 201);
     }
@@ -150,15 +150,15 @@ class BottlingController extends Controller
         $bottling = WineBottling::forUser($user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'container_id'   => 'sometimes|nullable|integer|exists:containers,id',
+            'container_id' => 'sometimes|nullable|integer|exists:containers,id',
             'product_lot_id' => 'sometimes|nullable|integer|exists:wine_lots,id',
-            'oenologist_id'  => 'sometimes|nullable|integer|exists:oenologists,id',
-            'bottling_date'  => 'sometimes|date',
-            'bottle_format'  => 'sometimes|string|in:' . implode(',', array_keys(WineBottling::BOTTLE_FORMATS)),
+            'oenologist_id' => 'sometimes|nullable|integer|exists:oenologists,id',
+            'bottling_date' => 'sometimes|date',
+            'bottle_format' => 'sometimes|string|in:'.implode(',', array_keys(WineBottling::BOTTLE_FORMATS)),
             'quantity_bottles' => 'sometimes|integer|min:1',
-            'quantity_liters'  => 'sometimes|numeric|min:0',
-            'lot_number'       => 'sometimes|nullable|string|max:100',
-            'notes'            => 'sometimes|nullable|string|max:2000',
+            'quantity_liters' => 'sometimes|numeric|min:0',
+            'lot_number' => 'sometimes|nullable|string|max:100',
+            'notes' => 'sometimes|nullable|string|max:2000',
         ]);
 
         if (isset($validated['container_id'])) {
@@ -172,9 +172,9 @@ class BottlingController extends Controller
         }
 
         $oldData = [
-            'wine_id'        => $bottling->wine_id,
-            'container_id'   => $bottling->container_id,
-            'quantity_liters'=> $bottling->quantity_liters,
+            'wine_id' => $bottling->wine_id,
+            'container_id' => $bottling->container_id,
+            'quantity_liters' => $bottling->quantity_liters,
         ];
 
         DB::transaction(function () use ($bottling, $validated, $oldData) {

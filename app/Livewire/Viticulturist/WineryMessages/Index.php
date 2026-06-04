@@ -44,7 +44,7 @@ class Index extends Component
 
         return view('livewire.viticulturist.winery-messages.index', [
             'notifications' => $notifications,
-            'unreadCount'   => $unreadCount,
+            'unreadCount' => $unreadCount,
         ])->layout('layouts.app');
     }
 }

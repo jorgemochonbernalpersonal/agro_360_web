@@ -15,34 +15,27 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
 
     public Container $container;
 
-    public string $winery_supply_id       = '';
-    public string $additive_name          = '';
-    public string $quantity               = '';
+    public string $winery_supply_id = '';
+
+    public string $additive_name = '';
+
+    public string $quantity = '';
+
     public string $unit_of_measurement_id = '';
-    public string $additive_date          = '';
-    public string $notes                  = '';
+
+    public string $additive_date = '';
+
+    public string $notes = '';
 
     public function mount(Container $container): void
     {
         abort_if($container->user_id !== Auth::id(), 403);
-        $this->container    = $container;
+        $this->container = $container;
         $this->additive_date = now()->toDateString();
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'winery_supply_id'       => $this->ownedWinerySupplyRule(false),
-            'additive_name'          => ['nullable', 'string', 'max:200'],
-            'quantity'               => ['required', 'numeric', 'min:0.001'],
-            'unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
-            'additive_date'          => ['required', 'date'],
-            'notes'                  => ['nullable', 'string'],
-        ];
     }
 
     public function save(): void
@@ -55,15 +48,15 @@ class Create extends Component
             ->first();
 
         ContainerAdditiveSupply::create([
-            'container_id'             => $this->container->id,
+            'container_id' => $this->container->id,
             'container_current_state_id' => $currentState?->id,
-            'winery_supply_id'         => $this->winery_supply_id ?: null,
-            'additive_name'            => $this->additive_name ?: null,
-            'quantity'                 => $this->quantity,
-            'unit_of_measurement_id'   => $this->unit_of_measurement_id ?: null,
-            'additive_date'            => $this->additive_date,
-            'created_by'               => Auth::id(),
-            'notes'                    => $this->notes ?: null,
+            'winery_supply_id' => $this->winery_supply_id ?: null,
+            'additive_name' => $this->additive_name ?: null,
+            'quantity' => $this->quantity,
+            'unit_of_measurement_id' => $this->unit_of_measurement_id ?: null,
+            'additive_date' => $this->additive_date,
+            'created_by' => Auth::id(),
+            'notes' => $this->notes ?: null,
         ]);
 
         $this->toastSuccess(__('Aditivo registrado correctamente.'));
@@ -74,7 +67,19 @@ class Create extends Component
     {
         return view('livewire.winery.cellar.containers.additives.create', [
             'winerySupplies' => WinerySupply::where('user_id', Auth::id())->active()->orderBy('name')->get(),
-            'units'          => UnitOfMeasurement::orderBy('name')->get(),
+            'units' => UnitOfMeasurement::orderBy('name')->get(),
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'winery_supply_id' => $this->ownedWinerySupplyRule(false),
+            'additive_name' => ['nullable', 'string', 'max:200'],
+            'quantity' => ['required', 'numeric', 'min:0.001'],
+            'unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
+            'additive_date' => ['required', 'date'],
+            'notes' => ['nullable', 'string'],
+        ];
     }
 }

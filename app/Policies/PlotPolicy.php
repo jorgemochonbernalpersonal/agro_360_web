@@ -15,7 +15,7 @@ class PlotPolicy
 
     public function view(User $user, Plot $plot): bool
     {
-        return match($user->role) {
+        return match ($user->role) {
             'admin' => true,
             'supervisor' => $this->canViewPlotAsSupervisor($user, $plot),
             'winery' => $this->canViewPlotAsWinery($user, $plot),
@@ -26,10 +26,10 @@ class PlotPolicy
 
     public function create(User $user): bool
     {
-        if (!in_array($user->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer'])) {
+        if (! in_array($user->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer'])) {
             return false;
         }
-        
+
         // Admin, supervisor y winery siempre pueden crear
         // Los viticultores también pueden crear parcelas para ellos mismos o para viticultores que hayan creado
         return true;
@@ -37,7 +37,7 @@ class PlotPolicy
 
     public function update(User $user, Plot $plot): bool
     {
-        return match($user->role) {
+        return match ($user->role) {
             'admin' => true,
             'supervisor' => $this->canUpdatePlotAsSupervisor($user, $plot),
             'winery' => $this->canUpdatePlotAsWinery($user, $plot),
@@ -56,13 +56,13 @@ class PlotPolicy
      */
     protected function canViewPlotAsSupervisor(User $user, Plot $plot): bool
     {
-        if (!$plot->viticulturist_id) {
+        if (! $plot->viticulturist_id) {
             return false;
         }
-        
+
         // Verificar si el viticultor de la parcela pertenece a alguna winery supervisada
         $supervisedWineryIds = $user->supervisedWineries->pluck('winery_id');
-        
+
         return WineryViticulturist::where('viticulturist_id', $plot->viticulturist_id)
             ->whereIn('winery_id', $supervisedWineryIds)
             ->exists();
@@ -73,10 +73,10 @@ class PlotPolicy
      */
     protected function canViewPlotAsWinery(User $user, Plot $plot): bool
     {
-        if (!$plot->viticulturist_id) {
+        if (! $plot->viticulturist_id) {
             return false;
         }
-        
+
         // Verificar si el viticultor de la parcela pertenece a esta winery
         return WineryViticulturist::where('viticulturist_id', $plot->viticulturist_id)
             ->where('winery_id', $user->id)
@@ -96,15 +96,15 @@ class PlotPolicy
      */
     protected function canUpdatePlotAsWinery(User $user, Plot $plot): bool
     {
-        if (!$this->canViewPlotAsWinery($user, $plot)) {
+        if (! $this->canViewPlotAsWinery($user, $plot)) {
             return false;
         }
-        
+
         // Solo puede editar si el viticultor fue creado por la winery o si no hay viticultor asignado
         if ($plot->viticulturist_id === null) {
             return true;
         }
-        
+
         return $this->canEditViticulturistForPlot($user, $plot->viticulturist_id);
     }
 
@@ -118,7 +118,7 @@ class PlotPolicy
         if ($plot->viticulturist_id === $user->id) {
             return true;
         }
-        
+
         // Verificar si la parcela está en el conjunto de parcelas visibles para el viticultor
         return Plot::forViticulturist($user)
             ->where('id', $plot->id)
@@ -134,12 +134,12 @@ class PlotPolicy
         if ($plot->viticulturist_id === $user->id) {
             return true;
         }
-        
+
         // Solo puede editar si el viticultor de la parcela fue creado por él
         if ($plot->viticulturist_id) {
             return $user->canEditViticulturist($plot->viticulturist_id);
         }
-        
+
         return false;
     }
 
@@ -148,15 +148,15 @@ class PlotPolicy
      */
     protected function canEditViticulturistForPlot(User $user, ?int $viticulturistId): bool
     {
-        if (!$viticulturistId) {
+        if (! $viticulturistId) {
             return false;
         }
-        
+
         // Solo puede editar si el viticultor fue creado por el usuario
         if ($user->hasViticulturistAccess()) {
             return $user->canEditViticulturist($viticulturistId);
         }
-        
+
         // Para winery: verificar si el viticultor fue creado por la winery
         if ($user->hasWineryAccess()) {
             return WineryViticulturist::where('viticulturist_id', $viticulturistId)
@@ -165,7 +165,7 @@ class PlotPolicy
                 ->where('assigned_by', $user->id)
                 ->exists();
         }
-        
+
         return false;
     }
 }

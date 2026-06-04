@@ -18,17 +18,20 @@ class Index extends AbstractIndex
         $this->filterCampaign = (string) ($campaign?->id ?? '');
     }
 
-    public function updatingFilterCampaign(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingFilterCampaign(): void
     {
-        return ['filterCampaign' => ''];
+        $this->resetPage();
     }
 
     public function delete(int $id): void
     {
         $this->findOwned(PlotEnvironment::class, $id)->delete();
         $this->toastSuccess(__('Registro eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['filterCampaign' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -44,23 +47,26 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['plot_id', 'asc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['plot_id', 'asc'];
+    }
 
     protected function viewData(mixed $entries): array
     {
         $base = PlotEnvironment::where('viticulturist_id', $this->viticulturistId());
 
         $stats = [
-            'total'     => (clone $base)->count(),
-            'water'     => (clone $base)->where('water_intake_nearby', true)->count(),
-            'protected' => (clone $base)->where(fn($q) => $q->where('protected_zone_total', true)->orWhere('protected_zone_partial', true))->count(),
-            'erosion'   => (clone $base)->where('erosion_risk', true)->count(),
+            'total' => (clone $base)->count(),
+            'water' => (clone $base)->where('water_intake_nearby', true)->count(),
+            'protected' => (clone $base)->where(fn ($q) => $q->where('protected_zone_total', true)->orWhere('protected_zone_partial', true))->count(),
+            'erosion' => (clone $base)->where('erosion_risk', true)->count(),
         ];
 
         return [
-            'entries'   => $entries,
+            'entries' => $entries,
             'campaigns' => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
-            'stats'     => $stats,
+            'stats' => $stats,
         ];
     }
 }

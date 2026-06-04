@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
+    // Constantes para estados
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_COMPLETED = 'completed';
+
+    public const STATUS_FAILED = 'failed';
+
+    public const STATUS_REFUNDED = 'refunded';
+
     protected $fillable = [
         'user_id',
         'subscription_id',
@@ -24,12 +33,6 @@ class Payment extends Model
         'paid_at' => 'datetime',
         'paypal_response' => 'array',
     ];
-
-    // Constantes para estados
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_COMPLETED = 'completed';
-    public const STATUS_FAILED = 'failed';
-    public const STATUS_REFUNDED = 'refunded';
 
     /**
      * Relación con el usuario

@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Viticulturist\Harvests;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
 use App\Models\HarvestDelivery;
 use App\Models\PlotPlanting;
 use App\Notifications\HarvestDeliveryDisputedNotification;
-use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -15,11 +15,13 @@ class Show extends Component
     use WithToastNotifications;
 
     public PlotPlanting $planting;
+
     public int $vintageYear;
 
     // Dispute form
-    public string $disputeNote     = '';
-    public ?int   $disputingId     = null; // ID de la HarvestDelivery que se está reclamando
+    public string $disputeNote = '';
+
+    public ?int $disputingId = null; // ID de la HarvestDelivery que se está reclamando
 
     public function mount(PlotPlanting $planting): void
     {
@@ -28,7 +30,7 @@ class Show extends Component
             403
         );
 
-        $this->planting    = $planting;
+        $this->planting = $planting;
         $this->vintageYear = (int) request('vintage', now()->year);
     }
 
@@ -50,8 +52,8 @@ class Show extends Component
             'disputeNote' => ['required', 'string', 'min:10', 'max:1000'],
         ], [
             'disputeNote.required' => __('Explica el motivo de la reclamación.'),
-            'disputeNote.min'      => __('La nota debe tener al menos 10 caracteres.'),
-            'disputeNote.max'      => __('La nota no puede superar los 1000 caracteres.'),
+            'disputeNote.min' => __('La nota debe tener al menos 10 caracteres.'),
+            'disputeNote.max' => __('La nota no puede superar los 1000 caracteres.'),
         ]);
 
         $delivery = HarvestDelivery::where('viticulturist_id', Auth::id())
@@ -60,7 +62,7 @@ class Show extends Component
             ->findOrFail($this->disputingId);
 
         $delivery->update([
-            'dispute_note'         => $this->disputeNote,
+            'dispute_note' => $this->disputeNote,
             'dispute_submitted_at' => now(),
         ]);
 
@@ -108,34 +110,34 @@ class Show extends Component
             ->orderBy('delivery_date')
             ->get();
 
-        $totalNotebook    = (float) $notebookHarvests->sum('total_weight');
-        $totalWinery      = (float) $wineryReceptions->sum('total_weight');
-        $totalDeclared    = (float) $declaredDeliveries->where('disqualified', false)->sum('delivered_kg');
+        $totalNotebook = (float) $notebookHarvests->sum('total_weight');
+        $totalWinery = (float) $wineryReceptions->sum('total_weight');
+        $totalDeclared = (float) $declaredDeliveries->where('disqualified', false)->sum('delivered_kg');
         $globalDiscrepancy = $totalNotebook > 0 && $totalWinery > 0
             ? round(abs($totalNotebook - $totalWinery), 1)
             : null;
 
         // Cupo PAC
-        $cupoKg       = $this->planting->effectiveHarvestLimitKg($this->vintageYear);
-        $totalRef     = $totalWinery > 0 ? $totalWinery : $totalDeclared; // base real para % uso
-        $cupoPct      = ($cupoKg && $cupoKg > 0 && $totalRef > 0)
+        $cupoKg = $this->planting->effectiveHarvestLimitKg($this->vintageYear);
+        $totalRef = $totalWinery > 0 ? $totalWinery : $totalDeclared; // base real para % uso
+        $cupoPct = ($cupoKg && $cupoKg > 0 && $totalRef > 0)
             ? round($totalRef / $cupoKg * 100, 1)
             : null;
         $cupoExceeded = $cupoPct !== null && $cupoPct > 100;
 
         return view('livewire.viticulturist.harvests.show', [
-            'notebookHarvests'   => $notebookHarvests,
-            'wineryReceptions'   => $wineryReceptions,
+            'notebookHarvests' => $notebookHarvests,
+            'wineryReceptions' => $wineryReceptions,
             'declaredDeliveries' => $declaredDeliveries,
-            'totalNotebook'      => $totalNotebook,
-            'totalWinery'        => $totalWinery,
-            'totalDeclared'      => $totalDeclared,
-            'globalDiscrepancy'  => $globalDiscrepancy,
-            'cupoKg'             => $cupoKg,
-            'cupoPct'            => $cupoPct,
-            'cupoExceeded'       => $cupoExceeded,
+            'totalNotebook' => $totalNotebook,
+            'totalWinery' => $totalWinery,
+            'totalDeclared' => $totalDeclared,
+            'globalDiscrepancy' => $globalDiscrepancy,
+            'cupoKg' => $cupoKg,
+            'cupoPct' => $cupoPct,
+            'cupoExceeded' => $cupoExceeded,
         ])->layout('layouts.app', [
-            'title'       => __('Detalle de cosecha — ') . ($this->planting->grapeVariety?->name ?? $this->planting->name) . ' · ' . $this->vintageYear,
+            'title' => __('Detalle de cosecha — ').($this->planting->grapeVariety?->name ?? $this->planting->name).' · '.$this->vintageYear,
             'description' => __('Detalle de registros de cosecha, recepciones de bodega y entregas declaradas.'),
         ]);
     }

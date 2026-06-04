@@ -30,54 +30,55 @@ use Illuminate\Support\Facades\DB;
 class WineryPlotLifecycleSeeder extends Seeder
 {
     private const WINERY_USER_ID = 1;
-    private const PLOT_ID        = 1521;
+
+    private const PLOT_ID = 1521;
 
     // ── Ciclo vegetativo completo por mes ────────────────────────────────────
     // Cada entrada genera 1 actividad con su registro de detalle asociado
     private const MONTHLY_PLAN = [
         // Mes => [[type, subdata], ...]
-        1  => [
+        1 => [
             ['pruning',       ['pruning_type' => 'vaso',       'buds' => 32000, 'hours' => 6.5, 'workers' => 3]],
             ['observation',   ['type' => 'plaga',     'desc' => 'Inspección invernal de yesca. Sin síntomas visibles.', 'severity' => 'none']],
         ],
-        2  => [
+        2 => [
             ['pruning',       ['pruning_type' => 'cordon',     'buds' => 28000, 'hours' => 8.0, 'workers' => 4]],
             ['fertilization', ['ftype' => 'orgánico',  'fname' => 'Compost de orujo',       'qty' => 2000, 'method' => 'incorporación', 'n' => 40, 'p' => 20, 'k' => 30]],
             ['cultural',      ['wtype' => 'acolchado', 'desc' => 'Acolchado con restos de poda triturados. BCAM 6.', 'hours' => 4.0, 'workers' => 2, 'residue' => 'triturado_incorporado']],
         ],
-        3  => [
+        3 => [
             ['phytosanitary', ['product' => 'Caldo bordelés',        'ingredient' => 'Cobre',           'dose' => 3.0, 'area' => null, 'method' => 'pulverización', 'target' => 'Mildiu',     'wind' => 8.0, 'hum' => 72.0]],
             ['observation',   ['type' => 'fenología', 'desc' => 'Brotación iniciada. Estadio BBCH 07-09. Punta verde visible.', 'severity' => 'none']],
             ['fertilization', ['ftype' => 'mineral',   'fname' => 'NPK 12-8-16 (Fertiberia)', 'qty' => 350, 'method' => 'localizada', 'n' => 42, 'p' => 28, 'k' => 56]],
         ],
-        4  => [
-            ['phytosanitary', ['product' => 'Azufre en polvo',       'ingredient' => 'Azufre',          'dose' => 25.0,'area' => null, 'method' => 'espolvoreo',     'target' => 'Oídio',      'wind' => 5.0, 'hum' => 55.0]],
+        4 => [
+            ['phytosanitary', ['product' => 'Azufre en polvo',       'ingredient' => 'Azufre',          'dose' => 25.0, 'area' => null, 'method' => 'espolvoreo',     'target' => 'Oídio',      'wind' => 5.0, 'hum' => 55.0]],
             ['irrigation',    ['volume' => 1200, 'unit' => 'L', 'method' => 'goteo', 'duration' => 120, 'source' => 'pozo', 'moisture_b' => 18.0, 'moisture_a' => 32.0, 'fertirrigation' => false]],
             ['cultural',      ['wtype' => 'desniete', 'desc' => 'Eliminación de brotes no productivos y chupones.', 'hours' => 5.0, 'workers' => 3, 'residue' => null]],
         ],
-        5  => [
+        5 => [
             ['phytosanitary', ['product' => 'Azufre mojable',        'ingredient' => 'Azufre',          'dose' => 4.0, 'area' => null, 'method' => 'pulverización', 'target' => 'Oídio',      'wind' => 6.5, 'hum' => 60.0]],
             ['irrigation',    ['volume' => 1500, 'unit' => 'L', 'method' => 'goteo', 'duration' => 150, 'source' => 'pozo', 'moisture_b' => 15.0, 'moisture_a' => 30.0, 'fertirrigation' => true, 'fert_product' => 'Ácidos húmicos', 'fert_dose' => 2.5]],
             ['observation',   ['type' => 'fenología', 'desc' => 'Inicio de floración (BBCH 61-65). Buen cuajado esperado.', 'severity' => 'none']],
         ],
-        6  => [
-            ['phytosanitary', ['product' => 'Bacillus thuringiensis','ingredient' => 'Bt kurstaki',     'dose' => 1.5, 'area' => null, 'method' => 'pulverización', 'target' => 'Polilla del racimo', 'wind' => 4.0, 'hum' => 50.0]],
+        6 => [
+            ['phytosanitary', ['product' => 'Bacillus thuringiensis', 'ingredient' => 'Bt kurstaki',     'dose' => 1.5, 'area' => null, 'method' => 'pulverización', 'target' => 'Polilla del racimo', 'wind' => 4.0, 'hum' => 50.0]],
             ['irrigation',    ['volume' => 2000, 'unit' => 'L', 'method' => 'goteo', 'duration' => 180, 'source' => 'pozo', 'moisture_b' => 12.0, 'moisture_a' => 28.0, 'fertirrigation' => false]],
             ['cultural',      ['wtype' => 'deshojado', 'desc' => 'Deshojado cara norte. Mejorar aireación racimos.', 'hours' => 6.0, 'workers' => 4, 'residue' => null]],
             ['observation',   ['type' => 'plaga',     'desc' => 'Revisión de trampas cromáticas. Capturas de polilla bajas (3/trampa/semana).', 'severity' => 'low']],
         ],
-        7  => [
+        7 => [
             ['irrigation',    ['volume' => 2500, 'unit' => 'L', 'method' => 'goteo', 'duration' => 200, 'source' => 'pozo', 'moisture_b' => 10.0, 'moisture_a' => 25.0, 'fertirrigation' => true, 'fert_product' => 'Sulfato potásico', 'fert_dose' => 3.0]],
             ['phytosanitary', ['product' => 'Confusión sexual (difusores)', 'ingredient' => 'Feromonas', 'dose' => 0.5, 'area' => null, 'method' => 'difusores',     'target' => 'Polilla del racimo', 'wind' => null, 'hum' => null]],
             ['observation',   ['type' => 'fenología', 'desc' => 'Inicio envero (BBCH 81). 30% de bayas cambiando color.', 'severity' => 'none']],
             ['fertilization', ['ftype' => 'mineral',   'fname' => 'Sulfato potásico',          'qty' => 200, 'method' => 'fertirrigación', 'n' => 0, 'p' => 0, 'k' => 100]],
         ],
-        8  => [
+        8 => [
             ['observation',   ['type' => 'maduración', 'desc' => 'Control madurez: 11.8° Baumé, pH 3.32, acidez 6.5 g/L. 10 días para óptimo.', 'severity' => 'none']],
             ['irrigation',    ['volume' => 800, 'unit' => 'L', 'method' => 'goteo', 'duration' => 90, 'source' => 'pozo', 'moisture_b' => 14.0, 'moisture_a' => 22.0, 'fertirrigation' => false]],
             ['harvest',       []],  // Handled specially
         ],
-        9  => [
+        9 => [
             ['harvest',       []],  // Second harvest pass
             ['observation',   ['type' => 'maduración', 'desc' => 'Control post-vendimia parcial: zonas altas aún en maduración. pH 3.45, 13.2° Baumé.', 'severity' => 'none']],
         ],
@@ -121,13 +122,14 @@ class WineryPlotLifecycleSeeder extends Seeder
 
         // ── Verificar que la parcela existe ──────────────────────────────────
         $plot = DB::table('plots')->find(self::PLOT_ID);
-        if (!$plot) {
-            $this->command->error('  ❌ No existe la parcela con ID ' . self::PLOT_ID);
+        if (! $plot) {
+            $this->command->error('  ❌ No existe la parcela con ID '.self::PLOT_ID);
+
             return;
         }
 
         $vitId = $plot->viticulturist_id;
-        $area  = (float) $plot->area;
+        $area = (float) $plot->area;
 
         $this->command->info("  📍 Parcela: {$plot->name} (ID {$plot->id}), viticultor #{$vitId}, {$area} ha");
 
@@ -149,15 +151,16 @@ class WineryPlotLifecycleSeeder extends Seeder
         $plantings = $this->ensurePlantings($area, $now);
         if (empty($plantings)) {
             $this->command->error('  ❌ No se pudieron crear plantaciones.');
+
             return;
         }
 
         // ── Generar datos por campaña ────────────────────────────────────────
         $totalActivities = 0;
-        $totalPhenology  = 0;
-        $totalEstimates  = 0;
-        $totalHarvests   = 0;
-        $totalBatches    = 0;
+        $totalPhenology = 0;
+        $totalEstimates = 0;
+        $totalHarvests = 0;
+        $totalBatches = 0;
 
         $containers = DB::table('containers')
             ->where('user_id', self::WINERY_USER_ID)
@@ -166,15 +169,17 @@ class WineryPlotLifecycleSeeder extends Seeder
             ->toArray();
 
         foreach ([2023, 2024, 2025] as $vintage) {
-            $vitCampaignId    = $vitCampaigns[$vintage] ?? null;
+            $vitCampaignId = $vitCampaigns[$vintage] ?? null;
             $wineryCampaignId = $wineryCampaigns[$vintage] ?? null;
-            if (!$vitCampaignId || !$wineryCampaignId) continue;
+            if (! $vitCampaignId || ! $wineryCampaignId) {
+                continue;
+            }
 
             // Variation factors per vintage
             $vintageQuality = match ($vintage) {
                 2023 => ['offset' => -0.1, 'yield_factor' => 0.90, 'label' => 'normal'],
-                2024 => ['offset' =>  0.2, 'yield_factor' => 1.10, 'label' => 'excelente'],
-                2025 => ['offset' =>  0.0, 'yield_factor' => 0.95, 'label' => 'en curso'],
+                2024 => ['offset' => 0.2, 'yield_factor' => 1.10, 'label' => 'excelente'],
+                2025 => ['offset' => 0.0, 'yield_factor' => 0.95, 'label' => 'en curso'],
             };
 
             $harvestIdx = 0;
@@ -182,20 +187,22 @@ class WineryPlotLifecycleSeeder extends Seeder
             // ── Actividades por mes ──────────────────────────────────────
             foreach (self::MONTHLY_PLAN as $month => $activities) {
                 // Skip future months for 2025
-                if ($vintage === 2025 && $month > 9) continue;
+                if ($vintage === 2025 && $month > 9) {
+                    continue;
+                }
 
                 foreach ($activities as [$actType, $subData]) {
                     // Pick planting for this activity
                     $planting = $plantings[$totalActivities % count($plantings)];
 
-                    $day  = mt_rand(1, 28);
+                    $day = mt_rand(1, 28);
                     $date = sprintf('%04d-%02d-%02d', $vintage, $month, $day);
 
                     // Temperature coherent with month (Canarias)
                     $temp = match (true) {
                         $month <= 2 || $month >= 11 => round(mt_rand(140, 200) / 10, 2),
-                        $month >= 6 && $month <= 9  => round(mt_rand(240, 340) / 10, 2),
-                        default                     => round(mt_rand(180, 260) / 10, 2),
+                        $month >= 6 && $month <= 9 => round(mt_rand(240, 340) / 10, 2),
+                        default => round(mt_rand(180, 260) / 10, 2),
                     };
 
                     $weather = ['soleado', 'parcialmente nublado', 'nublado', 'despejado', 'bruma matinal', 'viento moderado'][$totalActivities % 6];
@@ -211,7 +218,9 @@ class WineryPlotLifecycleSeeder extends Seeder
                         );
                         $totalActivities++;
                         $totalHarvests++;
-                        if ($result['new_batch']) $totalBatches++;
+                        if ($result['new_batch']) {
+                            $totalBatches++;
+                        }
                         $harvestIdx++;
                     } else {
                         // Regular activity + detail record
@@ -229,26 +238,28 @@ class WineryPlotLifecycleSeeder extends Seeder
             // ── Fenología por plantación ─────────────────────────────────
             foreach ($plantings as $planting) {
                 foreach (self::PHENOLOGY_EVENTS as $pheno) {
-                    if ($vintage === 2025 && $pheno['month'] > 9) continue;
+                    if ($vintage === 2025 && $pheno['month'] > 9) {
+                        continue;
+                    }
 
                     $day = mt_rand($pheno['day_range'][0], $pheno['day_range'][1]);
                     // Slight DD variation per vintage
-                    $dd  = round($pheno['dd'] + ($vintageQuality['offset'] * 50) + mt_rand(-20, 20), 2);
+                    $dd = round($pheno['dd'] + ($vintageQuality['offset'] * 50) + mt_rand(-20, 20), 2);
 
                     DB::table('phenology_observations')->insert([
-                        'plot_planting_id'        => $planting['id'],
-                        'campaign_id'             => $vitCampaignId,
-                        'viticulturist_id'        => $vitId,
-                        'event'                   => $pheno['event'],
-                        'obs_date'                => sprintf('%04d-%02d-%02d', $vintage, $pheno['month'], $day),
-                        'source'                  => 'manual',
-                        'confidence'              => mt_rand(80, 100),
+                        'plot_planting_id' => $planting['id'],
+                        'campaign_id' => $vitCampaignId,
+                        'viticulturist_id' => $vitId,
+                        'event' => $pheno['event'],
+                        'obs_date' => sprintf('%04d-%02d-%02d', $vintage, $pheno['month'], $day),
+                        'source' => 'manual',
+                        'confidence' => mt_rand(80, 100),
                         'degree_days_accumulated' => max(0, $dd),
-                        'bbch_code'               => $pheno['bbch'],
-                        'notes'                   => "Registro fenológico {$pheno['event']} — campaña {$vintage}.",
-                        'active'                  => true,
-                        'created_at'              => $now,
-                        'updated_at'              => $now,
+                        'bbch_code' => $pheno['bbch'],
+                        'notes' => "Registro fenológico {$pheno['event']} — campaña {$vintage}.",
+                        'active' => true,
+                        'created_at' => $now,
+                        'updated_at' => $now,
                     ]);
                     $totalPhenology++;
                 }
@@ -256,9 +267,9 @@ class WineryPlotLifecycleSeeder extends Seeder
 
             // ── Aforos (estimated_yields) por plantación ─────────────────
             foreach ($plantings as $planting) {
-                $yieldPerHa   = round(mt_rand(4000, 7000) * $vintageQuality['yield_factor']);
+                $yieldPerHa = round(mt_rand(4000, 7000) * $vintageQuality['yield_factor']);
                 $plantingArea = (float) $planting['area'];
-                $totalYield   = round($yieldPerHa * $plantingArea, 2);
+                $totalYield = round($yieldPerHa * $plantingArea, 2);
 
                 // Check unique constraint (plot_planting_id, campaign_id, estimation_round)
                 $exists = DB::table('estimated_yields')
@@ -267,28 +278,28 @@ class WineryPlotLifecycleSeeder extends Seeder
                     ->where('estimation_round', $vintage < 2025 ? 4 : 3)
                     ->exists();
 
-                if (!$exists) {
+                if (! $exists) {
                     DB::table('estimated_yields')->insert([
-                        'plot_planting_id'            => $planting['id'],
-                        'campaign_id'                 => $vitCampaignId,
-                        'estimated_by'                => $vitId,
-                        'vintage'                     => $vintage,
+                        'plot_planting_id' => $planting['id'],
+                        'campaign_id' => $vitCampaignId,
+                        'estimated_by' => $vitId,
+                        'vintage' => $vintage,
                         'estimated_yield_per_hectare' => $yieldPerHa,
-                        'estimated_total_yield'       => $totalYield,
-                        'estimation_date'             => sprintf('%04d-07-%02d', $vintage, mt_rand(10, 25)),
-                        'estimation_method'           => 'sampling',
-                        'estimation_round'            => $vintage < 2025 ? 4 : 3,
-                        'status'                      => $vintage < 2025 ? 'confirmed' : 'confirmed',
-                        'active'                      => true,
-                        'bunches_per_plant'           => mt_rand(10, 16),
-                        'bunch_weight_grams'          => mt_rand(150, 260),
-                        'total_plants_sampled'        => mt_rand(20, 40),
-                        'health_percentage'           => round(mt_rand(88, 100), 1),
-                        'health_status'               => mt_rand(0, 5) === 0 ? 'good' : 'excellent',
-                        'potential_alcohol'            => round(mt_rand(118, 142) / 10, 1),
-                        'notes'                       => "Aforo parcela {$plot->name}, variedad {$planting['variety']}. Campaña {$vintage}.",
-                        'created_at'                  => $now,
-                        'updated_at'                  => $now,
+                        'estimated_total_yield' => $totalYield,
+                        'estimation_date' => sprintf('%04d-07-%02d', $vintage, mt_rand(10, 25)),
+                        'estimation_method' => 'sampling',
+                        'estimation_round' => $vintage < 2025 ? 4 : 3,
+                        'status' => $vintage < 2025 ? 'confirmed' : 'confirmed',
+                        'active' => true,
+                        'bunches_per_plant' => mt_rand(10, 16),
+                        'bunch_weight_grams' => mt_rand(150, 260),
+                        'total_plants_sampled' => mt_rand(20, 40),
+                        'health_percentage' => round(mt_rand(88, 100), 1),
+                        'health_status' => mt_rand(0, 5) === 0 ? 'good' : 'excellent',
+                        'potential_alcohol' => round(mt_rand(118, 142) / 10, 1),
+                        'notes' => "Aforo parcela {$plot->name}, variedad {$planting['variety']}. Campaña {$vintage}.",
+                        'created_at' => $now,
+                        'updated_at' => $now,
                     ]);
                     $totalEstimates++;
                 }
@@ -296,7 +307,7 @@ class WineryPlotLifecycleSeeder extends Seeder
         }
 
         $this->command->info("  ✅ Ciclo de vida parcela #{$plot->id}:");
-        $this->command->info("     Plantaciones:  " . count($plantings));
+        $this->command->info('     Plantaciones:  '.count($plantings));
         $this->command->info("     Actividades:   {$totalActivities} (con registros de detalle)");
         $this->command->info("     Fenología:     {$totalPhenology} observaciones");
         $this->command->info("     Aforos:        {$totalEstimates} estimaciones");
@@ -316,16 +327,16 @@ class WineryPlotLifecycleSeeder extends Seeder
             ->where('viticulturist_id', $vitId)
             ->exists();
 
-        if (!$linked) {
+        if (! $linked) {
             DB::table('winery_viticulturist')->insert([
-                'winery_id'          => self::WINERY_USER_ID,
-                'viticulturist_id'   => $vitId,
-                'assigned_by'        => self::WINERY_USER_ID,
-                'source'             => 'own',
-                'notebook_access'    => true,
-                'notebook_granted_at'=> $now,
-                'created_at'         => $now,
-                'updated_at'         => $now,
+                'winery_id' => self::WINERY_USER_ID,
+                'viticulturist_id' => $vitId,
+                'assigned_by' => self::WINERY_USER_ID,
+                'source' => 'own',
+                'notebook_access' => true,
+                'notebook_granted_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
         } else {
             DB::table('winery_viticulturist')
@@ -343,20 +354,21 @@ class WineryPlotLifecycleSeeder extends Seeder
                 ->where('viticulturist_id', $vitId)
                 ->where('year', $year)
                 ->value('id');
-            if (!$campId) {
+            if (! $campId) {
                 $campId = DB::table('campaigns')->insertGetId([
-                    'name'             => "Campaña {$year}",
-                    'year'             => $year,
+                    'name' => "Campaña {$year}",
+                    'year' => $year,
                     'viticulturist_id' => $vitId,
-                    'start_date'       => "{$year}-01-01",
-                    'end_date'         => "{$year}-12-31",
-                    'active'           => $active,
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
+                    'start_date' => "{$year}-01-01",
+                    'end_date' => "{$year}-12-31",
+                    'active' => $active,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             }
             $campaigns[$year] = $campId;
         }
+
         return $campaigns;
     }
 
@@ -376,17 +388,18 @@ class WineryPlotLifecycleSeeder extends Seeder
         if (empty($campaigns)) {
             foreach ([2023 => false, 2024 => false, 2025 => true] as $year => $active) {
                 $campaigns[$year] = DB::table('campaigns')->insertGetId([
-                    'name'             => "Vendimia {$year}",
-                    'year'             => $year,
+                    'name' => "Vendimia {$year}",
+                    'year' => $year,
                     'viticulturist_id' => self::WINERY_USER_ID,
-                    'start_date'       => "{$year}-08-01",
-                    'end_date'         => "{$year}-11-30",
-                    'active'           => $active,
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
+                    'start_date' => "{$year}-08-01",
+                    'end_date' => "{$year}-11-30",
+                    'active' => $active,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             }
         }
+
         return $campaigns;
     }
 
@@ -405,22 +418,23 @@ class WineryPlotLifecycleSeeder extends Seeder
             $id = DB::table('phytosanitary_products')
                 ->where('name', $prod['name'])
                 ->value('id');
-            if (!$id) {
+            if (! $id) {
                 $id = DB::table('phytosanitary_products')->insertGetId([
-                    'name'                    => $prod['name'],
-                    'active_ingredient'       => $prod['ingredient'],
-                    'type'                    => $prod['type'],
-                    'toxicity_class'          => $prod['tox'],
-                    'withdrawal_period_days'  => $prod['withdrawal'],
-                    'registration_number'     => 'ES-' . str_pad(mt_rand(10000, 99999), 8, '0', STR_PAD_LEFT),
-                    'registration_status'     => 'active',
-                    'active'                  => true,
-                    'created_at'              => $now,
-                    'updated_at'              => $now,
+                    'name' => $prod['name'],
+                    'active_ingredient' => $prod['ingredient'],
+                    'type' => $prod['type'],
+                    'toxicity_class' => $prod['tox'],
+                    'withdrawal_period_days' => $prod['withdrawal'],
+                    'registration_number' => 'ES-'.str_pad(mt_rand(10000, 99999), 8, '0', STR_PAD_LEFT),
+                    'registration_status' => 'active',
+                    'active' => true,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             }
             $ids[$prod['name']] = $id;
         }
+
         return $ids;
     }
 
@@ -432,7 +446,9 @@ class WineryPlotLifecycleSeeder extends Seeder
                 ->where('name', $def['variety'])
                 ->value('id');
 
-            if (!$varietyId) continue; // Variety should exist from WineryGrapeReceptionsSeeder
+            if (! $varietyId) {
+                continue;
+            } // Variety should exist from WineryGrapeReceptionsSeeder
 
             $plantingId = DB::table('plot_plantings')
                 ->where('plot_id', self::PLOT_ID)
@@ -442,17 +458,17 @@ class WineryPlotLifecycleSeeder extends Seeder
             $plantingArea = round($plotArea * $def['area_pct'], 3);
             $harvestLimit = round($plantingArea * mt_rand(7000, 8500));
 
-            if (!$plantingId) {
+            if (! $plantingId) {
                 $plantingId = DB::table('plot_plantings')->insertGetId([
-                    'plot_id'          => self::PLOT_ID,
+                    'plot_id' => self::PLOT_ID,
                     'grape_variety_id' => $varietyId,
-                    'area_planted'     => $plantingArea,
-                    'planting_year'    => $def['year'],
+                    'area_planted' => $plantingArea,
+                    'planting_year' => $def['year'],
                     'harvest_limit_kg' => $harvestLimit,
-                    'status'           => 'active',
-                    'irrigated'        => true,
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
+                    'status' => 'active',
+                    'irrigated' => true,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             } else {
                 // Update harvest_limit_kg if not set
@@ -463,11 +479,12 @@ class WineryPlotLifecycleSeeder extends Seeder
             }
 
             $result[] = [
-                'id'      => $plantingId,
+                'id' => $plantingId,
                 'variety' => $def['variety'],
-                'area'    => $plantingArea,
+                'area' => $plantingArea,
             ];
         }
+
         return $result;
     }
 
@@ -481,21 +498,21 @@ class WineryPlotLifecycleSeeder extends Seeder
         int $vintage, $now
     ): int {
         return DB::table('agricultural_activities')->insertGetId([
-            'plot_id'            => self::PLOT_ID,
-            'plot_planting_id'   => $planting['id'],
-            'viticulturist_id'   => $vitId,
-            'campaign_id'        => $campaignId,
-            'activity_type'      => $type,
+            'plot_id' => self::PLOT_ID,
+            'plot_planting_id' => $planting['id'],
+            'viticulturist_id' => $vitId,
+            'campaign_id' => $campaignId,
+            'activity_type' => $type,
             'phenological_stage' => $phenoStage,
-            'activity_date'      => $date,
+            'activity_date' => $date,
             'weather_conditions' => $weather,
-            'temperature'        => $temp,
-            'notes'              => null, // Detail record has the description
-            'is_locked'          => $vintage < 2025,
-            'locked_at'          => $vintage < 2025 ? $now : null,
-            'locked_by'          => $vintage < 2025 ? $vitId : null,
-            'created_at'         => $now,
-            'updated_at'         => $now,
+            'temperature' => $temp,
+            'notes' => null, // Detail record has the description
+            'is_locked' => $vintage < 2025,
+            'locked_at' => $vintage < 2025 ? $now : null,
+            'locked_by' => $vintage < 2025 ? $vitId : null,
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
     }
 
@@ -507,96 +524,96 @@ class WineryPlotLifecycleSeeder extends Seeder
 
         match ($type) {
             'pruning' => DB::table('cultural_works')->insert([
-                'activity_id'                => $activityId,
-                'work_type'                  => 'poda',
-                'pruning_type'               => $data['pruning_type'],
-                'productive_buds_per_hectare'=> $data['buds'],
-                'hours_worked'               => $data['hours'],
-                'workers_count'              => $data['workers'],
-                'residue_management'         => 'triturado_superficie',
-                'description'                => "Poda tipo {$data['pruning_type']}. {$data['buds']} yemas/ha.",
-                'created_at'                 => $now,
-                'updated_at'                 => $now,
+                'activity_id' => $activityId,
+                'work_type' => 'poda',
+                'pruning_type' => $data['pruning_type'],
+                'productive_buds_per_hectare' => $data['buds'],
+                'hours_worked' => $data['hours'],
+                'workers_count' => $data['workers'],
+                'residue_management' => 'triturado_superficie',
+                'description' => "Poda tipo {$data['pruning_type']}. {$data['buds']} yemas/ha.",
+                'created_at' => $now,
+                'updated_at' => $now,
             ]),
 
             'cultural' => DB::table('cultural_works')->insert([
-                'activity_id'       => $activityId,
-                'work_type'         => $data['wtype'],
-                'hours_worked'      => $data['hours'],
-                'workers_count'     => $data['workers'],
-                'residue_management'=> $data['residue'],
-                'description'       => $data['desc'],
-                'created_at'        => $now,
-                'updated_at'        => $now,
+                'activity_id' => $activityId,
+                'work_type' => $data['wtype'],
+                'hours_worked' => $data['hours'],
+                'workers_count' => $data['workers'],
+                'residue_management' => $data['residue'],
+                'description' => $data['desc'],
+                'created_at' => $now,
+                'updated_at' => $now,
             ]),
 
             'phytosanitary' => DB::table('phytosanitary_treatments')->insert([
-                'activity_id'        => $activityId,
-                'product_id'         => $phytoProducts[$data['product']] ?? null,
-                'dose_per_hectare'   => $data['dose'],
-                'total_dose'         => round($data['dose'] * $plantingArea, 3),
-                'area_treated'       => $data['area'] ?? $plantingArea,
+                'activity_id' => $activityId,
+                'product_id' => $phytoProducts[$data['product']] ?? null,
+                'dose_per_hectare' => $data['dose'],
+                'total_dose' => round($data['dose'] * $plantingArea, 3),
+                'area_treated' => $data['area'] ?? $plantingArea,
                 'application_method' => $data['method'],
-                'wind_speed'         => $data['wind'],
-                'humidity'           => $data['hum'],
-                'buffer_zone_respected'     => true,
-                'prior_non_chemical_methods'=> $data['method'] === 'difusores',
-                'plague_monitoring'         => true,
-                'created_at'         => $now,
-                'updated_at'         => $now,
+                'wind_speed' => $data['wind'],
+                'humidity' => $data['hum'],
+                'buffer_zone_respected' => true,
+                'prior_non_chemical_methods' => $data['method'] === 'difusores',
+                'plague_monitoring' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]),
 
             'fertilization' => DB::table('fertilizations')->insert([
-                'activity_id'      => $activityId,
-                'fertilizer_type'  => $data['ftype'],
-                'fertilizer_name'  => $data['fname'],
-                'quantity'         => $data['qty'],
-                'application_method'=> $data['method'],
-                'area_applied'     => $plantingArea,
-                'nitrogen_uf'      => $data['n'],
-                'phosphorus_uf'    => $data['p'],
-                'potassium_uf'     => $data['k'],
-                'created_at'       => $now,
-                'updated_at'       => $now,
+                'activity_id' => $activityId,
+                'fertilizer_type' => $data['ftype'],
+                'fertilizer_name' => $data['fname'],
+                'quantity' => $data['qty'],
+                'application_method' => $data['method'],
+                'area_applied' => $plantingArea,
+                'nitrogen_uf' => $data['n'],
+                'phosphorus_uf' => $data['p'],
+                'potassium_uf' => $data['k'],
+                'created_at' => $now,
+                'updated_at' => $now,
             ]),
 
             'irrigation' => DB::table('irrigations')->insert([
-                'activity_id'           => $activityId,
-                'water_volume'          => $data['volume'],
-                'water_volume_unit'     => $data['unit'],
-                'irrigation_method'     => $data['method'],
-                'duration_minutes'      => $data['duration'],
-                'water_source'          => $data['source'],
-                'soil_moisture_before'  => $data['moisture_b'],
-                'soil_moisture_after'   => $data['moisture_a'],
-                'is_fertirrigation'     => $data['fertirrigation'],
-                'fertilizer_product'    => $data['fert_product'] ?? null,
-                'fertilizer_dose_per_ha'=> $data['fert_dose'] ?? null,
-                'created_at'            => $now,
-                'updated_at'            => $now,
+                'activity_id' => $activityId,
+                'water_volume' => $data['volume'],
+                'water_volume_unit' => $data['unit'],
+                'irrigation_method' => $data['method'],
+                'duration_minutes' => $data['duration'],
+                'water_source' => $data['source'],
+                'soil_moisture_before' => $data['moisture_b'],
+                'soil_moisture_after' => $data['moisture_a'],
+                'is_fertirrigation' => $data['fertirrigation'],
+                'fertilizer_product' => $data['fert_product'] ?? null,
+                'fertilizer_dose_per_ha' => $data['fert_dose'] ?? null,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]),
 
             'observation' => DB::table('observations')->insert([
-                'activity_id'              => $activityId,
-                'observation_type'         => $data['type'],
-                'description'              => $data['desc'],
-                'severity'                 => $data['severity'],
+                'activity_id' => $activityId,
+                'observation_type' => $data['type'],
+                'description' => $data['desc'],
+                'severity' => $data['severity'],
                 'affected_area_percentage' => $data['severity'] === 'none' ? 0 : mt_rand(5, 25),
-                'threshold_exceeded'       => $data['severity'] !== 'none' && $data['severity'] !== 'low',
-                'created_at'               => $now,
-                'updated_at'               => $now,
+                'threshold_exceeded' => $data['severity'] !== 'none' && $data['severity'] !== 'low',
+                'created_at' => $now,
+                'updated_at' => $now,
             ]),
 
             'post_harvest' => DB::table('post_harvest_treatments')->insert([
-                'activity_id'            => $activityId,
-                'application_type'       => $data['app_type'],
-                'treated_area_ha'        => $plantingArea,
-                'dose_per_hectare'       => $data['dose'],
-                'dose_unit'              => $data['dose_unit'],
-                'water_volume_liters'    => $data['water'],
+                'activity_id' => $activityId,
+                'application_type' => $data['app_type'],
+                'treated_area_ha' => $plantingArea,
+                'dose_per_hectare' => $data['dose'],
+                'dose_unit' => $data['dose_unit'],
+                'water_volume_liters' => $data['water'],
                 'reentry_interval_hours' => $data['reentry'],
-                'created_at'             => $now,
-                'updated_at'             => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]),
 
             default => null,
@@ -609,87 +626,87 @@ class WineryPlotLifecycleSeeder extends Seeder
         array $quality, array $containers, int $harvestIdx, $now
     ): array {
         $plantingArea = (float) $planting['area'];
-        $baseYield    = mt_rand(3500, 7000) * $quality['yield_factor'];
-        $weight       = round($plantingArea * $baseYield, 1);
+        $baseYield = mt_rand(3500, 7000) * $quality['yield_factor'];
+        $weight = round($plantingArea * $baseYield, 1);
 
-        $baume   = round(12.5 + $quality['offset'] + mt_rand(-5, 5) / 10, 2);
-        $brix    = round($baume * 1.8, 2);
-        $ph      = round(3.40 + mt_rand(-8, 8) / 100, 2);
-        $acid    = round(5.8 - $quality['offset'] * 0.5 + mt_rand(-5, 5) / 10, 2);
+        $baume = round(12.5 + $quality['offset'] + mt_rand(-5, 5) / 10, 2);
+        $brix = round($baume * 1.8, 2);
+        $ph = round(3.40 + mt_rand(-8, 8) / 100, 2);
+        $acid = round(5.8 - $quality['offset'] * 0.5 + mt_rand(-5, 5) / 10, 2);
         $alcohol = round($baume * 1.035, 2);
 
         // Activity record
         $activityId = DB::table('agricultural_activities')->insertGetId([
-            'plot_id'            => self::PLOT_ID,
-            'plot_planting_id'   => $planting['id'],
-            'viticulturist_id'   => $vitId,
-            'campaign_id'        => $vitCampaignId,
-            'activity_type'      => 'harvest',
+            'plot_id' => self::PLOT_ID,
+            'plot_planting_id' => $planting['id'],
+            'viticulturist_id' => $vitId,
+            'campaign_id' => $vitCampaignId,
+            'activity_type' => 'harvest',
             'phenological_stage' => $phenoStage,
-            'activity_date'      => $date,
+            'activity_date' => $date,
             'weather_conditions' => $weather,
-            'temperature'        => $temp,
-            'notes'              => "Vendimia {$planting['variety']} — {$quality['label']} {$vintage}.",
-            'is_locked'          => $vintage < 2025,
-            'locked_at'          => $vintage < 2025 ? $now : null,
-            'locked_by'          => $vintage < 2025 ? $vitId : null,
-            'created_at'         => $now,
-            'updated_at'         => $now,
+            'temperature' => $temp,
+            'notes' => "Vendimia {$planting['variety']} — {$quality['label']} {$vintage}.",
+            'is_locked' => $vintage < 2025,
+            'locked_at' => $vintage < 2025 ? $now : null,
+            'locked_by' => $vintage < 2025 ? $vitId : null,
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
 
         // Grape reception batch (one per planting per campaign)
-        $batchKey = $planting['id'] . '_' . $wineryCampaignId;
-        $batchId  = DB::table('grape_reception_batches')
+        $batchKey = $planting['id'].'_'.$wineryCampaignId;
+        $batchId = DB::table('grape_reception_batches')
             ->where('winery_id', self::WINERY_USER_ID)
             ->where('plot_planting_id', $planting['id'])
             ->where('campaign_id', $wineryCampaignId)
             ->value('id');
 
         $newBatch = false;
-        if (!$batchId) {
+        if (! $batchId) {
             $batchId = DB::table('grape_reception_batches')->insertGetId([
-                'winery_id'        => self::WINERY_USER_ID,
+                'winery_id' => self::WINERY_USER_ID,
                 'viticulturist_id' => $vitId,
                 'plot_planting_id' => $planting['id'],
-                'campaign_id'      => $wineryCampaignId,
-                'vintage_year'     => $vintage,
-                'total_weight_kg'  => 0,
-                'status'           => $vintage < 2025 ? 'invoiced' : 'open',
-                'created_at'       => $now,
-                'updated_at'       => $now,
+                'campaign_id' => $wineryCampaignId,
+                'vintage_year' => $vintage,
+                'total_weight_kg' => 0,
+                'status' => $vintage < 2025 ? 'invoiced' : 'open',
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
             $newBatch = true;
         }
 
-        $containerId = !empty($containers) ? $containers[$harvestIdx % count($containers)] : null;
+        $containerId = ! empty($containers) ? $containers[$harvestIdx % count($containers)] : null;
 
         // Harvest record (reception at winery)
         DB::table('harvests')->insert([
-            'winery_id'              => self::WINERY_USER_ID,
-            'activity_id'            => $activityId,
-            'batch_id'               => $batchId,
-            'plot_planting_id'       => $planting['id'],
-            'container_id'           => $containerId,
-            'harvest_start_date'     => $date,
-            'total_weight'           => $weight,
-            'vintage'                => $vintage,
-            'yield_per_hectare'      => $plantingArea > 0 ? round($weight / $plantingArea, 3) : null,
-            'baume_degree'           => $baume,
-            'brix_degree'            => $brix,
-            'ph_level'               => $ph,
-            'acidity_level'          => $acid,
-            'potential_alcohol'      => $alcohol,
-            'health_status'          => $harvestIdx % 5 === 0 ? 'daño_leve' : 'sano',
-            'destination_type'       => 'winery',
-            'destination'            => 'Bodega Agaete',
-            'price_per_kg'           => round(0.90 + mt_rand(0, 40) / 100, 4),
-            'status'                 => 'active',
-            'disqualified'           => false,
-            'harvest_ticket_number'  => 'REC-P' . self::PLOT_ID . '-' . $vintage . '-' . str_pad($harvestIdx + 1, 3, '0', STR_PAD_LEFT),
-            'sanitary_state_grapes'  => $harvestIdx % 5 === 0 ? 92.0 : 100.0,
-            'notes'                  => "Recepción {$planting['variety']} parcela #" . self::PLOT_ID . ", vendimia {$vintage}.",
-            'created_at'             => $now,
-            'updated_at'             => $now,
+            'winery_id' => self::WINERY_USER_ID,
+            'activity_id' => $activityId,
+            'batch_id' => $batchId,
+            'plot_planting_id' => $planting['id'],
+            'container_id' => $containerId,
+            'harvest_start_date' => $date,
+            'total_weight' => $weight,
+            'vintage' => $vintage,
+            'yield_per_hectare' => $plantingArea > 0 ? round($weight / $plantingArea, 3) : null,
+            'baume_degree' => $baume,
+            'brix_degree' => $brix,
+            'ph_level' => $ph,
+            'acidity_level' => $acid,
+            'potential_alcohol' => $alcohol,
+            'health_status' => $harvestIdx % 5 === 0 ? 'daño_leve' : 'sano',
+            'destination_type' => 'winery',
+            'destination' => 'Bodega Agaete',
+            'price_per_kg' => round(0.90 + mt_rand(0, 40) / 100, 4),
+            'status' => 'active',
+            'disqualified' => false,
+            'harvest_ticket_number' => 'REC-P'.self::PLOT_ID.'-'.$vintage.'-'.str_pad($harvestIdx + 1, 3, '0', STR_PAD_LEFT),
+            'sanitary_state_grapes' => $harvestIdx % 5 === 0 ? 92.0 : 100.0,
+            'notes' => "Recepción {$planting['variety']} parcela #".self::PLOT_ID.", vendimia {$vintage}.",
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
 
         DB::table('grape_reception_batches')
@@ -706,15 +723,15 @@ class WineryPlotLifecycleSeeder extends Seeder
     private function phenoStageForMonth(int $month): ?string
     {
         return match (true) {
-            $month <= 2              => 'reposo_invernal',
-            $month === 3             => 'brotacion',
-            $month === 4             => 'desarrollo_vegetativo',
-            $month === 5             => 'floracion',
-            $month === 6             => 'cuajado',
-            $month === 7             => 'envero',
+            $month <= 2 => 'reposo_invernal',
+            $month === 3 => 'brotacion',
+            $month === 4 => 'desarrollo_vegetativo',
+            $month === 5 => 'floracion',
+            $month === 6 => 'cuajado',
+            $month === 7 => 'envero',
             $month >= 8 && $month <= 9 => 'maduracion',
-            $month === 10            => 'post_vendimia',
-            default                  => 'reposo_invernal',
+            $month === 10 => 'post_vendimia',
+            default => 'reposo_invernal',
         };
     }
 

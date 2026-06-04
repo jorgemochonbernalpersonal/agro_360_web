@@ -26,6 +26,7 @@ use Tests\Feature\ProducerTestCase;
 class ProducerContainersTest extends ProducerTestCase
 {
     private User $producer;
+
     private ContainerType $type;
 
     protected function setUp(): void
@@ -34,21 +35,6 @@ class ProducerContainersTest extends ProducerTestCase
         $this->producer = $this->makeProducer();
         $this->actingAs($this->producer);
         $this->type = ContainerType::firstOrCreate(['name' => 'Depósito Inox']);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makeContainer(array $attrs = []): Container
-    {
-        return Container::create(array_merge([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Cuba Producer',
-            'type_id'       => $this->type->id,
-            'capacity'      => 1000,
-            'unit'          => 'kg',
-            'used_capacity' => 0,
-            'archived'      => false,
-        ], $attrs));
     }
 
     // ── Rutas accesibles ──────────────────────────────────────────────────────
@@ -82,7 +68,7 @@ class ProducerContainersTest extends ProducerTestCase
 
         $this->assertDatabaseHas('containers', [
             'user_id' => $this->producer->id,
-            'name'    => 'Cuba Producer',
+            'name' => 'Cuba Producer',
         ]);
     }
 
@@ -90,7 +76,7 @@ class ProducerContainersTest extends ProducerTestCase
     {
         $room = ContainerRoom::create([
             'user_id' => $this->producer->id,
-            'name'    => 'Sala Producer',
+            'name' => 'Sala Producer',
         ]);
 
         Livewire::test(Create::class)
@@ -103,8 +89,8 @@ class ProducerContainersTest extends ProducerTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'user_id'           => $this->producer->id,
-            'name'              => 'Cuba en Sala Producer',
+            'user_id' => $this->producer->id,
+            'name' => 'Cuba en Sala Producer',
             'container_room_id' => $room->id,
         ]);
     }
@@ -115,13 +101,13 @@ class ProducerContainersTest extends ProducerTestCase
     {
         $otherWinery = $this->makeWinery();
         $foreignContainer = Container::create([
-            'user_id'       => $otherWinery->id,
-            'name'          => 'Cuba Ajena',
-            'type_id'       => $this->type->id,
-            'capacity'      => 500,
-            'unit'          => 'kg',
+            'user_id' => $otherWinery->id,
+            'name' => 'Cuba Ajena',
+            'type_id' => $this->type->id,
+            'capacity' => 500,
+            'unit' => 'kg',
             'used_capacity' => 0,
-            'archived'      => false,
+            'archived' => false,
         ]);
 
         // La ruta producer usa el mismo componente Edit que verifica user_id
@@ -133,13 +119,13 @@ class ProducerContainersTest extends ProducerTestCase
     {
         $otherProducer = $this->makeOtherProducer();
         $foreignContainer = Container::create([
-            'user_id'       => $otherProducer->id,
-            'name'          => 'Cuba Ajena Livewire',
-            'type_id'       => $this->type->id,
-            'capacity'      => 500,
-            'unit'          => 'kg',
+            'user_id' => $otherProducer->id,
+            'name' => 'Cuba Ajena Livewire',
+            'type_id' => $this->type->id,
+            'capacity' => 500,
+            'unit' => 'kg',
             'used_capacity' => 0,
-            'archived'      => false,
+            'archived' => false,
         ]);
 
         Livewire::test(Edit::class, ['container' => $foreignContainer])
@@ -151,7 +137,7 @@ class ProducerContainersTest extends ProducerTestCase
         $otherProducer = $this->makeOtherProducer();
         $foreignRoom = ContainerRoom::create([
             'user_id' => $otherProducer->id,
-            'name'    => 'Sala Ajena',
+            'name' => 'Sala Ajena',
         ]);
 
         Livewire::test(Create::class)
@@ -168,7 +154,7 @@ class ProducerContainersTest extends ProducerTestCase
         $otherProducer = $this->makeOtherProducer();
         $foreignRoom = ContainerRoom::create([
             'user_id' => $otherProducer->id,
-            'name'    => 'Sala Ajena Edit',
+            'name' => 'Sala Ajena Edit',
         ]);
         $container = $this->makeContainer();
 
@@ -190,14 +176,14 @@ class ProducerContainersTest extends ProducerTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'id'   => $container->id,
+            'id' => $container->id,
             'name' => 'Cuba Renovada Producer',
         ]);
     }
 
     public function test_producer_can_assign_and_remove_room(): void
     {
-        $room      = ContainerRoom::create(['user_id' => $this->producer->id, 'name' => 'Sala Edit Producer']);
+        $room = ContainerRoom::create(['user_id' => $this->producer->id, 'name' => 'Sala Edit Producer']);
         $container = $this->makeContainer();
 
         // Asignar sala
@@ -215,5 +201,20 @@ class ProducerContainersTest extends ProducerTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', ['id' => $container->id, 'container_room_id' => null]);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makeContainer(array $attrs = []): Container
+    {
+        return Container::create(array_merge([
+            'user_id' => $this->producer->id,
+            'name' => 'Cuba Producer',
+            'type_id' => $this->type->id,
+            'capacity' => 1000,
+            'unit' => 'kg',
+            'used_capacity' => 0,
+            'archived' => false,
+        ], $attrs));
     }
 }

@@ -20,7 +20,9 @@ abstract class AbstractIndex extends SharedAbstractIndex
      * Find a model owned by the authenticated viticulturist, or abort 404.
      *
      * @template T of Model
-     * @param  class-string<T>  $modelClass
+     *
+     * @param class-string<T> $modelClass
+     *
      * @return T
      */
     protected function findOwned(string $modelClass, int $id): Model

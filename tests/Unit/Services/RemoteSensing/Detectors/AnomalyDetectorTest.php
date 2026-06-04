@@ -4,8 +4,6 @@ namespace Tests\Unit\Services\RemoteSensing\Detectors;
 
 use App\Models\PlotRemoteSensing;
 use App\Services\RemoteSensing\Detectors\AnomalyDetector;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class AnomalyDetectorTest extends TestCase
@@ -15,7 +13,7 @@ class AnomalyDetectorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->detector = new AnomalyDetector();
+        $this->detector = new AnomalyDetector;
     }
 
     /** @test */
@@ -47,7 +45,7 @@ class AnomalyDetectorTest extends TestCase
 
         $this->assertTrue($result['has_anomalies']);
         $this->assertGreaterThan(0, $result['count']);
-        
+
         // Should detect rapid NDVI decline
         $rapidDecline = collect($result['anomalies'])->firstWhere('type', 'rapid_ndvi_decline');
         $this->assertNotNull($rapidDecline);
@@ -140,7 +138,7 @@ class AnomalyDetectorTest extends TestCase
 
         $result = $this->detector->detectAnomalies($current, $historical);
 
-        if (!$result['has_anomalies']) {
+        if (! $result['has_anomalies']) {
             $this->assertEquals('none', $result['risk_level']);
         } else {
             $this->assertContains($result['risk_level'], ['none', 'low', 'medium', 'high', 'critical']);

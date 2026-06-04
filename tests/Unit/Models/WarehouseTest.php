@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Warehouse;
 use App\Models\ProductStock;
 use App\Models\User;
+use App\Models\Warehouse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -91,4 +91,3 @@ class WarehouseTest extends TestCase
         $this->assertFalse($warehouse->active);
     }
 }
-

@@ -36,7 +36,7 @@ class ShowTest extends SupervisorTestCase
     public function test_supervisor_cannot_see_winery_not_assigned_to_them(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         // Sin SupervisorWinery — no está adscrita
 
         $this->actingAs($supervisor)
@@ -47,7 +47,7 @@ class ShowTest extends SupervisorTestCase
     public function test_another_supervisor_cannot_see_winery(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         $this->actingAs($otherSupervisor)
             ->get(route('supervisor.oversight.wineries.show', $winery))
@@ -63,11 +63,11 @@ class ShowTest extends SupervisorTestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist', 'name' => 'Viticultor Asignado']);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         $this->actingAs($supervisor)
@@ -78,23 +78,23 @@ class ShowTest extends SupervisorTestCase
     public function test_does_not_show_viticulturists_from_another_supervisor(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         $viticulturist = User::factory()->create(['role' => 'viticulturist', 'name' => 'Viticultor Ajeno']);
 
         // Mismo winery, pero asignado por otro supervisor
         SupervisorWinery::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $otherSupervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $otherSupervisor->id,
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $otherSupervisor->id,
-            'assigned_by'      => $otherSupervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $otherSupervisor->id,
+            'assigned_by' => $otherSupervisor->id,
         ]);
 
         $this->actingAs($supervisor)
@@ -129,7 +129,7 @@ class ShowTest extends SupervisorTestCase
     public function test_livewire_component_throws_not_found_for_unassigned_winery(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         $this->actingAs($supervisor);
 

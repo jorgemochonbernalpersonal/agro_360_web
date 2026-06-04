@@ -41,7 +41,7 @@ class SigpacGeometryService
 
             $data = $response->json();
 
-            if (!is_array($data) || empty($data) || !isset($data[0]['wkt'])) {
+            if (! is_array($data) || empty($data) || ! isset($data[0]['wkt'])) {
                 return null;
             }
 
@@ -51,6 +51,7 @@ class SigpacGeometryService
                 'sigpac_code_id' => $sigpacCode->id,
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -86,8 +87,8 @@ class SigpacGeometryService
             $mps->save();
         } else {
             MultipartPlotSigpac::create([
-                'plot_id'          => $plotId,
-                'sigpac_code_id'   => $sigpacCode->id,
+                'plot_id' => $plotId,
+                'sigpac_code_id' => $sigpacCode->id,
                 'plot_geometry_id' => $geometryId,
             ]);
         }

@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('ticket_id')->constrained('support_tickets')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            
+
             $table->text('comment');
             $table->boolean('is_internal')->default(false)->comment('Solo visible para admins');
-            
+
             $table->timestamps();
-            
+
             // Índices
             $table->index('ticket_id');
         });

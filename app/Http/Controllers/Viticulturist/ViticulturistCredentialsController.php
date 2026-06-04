@@ -17,7 +17,7 @@ class ViticulturistCredentialsController extends Controller
         $viticulturistName = session('viticulturist_created_name');
 
         if (! $pdfPath && $viticulturistId) {
-            $files = glob(storage_path('app/temp') . '/credentials_' . $viticulturistId . '_*.pdf');
+            $files = glob(storage_path('app/temp').'/credentials_'.$viticulturistId.'_*.pdf');
 
             if (! empty($files)) {
                 usort($files, fn ($a, $b) => filemtime($b) - filemtime($a));
@@ -36,7 +36,7 @@ class ViticulturistCredentialsController extends Controller
                 ->with('error', __('El PDF de credenciales no está disponible. El archivo puede haber expirado.'));
         }
 
-        $filename = 'credenciales_' . Str::slug($viticulturistName ?? 'viticultor') . '_' . now()->format('Y-m-d') . '.pdf';
+        $filename = 'credenciales_'.Str::slug($viticulturistName ?? 'viticultor').'_'.now()->format('Y-m-d').'.pdf';
 
         session()->forget(['viticulturist_credentials_pdf', 'viticulturist_created_id', 'viticulturist_created_name']);
 

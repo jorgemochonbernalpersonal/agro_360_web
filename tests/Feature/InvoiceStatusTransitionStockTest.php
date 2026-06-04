@@ -2,16 +2,15 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Client;
-use App\Models\Invoice;
-use App\Models\InvoiceItem;
-use App\Models\Harvest;
-use App\Models\HarvestStock;
 use App\Models\Container;
 use App\Models\ContainerCurrentState;
+use App\Models\Harvest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class InvoiceStatusTransitionStockTest extends TestCase
 {
@@ -19,7 +18,9 @@ class InvoiceStatusTransitionStockTest extends TestCase
     use \Tests\Traits\CreatesTestHarvest;
 
     protected User $user;
+
     protected Client $client;
+
     protected Harvest $harvest;
 
     protected function setUp(): void
@@ -82,25 +83,25 @@ class InvoiceStatusTransitionStockTest extends TestCase
     {
         // Arrange
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'    => $this->user->id,
-            'client_id'  => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => null,
         ]);
 
         $quantity = 150;
         InvoiceItem::create([
-            'invoice_id'          => $invoice->id,
-            'harvest_id'          => $this->harvest->id,
-            'name'                => 'Uva',
-            'quantity'            => $quantity,
-            'unit_price'          => 1.5,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva',
+            'quantity' => $quantity,
+            'unit_price' => 1.5,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
-            'tax_base'            => 225,
-            'tax_amount'          => 0,
-            'subtotal'            => 225,
-            'total'               => 225,
-            'concept_type'        => 'harvest',
+            'discount_amount' => 0,
+            'tax_base' => 225,
+            'tax_amount' => 0,
+            'subtotal' => 225,
+            'total' => 225,
+            'concept_type' => 'harvest',
         ]);
 
         // Act
@@ -192,8 +193,8 @@ class InvoiceStatusTransitionStockTest extends TestCase
     {
         // Una factura ya enviada NO puede cancelarse directamente (requiere rectificativa).
         $invoice = Invoice::factory()->sent()->create([
-            'user_id'        => $this->user->id,
-            'client_id'      => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => 'FAC-2026-0099',
         ]);
 

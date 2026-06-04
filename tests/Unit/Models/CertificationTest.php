@@ -22,13 +22,13 @@ class CertificationTest extends TestCase
     public function test_certification_type_label_returns_label_for_every_type(): void
     {
         $expected = [
-            'ecologico'             => 'Agricultura Ecológica',
-            'produccion_integrada'  => 'Producción Integrada',
-            'globalgap'             => 'GlobalG.A.P.',
-            'rainforest'            => 'Rainforest Alliance',
-            'denominacion_origen'   => 'Denominación de Origen',
+            'ecologico' => 'Agricultura Ecológica',
+            'produccion_integrada' => 'Producción Integrada',
+            'globalgap' => 'GlobalG.A.P.',
+            'rainforest' => 'Rainforest Alliance',
+            'denominacion_origen' => 'Denominación de Origen',
             'indicacion_geografica' => 'Indicación Geográfica Protegida',
-            'otro'                  => 'Otra certificación',
+            'otro' => 'Otra certificación',
         ];
 
         foreach ($expected as $key => $label) {
@@ -48,13 +48,13 @@ class CertificationTest extends TestCase
     public function test_type_color_returns_correct_color_for_each_type(): void
     {
         $expected = [
-            'ecologico'             => 'green',
-            'produccion_integrada'  => 'teal',
-            'globalgap'             => 'blue',
-            'rainforest'            => 'emerald',
-            'denominacion_origen'   => 'agro',
+            'ecologico' => 'green',
+            'produccion_integrada' => 'teal',
+            'globalgap' => 'blue',
+            'rainforest' => 'emerald',
+            'denominacion_origen' => 'agro',
             'indicacion_geografica' => 'violet',
-            'otro'                  => 'zinc',
+            'otro' => 'zinc',
         ];
 
         foreach ($expected as $key => $color) {
@@ -128,11 +128,11 @@ class CertificationTest extends TestCase
         $user = User::factory()->create(['role' => 'viticulturist']);
 
         $cert = Certification::create([
-            'viticulturist_id'   => $user->id,
+            'viticulturist_id' => $user->id,
             'certification_type' => 'ecologico',
-            'certifying_body'    => 'CAAE',
-            'issue_date'         => now()->subYear(),
-            'active'             => true,
+            'certifying_body' => 'CAAE',
+            'issue_date' => now()->subYear(),
+            'active' => true,
         ]);
 
         $this->assertEquals($user->id, $cert->viticulturist->id);

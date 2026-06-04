@@ -4,15 +4,9 @@ namespace App\Enums;
 
 enum CertificationType: string
 {
-    case ECOLOGICO = 'ecologico';
-    case DO = 'do';
-    case DOCA = 'doca';
-    case IGP = 'igp';
-    case VINO_PAGO = 'vino_pago';
-
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ECOLOGICO => __('Ecológico'),
             self::DO => __('Denominación de Origen (DO)'),
             self::DOCA => __('Denominación de Origen Calificada (DOCa)'),
@@ -23,7 +17,7 @@ enum CertificationType: string
 
     public function icon(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ECOLOGICO => '🌿',
             self::DO => '🏆',
             self::DOCA => '👑',
@@ -31,4 +25,9 @@ enum CertificationType: string
             self::VINO_PAGO => '🍷',
         };
     }
+    case ECOLOGICO = 'ecologico';
+    case DO = 'do';
+    case DOCA = 'doca';
+    case IGP = 'igp';
+    case VINO_PAGO = 'vino_pago';
 }

@@ -19,25 +19,11 @@ class CreateTest extends ViticulturistTestCase
         $this->seed(\Database\Seeders\MunicipalitySeeder::class);
     }
 
-    private function makePlot(int $viticulturistId, string $name = 'Parcela Test'): Plot
-    {
-        return Plot::factory()->create([
-            'viticulturist_id' => $viticulturistId,
-            'name'             => $name,
-        ]);
-    }
-
-    private function makeCampaign(int $viticulturistId, int $year = 2024): Campaign
-    {
-        return Campaign::getOrCreateActiveForYear($viticulturistId)
-            ?? Campaign::create(['viticulturist_id' => $viticulturistId, 'year' => $year, 'name' => "Campaña $year"]);
-    }
-
     public function test_can_create_plot_environment(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $plot          = $this->makePlot($viticulturist->id);
-        $campaign      = $this->makeCampaign($viticulturist->id);
+        $plot = $this->makePlot($viticulturist->id);
+        $campaign = $this->makeCampaign($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -49,7 +35,7 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('plot_environments', [
             'viticulturist_id' => $viticulturist->id,
-            'plot_id'          => $plot->id,
+            'plot_id' => $plot->id,
         ]);
     }
 
@@ -68,7 +54,7 @@ class CreateTest extends ViticulturistTestCase
     public function test_water_intake_distance_must_be_positive(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $plot          = $this->makePlot($viticulturist->id);
+        $plot = $this->makePlot($viticulturist->id);
         $this->makeCampaign($viticulturist->id);
 
         $this->actingAs($viticulturist);
@@ -83,7 +69,7 @@ class CreateTest extends ViticulturistTestCase
     public function test_slope_pct_must_be_between_0_and_100(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $plot          = $this->makePlot($viticulturist->id);
+        $plot = $this->makePlot($viticulturist->id);
         $this->makeCampaign($viticulturist->id);
 
         $this->actingAs($viticulturist);
@@ -98,8 +84,8 @@ class CreateTest extends ViticulturistTestCase
     public function test_update_or_create_upserts_on_same_campaign_plot(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $plot          = $this->makePlot($viticulturist->id);
-        $campaign      = $this->makeCampaign($viticulturist->id);
+        $plot = $this->makePlot($viticulturist->id);
+        $campaign = $this->makeCampaign($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -119,5 +105,19 @@ class CreateTest extends ViticulturistTestCase
 
         // Only 1 record exists (updateOrCreate)
         $this->assertSame(1, PlotEnvironment::where('plot_id', $plot->id)->where('campaign_id', $campaign->id)->count());
+    }
+
+    private function makePlot(int $viticulturistId, string $name = 'Parcela Test'): Plot
+    {
+        return Plot::factory()->create([
+            'viticulturist_id' => $viticulturistId,
+            'name' => $name,
+        ]);
+    }
+
+    private function makeCampaign(int $viticulturistId, int $year = 2024): Campaign
+    {
+        return Campaign::getOrCreateActiveForYear($viticulturistId)
+            ?? Campaign::create(['viticulturist_id' => $viticulturistId, 'year' => $year, 'name' => "Campaña $year"]);
     }
 }

@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class SecurityEvent extends Model
 {
+    // Campos que no se duplican en context (ya tienen columna propia)
+    public const CONTEXT_SKIP = [
+        'event', 'ip', 'user_agent', 'email', 'user_email',
+        'user_id', 'admin_id', 'timestamp',
+    ];
+
     // Los eventos son inmutables — solo created_at
     public $timestamps = false;
 
@@ -23,13 +29,7 @@ class SecurityEvent extends Model
     ];
 
     protected $casts = [
-        'context'    => 'array',
+        'context' => 'array',
         'created_at' => 'datetime',
-    ];
-
-    // Campos que no se duplican en context (ya tienen columna propia)
-    public const CONTEXT_SKIP = [
-        'event', 'ip', 'user_agent', 'email', 'user_email',
-        'user_id', 'admin_id', 'timestamp',
     ];
 }

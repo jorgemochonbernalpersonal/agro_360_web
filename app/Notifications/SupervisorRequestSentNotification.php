@@ -5,8 +5,8 @@ namespace App\Notifications;
 use App\Models\SupervisorRequest;
 use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -33,10 +33,10 @@ class SupervisorRequestSentNotification extends Notification implements ShouldQu
 
     public function toMail(object $notifiable): MailMessage
     {
-        $req        = $this->supervisorRequest;
+        $req = $this->supervisorRequest;
         $supervisor = $req->supervisor;
-        $typeLabel  = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
-        $url        = AppLink::url(route('winery.denomination.requests.index'), 'agro365://home');
+        $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
+        $url = AppLink::url(route('winery.denomination.requests.index'), 'agro365://home');
 
         if (app()->environment('production')) {
             $url = str_replace('http://', 'https://', $url);
@@ -45,12 +45,12 @@ class SupervisorRequestSentNotification extends Notification implements ShouldQu
         $isNonconformity = $req->type === SupervisorRequest::TYPE_NONCONFORMITY;
 
         return (new MailMessage)
-            ->subject(($isNonconformity ? '⚠️ Acta de no conformidad' : 'Nueva actuación de tu DO') . ' — ' . $supervisor->name)
+            ->subject(($isNonconformity ? '⚠️ Acta de no conformidad' : 'Nueva actuación de tu DO').' — '.$supervisor->name)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line(__('Tu Denominación de Origen **') . $supervisor->name . '** te ha enviado una actuación que requiere tu atención.')
-            ->line('**Tipo:** ' . $typeLabel)
-            ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
-            ->when($req->notes, fn ($m) => $m->line('**Notas:** ' . $req->notes))
+            ->line(__('Tu Denominación de Origen **').$supervisor->name.'** te ha enviado una actuación que requiere tu atención.')
+            ->line('**Tipo:** '.$typeLabel)
+            ->when($req->title, fn ($m) => $m->line('**Asunto:** '.$req->title))
+            ->when($req->notes, fn ($m) => $m->line('**Notas:** '.$req->notes))
             ->action(__('Ver actuación'), $url)
             ->when(
                 $isNonconformity,
@@ -62,19 +62,19 @@ class SupervisorRequestSentNotification extends Notification implements ShouldQu
 
     public function toArray(object $notifiable): array
     {
-        $req       = $this->supervisorRequest;
+        $req = $this->supervisorRequest;
         $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
 
         return [
-            'request_id'      => $req->id,
-            'request_type'    => $req->type,
-            'request_title'   => $req->title,
-            'supervisor_id'   => $req->supervisor_id,
+            'request_id' => $req->id,
+            'request_type' => $req->type,
+            'request_title' => $req->title,
+            'supervisor_id' => $req->supervisor_id,
             'supervisor_name' => $req->supervisor?->name,
-            'icon'            => $req->type === SupervisorRequest::TYPE_NONCONFORMITY ? '⚠️' : '📋',
-            'message'         => ($req->supervisor?->name ?? 'Tu DO') . ' — ' . $typeLabel,
-            'action_url'      => route('winery.denomination.requests.index'),
-            'action_text'     => __('Ver solicitud'),
+            'icon' => $req->type === SupervisorRequest::TYPE_NONCONFORMITY ? '⚠️' : '📋',
+            'message' => ($req->supervisor?->name ?? 'Tu DO').' — '.$typeLabel,
+            'action_url' => route('winery.denomination.requests.index'),
+            'action_text' => __('Ver solicitud'),
         ];
     }
 }

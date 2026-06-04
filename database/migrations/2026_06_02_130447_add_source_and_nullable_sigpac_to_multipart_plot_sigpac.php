@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Generaliza la tabla de enlace de geometrías para admitir geometrías que NO
@@ -23,7 +23,7 @@ return new class extends Migration
         // sigpac_code_id NOT NULL -> NULL (mantiene tipo y FK existentes)
         DB::statement(
             'ALTER TABLE `multipart_plot_sigpac` '
-            . 'MODIFY `sigpac_code_id` BIGINT(20) UNSIGNED NULL'
+            .'MODIFY `sigpac_code_id` BIGINT(20) UNSIGNED NULL'
         );
 
         Schema::table('multipart_plot_sigpac', function (Blueprint $table) {
@@ -46,7 +46,7 @@ return new class extends Migration
 
         DB::statement(
             'ALTER TABLE `multipart_plot_sigpac` '
-            . 'MODIFY `sigpac_code_id` BIGINT(20) UNSIGNED NOT NULL'
+            .'MODIFY `sigpac_code_id` BIGINT(20) UNSIGNED NOT NULL'
         );
     }
 };

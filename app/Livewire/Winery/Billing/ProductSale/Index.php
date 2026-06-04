@@ -20,75 +20,104 @@ class Index extends AbstractIndex
 {
     use WithInvoiceActions;
 
-    public string $search               = '';
-    public string $filterStatus         = '';
-    public string $filterPaymentStatus  = '';
+    public string $search = '';
+
+    public string $filterStatus = '';
+
+    public string $filterPaymentStatus = '';
+
     public string $filterDeliveryStatus = '';
-    public bool   $filterGift           = false;
+
+    public bool $filterGift = false;
 
     // Modal emitir
-    public bool   $emitirModal = false;
-    public ?int   $emitirId    = null;
-    public string $emitirDate  = '';
+    public bool $emitirModal = false;
+
+    public ?int $emitirId = null;
+
+    public string $emitirDate = '';
 
     // Modal rectificativa
-    public bool   $correctiveModal  = false;
-    public ?int   $correctiveId     = null;
-    public string $correctiveDate   = '';
+    public bool $correctiveModal = false;
+
+    public ?int $correctiveId = null;
+
+    public string $correctiveDate = '';
+
     public string $correctiveReason = '';
 
     // Quick invoice modal
-    public bool   $quickModal              = false;
-    public string $quickClientId           = '';
-    public string $quickClientAddressId    = '';
-    public string $quickLotId              = '';
-    public string $quickConceptName        = '';
-    public string $quickQty                = '';
-    public string $quickPrice              = '';
-    public string $quickTaxId              = '';
-    public string $quickPaymentType        = '';
-    public array  $quickAvailableAddresses = [];
-    public float  $quickAvailableQty       = 0;
+    public bool $quickModal = false;
+
+    public string $quickClientId = '';
+
+    public string $quickClientAddressId = '';
+
+    public string $quickLotId = '';
+
+    public string $quickConceptName = '';
+
+    public string $quickQty = '';
+
+    public string $quickPrice = '';
+
+    public string $quickTaxId = '';
+
+    public string $quickPaymentType = '';
+
+    public array $quickAvailableAddresses = [];
+
+    public float $quickAvailableQty = 0;
 
     // Export modal
-    public bool   $exportModal    = false;
+    public bool $exportModal = false;
+
     public string $exportDateFrom = '';
-    public string $exportDateTo   = '';
+
+    public string $exportDateTo = '';
 
     protected $queryString = [
-        'search'               => ['except' => ''],
-        'filterStatus'         => ['except' => ''],
-        'filterPaymentStatus'  => ['except' => ''],
+        'search' => ['except' => ''],
+        'filterStatus' => ['except' => ''],
+        'filterPaymentStatus' => ['except' => ''],
         'filterDeliveryStatus' => ['except' => ''],
-        'filterGift'           => ['except' => false],
+        'filterGift' => ['except' => false],
     ];
 
-    public function updatingSearch(): void               { $this->resetPage(); }
-    public function updatingFilterStatus(): void         { $this->resetPage(); }
-    public function updatingFilterPaymentStatus(): void  { $this->resetPage(); }
-    public function updatingFilterDeliveryStatus(): void { $this->resetPage(); }
-    public function updatingFilterGift(): void           { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return [
-            'search'               => '',
-            'filterStatus'         => '',
-            'filterPaymentStatus'  => '',
-            'filterDeliveryStatus' => '',
-            'filterGift'           => false,
-        ];
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterPaymentStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterDeliveryStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterGift(): void
+    {
+        $this->resetPage();
     }
 
     // ── Limpiar filtros ───────────────────────────────────────────────────────
 
     public function clearFilters(): void
     {
-        $this->search               = '';
-        $this->filterStatus         = '';
-        $this->filterPaymentStatus  = '';
+        $this->search = '';
+        $this->filterStatus = '';
+        $this->filterPaymentStatus = '';
         $this->filterDeliveryStatus = '';
-        $this->filterGift           = false;
+        $this->filterGift = false;
         $this->resetPage();
     }
 
@@ -97,23 +126,26 @@ class Index extends AbstractIndex
     public function openEmitirModal(int $id): void
     {
         $invoice = $this->findInvoice($id);
-        if (!$invoice) return;
-
-        if ($invoice->status !== 'draft') {
-            $this->toastError(__('Solo se puede emitir una factura en borrador.'));
+        if (! $invoice) {
             return;
         }
 
-        $this->emitirId    = $id;
-        $this->emitirDate  = now()->toDateString();
+        if ($invoice->status !== 'draft') {
+            $this->toastError(__('Solo se puede emitir una factura en borrador.'));
+
+            return;
+        }
+
+        $this->emitirId = $id;
+        $this->emitirDate = now()->toDateString();
         $this->emitirModal = true;
     }
 
     public function closeEmitirModal(): void
     {
         $this->emitirModal = false;
-        $this->emitirId    = null;
-        $this->emitirDate  = '';
+        $this->emitirId = null;
+        $this->emitirDate = '';
         $this->resetValidation();
     }
 
@@ -125,9 +157,10 @@ class Index extends AbstractIndex
         );
 
         $invoice = $this->findInvoice($this->emitirId);
-        if (!$invoice || $invoice->status !== 'draft') {
+        if (! $invoice || $invoice->status !== 'draft') {
             $this->toastError(__('La factura ya no está en borrador.'));
             $this->closeEmitirModal();
+
             return;
         }
 
@@ -135,13 +168,13 @@ class Index extends AbstractIndex
 
         try {
             DB::transaction(function () use ($invoice, &$invoiceNumber) {
-                $settings      = InvoicingSetting::getOrCreateForUser(Auth::id());
+                $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
                 $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
 
                 $invoice->update([
                     'invoice_number' => $invoiceNumber,
-                    'invoice_date'   => $this->emitirDate,
-                    'status'         => 'sent',
+                    'invoice_date' => $this->emitirDate,
+                    'status' => 'sent',
                 ]);
             });
 
@@ -149,9 +182,9 @@ class Index extends AbstractIndex
             $this->toastSuccess("Factura {$invoiceNumber} emitida correctamente.");
 
         } catch (\Exception $e) {
-            Log::error('Error al emitir factura de productos: ' . $e->getMessage(), [
+            Log::error('Error al emitir factura de productos: '.$e->getMessage(), [
                 'invoice_id' => $this->emitirId,
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
             ]);
             $this->toastError(__('Error al emitir la factura.'));
         }
@@ -162,15 +195,19 @@ class Index extends AbstractIndex
     public function markDelivered(int $invoiceId): void
     {
         $invoice = $this->findInvoice($invoiceId, ['items.wineLot']);
-        if (!$invoice) return;
+        if (! $invoice) {
+            return;
+        }
 
         if ($invoice->status === 'cancelled') {
             $this->toastError(__('No se puede marcar como entregada una factura cancelada.'));
+
             return;
         }
 
         if ($invoice->delivery_status === 'delivered') {
             $this->toastError(__('Esta factura ya está entregada.'));
+
             return;
         }
 
@@ -183,11 +220,11 @@ class Index extends AbstractIndex
             $this->toastSuccess(__('Factura marcada como entregada. Stock movido a vendido.'));
 
         } catch (\Exception $e) {
-            Log::error('Error al marcar factura como entregada: ' . $e->getMessage(), [
+            Log::error('Error al marcar factura como entregada: '.$e->getMessage(), [
                 'invoice_id' => $invoiceId,
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al procesar la entrega.'));
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al procesar la entrega.'));
         }
     }
 
@@ -196,20 +233,25 @@ class Index extends AbstractIndex
     public function cancel(int $invoiceId): void
     {
         $invoice = $this->findInvoice($invoiceId, ['items.wineLot']);
-        if (!$invoice) return;
+        if (! $invoice) {
+            return;
+        }
 
         if ($invoice->status === 'cancelled') {
             $this->toastError(__('Esta factura ya está cancelada.'));
+
             return;
         }
 
         if ($invoice->payment_status === 'paid') {
             $this->toastError(__('No se puede cancelar una factura ya cobrada.'));
+
             return;
         }
 
         if ($invoice->delivery_status === 'delivered') {
             $this->toastError(__('No se puede cancelar directamente un albarán entregado. Crea una factura rectificativa.'));
+
             return;
         }
 
@@ -217,7 +259,7 @@ class Index extends AbstractIndex
             DB::transaction(function () use ($invoice) {
                 ProductStockService::moveForInvoice($invoice, 'cancel');
                 $invoice->update([
-                    'status'          => 'cancelled',
+                    'status' => 'cancelled',
                     'delivery_status' => 'cancelled',
                 ]);
             });
@@ -225,17 +267,12 @@ class Index extends AbstractIndex
             $this->toastSuccess(__('Factura cancelada y stock restaurado.'));
 
         } catch (\Exception $e) {
-            Log::error('Error al cancelar factura de productos: ' . $e->getMessage(), [
+            Log::error('Error al cancelar factura de productos: '.$e->getMessage(), [
                 'invoice_id' => $invoiceId,
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al cancelar la factura.'));
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al cancelar la factura.'));
         }
-    }
-
-    protected function markPaidSuccessMessage(): string
-    {
-        return __('Factura marcada como cobrada.');
     }
 
     // ── Rectificativa ─────────────────────────────────────────────────────────
@@ -243,34 +280,39 @@ class Index extends AbstractIndex
     public function openCorrectiveModal(int $id): void
     {
         $invoice = $this->findInvoice($id);
-        if (!$invoice) return;
+        if (! $invoice) {
+            return;
+        }
 
         if ($invoice->status !== 'sent') {
             $this->toastError(__('Solo se puede rectificar una factura emitida.'));
+
             return;
         }
 
         if ($invoice->corrective) {
             $this->toastError(__('Una rectificativa no puede rectificarse a sí misma.'));
+
             return;
         }
 
         if (Invoice::where('corrected_invoice_id', $id)->exists()) {
             $this->toastError(__('Esta factura ya tiene una rectificativa asociada.'));
+
             return;
         }
 
-        $this->correctiveId     = $id;
-        $this->correctiveDate   = now()->toDateString();
+        $this->correctiveId = $id;
+        $this->correctiveDate = now()->toDateString();
         $this->correctiveReason = '';
-        $this->correctiveModal  = true;
+        $this->correctiveModal = true;
     }
 
     public function closeCorrectiveModal(): void
     {
-        $this->correctiveModal  = false;
-        $this->correctiveId     = null;
-        $this->correctiveDate   = '';
+        $this->correctiveModal = false;
+        $this->correctiveId = null;
+        $this->correctiveDate = '';
         $this->correctiveReason = '';
         $this->resetValidation();
     }
@@ -279,16 +321,17 @@ class Index extends AbstractIndex
     {
         $this->validate(
             [
-                'correctiveDate'   => 'required|date',
+                'correctiveDate' => 'required|date',
                 'correctiveReason' => 'nullable|string|max:500',
             ],
             ['correctiveDate.required' => __('La fecha de la rectificativa es obligatoria.')]
         );
 
         $original = $this->findInvoice($this->correctiveId, ['items.wineLot']);
-        if (!$original || $original->status !== 'sent') {
+        if (! $original || $original->status !== 'sent') {
             $this->toastError(__('La factura original ya no es válida para rectificar.'));
             $this->closeCorrectiveModal();
+
             return;
         }
 
@@ -296,12 +339,14 @@ class Index extends AbstractIndex
         if ((int) $original->user_id !== Auth::id()) {
             $this->toastError(__('No tienes permiso para rectificar esta factura.'));
             $this->closeCorrectiveModal();
+
             return;
         }
 
         if (Invoice::where('corrected_invoice_id', $original->id)->exists()) {
             $this->toastError(__('Esta factura ya tiene una rectificativa asociada.'));
             $this->closeCorrectiveModal();
+
             return;
         }
 
@@ -309,65 +354,65 @@ class Index extends AbstractIndex
 
         try {
             DB::transaction(function () use ($original, &$invoiceNumber) {
-                $settings      = InvoicingSetting::getOrCreateForUser(Auth::id());
+                $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
                 $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
 
-                $notes = 'Rectificativa de ' . $original->invoice_number . '.'
-                    . ($this->correctiveReason ? ' Motivo: ' . $this->correctiveReason : '');
+                $notes = 'Rectificativa de '.$original->invoice_number.'.'
+                    .($this->correctiveReason ? ' Motivo: '.$this->correctiveReason : '');
 
                 $corrective = Invoice::withoutEvents(fn () => Invoice::create([
-                    'user_id'              => Auth::id(),
-                    'client_id'            => $original->client_id,
-                    'client_address_id'    => $original->client_address_id,
+                    'user_id' => Auth::id(),
+                    'client_id' => $original->client_id,
+                    'client_address_id' => $original->client_address_id,
                     'corrected_invoice_id' => $original->id,
-                    'invoice_type'         => 'wine_sale',
-                    'corrective'           => true,
-                    'invoice_number'       => $invoiceNumber,
-                    'invoice_date'         => $this->correctiveDate,
-                    'order_date'           => now(),
-                    'status'               => 'sent',
-                    'payment_status'       => 'unpaid',
-                    'delivery_status'      => 'cancelled',
-                    'subtotal'             => -abs((float) $original->subtotal),
-                    'discount_amount'      => -abs((float) $original->discount_amount),
-                    'tax_base'             => -abs((float) $original->tax_base),
-                    'tax_rate'             => $original->tax_rate,
-                    'tax_amount'           => -abs((float) $original->tax_amount),
-                    'total_amount'         => -abs((float) $original->total_amount),
-                    'billing_first_name'       => $original->billing_first_name,
-                    'billing_last_name'        => $original->billing_last_name,
-                    'billing_email'            => $original->billing_email,
-                    'billing_phone'            => $original->billing_phone,
-                    'billing_company_name'     => $original->billing_company_name,
+                    'invoice_type' => 'wine_sale',
+                    'corrective' => true,
+                    'invoice_number' => $invoiceNumber,
+                    'invoice_date' => $this->correctiveDate,
+                    'order_date' => now(),
+                    'status' => 'sent',
+                    'payment_status' => 'unpaid',
+                    'delivery_status' => 'cancelled',
+                    'subtotal' => -abs((float) $original->subtotal),
+                    'discount_amount' => -abs((float) $original->discount_amount),
+                    'tax_base' => -abs((float) $original->tax_base),
+                    'tax_rate' => $original->tax_rate,
+                    'tax_amount' => -abs((float) $original->tax_amount),
+                    'total_amount' => -abs((float) $original->total_amount),
+                    'billing_first_name' => $original->billing_first_name,
+                    'billing_last_name' => $original->billing_last_name,
+                    'billing_email' => $original->billing_email,
+                    'billing_phone' => $original->billing_phone,
+                    'billing_company_name' => $original->billing_company_name,
                     'billing_company_document' => $original->billing_company_document,
-                    'billing_address'          => $original->billing_address,
-                    'billing_postal_code'      => $original->billing_postal_code,
-                    'billing_city'             => $original->billing_city,
-                    'billing_state'            => $original->billing_state,
-                    'billing_country'          => $original->billing_country,
-                    'observations'             => $notes,
+                    'billing_address' => $original->billing_address,
+                    'billing_postal_code' => $original->billing_postal_code,
+                    'billing_city' => $original->billing_city,
+                    'billing_state' => $original->billing_state,
+                    'billing_country' => $original->billing_country,
+                    'observations' => $notes,
                 ]));
 
                 InvoiceItem::withoutEvents(function () use ($original, $corrective) {
                     foreach ($original->items as $item) {
                         $corrective->items()->create([
-                            'wine_lot_id'         => $item->wine_lot_id,
-                            'harvest_id'          => $item->harvest_id,
-                            'concept_type'        => $item->concept_type,
-                            'name'                => $item->name,
-                            'description'         => $item->description,
-                            'sku'                 => $item->sku,
-                            'quantity'            => -(float) $item->quantity,
-                            'unit_price'          => $item->unit_price,
+                            'wine_lot_id' => $item->wine_lot_id,
+                            'harvest_id' => $item->harvest_id,
+                            'concept_type' => $item->concept_type,
+                            'name' => $item->name,
+                            'description' => $item->description,
+                            'sku' => $item->sku,
+                            'quantity' => -(float) $item->quantity,
+                            'unit_price' => $item->unit_price,
                             'discount_percentage' => $item->discount_percentage,
-                            'discount_amount'     => -(float) $item->discount_amount,
-                            'tax_id'              => $item->tax_id,
-                            'tax_name'            => $item->tax_name,
-                            'tax_rate'            => $item->tax_rate,
-                            'tax_base'            => -(float) $item->tax_base,
-                            'tax_amount'          => -(float) $item->tax_amount,
-                            'subtotal'            => -(float) $item->subtotal,
-                            'total'               => -(float) $item->total,
+                            'discount_amount' => -(float) $item->discount_amount,
+                            'tax_id' => $item->tax_id,
+                            'tax_name' => $item->tax_name,
+                            'tax_rate' => $item->tax_rate,
+                            'tax_base' => -(float) $item->tax_base,
+                            'tax_amount' => -(float) $item->tax_amount,
+                            'subtotal' => -(float) $item->subtotal,
+                            'total' => -(float) $item->total,
                         ]);
                     }
                 });
@@ -379,11 +424,11 @@ class Index extends AbstractIndex
             $this->toastSuccess("Rectificativa {$invoiceNumber} emitida. Stock restaurado.");
 
         } catch (\Exception $e) {
-            Log::error('Error al crear rectificativa de venta de productos: ' . $e->getMessage(), [
+            Log::error('Error al crear rectificativa de venta de productos: '.$e->getMessage(), [
                 'original_invoice_id' => $this->correctiveId,
-                'user_id'             => Auth::id(),
+                'user_id' => Auth::id(),
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al generar la rectificativa.'));
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al generar la rectificativa.'));
         }
     }
 
@@ -392,7 +437,9 @@ class Index extends AbstractIndex
     public function duplicate(int $invoiceId): void
     {
         $original = $this->findInvoice($invoiceId, ['items.wineLot']);
-        if (!$original) return;
+        if (! $original) {
+            return;
+        }
 
         try {
             DB::transaction(function () use ($original) {
@@ -400,38 +447,38 @@ class Index extends AbstractIndex
                 $noteCode = $settings->generateAndIncrementDeliveryNoteCode();
 
                 $newInvoice = Invoice::create([
-                    'user_id'                  => Auth::id(),
-                    'client_id'                => $original->client_id,
-                    'client_address_id'        => $original->client_address_id,
-                    'invoice_type'             => 'wine_sale',
-                    'delivery_note_code'       => $noteCode,
-                    'delivery_note_date'       => now()->toDateString(),
-                    'order_date'               => now()->toDateString(),
-                    'invoice_date'             => null,
-                    'delivery_status'          => 'pending',
-                    'status'                   => 'draft',
-                    'payment_status'           => 'unpaid',
-                    'payment_type'             => $original->payment_type,
-                    'billing_first_name'           => $original->billing_first_name,
-                    'billing_last_name'            => $original->billing_last_name,
-                    'billing_company_name'         => $original->billing_company_name,
-                    'billing_company_document'     => $original->billing_company_document,
-                    'billing_email'                => $original->billing_email,
-                    'billing_phone'                => $original->billing_phone,
-                    'billing_address'              => $original->billing_address,
-                    'billing_postal_code'          => $original->billing_postal_code,
-                    'billing_city'                 => $original->billing_city,
-                    'billing_state'                => $original->billing_state,
-                    'billing_country'              => $original->billing_country,
-                    'gift'                         => $original->gift,
-                    'tax_rate'                     => $original->tax_rate,
-                    'subtotal'                 => $original->subtotal,
-                    'discount_amount'          => $original->discount_amount,
-                    'tax_base'                 => $original->tax_base,
-                    'tax_amount'               => $original->tax_amount,
-                    'total_amount'             => $original->total_amount,
-                    'observations'             => $original->observations,
-                    'observations_invoice'     => $original->observations_invoice,
+                    'user_id' => Auth::id(),
+                    'client_id' => $original->client_id,
+                    'client_address_id' => $original->client_address_id,
+                    'invoice_type' => 'wine_sale',
+                    'delivery_note_code' => $noteCode,
+                    'delivery_note_date' => now()->toDateString(),
+                    'order_date' => now()->toDateString(),
+                    'invoice_date' => null,
+                    'delivery_status' => 'pending',
+                    'status' => 'draft',
+                    'payment_status' => 'unpaid',
+                    'payment_type' => $original->payment_type,
+                    'billing_first_name' => $original->billing_first_name,
+                    'billing_last_name' => $original->billing_last_name,
+                    'billing_company_name' => $original->billing_company_name,
+                    'billing_company_document' => $original->billing_company_document,
+                    'billing_email' => $original->billing_email,
+                    'billing_phone' => $original->billing_phone,
+                    'billing_address' => $original->billing_address,
+                    'billing_postal_code' => $original->billing_postal_code,
+                    'billing_city' => $original->billing_city,
+                    'billing_state' => $original->billing_state,
+                    'billing_country' => $original->billing_country,
+                    'gift' => $original->gift,
+                    'tax_rate' => $original->tax_rate,
+                    'subtotal' => $original->subtotal,
+                    'discount_amount' => $original->discount_amount,
+                    'tax_base' => $original->tax_base,
+                    'tax_amount' => $original->tax_amount,
+                    'total_amount' => $original->total_amount,
+                    'observations' => $original->observations,
+                    'observations_invoice' => $original->observations_invoice,
                 ]);
 
                 foreach ($original->items as $item) {
@@ -440,23 +487,23 @@ class Index extends AbstractIndex
                         : null;
 
                     $createdItem = InvoiceItem::create([
-                        'invoice_id'          => $newInvoice->id,
-                        'wine_lot_id'         => $lot?->id,
-                        'concept_type'        => $item->concept_type,
-                        'name'                => $item->name,
-                        'description'         => $item->description,
-                        'sku'                 => $item->sku,
-                        'quantity'            => $item->quantity,
-                        'unit_price'          => $item->unit_price,
+                        'invoice_id' => $newInvoice->id,
+                        'wine_lot_id' => $lot?->id,
+                        'concept_type' => $item->concept_type,
+                        'name' => $item->name,
+                        'description' => $item->description,
+                        'sku' => $item->sku,
+                        'quantity' => $item->quantity,
+                        'unit_price' => $item->unit_price,
                         'discount_percentage' => $item->discount_percentage,
-                        'discount_amount'     => $item->discount_amount,
-                        'tax_id'              => $item->tax_id,
-                        'tax_name'            => $item->tax_name,
-                        'tax_rate'            => $item->tax_rate,
-                        'subtotal'            => $item->subtotal,
-                        'tax_base'            => $item->tax_base,
-                        'tax_amount'          => $item->tax_amount,
-                        'total'               => $item->total,
+                        'discount_amount' => $item->discount_amount,
+                        'tax_id' => $item->tax_id,
+                        'tax_name' => $item->tax_name,
+                        'tax_rate' => $item->tax_rate,
+                        'subtotal' => $item->subtotal,
+                        'tax_base' => $item->tax_base,
+                        'tax_amount' => $item->tax_amount,
+                        'total' => $item->total,
                     ]);
 
                     if ($lot) {
@@ -468,8 +515,8 @@ class Index extends AbstractIndex
             $this->toastSuccess(__('Albarán duplicado correctamente.'));
 
         } catch (\Exception $e) {
-            Log::error('Error al duplicar factura: ' . $e->getMessage(), ['invoice_id' => $invoiceId]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al duplicar el albarán.'));
+            Log::error('Error al duplicar factura: '.$e->getMessage(), ['invoice_id' => $invoiceId]);
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al duplicar el albarán.'));
         }
     }
 
@@ -495,20 +542,6 @@ class Index extends AbstractIndex
         $this->resetValidation();
     }
 
-    private function resetQuickModal(): void
-    {
-        $this->quickClientId           = '';
-        $this->quickClientAddressId    = '';
-        $this->quickLotId              = '';
-        $this->quickConceptName        = '';
-        $this->quickQty                = '';
-        $this->quickPrice              = '';
-        $this->quickTaxId              = '';
-        $this->quickPaymentType        = '';
-        $this->quickAvailableAddresses = [];
-        $this->quickAvailableQty       = 0;
-    }
-
     public function updatedQuickClientId(string $value): void
     {
         if ($value) {
@@ -527,8 +560,8 @@ class Index extends AbstractIndex
         if ($value) {
             $lot = ProductLot::where('user_id', Auth::id())->find($value);
             if ($lot) {
-                $this->quickConceptName  = $lot->name . ($lot->vintage ? " ({$lot->vintage})" : '');
-                $this->quickPrice        = (string) ($lot->price_per_unit ?? 0);
+                $this->quickConceptName = $lot->name.($lot->vintage ? " ({$lot->vintage})" : '');
+                $this->quickPrice = (string) ($lot->price_per_unit ?? 0);
                 $this->quickAvailableQty = (float) $lot->available_quantity;
             }
         }
@@ -538,38 +571,38 @@ class Index extends AbstractIndex
     {
         $this->validate(
             [
-                'quickClientId'        => 'required|exists:clients,id',
+                'quickClientId' => 'required|exists:clients,id',
                 'quickClientAddressId' => 'required|exists:client_addresses,id',
-                'quickLotId'           => 'required|exists:wine_lots,id',
-                'quickConceptName'     => 'required|string|max:255',
-                'quickQty'             => 'required|numeric|min:0.001',
-                'quickPrice'           => 'required|numeric|min:0',
-                'quickTaxId'           => 'nullable|exists:taxes,id',
-                'quickPaymentType'     => 'nullable|in:cash,transfer,check,other',
+                'quickLotId' => 'required|exists:wine_lots,id',
+                'quickConceptName' => 'required|string|max:255',
+                'quickQty' => 'required|numeric|min:0.001',
+                'quickPrice' => 'required|numeric|min:0',
+                'quickTaxId' => 'nullable|exists:taxes,id',
+                'quickPaymentType' => 'nullable|in:cash,transfer,check,other',
             ],
             [
-                'quickClientId.required'        => __('Selecciona un cliente.'),
+                'quickClientId.required' => __('Selecciona un cliente.'),
                 'quickClientAddressId.required' => __('Selecciona una dirección.'),
-                'quickLotId.required'           => __('Selecciona un lote de producto.'),
-                'quickConceptName.required'     => __('El concepto es obligatorio.'),
-                'quickQty.required'             => __('La cantidad es obligatoria.'),
-                'quickPrice.required'           => __('El precio es obligatorio.'),
+                'quickLotId.required' => __('Selecciona un lote de producto.'),
+                'quickConceptName.required' => __('El concepto es obligatorio.'),
+                'quickQty.required' => __('La cantidad es obligatoria.'),
+                'quickPrice.required' => __('El precio es obligatorio.'),
             ]
         );
 
-        $client   = Client::where('user_id', Auth::id())->findOrFail($this->quickClientId);
-        $taxes    = Auth::user()->taxes()->get()->keyBy('id');
+        $client = Client::where('user_id', Auth::id())->findOrFail($this->quickClientId);
+        $taxes = Auth::user()->taxes()->get()->keyBy('id');
         if ($taxes->isEmpty()) {
             $taxes = Tax::active()->get()->keyBy('id');
         }
 
-        $qty      = (float) $this->quickQty;
-        $price    = (float) $this->quickPrice;
-        $tax      = $this->quickTaxId ? ($taxes[$this->quickTaxId] ?? null) : null;
-        $taxRate  = $tax ? (float) $tax->rate : 0;
+        $qty = (float) $this->quickQty;
+        $price = (float) $this->quickPrice;
+        $tax = $this->quickTaxId ? ($taxes[$this->quickTaxId] ?? null) : null;
+        $taxRate = $tax ? (float) $tax->rate : 0;
         $subtotal = round($qty * $price, 3);
-        $taxAmt   = round($subtotal * ($taxRate / 100), 3);
-        $total    = $subtotal + $taxAmt;
+        $taxAmt = round($subtotal * ($taxRate / 100), 3);
+        $total = $subtotal + $taxAmt;
 
         try {
             DB::transaction(function () use ($client, $tax, $qty, $price, $taxRate, $subtotal, $taxAmt, $total) {
@@ -577,46 +610,46 @@ class Index extends AbstractIndex
                 $noteCode = $settings->generateAndIncrementDeliveryNoteCode();
 
                 $invoice = Invoice::create([
-                    'user_id'              => Auth::id(),
-                    'client_id'            => $client->id,
-                    'client_address_id'    => $this->quickClientAddressId ?: null,
-                    'invoice_type'         => 'wine_sale',
-                    'delivery_note_code'   => $noteCode,
-                    'delivery_note_date'   => now()->toDateString(),
-                    'invoice_date'         => now()->toDateString(),
-                    'delivery_status'      => 'pending',
-                    'status'               => 'draft',
-                    'payment_status'       => 'unpaid',
-                    'payment_type'         => $this->quickPaymentType ?: null,
-                    'billing_first_name'   => $client->first_name,
-                    'billing_last_name'    => $client->last_name,
+                    'user_id' => Auth::id(),
+                    'client_id' => $client->id,
+                    'client_address_id' => $this->quickClientAddressId ?: null,
+                    'invoice_type' => 'wine_sale',
+                    'delivery_note_code' => $noteCode,
+                    'delivery_note_date' => now()->toDateString(),
+                    'invoice_date' => now()->toDateString(),
+                    'delivery_status' => 'pending',
+                    'status' => 'draft',
+                    'payment_status' => 'unpaid',
+                    'payment_type' => $this->quickPaymentType ?: null,
+                    'billing_first_name' => $client->first_name,
+                    'billing_last_name' => $client->last_name,
                     'billing_company_name' => $client->company_name,
-                    'billing_email'        => $client->email,
-                    'billing_phone'        => $client->phone,
-                    'subtotal'             => $subtotal,
-                    'discount_amount'      => 0,
-                    'tax_base'             => $subtotal,
-                    'tax_amount'           => $taxAmt,
-                    'total_amount'         => $total,
+                    'billing_email' => $client->email,
+                    'billing_phone' => $client->phone,
+                    'subtotal' => $subtotal,
+                    'discount_amount' => 0,
+                    'tax_base' => $subtotal,
+                    'tax_amount' => $taxAmt,
+                    'total_amount' => $total,
                 ]);
 
-                $lot         = ProductLot::where('user_id', Auth::id())->lockForUpdate()->findOrFail($this->quickLotId);
+                $lot = ProductLot::where('user_id', Auth::id())->lockForUpdate()->findOrFail($this->quickLotId);
                 $createdItem = InvoiceItem::create([
-                    'invoice_id'          => $invoice->id,
-                    'wine_lot_id'         => $lot->id,
-                    'concept_type'        => 'wine',
-                    'name'                => $this->quickConceptName,
-                    'quantity'            => $qty,
-                    'unit_price'          => $price,
+                    'invoice_id' => $invoice->id,
+                    'wine_lot_id' => $lot->id,
+                    'concept_type' => 'wine',
+                    'name' => $this->quickConceptName,
+                    'quantity' => $qty,
+                    'unit_price' => $price,
                     'discount_percentage' => 0,
-                    'discount_amount'     => 0,
-                    'tax_id'              => $tax?->id,
-                    'tax_name'            => $tax?->name,
-                    'tax_rate'            => $taxRate,
-                    'subtotal'            => $subtotal,
-                    'tax_base'            => $subtotal,
-                    'tax_amount'          => $taxAmt,
-                    'total'               => $total,
+                    'discount_amount' => 0,
+                    'tax_id' => $tax?->id,
+                    'tax_name' => $tax?->name,
+                    'tax_rate' => $taxRate,
+                    'subtotal' => $subtotal,
+                    'tax_base' => $subtotal,
+                    'tax_amount' => $taxAmt,
+                    'total' => $total,
                 ]);
 
                 ProductStockService::moveOnCreate($invoice, $createdItem, $lot, $qty);
@@ -626,8 +659,8 @@ class Index extends AbstractIndex
             $this->toastSuccess(__('Albarán rápido creado correctamente.'));
 
         } catch (\Exception $e) {
-            Log::error('Error al crear albarán rápido: ' . $e->getMessage(), ['user_id' => Auth::id()]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al crear el albarán.'));
+            Log::error('Error al crear albarán rápido: '.$e->getMessage(), ['user_id' => Auth::id()]);
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al crear el albarán.'));
         }
     }
 
@@ -636,8 +669,8 @@ class Index extends AbstractIndex
     public function openExportModal(): void
     {
         $this->exportDateFrom = now()->startOfMonth()->toDateString();
-        $this->exportDateTo   = now()->toDateString();
-        $this->exportModal    = true;
+        $this->exportDateTo = now()->toDateString();
+        $this->exportModal = true;
     }
 
     public function closeExportModal(): void
@@ -651,7 +684,7 @@ class Index extends AbstractIndex
         $this->validate(
             [
                 'exportDateFrom' => 'required|date',
-                'exportDateTo'   => 'required|date|after_or_equal:exportDateFrom',
+                'exportDateTo' => 'required|date|after_or_equal:exportDateFrom',
             ],
             [
                 'exportDateTo.after_or_equal' => __('La fecha final no puede ser anterior a la inicial.'),
@@ -662,8 +695,24 @@ class Index extends AbstractIndex
 
         return \Maatwebsite\Excel\Facades\Excel::download(
             new \App\Exports\ProductSaleInvoiceExport(Auth::id(), $this->exportDateFrom, $this->exportDateTo),
-            'facturas_venta_' . $this->exportDateFrom . '_' . $this->exportDateTo . '.xlsx'
+            'facturas_venta_'.$this->exportDateFrom.'_'.$this->exportDateTo.'.xlsx'
         );
+    }
+
+    protected function filterDefaults(): array
+    {
+        return [
+            'search' => '',
+            'filterStatus' => '',
+            'filterPaymentStatus' => '',
+            'filterDeliveryStatus' => '',
+            'filterGift' => false,
+        ];
+    }
+
+    protected function markPaidSuccessMessage(): string
+    {
+        return __('Factura marcada como cobrada.');
     }
 
     // ── Query ─────────────────────────────────────────────────────────────────
@@ -679,14 +728,14 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(IFNULL(invoice_number,\'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term])
-                  ->orWhereHas('client', function ($q2) use ($term) {
-                      $q2->whereRaw('LOWER(IFNULL(first_name,\'\')) LIKE ?', [$term])
-                         ->orWhereRaw('LOWER(IFNULL(company_name,\'\')) LIKE ?', [$term]);
-                  });
+                    ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term])
+                    ->orWhereHas('client', function ($q2) use ($term) {
+                        $q2->whereRaw('LOWER(IFNULL(first_name,\'\')) LIKE ?', [$term])
+                            ->orWhereRaw('LOWER(IFNULL(company_name,\'\')) LIKE ?', [$term]);
+                    });
             });
         }
 
@@ -712,9 +761,15 @@ class Index extends AbstractIndex
         $query->orderByDesc('created_at')->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['created_at', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['created_at', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -723,10 +778,10 @@ class Index extends AbstractIndex
             ->where('gift', true)
             ->where('status', '!=', 'cancelled')
             ->when($this->search, function ($q) {
-                $term = '%' . mb_strtolower($this->search) . '%';
+                $term = '%'.mb_strtolower($this->search).'%';
                 $q->where(function ($q2) use ($term) {
                     $q2->whereRaw('LOWER(IFNULL(invoice_number,\'\')) LIKE ?', [$term])
-                       ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term]);
+                        ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term]);
                 });
             })
             ->when($this->filterStatus, fn ($q) => $q->where('status', $this->filterStatus))
@@ -740,6 +795,20 @@ class Index extends AbstractIndex
     protected function resolveViewName(): string
     {
         return 'livewire.winery.billing.products.index';
+    }
+
+    private function resetQuickModal(): void
+    {
+        $this->quickClientId = '';
+        $this->quickClientAddressId = '';
+        $this->quickLotId = '';
+        $this->quickConceptName = '';
+        $this->quickQty = '';
+        $this->quickPrice = '';
+        $this->quickTaxId = '';
+        $this->quickPaymentType = '';
+        $this->quickAvailableAddresses = [];
+        $this->quickAvailableQty = 0;
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

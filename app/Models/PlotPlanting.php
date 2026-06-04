@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\TrainingSystem;
 
 class PlotPlanting extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'plot_id',
         'name',
@@ -99,6 +99,8 @@ class PlotPlanting extends Model
 
     /**
      * Scope para plantaciones activas
+     *
+     * @param mixed $query
      */
     public function scopeActive($query)
     {
@@ -107,6 +109,8 @@ class PlotPlanting extends Model
 
     /**
      * Scope para plantaciones con riego
+     *
+     * @param mixed $query
      */
     public function scopeIrrigated($query)
     {
@@ -191,7 +195,7 @@ class PlotPlanting extends Model
     public function getTotalViticulturistYieldForVintage(int $year, int $viticulturistId): float
     {
         return $this->harvests()
-            ->whereHas('activity', fn($q) => $q->where('viticulturist_id', $viticulturistId))
+            ->whereHas('activity', fn ($q) => $q->where('viticulturist_id', $viticulturistId))
             ->where('vintage', $year)
             ->where('status', 'active')
             ->sum('total_weight');
@@ -215,7 +219,7 @@ class PlotPlanting extends Model
      */
     public function hasHarvestLimit(): bool
     {
-        return !is_null($this->harvest_limit_kg) && $this->harvest_limit_kg > 0;
+        return ! is_null($this->harvest_limit_kg) && $this->harvest_limit_kg > 0;
     }
 
     /**
@@ -223,7 +227,7 @@ class PlotPlanting extends Model
      */
     public function getHarvestLimitUsagePercentage(): ?float
     {
-        if (!$this->hasHarvestLimit()) {
+        if (! $this->hasHarvestLimit()) {
             return null;
         }
 
@@ -240,7 +244,7 @@ class PlotPlanting extends Model
      */
     public function getHarvestLimitUsagePercentageForCampaign(int $campaignId): ?float
     {
-        if (!$this->hasHarvestLimit()) {
+        if (! $this->hasHarvestLimit()) {
             return null;
         }
 
@@ -257,11 +261,12 @@ class PlotPlanting extends Model
      */
     public function getRemainingHarvestLimit(): ?float
     {
-        if (!$this->hasHarvestLimit()) {
+        if (! $this->hasHarvestLimit()) {
             return null;
         }
 
         $totalHarvested = $this->getTotalActualYield();
+
         return max(0, round($this->harvest_limit_kg - $totalHarvested, 3));
     }
 
@@ -270,11 +275,12 @@ class PlotPlanting extends Model
      */
     public function getRemainingHarvestLimitForCampaign(int $campaignId): ?float
     {
-        if (!$this->hasHarvestLimit()) {
+        if (! $this->hasHarvestLimit()) {
             return null;
         }
 
         $totalHarvested = $this->getTotalActualYieldForCampaign($campaignId);
+
         return max(0, round($this->harvest_limit_kg - $totalHarvested, 3));
     }
 
@@ -283,11 +289,12 @@ class PlotPlanting extends Model
      */
     public function exceedsHarvestLimit(): bool
     {
-        if (!$this->hasHarvestLimit()) {
+        if (! $this->hasHarvestLimit()) {
             return false;
         }
 
         $totalHarvested = $this->getTotalActualYield();
+
         return $totalHarvested > $this->harvest_limit_kg;
     }
 
@@ -296,12 +303,13 @@ class PlotPlanting extends Model
      */
     public function exceedsHarvestLimitForCampaign(int $campaignId, float $additionalWeight = 0): bool
     {
-        if (!$this->hasHarvestLimit()) {
+        if (! $this->hasHarvestLimit()) {
             return false;
         }
 
         $totalHarvested = $this->getTotalActualYieldForCampaign($campaignId);
         $newTotal = $totalHarvested + $additionalWeight;
+
         return $newTotal > $this->harvest_limit_kg;
     }
 
@@ -311,7 +319,7 @@ class PlotPlanting extends Model
     public function getYieldVariance(int $campaignId, ?float $additionalWeight = null): ?array
     {
         $estimatedYield = $this->getEstimatedYieldForCampaign($campaignId);
-        if (!$estimatedYield) {
+        if (! $estimatedYield) {
             return null;
         }
 
@@ -346,9 +354,10 @@ class PlotPlanting extends Model
      */
     public function getAgeAttribute(): int
     {
-        if (!$this->planting_year) {
+        if (! $this->planting_year) {
             return 0;
         }
+
         return now()->year - $this->planting_year;
     }
 
@@ -358,11 +367,20 @@ class PlotPlanting extends Model
     public function getLifeCycleStageAttribute(): string
     {
         $age = $this->age;
-        
-        if ($age < 3) return 'joven';
-        if ($age < 8) return 'desarrollo';
-        if ($age < 25) return 'productiva';
-        if ($age < 40) return 'madura';
+
+        if ($age < 3) {
+            return 'joven';
+        }
+        if ($age < 8) {
+            return 'desarrollo';
+        }
+        if ($age < 25) {
+            return 'productiva';
+        }
+        if ($age < 40) {
+            return 'madura';
+        }
+
         return 'vieja';
     }
 
@@ -377,20 +395,20 @@ class PlotPlanting extends Model
      *
      * Si no hay planting_year o harvest_limit_kg, devuelve null (sin límite definido).
      */
-    public function effectiveHarvestLimitKg(int $harvestYear = null): ?float
+    public function effectiveHarvestLimitKg(?int $harvestYear = null): ?float
     {
-        if (!$this->hasHarvestLimit() || !$this->planting_year) {
+        if (! $this->hasHarvestLimit() || ! $this->planting_year) {
             return $this->harvest_limit_kg ? (float) $this->harvest_limit_kg : null;
         }
 
         $year = $harvestYear ?? now()->year;
-        $age  = $year - $this->planting_year;
+        $age = $year - $this->planting_year;
 
-        $factor = match(true) {
-            $age < 3    => 0.0,
-            $age === 3  => 0.33,
-            $age === 4  => 0.75,
-            default     => 1.0,
+        $factor = match (true) {
+            $age < 3 => 0.0,
+            $age === 3 => 0.33,
+            $age === 4 => 0.75,
+            default => 1.0,
         };
 
         return round((float) $this->harvest_limit_kg * $factor, 2);
@@ -410,8 +428,8 @@ class PlotPlanting extends Model
     public function getExpectedProductivityAttribute(): string
     {
         $stage = $this->life_cycle_stage;
-        
-        return match($stage) {
+
+        return match ($stage) {
             'joven' => 'Baja (20-40% del máximo)',
             'desarrollo' => 'Media (60-80%)',
             'productiva' => 'Alta (100%)',
@@ -420,5 +438,4 @@ class PlotPlanting extends Model
             default => 'Desconocida',
         };
     }
-
 }

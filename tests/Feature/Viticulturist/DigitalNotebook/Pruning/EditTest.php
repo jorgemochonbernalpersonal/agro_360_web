@@ -15,66 +15,14 @@ use Tests\Feature\ViticulturistTestCase;
 
 class EditTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makePlot($viticulturist): Plot
-    {
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
-        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
-        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
-
-        return Plot::factory()->create([
-            'viticulturist_id'        => $viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
-        ]);
-    }
-
-    private function makeCampaign($viticulturist): Campaign
-    {
-        return Campaign::factory()->active()->create([
-            'viticulturist_id' => $viticulturist->id,
-            'year'             => now()->year,
-        ]);
-    }
-
-    private function makeActivityWithPruning($viticulturist, Plot $plot, Campaign $campaign): AgriculturalActivity
-    {
-        $activity = AgriculturalActivity::create([
-            'viticulturist_id'   => $viticulturist->id,
-            'plot_id'            => $plot->id,
-            'campaign_id'        => $campaign->id,
-            'activity_type'      => 'pruning',
-            'activity_date'      => now()->format('Y-m-d'),
-            'phenological_stage' => 'Reposo invernal',
-            'crew_member_id'     => null,
-            'is_locked'          => false,
-        ]);
-
-        CulturalWork::create([
-            'activity_id'                 => $activity->id,
-            'work_type'                   => 'poda',
-            'pruning_type'                => 'guyot',
-            'productive_buds_per_hectare' => 40000,
-            'residue_management'          => 'triturado_superficie',
-            'hours_worked'                => 6.0,
-            'workers_count'               => 2,
-            'description'                 => 'Poda inicial en Guyot simple antes de editar.',
-        ]);
-
-        return $activity->load('culturalWork');
-    }
-
     // ── mount: campos precargados ──────────────────────────────────────────────
 
     public function test_mount_fills_all_fields_from_existing_pruning(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -93,9 +41,9 @@ class EditTest extends ViticulturistTestCase
     public function test_can_update_pruning(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -110,8 +58,8 @@ class EditTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.digital-notebook.pruning.index'));
 
         $this->assertDatabaseHas('cultural_works', [
-            'activity_id'                 => $activity->id,
-            'pruning_type'                => 'doble_guyot',
+            'activity_id' => $activity->id,
+            'pruning_type' => 'doble_guyot',
             'productive_buds_per_hectare' => 55000,
         ]);
     }
@@ -121,9 +69,9 @@ class EditTest extends ViticulturistTestCase
     public function test_can_update_residue_management(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -144,9 +92,9 @@ class EditTest extends ViticulturistTestCase
     public function test_pruning_type_required_on_update(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -161,9 +109,9 @@ class EditTest extends ViticulturistTestCase
     public function test_description_required_on_update(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -178,9 +126,9 @@ class EditTest extends ViticulturistTestCase
     public function test_invalid_residue_management_fails_on_update(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
 
         $this->actingAs($viticulturist);
 
@@ -197,9 +145,9 @@ class EditTest extends ViticulturistTestCase
     public function test_policy_denies_update_for_locked_activity(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
 
         $activity->update([
             'is_locked' => true,
@@ -217,13 +165,64 @@ class EditTest extends ViticulturistTestCase
     public function test_policy_denies_update_for_other_viticulturist(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $activity      = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
+        $other = $this->makeViticulturist();
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $activity = $this->makeActivityWithPruning($viticulturist, $plot, $campaign);
 
         $this->assertFalse(
             $other->can('update', $activity)
         );
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makePlot($viticulturist): Plot
+    {
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
+        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
+
+        return Plot::factory()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
+        ]);
+    }
+
+    private function makeCampaign($viticulturist): Campaign
+    {
+        return Campaign::factory()->active()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'year' => now()->year,
+        ]);
+    }
+
+    private function makeActivityWithPruning($viticulturist, Plot $plot, Campaign $campaign): AgriculturalActivity
+    {
+        $activity = AgriculturalActivity::create([
+            'viticulturist_id' => $viticulturist->id,
+            'plot_id' => $plot->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'pruning',
+            'activity_date' => now()->format('Y-m-d'),
+            'phenological_stage' => 'Reposo invernal',
+            'crew_member_id' => null,
+            'is_locked' => false,
+        ]);
+
+        CulturalWork::create([
+            'activity_id' => $activity->id,
+            'work_type' => 'poda',
+            'pruning_type' => 'guyot',
+            'productive_buds_per_hectare' => 40000,
+            'residue_management' => 'triturado_superficie',
+            'hours_worked' => 6.0,
+            'workers_count' => 2,
+            'description' => 'Poda inicial en Guyot simple antes de editar.',
+        ]);
+
+        return $activity->load('culturalWork');
     }
 }

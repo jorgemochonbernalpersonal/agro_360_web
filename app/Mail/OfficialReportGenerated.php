@@ -5,9 +5,9 @@ namespace App\Mail;
 use App\Models\OfficialReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
 
 class OfficialReportGenerated extends Mailable
@@ -30,7 +30,7 @@ class OfficialReportGenerated extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '✅ Informe Oficial Generado - ' . $this->report->report_type_name,
+            subject: '✅ Informe Oficial Generado - '.$this->report->report_type_name,
         );
     }
 
@@ -54,7 +54,7 @@ class OfficialReportGenerated extends Mailable
         // Adjuntar el PDF si existe
         if ($this->report->pdf_path && $this->report->pdfExists()) {
             // Si el path es relativo (usando Storage), usar fromStorage
-            if (!str_starts_with($this->report->pdf_path, storage_path())) {
+            if (! str_starts_with($this->report->pdf_path, storage_path())) {
                 return [
                     Attachment::fromStorageDisk('local', $this->report->pdf_path)
                         ->as($this->report->pdf_filename)
@@ -69,7 +69,7 @@ class OfficialReportGenerated extends Mailable
                 ];
             }
         }
-        
+
         return [];
     }
 }

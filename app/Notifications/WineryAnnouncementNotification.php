@@ -3,8 +3,8 @@
 namespace App\Notifications;
 
 use App\Models\WineryAnnouncement;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -36,10 +36,10 @@ class WineryAnnouncementNotification extends Notification implements ShouldQueue
     {
         return [
             'announcement_id' => $this->announcement->id,
-            'winery_id'       => $this->announcement->winery_id,
-            'winery_name'     => $this->announcement->winery->name,
-            'title'           => $this->announcement->title,
-            'type'            => $this->announcement->type,
+            'winery_id' => $this->announcement->winery_id,
+            'winery_name' => $this->announcement->winery->name,
+            'title' => $this->announcement->title,
+            'type' => $this->announcement->type,
         ];
     }
 }

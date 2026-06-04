@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Viticulturist\Settings;
 
-use App\Models\InvoicingSetting;
-use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\InvoicingSetting;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Invoicing extends Component
 {
@@ -13,28 +13,35 @@ class Invoicing extends Component
 
     // Facturas
     public $invoice_prefix;
+
     public $invoice_padding;
+
     public $invoice_counter;
+
     public $invoice_year_reset;
 
     // Albaranes
     public $delivery_note_prefix;
+
     public $delivery_note_padding;
+
     public $delivery_note_counter;
+
     public $delivery_note_year_reset;
 
     // Previews
     public $invoicePreview;
+
     public $deliveryNotePreview;
 
     public function mount()
     {
         $user = Auth::user();
-        
+
         // Obtener o crear configuración
         $settings = InvoicingSetting::forUser($user->id)->first();
-        
-        if (!$settings) {
+
+        if (! $settings) {
             $settings = InvoicingSetting::createDefaultForUser($user->id);
         }
 
@@ -59,21 +66,11 @@ class Invoicing extends Component
 
     public function updatePreviews()
     {
-        $this->invoicePreview = $this->replaceVariables($this->invoice_prefix) . 
+        $this->invoicePreview = $this->replaceVariables($this->invoice_prefix).
                                 str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
 
-        $this->deliveryNotePreview = $this->replaceVariables($this->delivery_note_prefix) . 
+        $this->deliveryNotePreview = $this->replaceVariables($this->delivery_note_prefix).
                                      str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
-    }
-
-    protected function replaceVariables(string $prefix): string
-    {
-        $now = now();
-        return str_replace(
-            ['{YEAR}', '{YY}', '{MONTH}', '{DAY}'],
-            [$now->format('Y'), $now->format('y'), $now->format('m'), $now->format('d')],
-            $prefix
-        );
     }
 
     public function save()
@@ -122,5 +119,16 @@ class Invoicing extends Component
     public function render()
     {
         return view('livewire.viticulturist.settings.invoicing')->layout('layouts.app');
+    }
+
+    protected function replaceVariables(string $prefix): string
+    {
+        $now = now();
+
+        return str_replace(
+            ['{YEAR}', '{YY}', '{MONTH}', '{DAY}'],
+            [$now->format('Y'), $now->format('y'), $now->format('m'), $now->format('d')],
+            $prefix
+        );
     }
 }

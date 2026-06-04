@@ -15,34 +15,57 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
 {
     // ─── Model instances ──────────────────────────────────────────────────────
 
-    public AgriculturalActivity    $activity;
-    public PhytosanitaryTreatment  $treatment;
+    public AgriculturalActivity $activity;
+
+    public PhytosanitaryTreatment $treatment;
 
     // ─── Type-specific properties ─────────────────────────────────────────────
 
-    public $product_id               = '';
-    public $dose_per_hectare         = '';
-    public $total_dose               = '';
-    public $area_treated             = '';
-    public $application_method       = '';
-    public $pest_id                  = '';
-    public $wind_speed               = '';
-    public $humidity                 = '';
-    public $treatment_justification  = '';
-    public $field_applicator_id      = '';
-    public $applicator_ropo_number   = '';
-    public $reentry_period_days      = '';
-    public $spray_volume             = '';
-    public $water_volume_liters_ha   = '';
-    public $buffer_zone_respected    = false;
-    public $distance_to_water_m      = '';
-    public $under_advisory               = false;
+    public $product_id = '';
+
+    public $dose_per_hectare = '';
+
+    public $total_dose = '';
+
+    public $area_treated = '';
+
+    public $application_method = '';
+
+    public $pest_id = '';
+
+    public $wind_speed = '';
+
+    public $humidity = '';
+
+    public $treatment_justification = '';
+
+    public $field_applicator_id = '';
+
+    public $applicator_ropo_number = '';
+
+    public $reentry_period_days = '';
+
+    public $spray_volume = '';
+
+    public $water_volume_liters_ha = '';
+
+    public $buffer_zone_respected = false;
+
+    public $distance_to_water_m = '';
+
+    public $under_advisory = false;
+
     public $advisory_recommendation_date = '';
+
     public $prior_non_chemical_methods = false;
-    public $plague_monitoring          = false;
-    public $manual_mechanical_control  = false;
-    public $biological_control         = false;
-    public $cultural_preventions       = false;
+
+    public $plague_monitoring = false;
+
+    public $manual_mechanical_control = false;
+
+    public $biological_control = false;
+
+    public $cultural_preventions = false;
 
     // ─── Mount ────────────────────────────────────────────────────────────────
 
@@ -50,7 +73,7 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
     {
         $this->activity = $activity->load(['phytosanitaryTreatment', 'plot', 'plotPlanting', 'crew', 'crewMember']);
 
-        if (!$this->mountEditGuards($activity, 'phytosanitary', 'digital-notebook.treatment.index')) {
+        if (! $this->mountEditGuards($activity, 'phytosanitary', 'digital-notebook.treatment.index')) {
             return;
         }
 
@@ -58,30 +81,30 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
         $this->loadActivityFields($this->activity);
         $this->loadAvailablePlantings();
 
-        $this->product_id                    = $this->treatment->product_id;
-        $this->dose_per_hectare              = $this->treatment->dose_per_hectare;
-        $this->total_dose                    = $this->treatment->total_dose;
-        $this->area_treated                  = $this->treatment->area_treated;
-        $this->application_method            = $this->treatment->application_method ?? '';
-        $this->pest_id                       = $this->treatment->pest_id ?? '';
-        $this->wind_speed                    = $this->treatment->wind_speed ?? '';
-        $this->humidity                      = $this->treatment->humidity ?? '';
-        $this->treatment_justification       = $this->treatment->treatment_justification;
-        $this->field_applicator_id           = $this->treatment->field_applicator_id ?? '';
-        $this->applicator_ropo_number        = $this->treatment->applicator_ropo_number ?? '';
-        $this->reentry_period_days           = $this->treatment->reentry_period_days;
-        $this->spray_volume                  = $this->treatment->spray_volume;
-        $this->water_volume_liters_ha        = $this->treatment->water_volume_liters_ha ?? '';
-        $this->buffer_zone_respected         = (bool) ($this->treatment->buffer_zone_respected ?? false);
-        $this->distance_to_water_m           = $this->treatment->distance_to_water_m ?? '';
-        $this->under_advisory                = (bool) ($this->treatment->under_advisory ?? false);
-        $this->advisory_recommendation_date  = $this->treatment->advisory_recommendation_date
+        $this->product_id = $this->treatment->product_id;
+        $this->dose_per_hectare = $this->treatment->dose_per_hectare;
+        $this->total_dose = $this->treatment->total_dose;
+        $this->area_treated = $this->treatment->area_treated;
+        $this->application_method = $this->treatment->application_method ?? '';
+        $this->pest_id = $this->treatment->pest_id ?? '';
+        $this->wind_speed = $this->treatment->wind_speed ?? '';
+        $this->humidity = $this->treatment->humidity ?? '';
+        $this->treatment_justification = $this->treatment->treatment_justification;
+        $this->field_applicator_id = $this->treatment->field_applicator_id ?? '';
+        $this->applicator_ropo_number = $this->treatment->applicator_ropo_number ?? '';
+        $this->reentry_period_days = $this->treatment->reentry_period_days;
+        $this->spray_volume = $this->treatment->spray_volume;
+        $this->water_volume_liters_ha = $this->treatment->water_volume_liters_ha ?? '';
+        $this->buffer_zone_respected = (bool) ($this->treatment->buffer_zone_respected ?? false);
+        $this->distance_to_water_m = $this->treatment->distance_to_water_m ?? '';
+        $this->under_advisory = (bool) ($this->treatment->under_advisory ?? false);
+        $this->advisory_recommendation_date = $this->treatment->advisory_recommendation_date
             ? Carbon::parse($this->treatment->advisory_recommendation_date)->format('Y-m-d') : '';
-        $this->prior_non_chemical_methods    = (bool) ($this->treatment->prior_non_chemical_methods ?? false);
-        $this->plague_monitoring             = (bool) ($this->treatment->plague_monitoring ?? false);
-        $this->manual_mechanical_control     = (bool) ($this->treatment->manual_mechanical_control ?? false);
-        $this->biological_control            = (bool) ($this->treatment->biological_control ?? false);
-        $this->cultural_preventions          = (bool) ($this->treatment->cultural_preventions ?? false);
+        $this->prior_non_chemical_methods = (bool) ($this->treatment->prior_non_chemical_methods ?? false);
+        $this->plague_monitoring = (bool) ($this->treatment->plague_monitoring ?? false);
+        $this->manual_mechanical_control = (bool) ($this->treatment->manual_mechanical_control ?? false);
+        $this->biological_control = (bool) ($this->treatment->biological_control ?? false);
+        $this->cultural_preventions = (bool) ($this->treatment->cultural_preventions ?? false);
     }
 
     // ─── Reactive ─────────────────────────────────────────────────────────────
@@ -115,52 +138,22 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
     #[\Livewire\Attributes\Computed]
     public function applicationsThisCampaign(): int
     {
-        if (!$this->product_id || !$this->campaign_id) {
+        if (! $this->product_id || ! $this->campaign_id) {
             return 0;
         }
+
         return PhytosanitaryTreatment::whereHas('activity', fn ($q) => $q
             ->where('viticulturist_id', Auth::id())
             ->where('campaign_id', $this->campaign_id)
         )->where('product_id', $this->product_id)
-         ->where('activity_id', '!=', $this->activity->id)
-         ->count();
+            ->where('activity_id', '!=', $this->activity->id)
+            ->count();
     }
 
     #[\Livewire\Attributes\Computed]
     public function selectedProduct(): ?PhytosanitaryProduct
     {
         return $this->product_id ? PhytosanitaryProduct::find($this->product_id) : null;
-    }
-
-    // ─── Validation ───────────────────────────────────────────────────────────
-
-    protected function rules(): array
-    {
-        return array_merge($this->commonRules(), [
-            'product_id'       => 'required|exists:phytosanitary_products,id',
-            'dose_per_hectare' => 'required|numeric|min:0.01|max:100',
-            'total_dose'       => 'nullable|numeric|min:0',
-            'area_treated'     => 'required|numeric|min:0.01',
-            'application_method' => 'nullable|string|max:50',
-            'pest_id'            => 'nullable|exists:pests,id',
-            'wind_speed'         => 'nullable|numeric|min:0',
-            'humidity'           => 'nullable|numeric|min:0|max:100',
-            'treatment_justification' => 'required|string|min:10|max:500',
-            'field_applicator_id'     => 'nullable|exists:field_applicators,id',
-            'applicator_ropo_number'  => 'required|string|min:3|max:50',
-            'reentry_period_days'     => 'required|integer|min:0|max:365',
-            'spray_volume'            => 'required|numeric|min:0.01|max:10000',
-            'water_volume_liters_ha'  => 'nullable|numeric|min:0|max:10000',
-            'buffer_zone_respected'   => 'nullable|boolean',
-            'distance_to_water_m'     => 'nullable|numeric|min:0|max:10000',
-            'under_advisory'                => 'boolean',
-            'advisory_recommendation_date'  => 'nullable|date|required_if:under_advisory,true',
-            'prior_non_chemical_methods'    => 'boolean',
-            'plague_monitoring'             => 'boolean',
-            'manual_mechanical_control'     => 'boolean',
-            'biological_control'            => 'boolean',
-            'cultural_preventions'          => 'boolean',
-        ]);
     }
 
     // ─── Update ───────────────────────────────────────────────────────────────
@@ -175,33 +168,34 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
                 $this->activity->update($this->activityData('phytosanitary'));
 
                 $this->treatment->update([
-                    'field_applicator_id'           => $this->field_applicator_id ?: null,
-                    'product_id'                    => $this->product_id,
-                    'dose_per_hectare'              => $this->dose_per_hectare ?: null,
-                    'total_dose'                    => $this->total_dose ?: null,
-                    'area_treated'                  => $this->area_treated ?: null,
-                    'application_method'            => $this->application_method,
-                    'pest_id'                       => $this->pest_id ?: null,
-                    'wind_speed'                    => $this->wind_speed ?: null,
-                    'humidity'                      => $this->humidity ?: null,
-                    'treatment_justification'       => $this->treatment_justification,
-                    'applicator_ropo_number'        => $this->applicator_ropo_number ?: null,
-                    'reentry_period_days'           => $this->reentry_period_days,
-                    'spray_volume'                  => $this->spray_volume,
-                    'water_volume_liters_ha'        => $this->water_volume_liters_ha ?: null,
-                    'buffer_zone_respected'         => $this->buffer_zone_respected ?: null,
-                    'distance_to_water_m'           => $this->distance_to_water_m ?: null,
-                    'under_advisory'                => (bool) $this->under_advisory,
-                    'advisory_recommendation_date'  => $this->advisory_recommendation_date ?: null,
-                    'prior_non_chemical_methods'    => (bool) $this->prior_non_chemical_methods,
-                    'plague_monitoring'             => (bool) $this->plague_monitoring,
-                    'manual_mechanical_control'     => (bool) $this->manual_mechanical_control,
-                    'biological_control'            => (bool) $this->biological_control,
-                    'cultural_preventions'          => (bool) $this->cultural_preventions,
+                    'field_applicator_id' => $this->field_applicator_id ?: null,
+                    'product_id' => $this->product_id,
+                    'dose_per_hectare' => $this->dose_per_hectare ?: null,
+                    'total_dose' => $this->total_dose ?: null,
+                    'area_treated' => $this->area_treated ?: null,
+                    'application_method' => $this->application_method,
+                    'pest_id' => $this->pest_id ?: null,
+                    'wind_speed' => $this->wind_speed ?: null,
+                    'humidity' => $this->humidity ?: null,
+                    'treatment_justification' => $this->treatment_justification,
+                    'applicator_ropo_number' => $this->applicator_ropo_number ?: null,
+                    'reentry_period_days' => $this->reentry_period_days,
+                    'spray_volume' => $this->spray_volume,
+                    'water_volume_liters_ha' => $this->water_volume_liters_ha ?: null,
+                    'buffer_zone_respected' => $this->buffer_zone_respected ?: null,
+                    'distance_to_water_m' => $this->distance_to_water_m ?: null,
+                    'under_advisory' => (bool) $this->under_advisory,
+                    'advisory_recommendation_date' => $this->advisory_recommendation_date ?: null,
+                    'prior_non_chemical_methods' => (bool) $this->prior_non_chemical_methods,
+                    'plague_monitoring' => (bool) $this->plague_monitoring,
+                    'manual_mechanical_control' => (bool) $this->manual_mechanical_control,
+                    'biological_control' => (bool) $this->biological_control,
+                    'cultural_preventions' => (bool) $this->cultural_preventions,
                 ]);
             });
 
             $this->toastSuccess(__('Tratamiento fitosanitario actualizado correctamente.'));
+
             return $this->viticulturistRoleRedirect('digital-notebook.treatment.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar tratamiento fitosanitario', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
@@ -216,10 +210,42 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
     public function render()
     {
         $user = Auth::user();
+
         return view('livewire.viticulturist.digital-notebook.edit-phytosanitary-treatment', $this->renderData([
-            'products'    => PhytosanitaryProduct::forUser($user->id)->where('active', true)->orderBy('name')->get(),
-            'pests'       => Pest::active()->orderBy('name')->get(),
+            'products' => PhytosanitaryProduct::forUser($user->id)->where('active', true)->orderBy('name')->get(),
+            'pests' => Pest::active()->orderBy('name')->get(),
             'applicators' => FieldApplicator::forViticulturist($user->id)->active()->orderBy('name')->get(),
         ]))->layout('layouts.app', ['title' => __('Editar Tratamiento Fitosanitario - Agro365')]);
+    }
+
+    // ─── Validation ───────────────────────────────────────────────────────────
+
+    protected function rules(): array
+    {
+        return array_merge($this->commonRules(), [
+            'product_id' => 'required|exists:phytosanitary_products,id',
+            'dose_per_hectare' => 'required|numeric|min:0.01|max:100',
+            'total_dose' => 'nullable|numeric|min:0',
+            'area_treated' => 'required|numeric|min:0.01',
+            'application_method' => 'nullable|string|max:50',
+            'pest_id' => 'nullable|exists:pests,id',
+            'wind_speed' => 'nullable|numeric|min:0',
+            'humidity' => 'nullable|numeric|min:0|max:100',
+            'treatment_justification' => 'required|string|min:10|max:500',
+            'field_applicator_id' => 'nullable|exists:field_applicators,id',
+            'applicator_ropo_number' => 'required|string|min:3|max:50',
+            'reentry_period_days' => 'required|integer|min:0|max:365',
+            'spray_volume' => 'required|numeric|min:0.01|max:10000',
+            'water_volume_liters_ha' => 'nullable|numeric|min:0|max:10000',
+            'buffer_zone_respected' => 'nullable|boolean',
+            'distance_to_water_m' => 'nullable|numeric|min:0|max:10000',
+            'under_advisory' => 'boolean',
+            'advisory_recommendation_date' => 'nullable|date|required_if:under_advisory,true',
+            'prior_non_chemical_methods' => 'boolean',
+            'plague_monitoring' => 'boolean',
+            'manual_mechanical_control' => 'boolean',
+            'biological_control' => 'boolean',
+            'cultural_preventions' => 'boolean',
+        ]);
     }
 }

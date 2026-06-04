@@ -12,6 +12,8 @@ class ReportPdfGenerator
 {
     /**
      * Generar PDF de informe de tratamientos fitosanitarios
+     *
+     * @param mixed $treatments
      */
     public function generatePhytosanitaryPdf(
         OfficialReport $report,
@@ -55,6 +57,9 @@ class ReportPdfGenerator
 
     /**
      * Generar PDF de cuaderno completo
+     *
+     * @param mixed $campaign
+     * @param mixed $activities
      */
     public function generateFullNotebookPdf(
         OfficialReport $report,
@@ -93,6 +98,27 @@ class ReportPdfGenerator
     }
 
     /**
+     * Calcular hash SHA-256 de un PDF
+     */
+    public function calculatePdfHash(string $pdfPath): string
+    {
+        try {
+            $pdfContent = Storage::disk('local')->get($pdfPath);
+            if (! $pdfContent) {
+                throw new \Exception(__('No se pudo leer el contenido del PDF generado.'));
+            }
+
+            return hash('sha256', $pdfContent);
+        } catch (\Exception $e) {
+            Log::error('Error al calcular hash del PDF', [
+                'pdf_path' => $pdfPath,
+                'error' => $e->getMessage(),
+            ]);
+            throw new \Exception(__('Error al procesar el PDF: :error', ['error' => $e->getMessage()]));
+        }
+    }
+
+    /**
      * Generar PDF usando DomPDF
      */
     protected function generatePdf(
@@ -120,16 +146,16 @@ class ReportPdfGenerator
         }
 
         // Guardar PDF
-        $path = 'official_reports/' . $filename;
+        $path = 'official_reports/'.$filename;
         try {
             $pdfOutput = $pdf->output();
-            if (!$pdfOutput) {
+            if (! $pdfOutput) {
                 throw new \Exception(__('El PDF generado está vacío.'));
             }
             Storage::disk('local')->put($path, $pdfOutput);
 
             // Verificar que se guardó
-            if (!Storage::disk('local')->exists($path)) {
+            if (! Storage::disk('local')->exists($path)) {
                 throw new \Exception(__('No se pudo guardar el archivo PDF.'));
             }
         } catch (\Exception $storageError) {
@@ -145,46 +171,28 @@ class ReportPdfGenerator
     }
 
     /**
-     * Calcular hash SHA-256 de un PDF
-     */
-    public function calculatePdfHash(string $pdfPath): string
-    {
-        try {
-            $pdfContent = Storage::disk('local')->get($pdfPath);
-            if (!$pdfContent) {
-                throw new \Exception(__('No se pudo leer el contenido del PDF generado.'));
-            }
-            return hash('sha256', $pdfContent);
-        } catch (\Exception $e) {
-            Log::error('Error al calcular hash del PDF', [
-                'pdf_path' => $pdfPath,
-                'error' => $e->getMessage(),
-            ]);
-            throw new \Exception(__('Error al procesar el PDF: :error', ['error' => $e->getMessage()]));
-        }
-    }
-
-    /**
      * Generar URL de QR code
      */
     protected function generateQRCodeUrl(string $url): string
     {
         try {
             $size = 300;
+
             return 'https://api.qrserver.com/v1/create-qr-code/'
-                . '?size=' . $size . 'x' . $size
-                . '&data=' . urlencode($url)
-                . '&ecc=H'
-                . '&margin=2'
-                . '&format=png';
+                .'?size='.$size.'x'.$size
+                .'&data='.urlencode($url)
+                .'&ecc=H'
+                .'&margin=2'
+                .'&format=png';
         } catch (\Exception $e) {
-            Log::error('Error generando QR code, usando fallback: ' . $e->getMessage());
+            Log::error('Error generando QR code, usando fallback: '.$e->getMessage());
             $size = 200;
+
             return 'https://chart.googleapis.com/chart?'
-                . 'chs=' . $size . 'x' . $size
-                . '&cht=qr'
-                . '&chl=' . urlencode($url)
-                . '&choe=UTF-8';
+                .'chs='.$size.'x'.$size
+                .'&cht=qr'
+                .'&chl='.urlencode($url)
+                .'&choe=UTF-8';
         }
     }
 }

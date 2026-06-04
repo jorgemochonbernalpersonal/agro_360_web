@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\GrapeVariety;
-use App\Models\TrainingSystem;
 use App\Models\Certification;
+use App\Models\GrapeVariety;
 use App\Models\Tax;
+use App\Models\TrainingSystem;
 use Illuminate\Database\Seeder;
 
 class CatalogDataSeeder extends Seeder
@@ -28,7 +28,7 @@ class CatalogDataSeeder extends Seeder
             ['name' => 'Cabernet Sauvignon', 'type' => 'red', 'code' => 'CABS'],
             ['name' => 'Merlot', 'type' => 'red', 'code' => 'MERL'],
             ['name' => 'Syrah', 'type' => 'red', 'code' => 'SYRA'],
-            
+
             // Blancas
             ['name' => 'Verdejo', 'type' => 'white', 'code' => 'VERD'],
             ['name' => 'Albariño', 'type' => 'white', 'code' => 'ALBA'],
@@ -45,7 +45,7 @@ class CatalogDataSeeder extends Seeder
             );
         }
 
-        $this->command->info('✓ Created ' . count($grapeVarieties) . ' grape varieties');
+        $this->command->info('✓ Created '.count($grapeVarieties).' grape varieties');
 
         // Sistemas de conducción
         $trainingSystems = [
@@ -63,7 +63,7 @@ class CatalogDataSeeder extends Seeder
             );
         }
 
-        $this->command->info('✓ Created ' . count($trainingSystems) . ' training systems');
+        $this->command->info('✓ Created '.count($trainingSystems).' training systems');
 
         // Certificaciones
         $certifications = [
@@ -80,7 +80,7 @@ class CatalogDataSeeder extends Seeder
             );
         }
 
-        $this->command->info('✓ Created ' . count($certifications) . ' certifications');
+        $this->command->info('✓ Created '.count($certifications).' certifications');
 
         // Impuestos
         $taxes = [
@@ -97,7 +97,7 @@ class CatalogDataSeeder extends Seeder
             );
         }
 
-        $this->command->info('✓ Created ' . count($taxes) . ' tax rates');
+        $this->command->info('✓ Created '.count($taxes).' tax rates');
 
         $this->command->newLine();
         $this->command->info('Catalog data seeded successfully!');

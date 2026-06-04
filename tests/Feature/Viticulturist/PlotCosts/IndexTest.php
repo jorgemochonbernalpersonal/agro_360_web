@@ -4,11 +4,7 @@ namespace Tests\Feature\Viticulturist\PlotCosts;
 
 use App\Livewire\Viticulturist\PlotCosts\Index;
 use App\Models\Campaign;
-use App\Models\Plot;
 use App\Models\PlotCost;
-use App\Models\User;
-use App\Models\WineryViticulturist;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -28,10 +24,10 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
         $cost = PlotCost::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'description'      => 'Tratamiento mildiu',
-            'amount'           => 150.00,
-            'cost_date'        => now()->toDateString(),
-            'category'         => 'phytosanitary',
+            'description' => 'Tratamiento mildiu',
+            'amount' => 150.00,
+            'cost_date' => now()->toDateString(),
+            'category' => 'phytosanitary',
         ]);
 
         $this->actingAs($viticulturist);
@@ -47,10 +43,10 @@ class IndexTest extends ViticulturistTestCase
 
         PlotCost::factory()->create([
             'viticulturist_id' => $other->id,
-            'description'      => 'Coste ajeno',
-            'amount'           => 500.00,
-            'cost_date'        => now()->toDateString(),
-            'category'         => 'labor',
+            'description' => 'Coste ajeno',
+            'amount' => 500.00,
+            'cost_date' => now()->toDateString(),
+            'category' => 'labor',
         ]);
 
         $this->actingAs($viticulturist);
@@ -64,10 +60,10 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
         $cost = PlotCost::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'description'      => 'Poda manual',
-            'amount'           => 200.00,
-            'cost_date'        => now()->toDateString(),
-            'category'         => 'labor',
+            'description' => 'Poda manual',
+            'amount' => 200.00,
+            'cost_date' => now()->toDateString(),
+            'category' => 'labor',
         ]);
 
         $this->actingAs($viticulturist);
@@ -84,10 +80,10 @@ class IndexTest extends ViticulturistTestCase
         $other = $this->makeOtherViticulturist();
         $cost = PlotCost::factory()->create([
             'viticulturist_id' => $other->id,
-            'description'      => 'Coste ajeno',
-            'amount'           => 100.00,
-            'cost_date'        => now()->toDateString(),
-            'category'         => 'other',
+            'description' => 'Coste ajeno',
+            'amount' => 100.00,
+            'cost_date' => now()->toDateString(),
+            'category' => 'other',
         ]);
 
         $this->actingAs($viticulturist);
@@ -105,19 +101,19 @@ class IndexTest extends ViticulturistTestCase
 
         PlotCost::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'campaign_id'      => $campaign->id,
-            'description'      => 'Con campaña',
-            'amount'           => 100.00,
-            'cost_date'        => now()->toDateString(),
-            'category'         => 'labor',
+            'campaign_id' => $campaign->id,
+            'description' => 'Con campaña',
+            'amount' => 100.00,
+            'cost_date' => now()->toDateString(),
+            'category' => 'labor',
         ]);
         PlotCost::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'campaign_id'      => null,
-            'description'      => 'Sin campaña',
-            'amount'           => 200.00,
-            'cost_date'        => now()->toDateString(),
-            'category'         => 'other',
+            'campaign_id' => null,
+            'description' => 'Sin campaña',
+            'amount' => 200.00,
+            'cost_date' => now()->toDateString(),
+            'category' => 'other',
         ]);
 
         $this->actingAs($viticulturist);

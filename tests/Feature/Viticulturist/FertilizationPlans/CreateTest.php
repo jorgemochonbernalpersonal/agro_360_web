@@ -24,10 +24,10 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('fertilization_plans', [
             'viticulturist_id' => $v->id,
-            'plan_year'        => 2024,
-            'prepared_by'      => 'Ing. Agrónomo Test',
-            'status'           => 'draft',
-            'active'           => true,
+            'plan_year' => 2024,
+            'prepared_by' => 'Ing. Agrónomo Test',
+            'status' => 'draft',
+            'active' => true,
         ]);
     }
 
@@ -66,7 +66,7 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('fertilization_plans', [
             'viticulturist_id' => $v->id,
-            'status'           => 'draft',
+            'status' => 'draft',
         ]);
     }
 
@@ -93,7 +93,7 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('fertilization_plans', [
             'viticulturist_id' => $v->id,
-            'nitrate_zone'     => true,
+            'nitrate_zone' => true,
         ]);
     }
 
@@ -105,12 +105,12 @@ class CreateTest extends ViticulturistTestCase
         $component = Livewire::test(Create::class);
 
         // mount() adds 1 line by default
-        $component->assertSet('lines', fn($lines) => count($lines) === 1);
+        $component->assertSet('lines', fn ($lines) => count($lines) === 1);
 
         $component->call('addLine')
-            ->assertSet('lines', fn($lines) => count($lines) === 2);
+            ->assertSet('lines', fn ($lines) => count($lines) === 2);
 
         $component->call('removeLine', 0)
-            ->assertSet('lines', fn($lines) => count($lines) === 1);
+            ->assertSet('lines', fn ($lines) => count($lines) === 1);
     }
 }

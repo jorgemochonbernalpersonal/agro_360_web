@@ -183,4 +183,3 @@ class PaymentTest extends TestCase
         $this->assertEquals('ORDER-987654321', $payment->paypal_order_id);
     }
 }
-

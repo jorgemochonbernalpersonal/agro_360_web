@@ -18,7 +18,7 @@ class InfoviController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $request->validate(['campaign' => 'nullable|integer|min:1990|max:' . now()->year]);
+        $request->validate(['campaign' => 'nullable|integer|min:1990|max:'.now()->year]);
 
         $wineryId = $user->id;
         $campaign = $request->integer(
@@ -27,7 +27,7 @@ class InfoviController extends Controller
         );
 
         $campaignStart = "{$campaign}-08-01";
-        $campaignEnd   = ($campaign + 1) . "-07-31";
+        $campaignEnd = ($campaign + 1).'-07-31';
 
         $campaigns = DB::table('harvests')
             ->where('winery_id', $wineryId)
@@ -44,17 +44,17 @@ class InfoviController extends Controller
 
         return response()->json([
             'data' => [
-                'campaign'        => $campaign,
-                'campaign_start'  => $campaignStart,
-                'campaign_end'    => $campaignEnd,
-                'campaigns'       => $campaigns,
-                'threshold'       => $this->buildThreshold($wineryId),
-                'existencias'     => $this->buildCuadroExistencias($wineryId, $campaign),
-                'produccion'      => $this->buildCuadroProduccion($wineryId, $campaign),
-                'ventas'          => $this->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd),
-                'entradas'        => $this->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd),
-                'balance'         => $this->buildBalanceSheet($wineryId, $campaign, $campaignStart, $campaignEnd),
-                'mosto'           => $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd),
+                'campaign' => $campaign,
+                'campaign_start' => $campaignStart,
+                'campaign_end' => $campaignEnd,
+                'campaigns' => $campaigns,
+                'threshold' => $this->buildThreshold($wineryId),
+                'existencias' => $this->buildCuadroExistencias($wineryId, $campaign),
+                'produccion' => $this->buildCuadroProduccion($wineryId, $campaign),
+                'ventas' => $this->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd),
+                'entradas' => $this->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd),
+                'balance' => $this->buildBalanceSheet($wineryId, $campaign, $campaignStart, $campaignEnd),
+                'mosto' => $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd),
             ],
         ]);
     }
@@ -89,48 +89,50 @@ class InfoviController extends Controller
             ->pluck('hl', 'vintage');
 
         $campaigns = $vintageHl->count();
-        $avgHl     = $campaigns > 0 ? round($vintageHl->sum() / $campaigns, 1) : 0;
-        $isLarge   = $avgHl >= 1000;
+        $avgHl = $campaigns > 0 ? round($vintageHl->sum() / $campaigns, 1) : 0;
+        $isLarge = $avgHl >= 1000;
 
         return [
-            'avg_hl'         => $avgHl,
-            'campaigns'      => $campaigns,
-            'is_large'       => $isLarge,
-            'frequency'      => $isLarge ? 'monthly' : 'semi_annual',
-            'by_vintage'     => $vintageHl,
+            'avg_hl' => $avgHl,
+            'campaigns' => $campaigns,
+            'is_large' => $isLarge,
+            'frequency' => $isLarge ? 'monthly' : 'semi_annual',
+            'by_vintage' => $vintageHl,
             'next_deadlines' => $this->buildDeadlines($isLarge),
         ];
     }
 
     private function buildDeadlines(bool $isLarge): array
     {
-        $now       = now();
+        $now = now();
         $deadlines = [];
 
         if ($isLarge) {
-            $nextMonth   = $now->copy()->addMonth()->startOfMonth();
+            $nextMonth = $now->copy()->addMonth()->startOfMonth();
             $deadlines[] = [
-                'label' => __('Declaración mensual ') . $nextMonth->translatedFormat('F Y'),
-                'date'  => $nextMonth->copy()->setDay(19)->toDateString(),
-                'type'  => 'monthly',
+                'label' => __('Declaración mensual ').$nextMonth->translatedFormat('F Y'),
+                'date' => $nextMonth->copy()->setDay(19)->toDateString(),
+                'type' => 'monthly',
             ];
         } else {
             $candidates = [
-                now()->year . '-08-19',
-                now()->year . '-12-19',
-                (now()->year + 1) . '-08-19',
-                (now()->year + 1) . '-12-19',
+                now()->year.'-08-19',
+                now()->year.'-12-19',
+                (now()->year + 1).'-08-19',
+                (now()->year + 1).'-12-19',
             ];
             foreach ($candidates as $d) {
                 if ($d >= $now->toDateString()) {
-                    $date  = \Carbon\Carbon::parse($d);
+                    $date = \Carbon\Carbon::parse($d);
                     $month = $date->month === 12 ? 'noviembre' : 'julio';
                     $deadlines[] = [
-                        'label' => __('Declaración ampliada ') . $month . ' ' . $date->year,
-                        'date'  => $d,
-                        'type'  => 'semi_annual',
+                        'label' => __('Declaración ampliada ').$month.' '.$date->year,
+                        'date' => $d,
+                        'type' => 'semi_annual',
                     ];
-                    if (count($deadlines) >= 2) break;
+                    if (count($deadlines) >= 2) {
+                        break;
+                    }
                 }
             }
         }
@@ -145,7 +147,7 @@ class InfoviController extends Controller
         $snapshotDate = DB::table('wine_stock_snapshots')
             ->where('user_id', $wineryId)
             ->whereDate('snapshot_date', '>=', "{$campaign}-08-01")
-            ->whereDate('snapshot_date', '<=', ($campaign + 1) . "-07-31")
+            ->whereDate('snapshot_date', '<=', ($campaign + 1).'-07-31')
             ->orderByDesc('snapshot_date')
             ->value('snapshot_date');
 
@@ -225,20 +227,20 @@ class InfoviController extends Controller
         $totalHl = $totalBottles = 0;
 
         foreach (Infovi::WINE_CATEGORIES as $type => $label) {
-            $row      = $lotRows->firstWhere('wine_type', $type);
-            $hl       = $row ? round((float) $row->hl, 3) : 0;
-            $bottles  = $row ? (int) $row->bottles : 0;
+            $row = $lotRows->firstWhere('wine_type', $type);
+            $hl = $row ? round((float) $row->hl, 3) : 0;
+            $bottles = $row ? (int) $row->bottles : 0;
             $result[] = compact('type', 'label', 'hl', 'bottles');
-            $totalHl      += $hl;
+            $totalHl += $hl;
             $totalBottles += $bottles;
         }
 
         return [
-            'rows'           => $result,
-            'total_hl'       => round($totalHl, 3),
-            'total_bottles'  => $totalBottles,
+            'rows' => $result,
+            'total_hl' => round($totalHl, 3),
+            'total_bottles' => $totalBottles,
             'total_invoices' => (int) ($invoiceTotals->total_invoices ?? 0),
-            'total_amount'   => (float) ($invoiceTotals->total_amount ?? 0),
+            'total_amount' => (float) ($invoiceTotals->total_amount ?? 0),
         ];
     }
 
@@ -260,9 +262,9 @@ class InfoviController extends Controller
             ->get();
 
         return [
-            'kg_propia'      => $kgPropia,
-            'kg_comprada'    => (float) ($externas->firstWhere('grape_type', 'grapes')?->total_kg ?? 0),
-            'hl_mosto'       => round((float) ($externas->firstWhere('grape_type', 'must')?->total_kg ?? 0) / 100, 3),
+            'kg_propia' => $kgPropia,
+            'kg_comprada' => (float) ($externas->firstWhere('grape_type', 'grapes')?->total_kg ?? 0),
+            'hl_mosto' => round((float) ($externas->firstWhere('grape_type', 'must')?->total_kg ?? 0) / 100, 3),
             'hl_vino_granel' => round((float) ($externas->firstWhere('grape_type', 'bulk_wine')?->total_kg ?? 0) / 100, 3),
         ];
     }
@@ -326,19 +328,19 @@ class InfoviController extends Controller
         $totals = ['apertura' => 0, 'producido' => 0, 'comprado' => $compradoTotal, 'vendido' => 0, 'perdido' => 0, 'cierre_calc' => 0, 'cierre_real' => null];
 
         foreach (Infovi::WINE_CATEGORIES as $type => $label) {
-            $apertura   = round((float) ($aperturaByType[$type] ?? 0), 3);
-            $producido  = round((float) ($producidoByType[$type] ?? 0), 3);
-            $vendido    = round((float) ($vendidoByType[$type] ?? 0), 3);
-            $perdido    = round((float) ($perdidoByType[$type] ?? 0), 3);
+            $apertura = round((float) ($aperturaByType[$type] ?? 0), 3);
+            $producido = round((float) ($producidoByType[$type] ?? 0), 3);
+            $vendido = round((float) ($vendidoByType[$type] ?? 0), 3);
+            $perdido = round((float) ($perdidoByType[$type] ?? 0), 3);
             $cierreCalc = round($apertura + $producido - $vendido - $perdido, 3);
             $cierreReal = isset($cierreRealByType[$type]) ? round((float) $cierreRealByType[$type], 3) : null;
-            $delta      = $cierreReal !== null ? round($cierreReal - $cierreCalc, 3) : null;
+            $delta = $cierreReal !== null ? round($cierreReal - $cierreCalc, 3) : null;
 
             $result[] = compact('type', 'label', 'apertura', 'producido', 'vendido', 'perdido', 'cierreCalc', 'cierreReal', 'delta');
-            $totals['apertura']    += $apertura;
-            $totals['producido']   += $producido;
-            $totals['vendido']     += $vendido;
-            $totals['perdido']     += $perdido;
+            $totals['apertura'] += $apertura;
+            $totals['producido'] += $producido;
+            $totals['vendido'] += $vendido;
+            $totals['perdido'] += $perdido;
             $totals['cierre_calc'] += $cierreCalc;
             if ($cierreReal !== null) {
                 $totals['cierre_real'] = ($totals['cierre_real'] ?? 0) + $cierreReal;
@@ -354,9 +356,9 @@ class InfoviController extends Controller
         }
 
         return [
-            'rows'             => $result,
-            'totals'           => $totals,
-            'comprado_total'   => $compradoTotal,
+            'rows' => $result,
+            'totals' => $totals,
+            'comprado_total' => $compradoTotal,
             'opening_snapshot' => $openingSnapshotDate,
             'closing_snapshot' => $closingSnapshotDate,
         ];
@@ -414,17 +416,17 @@ class InfoviController extends Controller
         $cierreCalc = round($apertura + $producido + $comprado - $vendido - $perdido, 3);
 
         return [
-            'apertura'         => $apertura,
-            'producido'        => $producido,
-            'comprado'         => $comprado,
-            'vendido'          => $vendido,
-            'perdido'          => $perdido,
-            'cierre_calc'      => $cierreCalc,
-            'cierre_real'      => $cierreReal,
-            'delta'            => $cierreReal !== null ? round($cierreReal - $cierreCalc, 3) : null,
+            'apertura' => $apertura,
+            'producido' => $producido,
+            'comprado' => $comprado,
+            'vendido' => $vendido,
+            'perdido' => $perdido,
+            'cierre_calc' => $cierreCalc,
+            'cierre_real' => $cierreReal,
+            'delta' => $cierreReal !== null ? round($cierreReal - $cierreCalc, 3) : null,
             'opening_snapshot' => $openingDate,
             'closing_snapshot' => $closingDate,
-            'has_data'         => ($producido + $comprado + $apertura) > 0,
+            'has_data' => ($producido + $comprado + $apertura) > 0,
         ];
     }
 
@@ -433,24 +435,24 @@ class InfoviController extends Controller
     private function buildCategoryRows($rows, ?string $snapshotDate): array
     {
         $result = [];
-        $total  = 0;
+        $total = 0;
 
         foreach (Infovi::WINE_CATEGORIES as $type => $label) {
-            $row      = $rows->firstWhere('wine_type', $type);
-            $hl       = $row ? round((float) $row->hl, 3) : 0;
+            $row = $rows->firstWhere('wine_type', $type);
+            $hl = $row ? round((float) $row->hl, 3) : 0;
             $result[] = [
-                'type'       => $type,
-                'label'      => $label,
-                'hl'         => $hl,
+                'type' => $type,
+                'label' => $label,
+                'hl' => $hl,
                 'wine_count' => (int) ($row->wine_count ?? 0),
-                'source'     => $snapshotDate ? 'snapshot' : 'live',
+                'source' => $snapshotDate ? 'snapshot' : 'live',
             ];
             $total += $hl;
         }
 
         return [
-            'rows'          => $result,
-            'total_hl'      => round($total, 3),
+            'rows' => $result,
+            'total_hl' => round($total, 3),
             'snapshot_date' => $snapshotDate,
         ];
     }

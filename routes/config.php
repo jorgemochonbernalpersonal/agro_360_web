@@ -10,4 +10,3 @@ Route::middleware(['auth', 'verified', 'check.beta'])
             return view('config.index');
         })->name('index');
     });
-

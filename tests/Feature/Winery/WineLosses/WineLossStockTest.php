@@ -32,6 +32,7 @@ use Tests\Feature\WineryTestCase;
 class WineLossStockTest extends WineryTestCase
 {
     private Wine $wine;
+
     private UnitOfMeasurement $uom;
 
     protected function setUp(): void
@@ -40,10 +41,10 @@ class WineLossStockTest extends WineryTestCase
         $this->actingAs($this->makeWinery());
 
         $this->wine = Wine::create([
-            'user_id'      => auth()->id(),
-            'name'         => 'Vino Rosado Test',
-            'wine_type'    => 'rosé',
-            'status'       => 'in_progress',
+            'user_id' => auth()->id(),
+            'name' => 'Vino Rosado Test',
+            'wine_type' => 'rosé',
+            'status' => 'in_progress',
             'volume_liters' => 500.0,
         ]);
 
@@ -184,7 +185,7 @@ class WineLossStockTest extends WineryTestCase
         $container->refresh();
 
         $this->assertEquals(350.0, (float) $container->wine_volume_liters, 'wine_volume_liters debe reflejar la merma editada');
-        $this->assertEquals(0.0,   (float) $container->used_capacity, 'used_capacity no debe modificarse');
+        $this->assertEquals(0.0, (float) $container->used_capacity, 'used_capacity no debe modificarse');
     }
 
     // ── Bug A: wine.volume_liters no se actualiza al editar ────────────────────
@@ -253,10 +254,10 @@ class WineLossStockTest extends WineryTestCase
         $container = $this->makeWineContainer(wine: 500.0, grapes: 0.0);
 
         $wineB = Wine::create([
-            'user_id'       => auth()->id(),
-            'name'          => 'Vino B',
-            'wine_type'     => 'white',
-            'status'        => 'in_progress',
+            'user_id' => auth()->id(),
+            'name' => 'Vino B',
+            'wine_type' => 'white',
+            'status' => 'in_progress',
             'volume_liters' => 600.0,
         ]);
 
@@ -296,12 +297,12 @@ class WineLossStockTest extends WineryTestCase
     private function makeWineContainer(float $wine, float $grapes, float $capacity = 5000.0): Container
     {
         return Container::create([
-            'user_id'            => auth()->id(),
-            'name'               => 'Dep. ' . uniqid(),
-            'capacity'           => $capacity,
-            'used_capacity'      => $grapes,
+            'user_id' => auth()->id(),
+            'name' => 'Dep. '.uniqid(),
+            'capacity' => $capacity,
+            'used_capacity' => $grapes,
             'wine_volume_liters' => $wine,
-            'archived'           => false,
+            'archived' => false,
         ]);
     }
 }

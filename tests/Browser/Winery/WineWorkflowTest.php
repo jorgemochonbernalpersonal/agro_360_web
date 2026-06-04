@@ -169,10 +169,10 @@ class WineWorkflowTest extends DuskTestCase
 
         foreach ($statuses as $status) {
             $wines[] = Wine::create([
-                'user_id'    => $user->id,
-                'name'       => "Vino Dusk {$status}",
-                'wine_type'  => 'red',
-                'status'     => $status,
+                'user_id' => $user->id,
+                'name' => "Vino Dusk {$status}",
+                'wine_type' => 'red',
+                'status' => $status,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

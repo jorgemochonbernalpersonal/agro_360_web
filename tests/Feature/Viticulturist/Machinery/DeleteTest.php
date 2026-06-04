@@ -16,30 +16,12 @@ class DeleteTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function makeViticulturist(): User
-    {
-        return User::factory()->create([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ]);
-    }
-
-    private function makeMachinery(int $viticulturistId): Machinery
-    {
-        return Machinery::create([
-            'viticulturist_id' => $viticulturistId,
-            'name'             => 'Tractor Test',
-            'type'             => 'tractor',
-            'active'           => true,
-        ]);
-    }
-
     // ── happy path ────────────────────────────────────────────────────────────
 
     public function test_can_delete_machinery_without_activities(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $machinery     = $this->makeMachinery($viticulturist->id);
+        $machinery = $this->makeMachinery($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -54,8 +36,8 @@ class DeleteTest extends TestCase
     public function test_cannot_delete_another_viticulturists_machinery(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeViticulturist();
-        $machinery     = $this->makeMachinery($other->id);
+        $other = $this->makeViticulturist();
+        $machinery = $this->makeMachinery($other->id);
 
         $this->actingAs($viticulturist);
 
@@ -63,5 +45,23 @@ class DeleteTest extends TestCase
 
         Livewire::test(Index::class)
             ->call('delete', $machinery->id);
+    }
+
+    private function makeViticulturist(): User
+    {
+        return User::factory()->create([
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
+        ]);
+    }
+
+    private function makeMachinery(int $viticulturistId): Machinery
+    {
+        return Machinery::create([
+            'viticulturist_id' => $viticulturistId,
+            'name' => 'Tractor Test',
+            'type' => 'tractor',
+            'active' => true,
+        ]);
     }
 }

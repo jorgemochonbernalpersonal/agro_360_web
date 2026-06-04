@@ -18,7 +18,7 @@ class SupportTicketController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'status'   => 'nullable|string|in:open,in_progress,resolved,closed',
+            'status' => 'nullable|string|in:open,in_progress,resolved,closed',
             'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
@@ -34,10 +34,10 @@ class SupportTicketController extends Controller
         return response()->json([
             'data' => SupportTicketResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -50,21 +50,21 @@ class SupportTicketController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'required|string|max:5000',
-            'type'        => 'required|string|in:bug,feature,improvement,question',
-            'priority'    => 'nullable|string|in:urgent,high,medium,low',
+            'type' => 'required|string|in:bug,feature,improvement,question',
+            'priority' => 'nullable|string|in:urgent,high,medium,low',
         ]);
 
         $record = SupportTicket::create([
             ...$validated,
-            'user_id'  => $user->id,
-            'status'   => 'open',
+            'user_id' => $user->id,
+            'status' => 'open',
             'priority' => $validated['priority'] ?? 'medium',
         ]);
 
         return response()->json([
-            'data'    => new SupportTicketResource($record),
+            'data' => new SupportTicketResource($record),
             'message' => __('Ticket de soporte creado correctamente.'),
         ], 201);
     }

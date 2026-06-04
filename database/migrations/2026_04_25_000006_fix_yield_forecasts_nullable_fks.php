@@ -30,22 +30,34 @@ return new class extends Migration
 
         Schema::table('winery_yield_forecasts', function (Blueprint $table) use ($foreignKeys) {
             // viticulturist_id
-            $fk = collect($foreignKeys)->first(fn($k) => str_contains($k, 'viticulturist_id'));
-            if ($fk) $table->dropForeign(['viticulturist_id']);
+            $fk = collect($foreignKeys)->first(fn ($k) => str_contains($k, 'viticulturist_id'));
+            if ($fk) {
+                $table->dropForeign(['viticulturist_id']);
+            }
             $table->unsignedBigInteger('viticulturist_id')->nullable()->change();
-            if ($fk) $table->foreign('viticulturist_id')->references('id')->on('users')->onDelete('set null');
+            if ($fk) {
+                $table->foreign('viticulturist_id')->references('id')->on('users')->onDelete('set null');
+            }
 
             // plot_planting_id
-            $fk = collect($foreignKeys)->first(fn($k) => str_contains($k, 'plot_planting_id'));
-            if ($fk) $table->dropForeign(['plot_planting_id']);
+            $fk = collect($foreignKeys)->first(fn ($k) => str_contains($k, 'plot_planting_id'));
+            if ($fk) {
+                $table->dropForeign(['plot_planting_id']);
+            }
             $table->unsignedBigInteger('plot_planting_id')->nullable()->change();
-            if ($fk) $table->foreign('plot_planting_id')->references('id')->on('plot_plantings')->onDelete('set null');
+            if ($fk) {
+                $table->foreign('plot_planting_id')->references('id')->on('plot_plantings')->onDelete('set null');
+            }
 
             // campaign_id
-            $fk = collect($foreignKeys)->first(fn($k) => str_contains($k, 'campaign_id'));
-            if ($fk) $table->dropForeign(['campaign_id']);
+            $fk = collect($foreignKeys)->first(fn ($k) => str_contains($k, 'campaign_id'));
+            if ($fk) {
+                $table->dropForeign(['campaign_id']);
+            }
             $table->unsignedBigInteger('campaign_id')->nullable()->change();
-            if ($fk) $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('set null');
+            if ($fk) {
+                $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('set null');
+            }
         });
     }
 

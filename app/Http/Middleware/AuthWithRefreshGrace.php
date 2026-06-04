@@ -57,6 +57,7 @@ class AuthWithRefreshGrace
         // Guard against orphaned tokens (token row exists but user was deleted).
         if (! $user) {
             $token->delete();
+
             return response()->json(['message' => __('No autenticado.')], 401);
         }
 

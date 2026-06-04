@@ -8,13 +8,18 @@ use Livewire\Component;
 class VigorMapCard extends Component
 {
     public Plot $plot;
+
     public ?array $areaStats = null;
+
     public ?array $vigorZones = null;
+
     public bool $loading = false;
+
     public ?string $error = null;
-    
+
     // Historical date selector
     public ?string $selectedDate = null;
+
     public array $availableDates = [];
 
     public function mount(Plot $plot)
@@ -31,12 +36,12 @@ class VigorMapCard extends Component
             ->orderBy('image_date', 'desc')
             ->limit(30)
             ->pluck('image_date')
-            ->map(fn($date) => $date->format('Y-m-d'))
+            ->map(fn ($date) => $date->format('Y-m-d'))
             ->toArray();
-        
+
         $this->availableDates = $dates;
-        
-        if (empty($this->selectedDate) && !empty($dates)) {
+
+        if (empty($this->selectedDate) && ! empty($dates)) {
             $this->selectedDate = $dates[0];
         }
     }
@@ -54,15 +59,16 @@ class VigorMapCard extends Component
 
             $query = $this->plot->remoteSensingData()
                 ->whereNotNull('area_statistics');
-            
+
             if ($this->selectedDate) {
                 $query->whereDate('image_date', $this->selectedDate);
             }
-            
+
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
-            if (!$remoteSensing) {
+            if (! $remoteSensing) {
                 $this->error = __('No hay datos de área disponibles para esta fecha. Los datos de área se generan bajo demanda.');
+
                 return;
             }
 
@@ -100,7 +106,7 @@ class VigorMapCard extends Component
 
         } catch (\Exception $e) {
             $this->error = __('Error al solicitar datos de área');
-            
+
             $this->dispatch('notify', [
                 'type' => 'error',
                 'message' => __('Error al solicitar mapa de vigor'),
@@ -115,6 +121,16 @@ class VigorMapCard extends Component
         $this->loadData();
     }
 
+    public function render()
+    {
+        return view('livewire.viticulturist.remote-sensing.vigor-map-card', [
+            'areaStats' => $this->areaStats,
+            'vigorZones' => $this->vigorZones,
+            'error' => $this->error,
+            'availableDates' => $this->availableDates,
+        ]);
+    }
+
     /**
      * Build human-readable vigor zone array.
      * If Sentinel-2 zone_*_pct values are present (improvement #5), use them as the
@@ -124,65 +140,56 @@ class VigorMapCard extends Component
     {
         $hasSentinelZones = isset($areaStats['zone_critical_pct']);
 
-        if (!$hasSentinelZones) {
+        if (! $hasSentinelZones) {
             // Legacy: delegate to NASA area service
             $areaService = app(\App\Services\RemoteSensing\NasaAreaRequestService::class);
+
             return $areaService->createVigorZones($areaStats);
         }
 
         $zones = [
             'excellent' => [
-                'label'       => __('Excelente'),
+                'label' => __('Excelente'),
                 'description' => __('NDVI > 0.65 — vigor muy alto'),
-                'icon'        => '🌿',
-                'color'       => 'green',
-                'range'       => ['min' => 0.65, 'max' => 1.0],
-                'pct'         => $areaStats['zone_excellent_pct'] ?? 0,
+                'icon' => '🌿',
+                'color' => 'green',
+                'range' => ['min' => 0.65, 'max' => 1.0],
+                'pct' => $areaStats['zone_excellent_pct'] ?? 0,
             ],
             'good' => [
-                'label'       => __('Bueno'),
+                'label' => __('Bueno'),
                 'description' => __('NDVI 0.50–0.65 — vigor normal'),
-                'icon'        => '🍃',
-                'color'       => 'lime',
-                'range'       => ['min' => 0.50, 'max' => 0.65],
-                'pct'         => $areaStats['zone_good_pct'] ?? 0,
+                'icon' => '🍃',
+                'color' => 'lime',
+                'range' => ['min' => 0.50, 'max' => 0.65],
+                'pct' => $areaStats['zone_good_pct'] ?? 0,
             ],
             'moderate' => [
-                'label'       => __('Moderado'),
+                'label' => __('Moderado'),
                 'description' => __('NDVI 0.35–0.50 — estrés leve'),
-                'icon'        => '🌾',
-                'color'       => 'yellow',
-                'range'       => ['min' => 0.35, 'max' => 0.50],
-                'pct'         => $areaStats['zone_moderate_pct'] ?? 0,
+                'icon' => '🌾',
+                'color' => 'yellow',
+                'range' => ['min' => 0.35, 'max' => 0.50],
+                'pct' => $areaStats['zone_moderate_pct'] ?? 0,
             ],
             'low' => [
-                'label'       => __('Bajo'),
+                'label' => __('Bajo'),
                 'description' => __('NDVI 0.20–0.35 — estrés significativo'),
-                'icon'        => '🍂',
-                'color'       => 'orange',
-                'range'       => ['min' => 0.20, 'max' => 0.35],
-                'pct'         => $areaStats['zone_low_pct'] ?? 0,
+                'icon' => '🍂',
+                'color' => 'orange',
+                'range' => ['min' => 0.20, 'max' => 0.35],
+                'pct' => $areaStats['zone_low_pct'] ?? 0,
             ],
             'critical' => [
-                'label'       => __('Crítico'),
+                'label' => __('Crítico'),
                 'description' => __('NDVI < 0.20 — suelo desnudo o estrés severo'),
-                'icon'        => '🚨',
-                'color'       => 'red',
-                'range'       => ['min' => -1.0, 'max' => 0.20],
-                'pct'         => $areaStats['zone_critical_pct'] ?? 0,
+                'icon' => '🚨',
+                'color' => 'red',
+                'range' => ['min' => -1.0, 'max' => 0.20],
+                'pct' => $areaStats['zone_critical_pct'] ?? 0,
             ],
         ];
 
         return $zones;
-    }
-
-    public function render()
-    {
-        return view('livewire.viticulturist.remote-sensing.vigor-map-card', [
-            'areaStats' => $this->areaStats,
-            'vigorZones' => $this->vigorZones,
-            'error' => $this->error,
-            'availableDates' => $this->availableDates,
-        ]);
     }
 }

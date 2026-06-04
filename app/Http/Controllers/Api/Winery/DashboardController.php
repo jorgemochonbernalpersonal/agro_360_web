@@ -20,9 +20,9 @@ class DashboardController extends Controller
 
         abort_unless($user->hasWineryAccess(), 403, 'Acceso denegado.');
 
-        $userId       = $user->id;
+        $userId = $user->id;
         $campaignYear = now()->year;
-        $cacheKey     = "winery_dashboard:{$userId}:{$campaignYear}";
+        $cacheKey = "winery_dashboard:{$userId}:{$campaignYear}";
 
         $data = Cache::remember($cacheKey, 60, function () use ($userId, $campaignYear) {
 
@@ -38,7 +38,7 @@ class DashboardController extends Controller
                 ->first();
 
             $totalCapacity = (float) ($containerStats->total_capacity ?? 0);
-            $totalUsed     = (float) ($containerStats->total_used ?? 0);
+            $totalUsed = (float) ($containerStats->total_used ?? 0);
 
             // ── Critical containers (query directa con WHERE, no load+filter PHP) ──
             $criticalContainers = Container::where('user_id', $userId)
@@ -71,10 +71,10 @@ class DashboardController extends Controller
             $recentControls = WineFermentationControl::whereHas(
                 'wine', fn ($q) => $q->where('user_id', $userId)
             )
-            ->with(['wine:id,name,status', 'container:id,name'])
-            ->orderByDesc('control_date')
-            ->take(5)
-            ->get();
+                ->with(['wine:id,name,status', 'container:id,name'])
+                ->orderByDesc('control_date')
+                ->take(5)
+                ->get();
 
             // ── Alerts from critical containers ───────────────────────────────────
             $alerts = [];
@@ -90,28 +90,28 @@ class DashboardController extends Controller
             }
 
             return [
-                'campaign_year'     => $campaignYear,
+                'campaign_year' => $campaignYear,
                 'total_kg_received' => $totalKgReceived,
                 'containers' => [
-                    'total'          => (int) ($containerStats->total ?? 0),
+                    'total' => (int) ($containerStats->total ?? 0),
                     'total_capacity' => $totalCapacity,
-                    'total_used'     => $totalUsed,
-                    'usage_pct'      => $totalCapacity > 0 ? round($totalUsed / $totalCapacity * 100, 1) : 0,
+                    'total_used' => $totalUsed,
+                    'usage_pct' => $totalCapacity > 0 ? round($totalUsed / $totalCapacity * 100, 1) : 0,
                     'critical_count' => (int) ($containerStats->critical_count ?? 0),
                 ],
                 'wines' => [
-                    'total'                => (int) ($wineStats->total ?? 0),
-                    'in_progress'          => (int) ($wineStats->in_progress ?? 0),
+                    'total' => (int) ($wineStats->total ?? 0),
+                    'in_progress' => (int) ($wineStats->in_progress ?? 0),
                     'active_fermentations' => $activeFermentations,
                 ],
                 'critical_containers' => $criticalContainers->map(fn ($c) => [
-                    'id'            => $c->id,
-                    'name'          => $c->name,
+                    'id' => $c->id,
+                    'name' => $c->name,
                     'occupancy_pct' => $c->capacity > 0
                         ? round(($c->used_capacity / $c->capacity) * 100, 1) : 0,
                     'used_capacity' => (float) $c->used_capacity,
-                    'capacity'      => (float) $c->capacity,
-                    'room'          => $c->containerRoom?->name,
+                    'capacity' => (float) $c->capacity,
+                    'room' => $c->containerRoom?->name,
                 ])->all(),
                 'recent_fermentation_controls' => FermentationControlResource::collection($recentControls)->resolve(),
                 'alerts' => $alerts,

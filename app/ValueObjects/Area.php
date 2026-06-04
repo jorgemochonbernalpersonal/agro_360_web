@@ -13,6 +13,14 @@ class Area
     }
 
     /**
+     * Convertir a string
+     */
+    public function __toString(): string
+    {
+        return $this->format();
+    }
+
+    /**
      * Crear desde hectáreas
      */
     public static function fromHectares(float $hectares): self
@@ -105,7 +113,7 @@ class Area
      */
     public function format(int $decimals = 2): string
     {
-        return number_format($this->hectares, $decimals, ',', '.') . ' ha';
+        return number_format($this->hectares, $decimals, ',', '.').' ha';
     }
 
     /**
@@ -113,14 +121,6 @@ class Area
      */
     public function formatSquareMeters(int $decimals = 0): string
     {
-        return number_format($this->toSquareMeters(), $decimals, ',', '.') . ' m²';
-    }
-
-    /**
-     * Convertir a string
-     */
-    public function __toString(): string
-    {
-        return $this->format();
+        return number_format($this->toSquareMeters(), $decimals, ',', '.').' m²';
     }
 }

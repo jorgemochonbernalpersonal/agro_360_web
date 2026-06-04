@@ -42,32 +42,32 @@ class VerifactuService
             $response = $this->sendToAeat($signedXml, $invoice);
 
             // 5. Parse response
-            $linea     = $response->RespuestaLinea[0] ?? null;
-            $csv       = $linea?->CSV ?? null;
+            $linea = $response->RespuestaLinea[0] ?? null;
+            $csv = $linea?->CSV ?? null;
             $errorCode = $linea?->CodigoErrorRegistro ?? null;
             $errorDesc = $linea?->DescripcionErrorRegistro ?? null;
-            $isOk      = ($response->EstadoEnvio ?? '') === 'Correcto' && !$errorCode;
+            $isOk = ($response->EstadoEnvio ?? '') === 'Correcto' && ! $errorCode;
 
             // 6. Log in sif_records (store huella for chaining)
             SifRecord::create([
-                'invoice_id'    => $invoice->id,
+                'invoice_id' => $invoice->id,
                 'tipo_registro' => 'ALTA',
-                'csv'           => $csv,
-                'huella'        => $huella,
-                'request_xml'   => $xml,
-                'response_xml'  => $this->responseToXml($response),
-                'status'        => $isOk ? 'OK' : 'ER',
+                'csv' => $csv,
+                'huella' => $huella,
+                'request_xml' => $xml,
+                'response_xml' => $this->responseToXml($response),
+                'status' => $isOk ? 'OK' : 'ER',
                 'error_message' => $errorCode ? "[{$errorCode}] {$errorDesc}" : null,
             ]);
 
             // 7. Update invoice
             $invoice->update([
-                'sif_status'      => $isOk ? 'aceptado' : 'error',
+                'sif_status' => $isOk ? 'aceptado' : 'error',
                 'is_verified_aet' => $isOk,
-                'sif_uuid'        => $csv,
-                'sif_hash'        => $huella,
-                'sif_sent_at'     => now(),
-                'sif_response'    => $response->EstadoEnvio,
+                'sif_uuid' => $csv,
+                'sif_hash' => $huella,
+                'sif_sent_at' => now(),
+                'sif_response' => $response->EstadoEnvio,
             ]);
 
             // 8. Email after successful verification
@@ -77,21 +77,21 @@ class VerifactuService
 
             return [
                 'success' => $isOk,
-                'csv'     => $csv,
-                'huella'  => $huella,
-                'errors'  => $isOk ? [] : ["[{$errorCode}] {$errorDesc}"],
+                'csv' => $csv,
+                'huella' => $huella,
+                'errors' => $isOk ? [] : ["[{$errorCode}] {$errorDesc}"],
             ];
 
         } catch (\Exception $e) {
             Log::error('VerifactuService::send', [
                 'invoice_id' => $invoice->id,
-                'message'    => $e->getMessage(),
+                'message' => $e->getMessage(),
             ]);
 
             SifRecord::create([
-                'invoice_id'    => $invoice->id,
+                'invoice_id' => $invoice->id,
                 'tipo_registro' => 'ALTA',
-                'status'        => 'ER',
+                'status' => 'ER',
                 'error_message' => $e->getMessage(),
             ]);
 
@@ -108,48 +108,49 @@ class VerifactuService
     public function cancel(Invoice $invoice, string $reason = ''): array
     {
         try {
-            $chain        = $this->resolveChain($invoice->user->dni ?? '');
+            $chain = $this->resolveChain($invoice->user->dni ?? '');
             $fechaHoraGen = now()->setTimezone('Europe/Madrid')->format('Y-m-d\TH:i:sP');
-            $huella       = $this->buildAnulacionHuella($invoice, $chain, $fechaHoraGen);
-            $xml          = $this->buildAnulacionXml($invoice, $chain, $huella, $fechaHoraGen);
-            $signedXml    = $this->signXml($xml);
-            $response     = $this->sendToAeat($signedXml, $invoice);
+            $huella = $this->buildAnulacionHuella($invoice, $chain, $fechaHoraGen);
+            $xml = $this->buildAnulacionXml($invoice, $chain, $huella, $fechaHoraGen);
+            $signedXml = $this->signXml($xml);
+            $response = $this->sendToAeat($signedXml, $invoice);
 
-            $linea     = $response->RespuestaLinea[0] ?? null;
-            $csv       = $linea?->CSV ?? null;
+            $linea = $response->RespuestaLinea[0] ?? null;
+            $csv = $linea?->CSV ?? null;
             $errorCode = $linea?->CodigoErrorRegistro ?? null;
             $errorDesc = $linea?->DescripcionErrorRegistro ?? null;
-            $isOk      = ($response->EstadoEnvio ?? '') === 'Correcto' && !$errorCode;
+            $isOk = ($response->EstadoEnvio ?? '') === 'Correcto' && ! $errorCode;
 
             SifRecord::create([
-                'invoice_id'    => $invoice->id,
+                'invoice_id' => $invoice->id,
                 'tipo_registro' => 'ANULACION',
-                'huella'        => $huella,
-                'request_xml'   => $xml,
-                'response_xml'  => $this->responseToXml($response),
-                'status'        => $isOk ? 'OK' : 'ER',
+                'huella' => $huella,
+                'request_xml' => $xml,
+                'response_xml' => $this->responseToXml($response),
+                'status' => $isOk ? 'OK' : 'ER',
                 'error_message' => $errorCode ? "[{$errorCode}] {$errorDesc}" : null,
             ]);
 
             if ($isOk) {
                 $invoice->update([
-                    'sif_status'      => 'pendiente',
+                    'sif_status' => 'pendiente',
                     'is_verified_aet' => false,
-                    'sif_uuid'        => null,
-                    'sif_sent_at'     => null,
+                    'sif_uuid' => null,
+                    'sif_sent_at' => null,
                 ]);
             }
 
             return [
                 'success' => $isOk,
-                'errors'  => $isOk ? [] : ["[{$errorCode}] {$errorDesc}"],
+                'errors' => $isOk ? [] : ["[{$errorCode}] {$errorDesc}"],
             ];
 
         } catch (\Exception $e) {
             Log::error('VerifactuService::cancel', [
                 'invoice_id' => $invoice->id,
-                'message'    => $e->getMessage(),
+                'message' => $e->getMessage(),
             ]);
+
             return ['success' => false, 'errors' => [$e->getMessage()]];
         }
     }
@@ -160,6 +161,7 @@ class VerifactuService
     public function retry(Invoice $invoice): array
     {
         $invoice->update(['sif_status' => 'pendiente', 'sif_sent_at' => null]);
+
         return $this->send($invoice);
     }
 
@@ -173,11 +175,11 @@ class VerifactuService
         // ── Validation ──────────────────────────────────────────────────────
         $errors = [];
 
-        $numSerie   = $invoice->invoice_number ?? null;
-        $fecha      = $invoice->invoice_date ?? null;
-        $issuerNif  = trim($invoice->user->dni ?? '');
+        $numSerie = $invoice->invoice_number ?? null;
+        $fecha = $invoice->invoice_date ?? null;
+        $issuerNif = trim($invoice->user->dni ?? '');
         $invSettings = InvoicingSetting::forUser($invoice->user->id)->first();
-        $issuerName  = trim($invSettings?->issuer_legal_name ?? $invoice->user->name ?? '');
+        $issuerName = trim($invSettings?->issuer_legal_name ?? $invoice->user->name ?? '');
 
         if (empty($numSerie)) {
             $errors[] = 'El número de factura es obligatorio para Verifactu.';
@@ -192,16 +194,16 @@ class VerifactuService
             $errors[] = 'El importe total debe ser mayor que cero.';
         }
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             return ['errors' => $errors];
         }
 
         // ── Derived values ──────────────────────────────────────────────────
-        $fechaAEAT    = $fecha->format('d-m-Y');
-        $tipoFactura  = $invoice->corrective ? 'R1' : 'F1';
-        $cuotaTotal   = number_format((float) $invoice->tax_amount, 2, '.', '');
+        $fechaAEAT = $fecha->format('d-m-Y');
+        $tipoFactura = $invoice->corrective ? 'R1' : 'F1';
+        $cuotaTotal = number_format((float) $invoice->tax_amount, 2, '.', '');
         $importeTotal = number_format((float) $invoice->total_amount, 2, '.', '');
-        $descOp       = $invoice->invoice_type === 'grape_purchase'
+        $descOp = $invoice->invoice_type === 'grape_purchase'
             ? 'Liquidación de vendimia'
             : 'Venta de productos';
 
@@ -214,46 +216,46 @@ class VerifactuService
         // All values concatenated WITHOUT separator, uppercase hex result.
         $huellaAnterior = $chain['huella'] ?? '';
         $hashInput =
-            $issuerNif .
-            $numSerie .
-            $fechaAEAT .
-            $tipoFactura .
-            $cuotaTotal .
-            $importeTotal .
-            $huellaAnterior .
+            $issuerNif.
+            $numSerie.
+            $fechaAEAT.
+            $tipoFactura.
+            $cuotaTotal.
+            $importeTotal.
+            $huellaAnterior.
             $fechaHoraGen;
         $huella = strtoupper(hash('sha256', $hashInput));
 
         // ── Recipient ────────────────────────────────────────────────────────
-        $recipientNif  = $invoice->billing_company_document
+        $recipientNif = $invoice->billing_company_document
             ?? $invoice->client?->company_document
             ?? $invoice->client?->particular_document
             ?? null;
         $recipientName = $invoice->billing_company_name
-            ?? trim(($invoice->billing_first_name ?? '') . ' ' . ($invoice->billing_last_name ?? ''))
+            ?? trim(($invoice->billing_first_name ?? '').' '.($invoice->billing_last_name ?? ''))
             ?: null;
 
         // ── Software block (SistemaInformatico) ─────────────────────────────
-        $swVendorName  = config('services.sif_software.vendor_name', 'Agro365');
-        $swVendorNif   = config('services.sif_software.vendor_nif', '');
-        $swName        = config('services.sif_software.name', 'Agro365');
-        $swId          = config('services.sif_software.id', 'A3');           // max 2 chars
-        $swVersion     = config('services.sif_software.version', '1.0.0');
-        $swInstall     = 'AGR-' . $invoice->user->id; // una instalación por usuario (max 100)
+        $swVendorName = config('services.sif_software.vendor_name', 'Agro365');
+        $swVendorNif = config('services.sif_software.vendor_nif', '');
+        $swName = config('services.sif_software.name', 'Agro365');
+        $swId = config('services.sif_software.id', 'A3');           // max 2 chars
+        $swVersion = config('services.sif_software.version', '1.0.0');
+        $swInstall = 'AGR-'.$invoice->user->id; // una instalación por usuario (max 100)
 
         // ── Build XML ────────────────────────────────────────────────────────
-        $ns   = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroLR.xsd';
-        $nsT  = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroInformacion.xsd';
+        $ns = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroLR.xsd';
+        $nsT = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroInformacion.xsd';
 
-        $x  = '<?xml version="1.0" encoding="UTF-8"?>';
+        $x = '<?xml version="1.0" encoding="UTF-8"?>';
         $x .= "<RegFactuSistemaFacturacion xmlns=\"{$ns}\" xmlns:T=\"{$nsT}\">";
 
         // Cabecera
         $x .= '<Cabecera>';
         $x .= '<IDVersionSuministro>1.0</IDVersionSuministro>';
         $x .= '<Titular>';
-        $x .= '<T:NombreRazon>' . $this->e($issuerName) . '</T:NombreRazon>';
-        $x .= '<T:NIF>' . $this->e($issuerNif) . '</T:NIF>';
+        $x .= '<T:NombreRazon>'.$this->e($issuerName).'</T:NombreRazon>';
+        $x .= '<T:NIF>'.$this->e($issuerNif).'</T:NIF>';
         $x .= '</Titular>';
         $x .= '<TipoComunicacion>A0</TipoComunicacion>';
         $x .= '</Cabecera>';
@@ -265,27 +267,27 @@ class VerifactuService
 
         // IDFactura (corrected field names vs SII)
         $x .= '<T:IDFactura>';
-        $x .= '<T:IDEmisorFactura>' . $this->e($issuerNif) . '</T:IDEmisorFactura>';
-        $x .= '<T:NumSerieFactura>' . $this->e($numSerie) . '</T:NumSerieFactura>';
-        $x .= '<T:FechaExpedicionFactura>' . $this->e($fechaAEAT) . '</T:FechaExpedicionFactura>';
+        $x .= '<T:IDEmisorFactura>'.$this->e($issuerNif).'</T:IDEmisorFactura>';
+        $x .= '<T:NumSerieFactura>'.$this->e($numSerie).'</T:NumSerieFactura>';
+        $x .= '<T:FechaExpedicionFactura>'.$this->e($fechaAEAT).'</T:FechaExpedicionFactura>';
         $x .= '</T:IDFactura>';
 
-        $x .= '<T:NombreRazonEmisor>' . $this->e($issuerName) . '</T:NombreRazonEmisor>';
-        $x .= '<T:TipoFactura>' . $tipoFactura . '</T:TipoFactura>';
+        $x .= '<T:NombreRazonEmisor>'.$this->e($issuerName).'</T:NombreRazonEmisor>';
+        $x .= '<T:TipoFactura>'.$tipoFactura.'</T:TipoFactura>';
 
         // Rectificativa fields
         if ($invoice->corrective && $invoice->correctedInvoice) {
             $x .= '<T:TipoRectificativa>I</T:TipoRectificativa>';
             $x .= '<T:FacturasRectificadas>';
             $x .= '<T:IDFacturaRectificada>';
-            $x .= '<T:IDEmisorFactura>' . $this->e($issuerNif) . '</T:IDEmisorFactura>';
-            $x .= '<T:NumSerieFactura>' . $this->e($invoice->correctedInvoice->invoice_number) . '</T:NumSerieFactura>';
-            $x .= '<T:FechaExpedicionFactura>' . $this->e($invoice->correctedInvoice->invoice_date->format('d-m-Y')) . '</T:FechaExpedicionFactura>';
+            $x .= '<T:IDEmisorFactura>'.$this->e($issuerNif).'</T:IDEmisorFactura>';
+            $x .= '<T:NumSerieFactura>'.$this->e($invoice->correctedInvoice->invoice_number).'</T:NumSerieFactura>';
+            $x .= '<T:FechaExpedicionFactura>'.$this->e($invoice->correctedInvoice->invoice_date->format('d-m-Y')).'</T:FechaExpedicionFactura>';
             $x .= '</T:IDFacturaRectificada>';
             $x .= '</T:FacturasRectificadas>';
         }
 
-        $x .= '<T:DescripcionOperacion>' . $this->e($descOp) . '</T:DescripcionOperacion>';
+        $x .= '<T:DescripcionOperacion>'.$this->e($descOp).'</T:DescripcionOperacion>';
 
         // Desglose (corrected field names)
         $x .= '<T:Desglose>';
@@ -293,28 +295,28 @@ class VerifactuService
         // CalificacionOperacion: S1=sujeto y no exento, S2=ISP; OperacionExenta: E1–E8
         if ((float) $invoice->tax_rate > 0) {
             $x .= '<T:CalificacionOperacion>S1</T:CalificacionOperacion>';
-            $x .= '<T:TipoImpositivo>' . number_format((float) $invoice->tax_rate, 2, '.', '') . '</T:TipoImpositivo>';
-            $x .= '<T:BaseImponibleOimporteNoSujeto>' . number_format((float) $invoice->tax_base, 2, '.', '') . '</T:BaseImponibleOimporteNoSujeto>';
-            $x .= '<T:CuotaRepercutida>' . $cuotaTotal . '</T:CuotaRepercutida>';
+            $x .= '<T:TipoImpositivo>'.number_format((float) $invoice->tax_rate, 2, '.', '').'</T:TipoImpositivo>';
+            $x .= '<T:BaseImponibleOimporteNoSujeto>'.number_format((float) $invoice->tax_base, 2, '.', '').'</T:BaseImponibleOimporteNoSujeto>';
+            $x .= '<T:CuotaRepercutida>'.$cuotaTotal.'</T:CuotaRepercutida>';
         } else {
             // Exento (IVA 0%)
             $x .= '<T:OperacionExenta>E1</T:OperacionExenta>';
-            $x .= '<T:BaseImponibleOimporteNoSujeto>' . number_format((float) $invoice->tax_base, 2, '.', '') . '</T:BaseImponibleOimporteNoSujeto>';
+            $x .= '<T:BaseImponibleOimporteNoSujeto>'.number_format((float) $invoice->tax_base, 2, '.', '').'</T:BaseImponibleOimporteNoSujeto>';
         }
         $x .= '</T:DetalleDesglose>';
         $x .= '</T:Desglose>';
 
         // Totales a nivel de factura
-        $x .= '<T:CuotaTotal>' . $cuotaTotal . '</T:CuotaTotal>';
-        $x .= '<T:ImporteTotal>' . $importeTotal . '</T:ImporteTotal>';
+        $x .= '<T:CuotaTotal>'.$cuotaTotal.'</T:CuotaTotal>';
+        $x .= '<T:ImporteTotal>'.$importeTotal.'</T:ImporteTotal>';
 
         // Destinatarios (optional per schema, but expected for F1)
         if ($tipoFactura === 'F1' && ($recipientNif || $recipientName)) {
             $x .= '<T:Destinatarios>';
             $x .= '<T:IDDestinatario>';
-            $x .= '<T:NombreRazon>' . $this->e($recipientName ?: 'Destinatario') . '</T:NombreRazon>';
+            $x .= '<T:NombreRazon>'.$this->e($recipientName ?: 'Destinatario').'</T:NombreRazon>';
             if ($recipientNif) {
-                $x .= '<T:NIF>' . $this->e($recipientNif) . '</T:NIF>';
+                $x .= '<T:NIF>'.$this->e($recipientNif).'</T:NIF>';
             }
             $x .= '</T:IDDestinatario>';
             $x .= '</T:Destinatarios>';
@@ -326,35 +328,35 @@ class VerifactuService
             $x .= '<T:PrimerRegistro>S</T:PrimerRegistro>';
         } else {
             $x .= '<T:RegistroAnterior>';
-            $x .= '<T:IDEmisorFactura>' . $this->e($chain['issuerNif']) . '</T:IDEmisorFactura>';
-            $x .= '<T:NumSerieFactura>' . $this->e($chain['numSerie']) . '</T:NumSerieFactura>';
-            $x .= '<T:FechaExpedicionFactura>' . $this->e($chain['fecha']) . '</T:FechaExpedicionFactura>';
-            $x .= '<T:Huella>' . $this->e($huellaAnterior) . '</T:Huella>';
+            $x .= '<T:IDEmisorFactura>'.$this->e($chain['issuerNif']).'</T:IDEmisorFactura>';
+            $x .= '<T:NumSerieFactura>'.$this->e($chain['numSerie']).'</T:NumSerieFactura>';
+            $x .= '<T:FechaExpedicionFactura>'.$this->e($chain['fecha']).'</T:FechaExpedicionFactura>';
+            $x .= '<T:Huella>'.$this->e($huellaAnterior).'</T:Huella>';
             $x .= '</T:RegistroAnterior>';
         }
         $x .= '</T:Encadenamiento>';
 
         // SistemaInformatico (mandatory — identifies the software)
         $x .= '<T:SistemaInformatico>';
-        $x .= '<T:NombreRazon>' . $this->e($swVendorName) . '</T:NombreRazon>';
+        $x .= '<T:NombreRazon>'.$this->e($swVendorName).'</T:NombreRazon>';
         if ($swVendorNif) {
-            $x .= '<T:NIF>' . $this->e($swVendorNif) . '</T:NIF>';
+            $x .= '<T:NIF>'.$this->e($swVendorNif).'</T:NIF>';
         }
-        $x .= '<T:NombreSistemaInformatico>' . $this->e($swName) . '</T:NombreSistemaInformatico>';
-        $x .= '<T:IdSistemaInformatico>' . $this->e(substr($swId, 0, 2)) . '</T:IdSistemaInformatico>';
-        $x .= '<T:Version>' . $this->e($swVersion) . '</T:Version>';
-        $x .= '<T:NumeroInstalacion>' . $this->e($swInstall) . '</T:NumeroInstalacion>';
+        $x .= '<T:NombreSistemaInformatico>'.$this->e($swName).'</T:NombreSistemaInformatico>';
+        $x .= '<T:IdSistemaInformatico>'.$this->e(substr($swId, 0, 2)).'</T:IdSistemaInformatico>';
+        $x .= '<T:Version>'.$this->e($swVersion).'</T:Version>';
+        $x .= '<T:NumeroInstalacion>'.$this->e($swInstall).'</T:NumeroInstalacion>';
         $x .= '<T:TipoUsoPosibleSoloVerifactu>S</T:TipoUsoPosibleSoloVerifactu>';
         $x .= '<T:TipoUsoPosibleMultiOT>N</T:TipoUsoPosibleMultiOT>';
         $x .= '<T:IndicadorMultiplesOT>N</T:IndicadorMultiplesOT>';
         $x .= '</T:SistemaInformatico>';
 
         // Timestamp with timezone (mandatory)
-        $x .= '<T:FechaHoraHusoGenRegistro>' . $this->e($fechaHoraGen) . '</T:FechaHoraHusoGenRegistro>';
+        $x .= '<T:FechaHoraHusoGenRegistro>'.$this->e($fechaHoraGen).'</T:FechaHoraHusoGenRegistro>';
 
         // Huella
         $x .= '<T:TipoHuella>01</T:TipoHuella>';
-        $x .= '<T:Huella>' . $huella . '</T:Huella>';
+        $x .= '<T:Huella>'.$huella.'</T:Huella>';
         $x .= '<T:GeneradoPor>E</T:GeneradoPor>';
 
         $x .= '</T:RegistroAlta>';
@@ -376,12 +378,14 @@ class VerifactuService
         try {
             $renderer = new \BaconQrCode\Renderer\ImageRenderer(
                 new \BaconQrCode\Renderer\RendererStyle\RendererStyle(85),
-                new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+                new \BaconQrCode\Renderer\Image\SvgImageBackEnd
             );
             $writer = new \BaconQrCode\Writer($renderer);
+
             return $writer->writeString($url);
         } catch (\Throwable $e) {
             Log::warning('VerifactuService: QR SVG generation failed', ['error' => $e->getMessage()]);
+
             return '';
         }
     }
@@ -391,13 +395,13 @@ class VerifactuService
      */
     public function buildQrUrl(Invoice $invoice): string
     {
-        $nif      = urlencode($invoice->user->dni ?? '');
+        $nif = urlencode($invoice->user->dni ?? '');
         $numSerie = urlencode($invoice->invoice_number ?? '');
-        $fecha    = urlencode($invoice->invoice_date?->format('d-m-Y') ?? '');
-        $importe  = urlencode(number_format((float) $invoice->total_amount, 2, '.', ''));
+        $fecha = urlencode($invoice->invoice_date?->format('d-m-Y') ?? '');
+        $importe = urlencode(number_format((float) $invoice->total_amount, 2, '.', ''));
 
-        return "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR"
-            . "?nif={$nif}&numserie={$numSerie}&fecha={$fecha}&importe={$importe}";
+        return 'https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR'
+            ."?nif={$nif}&numserie={$numSerie}&fecha={$fecha}&importe={$importe}";
     }
 
     /**
@@ -406,44 +410,44 @@ class VerifactuService
      */
     public function signXml(string $xmlString): string
     {
-        $certPath    = config('services.sif_cert.path');
+        $certPath = config('services.sif_cert.path');
         $certPassword = config('services.sif_cert.password', '');
-        $environment  = config('services.sif_aeat.environment', 'testing');
+        $environment = config('services.sif_aeat.environment', 'testing');
 
-        if ($environment !== 'production' && (!$certPath || !file_exists($certPath))) {
+        if ($environment !== 'production' && (! $certPath || ! file_exists($certPath))) {
             return $xmlString;
         }
 
-        if (!file_exists($certPath)) {
+        if (! file_exists($certPath)) {
             throw new \Exception(__('Certificado no encontrado en: :path', ['path' => $certPath]));
         }
 
         $pkcs12 = file_get_contents($certPath);
-        $certs  = [];
-        if (!openssl_pkcs12_read($pkcs12, $certs, $certPassword)) {
+        $certs = [];
+        if (! openssl_pkcs12_read($pkcs12, $certs, $certPassword)) {
             throw new \Exception(__('No se pudo abrir el certificado PKCS#12. Verifica la contraseña.'));
         }
 
-        $dom       = new \DOMDocument();
+        $dom = new \DOMDocument;
         $dom->loadXML($xmlString);
-        $canonical   = $dom->C14N();
+        $canonical = $dom->C14N();
         $digestValue = base64_encode(hash('sha256', $canonical, true));
 
         $signedInfo =
             '<ds:SignedInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">'
-            . '<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>'
-            . '<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>'
-            . '<ds:Reference URI="">'
-            . '<ds:Transforms>'
-            . '<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>'
-            . '<ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>'
-            . '</ds:Transforms>'
-            . '<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>'
-            . '<ds:DigestValue>' . $digestValue . '</ds:DigestValue>'
-            . '</ds:Reference>'
-            . '</ds:SignedInfo>';
+            .'<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>'
+            .'<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>'
+            .'<ds:Reference URI="">'
+            .'<ds:Transforms>'
+            .'<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>'
+            .'<ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>'
+            .'</ds:Transforms>'
+            .'<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>'
+            .'<ds:DigestValue>'.$digestValue.'</ds:DigestValue>'
+            .'</ds:Reference>'
+            .'</ds:SignedInfo>';
 
-        $signedInfoDom = new \DOMDocument();
+        $signedInfoDom = new \DOMDocument;
         $signedInfoDom->loadXML($signedInfo);
         $signedInfoCanonical = $signedInfoDom->C14N();
 
@@ -457,14 +461,14 @@ class VerifactuService
 
         $dsSignature =
             '<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">'
-            . $signedInfo
-            . '<ds:SignatureValue>' . base64_encode($signature) . '</ds:SignatureValue>'
-            . '<ds:KeyInfo><ds:X509Data><ds:X509Certificate>' . $certClean . '</ds:X509Certificate></ds:X509Data></ds:KeyInfo>'
-            . '</ds:Signature>';
+            .$signedInfo
+            .'<ds:SignatureValue>'.base64_encode($signature).'</ds:SignatureValue>'
+            .'<ds:KeyInfo><ds:X509Data><ds:X509Certificate>'.$certClean.'</ds:X509Certificate></ds:X509Data></ds:KeyInfo>'
+            .'</ds:Signature>';
 
         return str_replace(
             '</RegFactuSistemaFacturacion>',
-            $dsSignature . '</RegFactuSistemaFacturacion>',
+            $dsSignature.'</RegFactuSistemaFacturacion>',
             $xmlString
         );
     }
@@ -477,12 +481,33 @@ class VerifactuService
         $certPath = config('services.sif_cert.path');
 
         return [
-            'environment'     => config('services.sif_aeat.environment', 'testing'),
-            'endpoint'        => config('services.sif_aeat.endpoint'),
-            'cert_path'       => $certPath,
-            'cert_configured' => !empty($certPath) && file_exists($certPath),
-            'is_production'   => config('services.sif_aeat.environment') === 'production',
+            'environment' => config('services.sif_aeat.environment', 'testing'),
+            'endpoint' => config('services.sif_aeat.endpoint'),
+            'cert_path' => $certPath,
+            'cert_configured' => ! empty($certPath) && file_exists($certPath),
+            'is_production' => config('services.sif_aeat.environment') === 'production',
         ];
+    }
+
+    /**
+     * Send verified invoice PDF by email to the client.
+     */
+    public function sendVerifiedEmail(Invoice $invoice): void
+    {
+        $email = $invoice->billing_email ?? $invoice->client?->email ?? null;
+
+        if (! $email) {
+            return;
+        }
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($email)->send(new \App\Mail\InvoiceVerifiedMail($invoice));
+        } catch (\Exception $e) {
+            Log::warning('VerifactuService: could not send verified email', [
+                'invoice_id' => $invoice->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     // ── Private helpers ────────────────────────────────────────────────────────
@@ -496,23 +521,23 @@ class VerifactuService
             return [];
         }
 
-        $last = SifRecord::whereHas('invoice', fn($q) => $q->whereHas('user', fn($q2) => $q2->where('dni', $issuerNif)))
+        $last = SifRecord::whereHas('invoice', fn ($q) => $q->whereHas('user', fn ($q2) => $q2->where('dni', $issuerNif)))
             ->where('status', 'OK')
             ->whereNotNull('huella')
             ->latest()
             ->first();
 
-        if (!$last) {
+        if (! $last) {
             return [];
         }
 
         $inv = $last->invoice;
 
         return [
-            'huella'    => $last->huella,
+            'huella' => $last->huella,
             'issuerNif' => $issuerNif,
-            'numSerie'  => $inv->invoice_number,
-            'fecha'     => $inv->invoice_date?->format('d-m-Y') ?? '',
+            'numSerie' => $inv->invoice_number,
+            'fecha' => $inv->invoice_date?->format('d-m-Y') ?? '',
         ];
     }
 
@@ -522,17 +547,17 @@ class VerifactuService
      */
     private function buildAnulacionHuella(Invoice $invoice, array $chain, string $fechaHoraGen): string
     {
-        $issuerNif      = $invoice->user->dni ?? '';
-        $numSerie       = $invoice->invoice_number ?? '';
-        $fechaAEAT      = $invoice->invoice_date?->format('d-m-Y') ?? '';
-        $tipoFactura    = $invoice->corrective ? 'R1' : 'F1';
+        $issuerNif = $invoice->user->dni ?? '';
+        $numSerie = $invoice->invoice_number ?? '';
+        $fechaAEAT = $invoice->invoice_date?->format('d-m-Y') ?? '';
+        $tipoFactura = $invoice->corrective ? 'R1' : 'F1';
         $huellaAnterior = $chain['huella'] ?? '';
 
         return strtoupper(hash('sha256',
-            $issuerNif . $numSerie . $fechaAEAT . $tipoFactura .
-            number_format((float) $invoice->tax_amount, 2, '.', '') .
-            number_format((float) $invoice->total_amount, 2, '.', '') .
-            $huellaAnterior . $fechaHoraGen
+            $issuerNif.$numSerie.$fechaAEAT.$tipoFactura.
+            number_format((float) $invoice->tax_amount, 2, '.', '').
+            number_format((float) $invoice->total_amount, 2, '.', '').
+            $huellaAnterior.$fechaHoraGen
         ));
     }
 
@@ -541,31 +566,31 @@ class VerifactuService
      */
     private function buildAnulacionXml(Invoice $invoice, array $chain, string $huella, string $fechaHoraGen): string
     {
-        $issuerNif  = $invoice->user->dni ?? '';
+        $issuerNif = $invoice->user->dni ?? '';
         $invSettings = InvoicingSetting::forUser($invoice->user->id)->first();
-        $issuerName  = trim($invSettings?->issuer_legal_name ?? $invoice->user->name ?? '');
-        $numSerie    = $invoice->invoice_number ?? '';
-        $fechaAEAT   = $invoice->invoice_date?->format('d-m-Y') ?? '';
+        $issuerName = trim($invSettings?->issuer_legal_name ?? $invoice->user->name ?? '');
+        $numSerie = $invoice->invoice_number ?? '';
+        $fechaAEAT = $invoice->invoice_date?->format('d-m-Y') ?? '';
         $huellaAnterior = $chain['huella'] ?? '';
 
         $swVendorName = config('services.sif_software.vendor_name', 'Agro365');
-        $swVendorNif  = config('services.sif_software.vendor_nif', '');
-        $swName       = config('services.sif_software.name', 'Agro365');
-        $swId         = config('services.sif_software.id', 'A3');
-        $swVersion    = config('services.sif_software.version', '1.0.0');
-        $swInstall    = 'AGR-' . $invoice->user->id;
+        $swVendorNif = config('services.sif_software.vendor_nif', '');
+        $swName = config('services.sif_software.name', 'Agro365');
+        $swId = config('services.sif_software.id', 'A3');
+        $swVersion = config('services.sif_software.version', '1.0.0');
+        $swInstall = 'AGR-'.$invoice->user->id;
 
-        $ns  = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroLR.xsd';
+        $ns = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroLR.xsd';
         $nsT = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroInformacion.xsd';
 
-        $x  = '<?xml version="1.0" encoding="UTF-8"?>';
+        $x = '<?xml version="1.0" encoding="UTF-8"?>';
         $x .= "<RegFactuSistemaFacturacion xmlns=\"{$ns}\" xmlns:T=\"{$nsT}\">";
 
         $x .= '<Cabecera>';
         $x .= '<IDVersionSuministro>1.0</IDVersionSuministro>';
         $x .= '<Titular>';
-        $x .= '<T:NombreRazon>' . $this->e($issuerName) . '</T:NombreRazon>';
-        $x .= '<T:NIF>' . $this->e($issuerNif) . '</T:NIF>';
+        $x .= '<T:NombreRazon>'.$this->e($issuerName).'</T:NombreRazon>';
+        $x .= '<T:NIF>'.$this->e($issuerNif).'</T:NIF>';
         $x .= '</Titular>';
         $x .= '<TipoComunicacion>A1</TipoComunicacion>';
         $x .= '</Cabecera>';
@@ -575,43 +600,43 @@ class VerifactuService
         $x .= '<T:IDVersion>1.0</T:IDVersion>';
 
         $x .= '<T:IDFactura>';
-        $x .= '<T:IDEmisorFactura>' . $this->e($issuerNif) . '</T:IDEmisorFactura>';
-        $x .= '<T:NumSerieFactura>' . $this->e($numSerie) . '</T:NumSerieFactura>';
-        $x .= '<T:FechaExpedicionFactura>' . $this->e($fechaAEAT) . '</T:FechaExpedicionFactura>';
+        $x .= '<T:IDEmisorFactura>'.$this->e($issuerNif).'</T:IDEmisorFactura>';
+        $x .= '<T:NumSerieFactura>'.$this->e($numSerie).'</T:NumSerieFactura>';
+        $x .= '<T:FechaExpedicionFactura>'.$this->e($fechaAEAT).'</T:FechaExpedicionFactura>';
         $x .= '</T:IDFactura>';
 
-        $x .= '<T:NombreRazonEmisor>' . $this->e($issuerName) . '</T:NombreRazonEmisor>';
+        $x .= '<T:NombreRazonEmisor>'.$this->e($issuerName).'</T:NombreRazonEmisor>';
 
         $x .= '<T:Encadenamiento>';
         if (empty($huellaAnterior)) {
             $x .= '<T:PrimerRegistro>S</T:PrimerRegistro>';
         } else {
             $x .= '<T:RegistroAnterior>';
-            $x .= '<T:IDEmisorFactura>' . $this->e($chain['issuerNif']) . '</T:IDEmisorFactura>';
-            $x .= '<T:NumSerieFactura>' . $this->e($chain['numSerie']) . '</T:NumSerieFactura>';
-            $x .= '<T:FechaExpedicionFactura>' . $this->e($chain['fecha']) . '</T:FechaExpedicionFactura>';
-            $x .= '<T:Huella>' . $this->e($huellaAnterior) . '</T:Huella>';
+            $x .= '<T:IDEmisorFactura>'.$this->e($chain['issuerNif']).'</T:IDEmisorFactura>';
+            $x .= '<T:NumSerieFactura>'.$this->e($chain['numSerie']).'</T:NumSerieFactura>';
+            $x .= '<T:FechaExpedicionFactura>'.$this->e($chain['fecha']).'</T:FechaExpedicionFactura>';
+            $x .= '<T:Huella>'.$this->e($huellaAnterior).'</T:Huella>';
             $x .= '</T:RegistroAnterior>';
         }
         $x .= '</T:Encadenamiento>';
 
         $x .= '<T:SistemaInformatico>';
-        $x .= '<T:NombreRazon>' . $this->e($swVendorName) . '</T:NombreRazon>';
+        $x .= '<T:NombreRazon>'.$this->e($swVendorName).'</T:NombreRazon>';
         if ($swVendorNif) {
-            $x .= '<T:NIF>' . $this->e($swVendorNif) . '</T:NIF>';
+            $x .= '<T:NIF>'.$this->e($swVendorNif).'</T:NIF>';
         }
-        $x .= '<T:NombreSistemaInformatico>' . $this->e($swName) . '</T:NombreSistemaInformatico>';
-        $x .= '<T:IdSistemaInformatico>' . $this->e(substr($swId, 0, 2)) . '</T:IdSistemaInformatico>';
-        $x .= '<T:Version>' . $this->e($swVersion) . '</T:Version>';
-        $x .= '<T:NumeroInstalacion>' . $this->e($swInstall) . '</T:NumeroInstalacion>';
+        $x .= '<T:NombreSistemaInformatico>'.$this->e($swName).'</T:NombreSistemaInformatico>';
+        $x .= '<T:IdSistemaInformatico>'.$this->e(substr($swId, 0, 2)).'</T:IdSistemaInformatico>';
+        $x .= '<T:Version>'.$this->e($swVersion).'</T:Version>';
+        $x .= '<T:NumeroInstalacion>'.$this->e($swInstall).'</T:NumeroInstalacion>';
         $x .= '<T:TipoUsoPosibleSoloVerifactu>S</T:TipoUsoPosibleSoloVerifactu>';
         $x .= '<T:TipoUsoPosibleMultiOT>N</T:TipoUsoPosibleMultiOT>';
         $x .= '<T:IndicadorMultiplesOT>N</T:IndicadorMultiplesOT>';
         $x .= '</T:SistemaInformatico>';
 
-        $x .= '<T:FechaHoraHusoGenRegistro>' . $this->e($fechaHoraGen) . '</T:FechaHoraHusoGenRegistro>';
+        $x .= '<T:FechaHoraHusoGenRegistro>'.$this->e($fechaHoraGen).'</T:FechaHoraHusoGenRegistro>';
         $x .= '<T:TipoHuella>01</T:TipoHuella>';
-        $x .= '<T:Huella>' . $huella . '</T:Huella>';
+        $x .= '<T:Huella>'.$huella.'</T:Huella>';
         $x .= '<T:GeneradoPor>E</T:GeneradoPor>';
 
         $x .= '</T:RegistroAnulacion>';
@@ -627,16 +652,16 @@ class VerifactuService
     private function sendToAeat(string $signedXml, Invoice $invoice): object
     {
         if (config('services.sif_aeat.environment') === 'production') {
-            $wsdl     = config('services.sif_aeat.wsdl');
+            $wsdl = config('services.sif_aeat.wsdl');
             $endpoint = config('services.sif_aeat.endpoint');
 
-            if (!file_exists($wsdl)) {
+            if (! file_exists($wsdl)) {
                 throw new \Exception(__('Fichero WSDL no encontrado: :path', ['path' => $wsdl]));
             }
 
             $client = new \SoapClient($wsdl, [
-                'location'   => $endpoint,
-                'trace'      => 1,
+                'location' => $endpoint,
+                'trace' => 1,
                 'exceptions' => true,
                 'cache_wsdl' => WSDL_CACHE_NONE,
             ]);
@@ -649,37 +674,16 @@ class VerifactuService
 
         // Simulated response
         return (object) [
-            'EstadoEnvio'    => __('Correcto'),
+            'EstadoEnvio' => __('Correcto'),
             'RespuestaLinea' => [
                 (object) [
-                    'EstadoRegistro'           => __('Correcta'),
-                    'CodigoErrorRegistro'      => null,
+                    'EstadoRegistro' => __('Correcta'),
+                    'CodigoErrorRegistro' => null,
                     'DescripcionErrorRegistro' => null,
-                    'CSV'                      => 'VFT' . strtoupper(substr(hash('sha256', ($invoice->invoice_number ?? '') . now()), 0, 16)),
+                    'CSV' => 'VFT'.strtoupper(substr(hash('sha256', ($invoice->invoice_number ?? '').now()), 0, 16)),
                 ],
             ],
         ];
-    }
-
-    /**
-     * Send verified invoice PDF by email to the client.
-     */
-    public function sendVerifiedEmail(Invoice $invoice): void
-    {
-        $email = $invoice->billing_email ?? $invoice->client?->email ?? null;
-
-        if (!$email) {
-            return;
-        }
-
-        try {
-            \Illuminate\Support\Facades\Mail::to($email)->send(new \App\Mail\InvoiceVerifiedMail($invoice));
-        } catch (\Exception $e) {
-            Log::warning('VerifactuService: could not send verified email', [
-                'invoice_id' => $invoice->id,
-                'error'      => $e->getMessage(),
-            ]);
-        }
     }
 
     private function responseToXml(object $response): string
@@ -687,7 +691,7 @@ class VerifactuService
         $xml = new \SimpleXMLElement('<RespuestaRegFactuSistemaFacturacion/>');
         $xml->addChild('EstadoEnvio', $response->EstadoEnvio ?? '');
 
-        if (!empty($response->RespuestaLinea)) {
+        if (! empty($response->RespuestaLinea)) {
             $lineas = $xml->addChild('RespuestaLinea');
             foreach ($response->RespuestaLinea as $linea) {
                 $item = $lineas->addChild('Linea');

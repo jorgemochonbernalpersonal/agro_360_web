@@ -4,10 +4,8 @@ namespace App\Livewire\Viticulturist\Billing\HarvestSale;
 
 use App\Livewire\Concerns\WithHarvestSaleStock;
 use App\Livewire\Concerns\WithInvoiceActions;
-use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Viticulturist\AbstractIndex;
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
 use App\Models\MarketedHarvest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -16,21 +14,34 @@ use Illuminate\Support\Facades\Log;
 
 class Index extends AbstractIndex
 {
-    use WithInvoiceActions, WithHarvestSaleStock;
+    use WithHarvestSaleStock, WithInvoiceActions;
 
-    public string $search        = '';
-    public string $buyerFilter   = '';
+    public string $search = '';
+
+    public string $buyerFilter = '';
+
     public string $paymentFilter = '';
 
     protected $queryString = [
-        'search'        => ['except' => ''],
-        'buyerFilter'   => ['except' => ''],
+        'search' => ['except' => ''],
+        'buyerFilter' => ['except' => ''],
         'paymentFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void        { $this->resetPage(); }
-    public function updatingBuyerFilter(): void   { $this->resetPage(); }
-    public function updatingPaymentFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingBuyerFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPaymentFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
@@ -38,24 +49,23 @@ class Index extends AbstractIndex
         $this->resetPage();
     }
 
-    protected function filterDefaults(): array
-    {
-        return ['search' => '', 'buyerFilter' => '', 'paymentFilter' => ''];
-    }
-
     // ── Actions ───────────────────────────────────────────────────────────────
 
     public function markDelivered(int $invoiceId): void
     {
         $invoice = $this->findInvoice($invoiceId, ['items']);
-        if (!$invoice) return;
+        if (! $invoice) {
+            return;
+        }
 
         if ($invoice->status === 'cancelled') {
             $this->toastError(__('No se puede marcar como entregada una factura cancelada.'));
+
             return;
         }
         if ($invoice->delivery_status === 'delivered') {
             $this->toastError(__('Esta factura ya está marcada como entregada.'));
+
             return;
         }
 
@@ -76,22 +86,26 @@ class Index extends AbstractIndex
 
             $this->toastSuccess(__('Factura marcada como entregada.'));
         } catch (\Exception $e) {
-            Log::error('Error al marcar entrega de factura vendimia: ' . $e->getMessage());
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al marcar como entregada.'));
+            Log::error('Error al marcar entrega de factura vendimia: '.$e->getMessage());
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al marcar como entregada.'));
         }
     }
 
     public function cancel(int $invoiceId): void
     {
         $invoice = $this->findInvoice($invoiceId, ['items']);
-        if (!$invoice) return;
+        if (! $invoice) {
+            return;
+        }
 
         if ($invoice->status === 'cancelled') {
             $this->toastError(__('Esta factura ya está cancelada.'));
+
             return;
         }
         if ($invoice->payment_status === 'paid') {
             $this->toastError(__('No se puede cancelar una factura ya pagada.'));
+
             return;
         }
 
@@ -118,9 +132,14 @@ class Index extends AbstractIndex
 
             $this->toastSuccess(__('Factura cancelada. Los kg quedan disponibles de nuevo.'));
         } catch (\Exception $e) {
-            Log::error('Error al cancelar factura vendimia: ' . $e->getMessage());
+            Log::error('Error al cancelar factura vendimia: '.$e->getMessage());
             $this->toastError(__('Error al cancelar la factura.'));
         }
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'buyerFilter' => '', 'paymentFilter' => ''];
     }
 
     protected function getEmailRecipient(Invoice $invoice): ?string
@@ -149,11 +168,11 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(IFNULL(invoice_number,\'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(billing_company_name,\'\')) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(IFNULL(billing_company_name,\'\')) LIKE ?', [$term]);
             });
         }
 
@@ -164,8 +183,8 @@ class Index extends AbstractIndex
         if ($this->paymentFilter) {
             match ($this->paymentFilter) {
                 'unpaid' => $query->where('payment_status', 'unpaid'),
-                'paid'   => $query->where('payment_status', 'paid'),
-                default  => null,
+                'paid' => $query->where('payment_status', 'paid'),
+                default => null,
             };
         }
     }
@@ -175,9 +194,15 @@ class Index extends AbstractIndex
         $query->orderByDesc('invoice_date')->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['invoice_date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['invoice_date', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -190,7 +215,7 @@ class Index extends AbstractIndex
 
         return [
             'invoices' => $entries,
-            'buyers'   => $buyers,
+            'buyers' => $buyers,
         ];
     }
 

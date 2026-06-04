@@ -37,7 +37,7 @@ class WinesTest extends ProducerTestCase
 
     public function test_create_saves_wine(): void
     {
-        $firstType   = array_key_first(Wine::WINE_TYPES);
+        $firstType = array_key_first(Wine::WINE_TYPES);
         $firstStatus = array_key_first(Wine::STATUSES);
 
         Livewire::test(Create::class)
@@ -49,17 +49,17 @@ class WinesTest extends ProducerTestCase
 
         $this->assertDatabaseHas('wines', [
             'user_id' => $this->producer->id,
-            'name'    => 'Garnacha Producer 2024',
+            'name' => 'Garnacha Producer 2024',
         ]);
     }
 
     public function test_edit_saves_changes(): void
     {
         $wine = Wine::create([
-            'user_id'   => $this->producer->id,
-            'name'      => 'Old Name',
+            'user_id' => $this->producer->id,
+            'name' => 'Old Name',
             'wine_type' => array_key_first(Wine::WINE_TYPES),
-            'status'    => array_key_first(Wine::STATUSES),
+            'status' => array_key_first(Wine::STATUSES),
         ]);
 
         Livewire::test(Edit::class, ['wine' => $wine])
@@ -73,10 +73,10 @@ class WinesTest extends ProducerTestCase
     public function test_other_producer_cannot_edit(): void
     {
         $wine = Wine::create([
-            'user_id'   => $this->producer->id,
-            'name'      => 'Protected Wine',
+            'user_id' => $this->producer->id,
+            'name' => 'Protected Wine',
             'wine_type' => array_key_first(Wine::WINE_TYPES),
-            'status'    => array_key_first(Wine::STATUSES),
+            'status' => array_key_first(Wine::STATUSES),
         ]);
 
         $this->actingAs($this->makeOtherProducer())
@@ -87,10 +87,10 @@ class WinesTest extends ProducerTestCase
     public function test_process_edit_route_exists(): void
     {
         $wine = Wine::create([
-            'user_id'   => $this->producer->id,
-            'name'      => 'Process Wine',
+            'user_id' => $this->producer->id,
+            'name' => 'Process Wine',
             'wine_type' => array_key_first(Wine::WINE_TYPES),
-            'status'    => array_key_first(Wine::STATUSES),
+            'status' => array_key_first(Wine::STATUSES),
         ]);
 
         // Verify the route is registered (process edit was missing before fix)

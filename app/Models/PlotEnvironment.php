@@ -27,13 +27,13 @@ class PlotEnvironment extends Model
     ];
 
     protected $casts = [
-        'water_intake_nearby'    => 'boolean',
-        'water_intake_distance_m'=> 'decimal:2',
-        'protected_zone_total'   => 'boolean',
+        'water_intake_nearby' => 'boolean',
+        'water_intake_distance_m' => 'decimal:2',
+        'protected_zone_total' => 'boolean',
         'protected_zone_partial' => 'boolean',
-        'buffer_zone_m'          => 'decimal:2',
-        'slope_pct'              => 'decimal:2',
-        'erosion_risk'           => 'boolean',
+        'buffer_zone_m' => 'decimal:2',
+        'slope_pct' => 'decimal:2',
+        'erosion_risk' => 'boolean',
     ];
 
     public function campaign(): BelongsTo

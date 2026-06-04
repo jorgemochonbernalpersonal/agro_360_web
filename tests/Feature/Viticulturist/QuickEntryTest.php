@@ -103,8 +103,8 @@ class QuickEntryTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('agricultural_activities', [
             'viticulturist_id' => $viticulturist->id,
-            'plot_id'          => $plot->id,
-            'activity_type'    => 'observation',
+            'plot_id' => $plot->id,
+            'activity_type' => 'observation',
         ]);
     }
 
@@ -141,7 +141,7 @@ class QuickEntryTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('agricultural_activities', [
             'viticulturist_id' => $viticulturist->id,
-            'notes'            => 'Poda de formación fila 3',
+            'notes' => 'Poda de formación fila 3',
         ]);
     }
 
@@ -164,7 +164,7 @@ class QuickEntryTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('agricultural_activities', [
             'viticulturist_id' => $viticulturist->id,
-            'campaign_id'      => $campaign->id,
+            'campaign_id' => $campaign->id,
         ]);
     }
 
@@ -184,7 +184,7 @@ class QuickEntryTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('agricultural_activities', [
             'viticulturist_id' => $viticulturist->id,
-            'campaign_id'      => null,
+            'campaign_id' => null,
         ]);
     }
 
@@ -239,8 +239,8 @@ class QuickEntryTest extends ViticulturistTestCase
     public function test_cannot_save_activity_for_another_users_plot(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $otherPlot     = $this->makePlot($other);
+        $other = $this->makeOtherViticulturist();
+        $otherPlot = $this->makePlot($other);
 
         $this->actingAs($viticulturist);
 
@@ -258,15 +258,14 @@ class QuickEntryTest extends ViticulturistTestCase
     public function test_render_passes_only_active_plots(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $activePlot    = $this->makePlot($viticulturist);
-        $inactivePlot  = $this->makePlot($viticulturist);
+        $activePlot = $this->makePlot($viticulturist);
+        $inactivePlot = $this->makePlot($viticulturist);
         $inactivePlot->update(['active' => false]);
 
         $this->actingAs($viticulturist);
 
         Livewire::test(QuickEntry::class)
-            ->assertViewHas('plots', fn($plots) =>
-                $plots->contains('id', $activePlot->id) &&
+            ->assertViewHas('plots', fn ($plots) => $plots->contains('id', $activePlot->id) &&
                 ! $plots->contains('id', $inactivePlot->id)
             );
     }
@@ -277,7 +276,7 @@ class QuickEntryTest extends ViticulturistTestCase
         $this->actingAs($viticulturist);
 
         Livewire::test(QuickEntry::class)
-            ->assertViewHas('activityTypes', fn($types) => count($types) === 8);
+            ->assertViewHas('activityTypes', fn ($types) => count($types) === 8);
     }
 
     // ── geographic helper ─────────────────────────────────────────────────────
@@ -304,8 +303,8 @@ class QuickEntryTest extends ViticulturistTestCase
 
         return Plot::factory()->forViticulturist($viticulturist)->create([
             'autonomous_community_id' => $community->id,
-            'province_id'             => $province->id,
-            'municipality_id'         => $municipality->id,
+            'province_id' => $province->id,
+            'municipality_id' => $municipality->id,
         ]);
     }
 }

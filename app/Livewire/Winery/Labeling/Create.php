@@ -16,16 +16,23 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
-    public string $wine_id           = '';
-    public string $wine_bottling_id  = '';
-    public string $label_batch_id    = '';
-    public string $labeling_date     = '';
-    public string $quantity_labeled  = '';
-    public string $from_number       = '';
-    public string $to_number         = '';
-    public string $notes             = '';
+    public string $wine_id = '';
+
+    public string $wine_bottling_id = '';
+
+    public string $label_batch_id = '';
+
+    public string $labeling_date = '';
+
+    public string $quantity_labeled = '';
+
+    public string $from_number = '';
+
+    public string $to_number = '';
+
+    public string $notes = '';
 
     public function mount(): void
     {
@@ -41,7 +48,9 @@ class Create extends Component
     #[Computed]
     public function wineBottlings()
     {
-        if (! $this->wine_id) return collect();
+        if (! $this->wine_id) {
+            return collect();
+        }
 
         return WineBottling::where('user_id', Auth::id())
             ->where('wine_id', $this->wine_id)
@@ -53,7 +62,7 @@ class Create extends Component
     public function labelBatches()
     {
         return LabelBatch::where('user_id', Auth::id())
-            ->where(fn($q) => $q->whereNull('wine_id')->orWhere('wine_id', $this->wine_id ?: 0))
+            ->where(fn ($q) => $q->whereNull('wine_id')->orWhere('wine_id', $this->wine_id ?: 0))
             ->withStock()
             ->orderByDesc('id')
             ->get();
@@ -62,7 +71,10 @@ class Create extends Component
     #[Computed]
     public function selectedBatch(): ?LabelBatch
     {
-        if (! $this->label_batch_id) return null;
+        if (! $this->label_batch_id) {
+            return null;
+        }
+
         return LabelBatch::find($this->label_batch_id);
     }
 
@@ -95,20 +107,6 @@ class Create extends Component
         }
     }
 
-    protected function rules(): array
-    {
-        return [
-            'wine_id'          => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
-            'wine_bottling_id' => ['nullable', Rule::exists('wine_bottlings', 'id')->where('user_id', Auth::id())],
-            'label_batch_id'   => ['nullable', Rule::exists('label_batches', 'id')->where('user_id', Auth::id())],
-            'labeling_date'    => ['required', 'date'],
-            'quantity_labeled' => ['required', 'integer', 'min:1'],
-            'from_number'      => ['nullable', 'integer', 'min:1'],
-            'to_number'        => ['nullable', 'integer', 'min:1', 'gte:from_number'],
-            'notes'            => ['nullable', 'string'],
-        ];
-    }
-
     public function save(): void
     {
         $data = $this->validate();
@@ -117,7 +115,7 @@ class Create extends Component
 
         $error = DB::transaction(function () use ($data) {
             $batchId = $data['label_batch_id'] ?: null;
-            $qty     = (int) $data['quantity_labeled'];
+            $qty = (int) $data['quantity_labeled'];
 
             if ($batchId) {
                 $batch = LabelBatch::where('id', $batchId)
@@ -133,16 +131,16 @@ class Create extends Component
             }
 
             WineLabeling::create([
-                'user_id'          => Auth::id(),
-                'wine_id'          => $data['wine_id'],
+                'user_id' => Auth::id(),
+                'wine_id' => $data['wine_id'],
                 'wine_bottling_id' => $data['wine_bottling_id'] ?: null,
-                'label_batch_id'   => $batchId,
-                'labeling_date'    => $data['labeling_date'],
+                'label_batch_id' => $batchId,
+                'labeling_date' => $data['labeling_date'],
                 'quantity_labeled' => $qty,
-                'from_number'      => $data['from_number'] ?: null,
-                'to_number'        => $data['to_number'] ?: null,
-                'notes'            => $data['notes'] ?: null,
-                'created_by'       => Auth::id(),
+                'from_number' => $data['from_number'] ?: null,
+                'to_number' => $data['to_number'] ?: null,
+                'notes' => $data['notes'] ?: null,
+                'created_by' => Auth::id(),
             ]);
 
             return null;
@@ -150,6 +148,7 @@ class Create extends Component
 
         if ($error) {
             $this->addError('quantity_labeled', $error);
+
             return;
         }
 
@@ -160,10 +159,24 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.labeling.create', [
-            'wines'          => $this->wines,
-            'wineBottlings'  => $this->wineBottlings,
-            'labelBatches'   => $this->labelBatches,
-            'selectedBatch'  => $this->selectedBatch,
+            'wines' => $this->wines,
+            'wineBottlings' => $this->wineBottlings,
+            'labelBatches' => $this->labelBatches,
+            'selectedBatch' => $this->selectedBatch,
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'wine_bottling_id' => ['nullable', Rule::exists('wine_bottlings', 'id')->where('user_id', Auth::id())],
+            'label_batch_id' => ['nullable', Rule::exists('label_batches', 'id')->where('user_id', Auth::id())],
+            'labeling_date' => ['required', 'date'],
+            'quantity_labeled' => ['required', 'integer', 'min:1'],
+            'from_number' => ['nullable', 'integer', 'min:1'],
+            'to_number' => ['nullable', 'integer', 'min:1', 'gte:from_number'],
+            'notes' => ['nullable', 'string'],
+        ];
     }
 }

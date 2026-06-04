@@ -24,11 +24,11 @@ return new class extends Migration
             $table->string('reference_number')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             $table->foreign('stock_id')->references('id')->on('product_stocks')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('treatment_id')->references('id')->on('phytosanitary_treatments')->onDelete('set null');
-            
+
             $table->index(['stock_id', 'movement_type']);
             $table->index('created_at');
         });

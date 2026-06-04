@@ -8,28 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ExternalGrapePurchase extends Model
 {
     const PRODUCT_TYPES = [
-        'grape'             => 'Uva',
-        'must'              => 'Mosto',
+        'grape' => 'Uva',
+        'must' => 'Mosto',
         'concentrated_must' => 'Mosto concentrado',
-        'rectified_must'    => 'Mosto concentrado rectificado',
+        'rectified_must' => 'Mosto concentrado rectificado',
     ];
 
     const STATUSES = [
-        'pending'   => 'Pendiente',
-        'received'  => 'Recibido',
+        'pending' => 'Pendiente',
+        'received' => 'Recibido',
         'processed' => 'Procesado',
-        'rejected'  => 'Rechazado',
+        'rejected' => 'Rechazado',
     ];
-
-    public static function productTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::PRODUCT_TYPES);
-    }
-
-    public static function statusOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::STATUSES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -59,18 +49,28 @@ class ExternalGrapePurchase extends Model
     ];
 
     protected $casts = [
-        'purchase_date'    => 'date',
-        'delivery_date'    => 'date',
-        'quantity_kg'      => 'decimal:3',
-        'price_per_kg'     => 'decimal:4',
-        'total_price'      => 'decimal:2',
-        'baume_degree'     => 'decimal:2',
-        'brix_degree'      => 'decimal:2',
+        'purchase_date' => 'date',
+        'delivery_date' => 'date',
+        'quantity_kg' => 'decimal:3',
+        'price_per_kg' => 'decimal:4',
+        'total_price' => 'decimal:2',
+        'baume_degree' => 'decimal:2',
+        'brix_degree' => 'decimal:2',
         'potential_alcohol' => 'decimal:2',
-        'acidity_level'    => 'decimal:2',
-        'ph_level'         => 'decimal:2',
-        'vintage_year'     => 'integer',
+        'acidity_level' => 'decimal:2',
+        'ph_level' => 'decimal:2',
+        'vintage_year' => 'integer',
     ];
+
+    public static function productTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PRODUCT_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
 
     // ── Relations ──────────────────────────────────────────────────────────────
 

@@ -23,9 +23,13 @@ use Tests\Feature\ProducerTestCase;
 class PromoteToReceptionTest extends ProducerTestCase
 {
     private User $producer;
+
     private Plot $plot;
+
     private PlotPlanting $planting;
+
     private Container $container;
+
     private Harvest $notebookHarvest;
 
     protected function setUp(): void
@@ -42,49 +46,49 @@ class PromoteToReceptionTest extends ProducerTestCase
 
         $this->plot = Plot::create([
             'viticulturist_id' => $this->producer->id,
-            'name'             => 'Parcela Producer',
-            'reference'        => 'PROD-001',
-            'area'             => 5.0,
-            'active'           => true,
+            'name' => 'Parcela Producer',
+            'reference' => 'PROD-001',
+            'area' => 5.0,
+            'active' => true,
         ]);
 
         $this->planting = PlotPlanting::create([
-            'plot_id'          => $this->plot->id,
+            'plot_id' => $this->plot->id,
             'grape_variety_id' => $grapeVariety->id,
-            'area_planted'     => 4.0,
-            'planting_year'    => now()->year - 5,
-            'status'           => 'active',
+            'area_planted' => 4.0,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
         ]);
 
         $this->container = Container::create([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Depósito Bodega',
-            'capacity'      => 5000,
+            'user_id' => $this->producer->id,
+            'name' => 'Depósito Bodega',
+            'capacity' => 5000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'kg',
+            'archived' => false,
+            'unit' => 'kg',
         ]);
 
         // Cosecha del cuaderno: activity_id set, winery_id null
         $campaign = Campaign::getOrCreateActiveForYear($this->producer->id, 2024);
         $activity = AgriculturalActivity::create([
-            'plot_id'          => $this->plot->id,
+            'plot_id' => $this->plot->id,
             'viticulturist_id' => $this->producer->id,
-            'campaign_id'      => $campaign->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => '2024-09-15',
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'harvest',
+            'activity_date' => '2024-09-15',
         ]);
 
         $this->notebookHarvest = Harvest::withoutEvents(fn () => Harvest::create([
-            'activity_id'        => $activity->id,
-            'plot_planting_id'   => $this->planting->id,
+            'activity_id' => $activity->id,
+            'plot_planting_id' => $this->planting->id,
             'harvest_start_date' => '2024-09-15',
-            'total_weight'       => 1000,
-            'baume_degree'       => 12.5,
-            'brix_degree'        => 22.0,
-            'ph_level'           => 3.4,
-            'health_status'      => 'sano',
-            'status'             => 'active',
+            'total_weight' => 1000,
+            'baume_degree' => 12.5,
+            'brix_degree' => 22.0,
+            'ph_level' => 3.4,
+            'health_status' => 'sano',
+            'status' => 'active',
         ]));
     }
 
@@ -100,10 +104,10 @@ class PromoteToReceptionTest extends ProducerTestCase
         // Recepción creada con winery_id y notebook_harvest_id
         $this->assertDatabaseHas('harvests', [
             'notebook_harvest_id' => $this->notebookHarvest->id,
-            'winery_id'           => $this->producer->id,
-            'plot_planting_id'    => $this->planting->id,
-            'total_weight'        => 1000,
-            'status'              => 'active',
+            'winery_id' => $this->producer->id,
+            'plot_planting_id' => $this->planting->id,
+            'total_weight' => 1000,
+            'status' => 'active',
         ]);
     }
 
@@ -138,7 +142,7 @@ class PromoteToReceptionTest extends ProducerTestCase
 
         // HarvestObserver → initializeStock()
         $this->assertDatabaseHas('containers', [
-            'id'            => $this->container->id,
+            'id' => $this->container->id,
             'used_capacity' => 1000,
         ]);
     }
@@ -151,9 +155,9 @@ class PromoteToReceptionTest extends ProducerTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('grape_reception_batches', [
-            'winery_id'        => $this->producer->id,
+            'winery_id' => $this->producer->id,
             'plot_planting_id' => $this->planting->id,
-            'total_weight_kg'  => 1000,
+            'total_weight_kg' => 1000,
         ]);
     }
 
@@ -169,14 +173,14 @@ class PromoteToReceptionTest extends ProducerTestCase
 
     public function test_container_from_other_user_is_rejected(): void
     {
-        $otherProducer    = $this->makeOtherProducer();
+        $otherProducer = $this->makeOtherProducer();
         $foreignContainer = Container::create([
-            'user_id'       => $otherProducer->id,
-            'name'          => 'Cuba Ajena',
-            'capacity'      => 5000,
+            'user_id' => $otherProducer->id,
+            'name' => 'Cuba Ajena',
+            'capacity' => 5000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'kg',
+            'archived' => false,
+            'unit' => 'kg',
         ]);
 
         Livewire::test(PromoteToReception::class, ['notebookHarvest' => $this->notebookHarvest])
@@ -188,12 +192,12 @@ class PromoteToReceptionTest extends ProducerTestCase
     public function test_litros_container_is_rejected(): void
     {
         $litrosContainer = Container::create([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Depósito Litros',
-            'capacity'      => 10000,
+            'user_id' => $this->producer->id,
+            'name' => 'Depósito Litros',
+            'capacity' => 10000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'litros',
+            'archived' => false,
+            'unit' => 'litros',
         ]);
 
         Livewire::test(PromoteToReception::class, ['notebookHarvest' => $this->notebookHarvest])
@@ -205,12 +209,12 @@ class PromoteToReceptionTest extends ProducerTestCase
     public function test_container_capacity_exceeded_shows_error(): void
     {
         $smallContainer = Container::create([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Cuba Pequeña',
-            'capacity'      => 500,
+            'user_id' => $this->producer->id,
+            'name' => 'Cuba Pequeña',
+            'capacity' => 500,
             'used_capacity' => 500,
-            'archived'      => false,
-            'unit'          => 'kg',
+            'archived' => false,
+            'unit' => 'kg',
         ]);
 
         Livewire::test(PromoteToReception::class, ['notebookHarvest' => $this->notebookHarvest])
@@ -251,12 +255,12 @@ class PromoteToReceptionTest extends ProducerTestCase
 
         // Segunda promoción → redirige a la recepción existente
         $secondContainer = Container::create([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Depósito B',
-            'capacity'      => 5000,
+            'user_id' => $this->producer->id,
+            'name' => 'Depósito B',
+            'capacity' => 5000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'kg',
+            'archived' => false,
+            'unit' => 'kg',
         ]);
 
         Livewire::test(PromoteToReception::class, ['notebookHarvest' => $this->notebookHarvest->fresh()])

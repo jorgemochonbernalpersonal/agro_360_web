@@ -35,20 +35,20 @@ class PlotResource extends JsonResource
                 'autonomous_community_id' => $this->autonomous_community_id,
                 'province_id' => $this->province_id,
                 'municipality_id' => $this->municipality_id,
-                'province' => $this->whenLoaded('province', fn() => [
+                'province' => $this->whenLoaded('province', fn () => [
                     'id' => $this->province->id,
                     'name' => $this->province->name,
                 ]),
-                'municipality' => $this->whenLoaded('municipality', fn() => [
+                'municipality' => $this->whenLoaded('municipality', fn () => [
                     'id' => $this->municipality->id,
                     'name' => $this->municipality->name,
                 ]),
             ],
-            'viticulturist' => $this->whenLoaded('viticulturist', fn() => new UserResource($this->viticulturist)),
+            'viticulturist' => $this->whenLoaded('viticulturist', fn () => new UserResource($this->viticulturist)),
             'plantings' => PlotPlantingResource::collection($this->whenLoaded('plantings')),
             'remote_sensing' => $this->when(
                 $this->relationLoaded('latestRemoteSensing') && $this->latestRemoteSensing,
-                fn() => new RemoteSensingResource($this->latestRemoteSensing)
+                fn () => new RemoteSensingResource($this->latestRemoteSensing)
             ),
             'alerts' => [
                 'ndvi_threshold' => $this->ndvi_alert_threshold,

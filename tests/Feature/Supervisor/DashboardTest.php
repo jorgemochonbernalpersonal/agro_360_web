@@ -37,7 +37,7 @@ class DashboardTest extends SupervisorTestCase
     public function test_viticulturist_cannot_access_dashboard(): void
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
@@ -60,7 +60,7 @@ class DashboardTest extends SupervisorTestCase
 
     public function test_dashboard_shows_viticulturist_count(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         $this->actingAs($supervisor);
@@ -71,14 +71,14 @@ class DashboardTest extends SupervisorTestCase
 
     public function test_dashboard_counts_only_own_wineries(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
-        $winery          = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         SupervisorWinery::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $otherSupervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $otherSupervisor->id,
         ]);
 
         $this->actingAs($supervisor);
@@ -95,19 +95,19 @@ class DashboardTest extends SupervisorTestCase
 
         DoQualification::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'vintage'       => now()->year,
-            'wine_name'     => 'Vino Test',
-            'result'        => DoQualification::RESULT_PENDING,
+            'winery_id' => $winery->id,
+            'vintage' => now()->year,
+            'wine_name' => 'Vino Test',
+            'result' => DoQualification::RESULT_PENDING,
         ]);
 
         // A non-pending qualification should not be counted
         DoQualification::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'vintage'       => now()->year,
-            'wine_name'     => 'Vino Calificado',
-            'result'        => DoQualification::RESULT_QUALIFIED,
+            'winery_id' => $winery->id,
+            'vintage' => now()->year,
+            'wine_name' => 'Vino Calificado',
+            'result' => DoQualification::RESULT_QUALIFIED,
         ]);
 
         $this->actingAs($supervisor);
@@ -118,16 +118,16 @@ class DashboardTest extends SupervisorTestCase
 
     public function test_dashboard_pending_qualifications_scoped_to_own_supervisor(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
-        $winery          = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         DoQualification::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'vintage'       => now()->year,
-            'wine_name'     => 'Vino Otro',
-            'result'        => DoQualification::RESULT_PENDING,
+            'winery_id' => $winery->id,
+            'vintage' => now()->year,
+            'wine_name' => 'Vino Otro',
+            'result' => DoQualification::RESULT_PENDING,
         ]);
 
         $this->actingAs($supervisor);
@@ -143,26 +143,26 @@ class DashboardTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         DoLabel::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => now()->year,
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => now()->year,
             'quantity_requested' => 500,
-            'quantity_issued'    => 400,
-            'quantity_stock'     => 0,
-            'status'             => DoLabel::STATUS_ISSUED,
-            'issued_at'          => now(),
+            'quantity_issued' => 400,
+            'quantity_stock' => 0,
+            'status' => DoLabel::STATUS_ISSUED,
+            'issued_at' => now(),
         ]);
 
         // A label from last year should not be counted
         DoLabel::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => now()->year - 1,
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => now()->year - 1,
             'quantity_requested' => 200,
-            'quantity_issued'    => 200,
-            'quantity_stock'     => 0,
-            'status'             => DoLabel::STATUS_ISSUED,
-            'issued_at'          => now()->subYear(),
+            'quantity_issued' => 200,
+            'quantity_stock' => 0,
+            'status' => DoLabel::STATUS_ISSUED,
+            'issued_at' => now()->subYear(),
         ]);
 
         $this->actingAs($supervisor);
@@ -175,40 +175,40 @@ class DashboardTest extends SupervisorTestCase
 
     public function test_dashboard_shows_pending_notebook_requests_count(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         $this->actingAs($supervisor);
 
         Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
             ->assertViewHas('pendingNotebookCount', 1)
-            ->assertViewHas('pendingNotebookRequests', fn($r) => $r->count() === 1);
+            ->assertViewHas('pendingNotebookRequests', fn ($r) => $r->count() === 1);
     }
 
     public function test_approved_notebook_requests_not_counted_as_pending(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now(),
         ]);
 
         $this->actingAs($supervisor);
 
         Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
             ->assertViewHas('pendingNotebookCount', 0)
-            ->assertViewHas('pendingNotebookRequests', fn($r) => $r->isEmpty());
+            ->assertViewHas('pendingNotebookRequests', fn ($r) => $r->isEmpty());
     }
 
     // ── pendingRequests ───────────────────────────────────────────────────────
@@ -229,7 +229,7 @@ class DashboardTest extends SupervisorTestCase
 
     public function test_dashboard_pending_requests_isolated_from_other_supervisor(): void
     {
-        [$supervisor]                    = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         SupervisorRequest::create(['supervisor_id' => $otherSupervisor->id, 'winery_id' => $otherWinery->id, 'type' => SupervisorRequest::TYPE_NONCONFORMITY, 'status' => SupervisorRequest::STATUS_PENDING]);
@@ -286,7 +286,7 @@ class DashboardTest extends SupervisorTestCase
 
     public function test_dashboard_pending_labels_isolated_from_other_supervisor(): void
     {
-        [$supervisor]                    = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         DoLabel::create(['supervisor_id' => $otherSupervisor->id, 'winery_id' => $otherWinery->id, 'vintage' => now()->year, 'quantity_requested' => 100, 'status' => DoLabel::STATUS_PENDING]);
@@ -326,7 +326,7 @@ class DashboardTest extends SupervisorTestCase
 
     public function test_dashboard_non_compliant_inspections_isolated_from_other_supervisor(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
 
         DoInspection::create(['supervisor_id' => $otherSupervisor->id, 'subject_type' => 'winery', 'subject_id' => $otherSupervisor->id, 'inspection_date' => now()->toDateString(), 'status' => DoInspection::STATUS_COMPLETED, 'result' => DoInspection::RESULT_NON_COMPLIANT]);

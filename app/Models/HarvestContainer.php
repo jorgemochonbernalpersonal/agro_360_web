@@ -50,19 +50,9 @@ class HarvestContainer extends Model
     }
 
     /**
-     * Calcular peso por unidad automáticamente
-     */
-    protected static function booted()
-    {
-        static::saving(function ($container) {
-            if ($container->weight && $container->quantity && $container->quantity > 0) {
-                $container->weight_per_unit = round($container->weight / $container->quantity, 3);
-            }
-        });
-    }
-
-    /**
      * Scope para filtrar por tipo de contenedor
+     *
+     * @param mixed $query
      */
     public function scopeOfType($query, string $type)
     {
@@ -71,6 +61,8 @@ class HarvestContainer extends Model
 
     /**
      * Scope para filtrar por estado
+     *
+     * @param mixed $query
      */
     public function scopeWithStatus($query, string $status)
     {
@@ -79,6 +71,8 @@ class HarvestContainer extends Model
 
     /**
      * Scope para contenedores entregados
+     *
+     * @param mixed $query
      */
     public function scopeDelivered($query)
     {
@@ -87,6 +81,8 @@ class HarvestContainer extends Model
 
     /**
      * Scope para contenedores en almacén
+     *
+     * @param mixed $query
      */
     public function scopeStored($query)
     {
@@ -95,6 +91,8 @@ class HarvestContainer extends Model
 
     /**
      * Scope para contenedores disponibles (sin cosecha asignada)
+     *
+     * @param mixed $query
      */
     public function scopeAvailable($query)
     {
@@ -103,6 +101,8 @@ class HarvestContainer extends Model
 
     /**
      * Scope para contenedores asignados (con cosecha)
+     *
+     * @param mixed $query
      */
     public function scopeAssigned($query)
     {
@@ -138,6 +138,18 @@ class HarvestContainer extends Model
      */
     public function isAssigned(): bool
     {
-        return !is_null($this->harvest_id);
+        return ! is_null($this->harvest_id);
+    }
+
+    /**
+     * Calcular peso por unidad automáticamente
+     */
+    protected static function booted()
+    {
+        static::saving(function ($container) {
+            if ($container->weight && $container->quantity && $container->quantity > 0) {
+                $container->weight_per_unit = round($container->weight / $container->quantity, 3);
+            }
+        });
     }
 }

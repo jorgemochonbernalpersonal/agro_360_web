@@ -17,7 +17,7 @@ class PlotEnvironmentController extends Controller
 
         $request->validate([
             'campaign_id' => 'nullable|integer|exists:campaigns,id',
-            'plot_id'     => 'nullable|integer|exists:plots,id',
+            'plot_id' => 'nullable|integer|exists:plots,id',
         ]);
 
         $query = PlotEnvironment::forViticulturist($user->id)
@@ -37,10 +37,10 @@ class PlotEnvironmentController extends Controller
         return response()->json([
             'data' => PlotEnvironmentResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -51,13 +51,13 @@ class PlotEnvironmentController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'             => 'nullable|integer|exists:campaigns,id',
-            'plot_id'                 => 'required|integer|exists:plots,id',
-            'water_intake_nearby'     => 'nullable|boolean',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'plot_id' => 'required|integer|exists:plots,id',
+            'water_intake_nearby' => 'nullable|boolean',
             'water_intake_distance_m' => 'nullable|numeric|min:0',
-            'slope_pct'              => 'nullable|numeric|min:0|max:100',
-            'erosion_risk'            => 'nullable|boolean',
-            'notes'                   => 'nullable|string|max:2000',
+            'slope_pct' => 'nullable|numeric|min:0|max:100',
+            'erosion_risk' => 'nullable|boolean',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         \App\Models\Plot::where('viticulturist_id', $user->id)->findOrFail($validated['plot_id']);
@@ -71,7 +71,7 @@ class PlotEnvironmentController extends Controller
         $record->load(['plot']);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\PlotEnvironmentResource($record),
+            'data' => new \App\Http\Resources\Api\PlotEnvironmentResource($record),
             'message' => __('Entorno de parcela registrado correctamente.'),
         ], 201);
     }

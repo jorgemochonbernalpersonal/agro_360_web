@@ -16,7 +16,7 @@ class PlotAlertPreference extends Model
 
     protected $casts = [
         'ndvi_threshold' => 'float',
-        'email_enabled'  => 'boolean',
+        'email_enabled' => 'boolean',
     ];
 
     public function plot(): BelongsTo

@@ -12,10 +12,10 @@ class Expired extends Component
         $user = Auth::user();
 
         return view('livewire.beta.expired', [
-            'monthlyPrice'  => $user->viticulturistMonthlyPrice(),
-            'yearlyPrice'   => $user->viticulturistYearlyPrice(),
+            'monthlyPrice' => $user->viticulturistMonthlyPrice(),
+            'yearlyPrice' => $user->viticulturistYearlyPrice(),
             'isWineryLinked' => $user->hasWinery(),
-            'isProducer'    => $user->isProducer(),
+            'isProducer' => $user->isProducer(),
         ])->layout('layouts.app');
     }
 }

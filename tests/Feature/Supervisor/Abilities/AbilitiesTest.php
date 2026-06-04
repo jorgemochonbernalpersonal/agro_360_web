@@ -47,7 +47,7 @@ class AbilitiesTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('user_abilities', [
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $ability->id,
             'granted_by' => $supervisor->id,
         ]);
@@ -60,7 +60,7 @@ class AbilitiesTest extends SupervisorTestCase
         $ability = Ability::where('code', Ability::WINE_PROCESS)->first();
 
         UserAbility::create([
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $ability->id,
             'granted_by' => $supervisor->id,
             'granted_at' => now(),
@@ -79,7 +79,7 @@ class AbilitiesTest extends SupervisorTestCase
         $ability = Ability::where('code', Ability::PRODUCT_SALES)->first();
 
         UserAbility::create([
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $ability->id,
             'granted_by' => $supervisor->id,
             'granted_at' => now(),
@@ -91,7 +91,7 @@ class AbilitiesTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseMissing('user_abilities', [
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $ability->id,
         ]);
     }
@@ -105,7 +105,7 @@ class AbilitiesTest extends SupervisorTestCase
         // Conceder SOLO una ability — las demás quedan restringidas
         $granted = Ability::where('code', Ability::HARVEST_RECEPTION)->first();
         UserAbility::create([
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $granted->id,
             'granted_by' => $supervisor->id,
             'granted_at' => now(),
@@ -156,7 +156,7 @@ class AbilitiesTest extends SupervisorTestCase
     public function test_another_supervisor_cannot_toggle_abilities(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         $ability = Ability::where('code', Ability::LABEL_BATCHES)->first();
 
@@ -174,7 +174,7 @@ class AbilitiesTest extends SupervisorTestCase
 
         $ability = Ability::where('code', Ability::HARVEST_RECEPTION)->first();
         UserAbility::create([
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $ability->id,
             'granted_by' => $supervisor->id,
             'granted_at' => now(),
@@ -194,7 +194,7 @@ class AbilitiesTest extends SupervisorTestCase
         // La DO restringe la bodega a un único módulo.
         $granted = Ability::where('code', Ability::HARVEST_RECEPTION)->first();
         UserAbility::create([
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $granted->id,
             'granted_by' => $supervisor->id,
             'granted_at' => now(),
@@ -223,17 +223,17 @@ class AbilitiesTest extends SupervisorTestCase
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
-            'can_login'         => true,
+            'role' => 'viticulturist',
+            'can_login' => true,
             'email_verified_at' => now(),
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         SupervisorWinery::where('supervisor_id', $supervisor->id)
@@ -242,10 +242,10 @@ class AbilitiesTest extends SupervisorTestCase
             ->delete();
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'supervisor_id'    => null,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'supervisor_id' => null,
         ]);
     }
 
@@ -256,7 +256,7 @@ class AbilitiesTest extends SupervisorTestCase
         // La DO había restringido la bodega a un módulo.
         $granted = Ability::where('code', Ability::HARVEST_RECEPTION)->first();
         UserAbility::create([
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $granted->id,
             'granted_by' => $supervisor->id,
             'granted_at' => now(),
@@ -264,8 +264,8 @@ class AbilitiesTest extends SupervisorTestCase
         $winery->update(['abilities_configured' => true]);
 
         $admin = User::factory()->create([
-            'role'              => 'admin',
-            'can_login'         => true,
+            'role' => 'admin',
+            'can_login' => true,
             'email_verified_at' => now(),
         ]);
 

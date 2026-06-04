@@ -13,7 +13,7 @@ class UnlockPlotAction
      */
     public function execute(Plot $plot): bool
     {
-        if (!$plot->isLocked()) {
+        if (! $plot->isLocked()) {
             return false; // No está bloqueada
         }
 

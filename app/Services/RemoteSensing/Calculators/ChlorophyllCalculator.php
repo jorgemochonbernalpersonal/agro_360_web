@@ -2,11 +2,9 @@
 
 namespace App\Services\RemoteSensing\Calculators;
 
-use App\Models\PlotRemoteSensing;
-
 /**
  * Green NDVI and Chlorophyll Content Calculator
- * 
+ *
  * GNDVI is more sensitive to chlorophyll content than NDVI
  * Used for: Early detection of nitrogen deficiency, nutritional status
  */
@@ -16,18 +14,19 @@ class ChlorophyllCalculator
      * Calculate GNDVI (Green Normalized Difference Vegetation Index)
      * GNDVI = (NIR - Green) / (NIR + Green)
      *
-     * @param float $nir Near-Infrared reflectance (B08 in Sentinel-2)
+     * @param float $nir   Near-Infrared reflectance (B08 in Sentinel-2)
      * @param float $green Green reflectance (B03 in Sentinel-2)
+     *
      * @return float GNDVI value (-1 to 1)
      */
     public function calculateGNDVI(float $nir, float $green): float
     {
         $sum = $nir + $green;
-        
+
         if ($sum === 0.0) {
             return 0.0;
         }
-        
+
         return ($nir - $green) / $sum;
     }
 
@@ -35,18 +34,19 @@ class ChlorophyllCalculator
      * Calculate NDRE (Normalized Difference Red Edge)
      * More sensitive to chlorophyll than NDVI
      *
-     * @param float $nir Near-Infrared (B08)
+     * @param float $nir     Near-Infrared (B08)
      * @param float $redEdge Red Edge (B05 in Sentinel-2)
+     *
      * @return float NDRE value
      */
     public function calculateNDRE(float $nir, float $redEdge): float
     {
         $sum = $nir + $redEdge;
-        
+
         if ($sum === 0.0) {
             return 0.0;
         }
-        
+
         return ($nir - $redEdge) / $sum;
     }
 
@@ -55,6 +55,7 @@ class ChlorophyllCalculator
      * Returns value 0-100 (percentage of optimal)
      *
      * @param float $gndvi GNDVI value
+     *
      * @return float Relative chlorophyll content (0-100)
      */
     public function estimateChlorophyllContent(float $gndvi): float
@@ -64,7 +65,7 @@ class ChlorophyllCalculator
         // 0.6+ = high chlorophyll (80-100%)
         // 0.4-0.6 = moderate (50-80%)
         // <0.4 = low (<50%)
-        
+
         return match (true) {
             $gndvi >= 0.65 => 100,
             $gndvi >= 0.60 => 80 + (($gndvi - 0.60) / 0.05) * 20,
@@ -78,7 +79,8 @@ class ChlorophyllCalculator
      * Diagnose nutritional status by comparing GNDVI and NDVI
      *
      * @param float $gndvi GNDVI value
-     * @param float $ndvi NDVI value
+     * @param float $ndvi  NDVI value
+     *
      * @return array Diagnosis with status, nutrient, and recommendation
      */
     public function diagnoseNutritionalStatus(float $gndvi, float $ndvi): array
@@ -139,9 +141,10 @@ class ChlorophyllCalculator
     /**
      * Calculate nitrogen application recommendation
      *
-     * @param float $gndvi Current GNDVI
+     * @param float $gndvi       Current GNDVI
      * @param float $targetGNDVI Target GNDVI for optimal growth
-     * @param float $areaHa Plot area
+     * @param float $areaHa      Plot area
+     *
      * @return array Nitrogen recommendation
      */
     public function calculateNitrogenNeed(
@@ -151,7 +154,7 @@ class ChlorophyllCalculator
     ): array {
         // Calculate deficit
         $deficit = $targetGNDVI - $gndvi;
-        
+
         if ($deficit <= 0) {
             return [
                 'nitrogen_kg_ha' => 0,
@@ -163,7 +166,7 @@ class ChlorophyllCalculator
 
         // Empirical relationship: 0.1 GNDVI deficit ≈ 30 kg N/ha
         $nitrogenPerHa = $deficit * 300;
-        
+
         // Apply realistic limits
         $nitrogenPerHa = max(0, min(60, $nitrogenPerHa));
         $totalNitrogen = $nitrogenPerHa * $areaHa;
@@ -186,23 +189,11 @@ class ChlorophyllCalculator
     }
 
     /**
-     * Get nitrogen recommendation text
-     */
-    private function getNitrogenRecommendationText(float $kgPerHa): string
-    {
-        return match (true) {
-            $kgPerHa <= 0 => __('Sin necesidad de nitrógeno'),
-            $kgPerHa < 15 => sprintf('Aplicación foliar ligera: %.0f kg N/ha', $kgPerHa),
-            $kgPerHa < 30 => sprintf('Aplicación moderada: %.0f kg N/ha en 2 veces', $kgPerHa),
-            default => sprintf('Aplicación fuerte: %.0f kg N/ha fraccionada en 3 aplicaciones', $kgPerHa),
-        };
-    }
-
-    /**
      * Detect early signs of chlorosis
      *
-     * @param float $gndvi Current GNDVI
+     * @param float $gndvi           Current GNDVI
      * @param array $historicalGNDVI Historical GNDVI values
+     *
      * @return array Chlorosis detection result
      */
     public function detectChlorosis(float $gndvi, array $historicalGNDVI): array
@@ -243,5 +234,18 @@ class ChlorophyllCalculator
                 default => __('Monitoreo continuo'),
             },
         ];
+    }
+
+    /**
+     * Get nitrogen recommendation text
+     */
+    private function getNitrogenRecommendationText(float $kgPerHa): string
+    {
+        return match (true) {
+            $kgPerHa <= 0 => __('Sin necesidad de nitrógeno'),
+            $kgPerHa < 15 => sprintf('Aplicación foliar ligera: %.0f kg N/ha', $kgPerHa),
+            $kgPerHa < 30 => sprintf('Aplicación moderada: %.0f kg N/ha en 2 veces', $kgPerHa),
+            default => sprintf('Aplicación fuerte: %.0f kg N/ha fraccionada en 3 aplicaciones', $kgPerHa),
+        };
     }
 }

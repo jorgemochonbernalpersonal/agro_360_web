@@ -30,17 +30,18 @@ class CleanOldRemoteSensingDataCommand extends Command
     {
         $days = (int) $this->option('days');
         $dryRun = $this->option('dry-run');
-        
+
         $this->info("🗑️  Cleaning remote sensing data older than {$days} days...");
         $this->newLine();
 
         $cutoffDate = now()->subDays($days);
-        
+
         // Count records to delete
         $count = PlotRemoteSensing::where('image_date', '<', $cutoffDate)->count();
 
         if ($count === 0) {
             $this->info('✅ No old data to clean');
+
             return self::SUCCESS;
         }
 
@@ -55,17 +56,19 @@ class CleanOldRemoteSensingDataCommand extends Command
 
         if ($dryRun) {
             $this->warn('🔍 DRY RUN - No data will be deleted');
+
             return self::SUCCESS;
         }
 
-        if (!$this->confirm('Are you sure you want to delete this data?', false)) {
+        if (! $this->confirm('Are you sure you want to delete this data?', false)) {
             $this->info('Operation cancelled');
+
             return self::SUCCESS;
         }
 
         $this->newLine();
         $this->info('Deleting old records...');
-        
+
         $bar = $this->output->createProgressBar($count);
         $bar->start();
 
@@ -86,7 +89,7 @@ class CleanOldRemoteSensingDataCommand extends Command
         $this->newLine(2);
 
         $this->info("✅ Deleted {$deleted} old records");
-        
+
         Log::info('Old remote sensing data cleaned', [
             'cutoff_date' => $cutoffDate->format('Y-m-d'),
             'deleted' => $deleted,

@@ -23,26 +23,26 @@
  * SAFETY: Protected by the allowedDatabases check below.
  */
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 (function () {
-    $app = require __DIR__ . '/../bootstrap/app.php';
+    $app = require __DIR__.'/../bootstrap/app.php';
     $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
     $kernel->bootstrap();
 
     $connection = config('database.default');
-    $database   = config("database.connections.{$connection}.database");
+    $database = config("database.connections.{$connection}.database");
     $allowedDbs = ['agro365_test'];
 
     if (! in_array($database, $allowedDbs, true)) {
         throw new RuntimeException(
-            "🚨 PELIGRO: bootstrap refuses to wipe '{$database}'. " .
-            "Only agro365_test is allowed. Check your .env.testing."
+            "🚨 PELIGRO: bootstrap refuses to wipe '{$database}'. ".
+            'Only agro365_test is allowed. Check your .env.testing.'
         );
     }
 
-    $host     = config("database.connections.{$connection}.host");
-    $port     = config("database.connections.{$connection}.port", 3306);
+    $host = config("database.connections.{$connection}.host");
+    $port = config("database.connections.{$connection}.port", 3306);
     $username = config("database.connections.{$connection}.username");
     $password = config("database.connections.{$connection}.password");
 
@@ -63,7 +63,10 @@ require __DIR__ . '/../vendor/autoload.php';
     $pdo->exec('SET foreign_key_checks = 1');
 
     // Flush table cache to help InnoDB release dict entries.
-    try { $pdo->exec('FLUSH TABLES'); } catch (\Throwable $e) { /* ignore */ }
+    try {
+        $pdo->exec('FLUSH TABLES');
+    } catch (\Throwable $e) { /* ignore */
+    }
     unset($pdo);
 
     // ── Step 2: Brief pause to let InnoDB flush the data dictionary.
@@ -71,9 +74,9 @@ require __DIR__ . '/../vendor/autoload.php';
 
     // ── Step 3: Run migrate in a subprocess (fresh connection + plain output).
     putenv('APP_ENV=testing');
-    $phpBin  = PHP_BINARY;
-    $artisan = dirname(__DIR__) . '/artisan';
-    $cmd     = escapeshellarg($phpBin) . ' ' . escapeshellarg($artisan) .
+    $phpBin = PHP_BINARY;
+    $artisan = dirname(__DIR__).'/artisan';
+    $cmd = escapeshellarg($phpBin).' '.escapeshellarg($artisan).
                ' migrate --force --no-ansi 2>&1';
 
     // ── Step 4: Retry loop — each iteration fixes one ghost table.
@@ -87,7 +90,7 @@ require __DIR__ . '/../vendor/autoload.php';
     // is acceptable since ghost tables should not persist many iterations.
     $maxRetries = 50;
     for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
-        $output   = [];
+        $output = [];
         $exitCode = 0;
         exec($cmd, $output, $exitCode);
 
@@ -98,7 +101,7 @@ require __DIR__ . '/../vendor/autoload.php';
         if ($attempt === $maxRetries) {
             $detail = implode(PHP_EOL, array_slice($output, -30));
             throw new RuntimeException(
-                "Bootstrap migration failed after {$maxRetries} attempts " .
+                "Bootstrap migration failed after {$maxRetries} attempts ".
                 "(exit {$exitCode}):\n{$detail}"
             );
         }
@@ -118,6 +121,7 @@ require __DIR__ . '/../vendor/autoload.php';
         // flushes on its own (covers edge cases with unusual error formats).
         if (empty($ghostTablesFromOutput)) {
             sleep(3);
+
             continue;
         }
 
@@ -133,19 +137,19 @@ require __DIR__ . '/../vendor/autoload.php';
 
         if (! $migrationsTableExists) {
             $pdo->exec(
-                "CREATE TABLE `migrations` (" .
-                "  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY," .
-                "  `migration` varchar(255) NOT NULL," .
-                "  `batch` int NOT NULL" .
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+                'CREATE TABLE `migrations` ('.
+                '  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,'.
+                '  `migration` varchar(255) NOT NULL,'.
+                '  `batch` int NOT NULL'.
+                ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
             );
         }
 
         $recorded = $pdo->query(
-            "SELECT migration FROM migrations"
+            'SELECT migration FROM migrations'
         )->fetchAll(PDO::FETCH_COLUMN);
 
-        $migrationPath  = dirname(__DIR__) . '/database/migrations';
+        $migrationPath = dirname(__DIR__).'/database/migrations';
         $migrationFiles = glob("{$migrationPath}/*.php");
         sort($migrationFiles);
 
@@ -158,14 +162,17 @@ require __DIR__ . '/../vendor/autoload.php';
             if (preg_match('/create_(.+?)(?:_table)?$/', $migName, $m)) {
                 if (in_array($m[1], $ghostTablesFromOutput, true)) {
                     $pdo->exec(
-                        "INSERT INTO `migrations` (migration, batch) VALUES (" .
-                        $pdo->quote($migName) . ", 1)"
+                        'INSERT INTO `migrations` (migration, batch) VALUES ('.
+                        $pdo->quote($migName).', 1)'
                     );
                 }
             }
         }
 
-        try { $pdo->exec('FLUSH TABLES'); } catch (\Throwable $e) { /* ignore */ }
+        try {
+            $pdo->exec('FLUSH TABLES');
+        } catch (\Throwable $e) { /* ignore */
+        }
         unset($pdo);
         sleep(2);
     }

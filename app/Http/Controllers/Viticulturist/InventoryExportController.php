@@ -12,6 +12,6 @@ class InventoryExportController extends Controller
     {
         $export = new InventoryExport(auth()->id());
 
-        return Excel::download($export, 'inventario_' . now()->format('Y-m-d') . '.xlsx');
+        return Excel::download($export, 'inventario_'.now()->format('Y-m-d').'.xlsx');
     }
 }

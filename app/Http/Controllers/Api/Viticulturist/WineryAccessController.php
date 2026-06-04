@@ -21,13 +21,13 @@ class WineryAccessController extends Controller
             ->with('winery')
             ->get()
             ->map(fn ($link) => [
-                'id'                 => $link->id,
-                'winery_id'          => $link->winery_id,
-                'winery_name'        => $link->winery?->name,
-                'source'             => $link->source,
-                'notebook_access'    => (bool) $link->notebook_access,
+                'id' => $link->id,
+                'winery_id' => $link->winery_id,
+                'winery_name' => $link->winery?->name,
+                'source' => $link->source,
+                'notebook_access' => (bool) $link->notebook_access,
                 'notebook_granted_at' => $link->notebook_granted_at?->toIso8601String(),
-                'created_at'         => $link->created_at->toIso8601String(),
+                'created_at' => $link->created_at->toIso8601String(),
             ]);
 
         return response()->json([

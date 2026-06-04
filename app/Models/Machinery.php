@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\MachineryType;
 
 class Machinery extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'machinery';
-    
+
     protected $fillable = [
         'name',
         'type',
@@ -71,6 +70,8 @@ class Machinery extends Model
 
     /**
      * Scope para filtrar por viticultor
+     *
+     * @param mixed $query
      */
     public function scopeForViticulturist($query, int $viticulturistId)
     {
@@ -79,6 +80,8 @@ class Machinery extends Model
 
     /**
      * Scope para filtrar maquinaria activa
+     *
+     * @param mixed $query
      */
     public function scopeActive($query)
     {
@@ -87,6 +90,8 @@ class Machinery extends Model
 
     /**
      * Scope para filtrar por tipo
+     *
+     * @param mixed $query
      */
     public function scopeOfType($query, string $type)
     {

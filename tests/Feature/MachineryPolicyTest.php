@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Machinery;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,34 +12,39 @@ class MachineryPolicyTest extends TestCase
     use RefreshDatabase;
 
     protected User $viticulturist;
+
     protected User $otherViticulturist;
+
     protected User $winery;
+
     protected User $admin;
+
     protected Machinery $machinery;
+
     protected Machinery $otherMachinery;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Crear usuarios de prueba
         $this->viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $this->otherViticulturist = User::factory()->create(['role' => 'viticulturist']);
         $this->winery = User::factory()->create(['role' => 'winery']);
         $this->admin = User::factory()->create(['role' => 'admin']);
-        
+
         // Crear maquinaria
         $this->machinery = Machinery::factory()->create([
             'viticulturist_id' => $this->viticulturist->id,
         ]);
-        
+
         $this->otherMachinery = Machinery::factory()->create([
             'viticulturist_id' => $this->otherViticulturist->id,
         ]);
     }
 
     // ============ viewAny Tests ============
-    
+
     public function test_viticulturist_can_view_any_machinery(): void
     {
         $this->assertTrue(
@@ -54,7 +59,7 @@ class MachineryPolicyTest extends TestCase
             $this->winery->can('viewAny', Machinery::class),
             'Winery should not be able to view machinery'
         );
-        
+
         $this->assertFalse(
             $this->admin->can('viewAny', Machinery::class),
             'Admin should not be able to view machinery (viticulturist-only feature)'
@@ -62,7 +67,7 @@ class MachineryPolicyTest extends TestCase
     }
 
     // ============ view Tests ============
-    
+
     public function test_viticulturist_can_view_own_machinery(): void
     {
         $this->assertTrue(
@@ -80,7 +85,7 @@ class MachineryPolicyTest extends TestCase
     }
 
     // ============ create Tests ============
-    
+
     public function test_viticulturist_can_create_machinery(): void
     {
         $this->assertTrue(
@@ -95,7 +100,7 @@ class MachineryPolicyTest extends TestCase
             $this->winery->can('create', Machinery::class),
             'Winery should not be able to create machinery'
         );
-        
+
         $this->assertFalse(
             $this->admin->can('create', Machinery::class),
             'Admin should not be able to create machinery'
@@ -103,7 +108,7 @@ class MachineryPolicyTest extends TestCase
     }
 
     // ============ update Tests ============
-    
+
     public function test_viticulturist_can_update_own_machinery(): void
     {
         $this->assertTrue(
@@ -121,7 +126,7 @@ class MachineryPolicyTest extends TestCase
     }
 
     // ============ delete Tests ============
-    
+
     public function test_viticulturist_can_delete_own_machinery(): void
     {
         $this->assertTrue(
@@ -144,7 +149,7 @@ class MachineryPolicyTest extends TestCase
             $this->winery->can('delete', $this->machinery),
             'Winery should not be able to delete machinery'
         );
-        
+
         $this->assertFalse(
             $this->admin->can('delete', $this->machinery),
             'Admin should not be able to delete machinery'

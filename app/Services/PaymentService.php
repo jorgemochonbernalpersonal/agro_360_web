@@ -64,13 +64,13 @@ class PaymentService
     {
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
-        
+
         $token = $provider->getAccessToken();
         $provider->setAccessToken($token);
 
         $response = $provider->capturePaymentOrder($orderId);
 
-        if (!isset($response['status']) || $response['status'] !== 'COMPLETED') {
+        if (! isset($response['status']) || $response['status'] !== 'COMPLETED') {
             throw new \Exception(__('El pago no se completó correctamente en PayPal.'));
         }
 

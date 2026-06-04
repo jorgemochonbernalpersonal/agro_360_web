@@ -11,12 +11,14 @@ class Index extends Component
     use WithPagination;
 
     public $search = '';
+
     public $typeFilter = 'all'; // all, pest, disease
+
     public $showOnlyRisk = false;
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'typeFilter'   => ['except' => 'all'],
+        'search' => ['except' => ''],
+        'typeFilter' => ['except' => 'all'],
         'showOnlyRisk' => ['except' => false],
     ];
 
@@ -37,8 +39,8 @@ class Index extends Component
 
     public function clearFilters(): void
     {
-        $this->search       = '';
-        $this->typeFilter   = 'all';
+        $this->search = '';
+        $this->typeFilter = 'all';
         $this->showOnlyRisk = false;
         $this->resetPage();
     }
@@ -50,9 +52,9 @@ class Index extends Component
         // Filtro de búsqueda
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('scientific_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%');
+                $q->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('scientific_name', 'like', '%'.$this->search.'%')
+                    ->orWhere('description', 'like', '%'.$this->search.'%');
             });
         }
 

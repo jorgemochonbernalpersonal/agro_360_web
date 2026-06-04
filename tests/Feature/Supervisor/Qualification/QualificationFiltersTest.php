@@ -9,20 +9,6 @@ use Tests\Feature\SupervisorTestCase;
 
 class QualificationFiltersTest extends SupervisorTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeQualification(int $supervisorId, int $wineryId, array $attrs = []): DoQualification
-    {
-        return DoQualification::create(array_merge([
-            'supervisor_id'      => $supervisorId,
-            'winery_id'          => $wineryId,
-            'vintage'            => now()->year,
-            'wine_name'          => 'Vino Test',
-            'qualification_date' => now()->format('Y-m-d'),
-            'result'             => DoQualification::RESULT_PENDING,
-        ], $attrs));
-    }
-
     // ── tabs ──────────────────────────────────────────────────────────────────
 
     public function test_switch_tab_changes_current_tab(): void
@@ -60,8 +46,7 @@ class QualificationFiltersTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->call('switchTab', 'pending')
-            ->assertViewHas('qualifications', fn ($q) =>
-                $q->total() === 1 &&
+            ->assertViewHas('qualifications', fn ($q) => $q->total() === 1 &&
                 collect($q->items())->first()->wine_name === 'Pendiente'
             );
     }
@@ -76,8 +61,7 @@ class QualificationFiltersTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->call('switchTab', 'qualified')
-            ->assertViewHas('qualifications', fn ($q) =>
-                $q->total() === 1 &&
+            ->assertViewHas('qualifications', fn ($q) => $q->total() === 1 &&
                 collect($q->items())->first()->wine_name === 'Calificado'
             );
     }
@@ -92,8 +76,7 @@ class QualificationFiltersTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->call('switchTab', 'disqualified')
-            ->assertViewHas('qualifications', fn ($q) =>
-                $q->total() === 1 &&
+            ->assertViewHas('qualifications', fn ($q) => $q->total() === 1 &&
                 collect($q->items())->first()->wine_name === 'Descalificado'
             );
     }
@@ -110,17 +93,16 @@ class QualificationFiltersTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('tabs', fn ($tabs) =>
-                $tabs['all']['count']          === 3 &&
-                $tabs['pending']['count']      === 2 &&
-                $tabs['qualified']['count']    === 1 &&
+            ->assertViewHas('tabs', fn ($tabs) => $tabs['all']['count'] === 3 &&
+                $tabs['pending']['count'] === 2 &&
+                $tabs['qualified']['count'] === 1 &&
                 $tabs['disqualified']['count'] === 0
             );
     }
 
     public function test_tabs_counts_isolated_from_other_supervisors(): void
     {
-        [$supervisor]                    = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $this->makeQualification($otherSupervisor->id, $otherWinery->id, ['result' => DoQualification::RESULT_PENDING]);
@@ -142,8 +124,7 @@ class QualificationFiltersTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->set('vintageFilter', '2022')
-            ->assertViewHas('qualifications', fn ($q) =>
-                $q->total() === 1 &&
+            ->assertViewHas('qualifications', fn ($q) => $q->total() === 1 &&
                 collect($q->items())->first()->wine_name === 'Añada 2022'
             );
     }
@@ -175,8 +156,7 @@ class QualificationFiltersTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->set('colorFilter', 'tinto')
-            ->assertViewHas('qualifications', fn ($q) =>
-                $q->total() === 1 &&
+            ->assertViewHas('qualifications', fn ($q) => $q->total() === 1 &&
                 collect($q->items())->first()->wine_name === 'Tinto'
             );
     }
@@ -193,8 +173,7 @@ class QualificationFiltersTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('availableVintages', fn ($v) =>
-                $v->count() === 2 &&
+            ->assertViewHas('availableVintages', fn ($v) => $v->count() === 2 &&
                 $v->contains(2021) &&
                 $v->contains(2023)
             );
@@ -207,9 +186,9 @@ class QualificationFiltersTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $q = $this->makeQualification($supervisor->id, $winery->id, [
-            'wine_name'          => 'Ribera Especial',
-            'vintage'            => 2022,
-            'color'              => 'tinto',
+            'wine_name' => 'Ribera Especial',
+            'vintage' => 2022,
+            'color' => 'tinto',
             'alcohol_percentage' => 13.5,
             'qualification_date' => '2022-06-15',
         ]);
@@ -242,7 +221,7 @@ class QualificationFiltersTest extends SupervisorTestCase
 
     public function test_open_edit_blocked_for_other_supervisor_qualification(): void
     {
-        $supervisor              = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         [$otherSup, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $q = $this->makeQualification($otherSup->id, $otherWinery->id);
@@ -262,7 +241,7 @@ class QualificationFiltersTest extends SupervisorTestCase
 
         $q = $this->makeQualification($supervisor->id, $winery->id, [
             'wine_name' => 'Original',
-            'vintage'   => 2022,
+            'vintage' => 2022,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -351,7 +330,7 @@ class QualificationFiltersTest extends SupervisorTestCase
 
     public function test_qualify_blocked_for_other_supervisor(): void
     {
-        $supervisor              = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         [$otherSup, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $q = $this->makeQualification($otherSup->id, $otherWinery->id);
@@ -383,13 +362,25 @@ class QualificationFiltersTest extends SupervisorTestCase
     public function test_wineries_view_data_contains_only_own_wineries(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherWinery           = $this->makeWinery();
+        $otherWinery = $this->makeWinery();
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('wineries', fn ($w) =>
-                $w->pluck('id')->contains($winery->id) &&
+            ->assertViewHas('wineries', fn ($w) => $w->pluck('id')->contains($winery->id) &&
                 $w->pluck('id')->doesntContain($otherWinery->id)
             );
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeQualification(int $supervisorId, int $wineryId, array $attrs = []): DoQualification
+    {
+        return DoQualification::create(array_merge([
+            'supervisor_id' => $supervisorId,
+            'winery_id' => $wineryId,
+            'vintage' => now()->year,
+            'wine_name' => 'Vino Test',
+            'qualification_date' => now()->format('Y-m-d'),
+            'result' => DoQualification::RESULT_PENDING,
+        ], $attrs));
     }
 }

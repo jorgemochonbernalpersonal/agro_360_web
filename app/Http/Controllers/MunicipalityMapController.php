@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MultipartPlotSigpac;
 use App\Models\Municipality;
 use App\Models\Plot;
-use App\Models\MultipartPlotSigpac;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -13,11 +12,13 @@ class MunicipalityMapController extends Controller
 {
     /**
      * Mostrar todos los mapas de un municipio
+     *
+     * @param mixed $municipalityId
      */
     public function show($municipalityId)
     {
         $user = Auth::user();
-        
+
         // Buscar el municipio
         $municipality = Municipality::findOrFail($municipalityId);
 
@@ -32,7 +33,7 @@ class MunicipalityMapController extends Controller
 
         // Obtener todas las geometrías del municipio con caché
         $cacheKey = "municipality_geometries_{$municipality->id}_user_{$user->id}";
-        
+
         $plotGeometries = \Illuminate\Support\Facades\Cache::remember(
             $cacheKey,
             now()->addHours(24),
@@ -41,7 +42,7 @@ class MunicipalityMapController extends Controller
                 $relations = MultipartPlotSigpac::with(['sigpacCode', 'plotGeometry', 'plot'])
                     ->whereHas('plot', function ($query) use ($plotIds, $municipality) {
                         $query->whereIn('plots.id', $plotIds)
-                              ->where('municipality_id', $municipality->id);
+                            ->where('municipality_id', $municipality->id);
                     })
                     ->whereNotNull('plot_geometry_id')
                     ->get();
@@ -61,7 +62,7 @@ class MunicipalityMapController extends Controller
                 $wktData = DB::select(
                     'SELECT id, ST_AsText(coordinates) as wkt 
                      FROM plot_geometry 
-                     WHERE id IN (' . $geometryIds->implode(',') . ')'
+                     WHERE id IN ('.$geometryIds->implode(',').')'
                 );
 
                 // Crear mapa id => wkt para acceso O(1)
@@ -72,13 +73,13 @@ class MunicipalityMapController extends Controller
                     ->map(function ($rel, $index) use ($wktMap) {
                         $wkt = $wktMap[$rel->plot_geometry_id] ?? null;
 
-                        if (!$wkt) {
+                        if (! $wkt) {
                             return null;
                         }
 
                         // Generar color único para cada recinto
                         $hue = ($index * 137.5) % 360;
-                        
+
                         return [
                             'wkt' => $wkt,
                             'sigpac_code' => $rel->sigpacCode->code ?? 'Sin código',

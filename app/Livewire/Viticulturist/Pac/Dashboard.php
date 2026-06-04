@@ -17,10 +17,10 @@ class Dashboard extends Component
             ->where('active', true)
             ->get();
 
-        $totalArea          = $plots->sum('area');
-        $totalEligible      = $plots->sum('pac_eligible_area');
-        $totalNonEligible   = $plots->sum('non_eligible_area');
-        $plotsWithoutPac    = $plots->whereNull('pac_eligible_area')->count();
+        $totalArea = $plots->sum('area');
+        $totalEligible = $plots->sum('pac_eligible_area');
+        $totalNonEligible = $plots->sum('non_eligible_area');
+        $plotsWithoutPac = $plots->whereNull('pac_eligible_area')->count();
 
         $eligibilityPct = $totalArea > 0
             ? round(($totalEligible / $totalArea) * 100, 1)
@@ -30,29 +30,29 @@ class Dashboard extends Component
             ->orderByDesc('year')
             ->get();
 
-        $currentYear     = now()->year;
+        $currentYear = now()->year;
         $currentDeclaration = $declarations->firstWhere('year', $currentYear);
-        $lastDeclaration    = $declarations->first();
+        $lastDeclaration = $declarations->first();
 
         $stats = [
-            'total_plots'        => $plots->count(),
-            'total_area'         => $totalArea,
-            'total_eligible'     => $totalEligible,
+            'total_plots' => $plots->count(),
+            'total_area' => $totalArea,
+            'total_eligible' => $totalEligible,
             'total_non_eligible' => $totalNonEligible,
-            'eligibility_pct'    => $eligibilityPct,
-            'plots_without_pac'  => $plotsWithoutPac,
+            'eligibility_pct' => $eligibilityPct,
+            'plots_without_pac' => $plotsWithoutPac,
             'total_declarations' => $declarations->count(),
-            'approved'           => $declarations->where('status', 'approved')->count(),
-            'pending'            => $declarations->whereIn('status', ['draft', 'submitted'])->count(),
+            'approved' => $declarations->where('status', 'approved')->count(),
+            'pending' => $declarations->whereIn('status', ['draft', 'submitted'])->count(),
         ];
 
         return view('livewire.viticulturist.pac.dashboard', [
-            'stats'              => $stats,
+            'stats' => $stats,
             'currentDeclaration' => $currentDeclaration,
-            'lastDeclaration'    => $lastDeclaration,
-            'declarations'       => $declarations->take(5),
-            'currentYear'        => $currentYear,
-            'plotsWithoutPac'    => $plots->whereNull('pac_eligible_area')->values(),
+            'lastDeclaration' => $lastDeclaration,
+            'declarations' => $declarations->take(5),
+            'currentYear' => $currentYear,
+            'plotsWithoutPac' => $plots->whereNull('pac_eligible_area')->values(),
         ])->layout('layouts.app');
     }
 }

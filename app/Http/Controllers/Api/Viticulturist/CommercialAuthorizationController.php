@@ -19,8 +19,8 @@ class CommercialAuthorizationController extends Controller
 
         $request->validate([
             'authorization_type' => 'nullable|string',
-            'search'             => 'nullable|string|max:100',
-            'per_page'           => 'nullable|integer|min:1|max:100',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = CommercialAuthorization::where('viticulturist_id', $user->id)
@@ -35,8 +35,8 @@ class CommercialAuthorizationController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('authorization_code', 'like', "%{$term}%")
-                  ->orWhere('description', 'like', "%{$term}%")
-                  ->orWhere('issuing_body', 'like', "%{$term}%");
+                    ->orWhere('description', 'like', "%{$term}%")
+                    ->orWhere('issuing_body', 'like', "%{$term}%");
             });
         }
 
@@ -45,10 +45,10 @@ class CommercialAuthorizationController extends Controller
         return response()->json([
             'data' => CommercialAuthorizationResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -63,17 +63,17 @@ class CommercialAuthorizationController extends Controller
         $validated = $request->validate([
             'authorization_type' => 'required|string|in:do_registration,organic_certification,planting_right,replanting_right,integrated_production,other',
             'authorization_code' => 'nullable|string|max:100',
-            'description'        => 'nullable|string|max:255',
-            'issuing_body'       => 'nullable|string|max:255',
-            'issue_date'         => 'required|date',
-            'expiry_date'        => 'nullable|date|after_or_equal:issue_date',
-            'notes'              => 'nullable|string|max:2000',
+            'description' => 'nullable|string|max:255',
+            'issuing_body' => 'nullable|string|max:255',
+            'issue_date' => 'required|date',
+            'expiry_date' => 'nullable|date|after_or_equal:issue_date',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         $record = CommercialAuthorization::create([...$validated, 'viticulturist_id' => $user->id]);
 
         return response()->json([
-            'data'    => new CommercialAuthorizationResource($record),
+            'data' => new CommercialAuthorizationResource($record),
             'message' => __('Autorización registrada correctamente.'),
         ], 201);
     }

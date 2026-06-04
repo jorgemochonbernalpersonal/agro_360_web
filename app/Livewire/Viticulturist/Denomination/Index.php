@@ -24,13 +24,14 @@ class Index extends Component
             ->where('notebook_access', true)
             ->first();
 
-        if (!$relation) {
+        if (! $relation) {
             $this->toastError(__('No tienes acceso al cuaderno concedido a tu DO.'));
+
             return;
         }
 
         $relation->update([
-            'notebook_access'     => false,
+            'notebook_access' => false,
             'notebook_revoked_at' => now(),
         ]);
 
@@ -39,7 +40,7 @@ class Index extends Component
             ->where('viticulturist_id', $viticulturistId)
             ->whereIn('status', [NotebookAccessRequest::STATUS_PENDING, NotebookAccessRequest::STATUS_APPROVED])
             ->update([
-                'status'       => NotebookAccessRequest::STATUS_REJECTED,
+                'status' => NotebookAccessRequest::STATUS_REJECTED,
                 'responded_at' => now(),
             ]);
 
@@ -60,8 +61,8 @@ class Index extends Component
         $supervisor = $supervisorRelation?->supervisor;
 
         $supervisorWineries = collect();
-        $doDocuments        = collect();
-        $pendingRequest     = null;
+        $doDocuments = collect();
+        $pendingRequest = null;
 
         if ($supervisor) {
             $supervisorWineries = WineryViticulturist::where('viticulturist_id', $viticulturistId)
@@ -79,7 +80,7 @@ class Index extends Component
                 ->get();
 
             // Pending notebook access request from this DO (if not already granted)
-            if (!$supervisorRelation->hasNotebookAccess()) {
+            if (! $supervisorRelation->hasNotebookAccess()) {
                 $pendingRequest = NotebookAccessRequest::where('supervisor_id', $supervisor->id)
                     ->where('viticulturist_id', $viticulturistId)
                     ->where('status', NotebookAccessRequest::STATUS_PENDING)
@@ -90,12 +91,12 @@ class Index extends Component
         $notebookGranted = $supervisorRelation?->hasNotebookAccess() ?? false;
 
         return view('livewire.viticulturist.denomination.index', [
-            'supervisor'         => $supervisor,
-            'supervisorJoined'   => $supervisorRelation?->created_at,
+            'supervisor' => $supervisor,
+            'supervisorJoined' => $supervisorRelation?->created_at,
             'supervisorWineries' => $supervisorWineries,
-            'notebookGranted'    => $notebookGranted,
-            'doDocuments'        => $doDocuments,
-            'pendingRequest'     => $pendingRequest,
+            'notebookGranted' => $notebookGranted,
+            'doDocuments' => $doDocuments,
+            'pendingRequest' => $pendingRequest,
         ]);
     }
 }

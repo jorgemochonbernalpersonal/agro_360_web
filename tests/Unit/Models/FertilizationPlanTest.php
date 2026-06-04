@@ -110,10 +110,10 @@ class FertilizationPlanTest extends TestCase
 
         $plan = FertilizationPlan::create([
             'viticulturist_id' => $user->id,
-            'campaign_id'      => $campaign->id,
-            'plan_year'        => 2026,
-            'status'           => 'draft',
-            'active'           => true,
+            'campaign_id' => $campaign->id,
+            'plan_year' => 2026,
+            'status' => 'draft',
+            'active' => true,
         ]);
 
         $this->assertEquals($user->id, $plan->viticulturist->id);
@@ -126,10 +126,10 @@ class FertilizationPlanTest extends TestCase
 
         $plan = FertilizationPlan::create([
             'viticulturist_id' => $user->id,
-            'campaign_id'      => $campaign->id,
-            'plan_year'        => 2026,
-            'status'           => 'active',
-            'active'           => true,
+            'campaign_id' => $campaign->id,
+            'plan_year' => 2026,
+            'status' => 'active',
+            'active' => true,
         ]);
 
         $this->assertEquals($campaign->id, $plan->campaign->id);

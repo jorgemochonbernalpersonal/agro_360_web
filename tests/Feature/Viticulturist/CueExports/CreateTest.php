@@ -3,31 +3,16 @@
 namespace Tests\Feature\Viticulturist\CueExports;
 
 use App\Livewire\Viticulturist\CueExports\Create;
-use App\Models\CueExport;
 use App\Models\Exploitation;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
 class CreateTest extends ViticulturistTestCase
 {
-    private function makeExploitation(int $viticulturistId): Exploitation
-    {
-        return Exploitation::create([
-            'viticulturist_id'         => $viticulturistId,
-            'exploitation_name'        => 'Explotación Test',
-            'holder_name'              => 'Test Holder',
-            'holder_nif'               => '12345678A',
-            'is_ecological'            => false,
-            'is_integrated_production' => false,
-            'is_quality_scheme'        => false,
-            'active'                   => true,
-        ]);
-    }
-
     public function test_can_create_cue_export(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $exploitation  = $this->makeExploitation($viticulturist->id);
+        $exploitation = $this->makeExploitation($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -43,9 +28,9 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('cue_exports', [
             'viticulturist_id' => $viticulturist->id,
-            'exploitation_id'  => $exploitation->id,
-            'campaign_year'    => 2024,
-            'status'           => 'draft',
+            'exploitation_id' => $exploitation->id,
+            'campaign_year' => 2024,
+            'status' => 'draft',
         ]);
     }
 
@@ -64,7 +49,7 @@ class CreateTest extends ViticulturistTestCase
     public function test_to_date_must_be_after_from_date(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $exploitation  = $this->makeExploitation($viticulturist->id);
+        $exploitation = $this->makeExploitation($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -79,8 +64,8 @@ class CreateTest extends ViticulturistTestCase
     public function test_exploitation_must_belong_to_viticulturist(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $otherExp      = $this->makeExploitation($other->id);
+        $other = $this->makeOtherViticulturist();
+        $otherExp = $this->makeExploitation($other->id);
 
         $this->actingAs($viticulturist);
 
@@ -106,5 +91,19 @@ class CreateTest extends ViticulturistTestCase
             ->set('period_type', 'annual')
             ->assertSet('from_date', "{$currentYear}-01-01")
             ->assertSet('to_date', "{$currentYear}-12-31");
+    }
+
+    private function makeExploitation(int $viticulturistId): Exploitation
+    {
+        return Exploitation::create([
+            'viticulturist_id' => $viticulturistId,
+            'exploitation_name' => 'Explotación Test',
+            'holder_name' => 'Test Holder',
+            'holder_nif' => '12345678A',
+            'is_ecological' => false,
+            'is_integrated_production' => false,
+            'is_quality_scheme' => false,
+            'active' => true,
+        ]);
     }
 }

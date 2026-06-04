@@ -28,8 +28,9 @@ class ShowRateLimitStatusCommand extends Command
     {
         // Handle reset if requested
         if ($service = $this->option('reset')) {
-            if (!in_array($service, ['nasa', 'open_meteo'])) {
+            if (! in_array($service, ['nasa', 'open_meteo'])) {
                 $this->error("Invalid service: {$service}. Use 'nasa' or 'open_meteo'");
+
                 return self::FAILURE;
             }
 
@@ -37,7 +38,7 @@ class ShowRateLimitStatusCommand extends Command
                 $rateLimitService->resetCounters($service);
                 $this->info("✅ Counters reset for {$service}");
             }
-            
+
             return self::SUCCESS;
         }
 
@@ -60,14 +61,14 @@ class ShowRateLimitStatusCommand extends Command
      */
     private function displayServiceStatus(string $name, array $usage): void
     {
-        $this->line("🌐 <fg=cyan>" . strtoupper($name) . "</>");
+        $this->line('🌐 <fg=cyan>'.strtoupper($name).'</>');
         $this->newLine();
 
         // Hourly limits
         $hourColor = $this->getColorForPercentage($usage['hour']['percentage']);
         $this->line("  ⏰ <fg={$hourColor}>Hourly:</>  {$usage['hour']['used']}/{$usage['hour']['limit']} ({$usage['hour']['percentage']}%)");
         $this->line("     Remaining: {$usage['hour']['remaining']} requests");
-        
+
         // Daily limits
         $dayColor = $this->getColorForPercentage($usage['day']['percentage']);
         $this->line("  📅 <fg={$dayColor}>Daily:</>   {$usage['day']['used']}/{$usage['day']['limit']} ({$usage['day']['percentage']}%)");
@@ -76,7 +77,7 @@ class ShowRateLimitStatusCommand extends Command
         // Warning if approaching limits
         if ($usage['hour']['percentage'] > 80 || $usage['day']['percentage'] > 80) {
             $this->newLine();
-            $this->warn("  ⚠️  Approaching rate limits! Consider delaying some requests.");
+            $this->warn('  ⚠️  Approaching rate limits! Consider delaying some requests.');
         }
     }
 

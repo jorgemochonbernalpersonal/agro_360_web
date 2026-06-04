@@ -2,13 +2,14 @@
 
 namespace App\Livewire\Viticulturist;
 
-use App\Models\OnboardingProgress;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\OnboardingProgress;
 use Livewire\Component;
 
 class OnboardingWelcome extends Component
 {
     use WithToastNotifications;
+
     public bool $showModal = false;
 
     public function mount(): void
@@ -19,7 +20,7 @@ class OnboardingWelcome extends Component
             ->whereNotNull('completed_at')
             ->exists();
 
-        $this->showModal = !$hasAnyProgress;
+        $this->showModal = ! $hasAnyProgress;
     }
 
     public function startTour(): void
@@ -32,7 +33,7 @@ class OnboardingWelcome extends Component
     {
         OnboardingProgress::skipAll(auth()->id());
         $this->showModal = false;
-        
+
         $this->toastInfo(__('Onboarding saltado. Puedes reactivarlo desde Configuración.'));
     }
 

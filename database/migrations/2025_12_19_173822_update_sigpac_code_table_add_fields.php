@@ -20,10 +20,10 @@ return new class extends Migration
             $table->string('code_province', 10)->nullable()->after('code_aggregate');
             $table->string('code_zone', 10)->nullable()->after('code_province');
             $table->string('code_municipality', 10)->nullable()->after('code_zone');
-            
+
             // El campo 'code' ya existe, lo hacemos nullable y cambiamos tamaño
             $table->string('code', 30)->nullable()->change();
-            
+
             // Índices adicionales
             $table->index('code_municipality');
         });
@@ -44,7 +44,7 @@ return new class extends Migration
                 'code_zone',
                 'code_municipality',
             ]);
-            
+
             $table->dropIndex(['code_municipality']);
             $table->string('code')->change(); // Revertir a non-nullable
         });

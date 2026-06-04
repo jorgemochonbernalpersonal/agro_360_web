@@ -15,7 +15,7 @@ class OfficialReportController extends Controller
             abort(403, __('No tienes permiso para descargar este informe.'));
         }
 
-        $service = new OfficialReportService();
+        $service = new OfficialReportService;
 
         return $service->downloadReport($report);
     }
@@ -35,8 +35,8 @@ class OfficialReportController extends Controller
             : Storage::disk('local')->path($report->pdf_path);
 
         return response()->file($pdfPath, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . ($report->pdf_filename ?? 'informe.pdf') . '"',
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.($report->pdf_filename ?? 'informe.pdf').'"',
         ]);
     }
 }

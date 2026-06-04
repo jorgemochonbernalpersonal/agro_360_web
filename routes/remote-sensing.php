@@ -5,8 +5,8 @@ use App\Http\Controllers\RemoteSensingExportController;
 use App\Livewire\Viticulturist\RemoteSensing\Dashboard;
 use App\Livewire\Viticulturist\RemoteSensing\ExecutiveDashboard;
 use App\Livewire\Viticulturist\RemoteSensing\PlotAnalysis;
-use App\Services\RemoteSensing\RemoteSensingReportService;
 use App\Models\Plot;
+use App\Services\RemoteSensing\RemoteSensingReportService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,28 +22,28 @@ Route::middleware(['auth', 'verified', 'check.beta', 'role:viticulturist,produce
     Route::prefix('remote-sensing')->name('remote-sensing.')->group(function () {
         // Dashboard ejecutivo (vista resumen)
         Route::get('/', ExecutiveDashboard::class)->name('dashboard');
-        
+
         // Dashboard avanzado (13 pestañas detalladas)
         Route::get('/advanced', Dashboard::class)->name('advanced');
-        
+
         // Vista de detalle por sección (para modales)
         Route::get('/detail', Dashboard::class)->name('detail');
-        
+
         // Análisis unificado por parcela
         Route::get('/plot/{plot}', PlotAnalysis::class)->name('plot');
-        
+
         // API endpoints para datos de teledetección
         Route::get('/api/plot/{plot}/ndvi-colors', [RemoteSensingController::class, 'getPlotNdviColors'])
             ->name('api.plot.ndvi-colors')
             ->can('view', 'plot');
         Route::get('/api/plots/ndvi', [RemoteSensingController::class, 'getAllPlotsNdvi'])
             ->name('api.plots.ndvi');
-        
+
         // PDF Reports
         Route::get('/report/plot/{plot}', function (Plot $plot) {
             abort_unless(auth()->user()->can('view', $plot), 403);
 
-            $service = new RemoteSensingReportService();
+            $service = new RemoteSensingReportService;
             $result = $service->generatePlotReport($plot);
 
             if ($result['success']) {
@@ -52,18 +52,18 @@ Route::middleware(['auth', 'verified', 'check.beta', 'role:viticulturist,produce
 
             return back()->with('error', 'No se pudo generar el informe');
         })->name('report.plot');
-        
+
         Route::get('/report/global', function () {
-            $service = new RemoteSensingReportService();
+            $service = new RemoteSensingReportService;
             $result = $service->generateGlobalReport(auth()->user());
-            
+
             if ($result['success']) {
                 return $service->downloadReport($result['pdf_path']);
             }
-            
+
             return back()->with('error', 'No se pudo generar el informe');
         })->name('report.global');
-        
+
         // Export routes (PDF/Excel)
         Route::get('/export/{plot}/pdf', [RemoteSensingExportController::class, 'exportPdf'])
             ->name('export.pdf')
@@ -73,4 +73,3 @@ Route::middleware(['auth', 'verified', 'check.beta', 'role:viticulturist,produce
             ->can('view', 'plot');
     });
 });
-

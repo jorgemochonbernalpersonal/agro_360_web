@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\InvoiceItem;
-use App\Models\Invoice;
 use App\Models\Harvest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Tax;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,7 +17,7 @@ class InvoiceItemFactory extends Factory
         $quantity = $this->faker->randomFloat(2, 10, 1000);
         $unitPrice = $this->faker->randomFloat(2, 0.5, 5);
         $subtotal = $quantity * $unitPrice;
-        
+
         return [
             'invoice_id' => Invoice::factory(),
             'harvest_id' => null, // Optional - will be set when needed
@@ -42,10 +42,10 @@ class InvoiceItemFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($harvest) {
             $harvestModel = $harvest ?? Harvest::factory()->create();
-            
+
             return [
                 'harvest_id' => $harvestModel->id,
-                'name' => 'Cosecha ' . $harvestModel->plotPlanting->grapeVariety->name ?? 'Uva',
+                'name' => 'Cosecha '.$harvestModel->plotPlanting->grapeVariety->name ?? 'Uva',
                 'concept_type' => 'harvest',
                 'quantity' => min($attributes['quantity'], $harvestModel->total_weight / 2), // No más de la mitad
             ];
@@ -57,7 +57,7 @@ class InvoiceItemFactory extends Factory
         return $this->state(function (array $attributes) use ($tax) {
             $taxModel = $tax ?? Tax::where('rate', 21)->first() ?? Tax::factory()->create(['rate' => 21]);
             $taxAmount = $attributes['subtotal'] * ($taxModel->rate / 100);
-            
+
             return [
                 'tax_id' => $taxModel->id,
                 'tax_name' => $taxModel->name,

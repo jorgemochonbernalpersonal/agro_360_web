@@ -19,12 +19,12 @@ class PlannedWorkController extends Controller
 
         $request->validate([
             'campaign_id' => 'nullable|integer|min:1',
-            'plot_id'     => 'nullable|integer|min:1',
-            'category'    => 'nullable|string|max:50',
-            'status'      => 'nullable|string|max:50',
-            'priority'    => 'nullable|string|max:50',
-            'search'      => 'nullable|string|max:100',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'plot_id' => 'nullable|integer|min:1',
+            'category' => 'nullable|string|max:50',
+            'status' => 'nullable|string|max:50',
+            'priority' => 'nullable|string|max:50',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = PlannedWork::where('viticulturist_id', $user->id)
@@ -35,7 +35,7 @@ class PlannedWorkController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('title', 'like', "%{$term}%")
-                  ->orWhere('description', 'like', "%{$term}%");
+                    ->orWhere('description', 'like', "%{$term}%");
             });
         }
 
@@ -64,10 +64,10 @@ class PlannedWorkController extends Controller
         return response()->json([
             'data' => PlannedWorkResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -78,15 +78,15 @@ class PlannedWorkController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'  => 'nullable|integer|exists:campaigns,id',
-            'plot_id'      => 'nullable|integer|exists:plots,id',
-            'category'     => 'required|string|max:100',
-            'title'        => 'required|string|max:255',
-            'description'  => 'nullable|string|max:1000',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'plot_id' => 'nullable|integer|exists:plots,id',
+            'category' => 'required|string|max:100',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
             'planned_date' => 'required|date',
-            'priority'     => 'nullable|string|max:50',
-            'status'       => 'nullable|string|max:50',
-            'notes'        => 'nullable|string|max:2000',
+            'priority' => 'nullable|string|max:50',
+            'status' => 'nullable|string|max:50',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (isset($validated['plot_id'])) {
@@ -96,7 +96,7 @@ class PlannedWorkController extends Controller
         $record = \App\Models\PlannedWork::create([...$validated, 'viticulturist_id' => $user->id, 'status' => $validated['status'] ?? 'pendiente', 'priority' => $validated['priority'] ?? 'media']);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\PlannedWorkResource($record),
+            'data' => new \App\Http\Resources\Api\PlannedWorkResource($record),
             'message' => __('Trabajo planeado registrado correctamente.'),
         ], 201);
     }

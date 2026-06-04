@@ -24,7 +24,7 @@ class PlotRemoteSensingObserver
 
         $plot = $record->plot()->first();
 
-        if (!$plot) {
+        if (! $plot) {
             return;
         }
 
@@ -33,7 +33,7 @@ class PlotRemoteSensingObserver
             ->get();
 
         foreach ($preferences as $pref) {
-            if (!$pref->user) {
+            if (! $pref->user) {
                 continue;
             }
 

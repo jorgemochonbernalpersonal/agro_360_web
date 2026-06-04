@@ -8,20 +8,23 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search         = '';
+    public string $search = '';
+
     public string $categoryFilter = '';
 
     protected $queryString = [
-        'search'         => ['except' => ''],
+        'search' => ['except' => ''],
         'categoryFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void         { $this->resetPage(); }
-    public function updatingCategoryFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'categoryFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingCategoryFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
@@ -29,6 +32,11 @@ class Index extends AbstractIndex
         $supplier = Supplier::where('user_id', $this->wineryId())->findOrFail($id);
         $supplier->delete();
         $this->toastSuccess(__('Proveedor eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'categoryFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -39,10 +47,10 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(contact_person, \'\')) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(IFNULL(contact_person, \'\')) LIKE ?', [$term]);
             });
         }
         if ($this->categoryFilter) {
@@ -55,13 +63,20 @@ class Index extends AbstractIndex
         $query->orderBy('name');
     }
 
-    protected function defaultOrderBy(): array { return ['name', 'asc']; }
-    protected function perPage(): int          { return 20; }
+    protected function defaultOrderBy(): array
+    {
+        return ['name', 'asc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
         return [
-            'suppliers'  => $entries,
+            'suppliers' => $entries,
             'categories' => Supplier::categoryOptions(),
         ];
     }

@@ -32,8 +32,11 @@ use Tests\Feature\ProducerTestCase;
 class ProducerReceptionTest extends ProducerTestCase
 {
     private User $producer;
+
     private Plot $plot;
+
     private PlotPlanting $planting;
+
     private Container $container;
 
     protected function setUp(): void
@@ -51,60 +54,28 @@ class ProducerReceptionTest extends ProducerTestCase
         // Producer auto-recepción: la parcela le pertenece a él mismo como viticultor
         $this->plot = Plot::create([
             'viticulturist_id' => $this->producer->id,
-            'name'             => 'Parcela Productor',
-            'reference'        => 'PROD-001',
-            'area'             => 5.0,
-            'active'           => true,
+            'name' => 'Parcela Productor',
+            'reference' => 'PROD-001',
+            'area' => 5.0,
+            'active' => true,
         ]);
 
         $this->planting = PlotPlanting::create([
-            'plot_id'          => $this->plot->id,
+            'plot_id' => $this->plot->id,
             'grape_variety_id' => $grapeVariety->id,
-            'area_planted'     => 4.0,
-            'planting_year'    => now()->year - 5,
-            'status'           => 'active',
+            'area_planted' => 4.0,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
         ]);
 
         $this->container = Container::create([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Depósito Productor',
-            'capacity'      => 5000,
+            'user_id' => $this->producer->id,
+            'name' => 'Depósito Productor',
+            'capacity' => 5000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'kg',
+            'archived' => false,
+            'unit' => 'kg',
         ]);
-    }
-
-    // ── Helper ────────────────────────────────────────────────────────────────
-
-    private function makeProducerReception(array $attrs = []): Harvest
-    {
-        $campaign = Campaign::getOrCreateActiveForYear($this->producer->id, 2024);
-
-        $batch = GrapeReceptionBatch::firstOrCreate(
-            [
-                'winery_id'        => $this->producer->id,
-                'plot_planting_id' => $this->planting->id,
-                'campaign_id'      => $campaign->id,
-            ],
-            [
-                'viticulturist_id' => $this->producer->id,
-                'vintage_year'     => 2024,
-                'total_weight_kg'  => 0,
-                'status'           => 'open',
-            ]
-        );
-
-        return Harvest::create(array_merge([
-            'winery_id'          => $this->producer->id,
-            'batch_id'           => $batch->id,
-            'plot_planting_id'   => $this->planting->id,
-            'vintage'            => 2024,
-            'total_weight'       => 1000,
-            'harvest_start_date' => '2024-09-15',
-            'status'             => 'active',
-            'container_id'       => $this->container->id,
-        ], $attrs));
     }
 
     // ── Rutas accesibles ──────────────────────────────────────────────────────
@@ -135,14 +106,14 @@ class ProducerReceptionTest extends ProducerTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvests', [
-            'winery_id'    => $this->producer->id,
+            'winery_id' => $this->producer->id,
             'total_weight' => 800,
-            'status'       => 'active',
+            'status' => 'active',
         ]);
 
         // HarvestObserver → ContainerStockService::initializeStock()
         $this->assertDatabaseHas('containers', [
-            'id'            => $this->container->id,
+            'id' => $this->container->id,
             'used_capacity' => 800,
         ]);
     }
@@ -151,14 +122,14 @@ class ProducerReceptionTest extends ProducerTestCase
 
     public function test_producer_cannot_use_container_from_another_user(): void
     {
-        $otherProducer    = $this->makeOtherProducer();
+        $otherProducer = $this->makeOtherProducer();
         $foreignContainer = Container::create([
-            'user_id'       => $otherProducer->id,
-            'name'          => 'Cuba Ajena',
-            'capacity'      => 5000,
+            'user_id' => $otherProducer->id,
+            'name' => 'Cuba Ajena',
+            'capacity' => 5000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'kg',
+            'archived' => false,
+            'unit' => 'kg',
         ]);
 
         Livewire::test(Create::class)
@@ -178,12 +149,12 @@ class ProducerReceptionTest extends ProducerTestCase
     public function test_producer_cannot_use_litros_container_for_reception(): void
     {
         $litrosContainer = Container::create([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Depósito Litros',
-            'capacity'      => 10000,
+            'user_id' => $this->producer->id,
+            'name' => 'Depósito Litros',
+            'capacity' => 10000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'litros',
+            'archived' => false,
+            'unit' => 'litros',
         ]);
 
         Livewire::test(Create::class)
@@ -203,7 +174,7 @@ class ProducerReceptionTest extends ProducerTestCase
     public function test_producer_cannot_access_another_producers_reception(): void
     {
         $otherProducer = $this->makeOtherProducer();
-        $reception     = $this->makeProducerReception(['winery_id' => $otherProducer->id]);
+        $reception = $this->makeProducerReception(['winery_id' => $otherProducer->id]);
 
         $this->get(route('producer.grape-reception.show', $reception))
             ->assertForbidden();
@@ -224,28 +195,28 @@ class ProducerReceptionTest extends ProducerTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvests', [
-            'id'           => $reception->id,
+            'id' => $reception->id,
             'total_weight' => 1200,
         ]);
 
         // HarvestObserver → adjustWeight()
         $this->assertDatabaseHas('containers', [
-            'id'            => $this->container->id,
+            'id' => $this->container->id,
             'used_capacity' => 1200,
         ]);
     }
 
     public function test_producer_edit_rejects_foreign_container(): void
     {
-        $reception     = $this->makeProducerReception();
+        $reception = $this->makeProducerReception();
         $otherProducer = $this->makeOtherProducer();
         $foreignContainer = Container::create([
-            'user_id'       => $otherProducer->id,
-            'name'          => 'Cuba Ajena Edit',
-            'capacity'      => 5000,
+            'user_id' => $otherProducer->id,
+            'name' => 'Cuba Ajena Edit',
+            'capacity' => 5000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'kg',
+            'archived' => false,
+            'unit' => 'kg',
         ]);
         $this->container->refresh();
 
@@ -258,7 +229,7 @@ class ProducerReceptionTest extends ProducerTestCase
     public function test_producer_cannot_edit_another_producers_reception(): void
     {
         $otherProducer = $this->makeOtherProducer();
-        $reception     = $this->makeProducerReception(['winery_id' => $otherProducer->id]);
+        $reception = $this->makeProducerReception(['winery_id' => $otherProducer->id]);
 
         Livewire::test(Edit::class, ['harvest' => $reception])
             ->assertStatus(403);
@@ -272,12 +243,12 @@ class ProducerReceptionTest extends ProducerTestCase
         $this->container->refresh();
 
         $newContainer = Container::create([
-            'user_id'       => $this->producer->id,
-            'name'          => 'Depósito Nuevo Productor',
-            'capacity'      => 3000,
+            'user_id' => $this->producer->id,
+            'name' => 'Depósito Nuevo Productor',
+            'capacity' => 3000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'kg',
+            'archived' => false,
+            'unit' => 'kg',
         ]);
 
         Livewire::test(Assign::class, ['harvest' => $reception])
@@ -286,28 +257,60 @@ class ProducerReceptionTest extends ProducerTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvests', [
-            'id'           => $reception->id,
+            'id' => $reception->id,
             'container_id' => $newContainer->id,
         ]);
     }
 
     public function test_producer_assign_rejects_foreign_container(): void
     {
-        $reception     = $this->makeProducerReception();
+        $reception = $this->makeProducerReception();
         $this->container->refresh();
         $otherProducer = $this->makeOtherProducer();
         $foreignContainer = Container::create([
-            'user_id'       => $otherProducer->id,
-            'name'          => 'Cuba Ajena Assign',
-            'capacity'      => 5000,
+            'user_id' => $otherProducer->id,
+            'name' => 'Cuba Ajena Assign',
+            'capacity' => 5000,
             'used_capacity' => 0,
-            'archived'      => false,
-            'unit'          => 'kg',
+            'archived' => false,
+            'unit' => 'kg',
         ]);
 
         Livewire::test(Assign::class, ['harvest' => $reception])
             ->set('container_id', (string) $foreignContainer->id)
             ->call('save')
             ->assertHasErrors(['container_id']);
+    }
+
+    // ── Helper ────────────────────────────────────────────────────────────────
+
+    private function makeProducerReception(array $attrs = []): Harvest
+    {
+        $campaign = Campaign::getOrCreateActiveForYear($this->producer->id, 2024);
+
+        $batch = GrapeReceptionBatch::firstOrCreate(
+            [
+                'winery_id' => $this->producer->id,
+                'plot_planting_id' => $this->planting->id,
+                'campaign_id' => $campaign->id,
+            ],
+            [
+                'viticulturist_id' => $this->producer->id,
+                'vintage_year' => 2024,
+                'total_weight_kg' => 0,
+                'status' => 'open',
+            ]
+        );
+
+        return Harvest::create(array_merge([
+            'winery_id' => $this->producer->id,
+            'batch_id' => $batch->id,
+            'plot_planting_id' => $this->planting->id,
+            'vintage' => 2024,
+            'total_weight' => 1000,
+            'harvest_start_date' => '2024-09-15',
+            'status' => 'active',
+            'container_id' => $this->container->id,
+        ], $attrs));
     }
 }

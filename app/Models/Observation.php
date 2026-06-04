@@ -21,10 +21,10 @@ class Observation extends Model
     ];
 
     protected $casts = [
-        'photos'                   => 'array',
+        'photos' => 'array',
         'affected_area_percentage' => 'decimal:2',
-        'threshold_exceeded'       => 'boolean',
-        'follow_up_date'           => 'date',
+        'threshold_exceeded' => 'boolean',
+        'follow_up_date' => 'date',
     ];
 
     /**

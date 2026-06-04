@@ -16,16 +16,16 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class HarvestReceptionExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     public function __construct(
-        protected int    $wineryId,
-        protected string $campaignFilter     = '',
-        protected string $viticulturistFilter= '',
+        protected int $wineryId,
+        protected string $campaignFilter = '',
+        protected string $viticulturistFilter = '',
         protected string $disqualifiedFilter = '',
     ) {}
 
     public function collection()
     {
         $viticulturistIds = WineryViticulturist::where('winery_id', $this->wineryId)->pluck('viticulturist_id');
-        $campaignIds      = Campaign::forViticulturist($this->wineryId)->pluck('id');
+        $campaignIds = Campaign::forViticulturist($this->wineryId)->pluck('id');
 
         $query = Harvest::with([
             'plotPlanting.grapeVariety',
@@ -33,20 +33,17 @@ class HarvestReceptionExport implements FromCollection, WithHeadings, WithMappin
             'activity.viticulturist',
             'activity.campaign',
             'container',
-        ])->whereHas('activity', fn(Builder $q) =>
-            $q->whereIn('viticulturist_id', $viticulturistIds)
-              ->whereIn('campaign_id', $campaignIds)
+        ])->whereHas('activity', fn (Builder $q) => $q->whereIn('viticulturist_id', $viticulturistIds)
+            ->whereIn('campaign_id', $campaignIds)
         );
 
         if ($this->campaignFilter) {
-            $query->whereHas('activity', fn(Builder $q) =>
-                $q->where('campaign_id', $this->campaignFilter)
+            $query->whereHas('activity', fn (Builder $q) => $q->where('campaign_id', $this->campaignFilter)
             );
         }
 
         if ($this->viticulturistFilter) {
-            $query->whereHas('activity', fn(Builder $q) =>
-                $q->where('viticulturist_id', $this->viticulturistFilter)
+            $query->whereHas('activity', fn (Builder $q) => $q->where('viticulturist_id', $this->viticulturistFilter)
             );
         }
 
@@ -91,10 +88,10 @@ class HarvestReceptionExport implements FromCollection, WithHeadings, WithMappin
     public function map($harvest): array
     {
         $sanitaryLabels = [
-            'sano'          => __('Sano'),
-            'daño_leve'     => __('Daño leve'),
+            'sano' => __('Sano'),
+            'daño_leve' => __('Daño leve'),
             'daño_moderado' => __('Daño moderado'),
-            'daño_grave'    => __('Daño grave'),
+            'daño_grave' => __('Daño grave'),
         ];
 
         return [
@@ -132,7 +129,7 @@ class HarvestReceptionExport implements FromCollection, WithHeadings, WithMappin
             1 => [
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => [
-                    'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '16a34a'],
                 ],
             ],
@@ -141,6 +138,6 @@ class HarvestReceptionExport implements FromCollection, WithHeadings, WithMappin
 
     public function title(): string
     {
-        return 'Recepciones ' . now()->format('d-m-Y');
+        return 'Recepciones '.now()->format('d-m-Y');
     }
 }

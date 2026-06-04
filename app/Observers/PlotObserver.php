@@ -3,8 +3,8 @@
 namespace App\Observers;
 
 use App\Models\Municipality;
-use App\Models\Plot;
 use App\Models\OnboardingProgress;
+use App\Models\Plot;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -23,50 +23,13 @@ class PlotObserver
                 OnboardingProgress::STEP_CREATE_PLOT
             );
 
-            if (!$progress->isCompleted()) {
+            if (! $progress->isCompleted()) {
                 $progress->markAsCompleted();
                 Cache::forget("nav_onboarding_pending_{$plot->viticulturist_id}");
             }
         }
 
         $this->geocodeMunicipalityIfNeeded($plot->municipality_id);
-    }
-
-    private function geocodeMunicipalityIfNeeded(?int $municipalityId): void
-    {
-        if (! $municipalityId) return;
-
-        $municipality = Municipality::with('province')->find($municipalityId);
-
-        if (! $municipality || $municipality->lat !== null) return;
-
-        try {
-            $name     = trim(explode('/', $municipality->name)[0]);
-            $province = trim(explode('/', $municipality->province?->name ?? '')[0]);
-
-            $http = Http::withHeaders(['User-Agent' => 'Agro365/1.0 (info@agro365.es)']);
-
-            if (app()->environment('local')) {
-                $http = $http->withoutVerifying();
-            }
-
-            $results = $http->get('https://nominatim.openstreetmap.org/search', [
-                'city'    => $name,
-                'state'   => $province,
-                'country' => __('Spain'),
-                'format'  => 'json',
-                'limit'   => 1,
-            ])->json();
-
-            if (!empty($results)) {
-                $municipality->update([
-                    'lat' => round((float) $results[0]['lat'], 6),
-                    'lng' => round((float) $results[0]['lon'], 6),
-                ]);
-            }
-        } catch (\Throwable $e) {
-            Log::warning("No se pudo geocodificar municipio {$municipalityId}: {$e->getMessage()}");
-        }
     }
 
     /**
@@ -102,5 +65,46 @@ class PlotObserver
     public function forceDeleted(Plot $plot): void
     {
         //
+    }
+
+    private function geocodeMunicipalityIfNeeded(?int $municipalityId): void
+    {
+        if (! $municipalityId) {
+            return;
+        }
+
+        $municipality = Municipality::with('province')->find($municipalityId);
+
+        if (! $municipality || $municipality->lat !== null) {
+            return;
+        }
+
+        try {
+            $name = trim(explode('/', $municipality->name)[0]);
+            $province = trim(explode('/', $municipality->province?->name ?? '')[0]);
+
+            $http = Http::withHeaders(['User-Agent' => 'Agro365/1.0 (info@agro365.es)']);
+
+            if (app()->environment('local')) {
+                $http = $http->withoutVerifying();
+            }
+
+            $results = $http->get('https://nominatim.openstreetmap.org/search', [
+                'city' => $name,
+                'state' => $province,
+                'country' => __('Spain'),
+                'format' => 'json',
+                'limit' => 1,
+            ])->json();
+
+            if (! empty($results)) {
+                $municipality->update([
+                    'lat' => round((float) $results[0]['lat'], 6),
+                    'lng' => round((float) $results[0]['lon'], 6),
+                ]);
+            }
+        } catch (\Throwable $e) {
+            Log::warning("No se pudo geocodificar municipio {$municipalityId}: {$e->getMessage()}");
+        }
     }
 }

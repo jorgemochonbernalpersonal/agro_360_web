@@ -20,37 +20,29 @@ class ContainerAuditTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function actingWinery(): User
-    {
-        $user = User::factory()->create(['role' => 'winery']);
-        $this->actingAs($user);
-
-        return $user;
-    }
-
     public function test_creating_container_writes_audit_log(): void
     {
         $user = $this->actingWinery();
 
         $container = Container::factory()->create([
-            'user_id'  => $user->id,
+            'user_id' => $user->id,
             'capacity' => 1000.0,
         ]);
 
         $this->assertDatabaseHas('audit_logs', [
             'auditable_type' => Container::class,
-            'auditable_id'   => $container->id,
-            'event'          => 'created',
-            'user_id'        => $user->id,
+            'auditable_id' => $container->id,
+            'event' => 'created',
+            'user_id' => $user->id,
         ]);
     }
 
     public function test_updating_metadata_is_audited(): void
     {
-        $user      = $this->actingWinery();
+        $user = $this->actingWinery();
         $container = Container::factory()->create([
-            'user_id'  => $user->id,
-            'name'     => 'Tanque A',
+            'user_id' => $user->id,
+            'name' => 'Tanque A',
             'capacity' => 1000.0,
         ]);
         AuditLog::where('event', 'created')->delete();
@@ -70,7 +62,7 @@ class ContainerAuditTest extends TestCase
 
     public function test_archiving_is_audited(): void
     {
-        $user      = $this->actingWinery();
+        $user = $this->actingWinery();
         $container = Container::factory()->create(['user_id' => $user->id, 'archived' => false]);
         AuditLog::where('auditable_id', $container->id)->delete();
 
@@ -84,12 +76,12 @@ class ContainerAuditTest extends TestCase
         $this->assertArrayHasKey('archived', $log->new_values);
     }
 
-    public function test_stock_changes_are_NOT_audited(): void
+    public function test_stock_changes_are_no_t_audited(): void
     {
-        $user      = $this->actingWinery();
+        $user = $this->actingWinery();
         $container = Container::factory()->create([
-            'user_id'       => $user->id,
-            'capacity'      => 1000.0,
+            'user_id' => $user->id,
+            'capacity' => 1000.0,
             'used_capacity' => 0.0,
         ]);
         AuditLog::where('auditable_id', $container->id)->delete();
@@ -100,8 +92,8 @@ class ContainerAuditTest extends TestCase
 
         $this->assertDatabaseMissing('audit_logs', [
             'auditable_type' => Container::class,
-            'auditable_id'   => $container->id,
-            'event'          => 'updated',
+            'auditable_id' => $container->id,
+            'event' => 'updated',
         ]);
     }
 
@@ -109,8 +101,8 @@ class ContainerAuditTest extends TestCase
     {
         $user = $this->actingWinery();
         $room = ContainerRoom::create([
-            'user_id'     => $user->id,
-            'name'        => 'Sala Barricas',
+            'user_id' => $user->id,
+            'name' => 'Sala Barricas',
             'temperature' => 14.0,
         ]);
         AuditLog::where('event', 'created')->delete();
@@ -119,8 +111,16 @@ class ContainerAuditTest extends TestCase
 
         $this->assertDatabaseHas('audit_logs', [
             'auditable_type' => ContainerRoom::class,
-            'auditable_id'   => $room->id,
-            'event'          => 'updated',
+            'auditable_id' => $room->id,
+            'event' => 'updated',
         ]);
+    }
+
+    private function actingWinery(): User
+    {
+        $user = User::factory()->create(['role' => 'winery']);
+        $this->actingAs($user);
+
+        return $user;
     }
 }

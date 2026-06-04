@@ -10,6 +10,19 @@ class PlotCost extends Model
 {
     use HasFactory;
 
+    public const CATEGORIES = [
+        'labor' => 'Mano de obra',
+        'machinery' => 'Maquinaria',
+        'materials' => 'Materiales',
+        'phytosanitary' => 'Fitosanitarios',
+        'fertilizer' => 'Abonos y fertilizantes',
+        'water' => 'Agua / Riego',
+        'insurance' => 'Seguros',
+        'transport' => 'Transporte',
+        'subcontracting' => 'Subcontratación',
+        'other' => 'Otros',
+    ];
+
     protected $fillable = [
         'viticulturist_id',
         'plot_id',
@@ -24,21 +37,8 @@ class PlotCost extends Model
     ];
 
     protected $casts = [
-        'amount'    => 'decimal:2',
+        'amount' => 'decimal:2',
         'cost_date' => 'date',
-    ];
-
-    public const CATEGORIES = [
-        'labor'          => 'Mano de obra',
-        'machinery'      => 'Maquinaria',
-        'materials'      => 'Materiales',
-        'phytosanitary'  => 'Fitosanitarios',
-        'fertilizer'     => 'Abonos y fertilizantes',
-        'water'          => 'Agua / Riego',
-        'insurance'      => 'Seguros',
-        'transport'      => 'Transporte',
-        'subcontracting' => 'Subcontratación',
-        'other'          => 'Otros',
     ];
 
     public static function categoryOptions(): array

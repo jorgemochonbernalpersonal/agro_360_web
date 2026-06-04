@@ -18,7 +18,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertEquals('viticulturist', WineryViticulturist::SOURCE_VITICULTURIST);
     }
 
-    public function test_scopeVisibleTo_returns_created_viticulturists(): void
+    public function test_scope_visible_to_returns_created_viticulturists(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
         $created1 = User::factory()->create(['role' => 'viticulturist']);
@@ -55,7 +55,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertFalse($visible->contains('viticulturist_id', $other->id));
     }
 
-    public function test_scopeVisibleTo_returns_supervisor_pool_when_has_supervisor(): void
+    public function test_scope_visible_to_returns_supervisor_pool_when_has_supervisor(): void
     {
         $supervisor = User::factory()->create(['role' => 'supervisor']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
@@ -92,7 +92,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertTrue($visible->contains('viticulturist_id', $poolViticulturist2->id));
     }
 
-    public function test_scopeVisibleTo_returns_winery_viticulturists_when_has_winery(): void
+    public function test_scope_visible_to_returns_winery_viticulturists_when_has_winery(): void
     {
         $winery = User::factory()->create(['role' => 'winery']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
@@ -129,7 +129,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertTrue($visible->contains('viticulturist_id', $wineryViticulturist2->id));
     }
 
-    public function test_scopeVisibleTo_excludes_self(): void
+    public function test_scope_visible_to_excludes_self(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $other = User::factory()->create(['role' => 'viticulturist']);
@@ -147,7 +147,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertFalse($visible->contains('viticulturist_id', $viticulturist->id));
     }
 
-    public function test_scopeEditableBy_returns_only_created_viticulturists(): void
+    public function test_scope_editable_by_returns_only_created_viticulturists(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
         $created = User::factory()->create(['role' => 'viticulturist']);
@@ -176,7 +176,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertEquals($created->id, $editable->first()->viticulturist_id);
     }
 
-    public function test_isVisibleTo_returns_true_for_created_viticulturists(): void
+    public function test_is_visible_to_returns_true_for_created_viticulturists(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
         $created = User::factory()->create(['role' => 'viticulturist']);
@@ -191,7 +191,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertTrue($relation->isVisibleTo($creator));
     }
 
-    public function test_isVisibleTo_returns_false_for_unrelated_viticulturists(): void
+    public function test_is_visible_to_returns_false_for_unrelated_viticulturists(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
         $created = User::factory()->create(['role' => 'viticulturist']);
@@ -207,7 +207,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertFalse($relation->isVisibleTo($unrelated));
     }
 
-    public function test_isOwn_returns_true_for_own_source(): void
+    public function test_is_own_returns_true_for_own_source(): void
     {
         $relation = WineryViticulturist::create([
             'viticulturist_id' => User::factory()->create(['role' => 'viticulturist'])->id,
@@ -221,7 +221,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertFalse($relation->isFromViticulturist());
     }
 
-    public function test_isFromSupervisor_returns_true_for_supervisor_source(): void
+    public function test_is_from_supervisor_returns_true_for_supervisor_source(): void
     {
         $relation = WineryViticulturist::create([
             'viticulturist_id' => User::factory()->create(['role' => 'viticulturist'])->id,
@@ -235,7 +235,7 @@ class WineryViticulturistTest extends TestCase
         $this->assertFalse($relation->isFromViticulturist());
     }
 
-    public function test_isFromViticulturist_returns_true_for_viticulturist_source(): void
+    public function test_is_from_viticulturist_returns_true_for_viticulturist_source(): void
     {
         $relation = WineryViticulturist::create([
             'viticulturist_id' => User::factory()->create(['role' => 'viticulturist'])->id,
@@ -249,4 +249,3 @@ class WineryViticulturistTest extends TestCase
         $this->assertTrue($relation->isFromViticulturist());
     }
 }
-

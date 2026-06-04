@@ -20,36 +20,52 @@ class Settings extends Component
 
     // === INFOVI TAB ===
     public string $reovi_number = '';
-    public string $nidpb        = '';
 
-    protected $queryString = ['currentTab' => ['as' => 'tab']];
+    public string $nidpb = '';
 
     // === TAXES TAB ===
     public $taxes;
+
     public $activeTaxId;
 
     // === INVOICING TAB ===
     public $invoice_prefix;
+
     public $invoice_padding;
+
     public $invoice_counter;
+
     public $invoice_year_reset;
+
     public $delivery_note_prefix;
+
     public $delivery_note_padding;
+
     public $delivery_note_counter;
+
     public $delivery_note_year_reset;
+
     public $invoicePreview;
+
     public $deliveryNotePreview;
 
     // === PLOTS TAB ===
     public $default_limit_kg_per_ha = '';
 
     // === FISCAL TAB ===
-    public $fiscal_nif          = '';
-    public $fiscal_legal_name   = '';
-    public $fiscal_address      = '';
-    public $fiscal_city         = '';
-    public $fiscal_postal_code  = '';
-    public $fiscal_phone        = '';
+    public $fiscal_nif = '';
+
+    public $fiscal_legal_name = '';
+
+    public $fiscal_address = '';
+
+    public $fiscal_city = '';
+
+    public $fiscal_postal_code = '';
+
+    public $fiscal_phone = '';
+
+    protected $queryString = ['currentTab' => ['as' => 'tab']];
 
     public function mount(): void
     {
@@ -80,10 +96,10 @@ class Settings extends Component
     {
         UserTax::where('user_id', Auth::id())->delete();
         UserTax::create([
-            'user_id'    => Auth::id(),
-            'tax_id'     => $taxId,
+            'user_id' => Auth::id(),
+            'tax_id' => $taxId,
             'is_default' => true,
-            'order'      => 1,
+            'order' => 1,
         ]);
         $this->activeTaxId = $taxId;
         $this->toastSuccess(__('Impuesto configurado correctamente'));
@@ -98,14 +114,14 @@ class Settings extends Component
         $settings = InvoicingSetting::forUser(Auth::id())->first()
             ?? InvoicingSetting::createDefaultForUser(Auth::id());
 
-        $this->invoice_prefix            = $settings->invoice_prefix;
-        $this->invoice_padding           = $settings->invoice_padding;
-        $this->invoice_counter           = $settings->invoice_counter;
-        $this->invoice_year_reset        = $settings->invoice_year_reset;
-        $this->delivery_note_prefix      = $settings->delivery_note_prefix;
-        $this->delivery_note_padding     = $settings->delivery_note_padding;
-        $this->delivery_note_counter     = $settings->delivery_note_counter;
-        $this->delivery_note_year_reset  = $settings->delivery_note_year_reset;
+        $this->invoice_prefix = $settings->invoice_prefix;
+        $this->invoice_padding = $settings->invoice_padding;
+        $this->invoice_counter = $settings->invoice_counter;
+        $this->invoice_year_reset = $settings->invoice_year_reset;
+        $this->delivery_note_prefix = $settings->delivery_note_prefix;
+        $this->delivery_note_padding = $settings->delivery_note_padding;
+        $this->delivery_note_counter = $settings->delivery_note_counter;
+        $this->delivery_note_year_reset = $settings->delivery_note_year_reset;
 
         $this->updatePreviews();
     }
@@ -119,42 +135,32 @@ class Settings extends Component
 
     public function updatePreviews(): void
     {
-        $this->invoicePreview      = $this->replaceVariables($this->invoice_prefix)
-            . str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
+        $this->invoicePreview = $this->replaceVariables($this->invoice_prefix)
+            .str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
         $this->deliveryNotePreview = $this->replaceVariables($this->delivery_note_prefix)
-            . str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
-    }
-
-    protected function replaceVariables(string $prefix): string
-    {
-        $now = now();
-        return str_replace(
-            ['{YEAR}', '{MONTH}', '{DAY}'],
-            [$now->format('Y'), $now->format('m'), $now->format('d')],
-            $prefix
-        );
+            .str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
     }
 
     public function saveInvoicing(): void
     {
         $this->validate([
-            'invoice_prefix'           => 'required|string|max:50',
-            'invoice_padding'          => 'required|integer|min:2|max:6',
-            'invoice_counter'          => 'required|integer|min:1',
-            'delivery_note_prefix'     => 'required|string|max:50',
-            'delivery_note_padding'    => 'required|integer|min:2|max:6',
-            'delivery_note_counter'    => 'required|integer|min:1',
+            'invoice_prefix' => 'required|string|max:50',
+            'invoice_padding' => 'required|integer|min:2|max:6',
+            'invoice_counter' => 'required|integer|min:1',
+            'delivery_note_prefix' => 'required|string|max:50',
+            'delivery_note_padding' => 'required|integer|min:2|max:6',
+            'delivery_note_counter' => 'required|integer|min:1',
         ]);
 
         $settings = InvoicingSetting::forUser(Auth::id())->first();
         $settings->update([
-            'invoice_prefix'           => $this->invoice_prefix,
-            'invoice_padding'          => $this->invoice_padding,
-            'invoice_counter'          => $this->invoice_counter,
-            'invoice_year_reset'       => $this->invoice_year_reset,
-            'delivery_note_prefix'     => $this->delivery_note_prefix,
-            'delivery_note_padding'    => $this->delivery_note_padding,
-            'delivery_note_counter'    => $this->delivery_note_counter,
+            'invoice_prefix' => $this->invoice_prefix,
+            'invoice_padding' => $this->invoice_padding,
+            'invoice_counter' => $this->invoice_counter,
+            'invoice_year_reset' => $this->invoice_year_reset,
+            'delivery_note_prefix' => $this->delivery_note_prefix,
+            'delivery_note_padding' => $this->delivery_note_padding,
+            'delivery_note_counter' => $this->delivery_note_counter,
             'delivery_note_year_reset' => $this->delivery_note_year_reset,
         ]);
 
@@ -210,28 +216,28 @@ class Settings extends Component
 
     public function loadFiscal(): void
     {
-        $user    = Auth::user();
+        $user = Auth::user();
         $profile = UserProfile::where('user_id', $user->id)->first();
-        $inv     = InvoicingSetting::forUser($user->id)->first();
-        $org     = $user->organization;
+        $inv = InvoicingSetting::forUser($user->id)->first();
+        $org = $user->organization;
 
-        $this->fiscal_nif         = $user->dni ?? $org?->vat_number ?? '';
-        $this->fiscal_legal_name  = $inv?->issuer_legal_name ?? '';
-        $this->fiscal_address     = $profile?->address ?? $org?->address ?? '';
-        $this->fiscal_city        = $profile?->city ?? $org?->city ?? '';
+        $this->fiscal_nif = $user->dni ?? $org?->vat_number ?? '';
+        $this->fiscal_legal_name = $inv?->issuer_legal_name ?? '';
+        $this->fiscal_address = $profile?->address ?? $org?->address ?? '';
+        $this->fiscal_city = $profile?->city ?? $org?->city ?? '';
         $this->fiscal_postal_code = $profile?->postal_code ?? $org?->postal_code ?? '';
-        $this->fiscal_phone       = $profile?->phone ?? $org?->phone ?? '';
+        $this->fiscal_phone = $profile?->phone ?? $org?->phone ?? '';
     }
 
     public function saveFiscal(): void
     {
         $this->validate([
-            'fiscal_nif'         => 'nullable|string|max:20',
-            'fiscal_legal_name'  => 'nullable|string|max:150',
-            'fiscal_address'     => 'nullable|string|max:255',
-            'fiscal_city'        => 'nullable|string|max:100',
+            'fiscal_nif' => 'nullable|string|max:20',
+            'fiscal_legal_name' => 'nullable|string|max:150',
+            'fiscal_address' => 'nullable|string|max:255',
+            'fiscal_city' => 'nullable|string|max:100',
             'fiscal_postal_code' => 'nullable|string|max:10',
-            'fiscal_phone'       => 'nullable|string|max:20',
+            'fiscal_phone' => 'nullable|string|max:20',
         ]);
 
         $user = Auth::user();
@@ -248,22 +254,22 @@ class Settings extends Component
         UserProfile::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'address'     => $this->fiscal_address ?: null,
-                'city'        => $this->fiscal_city ?: null,
+                'address' => $this->fiscal_address ?: null,
+                'city' => $this->fiscal_city ?: null,
                 'postal_code' => $this->fiscal_postal_code ?: null,
-                'phone'       => $this->fiscal_phone ?: null,
+                'phone' => $this->fiscal_phone ?: null,
             ]
         );
 
         // Sync to Organization record if this user has one
         $user->organization?->update([
-            'name'        => $this->fiscal_legal_name ?: $user->name,
-            'vat_number'  => $this->fiscal_nif ?: null,
-            'address'     => $this->fiscal_address ?: null,
-            'city'        => $this->fiscal_city ?: null,
+            'name' => $this->fiscal_legal_name ?: $user->name,
+            'vat_number' => $this->fiscal_nif ?: null,
+            'address' => $this->fiscal_address ?: null,
+            'city' => $this->fiscal_city ?: null,
             'postal_code' => $this->fiscal_postal_code ?: null,
-            'phone'       => $this->fiscal_phone ?: null,
-            'email'       => !str_contains($user->email, '@noemail.agro365.es') ? $user->email : null,
+            'phone' => $this->fiscal_phone ?: null,
+            'email' => ! str_contains($user->email, '@noemail.agro365.es') ? $user->email : null,
         ]);
 
         $this->toastSuccess(__('Datos fiscales guardados correctamente'));
@@ -277,19 +283,19 @@ class Settings extends Component
     {
         $org = Auth::user()->organization;
         $this->reovi_number = $org?->reovi_number ?? '';
-        $this->nidpb        = $org?->nidpb ?? '';
+        $this->nidpb = $org?->nidpb ?? '';
     }
 
     public function saveInfovi(): void
     {
         $this->validate([
             'reovi_number' => 'nullable|string|max:50',
-            'nidpb'        => 'nullable|string|max:50',
+            'nidpb' => 'nullable|string|max:50',
         ]);
 
         Auth::user()->organization?->update([
             'reovi_number' => $this->reovi_number ?: null,
-            'nidpb'        => $this->nidpb ?: null,
+            'nidpb' => $this->nidpb ?: null,
         ]);
 
         $this->toastSuccess(__('Configuración INFOVI guardada correctamente'));
@@ -298,8 +304,19 @@ class Settings extends Component
     public function render()
     {
         return view('livewire.winery.settings')->layout('layouts.app', [
-            'title'       => __('Configuración - Agro365'),
+            'title' => __('Configuración - Agro365'),
             'description' => __('Gestiona la configuración de tu cuenta de bodega.'),
         ]);
+    }
+
+    protected function replaceVariables(string $prefix): string
+    {
+        $now = now();
+
+        return str_replace(
+            ['{YEAR}', '{MONTH}', '{DAY}'],
+            [$now->format('Y'), $now->format('m'), $now->format('d')],
+            $prefix
+        );
     }
 }

@@ -17,9 +17,9 @@ abstract class AbstractEdit extends SharedAbstractEdit
 
     protected function rolePrefix(): string
     {
-        return match(Auth::user()?->role) {
+        return match (Auth::user()?->role) {
             'producer' => 'producer',
-            default    => 'viticulturist',
+            default => 'viticulturist',
         };
     }
 

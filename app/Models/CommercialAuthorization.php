@@ -11,18 +11,13 @@ class CommercialAuthorization extends Model
     use HasFactory;
 
     const AUTHORIZATION_TYPES = [
-        'do_registration'       => 'Inscripción Denominación de Origen',
+        'do_registration' => 'Inscripción Denominación de Origen',
         'organic_certification' => 'Certificación Ecológica',
-        'planting_right'        => 'Derecho de Plantación',
-        'replanting_right'      => 'Derecho de Replantación',
+        'planting_right' => 'Derecho de Plantación',
+        'replanting_right' => 'Derecho de Replantación',
         'integrated_production' => 'Producción Integrada',
-        'other'                 => 'Otro',
+        'other' => 'Otro',
     ];
-
-    public static function authorizationTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::AUTHORIZATION_TYPES);
-    }
 
     protected $fillable = [
         'viticulturist_id',
@@ -39,10 +34,15 @@ class CommercialAuthorization extends Model
     ];
 
     protected $casts = [
-        'issue_date'  => 'date',
+        'issue_date' => 'date',
         'expiry_date' => 'date',
-        'active'      => 'boolean',
+        'active' => 'boolean',
     ];
+
+    public static function authorizationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::AUTHORIZATION_TYPES);
+    }
 
     public function viticulturist(): BelongsTo
     {
@@ -66,8 +66,11 @@ class CommercialAuthorization extends Model
 
     public function isExpiringSoon(int $days = 60): bool
     {
-        if (!$this->expiry_date) return false;
-        return !$this->isExpired() && $this->expiry_date->lte(now()->addDays($days));
+        if (! $this->expiry_date) {
+            return false;
+        }
+
+        return ! $this->isExpired() && $this->expiry_date->lte(now()->addDays($days));
     }
 
     public function scopeActive($query)

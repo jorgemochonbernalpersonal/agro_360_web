@@ -4,7 +4,6 @@ namespace Tests\Feature\Viticulturist\Subcontracting;
 
 use App\Livewire\Viticulturist\Subcontracting\Edit;
 use App\Models\Subcontracting;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -16,9 +15,9 @@ class EditTest extends ViticulturistTestCase
 
         $record = Subcontracting::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'company_name'     => 'Original',
-            'service_type'     => 'pruning',
-            'service_date'     => now()->toDateString(),
+            'company_name' => 'Original',
+            'service_type' => 'pruning',
+            'service_date' => now()->toDateString(),
         ]);
 
         $this->actingAs($viticulturist);
@@ -29,7 +28,7 @@ class EditTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.subcontracting.index'));
 
         $this->assertDatabaseHas('subcontractings', [
-            'id'           => $record->id,
+            'id' => $record->id,
             'company_name' => 'Actualizada SL',
         ]);
     }
@@ -41,9 +40,9 @@ class EditTest extends ViticulturistTestCase
 
         $record = Subcontracting::factory()->create([
             'viticulturist_id' => $other->id,
-            'company_name'     => 'Ajeno',
-            'service_type'     => 'harvesting',
-            'service_date'     => now()->toDateString(),
+            'company_name' => 'Ajeno',
+            'service_type' => 'harvesting',
+            'service_date' => now()->toDateString(),
         ]);
 
         $this->actingAs($viticulturist);
@@ -58,10 +57,10 @@ class EditTest extends ViticulturistTestCase
 
         $record = Subcontracting::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'company_name'     => 'Empresa Test',
-            'service_type'     => 'treatment',
-            'service_date'     => '2026-03-15',
-            'invoiced'         => true,
+            'company_name' => 'Empresa Test',
+            'service_type' => 'treatment',
+            'service_date' => '2026-03-15',
+            'invoiced' => true,
         ]);
 
         $this->actingAs($viticulturist);

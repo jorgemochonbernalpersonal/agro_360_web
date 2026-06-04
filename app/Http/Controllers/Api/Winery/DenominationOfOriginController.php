@@ -29,17 +29,17 @@ class DenominationOfOriginController extends Controller
         }
 
         $perPage = $this->resolvePerPage($request, 20, 100);
-        $items   = $query->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
             'data' => $items->map(fn ($q) => $this->formatQualification($q)),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'results'      => DoQualification::RESULT_LABELS,
-                'colors'       => DoQualification::COLOR_LABELS,
+                'last_page' => $items->lastPage(),
+                'results' => DoQualification::RESULT_LABELS,
+                'colors' => DoQualification::COLOR_LABELS,
             ],
         ]);
     }
@@ -72,16 +72,16 @@ class DenominationOfOriginController extends Controller
         }
 
         $perPage = $this->resolvePerPage($request, 20, 100);
-        $items   = $query->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
             'data' => $items->map(fn ($l) => $this->formatLabel($l)),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'statuses'     => DoLabel::STATUS_LABELS,
+                'last_page' => $items->lastPage(),
+                'statuses' => DoLabel::STATUS_LABELS,
             ],
         ]);
     }
@@ -114,17 +114,17 @@ class DenominationOfOriginController extends Controller
         }
 
         $perPage = $this->resolvePerPage($request, 20, 100);
-        $items   = $query->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
             'data' => $items->map(fn ($i) => $this->formatInspection($i)),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'statuses'     => DoInspection::STATUS_LABELS,
-                'results'      => DoInspection::RESULT_LABELS,
+                'last_page' => $items->lastPage(),
+                'statuses' => DoInspection::STATUS_LABELS,
+                'results' => DoInspection::RESULT_LABELS,
             ],
         ]);
     }
@@ -143,15 +143,15 @@ class DenominationOfOriginController extends Controller
         }
 
         $perPage = $this->resolvePerPage($request, 20, 100);
-        $items   = $query->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
             'data' => $items->map(fn ($d) => $this->formatDocument($d)),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
+                'last_page' => $items->lastPage(),
             ],
         ]);
     }
@@ -161,73 +161,73 @@ class DenominationOfOriginController extends Controller
     private function formatQualification(DoQualification $q): array
     {
         return [
-            'id'                 => $q->id,
-            'vintage'            => $q->vintage,
-            'wine_name'          => $q->wine_name,
-            'color'              => $q->color,
-            'color_label'        => DoQualification::COLOR_LABELS[$q->color] ?? $q->color,
+            'id' => $q->id,
+            'vintage' => $q->vintage,
+            'wine_name' => $q->wine_name,
+            'color' => $q->color,
+            'color_label' => DoQualification::COLOR_LABELS[$q->color] ?? $q->color,
             'alcohol_percentage' => $q->alcohol_percentage !== null ? (float) $q->alcohol_percentage : null,
-            'brix_degree'        => $q->brix_degree !== null ? (float) $q->brix_degree : null,
-            'acidity_level'      => $q->acidity_level !== null ? (float) $q->acidity_level : null,
-            'ph_level'           => $q->ph_level !== null ? (float) $q->ph_level : null,
-            'visual_score'       => $q->visual_score,
-            'aroma_score'        => $q->aroma_score,
-            'taste_score'        => $q->taste_score,
-            'overall_score'      => $q->overall_score,
-            'result'             => $q->result,
-            'result_label'       => DoQualification::RESULT_LABELS[$q->result] ?? $q->result,
-            'tasting_notes'      => $q->tasting_notes,
+            'brix_degree' => $q->brix_degree !== null ? (float) $q->brix_degree : null,
+            'acidity_level' => $q->acidity_level !== null ? (float) $q->acidity_level : null,
+            'ph_level' => $q->ph_level !== null ? (float) $q->ph_level : null,
+            'visual_score' => $q->visual_score,
+            'aroma_score' => $q->aroma_score,
+            'taste_score' => $q->taste_score,
+            'overall_score' => $q->overall_score,
+            'result' => $q->result,
+            'result_label' => DoQualification::RESULT_LABELS[$q->result] ?? $q->result,
+            'tasting_notes' => $q->tasting_notes,
             'qualification_date' => $q->qualification_date?->toDateString(),
-            'created_at'         => $q->created_at->toIso8601String(),
+            'created_at' => $q->created_at->toIso8601String(),
         ];
     }
 
     private function formatLabel(DoLabel $l): array
     {
         return [
-            'id'                 => $l->id,
-            'vintage'            => $l->vintage,
-            'batch_number'       => $l->batch_number,
+            'id' => $l->id,
+            'vintage' => $l->vintage,
+            'batch_number' => $l->batch_number,
             'quantity_requested' => $l->quantity_requested,
-            'quantity_issued'    => $l->quantity_issued,
-            'quantity_stock'     => $l->quantity_stock,
-            'status'             => $l->status,
-            'status_label'       => DoLabel::STATUS_LABELS[$l->status] ?? $l->status,
-            'notes'              => $l->notes,
-            'requested_at'       => $l->requested_at?->toIso8601String(),
-            'issued_at'          => $l->issued_at?->toIso8601String(),
-            'created_at'         => $l->created_at->toIso8601String(),
+            'quantity_issued' => $l->quantity_issued,
+            'quantity_stock' => $l->quantity_stock,
+            'status' => $l->status,
+            'status_label' => DoLabel::STATUS_LABELS[$l->status] ?? $l->status,
+            'notes' => $l->notes,
+            'requested_at' => $l->requested_at?->toIso8601String(),
+            'issued_at' => $l->issued_at?->toIso8601String(),
+            'created_at' => $l->created_at->toIso8601String(),
         ];
     }
 
     private function formatInspection(DoInspection $i): array
     {
         return [
-            'id'               => $i->id,
-            'inspection_date'  => $i->inspection_date?->toDateString(),
-            'status'           => $i->status,
-            'status_label'     => DoInspection::STATUS_LABELS[$i->status] ?? $i->status,
-            'result'           => $i->result,
-            'result_label'     => DoInspection::RESULT_LABELS[$i->result] ?? $i->result,
-            'findings'         => $i->findings,
-            'notes'            => $i->notes,
+            'id' => $i->id,
+            'inspection_date' => $i->inspection_date?->toDateString(),
+            'status' => $i->status,
+            'status_label' => DoInspection::STATUS_LABELS[$i->status] ?? $i->status,
+            'result' => $i->result,
+            'result_label' => DoInspection::RESULT_LABELS[$i->result] ?? $i->result,
+            'findings' => $i->findings,
+            'notes' => $i->notes,
             'reference_number' => $i->reference_number,
-            'created_at'       => $i->created_at->toIso8601String(),
+            'created_at' => $i->created_at->toIso8601String(),
         ];
     }
 
     private function formatDocument(DoDocument $d): array
     {
         return [
-            'id'             => $d->id,
-            'type'           => $d->type,
-            'title'          => $d->title,
-            'version'        => $d->version,
+            'id' => $d->id,
+            'type' => $d->type,
+            'title' => $d->title,
+            'version' => $d->version,
             'effective_date' => $d->effective_date?->toDateString(),
-            'content'        => $d->content,
-            'status'         => $d->status,
-            'status_label'   => DoDocument::STATUS_LABELS[$d->status] ?? $d->status,
-            'created_at'     => $d->created_at->toIso8601String(),
+            'content' => $d->content,
+            'status' => $d->status,
+            'status_label' => DoDocument::STATUS_LABELS[$d->status] ?? $d->status,
+            'created_at' => $d->created_at->toIso8601String(),
         ];
     }
 }

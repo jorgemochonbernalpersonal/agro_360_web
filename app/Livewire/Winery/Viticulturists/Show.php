@@ -18,11 +18,13 @@ class Show extends Component
     use WithToastNotifications;
 
     public User $viticulturist;
+
     public WineryViticulturist $relation;
 
     // Invitation
-    public string $inviteEmail    = '';
-    public bool   $showEmailField = false;
+    public string $inviteEmail = '';
+
+    public bool $showEmailField = false;
 
     public function mount(User $viticulturist): void
     {
@@ -39,27 +41,20 @@ class Show extends Component
         }
     }
 
-    // ── Invitation ───────────────────────────────────────────────────────────
-
-    protected function hasRealEmail(): bool
-    {
-        return $this->viticulturist->email
-            && !str_starts_with($this->viticulturist->email, 'viticultores.');
-    }
-
     public function sendInvitation(): void
     {
         $this->validate([
             'inviteEmail' => ['required', 'email', 'max:255'],
         ], [
             'inviteEmail.required' => __('Introduce el email del viticultor.'),
-            'inviteEmail.email'    => __('El email no es válido.'),
+            'inviteEmail.email' => __('El email no es válido.'),
         ]);
 
         // Rate limit: max 1 envío por hora
         if ($this->viticulturist->invitation_sent_at
             && $this->viticulturist->invitation_sent_at->isAfter(now()->subHour())) {
             $this->toastError(__('Invitación enviada hace menos de 1 hora. Espera antes de reenviar.'));
+
             return;
         }
 
@@ -69,18 +64,19 @@ class Show extends Component
 
         if ($emailTaken) {
             $this->addError('inviteEmail', __('Este email ya está registrado en el sistema.'));
+
             return;
         }
 
         $plainToken = Str::random(64);
 
         $updates = [
-            'invitation_token'      => hash('sha256', $plainToken),
-            'invitation_sent_at'    => now(),
+            'invitation_token' => hash('sha256', $plainToken),
+            'invitation_sent_at' => now(),
             'invitation_expires_at' => now()->addDays(7),
         ];
 
-        if (!$this->hasRealEmail()) {
+        if (! $this->hasRealEmail()) {
             $updates['email'] = $this->inviteEmail;
         }
 
@@ -96,9 +92,9 @@ class Show extends Component
     public function revokeInvitation(): void
     {
         $this->viticulturist->update([
-            'invitation_token'      => null,
+            'invitation_token' => null,
             'invitation_expires_at' => null,
-            'invitation_sent_at'    => null,
+            'invitation_sent_at' => null,
         ]);
         $this->toastSuccess(__('Invitación revocada.'));
     }
@@ -113,21 +109,23 @@ class Show extends Component
 
         if ($existing && $existing->isPending()) {
             $this->toastInfo(__('Ya tienes una solicitud pendiente de respuesta.'));
+
             return;
         }
 
         if ($this->relation->notebook_access) {
             $this->toastInfo(__('Esta bodega ya tiene acceso al cuaderno.'));
+
             return;
         }
 
         NotebookAccessRequest::updateOrCreate(
             [
-                'winery_id'        => Auth::id(),
+                'winery_id' => Auth::id(),
                 'viticulturist_id' => $this->viticulturist->id,
             ],
             [
-                'status'       => NotebookAccessRequest::STATUS_PENDING,
+                'status' => NotebookAccessRequest::STATUS_PENDING,
                 'requested_at' => now(),
                 'responded_at' => null,
             ]
@@ -161,9 +159,9 @@ class Show extends Component
 
         $plots = $this->viticulturist->plots;
 
-        $totalHa        = $plots->sum('area');
-        $totalPlantings = $plots->sum(fn($p) => $p->plantings->count());
-        $totalKgLimit   = $plots->sum(fn($p) => $p->plantings->sum('harvest_limit_kg'));
+        $totalHa = $plots->sum('area');
+        $totalPlantings = $plots->sum(fn ($p) => $p->plantings->count());
+        $totalKgLimit = $plots->sum(fn ($p) => $p->plantings->sum('harvest_limit_kg'));
 
         $isOwn = $this->relation->source === WineryViticulturist::SOURCE_OWN;
 
@@ -174,14 +172,22 @@ class Show extends Component
             : null;
 
         return view('livewire.winery.viticulturists.show', [
-            'plots'          => $plots,
-            'totalHa'        => $totalHa,
+            'plots' => $plots,
+            'totalHa' => $totalHa,
             'totalPlantings' => $totalPlantings,
-            'totalKgLimit'   => $totalKgLimit,
-            'relation'       => $this->relation,
-            'isOwn'          => $isOwn,
-            'hasRealEmail'   => $this->hasRealEmail(),
-            'accessRequest'  => $accessRequest,
+            'totalKgLimit' => $totalKgLimit,
+            'relation' => $this->relation,
+            'isOwn' => $isOwn,
+            'hasRealEmail' => $this->hasRealEmail(),
+            'accessRequest' => $accessRequest,
         ])->layout('layouts.app');
+    }
+
+    // ── Invitation ───────────────────────────────────────────────────────────
+
+    protected function hasRealEmail(): bool
+    {
+        return $this->viticulturist->email
+            && ! str_starts_with($this->viticulturist->email, 'viticultores.');
     }
 }

@@ -23,10 +23,10 @@ class HarvestByproductTest extends TestCase
     public function test_byproduct_type_label_returns_label_for_every_type(): void
     {
         $expected = [
-            'orujo'  => 'Orujo / Hollejo',
+            'orujo' => 'Orujo / Hollejo',
             'raspon' => 'Raspón / Escobajo',
-            'lia'    => 'Lías',
-            'otro'   => 'Otro',
+            'lia' => 'Lías',
+            'otro' => 'Otro',
         ];
 
         foreach ($expected as $key => $label) {
@@ -50,12 +50,12 @@ class HarvestByproductTest extends TestCase
     public function test_destination_type_label_returns_label_for_every_type(): void
     {
         $expected = [
-            'cooperativa'          => 'Cooperativa vinícola',
-            'bodega'               => 'Bodega',
-            'destileria'           => 'Destilería / Alcoholera',
-            'compostaje'           => 'Planta de compostaje',
+            'cooperativa' => 'Cooperativa vinícola',
+            'bodega' => 'Bodega',
+            'destileria' => 'Destilería / Alcoholera',
+            'compostaje' => 'Planta de compostaje',
             'vertedero_autorizado' => 'Vertedero autorizado',
-            'otro'                 => 'Otro destino',
+            'otro' => 'Otro destino',
         ];
 
         foreach ($expected as $key => $label) {
@@ -99,13 +99,13 @@ class HarvestByproductTest extends TestCase
 
         $byproduct = HarvestByproduct::create([
             'viticulturist_id' => $user->id,
-            'campaign_id'      => $campaign->id,
-            'date'             => now(),
-            'byproduct_type'   => 'orujo',
-            'quantity_kg'      => 500,
+            'campaign_id' => $campaign->id,
+            'date' => now(),
+            'byproduct_type' => 'orujo',
+            'quantity_kg' => 500,
             'destination_type' => 'cooperativa',
             'destination_name' => 'Coop Test',
-            'active'           => true,
+            'active' => true,
         ]);
 
         $this->assertEquals($user->id, $byproduct->viticulturist->id);
@@ -118,13 +118,13 @@ class HarvestByproductTest extends TestCase
 
         $byproduct = HarvestByproduct::create([
             'viticulturist_id' => $user->id,
-            'campaign_id'      => $campaign->id,
-            'date'             => now(),
-            'byproduct_type'   => 'lia',
-            'quantity_kg'      => 200,
+            'campaign_id' => $campaign->id,
+            'date' => now(),
+            'byproduct_type' => 'lia',
+            'quantity_kg' => 200,
             'destination_type' => 'destileria',
             'destination_name' => 'Destilería Test',
-            'active'           => true,
+            'active' => true,
         ]);
 
         $this->assertEquals($campaign->id, $byproduct->campaign->id);

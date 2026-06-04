@@ -3,50 +3,66 @@
 namespace App\Livewire\Viticulturist\Clients;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Models\Client;
-use App\Models\AutonomousCommunity;
-use App\Models\Province;
-use App\Models\Municipality;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
+use App\Models\AutonomousCommunity;
+use App\Models\Client;
+use App\Models\Municipality;
+use App\Models\Province;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Create extends Component
 {
     use WithFileUploads, WithRoleAwareRedirect, WithToastNotifications;
 
     public $client_type = 'individual';
+
     public $first_name = '';
+
     public $last_name = '';
+
     public $email = '';
+
     public $phone = '';
+
     public $company_name = '';
+
     public $company_document = '';
+
     public $particular_document = '';
+
     public $default_discount = 0;
+
     public $payment_method = '';
+
     public $account_number = '';
+
     public $has_cae = false;
+
     public $cae_number = '';
+
     public $active = true;
+
     public $notes = '';
-    
+
     // Direcciones
     public $addresses = [];
-    
+
     // Datos geográficos
     public $autonomousCommunities;
+
     public $provinces = [];
+
     public $municipalities = [];
 
     public function mount()
     {
         // Cargar comunidades autónomas
         $this->autonomousCommunities = AutonomousCommunity::orderBy('name')->get();
-        
+
         // Inicializar con una dirección por defecto
         $this->addresses = [[
             'address' => '',
@@ -77,7 +93,7 @@ class Create extends Component
         if (count($this->addresses) > 1) {
             unset($this->addresses[$index]);
             $this->addresses = array_values($this->addresses);
-            
+
             // Asegurar que al menos una esté marcada como default
             $hasDefault = false;
             foreach ($this->addresses as $address) {
@@ -86,7 +102,7 @@ class Create extends Component
                     break;
                 }
             }
-            if (!$hasDefault && count($this->addresses) > 0) {
+            if (! $hasDefault && count($this->addresses) > 0) {
                 $this->addresses[0]['is_default'] = true;
             }
         }
@@ -98,7 +114,7 @@ class Create extends Component
             $this->addresses[$key]['is_default'] = ($key === $index);
         }
     }
-    
+
     public function updatedAddresses($value, $key)
     {
         // Si cambia la comunidad autónoma de alguna dirección
@@ -114,7 +130,7 @@ class Create extends Component
                 $this->loadProvinces($index);
             }
         }
-        
+
         // Si cambia la provincia
         if (str_contains($key, '.province_id')) {
             $index = (int) explode('.', $key)[0];
@@ -127,7 +143,7 @@ class Create extends Component
             }
         }
     }
-    
+
     public function loadProvinces($index)
     {
         $caId = $this->addresses[$index]['autonomous_community_id'] ?? null;
@@ -139,7 +155,7 @@ class Create extends Component
             $this->provinces[$index] = [];
         }
     }
-    
+
     public function loadMunicipalities($index)
     {
         $provinceId = $this->addresses[$index]['province_id'] ?? null;
@@ -150,39 +166,6 @@ class Create extends Component
         } else {
             $this->municipalities[$index] = [];
         }
-    }
-
-    protected function rules(): array
-    {
-        $rules = [
-            'client_type' => 'required|in:individual,company',
-            'first_name' => 'required_if:client_type,individual|nullable|string|max:100',
-            'last_name' => 'required_if:client_type,individual|nullable|string|max:100',
-            'email' => 'nullable|email|max:50',
-            'phone' => 'nullable|string|max:50',
-            'company_name' => 'required_if:client_type,company|nullable|string|max:100',
-            'company_document' => 'required_if:client_type,company|nullable|string|max:50',
-            'particular_document' => 'nullable|string|max:15',
-            'default_discount' => 'nullable|numeric|min:0|max:100',
-            'payment_method' => 'nullable|in:cash,transfer,check,other',
-            'account_number' => 'nullable|string|max:50',
-            'has_cae' => 'boolean',
-            'cae_number' => 'nullable|string|max:255',
-            'active' => 'boolean',
-            'notes' => 'nullable|string',
-            
-            // Validación de direcciones
-            'addresses' => 'required|array|min:1',
-            'addresses.*.address' => 'required|string|max:255',
-            'addresses.*.postal_code' => 'required|string|max:10',
-            'addresses.*.municipality_id' => 'required|exists:municipalities,id',
-            'addresses.*.province_id' => 'required|exists:provinces,id',
-            'addresses.*.autonomous_community_id' => 'required|exists:autonomous_communities,id',
-            'addresses.*.is_default' => 'boolean',
-            'addresses.*.description' => 'nullable|string|max:500',
-        ];
-
-        return $rules;
     }
 
     public function save()
@@ -211,10 +194,10 @@ class Create extends Component
                     'active' => $this->active,
                     'notes' => $this->notes ?: null,
                 ]);
-                
+
                 // Guardar direcciones
                 foreach ($this->addresses as $addressData) {
-                    if (!empty($addressData['address'])) {
+                    if (! empty($addressData['address'])) {
                         $client->addresses()->create([
                             'address' => $addressData['address'],
                             'postal_code' => $addressData['postal_code'] ?: null,
@@ -229,9 +212,10 @@ class Create extends Component
             });
 
             $this->toastSuccess(__('Cliente creado exitosamente.'));
+
             return $this->viticulturistRoleRedirect('clients.index');
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al crear el cliente. Inténtalo de nuevo.'));
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : __('Error al crear el cliente. Inténtalo de nuevo.'));
         }
     }
 
@@ -239,5 +223,38 @@ class Create extends Component
     public function render()
     {
         return view('livewire.viticulturist.clients.create');
+    }
+
+    protected function rules(): array
+    {
+        $rules = [
+            'client_type' => 'required|in:individual,company',
+            'first_name' => 'required_if:client_type,individual|nullable|string|max:100',
+            'last_name' => 'required_if:client_type,individual|nullable|string|max:100',
+            'email' => 'nullable|email|max:50',
+            'phone' => 'nullable|string|max:50',
+            'company_name' => 'required_if:client_type,company|nullable|string|max:100',
+            'company_document' => 'required_if:client_type,company|nullable|string|max:50',
+            'particular_document' => 'nullable|string|max:15',
+            'default_discount' => 'nullable|numeric|min:0|max:100',
+            'payment_method' => 'nullable|in:cash,transfer,check,other',
+            'account_number' => 'nullable|string|max:50',
+            'has_cae' => 'boolean',
+            'cae_number' => 'nullable|string|max:255',
+            'active' => 'boolean',
+            'notes' => 'nullable|string',
+
+            // Validación de direcciones
+            'addresses' => 'required|array|min:1',
+            'addresses.*.address' => 'required|string|max:255',
+            'addresses.*.postal_code' => 'required|string|max:10',
+            'addresses.*.municipality_id' => 'required|exists:municipalities,id',
+            'addresses.*.province_id' => 'required|exists:provinces,id',
+            'addresses.*.autonomous_community_id' => 'required|exists:autonomous_communities,id',
+            'addresses.*.is_default' => 'boolean',
+            'addresses.*.description' => 'nullable|string|max:500',
+        ];
+
+        return $rules;
     }
 }

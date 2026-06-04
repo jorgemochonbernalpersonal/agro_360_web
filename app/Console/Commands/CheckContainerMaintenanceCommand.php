@@ -11,12 +11,13 @@ use Illuminate\Support\Facades\Log;
 
 class CheckContainerMaintenanceCommand extends Command
 {
-    protected $signature   = 'containers:check-maintenance {--days=7 : Días de antelación para alertas próximas}';
+    protected $signature = 'containers:check-maintenance {--days=7 : Días de antelación para alertas próximas}';
+
     protected $description = 'Envía alertas por email de mantenimientos de contenedores vencidos o próximos';
 
     public function handle(): int
     {
-        $days  = (int) $this->option('days');
+        $days = (int) $this->option('days');
         $today = now()->toDateString();
         $limit = now()->addDays($days)->toDateString();
 
@@ -29,14 +30,13 @@ class CheckContainerMaintenanceCommand extends Command
 
         foreach ($userIds as $userId) {
             $user = User::find($userId);
-            if (!$user || !$user->email) {
+            if (! $user || ! $user->email) {
                 continue;
             }
 
             // Mantenimientos programados vencidos (scheduled_date < hoy, sin completar)
-            $overdue = ContainerMaintenance::whereHas('container', fn ($q) =>
-                    $q->where('user_id', $userId)->where('archived', false)
-                )
+            $overdue = ContainerMaintenance::whereHas('container', fn ($q) => $q->where('user_id', $userId)->where('archived', false)
+            )
                 ->where('status', 'scheduled')
                 ->where('scheduled_date', '<', $today)
                 ->with('container')
@@ -59,13 +59,13 @@ class CheckContainerMaintenanceCommand extends Command
                 $sent++;
 
                 $this->line("  ✓ Notificación enviada a {$user->email} "
-                    . "({$overdue->count()} vencidos, {$upcoming->count()} próximos)");
+                    ."({$overdue->count()} vencidos, {$upcoming->count()} próximos)");
 
             } catch (\Exception $e) {
-                Log::error('CheckContainerMaintenance: error al notificar usuario ' . $userId, [
+                Log::error('CheckContainerMaintenance: error al notificar usuario '.$userId, [
                     'error' => $e->getMessage(),
                 ]);
-                $this->error("  ✗ Error notificando a {$user->email}: " . $e->getMessage());
+                $this->error("  ✗ Error notificando a {$user->email}: ".$e->getMessage());
             }
         }
 

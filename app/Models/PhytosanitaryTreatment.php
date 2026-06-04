@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class PhytosanitaryTreatment extends Model
 {
@@ -39,23 +39,23 @@ class PhytosanitaryTreatment extends Model
     ];
 
     protected $casts = [
-        'dose_per_hectare'              => 'decimal:3',
-        'total_dose'                    => 'decimal:3',
-        'area_treated'                  => 'decimal:3',
-        'wind_speed'                    => 'decimal:2',
-        'humidity'                      => 'decimal:2',
-        'spray_volume'                  => 'decimal:2',
-        'water_volume_liters_ha'        => 'decimal:2',
-        'distance_to_water_m'           => 'decimal:2',
-        'reentry_period_days'           => 'integer',
-        'advisory_recommendation_date'  => 'date',
-        'under_advisory'                => 'boolean',
-        'buffer_zone_respected'         => 'boolean',
-        'prior_non_chemical_methods'    => 'boolean',
-        'plague_monitoring'             => 'boolean',
-        'manual_mechanical_control'     => 'boolean',
-        'biological_control'            => 'boolean',
-        'cultural_preventions'          => 'boolean',
+        'dose_per_hectare' => 'decimal:3',
+        'total_dose' => 'decimal:3',
+        'area_treated' => 'decimal:3',
+        'wind_speed' => 'decimal:2',
+        'humidity' => 'decimal:2',
+        'spray_volume' => 'decimal:2',
+        'water_volume_liters_ha' => 'decimal:2',
+        'distance_to_water_m' => 'decimal:2',
+        'reentry_period_days' => 'integer',
+        'advisory_recommendation_date' => 'date',
+        'under_advisory' => 'boolean',
+        'buffer_zone_respected' => 'boolean',
+        'prior_non_chemical_methods' => 'boolean',
+        'plague_monitoring' => 'boolean',
+        'manual_mechanical_control' => 'boolean',
+        'biological_control' => 'boolean',
+        'cultural_preventions' => 'boolean',
     ];
 
     /**
@@ -97,14 +97,14 @@ class PhytosanitaryTreatment extends Model
     {
         return Attribute::make(
             get: function () {
-                if (!$this->product || !$this->product->withdrawal_period_days) {
+                if (! $this->product || ! $this->product->withdrawal_period_days) {
                     return null;
                 }
                 $activityDate = $this->relationLoaded('activity')
                     ? $this->activity?->activity_date
                     : $this->activity()->value('activity_date');
 
-                if (!$activityDate) {
+                if (! $activityDate) {
                     return null;
                 }
 

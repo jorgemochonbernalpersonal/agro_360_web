@@ -43,7 +43,7 @@ class DailyDigestNotification extends Notification implements ShouldQueue
         }
 
         $mail->action(__('Ver todas en Agro365'), url('/dashboard'))
-             ->line(__('Puedes cambiar a notificaciones instantáneas en Configuración > Notificaciones.'));
+            ->line(__('Puedes cambiar a notificaciones instantáneas en Configuración > Notificaciones.'));
 
         return $mail;
     }

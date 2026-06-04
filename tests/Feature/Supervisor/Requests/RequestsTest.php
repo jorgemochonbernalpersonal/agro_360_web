@@ -4,8 +4,6 @@ namespace Tests\Feature\Supervisor\Requests;
 
 use App\Livewire\Supervisor\Requests\Index;
 use App\Models\SupervisorRequest;
-use App\Models\SupervisorWinery;
-use App\Models\User;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -38,10 +36,10 @@ class RequestsTest extends SupervisorTestCase
 
         $this->assertDatabaseHas('supervisor_requests', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_QUALIFICATION,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
-            'title'         => 'Lote R-2026-001',
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_QUALIFICATION,
+            'status' => SupervisorRequest::STATUS_DRAFT,
+            'title' => 'Lote R-2026-001',
         ]);
     }
 
@@ -58,7 +56,7 @@ class RequestsTest extends SupervisorTestCase
     public function test_cannot_create_request_for_unassigned_winery(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery(); // no adscrita
+        $winery = $this->makeWinery(); // no adscrita
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
@@ -77,9 +75,9 @@ class RequestsTest extends SupervisorTestCase
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_LABEL_REQUEST,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_LABEL_REQUEST,
+            'status' => SupervisorRequest::STATUS_DRAFT,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -97,9 +95,9 @@ class RequestsTest extends SupervisorTestCase
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_QUALIFICATION,
-            'status'        => SupervisorRequest::STATUS_IN_REVIEW,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_QUALIFICATION,
+            'status' => SupervisorRequest::STATUS_IN_REVIEW,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -116,9 +114,9 @@ class RequestsTest extends SupervisorTestCase
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_HARVEST_DECLARATION,
-            'status'        => SupervisorRequest::STATUS_IN_REVIEW,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_HARVEST_DECLARATION,
+            'status' => SupervisorRequest::STATUS_IN_REVIEW,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -132,13 +130,13 @@ class RequestsTest extends SupervisorTestCase
     public function test_supervisor_cannot_touch_another_supervisors_request(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_CERTIFICATION,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_CERTIFICATION,
+            'status' => SupervisorRequest::STATUS_DRAFT,
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);

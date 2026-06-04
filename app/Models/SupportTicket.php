@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
@@ -24,19 +24,10 @@ class SupportTicket extends Model
     ];
 
     protected $casts = [
-        'images'      => 'array',
+        'images' => 'array',
         'resolved_at' => 'datetime',
-        'closed_at'   => 'datetime',
+        'closed_at' => 'datetime',
     ];
-
-    protected static function booted(): void
-    {
-        static::saved(function (SupportTicket $ticket) {
-            if ($ticket->wasRecentlyCreated || $ticket->wasChanged('status')) {
-                Cache::forget("nav_badge_support_{$ticket->user_id}");
-            }
-        });
-    }
 
     /**
      * Usuario que creó el ticket
@@ -64,6 +55,8 @@ class SupportTicket extends Model
 
     /**
      * Scope para filtrar tickets abiertos
+     *
+     * @param mixed $query
      */
     public function scopeOpen($query)
     {
@@ -72,6 +65,8 @@ class SupportTicket extends Model
 
     /**
      * Scope para filtrar tickets cerrados
+     *
+     * @param mixed $query
      */
     public function scopeClosed($query)
     {
@@ -80,6 +75,9 @@ class SupportTicket extends Model
 
     /**
      * Scope para filtrar tickets de un usuario
+     *
+     * @param mixed $query
+     * @param mixed $userId
      */
     public function scopeForUser($query, $userId)
     {
@@ -88,6 +86,8 @@ class SupportTicket extends Model
 
     /**
      * Scope para filtrar por tipo
+     *
+     * @param mixed $query
      */
     public function scopeOfType($query, string $type)
     {
@@ -96,6 +96,8 @@ class SupportTicket extends Model
 
     /**
      * Scope para filtrar por prioridad
+     *
+     * @param mixed $query
      */
     public function scopeWithPriority($query, string $priority)
     {
@@ -240,8 +242,17 @@ class SupportTicket extends Model
         }
 
         return array_map(
-            fn($path) => Storage::disk('public')->url($path),
+            fn ($path) => Storage::disk('public')->url($path),
             $this->images
         );
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function (SupportTicket $ticket) {
+            if ($ticket->wasRecentlyCreated || $ticket->wasChanged('status')) {
+                Cache::forget("nav_badge_support_{$ticket->user_id}");
+            }
+        });
     }
 }

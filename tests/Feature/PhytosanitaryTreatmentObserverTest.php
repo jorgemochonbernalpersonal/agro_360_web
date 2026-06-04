@@ -2,18 +2,18 @@
 
 namespace Tests\Feature;
 
-use App\Models\PhytosanitaryTreatment;
-use App\Models\PhytosanitaryProduct;
-use App\Models\ProductStock;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\GrapeVariety;
+use App\Models\PhytosanitaryProduct;
+use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Models\GrapeVariety;
-use App\Models\Campaign;
+use App\Models\ProductStock;
 use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
 use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,22 +29,6 @@ class PhytosanitaryTreatmentObserverTest extends TestCase
             AutonomousCommunitySeeder::class,
             ProvinceSeeder::class,
             MunicipalitySeeder::class,
-        ]);
-    }
-
-    private function createPlantingForPlot(Plot $plot): PlotPlanting
-    {
-        $grapeVariety = GrapeVariety::firstOrCreate(
-            ['code' => 'TEMP'],
-            ['name' => 'Tempranillo', 'color' => 'red']
-        );
-        
-        return PlotPlanting::create([
-            'plot_id' => $plot->id,
-            'grape_variety_id' => $grapeVariety->id,
-            'area_planted' => $plot->area * 0.8,
-            'planting_year' => now()->year - 5,
-            'status' => 'active',
         ]);
     }
 
@@ -92,10 +76,10 @@ class PhytosanitaryTreatmentObserverTest extends TestCase
         ]);
 
         $stock->refresh();
-        
+
         // El stock debería haberse descontado
         $this->assertEquals(6.5, $stock->quantity);
-        
+
         // Debería existir un movimiento de consumo
         $movement = $stock->movements()->where('movement_type', 'consumption')->first();
         $this->assertNotNull($movement);
@@ -145,10 +129,10 @@ class PhytosanitaryTreatmentObserverTest extends TestCase
         ]);
 
         $stock->refresh();
-        
+
         // El stock debería haberse descontado solo lo disponible (2.0)
         $this->assertEquals(0, $stock->quantity);
-        
+
         // Debería existir un movimiento de consumo
         $movement = $stock->movements()->where('movement_type', 'consumption')->first();
         $this->assertNotNull($movement);
@@ -195,13 +179,28 @@ class PhytosanitaryTreatmentObserverTest extends TestCase
         ]);
 
         $stock->refresh();
-        
+
         // El stock no debería haberse descontado
         $this->assertEquals(10.0, $stock->quantity);
-        
+
         // No debería existir ningún movimiento
         $movement = $stock->movements()->where('movement_type', 'consumption')->first();
         $this->assertNull($movement);
     }
-}
 
+    private function createPlantingForPlot(Plot $plot): PlotPlanting
+    {
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+
+        return PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => $plot->area * 0.8,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
+    }
+}

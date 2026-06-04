@@ -45,7 +45,7 @@ class WineAnalysisTest extends WineryTestCase
 
     public function test_winery_can_create_wine_analysis(): void
     {
-        $firstType   = array_key_first(WineAnalysis::ANALYSIS_TYPES);
+        $firstType = array_key_first(WineAnalysis::ANALYSIS_TYPES);
         $firstResult = array_key_first(WineAnalysis::RESULTS);
 
         Livewire::test(Create::class)
@@ -56,22 +56,22 @@ class WineAnalysisTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_analyses', [
-            'user_id'       => $this->winery->id,
+            'user_id' => $this->winery->id,
             'analysis_type' => $firstType,
-            'result'        => $firstResult,
+            'result' => $firstResult,
         ]);
     }
 
     public function test_winery_can_edit_wine_analysis(): void
     {
-        $firstType   = array_key_first(WineAnalysis::ANALYSIS_TYPES);
+        $firstType = array_key_first(WineAnalysis::ANALYSIS_TYPES);
         $firstResult = array_key_first(WineAnalysis::RESULTS);
 
         $analysis = WineAnalysis::create([
-            'user_id'       => $this->winery->id,
+            'user_id' => $this->winery->id,
             'analysis_type' => $firstType,
             'analysis_date' => '2026-01-15',
-            'result'        => $firstResult,
+            'result' => $firstResult,
         ]);
 
         $secondType = array_key_last(WineAnalysis::ANALYSIS_TYPES);
@@ -82,21 +82,21 @@ class WineAnalysisTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_analyses', [
-            'id'            => $analysis->id,
+            'id' => $analysis->id,
             'analysis_type' => $secondType,
         ]);
     }
 
     public function test_winery_cannot_edit_other_winery_wine_analysis(): void
     {
-        $firstType   = array_key_first(WineAnalysis::ANALYSIS_TYPES);
+        $firstType = array_key_first(WineAnalysis::ANALYSIS_TYPES);
         $firstResult = array_key_first(WineAnalysis::RESULTS);
 
         $analysis = WineAnalysis::create([
-            'user_id'       => $this->winery->id,
+            'user_id' => $this->winery->id,
             'analysis_type' => $firstType,
             'analysis_date' => '2026-01-15',
-            'result'        => $firstResult,
+            'result' => $firstResult,
         ]);
 
         $otherWinery = $this->makeOtherWinery();
@@ -108,14 +108,14 @@ class WineAnalysisTest extends WineryTestCase
 
     public function test_winery_can_delete_wine_analysis(): void
     {
-        $firstType   = array_key_first(WineAnalysis::ANALYSIS_TYPES);
+        $firstType = array_key_first(WineAnalysis::ANALYSIS_TYPES);
         $firstResult = array_key_first(WineAnalysis::RESULTS);
 
         $analysis = WineAnalysis::create([
-            'user_id'       => $this->winery->id,
+            'user_id' => $this->winery->id,
             'analysis_type' => $firstType,
             'analysis_date' => '2026-01-15',
-            'result'        => $firstResult,
+            'result' => $firstResult,
         ]);
 
         Livewire::test(Index::class)

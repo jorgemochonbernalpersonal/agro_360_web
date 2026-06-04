@@ -15,31 +15,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class CreateTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makePlot($viticulturist): Plot
-    {
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
-        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
-        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
-
-        return Plot::factory()->create([
-            'viticulturist_id'        => $viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
-        ]);
-    }
-
-    private function makeCampaign($viticulturist): Campaign
-    {
-        return Campaign::factory()->active()->create([
-            'viticulturist_id' => $viticulturist->id,
-            'year'             => now()->year,
-        ]);
-    }
-
     // ── mount ──────────────────────────────────────────────────────────────────
 
     public function test_component_renders(): void
@@ -236,17 +211,17 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('agricultural_activities', [
             'viticulturist_id' => $viticulturist->id,
-            'activity_type'    => 'post_harvest',
-            'plot_id'          => $plot->id,
+            'activity_type' => 'post_harvest',
+            'plot_id' => $plot->id,
         ]);
 
         $activity = AgriculturalActivity::where([
             'viticulturist_id' => $viticulturist->id,
-            'activity_type'    => 'post_harvest',
+            'activity_type' => 'post_harvest',
         ])->first();
 
         $this->assertDatabaseHas('post_harvest_treatments', [
-            'activity_id'      => $activity->id,
+            'activity_id' => $activity->id,
             'application_type' => 'copper_treatment',
         ]);
     }
@@ -272,7 +247,7 @@ class CreateTest extends ViticulturistTestCase
             ->call('save')
             ->assertHasNoErrors();
 
-        $activity  = AgriculturalActivity::where('viticulturist_id', $viticulturist->id)->first();
+        $activity = AgriculturalActivity::where('viticulturist_id', $viticulturist->id)->first();
         $treatment = PostHarvestTreatment::where('activity_id', $activity->id)->first();
 
         $this->assertEquals(24, $treatment->reentry_interval_hours);
@@ -297,7 +272,7 @@ class CreateTest extends ViticulturistTestCase
             ->call('save')
             ->assertHasNoErrors();
 
-        $activity  = AgriculturalActivity::where('viticulturist_id', $viticulturist->id)->first();
+        $activity = AgriculturalActivity::where('viticulturist_id', $viticulturist->id)->first();
         $treatment = PostHarvestTreatment::where('activity_id', $activity->id)->first();
 
         $this->assertEquals(0, $treatment->reentry_interval_hours);
@@ -321,7 +296,7 @@ class CreateTest extends ViticulturistTestCase
             ->call('save')
             ->assertHasNoErrors();
 
-        $activity  = AgriculturalActivity::where('viticulturist_id', $viticulturist->id)->first();
+        $activity = AgriculturalActivity::where('viticulturist_id', $viticulturist->id)->first();
         $treatment = PostHarvestTreatment::where('activity_id', $activity->id)->first();
 
         $this->assertNull($treatment->reentry_interval_hours);
@@ -332,9 +307,33 @@ class CreateTest extends ViticulturistTestCase
     public function test_policy_denies_create_for_other_viticulturist_plot(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $plot          = $this->makePlot($viticulturist);
+        $other = $this->makeOtherViticulturist();
+        $plot = $this->makePlot($viticulturist);
 
         $this->assertFalse($other->can('create-activity', $plot));
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makePlot($viticulturist): Plot
+    {
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
+        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
+
+        return Plot::factory()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
+        ]);
+    }
+
+    private function makeCampaign($viticulturist): Campaign
+    {
+        return Campaign::factory()->active()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'year' => now()->year,
+        ]);
     }
 }

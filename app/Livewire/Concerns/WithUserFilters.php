@@ -13,10 +13,10 @@ trait WithUserFilters
     public function getWineriesProperty()
     {
         $user = auth()->user();
-        
-        return match($user->role) {
+
+        return match ($user->role) {
             'admin' => User::where('role', User::ROLE_WINERY)->get(),
-            'supervisor' => User::whereIn('id', 
+            'supervisor' => User::whereIn('id',
                 $user->supervisedWineries->pluck('winery_id')
             )->get(),
             'winery' => collect([$user]),
@@ -24,7 +24,7 @@ trait WithUserFilters
             default => collect(),
         };
     }
-    
+
     /**
      * Obtener viticultores accesibles según el rol del usuario
      * Solo muestra viticultores que el usuario puede editar (crear parcelas para ellos)
@@ -32,10 +32,10 @@ trait WithUserFilters
     public function getViticulturistsProperty()
     {
         $user = auth()->user();
-        
-        return match($user->role) {
+
+        return match ($user->role) {
             'admin' => User::where('role', User::ROLE_VITICULTURIST)->get(),
-            'supervisor' => User::whereIn('id', 
+            'supervisor' => User::whereIn('id',
                 $user->supervisedViticulturists->pluck('viticulturist_id')
             )->get(),
             // Winery users see viticultores creados por la winery
@@ -79,7 +79,7 @@ trait WithUserFilters
                 $fromWineries = \App\Models\WineryViticulturist::whereIn('winery_id', $wineryIds)
                     ->whereIn('source', [
                         \App\Models\WineryViticulturist::SOURCE_OWN,
-                        \App\Models\WineryViticulturist::SOURCE_VITICULTURIST
+                        \App\Models\WineryViticulturist::SOURCE_VITICULTURIST,
                     ])
                     ->where('viticulturist_id', '!=', $user->id)
                     ->with('viticulturist')
@@ -154,4 +154,3 @@ trait WithUserFilters
             ->values();
     }
 }
-

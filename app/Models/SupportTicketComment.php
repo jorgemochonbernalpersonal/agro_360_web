@@ -36,6 +36,8 @@ class SupportTicketComment extends Model
 
     /**
      * Scope para comentarios públicos
+     *
+     * @param mixed $query
      */
     public function scopePublic($query)
     {
@@ -44,6 +46,8 @@ class SupportTicketComment extends Model
 
     /**
      * Scope para comentarios internos
+     *
+     * @param mixed $query
      */
     public function scopeInternal($query)
     {

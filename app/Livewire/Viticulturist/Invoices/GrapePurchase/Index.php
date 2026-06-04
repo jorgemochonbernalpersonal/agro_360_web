@@ -12,19 +12,32 @@ class Index extends Component
 {
     use WithPagination;
 
-    public string $search        = '';
-    public string $wineryFilter  = '';
+    public string $search = '';
+
+    public string $wineryFilter = '';
+
     public string $paymentFilter = '';
 
     protected $queryString = [
-        'search'        => ['except' => ''],
-        'wineryFilter'  => ['except' => ''],
+        'search' => ['except' => ''],
+        'wineryFilter' => ['except' => ''],
         'paymentFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void        { $this->resetPage(); }
-    public function updatingWineryFilter(): void  { $this->resetPage(); }
-    public function updatingPaymentFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingWineryFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPaymentFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
@@ -41,13 +54,12 @@ class Index extends Component
             ->with('user');
 
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(IFNULL(invoice_number,\'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term])
-                  ->orWhereHas('user', fn ($q2) =>
-                      $q2->whereRaw('LOWER(name) LIKE ?', [$term])
-                  );
+                    ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term])
+                    ->orWhereHas('user', fn ($q2) => $q2->whereRaw('LOWER(name) LIKE ?', [$term])
+                    );
             });
         }
 
@@ -78,14 +90,14 @@ class Index extends Component
 
         $stats = [
             'total_amount' => (clone $baseQuery)->sum('total_amount'),
-            'paid_amount'  => (clone $baseQuery)->where('payment_status', 'paid')->sum('total_amount'),
+            'paid_amount' => (clone $baseQuery)->where('payment_status', 'paid')->sum('total_amount'),
             'pending_count' => (clone $baseQuery)->where('payment_status', 'unpaid')->count(),
         ];
 
         return view('livewire.viticulturist.invoices.grape-purchase.index', [
             'invoices' => $invoices,
             'wineries' => $wineries,
-            'stats'    => $stats,
+            'stats' => $stats,
         ])->layout('layouts.app');
     }
 }

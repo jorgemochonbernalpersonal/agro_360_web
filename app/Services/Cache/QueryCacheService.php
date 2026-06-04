@@ -46,7 +46,7 @@ class QueryCacheService
         return Cache::remember(
             'geography_provinces',
             604800, // 1 semana
-            fn() => \App\Models\Province::with('autonomousCommunity')->orderBy('name')->get()
+            fn () => \App\Models\Province::with('autonomousCommunity')->orderBy('name')->get()
         );
     }
 
@@ -58,7 +58,7 @@ class QueryCacheService
         return Cache::remember(
             "geography_municipalities_province_{$provinceId}",
             604800, // 1 semana
-            fn() => \App\Models\Municipality::where('province_id', $provinceId)
+            fn () => \App\Models\Municipality::where('province_id', $provinceId)
                 ->orderBy('name')
                 ->get()
         );
@@ -72,7 +72,7 @@ class QueryCacheService
         return Cache::remember(
             'catalog_grape_varieties',
             604800, // 1 semana
-            fn() => \App\Models\GrapeVariety::orderBy('name')->get()
+            fn () => \App\Models\GrapeVariety::orderBy('name')->get()
         );
     }
 
@@ -84,7 +84,7 @@ class QueryCacheService
         return Cache::remember(
             'catalog_training_systems',
             604800, // 1 semana
-            fn() => \App\Models\TrainingSystem::orderBy('name')->get()
+            fn () => \App\Models\TrainingSystem::orderBy('name')->get()
         );
     }
 
@@ -96,7 +96,7 @@ class QueryCacheService
         return Cache::remember(
             'catalog_taxes',
             604800, // 1 semana
-            fn() => \App\Models\Tax::orderBy('rate')->get()
+            fn () => \App\Models\Tax::orderBy('rate')->get()
         );
     }
 

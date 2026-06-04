@@ -23,16 +23,6 @@ class ForcePasswordResetTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function makeUserWithForcedReset(string $role = 'viticulturist'): User
-    {
-        return User::factory()->create([
-            'role'                => $role,
-            'email_verified_at'   => now(),
-            'password'            => Hash::make('TemporalPass1!'),
-            'password_must_reset' => true,
-        ]);
-    }
-
     // ── Renderizado ───────────────────────────────────────────────────────────
 
     public function test_force_reset_page_renders(): void
@@ -67,8 +57,8 @@ class ForcePasswordResetTest extends TestCase
     public function test_user_without_force_reset_accesses_dashboard_normally(): void
     {
         $user = User::factory()->create([
-            'role'                => 'viticulturist',
-            'email_verified_at'   => now(),
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
             'password_must_reset' => false,
         ]);
 
@@ -94,13 +84,13 @@ class ForcePasswordResetTest extends TestCase
                 ->call('updatePassword');
         } catch (\RuntimeException $e) {
             // request()->session()->regenerate() no disponible en Livewire test context
-            if (!str_contains($e->getMessage(), 'Session store not set')) {
+            if (! str_contains($e->getMessage(), 'Session store not set')) {
                 throw $e;
             }
         }
 
         $this->assertDatabaseHas('users', [
-            'id'                  => $user->id,
+            'id' => $user->id,
             'password_must_reset' => false,
         ]);
     }
@@ -117,7 +107,7 @@ class ForcePasswordResetTest extends TestCase
                 ->set('new_password_confirmation', 'NuevaClave1!')
                 ->call('updatePassword');
         } catch (\RuntimeException $e) {
-            if (!str_contains($e->getMessage(), 'Session store not set')) {
+            if (! str_contains($e->getMessage(), 'Session store not set')) {
                 throw $e;
             }
         }
@@ -128,9 +118,9 @@ class ForcePasswordResetTest extends TestCase
     public function test_email_verified_at_set_after_successful_change(): void
     {
         $user = User::factory()->create([
-            'role'                => 'viticulturist',
-            'email_verified_at'   => null,
-            'password'            => Hash::make('TemporalPass1!'),
+            'role' => 'viticulturist',
+            'email_verified_at' => null,
+            'password' => Hash::make('TemporalPass1!'),
             'password_must_reset' => true,
         ]);
 
@@ -143,7 +133,7 @@ class ForcePasswordResetTest extends TestCase
                 ->set('new_password_confirmation', 'NuevaClave1!')
                 ->call('updatePassword');
         } catch (\RuntimeException $e) {
-            if (!str_contains($e->getMessage(), 'Session store not set')) {
+            if (! str_contains($e->getMessage(), 'Session store not set')) {
                 throw $e;
             }
         }
@@ -218,9 +208,9 @@ class ForcePasswordResetTest extends TestCase
         string $expectedRoute
     ): void {
         $user = User::factory()->create([
-            'role'                => $role,
-            'email_verified_at'   => now(),
-            'password'            => Hash::make('TemporalPass1!'),
+            'role' => $role,
+            'email_verified_at' => now(),
+            'password' => Hash::make('TemporalPass1!'),
             'password_must_reset' => true,
         ]);
 
@@ -237,9 +227,19 @@ class ForcePasswordResetTest extends TestCase
     {
         return [
             'viticulturist' => ['viticulturist', 'viticulturist.dashboard'],
-            'winery'        => ['winery',         'winery.dashboard'],
-            'supervisor'    => ['supervisor',      'supervisor.dashboard'],
-            'producer'      => ['producer',        'producer.dashboard'],
+            'winery' => ['winery',         'winery.dashboard'],
+            'supervisor' => ['supervisor',      'supervisor.dashboard'],
+            'producer' => ['producer',        'producer.dashboard'],
         ];
+    }
+
+    private function makeUserWithForcedReset(string $role = 'viticulturist'): User
+    {
+        return User::factory()->create([
+            'role' => $role,
+            'email_verified_at' => now(),
+            'password' => Hash::make('TemporalPass1!'),
+            'password_must_reset' => true,
+        ]);
     }
 }

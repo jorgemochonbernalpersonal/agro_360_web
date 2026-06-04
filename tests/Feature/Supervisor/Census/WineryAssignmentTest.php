@@ -26,7 +26,7 @@ class WineryAssignmentTest extends SupervisorTestCase
     public function test_supervisor_can_assign_winery(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
@@ -35,14 +35,14 @@ class WineryAssignmentTest extends SupervisorTestCase
 
         $this->assertDatabaseHas('supervisor_winery', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
+            'winery_id' => $winery->id,
         ]);
     }
 
     public function test_assign_is_idempotent(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         $component = Livewire::actingAs($supervisor)->test(Index::class);
         $component->call('assignWinery', $winery->id);
@@ -54,7 +54,7 @@ class WineryAssignmentTest extends SupervisorTestCase
     public function test_cannot_assign_non_winery_user(): void
     {
         $supervisor = $this->makeSupervisor();
-        $other      = User::factory()->create(['role' => 'viticulturist']);
+        $other = User::factory()->create(['role' => 'viticulturist']);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
@@ -73,8 +73,8 @@ class WineryAssignmentTest extends SupervisorTestCase
         $second = $this->makeWinery();
         SupervisorWinery::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $second->id,
-            'assigned_by'   => $supervisor->id,
+            'winery_id' => $second->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -84,7 +84,7 @@ class WineryAssignmentTest extends SupervisorTestCase
 
         $this->assertDatabaseMissing('supervisor_winery', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
+            'winery_id' => $winery->id,
         ]);
     }
 
@@ -101,20 +101,20 @@ class WineryAssignmentTest extends SupervisorTestCase
         // La única bodega sigue asociada: no se permite dejar la D.O. huérfana.
         $this->assertDatabaseHas('supervisor_winery', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
+            'winery_id' => $winery->id,
         ]);
     }
 
     public function test_supervisor_cannot_unassign_winery_of_another_supervisor(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
-        $winery          = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         SupervisorWinery::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $otherSupervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $otherSupervisor->id,
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);

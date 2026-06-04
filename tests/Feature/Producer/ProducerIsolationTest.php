@@ -3,7 +3,6 @@
 namespace Tests\Feature\Producer;
 
 use App\Livewire\Winery\Cellar\Containers\Index as ContainersIndex;
-use App\Livewire\Winery\Viticulturists\Index as ViticulturistsIndex;
 use App\Livewire\Winery\Viticulturists\Show as ViticulturistShow;
 use App\Models\Container;
 use App\Models\User;
@@ -21,6 +20,7 @@ use Tests\Feature\ProducerTestCase;
 class ProducerIsolationTest extends ProducerTestCase
 {
     private User $producerA;
+
     private User $producerB;
 
     protected function setUp(): void
@@ -49,7 +49,7 @@ class ProducerIsolationTest extends ProducerTestCase
     public function test_producer_cannot_archive_another_producers_container(): void
     {
         $containerB = Container::factory()->create([
-            'user_id'  => $this->producerB->id,
+            'user_id' => $this->producerB->id,
             'archived' => false,
         ]);
 
@@ -65,7 +65,7 @@ class ProducerIsolationTest extends ProducerTestCase
     public function test_producer_cannot_unarchive_another_producers_container(): void
     {
         $containerB = Container::factory()->create([
-            'user_id'  => $this->producerB->id,
+            'user_id' => $this->producerB->id,
             'archived' => true,
         ]);
 
@@ -84,10 +84,10 @@ class ProducerIsolationTest extends ProducerTestCase
         // Viticulturist linked to Producer B
         $vitic = User::factory()->create(['role' => 'viticulturist']);
         WineryViticulturist::create([
-            'winery_id'        => $this->producerB->id,
+            'winery_id' => $this->producerB->id,
             'viticulturist_id' => $vitic->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->producerB->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->producerB->id,
         ]);
 
         $this->actingAs($this->producerA);
@@ -103,10 +103,10 @@ class ProducerIsolationTest extends ProducerTestCase
     {
         $vitic = User::factory()->create(['role' => 'viticulturist']);
         WineryViticulturist::create([
-            'winery_id'        => $this->producerB->id,
+            'winery_id' => $this->producerB->id,
             'viticulturist_id' => $vitic->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->producerB->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->producerB->id,
         ]);
 
         $this->actingAs($this->producerA);
@@ -124,10 +124,10 @@ class ProducerIsolationTest extends ProducerTestCase
     {
         $vitic = User::factory()->create(['role' => 'viticulturist', 'can_login' => true]);
         WineryViticulturist::create([
-            'winery_id'        => $this->producerA->id,
+            'winery_id' => $this->producerA->id,
             'viticulturist_id' => $vitic->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->producerA->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->producerA->id,
         ]);
 
         $this->actingAs($this->producerA);
@@ -141,18 +141,18 @@ class ProducerIsolationTest extends ProducerTestCase
         // One viticulturist for Producer A, one for Producer B
         $viticA = User::factory()->create(['role' => 'viticulturist']);
         WineryViticulturist::create([
-            'winery_id'        => $this->producerA->id,
+            'winery_id' => $this->producerA->id,
             'viticulturist_id' => $viticA->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->producerA->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->producerA->id,
         ]);
 
         $viticB = User::factory()->create(['role' => 'viticulturist']);
         WineryViticulturist::create([
-            'winery_id'        => $this->producerB->id,
+            'winery_id' => $this->producerB->id,
             'viticulturist_id' => $viticB->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->producerB->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->producerB->id,
         ]);
 
         $this->actingAs($this->producerA);

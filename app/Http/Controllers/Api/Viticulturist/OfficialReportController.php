@@ -19,8 +19,8 @@ class OfficialReportController extends Controller
 
         $request->validate([
             'report_type' => 'nullable|string',
-            'search'      => 'nullable|string|max:100',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = OfficialReport::forUser($user->id)
@@ -35,7 +35,7 @@ class OfficialReportController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('report_type', 'like', "%{$term}%")
-                  ->orWhere('verification_code', 'like', "%{$term}%");
+                    ->orWhere('verification_code', 'like', "%{$term}%");
             });
         }
 
@@ -44,10 +44,10 @@ class OfficialReportController extends Controller
         return response()->json([
             'data' => OfficialReportResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }

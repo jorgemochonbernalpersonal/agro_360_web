@@ -14,7 +14,7 @@ return new class extends Migration
         if (Schema::hasTable('plots')) {
             return;
         }
-        
+
         Schema::create('plots', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->unsignedBigInteger('province_id');
             $table->unsignedBigInteger('municipality_id');
             $table->timestamps();
-            
+
             $table->foreign('viticulturist_id')->references('id')->on('users')->nullOnDelete();
             $table->foreign('autonomous_community_id')->references('id')->on('autonomous_communities')->onDelete('restrict');
             $table->foreign('province_id')->references('id')->on('provinces')->onDelete('restrict');
@@ -45,4 +45,3 @@ return new class extends Migration
         Schema::dropIfExists('plots');
     }
 };
-

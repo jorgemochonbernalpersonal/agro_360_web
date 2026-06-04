@@ -5,8 +5,8 @@ namespace Tests\Unit\Services;
 use App\Services\SecurityLogger;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
-use Tests\TestCase;
 use Mockery;
+use Tests\TestCase;
 
 class SecurityLoggerTest extends TestCase
 {
@@ -47,14 +47,14 @@ class SecurityLoggerTest extends TestCase
             }));
 
         SecurityLogger::logFailedLogin('test@example.com', 'Invalid credentials');
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 
     public function test_log_captcha_activated_logs_notice(): void
     {
         session(['login_failed_attempts' => 5]);
-        
+
         $logChannel = Mockery::mock();
         Log::shouldReceive('channel')
             ->with('security')
@@ -74,7 +74,7 @@ class SecurityLoggerTest extends TestCase
             }));
 
         SecurityLogger::logCaptchaActivated('test@example.com');
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 
@@ -97,7 +97,7 @@ class SecurityLoggerTest extends TestCase
             }));
 
         SecurityLogger::logRateLimitReached('login:127.0.0.1', 5);
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 
@@ -121,7 +121,7 @@ class SecurityLoggerTest extends TestCase
             }));
 
         SecurityLogger::logSuccessfulLoginAfterFailures(1, 'test@example.com', 3);
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 
@@ -146,7 +146,7 @@ class SecurityLoggerTest extends TestCase
             }));
 
         SecurityLogger::logAccessDenied(1, 'Campaign', 'edit');
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 
@@ -165,7 +165,7 @@ class SecurityLoggerTest extends TestCase
             }));
 
         SecurityLogger::logAccessDenied(null, 'Campaign', 'edit');
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 
@@ -189,7 +189,7 @@ class SecurityLoggerTest extends TestCase
             }));
 
         SecurityLogger::logCaptchaValidationFailed('test@example.com');
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 
@@ -213,7 +213,7 @@ class SecurityLoggerTest extends TestCase
             }));
 
         SecurityLogger::logAccountLocked('test@example.com');
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 
@@ -239,7 +239,7 @@ class SecurityLoggerTest extends TestCase
             'custom_field' => 'custom_value',
             'user_id' => 123,
         ]);
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 
@@ -260,7 +260,7 @@ class SecurityLoggerTest extends TestCase
             }));
 
         SecurityLogger::logSecurityEvent('simple_event');
-        
+
         $this->assertTrue(true); // Assertion explícita
     }
 }

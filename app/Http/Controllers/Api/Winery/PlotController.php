@@ -21,9 +21,9 @@ class PlotController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
-            'per_page'       => 'nullable|integer|min:1|max:100',
-            'viticulturist'  => 'nullable|integer|min:1',
-            'search'         => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'viticulturist' => 'nullable|integer|min:1',
+            'search' => 'nullable|string|max:100',
         ]);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
@@ -38,7 +38,7 @@ class PlotController extends Controller
             $base->where('viticulturist_id', (int) $request->viticulturist);
         }
         if ($request->filled('search')) {
-            $base->where('name', 'like', '%' . $request->search . '%');
+            $base->where('name', 'like', '%'.$request->search.'%');
         }
 
         // Area stats over full filtered set (single aggregation query)
@@ -57,17 +57,17 @@ class PlotController extends Controller
 
         $plots->each(function ($plot) use ($centroids) {
             $plot->centroid_data = $centroids[$plot->id] ?? null;
-            $plot->has_geometry  = isset($centroids[$plot->id]);
+            $plot->has_geometry = isset($centroids[$plot->id]);
         });
 
         return response()->json([
             'data' => PlotResource::collection($plots),
             'meta' => [
-                'total'        => $plots->total(),
-                'per_page'     => $plots->perPage(),
+                'total' => $plots->total(),
+                'per_page' => $plots->perPage(),
                 'current_page' => $plots->currentPage(),
-                'last_page'    => $plots->lastPage(),
-                'total_area'   => round((float) $areaStats->total_area, 2),
+                'last_page' => $plots->lastPage(),
+                'total_area' => round((float) $areaStats->total_area, 2),
                 'organic_area' => round((float) $areaStats->organic_area, 2),
             ],
         ]);
@@ -103,7 +103,7 @@ class PlotController extends Controller
         }
 
         $placeholders = implode(',', array_fill(0, count($plotIds), '?'));
-        $params       = $plotIds;
+        $params = $plotIds;
 
         $sql = "SELECT mps.plot_id, sc.code,
                         ST_AsText(pg.coordinates) AS coordinates_wkt,
@@ -121,31 +121,31 @@ class PlotController extends Controller
                 // Validar rangos geográficos: lat [-90,90], lng [-180,180]
                 if ($south >= -90 && $north <= 90 && $south < $north &&
                     $west >= -180 && $east <= 180 && $west < $east) {
-                    $bboxWkt  = "POLYGON(($west $south,$east $south,$east $north,$west $north,$west $south))";
-                    $sql     .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?, 4326))';
+                    $bboxWkt = "POLYGON(($west $south,$east $south,$east $north,$west $north,$west $south))";
+                    $sql .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?, 4326))';
                     $params[] = $bboxWkt;
                 }
             }
         }
 
-        $rows             = DB::select($sql, $params);
+        $rows = DB::select($sql, $params);
         $geometriesByPlot = collect($rows)->groupBy('plot_id');
 
         $result = $plots->map(function ($plot) use ($geometriesByPlot) {
-            $geos       = $geometriesByPlot->get($plot->id, collect());
+            $geos = $geometriesByPlot->get($plot->id, collect());
             $geometries = $geos->map(fn ($row) => [
                 'sigpac_code' => $row->code,
-                'centroid'    => $this->parseCentroidWkt($row->centroid_wkt),
+                'centroid' => $this->parseCentroidWkt($row->centroid_wkt),
                 'coordinates' => $this->parsePolygonWkt($row->coordinates_wkt),
             ])->values();
 
             return [
-                'plot_id'            => $plot->id,
-                'plot_name'          => $plot->name,
+                'plot_id' => $plot->id,
+                'plot_name' => $plot->name,
                 'viticulturist_name' => $plot->viticulturist?->name,
-                'area'               => (float) $plot->area,
-                'has_geometry'       => $geometries->isNotEmpty(),
-                'geometries'         => $geometries,
+                'area' => (float) $plot->area,
+                'has_geometry' => $geometries->isNotEmpty(),
+                'geometries' => $geometries,
             ];
         })->filter(fn ($p) => $p['has_geometry'])->values();
 
@@ -172,17 +172,16 @@ class PlotController extends Controller
         $centroids = $this->batchCentroids($plots->pluck('id')->all());
 
         $result = $plots
-            ->filter(fn ($p) =>
-                isset($centroids[$p->id]) ||
+            ->filter(fn ($p) => isset($centroids[$p->id]) ||
                 ($p->municipality?->lat && $p->municipality?->lng)
             )
             ->map(fn ($p) => [
-                'plot_id'            => $p->id,
-                'plot_name'          => $p->name,
+                'plot_id' => $p->id,
+                'plot_name' => $p->name,
                 'viticulturist_name' => $p->viticulturist?->name,
-                'area'               => (float) $p->area,
-                'has_geometry'       => isset($centroids[$p->id]),
-                'centroid'           => $centroids[$p->id] ?? [
+                'area' => (float) $p->area,
+                'has_geometry' => isset($centroids[$p->id]),
+                'centroid' => $centroids[$p->id] ?? [
                     'lat' => (float) $p->municipality->lat,
                     'lng' => (float) $p->municipality->lng,
                 ],
@@ -208,7 +207,7 @@ class PlotController extends Controller
 
         $centroids = $this->batchCentroids([$plot->id]);
         $plot->centroid_data = $centroids[$plot->id] ?? null;
-        $plot->has_geometry  = isset($centroids[$plot->id]);
+        $plot->has_geometry = isset($centroids[$plot->id]);
 
         return response()->json(['data' => new PlotResource($plot)]);
     }
@@ -240,14 +239,14 @@ class PlotController extends Controller
 
         $geometries = collect($rows)->map(fn ($row) => [
             'sigpac_code' => $row->code,
-            'centroid'    => $this->parseCentroidWkt($row->centroid_wkt),
+            'centroid' => $this->parseCentroidWkt($row->centroid_wkt),
             'coordinates' => $this->parsePolygonWkt($row->coordinates_wkt),
         ]);
 
         return response()->json([
-            'plot_id'      => $id,
+            'plot_id' => $id,
             'has_geometry' => $geometries->isNotEmpty(),
-            'geometries'   => $geometries,
+            'geometries' => $geometries,
         ]);
     }
 
@@ -270,18 +269,18 @@ class PlotController extends Controller
             ->orderBy('planting_year', 'desc')
             ->get()
             ->map(fn ($p) => [
-                'id'              => $p->id,
-                'name'            => $p->name,
-                'grape_variety'   => $p->grapeVariety?->name,
-                'planted_area'    => (float) $p->planted_area,
-                'planting_year'   => $p->planting_year,
-                'vine_count'      => $p->vine_count,
-                'row_spacing'     => $p->row_spacing ? (float) $p->row_spacing : null,
-                'vine_spacing'    => $p->vine_spacing ? (float) $p->vine_spacing : null,
-                'rootstock'       => $p->rootstock,
+                'id' => $p->id,
+                'name' => $p->name,
+                'grape_variety' => $p->grapeVariety?->name,
+                'planted_area' => (float) $p->planted_area,
+                'planting_year' => $p->planting_year,
+                'vine_count' => $p->vine_count,
+                'row_spacing' => $p->row_spacing ? (float) $p->row_spacing : null,
+                'vine_spacing' => $p->vine_spacing ? (float) $p->vine_spacing : null,
+                'rootstock' => $p->rootstock,
                 'training_system' => $p->trainingSystem?->name,
-                'status'          => $p->status,
-                'irrigated'       => (bool) $p->irrigated,
+                'status' => $p->status,
+                'irrigated' => (bool) $p->irrigated,
             ]);
 
         return response()->json(['data' => $plantings]);
@@ -295,13 +294,13 @@ class PlotController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $data = $request->validate([
-            'viticulturist_id'        => 'required|integer|exists:users,id',
-            'name'                    => 'required|string|max:255',
-            'area'                    => 'required|numeric|min:0.001',
+            'viticulturist_id' => 'required|integer|exists:users,id',
+            'name' => 'required|string|max:255',
+            'area' => 'required|numeric|min:0.001',
             'autonomous_community_id' => 'required|integer|exists:autonomous_communities,id',
-            'province_id'             => 'required|integer|exists:provinces,id',
-            'municipality_id'         => 'required|integer|exists:municipalities,id',
-            'is_organic'              => 'nullable|boolean',
+            'province_id' => 'required|integer|exists:provinces,id',
+            'municipality_id' => 'required|integer|exists:municipalities,id',
+            'is_organic' => 'nullable|boolean',
         ]);
 
         abort_unless(
@@ -312,19 +311,19 @@ class PlotController extends Controller
         );
 
         $plot = Plot::create([
-            'viticulturist_id'        => $data['viticulturist_id'],
-            'name'                    => $data['name'],
-            'area'                    => $data['area'],
+            'viticulturist_id' => $data['viticulturist_id'],
+            'name' => $data['name'],
+            'area' => $data['area'],
             'autonomous_community_id' => $data['autonomous_community_id'],
-            'province_id'             => $data['province_id'],
-            'municipality_id'         => $data['municipality_id'],
-            'is_organic'              => $data['is_organic'] ?? false,
-            'active'                  => true,
+            'province_id' => $data['province_id'],
+            'municipality_id' => $data['municipality_id'],
+            'is_organic' => $data['is_organic'] ?? false,
+            'active' => true,
         ]);
 
         $plot->load(['province', 'municipality', 'plantings.grapeVariety']);
         $plot->centroid_data = null;
-        $plot->has_geometry  = false;
+        $plot->has_geometry = false;
 
         return response()->json(['data' => new PlotResource($plot)], 201);
     }
@@ -343,32 +342,32 @@ class PlotController extends Controller
 
         $data = $request->validate([
             'grape_variety_id' => 'required|integer|exists:grape_varieties,id',
-            'area_planted'     => 'required|numeric|min:0.001',
-            'planting_year'    => 'required|integer|min:1900|max:2100',
-            'name'             => 'nullable|string|max:255',
-            'irrigated'        => 'nullable|boolean',
+            'area_planted' => 'required|numeric|min:0.001',
+            'planting_year' => 'required|integer|min:1900|max:2100',
+            'name' => 'nullable|string|max:255',
+            'irrigated' => 'nullable|boolean',
         ]);
 
         $planting = $plot->plantings()->create([
             'grape_variety_id' => $data['grape_variety_id'],
-            'area_planted'     => $data['area_planted'],
-            'planting_year'    => $data['planting_year'],
-            'name'             => $data['name'] ?? null,
-            'irrigated'        => $data['irrigated'] ?? false,
-            'status'           => 'active',
-            'active'           => true,
+            'area_planted' => $data['area_planted'],
+            'planting_year' => $data['planting_year'],
+            'name' => $data['name'] ?? null,
+            'irrigated' => $data['irrigated'] ?? false,
+            'status' => 'active',
+            'active' => true,
         ]);
 
         $planting->load(['grapeVariety', 'trainingSystem']);
 
         return response()->json(['data' => [
-            'id'              => $planting->id,
-            'name'            => $planting->name,
-            'grape_variety'   => $planting->grapeVariety?->name,
-            'planted_area'    => (float) $planting->area_planted,
-            'planting_year'   => $planting->planting_year,
-            'irrigated'       => (bool) $planting->irrigated,
-            'status'          => $planting->status,
+            'id' => $planting->id,
+            'name' => $planting->name,
+            'grape_variety' => $planting->grapeVariety?->name,
+            'planted_area' => (float) $planting->area_planted,
+            'planting_year' => $planting->planting_year,
+            'irrigated' => (bool) $planting->irrigated,
+            'status' => $planting->status,
         ]], 201);
     }
 
@@ -385,7 +384,7 @@ class PlotController extends Controller
 
         Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
 
-        $perPage    = $this->resolvePerPage($request, 15, 100);
+        $perPage = $this->resolvePerPage($request, 15, 100);
         $activities = AgriculturalActivity::where('plot_id', $id)
             ->where('activity_type', 'harvest')
             ->whereIn('viticulturist_id', $viticulturistIds)
@@ -395,22 +394,22 @@ class PlotController extends Controller
 
         return response()->json([
             'data' => $activities->map(fn ($a) => [
-                'id'                => $a->id,
-                'activity_date'     => $a->activity_date?->format('Y-m-d'),
-                'grape_variety'     => $a->plotPlanting?->grapeVariety?->name,
-                'baume_degree'      => $a->harvest?->baume_degree,
-                'brix_degree'       => $a->harvest?->brix_degree,
-                'ph_level'          => $a->harvest?->ph_level,
-                'acidity_level'     => $a->harvest?->acidity_level,
+                'id' => $a->id,
+                'activity_date' => $a->activity_date?->format('Y-m-d'),
+                'grape_variety' => $a->plotPlanting?->grapeVariety?->name,
+                'baume_degree' => $a->harvest?->baume_degree,
+                'brix_degree' => $a->harvest?->brix_degree,
+                'ph_level' => $a->harvest?->ph_level,
+                'acidity_level' => $a->harvest?->acidity_level,
                 'potential_alcohol' => $a->harvest?->potential_alcohol,
-                'total_weight'      => $a->harvest?->total_weight,
-                'notes'             => $a->notes ?? $a->harvest?->notes,
+                'total_weight' => $a->harvest?->total_weight,
+                'notes' => $a->notes ?? $a->harvest?->notes,
             ]),
             'meta' => [
-                'total'        => $activities->total(),
-                'per_page'     => $activities->perPage(),
+                'total' => $activities->total(),
+                'per_page' => $activities->perPage(),
                 'current_page' => $activities->currentPage(),
-                'last_page'    => $activities->lastPage(),
+                'last_page' => $activities->lastPage(),
             ],
         ]);
     }
@@ -428,7 +427,7 @@ class PlotController extends Controller
 
         Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
 
-        $perPage    = $this->resolvePerPage($request, 20, 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $activities = AgriculturalActivity::where('plot_id', $id)
             ->whereIn('viticulturist_id', $viticulturistIds)
             ->orderByDesc('activity_date')
@@ -436,16 +435,16 @@ class PlotController extends Controller
 
         return response()->json([
             'data' => $activities->map(fn ($a) => [
-                'id'            => $a->id,
+                'id' => $a->id,
                 'activity_type' => $a->activity_type,
                 'activity_date' => $a->activity_date?->format('Y-m-d'),
-                'notes'         => $a->notes,
+                'notes' => $a->notes,
             ]),
             'meta' => [
-                'total'        => $activities->total(),
-                'per_page'     => $activities->perPage(),
+                'total' => $activities->total(),
+                'per_page' => $activities->perPage(),
                 'current_page' => $activities->currentPage(),
-                'last_page'    => $activities->lastPage(),
+                'last_page' => $activities->lastPage(),
             ],
         ]);
     }
@@ -484,10 +483,15 @@ class PlotController extends Controller
 
     private function parseCentroidWkt(?string $wkt): ?array
     {
-        if (!$wkt) return null;
+        if (! $wkt) {
+            return null;
+        }
         preg_match('/POINT\(([^)]+)\)/', $wkt, $m);
-        if (!isset($m[1])) return null;
+        if (! isset($m[1])) {
+            return null;
+        }
         $parts = explode(' ', trim($m[1]));
+
         return count($parts) >= 2
             ? ['lat' => (float) $parts[1], 'lng' => (float) $parts[0]]
             : null;
@@ -495,9 +499,13 @@ class PlotController extends Controller
 
     private function parsePolygonWkt(?string $wkt): array
     {
-        if (!$wkt) return [];
+        if (! $wkt) {
+            return [];
+        }
         preg_match('/POLYGON\(\(([^)]+)\)\)/', $wkt, $m);
-        if (!isset($m[1])) return [];
+        if (! isset($m[1])) {
+            return [];
+        }
 
         $points = [];
         foreach (explode(',', $m[1]) as $coord) {
@@ -506,6 +514,7 @@ class PlotController extends Controller
                 $points[] = ['lat' => (float) $parts[1], 'lng' => (float) $parts[0]];
             }
         }
+
         return $points;
     }
 }

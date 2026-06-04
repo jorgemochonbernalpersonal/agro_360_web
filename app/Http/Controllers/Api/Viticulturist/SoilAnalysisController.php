@@ -19,9 +19,9 @@ class SoilAnalysisController extends Controller
 
         $request->validate([
             'campaign_id' => 'nullable|integer',
-            'plot_id'     => 'nullable|integer',
-            'search'      => 'nullable|string|max:100',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'plot_id' => 'nullable|integer',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = SoilAnalysis::where('viticulturist_id', $user->id)
@@ -45,10 +45,10 @@ class SoilAnalysisController extends Controller
         return response()->json([
             'data' => SoilAnalysisResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -59,14 +59,14 @@ class SoilAnalysisController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'plot_id'         => 'required|integer|exists:plots,id',
-            'campaign_id'     => 'nullable|integer|exists:campaigns,id',
-            'analysis_date'   => 'required|date',
-            'laboratory'      => 'required|string|max:255',
-            'ph'              => 'nullable|numeric|min:0|max:14',
-            'organic_matter'  => 'nullable|numeric|min:0',
-            'texture_class'   => 'nullable|string|max:100',
-            'notes'           => 'nullable|string|max:2000',
+            'plot_id' => 'required|integer|exists:plots,id',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'analysis_date' => 'required|date',
+            'laboratory' => 'required|string|max:255',
+            'ph' => 'nullable|numeric|min:0|max:14',
+            'organic_matter' => 'nullable|numeric|min:0',
+            'texture_class' => 'nullable|string|max:100',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         \App\Models\Plot::where('viticulturist_id', $user->id)->findOrFail($validated['plot_id']);
@@ -75,7 +75,7 @@ class SoilAnalysisController extends Controller
         $record->load(['plot']);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\SoilAnalysisResource($record),
+            'data' => new \App\Http\Resources\Api\SoilAnalysisResource($record),
             'message' => __('Análisis de suelo registrado correctamente.'),
         ], 201);
     }

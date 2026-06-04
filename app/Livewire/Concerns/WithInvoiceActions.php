@@ -27,26 +27,25 @@ trait WithInvoiceActions
     public function markPaid(int $id): void
     {
         $invoice = $this->findInvoice($id);
-        if (!$invoice) return;
+        if (! $invoice) {
+            return;
+        }
 
         if ($invoice->status === 'cancelled') {
             $this->toastError(__('No se puede marcar como pagada una factura cancelada.'));
+
             return;
         }
 
         if ($invoice->payment_status === 'paid') {
             $this->toastError(__('Esta factura ya está marcada como pagada.'));
+
             return;
         }
 
         // InvoiceObserver detecta el cambio y establece payment_date automáticamente
         $invoice->update(['payment_status' => 'paid']);
         $this->toastSuccess($this->markPaidSuccessMessage());
-    }
-
-    protected function markPaidSuccessMessage(): string
-    {
-        return __('Factura marcada como pagada.');
     }
 
     // ── Enviar por email ──────────────────────────────────────────────────────
@@ -56,12 +55,15 @@ trait WithInvoiceActions
         $invoice = $this->findInvoice($id, [
             'client', 'viticulturist', 'items', 'user.profile.province',
         ]);
-        if (!$invoice) return;
+        if (! $invoice) {
+            return;
+        }
 
         $email = $this->getEmailRecipient($invoice);
 
-        if (!$email) {
+        if (! $email) {
             $this->toastError(__('No hay email registrado para el destinatario.'));
+
             return;
         }
 
@@ -75,12 +77,17 @@ trait WithInvoiceActions
             $this->toastSuccess($this->sendEmailSuccessMessage($email));
 
         } catch (\Exception $e) {
-            Log::error('Error al enviar factura por email: ' . $e->getMessage(), [
+            Log::error('Error al enviar factura por email: '.$e->getMessage(), [
                 'invoice_id' => $id,
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
             ]);
             $this->toastError(__('Error al enviar el email. Inténtalo de nuevo.'));
         }
+    }
+
+    protected function markPaidSuccessMessage(): string
+    {
+        return __('Factura marcada como pagada.');
     }
 
     /**

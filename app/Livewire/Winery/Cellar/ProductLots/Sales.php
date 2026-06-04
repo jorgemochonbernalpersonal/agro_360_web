@@ -14,14 +14,16 @@ class Sales extends Component
 
     public ProductLot $lot;
 
-    public string $search      = '';
-    public string $dateFrom    = '';
-    public string $dateTo      = '';
+    public string $search = '';
+
+    public string $dateFrom = '';
+
+    public string $dateTo = '';
 
     protected $queryString = [
-        'search'   => ['except' => ''],
+        'search' => ['except' => ''],
         'dateFrom' => ['except' => ''],
-        'dateTo'   => ['except' => ''],
+        'dateTo' => ['except' => ''],
     ];
 
     public function mount(ProductLot $lot): void
@@ -30,15 +32,26 @@ class Sales extends Component
         $this->lot = $lot;
     }
 
-    public function updatingSearch(): void  { $this->resetPage(); }
-    public function updatingDateFrom(): void { $this->resetPage(); }
-    public function updatingDateTo(): void   { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDateFrom(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDateTo(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->search   = '';
+        $this->search = '';
         $this->dateFrom = '';
-        $this->dateTo   = '';
+        $this->dateTo = '';
         $this->resetPage();
     }
 
@@ -50,15 +63,15 @@ class Sales extends Component
             ->where('invoice_items.wine_lot_id', $this->lot->id)
             ->where('invoices.status', '!=', 'cancelled')
             ->when($this->dateFrom, fn ($q) => $q->where('invoices.invoice_date', '>=', $this->dateFrom))
-            ->when($this->dateTo,   fn ($q) => $q->where('invoices.invoice_date', '<=', $this->dateTo))
+            ->when($this->dateTo, fn ($q) => $q->where('invoices.invoice_date', '<=', $this->dateTo))
             ->when($this->search, function ($q) {
-                $term = '%' . mb_strtolower($this->search) . '%';
+                $term = '%'.mb_strtolower($this->search).'%';
                 $q->where(function ($q2) use ($term) {
                     $q2->whereRaw("LOWER(IFNULL(invoices.invoice_number,'')) LIKE ?", [$term])
-                       ->orWhereRaw("LOWER(IFNULL(invoices.delivery_note_code,'')) LIKE ?", [$term])
-                       ->orWhereRaw("LOWER(IFNULL(clients.first_name,'')) LIKE ?", [$term])
-                       ->orWhereRaw("LOWER(IFNULL(clients.last_name,'')) LIKE ?", [$term])
-                       ->orWhereRaw("LOWER(IFNULL(clients.company_name,'')) LIKE ?", [$term]);
+                        ->orWhereRaw("LOWER(IFNULL(invoices.delivery_note_code,'')) LIKE ?", [$term])
+                        ->orWhereRaw("LOWER(IFNULL(clients.first_name,'')) LIKE ?", [$term])
+                        ->orWhereRaw("LOWER(IFNULL(clients.last_name,'')) LIKE ?", [$term])
+                        ->orWhereRaw("LOWER(IFNULL(clients.company_name,'')) LIKE ?", [$term]);
                 });
             })
             ->selectRaw("
@@ -96,7 +109,7 @@ class Sales extends Component
             ->first();
 
         return view('livewire.winery.cellar.product-lots.sales', [
-            'items'  => $items,
+            'items' => $items,
             'totals' => $totals,
         ])->layout('layouts.app');
     }

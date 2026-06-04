@@ -12,13 +12,15 @@ class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public string $currentTab  = 'active';
-    public string $search      = '';
-    public string $filterType  = '';
+    public string $currentTab = 'active';
+
+    public string $search = '';
+
+    public string $filterType = '';
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'filterType' => ['except' => ''],
     ];
 
@@ -28,12 +30,19 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function updatingSearch(): void     { $this->resetPage(); }
-    public function updatingFilterType(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterType(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->search     = '';
+        $this->search = '';
         $this->filterType = '';
         $this->resetPage();
     }
@@ -41,15 +50,19 @@ class Index extends Component
     public function toggleActive(int $clientId): void
     {
         $client = Client::where('user_id', Auth::id())->findOrFail($clientId);
-        $newState = !$client->active;
+        $newState = ! $client->active;
         $client->update(['active' => $newState]);
 
         if ($newState) {
             $this->toastSuccess(__('Cliente activado correctamente.'));
-            if ($this->currentTab === 'inactive') $this->currentTab = 'active';
+            if ($this->currentTab === 'inactive') {
+                $this->currentTab = 'active';
+            }
         } else {
             $this->toastSuccess(__('Cliente desactivado correctamente.'));
-            if ($this->currentTab === 'active') $this->currentTab = 'inactive';
+            if ($this->currentTab === 'active') {
+                $this->currentTab = 'inactive';
+            }
         }
     }
 
@@ -71,29 +84,29 @@ class Index extends Component
         }
 
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(first_name) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(last_name) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(company_name) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(phone) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(company_document) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(particular_document) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(last_name) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(company_name) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(phone) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(company_document) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(particular_document) LIKE ?', [$term]);
             });
         }
 
         $clients = $query->orderBy('created_at', 'desc')->paginate(12);
 
         $stats = [
-            'total'    => Client::where('user_id', $userId)->count(),
-            'active'   => Client::where('user_id', $userId)->where('active', true)->count(),
+            'total' => Client::where('user_id', $userId)->count(),
+            'active' => Client::where('user_id', $userId)->where('active', true)->count(),
             'inactive' => Client::where('user_id', $userId)->where('active', false)->count(),
         ];
 
         return view('livewire.winery.clients.index', [
             'clients' => $clients,
-            'stats'   => $stats,
+            'stats' => $stats,
         ])->layout('layouts.app');
     }
 }

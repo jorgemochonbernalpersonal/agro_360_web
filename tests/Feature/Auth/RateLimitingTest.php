@@ -21,7 +21,7 @@ class RateLimitingTest extends TestCase
         ]);
 
         // Llenar el rate limiter directamente hasta el límite del entorno actual
-        $key = 'login.' . request()->ip();
+        $key = 'login.'.request()->ip();
         $maxAttempts = app()->environment('production') ? 5 : 100;
         for ($i = 0; $i < $maxAttempts; $i++) {
             RateLimiter::hit($key, 60);
@@ -44,7 +44,7 @@ class RateLimitingTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $key = 'login.' . request()->ip();
+        $key = 'login.'.request()->ip();
 
         // Llenar el rate limiter
         for ($i = 0; $i < 5; $i++) {
@@ -68,7 +68,7 @@ class RateLimitingTest extends TestCase
             'role' => 'viticulturist',
         ]);
 
-        $key = 'login.' . request()->ip();
+        $key = 'login.'.request()->ip();
 
         // Intentar login 3 veces con contraseña incorrecta
         for ($i = 0; $i < 3; $i++) {
@@ -105,8 +105,8 @@ class RateLimitingTest extends TestCase
         $ip1 = '192.168.1.1';
         $ip2 = '192.168.1.2';
 
-        $key1 = 'login.' . $ip1;
-        $key2 = 'login.' . $ip2;
+        $key1 = 'login.'.$ip1;
+        $key2 = 'login.'.$ip2;
 
         // Llenar rate limit para IP1
         for ($i = 0; $i < 5; $i++) {
@@ -125,7 +125,7 @@ class RateLimitingTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $key = 'login.' . request()->ip();
+        $key = 'login.'.request()->ip();
         $maxAttempts = app()->environment('production') ? 5 : 100;
 
         // Llenar el rate limiter hasta el límite del entorno actual
@@ -144,4 +144,3 @@ class RateLimitingTest extends TestCase
         $response->assertSee('segundos');
     }
 }
-

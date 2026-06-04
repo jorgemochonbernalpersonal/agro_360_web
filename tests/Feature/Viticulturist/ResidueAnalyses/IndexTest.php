@@ -10,20 +10,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeAnalysis(int $viticulturistId, string $labName = 'Lab Test', bool $active = true): ResidueAnalysis
-    {
-        $campaign = Campaign::getOrCreateActiveForYear($viticulturistId);
-
-        return ResidueAnalysis::create([
-            'viticulturist_id'  => $viticulturistId,
-            'campaign_id'       => $campaign->id,
-            'analysis_date'     => '2024-06-15',
-            'laboratory_name'   => $labName,
-            'overall_compliant' => true,
-            'active'            => $active,
-        ]);
-    }
-
     public function test_index_shows_active_analyses(): void
     {
         $viticulturist = $this->makeViticulturist();
@@ -38,7 +24,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_deactivate_archives_analysis(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $analysis      = $this->makeAnalysis($viticulturist->id);
+        $analysis = $this->makeAnalysis($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -46,7 +32,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('deactivate', $analysis->id);
 
         $this->assertDatabaseHas('residue_analyses', [
-            'id'     => $analysis->id,
+            'id' => $analysis->id,
             'active' => false,
         ]);
     }
@@ -54,7 +40,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_deactivated_disappears(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $analysis      = $this->makeAnalysis($viticulturist->id, 'Lab-A-Archivar-001');
+        $analysis = $this->makeAnalysis($viticulturist->id, 'Lab-A-Archivar-001');
 
         $this->actingAs($viticulturist);
 
@@ -67,8 +53,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_cannot_deactivate_other_viticulturists_analysis(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $analysis      = $this->makeAnalysis($viticulturist->id);
+        $other = $this->makeOtherViticulturist();
+        $analysis = $this->makeAnalysis($viticulturist->id);
 
         $this->actingAs($other);
 
@@ -76,5 +62,19 @@ class IndexTest extends ViticulturistTestCase
 
         Livewire::test(Index::class)
             ->call('deactivate', $analysis->id);
+    }
+
+    private function makeAnalysis(int $viticulturistId, string $labName = 'Lab Test', bool $active = true): ResidueAnalysis
+    {
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturistId);
+
+        return ResidueAnalysis::create([
+            'viticulturist_id' => $viticulturistId,
+            'campaign_id' => $campaign->id,
+            'analysis_date' => '2024-06-15',
+            'laboratory_name' => $labName,
+            'overall_compliant' => true,
+            'active' => $active,
+        ]);
     }
 }

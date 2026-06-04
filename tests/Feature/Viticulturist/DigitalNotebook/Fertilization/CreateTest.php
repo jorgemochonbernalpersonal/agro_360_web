@@ -15,31 +15,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class CreateTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makePlot($viticulturist): Plot
-    {
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
-        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
-        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
-
-        return Plot::factory()->create([
-            'viticulturist_id'        => $viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
-        ]);
-    }
-
-    private function makeCampaign($viticulturist): Campaign
-    {
-        return Campaign::factory()->active()->create([
-            'viticulturist_id' => $viticulturist->id,
-            'year'             => now()->year,
-        ]);
-    }
-
     // ── mount ──────────────────────────────────────────────────────────────────
 
     public function test_component_renders(): void
@@ -251,11 +226,11 @@ class CreateTest extends ViticulturistTestCase
 
         $activity = AgriculturalActivity::where([
             'viticulturist_id' => $viticulturist->id,
-            'activity_type'    => 'fertilization',
+            'activity_type' => 'fertilization',
         ])->first();
 
         $this->assertDatabaseHas('fertilizations', [
-            'activity_id'     => $activity->id,
+            'activity_id' => $activity->id,
             'fertilizer_type' => 'Mineral',
             'fertilizer_name' => 'NPK 15-15-15',
         ]);
@@ -289,12 +264,12 @@ class CreateTest extends ViticulturistTestCase
 
         $activity = AgriculturalActivity::where([
             'viticulturist_id' => $viticulturist->id,
-            'activity_type'    => 'fertilization',
+            'activity_type' => 'fertilization',
         ])->first();
 
         $this->assertDatabaseHas('fertilizations', [
-            'activity_id'  => $activity->id,
-            'manure_type'  => 'Estiércol vacuno',
+            'activity_id' => $activity->id,
+            'manure_type' => 'Estiércol vacuno',
         ]);
     }
 
@@ -322,7 +297,7 @@ class CreateTest extends ViticulturistTestCase
 
         $activity = AgriculturalActivity::where([
             'viticulturist_id' => $viticulturist->id,
-            'activity_type'    => 'fertilization',
+            'activity_type' => 'fertilization',
         ])->first();
 
         $fertilization = Fertilization::where('activity_id', $activity->id)->first();
@@ -334,9 +309,33 @@ class CreateTest extends ViticulturistTestCase
     public function test_policy_denies_create_for_other_viticulturist_plot(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $plot          = $this->makePlot($viticulturist);
+        $other = $this->makeOtherViticulturist();
+        $plot = $this->makePlot($viticulturist);
 
         $this->assertFalse($other->can('create-activity', $plot));
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makePlot($viticulturist): Plot
+    {
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
+        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
+
+        return Plot::factory()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
+        ]);
+    }
+
+    private function makeCampaign($viticulturist): Campaign
+    {
+        return Campaign::factory()->active()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'year' => now()->year,
+        ]);
     }
 }

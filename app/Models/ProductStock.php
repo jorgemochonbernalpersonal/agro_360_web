@@ -62,6 +62,7 @@ class ProductStock extends Model
         if ($this->expiry_date && $this->expiry_date->isPast()) {
             return 0;
         }
+
         return (float) $this->quantity;
     }
 
@@ -70,12 +71,13 @@ class ProductStock extends Model
      */
     public function isExpiringSoon(): bool
     {
-        if (!$this->expiry_date) {
+        if (! $this->expiry_date) {
             return false;
         }
         if ($this->expiry_date->isPast()) {
             return false;
         }
+
         return now()->diffInDays($this->expiry_date, false) <= 30;
     }
 
@@ -94,7 +96,7 @@ class ProductStock extends Model
     {
         $quantityBefore = (float) $this->quantity;
         $newQuantity = max(0, $quantityBefore - $quantity);
-        
+
         $this->quantity = $newQuantity;
         $this->save();
 
@@ -116,11 +118,11 @@ class ProductStock extends Model
     {
         $quantityBefore = (float) $this->quantity;
         $newQuantity = $quantityBefore + $quantity;
-        
+
         if (isset($attributes['unit_price'])) {
             $this->unit_price = $attributes['unit_price'];
         }
-        
+
         $this->quantity = $newQuantity;
         $this->save();
 
@@ -138,15 +140,17 @@ class ProductStock extends Model
 
     /**
      * Scope para obtener stock disponible de un producto
+     *
+     * @param mixed $query
      */
     public function scopeAvailableForProduct($query, int $productId, int $userId)
     {
         return $query->where('product_id', $productId)
             ->where('user_id', $userId)
             ->where('active', true)
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->whereNull('expiry_date')
-                  ->orWhere('expiry_date', '>', now());
+                    ->orWhere('expiry_date', '>', now());
             })
             ->where('quantity', '>', 0)
             ->orderBy('expiry_date', 'asc'); // FIFO: primero los que caducan antes

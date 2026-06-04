@@ -101,5 +101,3 @@ class PlotTest extends TestCase
         $this->assertNotContains($otherPlot->id, $visibleIds);
     }
 }
-
-

@@ -9,9 +9,13 @@ class IrrigationRecommendationService
 {
     // Thresholds for irrigation recommendations
     private const NDVI_STRESS_THRESHOLD = 0.4;
+
     private const NDWI_STRESS_THRESHOLD = -0.1;
+
     private const SOIL_MOISTURE_LOW = 20;
+
     private const SOIL_MOISTURE_CRITICAL = 10;
+
     private const ET0_HIGH = 6.0; // mm/day
 
     /**
@@ -23,7 +27,7 @@ class IrrigationRecommendationService
             ->orderBy('image_date', 'desc')
             ->first();
 
-        if (!$latestData) {
+        if (! $latestData) {
             return $this->noDataRecommendation();
         }
 
@@ -173,7 +177,7 @@ class IrrigationRecommendationService
             return __('No necesario');
         }
 
-        return number_format($amount, 1) . ' mm/día';
+        return number_format($amount, 1).' mm/día';
     }
 
     /**

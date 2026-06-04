@@ -19,39 +19,58 @@ class Settings extends Component
 
     public $currentTab = 'taxes';
 
-    protected $queryString = ['currentTab' => ['as' => 'tab']];
-
     // === TAXES TAB ===
     public $taxes;
+
     public $activeTaxId;
 
     // === INVOICING TAB ===
     public $invoice_prefix;
+
     public $invoice_padding;
+
     public $invoice_counter;
+
     public $invoice_year_reset;
+
     public $delivery_note_prefix;
+
     public $delivery_note_padding;
+
     public $delivery_note_counter;
+
     public $delivery_note_year_reset;
+
     public $invoicePreview;
+
     public $deliveryNotePreview;
 
     // === FISCAL TAB ===
-    public $fiscal_nif          = '';
-    public $fiscal_legal_name   = '';
-    public $fiscal_address      = '';
-    public $fiscal_city         = '';
-    public $fiscal_postal_code  = '';
-    public $fiscal_phone        = '';
+    public $fiscal_nif = '';
+
+    public $fiscal_legal_name = '';
+
+    public $fiscal_address = '';
+
+    public $fiscal_city = '';
+
+    public $fiscal_postal_code = '';
+
+    public $fiscal_phone = '';
 
     // === FIELDBOOK TAB ===
     public $default_limit_kg_per_ha = '';
+
     public $degree_day_base = 10;
+
     public $document_prefix_activity = 'ACT';
+
     public $document_prefix_harvest = 'VND';
+
     public $legal_text_fieldbook = '';
+
     public $notify_harvest_alerts = true;
+
     public $notify_activity_alerts = true;
 
     // === GENERAL TAB ===
@@ -59,11 +78,16 @@ class Settings extends Component
 
     // === SIGNATURE TAB ===
     public $signaturePassword = '';
+
     public $signaturePassword_confirmation = '';
+
     public $hasDigitalSignature = false;
 
     public $showResetPasswordModal = false;
+
     public $loginPasswordForReset = '';
+
+    protected $queryString = ['currentTab' => ['as' => 'tab']];
 
     public function mount(): void
     {
@@ -98,8 +122,8 @@ class Settings extends Component
 
     public function loadTaxes(): void
     {
-        $this->taxes     = Tax::orderBy('rate', 'asc')->get();
-        $userTax         = UserTax::where('user_id', Auth::id())->first();
+        $this->taxes = Tax::orderBy('rate', 'asc')->get();
+        $userTax = UserTax::where('user_id', Auth::id())->first();
         $this->activeTaxId = $userTax?->tax_id;
     }
 
@@ -107,10 +131,10 @@ class Settings extends Component
     {
         UserTax::where('user_id', Auth::id())->delete();
         UserTax::create([
-            'user_id'    => Auth::id(),
-            'tax_id'     => $taxId,
+            'user_id' => Auth::id(),
+            'tax_id' => $taxId,
             'is_default' => true,
-            'order'      => 1,
+            'order' => 1,
         ]);
         $this->activeTaxId = $taxId;
         $this->toastSuccess(__('Impuesto configurado correctamente'));
@@ -125,13 +149,13 @@ class Settings extends Component
         $settings = InvoicingSetting::forUser(Auth::id())->first()
             ?? InvoicingSetting::createDefaultForUser(Auth::id());
 
-        $this->invoice_prefix           = $settings->invoice_prefix;
-        $this->invoice_padding          = $settings->invoice_padding;
-        $this->invoice_counter          = $settings->invoice_counter;
-        $this->invoice_year_reset       = $settings->invoice_year_reset;
-        $this->delivery_note_prefix     = $settings->delivery_note_prefix;
-        $this->delivery_note_padding    = $settings->delivery_note_padding;
-        $this->delivery_note_counter    = $settings->delivery_note_counter;
+        $this->invoice_prefix = $settings->invoice_prefix;
+        $this->invoice_padding = $settings->invoice_padding;
+        $this->invoice_counter = $settings->invoice_counter;
+        $this->invoice_year_reset = $settings->invoice_year_reset;
+        $this->delivery_note_prefix = $settings->delivery_note_prefix;
+        $this->delivery_note_padding = $settings->delivery_note_padding;
+        $this->delivery_note_counter = $settings->delivery_note_counter;
         $this->delivery_note_year_reset = $settings->delivery_note_year_reset;
 
         $this->updatePreviews();
@@ -146,42 +170,32 @@ class Settings extends Component
 
     public function updatePreviews(): void
     {
-        $this->invoicePreview      = $this->replaceVariables($this->invoice_prefix)
-            . str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
+        $this->invoicePreview = $this->replaceVariables($this->invoice_prefix)
+            .str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
         $this->deliveryNotePreview = $this->replaceVariables($this->delivery_note_prefix)
-            . str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
-    }
-
-    protected function replaceVariables(string $prefix): string
-    {
-        $now = now();
-        return str_replace(
-            ['{YEAR}', '{MONTH}', '{DAY}'],
-            [$now->format('Y'), $now->format('m'), $now->format('d')],
-            $prefix
-        );
+            .str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
     }
 
     public function saveInvoicing(): void
     {
         $this->validate([
-            'invoice_prefix'        => 'required|string|max:50',
-            'invoice_padding'       => 'required|integer|min:2|max:6',
-            'invoice_counter'       => 'required|integer|min:1',
-            'delivery_note_prefix'  => 'required|string|max:50',
+            'invoice_prefix' => 'required|string|max:50',
+            'invoice_padding' => 'required|integer|min:2|max:6',
+            'invoice_counter' => 'required|integer|min:1',
+            'delivery_note_prefix' => 'required|string|max:50',
             'delivery_note_padding' => 'required|integer|min:2|max:6',
             'delivery_note_counter' => 'required|integer|min:1',
         ]);
 
         $settings = InvoicingSetting::forUser(Auth::id())->first();
         $settings->update([
-            'invoice_prefix'           => $this->invoice_prefix,
-            'invoice_padding'          => $this->invoice_padding,
-            'invoice_counter'          => $this->invoice_counter,
-            'invoice_year_reset'       => $this->invoice_year_reset,
-            'delivery_note_prefix'     => $this->delivery_note_prefix,
-            'delivery_note_padding'    => $this->delivery_note_padding,
-            'delivery_note_counter'    => $this->delivery_note_counter,
+            'invoice_prefix' => $this->invoice_prefix,
+            'invoice_padding' => $this->invoice_padding,
+            'invoice_counter' => $this->invoice_counter,
+            'invoice_year_reset' => $this->invoice_year_reset,
+            'delivery_note_prefix' => $this->delivery_note_prefix,
+            'delivery_note_padding' => $this->delivery_note_padding,
+            'delivery_note_counter' => $this->delivery_note_counter,
             'delivery_note_year_reset' => $this->delivery_note_year_reset,
         ]);
 
@@ -209,27 +223,27 @@ class Settings extends Component
 
     public function loadFiscal(): void
     {
-        $user    = Auth::user();
+        $user = Auth::user();
         $profile = UserProfile::where('user_id', $user->id)->first();
-        $inv     = InvoicingSetting::forUser($user->id)->first();
+        $inv = InvoicingSetting::forUser($user->id)->first();
 
-        $this->fiscal_nif         = $user->dni ?? '';
-        $this->fiscal_legal_name  = $inv?->issuer_legal_name ?? '';
-        $this->fiscal_address     = $profile?->address ?? '';
-        $this->fiscal_city        = $profile?->city ?? '';
+        $this->fiscal_nif = $user->dni ?? '';
+        $this->fiscal_legal_name = $inv?->issuer_legal_name ?? '';
+        $this->fiscal_address = $profile?->address ?? '';
+        $this->fiscal_city = $profile?->city ?? '';
         $this->fiscal_postal_code = $profile?->postal_code ?? '';
-        $this->fiscal_phone       = $profile?->phone ?? '';
+        $this->fiscal_phone = $profile?->phone ?? '';
     }
 
     public function saveFiscal(): void
     {
         $this->validate([
-            'fiscal_nif'         => 'nullable|string|max:20',
-            'fiscal_legal_name'  => 'nullable|string|max:150',
-            'fiscal_address'     => 'nullable|string|max:255',
-            'fiscal_city'        => 'nullable|string|max:100',
+            'fiscal_nif' => 'nullable|string|max:20',
+            'fiscal_legal_name' => 'nullable|string|max:150',
+            'fiscal_address' => 'nullable|string|max:255',
+            'fiscal_city' => 'nullable|string|max:100',
             'fiscal_postal_code' => 'nullable|string|max:10',
-            'fiscal_phone'       => 'nullable|string|max:20',
+            'fiscal_phone' => 'nullable|string|max:20',
         ]);
 
         $user = Auth::user();
@@ -242,10 +256,10 @@ class Settings extends Component
         UserProfile::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'address'     => $this->fiscal_address ?: null,
-                'city'        => $this->fiscal_city ?: null,
+                'address' => $this->fiscal_address ?: null,
+                'city' => $this->fiscal_city ?: null,
                 'postal_code' => $this->fiscal_postal_code ?: null,
-                'phone'       => $this->fiscal_phone ?: null,
+                'phone' => $this->fiscal_phone ?: null,
             ]
         );
 
@@ -261,39 +275,39 @@ class Settings extends Component
         $settings = ViticulturistSetting::forUser(Auth::id())
             ?? ViticulturistSetting::createDefaultForUser(Auth::id());
 
-        $this->default_limit_kg_per_ha  = $settings->default_limit_kg_per_ha ?? '';
-        $this->degree_day_base          = $settings->degree_day_base;
+        $this->default_limit_kg_per_ha = $settings->default_limit_kg_per_ha ?? '';
+        $this->degree_day_base = $settings->degree_day_base;
         $this->document_prefix_activity = $settings->document_prefix_activity;
-        $this->document_prefix_harvest  = $settings->document_prefix_harvest;
-        $this->legal_text_fieldbook     = $settings->legal_text_fieldbook ?? '';
-        $this->notify_harvest_alerts    = $settings->notify_harvest_alerts;
-        $this->notify_activity_alerts   = $settings->notify_activity_alerts;
+        $this->document_prefix_harvest = $settings->document_prefix_harvest;
+        $this->legal_text_fieldbook = $settings->legal_text_fieldbook ?? '';
+        $this->notify_harvest_alerts = $settings->notify_harvest_alerts;
+        $this->notify_activity_alerts = $settings->notify_activity_alerts;
     }
 
     public function saveFieldbook(): void
     {
         $this->validate([
-            'default_limit_kg_per_ha'  => 'nullable|numeric|min:0|max:999999',
-            'degree_day_base'          => 'required|numeric|min:0|max:30',
+            'default_limit_kg_per_ha' => 'nullable|numeric|min:0|max:999999',
+            'degree_day_base' => 'required|numeric|min:0|max:30',
             'document_prefix_activity' => 'required|string|max:20|regex:/^[A-Z0-9_\-]+$/',
-            'document_prefix_harvest'  => 'required|string|max:20|regex:/^[A-Z0-9_\-]+$/',
-            'legal_text_fieldbook'     => 'nullable|string|max:2000',
+            'document_prefix_harvest' => 'required|string|max:20|regex:/^[A-Z0-9_\-]+$/',
+            'legal_text_fieldbook' => 'nullable|string|max:2000',
         ], [
             'document_prefix_activity.regex' => __('Solo letras mayúsculas, números, guión y guión bajo.'),
-            'document_prefix_harvest.regex'  => __('Solo letras mayúsculas, números, guión y guión bajo.'),
+            'document_prefix_harvest.regex' => __('Solo letras mayúsculas, números, guión y guión bajo.'),
         ]);
 
         $settings = ViticulturistSetting::forUser(Auth::id())
             ?? ViticulturistSetting::createDefaultForUser(Auth::id());
 
         $settings->update([
-            'default_limit_kg_per_ha'  => $this->default_limit_kg_per_ha ?: null,
-            'degree_day_base'          => $this->degree_day_base,
+            'default_limit_kg_per_ha' => $this->default_limit_kg_per_ha ?: null,
+            'degree_day_base' => $this->degree_day_base,
             'document_prefix_activity' => strtoupper($this->document_prefix_activity),
-            'document_prefix_harvest'  => strtoupper($this->document_prefix_harvest),
-            'legal_text_fieldbook'     => $this->legal_text_fieldbook ?: null,
-            'notify_harvest_alerts'    => $this->notify_harvest_alerts,
-            'notify_activity_alerts'   => $this->notify_activity_alerts,
+            'document_prefix_harvest' => strtoupper($this->document_prefix_harvest),
+            'legal_text_fieldbook' => $this->legal_text_fieldbook ?: null,
+            'notify_harvest_alerts' => $this->notify_harvest_alerts,
+            'notify_activity_alerts' => $this->notify_activity_alerts,
         ]);
 
         $this->loadFieldbook();
@@ -322,10 +336,10 @@ class Settings extends Component
                 'regex:/[0-9]/',
             ],
         ], [
-            'signaturePassword.required'  => __('La contraseña de firma es obligatoria.'),
-            'signaturePassword.min'       => __('La contraseña debe tener al menos 8 caracteres.'),
+            'signaturePassword.required' => __('La contraseña de firma es obligatoria.'),
+            'signaturePassword.min' => __('La contraseña debe tener al menos 8 caracteres.'),
             'signaturePassword.confirmed' => __('Las contraseñas no coinciden.'),
-            'signaturePassword.regex'     => __('La contraseña debe contener al menos una mayúscula, una minúscula y un número.'),
+            'signaturePassword.regex' => __('La contraseña debe contener al menos una mayúscula, una minúscula y un número.'),
         ]);
 
         $forbiddenPasswords = [
@@ -339,6 +353,7 @@ class Settings extends Component
         foreach ($forbiddenPasswords as $forbidden) {
             if (strcasecmp($this->signaturePassword, $forbidden) === 0) {
                 $this->addError('signaturePassword', __('Esta contraseña es demasiado común y predecible. Por seguridad, elige una contraseña más única para firmar documentos oficiales.'));
+
                 return;
             }
         }
@@ -347,14 +362,14 @@ class Settings extends Component
             $wasUpdate = $this->hasDigitalSignature;
             DigitalSignature::createOrUpdateForUser(Auth::id(), $this->signaturePassword);
 
-            $this->signaturePassword              = '';
+            $this->signaturePassword = '';
             $this->signaturePassword_confirmation = '';
-            $this->hasDigitalSignature            = true;
+            $this->hasDigitalSignature = true;
 
             $this->dispatch('signature-updated');
-            $this->toastSuccess('Contraseña de firma digital ' . ($wasUpdate ? __('actualizada') : __('creada')) . ' correctamente');
+            $this->toastSuccess('Contraseña de firma digital '.($wasUpdate ? __('actualizada') : __('creada')).' correctamente');
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al guardar la configuración. Inténtalo de nuevo.'));
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : __('Error al guardar la configuración. Inténtalo de nuevo.'));
         }
     }
 
@@ -366,7 +381,7 @@ class Settings extends Component
     public function closeResetPasswordModal(): void
     {
         $this->showResetPasswordModal = false;
-        $this->loginPasswordForReset  = '';
+        $this->loginPasswordForReset = '';
         $this->resetValidation('loginPasswordForReset');
     }
 
@@ -379,8 +394,9 @@ class Settings extends Component
         ]);
 
         $user = Auth::user();
-        if (!\Hash::check($this->loginPasswordForReset, $user->password)) {
+        if (! \Hash::check($this->loginPasswordForReset, $user->password)) {
             $this->addError('loginPasswordForReset', __('Contraseña de login incorrecta.'));
+
             return;
         }
 
@@ -388,18 +404,18 @@ class Settings extends Component
             $signature = DigitalSignature::forUser($user->id);
             if ($signature) {
                 $resetData = [
-                    'reset_at'   => now()->format('d/m/Y H:i:s'),
+                    'reset_at' => now()->format('d/m/Y H:i:s'),
                     'ip_address' => request()->ip(),
-                    'browser'    => $this->getBrowserName(request()->userAgent()),
-                    'device'     => $this->getDeviceName(request()->userAgent()),
+                    'browser' => $this->getBrowserName(request()->userAgent()),
+                    'device' => $this->getDeviceName(request()->userAgent()),
                 ];
 
                 \Log::warning('Signature password reset', [
                     'user_id' => $user->id,
-                    'email'   => $user->email,
-                    'ip'      => $resetData['ip_address'],
+                    'email' => $user->email,
+                    'ip' => $resetData['ip_address'],
                     'browser' => $resetData['browser'],
-                    'device'  => $resetData['device'],
+                    'device' => $resetData['device'],
                 ]);
 
                 try {
@@ -407,7 +423,7 @@ class Settings extends Component
                         new \App\Mail\SignaturePasswordReset($user, $resetData)
                     );
                 } catch (\Exception $emailError) {
-                    \Log::error('Error sending signature reset email: ' . $emailError->getMessage());
+                    \Log::error('Error sending signature reset email: '.$emailError->getMessage());
                 }
 
                 $signature->delete();
@@ -418,35 +434,68 @@ class Settings extends Component
             $this->dispatch('signature-updated');
             $this->toastSuccess(__('Contraseña de firma eliminada. Te hemos enviado un email de confirmación. Ahora puedes crear una nueva.'));
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al resetear. Inténtalo de nuevo.'));
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : __('Error al resetear. Inténtalo de nuevo.'));
         }
-    }
-
-    protected function getBrowserName(string $userAgent): string
-    {
-        if (str_contains($userAgent, 'Chrome'))  return __('Chrome');
-        if (str_contains($userAgent, 'Firefox')) return __('Firefox');
-        if (str_contains($userAgent, 'Safari'))  return __('Safari');
-        if (str_contains($userAgent, 'Edge'))    return __('Edge');
-        if (str_contains($userAgent, 'Opera'))   return __('Opera');
-        return __('Desconocido');
-    }
-
-    protected function getDeviceName(string $userAgent): string
-    {
-        if (str_contains($userAgent, 'Mobile'))    return __('Móvil');
-        if (str_contains($userAgent, 'Tablet'))    return __('Tablet');
-        if (str_contains($userAgent, 'Windows'))   return __('Windows PC');
-        if (str_contains($userAgent, 'Macintosh')) return __('Mac');
-        if (str_contains($userAgent, 'Linux'))     return __('Linux PC');
-        return __('Escritorio');
     }
 
     public function render()
     {
         return view('livewire.producer.settings')->layout('layouts.app', [
-            'title'       => __('Configuración - Agro365'),
+            'title' => __('Configuración - Agro365'),
             'description' => __('Gestiona la configuración de tu cuenta: impuestos, numeración de facturas, datos fiscales y cuaderno de campo.'),
         ]);
+    }
+
+    protected function replaceVariables(string $prefix): string
+    {
+        $now = now();
+
+        return str_replace(
+            ['{YEAR}', '{MONTH}', '{DAY}'],
+            [$now->format('Y'), $now->format('m'), $now->format('d')],
+            $prefix
+        );
+    }
+
+    protected function getBrowserName(string $userAgent): string
+    {
+        if (str_contains($userAgent, 'Chrome')) {
+            return __('Chrome');
+        }
+        if (str_contains($userAgent, 'Firefox')) {
+            return __('Firefox');
+        }
+        if (str_contains($userAgent, 'Safari')) {
+            return __('Safari');
+        }
+        if (str_contains($userAgent, 'Edge')) {
+            return __('Edge');
+        }
+        if (str_contains($userAgent, 'Opera')) {
+            return __('Opera');
+        }
+
+        return __('Desconocido');
+    }
+
+    protected function getDeviceName(string $userAgent): string
+    {
+        if (str_contains($userAgent, 'Mobile')) {
+            return __('Móvil');
+        }
+        if (str_contains($userAgent, 'Tablet')) {
+            return __('Tablet');
+        }
+        if (str_contains($userAgent, 'Windows')) {
+            return __('Windows PC');
+        }
+        if (str_contains($userAgent, 'Macintosh')) {
+            return __('Mac');
+        }
+        if (str_contains($userAgent, 'Linux')) {
+            return __('Linux PC');
+        }
+
+        return __('Escritorio');
     }
 }

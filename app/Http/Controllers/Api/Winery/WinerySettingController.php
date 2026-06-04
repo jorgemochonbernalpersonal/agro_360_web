@@ -25,12 +25,12 @@ class WinerySettingController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'issuer_legal_name'        => 'sometimes|nullable|string|max:255',
-            'invoice_prefix'           => 'sometimes|string|max:50',
-            'invoice_padding'          => 'sometimes|integer|min:1|max:10',
-            'invoice_year_reset'       => 'sometimes|boolean',
-            'delivery_note_prefix'     => 'sometimes|string|max:50',
-            'delivery_note_padding'    => 'sometimes|integer|min:1|max:10',
+            'issuer_legal_name' => 'sometimes|nullable|string|max:255',
+            'invoice_prefix' => 'sometimes|string|max:50',
+            'invoice_padding' => 'sometimes|integer|min:1|max:10',
+            'invoice_year_reset' => 'sometimes|boolean',
+            'delivery_note_prefix' => 'sometimes|string|max:50',
+            'delivery_note_padding' => 'sometimes|integer|min:1|max:10',
             'delivery_note_year_reset' => 'sometimes|boolean',
         ]);
 
@@ -43,17 +43,17 @@ class WinerySettingController extends Controller
     private function format(InvoicingSetting $s): array
     {
         return [
-            'issuer_legal_name'        => $s->issuer_legal_name,
-            'invoice_prefix'           => $s->invoice_prefix,
-            'invoice_padding'          => $s->invoice_padding,
-            'invoice_counter'          => $s->invoice_counter,
-            'invoice_year_reset'       => $s->invoice_year_reset,
-            'invoice_preview'          => $s->getInvoicePreview(),
-            'delivery_note_prefix'     => $s->delivery_note_prefix,
-            'delivery_note_padding'    => $s->delivery_note_padding,
-            'delivery_note_counter'    => $s->delivery_note_counter,
+            'issuer_legal_name' => $s->issuer_legal_name,
+            'invoice_prefix' => $s->invoice_prefix,
+            'invoice_padding' => $s->invoice_padding,
+            'invoice_counter' => $s->invoice_counter,
+            'invoice_year_reset' => $s->invoice_year_reset,
+            'invoice_preview' => $s->getInvoicePreview(),
+            'delivery_note_prefix' => $s->delivery_note_prefix,
+            'delivery_note_padding' => $s->delivery_note_padding,
+            'delivery_note_counter' => $s->delivery_note_counter,
             'delivery_note_year_reset' => $s->delivery_note_year_reset,
-            'delivery_note_preview'    => $s->getDeliveryNotePreview(),
+            'delivery_note_preview' => $s->getDeliveryNotePreview(),
         ];
     }
 }

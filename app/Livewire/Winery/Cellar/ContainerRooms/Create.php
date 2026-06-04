@@ -11,34 +11,27 @@ class Create extends Component
 {
     use WithToastNotifications;
 
-    public string $name        = '';
-    public string $description = '';
-    public string $capacity    = '';
-    public string $temperature = '';
-    public string $humidity    = '';
+    public string $name = '';
 
-    protected function rules(): array
-    {
-        return [
-            'name'        => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:255'],
-            'capacity'    => ['nullable', 'integer', 'min:1'],
-            'temperature' => ['nullable', 'numeric', 'min:-20', 'max:50'],
-            'humidity'    => ['nullable', 'numeric', 'min:0', 'max:100'],
-        ];
-    }
+    public string $description = '';
+
+    public string $capacity = '';
+
+    public string $temperature = '';
+
+    public string $humidity = '';
 
     public function save(): void
     {
         $this->validate();
 
         ContainerRoom::create([
-            'user_id'     => Auth::id(),
-            'name'        => $this->name,
+            'user_id' => Auth::id(),
+            'name' => $this->name,
             'description' => $this->description ?: null,
-            'capacity'    => $this->capacity ?: null,
+            'capacity' => $this->capacity ?: null,
             'temperature' => $this->temperature ?: null,
-            'humidity'    => $this->humidity ?: null,
+            'humidity' => $this->humidity ?: null,
         ]);
 
         $this->toastSuccess(__('Sala de bodega creada correctamente.'));
@@ -49,5 +42,16 @@ class Create extends Component
     {
         return view('livewire.winery.cellar.container-rooms.create')
             ->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:255'],
+            'capacity' => ['nullable', 'integer', 'min:1'],
+            'temperature' => ['nullable', 'numeric', 'min:-20', 'max:50'],
+            'humidity' => ['nullable', 'numeric', 'min:0', 'max:100'],
+        ];
     }
 }

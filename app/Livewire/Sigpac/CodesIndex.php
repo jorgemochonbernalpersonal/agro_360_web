@@ -5,7 +5,6 @@ namespace App\Livewire\Sigpac;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
-use App\Models\PlotGeometry;
 use App\Models\SigpacCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,8 +18,11 @@ class CodesIndex extends Component
     use WithPagination, WithToastNotifications;
 
     public $search = '';
+
     public $filterAutonomousCommunity = '';
+
     public $filterProvince = '';
+
     public $filterMunicipality = '';
 
     protected $queryString = [
@@ -42,28 +44,28 @@ class CodesIndex extends Component
                 $query->whereIn('plots.id', $plotIds);
             })
             ->when($this->search, function ($query) {
-                $search = '%' . strtolower($this->search) . '%';
+                $search = '%'.strtolower($this->search).'%';
                 $query->whereRaw('LOWER(code) LIKE ?', [$search]);
             })
             // ✅ Filtro por Comunidad Autónoma
             ->when($this->filterAutonomousCommunity, function ($query) use ($plotIds) {
                 $query->whereHas('plots', function ($q) use ($plotIds) {
                     $q->whereIn('plots.id', $plotIds)
-                      ->where('autonomous_community_id', $this->filterAutonomousCommunity);
+                        ->where('autonomous_community_id', $this->filterAutonomousCommunity);
                 });
             })
             // ✅ Filtro por Provincia
             ->when($this->filterProvince, function ($query) use ($plotIds) {
                 $query->whereHas('plots', function ($q) use ($plotIds) {
                     $q->whereIn('plots.id', $plotIds)
-                      ->where('province_id', $this->filterProvince);
+                        ->where('province_id', $this->filterProvince);
                 });
             })
             // ✅ Filtro por Municipio
             ->when($this->filterMunicipality, function ($query) use ($plotIds) {
                 $query->whereHas('plots', function ($q) use ($plotIds) {
                     $q->whereIn('plots.id', $plotIds)
-                      ->where('municipality_id', $this->filterMunicipality);
+                        ->where('municipality_id', $this->filterMunicipality);
                 });
             })
             ->with(['plots' => function ($query) use ($plotIds) {
@@ -92,8 +94,9 @@ class CodesIndex extends Component
         $plot = Plot::findOrFail($plotId);
         $sigpacCode = SigpacCode::findOrFail($sigpacCodeId);
 
-        if (!Auth::user()->can('update', $plot)) {
+        if (! Auth::user()->can('update', $plot)) {
             $this->toastError(__('No tienes permiso para modificar esta parcela.'));
+
             return;
         }
 
@@ -101,6 +104,7 @@ class CodesIndex extends Component
 
         if ($sigpacCodes->isEmpty()) {
             $this->toastError(__('Este código SIGPAC no está asociado a esta parcela.'));
+
             return;
         }
 
@@ -113,13 +117,15 @@ class CodesIndex extends Component
 
             $wkt = $this->fetchCoordinatesFromSigpacApi($sigpacCode);
 
-            if (!$wkt) {
+            if (! $wkt) {
                 $this->toastError("No se pudieron obtener coordenadas para el código {$sigpacCode->code}");
+
                 return;
             }
 
-            if (!preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
+            if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
                 $this->toastError("Formato de coordenadas inválido para el código {$sigpacCode->code}");
+
                 return;
             }
 
@@ -129,7 +135,7 @@ class CodesIndex extends Component
                  VALUES (ST_GeomFromText(?, 4326), ST_Centroid(ST_GeomFromText(?, 4326)), ?, ?)',
                 [$wkt, $wkt, now(), now()]
             );
-            
+
             $geometryId = DB::getPdo()->lastInsertId();
 
             $mps = MultipartPlotSigpac::where('plot_id', $plotId)
@@ -163,47 +169,6 @@ class CodesIndex extends Component
         }
     }
 
-    private function fetchCoordinatesFromSigpacApi(SigpacCode $sigpacCode): ?string
-    {
-        try {
-            $url = sprintf(
-                'https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/%s/%s/%s/%s/%s/%s/%s.json',
-                $sigpacCode->code_province,
-                $sigpacCode->code_municipality,
-                $sigpacCode->code_aggregate ?? '0',
-                $sigpacCode->code_zone,
-                $sigpacCode->code_polygon,
-                $sigpacCode->code_plot,
-                $sigpacCode->code_enclosure
-            );
-
-            $httpClient = Http::timeout(10);
-            if (app()->environment('local')) {
-                $httpClient = $httpClient->withoutVerifying();
-            }
-
-            $response = $httpClient->get($url);
-
-            if ($response->status() !== 200) {
-                return null;
-            }
-
-            $data = $response->json();
-
-            if (!is_array($data) || empty($data) || !isset($data[0]['wkt'])) {
-                return null;
-            }
-
-            return $data[0]['wkt'];
-        } catch (\Exception $e) {
-            Log::warning('Error fetching SIGPAC coordinates', [
-                'sigpac_code_id' => $sigpacCode->id,
-                'error' => $e->getMessage(),
-            ]);
-            return null;
-        }
-    }
-
     /**
      * Obtener opciones de Comunidades Autónomas (con caché)
      */
@@ -212,13 +177,13 @@ class CodesIndex extends Component
         return \Illuminate\Support\Facades\Cache::remember('filter_autonomous_communities', now()->addHours(24), function () {
             $user = Auth::user();
             $plotIds = Plot::forUser($user)->pluck('id');
-            
+
             return \App\Models\AutonomousCommunity::whereHas('plots', function ($query) use ($plotIds) {
                 $query->whereIn('plots.id', $plotIds);
             })
-            ->orderBy('name')
-            ->get()
-            ->mapWithKeys(fn($ca) => [$ca->id => $ca->name]);
+                ->orderBy('name')
+                ->get()
+                ->mapWithKeys(fn ($ca) => [$ca->id => $ca->name]);
         });
     }
 
@@ -227,23 +192,23 @@ class CodesIndex extends Component
      */
     public function getProvincesProperty()
     {
-        if (!$this->filterAutonomousCommunity) {
+        if (! $this->filterAutonomousCommunity) {
             return collect();
         }
 
         $cacheKey = "filter_provinces_{$this->filterAutonomousCommunity}";
-        
+
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(24), function () {
             $user = Auth::user();
             $plotIds = Plot::forUser($user)->pluck('id');
-            
+
             return \App\Models\Province::where('autonomous_community_id', $this->filterAutonomousCommunity)
                 ->whereHas('plots', function ($query) use ($plotIds) {
                     $query->whereIn('plots.id', $plotIds);
                 })
                 ->orderBy('name')
                 ->get()
-                ->mapWithKeys(fn($prov) => [$prov->id => $prov->name]);
+                ->mapWithKeys(fn ($prov) => [$prov->id => $prov->name]);
         });
     }
 
@@ -252,23 +217,23 @@ class CodesIndex extends Component
      */
     public function getMunicipalitiesProperty()
     {
-        if (!$this->filterProvince) {
+        if (! $this->filterProvince) {
             return collect();
         }
 
         $cacheKey = "filter_municipalities_{$this->filterProvince}";
-        
+
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(24), function () {
             $user = Auth::user();
             $plotIds = Plot::forUser($user)->pluck('id');
-            
+
             return \App\Models\Municipality::where('province_id', $this->filterProvince)
                 ->whereHas('plots', function ($query) use ($plotIds) {
                     $query->whereIn('plots.id', $plotIds);
                 })
                 ->orderBy('name')
                 ->get()
-                ->mapWithKeys(fn($mun) => [$mun->id => $mun->name]);
+                ->mapWithKeys(fn ($mun) => [$mun->id => $mun->name]);
         });
     }
 
@@ -277,16 +242,16 @@ class CodesIndex extends Component
      */
     public function getMunicipalityHasSigpacCodesProperty()
     {
-        if (!$this->filterMunicipality) {
+        if (! $this->filterMunicipality) {
             return false;
         }
 
         $user = Auth::user();
         $plotIds = Plot::forUser($user)->pluck('id');
-        
+
         return SigpacCode::whereHas('plots', function ($query) use ($plotIds) {
             $query->whereIn('plots.id', $plotIds)
-                  ->where('municipality_id', $this->filterMunicipality);
+                ->where('municipality_id', $this->filterMunicipality);
         })->exists();
     }
 
@@ -334,8 +299,9 @@ class CodesIndex extends Component
      */
     public function generateAllMapsForMunicipality()
     {
-        if (!$this->filterMunicipality) {
+        if (! $this->filterMunicipality) {
             $this->toastError(__('Debes seleccionar un municipio primero.'));
+
             return;
         }
 
@@ -346,29 +312,32 @@ class CodesIndex extends Component
         $codesWithoutGeometry = SigpacCode::query()
             ->whereHas('plots', function ($query) use ($plotIds) {
                 $query->whereIn('plots.id', $plotIds)
-                      ->where('municipality_id', $this->filterMunicipality);
+                    ->where('municipality_id', $this->filterMunicipality);
             })
             ->with(['plots' => function ($query) use ($plotIds) {
                 $query->whereIn('plots.id', $plotIds)
-                      ->where('municipality_id', $this->filterMunicipality)
-                      ->limit(1);
+                    ->where('municipality_id', $this->filterMunicipality)
+                    ->limit(1);
             }])
             ->get()
             ->filter(function ($code) {
                 $plot = $code->plots->first();
-                if (!$plot) return false;
-                
+                if (! $plot) {
+                    return false;
+                }
+
                 // Verificar si ya tiene geometría
                 $hasGeometry = MultipartPlotSigpac::where('plot_id', $plot->id)
                     ->where('sigpac_code_id', $code->id)
                     ->whereNotNull('plot_geometry_id')
                     ->exists();
-                
-                return !$hasGeometry;
+
+                return ! $hasGeometry;
             });
 
         if ($codesWithoutGeometry->isEmpty()) {
             $this->toastInfo(__('Todos los códigos de este municipio ya tienen mapas generados.'));
+
             return;
         }
 
@@ -377,22 +346,26 @@ class CodesIndex extends Component
 
         foreach ($codesWithoutGeometry as $code) {
             $plot = $code->plots->first();
-            if (!$plot) continue;
+            if (! $plot) {
+                continue;
+            }
 
             try {
                 DB::beginTransaction();
 
                 $wkt = $this->fetchCoordinatesFromSigpacApi($code);
 
-                if (!$wkt) {
+                if (! $wkt) {
                     $errorCount++;
                     DB::rollBack();
+
                     continue;
                 }
 
-                if (!preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
+                if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
                     $errorCount++;
                     DB::rollBack();
+
                     continue;
                 }
 
@@ -402,7 +375,7 @@ class CodesIndex extends Component
                      VALUES (ST_GeomFromText(?, 4326), ST_Centroid(ST_GeomFromText(?, 4326)), ?, ?)',
                     [$wkt, $wkt, now(), now()]
                 );
-                
+
                 $geometryId = DB::getPdo()->lastInsertId();
 
                 $mps = MultipartPlotSigpac::where('plot_id', $plot->id)
@@ -436,11 +409,53 @@ class CodesIndex extends Component
         if ($successCount > 0) {
             $this->toastSuccess("Se generaron {$successCount} mapas correctamente.");
         }
-        
+
         if ($errorCount > 0) {
             $this->toastWarning("No se pudieron generar {$errorCount} mapas.");
         }
 
         $this->dispatch('$refresh');
+    }
+
+    private function fetchCoordinatesFromSigpacApi(SigpacCode $sigpacCode): ?string
+    {
+        try {
+            $url = sprintf(
+                'https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/%s/%s/%s/%s/%s/%s/%s.json',
+                $sigpacCode->code_province,
+                $sigpacCode->code_municipality,
+                $sigpacCode->code_aggregate ?? '0',
+                $sigpacCode->code_zone,
+                $sigpacCode->code_polygon,
+                $sigpacCode->code_plot,
+                $sigpacCode->code_enclosure
+            );
+
+            $httpClient = Http::timeout(10);
+            if (app()->environment('local')) {
+                $httpClient = $httpClient->withoutVerifying();
+            }
+
+            $response = $httpClient->get($url);
+
+            if ($response->status() !== 200) {
+                return null;
+            }
+
+            $data = $response->json();
+
+            if (! is_array($data) || empty($data) || ! isset($data[0]['wkt'])) {
+                return null;
+            }
+
+            return $data[0]['wkt'];
+        } catch (\Exception $e) {
+            Log::warning('Error fetching SIGPAC coordinates', [
+                'sigpac_code_id' => $sigpacCode->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 }

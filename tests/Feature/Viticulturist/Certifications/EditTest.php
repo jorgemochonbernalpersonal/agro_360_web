@@ -9,19 +9,9 @@ use Tests\Feature\ViticulturistTestCase;
 
 class EditTest extends ViticulturistTestCase
 {
-    private function makeCertification(int $viticulturistId): Certification
-    {
-        return Certification::create([
-            'viticulturist_id'   => $viticulturistId,
-            'certification_type' => 'ecologico',
-            'certifying_body'    => 'CAAE Original',
-            'issue_date'         => '2023-01-01',
-        ]);
-    }
-
     public function test_can_edit_certification(): void
     {
-        $v    = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $cert = $this->makeCertification($v->id);
         $this->actingAs($v);
 
@@ -33,15 +23,15 @@ class EditTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.certifications.index'));
 
         $this->assertDatabaseHas('certifications', [
-            'id'                 => $cert->id,
-            'certifying_body'    => 'CCPAE Actualizado',
+            'id' => $cert->id,
+            'certifying_body' => 'CCPAE Actualizado',
             'certification_type' => 'produccion_integrada',
         ]);
     }
 
     public function test_mount_fills_properties_from_model(): void
     {
-        $v    = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $cert = $this->makeCertification($v->id);
         $this->actingAs($v);
 
@@ -53,9 +43,9 @@ class EditTest extends ViticulturistTestCase
 
     public function test_cannot_edit_other_viticulturists_certification(): void
     {
-        $v     = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $other = $this->makeOtherViticulturist();
-        $cert  = $this->makeCertification($v->id);
+        $cert = $this->makeCertification($v->id);
         $this->actingAs($other);
 
         Livewire::test(Edit::class, ['certification' => $cert])
@@ -64,7 +54,7 @@ class EditTest extends ViticulturistTestCase
 
     public function test_expiry_must_be_after_issue_on_update(): void
     {
-        $v    = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $cert = $this->makeCertification($v->id);
         $this->actingAs($v);
 
@@ -77,7 +67,7 @@ class EditTest extends ViticulturistTestCase
 
     public function test_certificate_number_can_be_cleared(): void
     {
-        $v    = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $cert = $this->makeCertification($v->id);
         $this->actingAs($v);
 
@@ -87,8 +77,18 @@ class EditTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('certifications', [
-            'id'                 => $cert->id,
+            'id' => $cert->id,
             'certificate_number' => null,
+        ]);
+    }
+
+    private function makeCertification(int $viticulturistId): Certification
+    {
+        return Certification::create([
+            'viticulturist_id' => $viticulturistId,
+            'certification_type' => 'ecologico',
+            'certifying_body' => 'CAAE Original',
+            'issue_date' => '2023-01-01',
         ]);
     }
 }

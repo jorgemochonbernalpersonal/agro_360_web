@@ -9,18 +9,23 @@ use Livewire\Component;
 class SmapSoilCard extends Component
 {
     public Plot $plot;
+
     public ?int $sigpacId = null;
+
     public ?array $smapData = null;
+
     public bool $loading = false;
+
     public ?string $error = null;
 
     // Historical date selector
     public ?string $selectedDate = null;
+
     public array $availableDates = [];
 
     public function mount(Plot $plot, ?int $sigpacId = null)
     {
-        $this->plot     = $plot;
+        $this->plot = $plot;
         $this->sigpacId = $sigpacId;
         $this->loadAvailableDates();
         $this->loadData();
@@ -38,12 +43,12 @@ class SmapSoilCard extends Component
         $dates = $query->orderBy('image_date', 'desc')
             ->limit(30)
             ->pluck('image_date')
-            ->map(fn($date) => $date->format('Y-m-d'))
+            ->map(fn ($date) => $date->format('Y-m-d'))
             ->toArray();
 
         $this->availableDates = $dates;
 
-        if (empty($this->selectedDate) && !empty($dates)) {
+        if (empty($this->selectedDate) && ! empty($dates)) {
             $this->selectedDate = $dates[0];
         }
     }
@@ -57,7 +62,7 @@ class SmapSoilCard extends Component
     {
         try {
             $this->loading = true;
-            $this->error   = null;
+            $this->error = null;
 
             $query = $this->plot->remoteSensingData()
                 ->whereNotNull('soil_moisture_surface_smap');
@@ -72,29 +77,30 @@ class SmapSoilCard extends Component
 
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
-            if (!$remoteSensing) {
+            if (! $remoteSensing) {
                 $this->error = __('Sin datos de humedad para este recinto. Pulsa el botón de actualizar.');
+
                 return;
             }
 
-            $smapService     = app(NasaSMAPService::class);
+            $smapService = app(NasaSMAPService::class);
             $surfaceMoisture = $remoteSensing->soil_moisture_surface_smap;
             $rootzoneMoisture = $remoteSensing->soil_moisture_rootzone_smap;
 
             $this->smapData = [
-                'surface'        => $surfaceMoisture,
-                'rootzone'       => $rootzoneMoisture,
-                'date'           => $remoteSensing->image_date->format('d/m/Y'),
+                'surface' => $surfaceMoisture,
+                'rootzone' => $rootzoneMoisture,
+                'date' => $remoteSensing->image_date->format('d/m/Y'),
                 'surface_status' => $smapService->classifySoilMoisture($surfaceMoisture),
-                'rootzone_status'=> $smapService->classifySoilMoisture($rootzoneMoisture),
+                'rootzone_status' => $smapService->classifySoilMoisture($rootzoneMoisture),
             ];
 
         } catch (\Exception $e) {
             $this->error = __('Error al cargar datos de humedad');
             logger()->error('SMAP data load failed', [
-                'plot_id'   => $this->plot->id,
+                'plot_id' => $this->plot->id,
                 'sigpac_id' => $this->sigpacId,
-                'error'     => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         } finally {
             $this->loading = false;
@@ -105,7 +111,7 @@ class SmapSoilCard extends Component
     {
         try {
             $this->loading = true;
-            $this->error   = null;
+            $this->error = null;
 
             $service = app(\App\Services\RemoteSensing\NasaEarthdataService::class);
             $service->fetchEnrichedData($this->plot, includeArea: false, plotSigpacId: $this->sigpacId);
@@ -114,7 +120,7 @@ class SmapSoilCard extends Component
             $this->loadData();
 
             $this->dispatch('notify', [
-                'type'    => 'success',
+                'type' => 'success',
                 'message' => __('Datos de humedad actualizados'),
             ]);
 
@@ -122,7 +128,7 @@ class SmapSoilCard extends Component
             $this->error = __('Error al actualizar datos de humedad');
 
             $this->dispatch('notify', [
-                'type'    => 'error',
+                'type' => 'error',
                 'message' => __('Error al actualizar datos de humedad'),
             ]);
         } finally {
@@ -133,8 +139,8 @@ class SmapSoilCard extends Component
     public function render()
     {
         return view('livewire.viticulturist.remote-sensing.smap-soil-card', [
-            'smapData'       => $this->smapData,
-            'error'          => $this->error,
+            'smapData' => $this->smapData,
+            'error' => $this->error,
             'availableDates' => $this->availableDates,
         ]);
     }

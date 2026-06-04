@@ -8,20 +8,23 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search     = '';
+    public string $search = '';
+
     public string $typeFilter = '';
 
     protected $queryString = [
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'typeFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void   { $this->resetPage(); }
-    public function updatingTypeFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'typeFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
@@ -29,6 +32,11 @@ class Index extends AbstractIndex
         $supply = WinerySupply::where('user_id', $this->wineryId())->findOrFail($id);
         $supply->delete();
         $this->toastSuccess(__('Insumo eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'typeFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -39,10 +47,10 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(commercial_name, \'\')) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(IFNULL(commercial_name, \'\')) LIKE ?', [$term]);
             });
         }
         if ($this->typeFilter) {
@@ -55,14 +63,21 @@ class Index extends AbstractIndex
         $query->orderBy('name');
     }
 
-    protected function defaultOrderBy(): array { return ['name', 'asc']; }
-    protected function perPage(): int { return 20; }
+    protected function defaultOrderBy(): array
+    {
+        return ['name', 'asc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
         return [
             'supplies' => $entries,
-            'types'    => WinerySupply::supplyTypeOptions(),
+            'types' => WinerySupply::supplyTypeOptions(),
         ];
     }
 }

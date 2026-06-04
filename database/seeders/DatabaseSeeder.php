@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->command->info('🌱 Iniciando seeders...');
-        
+
         // Ejecutar seeders en orden de dependencias
         $this->call([
             AutonomousCommunitySeeder::class,  // Primero: Comunidades autónomas
@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             PestSeeder::class,                  // Plagas y enfermedades del viñedo
             ContainerTypeSeeder::class,         // Tipos de contenedor (bodega)
         ]);
-        
+
         $this->command->info('✅ Seeders completados.');
     }
 }

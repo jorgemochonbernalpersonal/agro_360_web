@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\InvoiceGroup;
 use App\Models\Invoice;
+use App\Models\InvoiceGroup;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -102,4 +102,3 @@ class InvoiceGroupTest extends TestCase
         $this->assertEquals('', $group->description);
     }
 }
-

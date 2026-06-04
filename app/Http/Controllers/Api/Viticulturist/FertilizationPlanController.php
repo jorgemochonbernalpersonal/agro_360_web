@@ -19,8 +19,8 @@ class FertilizationPlanController extends Controller
 
         $request->validate([
             'campaign_id' => 'nullable|integer|min:1',
-            'status'      => 'nullable|string|in:draft,active,archived',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'status' => 'nullable|string|in:draft,active,archived',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = FertilizationPlan::where('viticulturist_id', $user->id)
@@ -41,10 +41,10 @@ class FertilizationPlanController extends Controller
         return response()->json([
             'data' => FertilizationPlanResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -55,15 +55,15 @@ class FertilizationPlanController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'      => 'nullable|integer|exists:campaigns,id',
-            'plan_year'        => 'required|integer|min:2000|max:2100',
-            'nitrate_zone'     => 'nullable|boolean',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'plan_year' => 'required|integer|min:2000|max:2100',
+            'nitrate_zone' => 'nullable|boolean',
             'total_surface_ha' => 'nullable|numeric|min:0',
-            'total_n_kg_ha'    => 'nullable|numeric|min:0',
-            'total_p_kg_ha'    => 'nullable|numeric|min:0',
-            'total_k_kg_ha'    => 'nullable|numeric|min:0',
-            'status'           => 'nullable|string|max:50',
-            'notes'            => 'nullable|string|max:2000',
+            'total_n_kg_ha' => 'nullable|numeric|min:0',
+            'total_p_kg_ha' => 'nullable|numeric|min:0',
+            'total_k_kg_ha' => 'nullable|numeric|min:0',
+            'status' => 'nullable|string|max:50',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (empty($validated['campaign_id'])) {
@@ -74,7 +74,7 @@ class FertilizationPlanController extends Controller
         $record = \App\Models\FertilizationPlan::create([...$validated, 'viticulturist_id' => $user->id, 'status' => $validated['status'] ?? 'draft', 'active' => true]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\FertilizationPlanResource($record),
+            'data' => new \App\Http\Resources\Api\FertilizationPlanResource($record),
             'message' => __('Plan de fertilización registrado correctamente.'),
         ], 201);
     }

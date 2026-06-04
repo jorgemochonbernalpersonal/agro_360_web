@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Viticulturist\Machinery;
 
-use App\Models\Machinery;
 use App\Models\AgriculturalActivity;
-use Livewire\Component;
+use App\Models\Machinery;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Show extends Component
 {
@@ -14,7 +14,7 @@ class Show extends Component
     public function mount(Machinery $machinery)
     {
         // Validar autorización
-        if (!Auth::user()->can('view', $machinery)) {
+        if (! Auth::user()->can('view', $machinery)) {
             abort(403, __('No tienes permiso para ver esta maquinaria.'));
         }
 
@@ -33,8 +33,8 @@ class Show extends Component
         return view('livewire.viticulturist.machinery.show', [
             'recentActivities' => $recentActivities,
         ])->layout('layouts.app', [
-            'title' => $this->machinery->name . ' - Maquinaria - Agro365',
-            'description' => __('Detalles de la maquinaria ') . $this->machinery->name . '. Especificaciones técnicas, registro ROMA y historial de uso en actividades.',
+            'title' => $this->machinery->name.' - Maquinaria - Agro365',
+            'description' => __('Detalles de la maquinaria ').$this->machinery->name.'. Especificaciones técnicas, registro ROMA y historial de uso en actividades.',
         ]);
     }
 }

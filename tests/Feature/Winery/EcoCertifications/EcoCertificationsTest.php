@@ -45,7 +45,7 @@ class EcoCertificationsTest extends WineryTestCase
 
     public function test_winery_can_create_eco_certification(): void
     {
-        $firstType   = array_key_first(EcoCertification::CERTIFICATION_TYPES);
+        $firstType = array_key_first(EcoCertification::CERTIFICATION_TYPES);
         $firstStatus = array_key_first(EcoCertification::STATUSES);
 
         Livewire::test(Create::class)
@@ -56,23 +56,23 @@ class EcoCertificationsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('eco_certifications', [
-            'user_id'            => $this->winery->id,
-            'name'               => 'Certificación Ecológica 2026',
+            'user_id' => $this->winery->id,
+            'name' => 'Certificación Ecológica 2026',
             'certification_type' => $firstType,
-            'status'             => $firstStatus,
+            'status' => $firstStatus,
         ]);
     }
 
     public function test_winery_can_edit_eco_certification(): void
     {
-        $firstType   = array_key_first(EcoCertification::CERTIFICATION_TYPES);
+        $firstType = array_key_first(EcoCertification::CERTIFICATION_TYPES);
         $firstStatus = array_key_first(EcoCertification::STATUSES);
 
         $certification = EcoCertification::create([
-            'user_id'            => $this->winery->id,
-            'name'               => 'Nombre Original',
+            'user_id' => $this->winery->id,
+            'name' => 'Nombre Original',
             'certification_type' => $firstType,
-            'status'             => $firstStatus,
+            'status' => $firstStatus,
         ]);
 
         Livewire::test(Edit::class, ['ecoCertification' => $certification])
@@ -81,21 +81,21 @@ class EcoCertificationsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('eco_certifications', [
-            'id'   => $certification->id,
+            'id' => $certification->id,
             'name' => 'Nombre Actualizado',
         ]);
     }
 
     public function test_winery_cannot_edit_other_winery_eco_certification(): void
     {
-        $firstType   = array_key_first(EcoCertification::CERTIFICATION_TYPES);
+        $firstType = array_key_first(EcoCertification::CERTIFICATION_TYPES);
         $firstStatus = array_key_first(EcoCertification::STATUSES);
 
         $certification = EcoCertification::create([
-            'user_id'            => $this->winery->id,
-            'name'               => 'Certificación Protegida',
+            'user_id' => $this->winery->id,
+            'name' => 'Certificación Protegida',
             'certification_type' => $firstType,
-            'status'             => $firstStatus,
+            'status' => $firstStatus,
         ]);
 
         $otherWinery = $this->makeOtherWinery();
@@ -107,14 +107,14 @@ class EcoCertificationsTest extends WineryTestCase
 
     public function test_winery_can_delete_eco_certification(): void
     {
-        $firstType   = array_key_first(EcoCertification::CERTIFICATION_TYPES);
+        $firstType = array_key_first(EcoCertification::CERTIFICATION_TYPES);
         $firstStatus = array_key_first(EcoCertification::STATUSES);
 
         $certification = EcoCertification::create([
-            'user_id'            => $this->winery->id,
-            'name'               => 'Certificación a Eliminar',
+            'user_id' => $this->winery->id,
+            'name' => 'Certificación a Eliminar',
             'certification_type' => $firstType,
-            'status'             => $firstStatus,
+            'status' => $firstStatus,
         ]);
 
         Livewire::test(Index::class)

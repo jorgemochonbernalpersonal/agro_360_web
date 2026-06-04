@@ -8,13 +8,13 @@ class AppRedirectController extends Controller
 {
     public function open(Request $request)
     {
-        $appUrl  = rtrim(config('app.url'), '/');
-        $webUrl  = $request->query('web', $appUrl . '/login');
+        $appUrl = rtrim(config('app.url'), '/');
+        $webUrl = $request->query('web', $appUrl.'/login');
         $deepUrl = $request->query('deep', 'agro365://home');
 
         // Prevenir open redirect: solo URLs del mismo dominio
         if (! str_starts_with($webUrl, $appUrl)) {
-            $webUrl = $appUrl . '/login';
+            $webUrl = $appUrl.'/login';
         }
 
         // Solo deep links con el scheme de la app

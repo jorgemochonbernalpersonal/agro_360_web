@@ -35,10 +35,10 @@ class SendWithdrawalPeriodAlertsCommand extends Command
         // Obtener tratamientos fitosanitarios con plazo de seguridad
         $treatments = PhytosanitaryTreatment::whereHas('product', function ($query) {
             $query->whereNotNull('withdrawal_period_days')
-                  ->where('withdrawal_period_days', '>', 0);
+                ->where('withdrawal_period_days', '>', 0);
         })
-        ->with(['activity', 'activity.plot', 'activity.plot.viticulturist', 'product'])
-        ->get();
+            ->with(['activity', 'activity.plot', 'activity.plot.viticulturist', 'product'])
+            ->get();
 
         $notifiedCount = 0;
 
@@ -46,7 +46,7 @@ class SendWithdrawalPeriodAlertsCommand extends Command
             $activity = $treatment->activity;
             $product = $treatment->product;
 
-            if (!$activity || !$product) {
+            if (! $activity || ! $product) {
                 continue;
             }
 

@@ -5,31 +5,24 @@ namespace App\Livewire\Viticulturist\Warehouses;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Warehouse;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
 
-    public string $name        = '';
-    public string $location    = '';
+    public string $name = '';
+
+    public string $location = '';
+
     public string $description = '';
 
     public function mount(): void
     {
-        if (!Auth::user()->hasViticulturistAccess()) {
+        if (! Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'name'        => 'required|string|max:255',
-            'location'    => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-        ];
     }
 
     public function save(): mixed
@@ -37,11 +30,11 @@ class Create extends Component
         $this->validate();
 
         Warehouse::create([
-            'user_id'     => Auth::id(),
-            'name'        => $this->name,
-            'location'    => $this->location ?: null,
+            'user_id' => Auth::id(),
+            'name' => $this->name,
+            'location' => $this->location ?: null,
             'description' => $this->description ?: null,
-            'active'      => true,
+            'active' => true,
         ]);
 
         $this->toastSuccess(__('Almacén creado correctamente.'));
@@ -53,5 +46,14 @@ class Create extends Component
     {
         return view('livewire.viticulturist.warehouses.create')
             ->layout('layouts.app', ['title' => __('Nuevo Almacén - Agro365')]);
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+        ];
     }
 }

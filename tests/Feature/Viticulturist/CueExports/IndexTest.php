@@ -10,37 +10,10 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeExploitation(int $viticulturistId): Exploitation
-    {
-        return Exploitation::create([
-            'viticulturist_id'         => $viticulturistId,
-            'exploitation_name'        => 'Explotación Test',
-            'holder_name'              => 'Test Holder',
-            'holder_nif'               => '12345678A',
-            'is_ecological'            => false,
-            'is_integrated_production' => false,
-            'is_quality_scheme'        => false,
-            'active'                   => true,
-        ]);
-    }
-
-    private function makeCueExport(int $viticulturistId, int $exploitationId, string $status = 'draft'): CueExport
-    {
-        return CueExport::create([
-            'viticulturist_id' => $viticulturistId,
-            'exploitation_id'  => $exploitationId,
-            'campaign_year'    => 2024,
-            'period_type'      => 'annual',
-            'from_date'        => '2024-01-01',
-            'to_date'          => '2024-12-31',
-            'status'           => $status,
-        ]);
-    }
-
     public function test_index_shows_exports(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $exploitation  = $this->makeExploitation($viticulturist->id);
+        $exploitation = $this->makeExploitation($viticulturist->id);
         $this->makeCueExport($viticulturist->id, $exploitation->id);
 
         $this->actingAs($viticulturist);
@@ -53,8 +26,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_mark_as_generated_transitions_draft(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $exploitation  = $this->makeExploitation($viticulturist->id);
-        $export        = $this->makeCueExport($viticulturist->id, $exploitation->id, 'draft');
+        $exploitation = $this->makeExploitation($viticulturist->id);
+        $export = $this->makeCueExport($viticulturist->id, $exploitation->id, 'draft');
 
         $this->actingAs($viticulturist);
 
@@ -62,7 +35,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('markAsGenerated', $export->id);
 
         $this->assertDatabaseHas('cue_exports', [
-            'id'     => $export->id,
+            'id' => $export->id,
             'status' => 'generated',
         ]);
     }
@@ -70,8 +43,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_cannot_mark_as_generated_if_already_generated(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $exploitation  = $this->makeExploitation($viticulturist->id);
-        $export        = $this->makeCueExport($viticulturist->id, $exploitation->id, 'generated');
+        $exploitation = $this->makeExploitation($viticulturist->id);
+        $export = $this->makeCueExport($viticulturist->id, $exploitation->id, 'generated');
 
         $this->actingAs($viticulturist);
 
@@ -80,7 +53,7 @@ class IndexTest extends ViticulturistTestCase
 
         // Status remains 'generated', not changed to something else
         $this->assertDatabaseHas('cue_exports', [
-            'id'     => $export->id,
+            'id' => $export->id,
             'status' => 'generated',
         ]);
     }
@@ -88,8 +61,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_mark_as_sent_transitions_generated(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $exploitation  = $this->makeExploitation($viticulturist->id);
-        $export        = $this->makeCueExport($viticulturist->id, $exploitation->id, 'generated');
+        $exploitation = $this->makeExploitation($viticulturist->id);
+        $export = $this->makeCueExport($viticulturist->id, $exploitation->id, 'generated');
 
         $this->actingAs($viticulturist);
 
@@ -97,7 +70,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('markAsSent', $export->id);
 
         $this->assertDatabaseHas('cue_exports', [
-            'id'     => $export->id,
+            'id' => $export->id,
             'status' => 'sent',
         ]);
     }
@@ -105,8 +78,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_delete_removes_draft(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $exploitation  = $this->makeExploitation($viticulturist->id);
-        $export        = $this->makeCueExport($viticulturist->id, $exploitation->id, 'draft');
+        $exploitation = $this->makeExploitation($viticulturist->id);
+        $export = $this->makeCueExport($viticulturist->id, $exploitation->id, 'draft');
 
         $this->actingAs($viticulturist);
 
@@ -119,8 +92,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_cannot_delete_non_draft(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $exploitation  = $this->makeExploitation($viticulturist->id);
-        $export        = $this->makeCueExport($viticulturist->id, $exploitation->id, 'generated');
+        $exploitation = $this->makeExploitation($viticulturist->id);
+        $export = $this->makeCueExport($viticulturist->id, $exploitation->id, 'generated');
 
         $this->actingAs($viticulturist);
 
@@ -129,5 +102,32 @@ class IndexTest extends ViticulturistTestCase
 
         // Record is NOT deleted
         $this->assertDatabaseHas('cue_exports', ['id' => $export->id]);
+    }
+
+    private function makeExploitation(int $viticulturistId): Exploitation
+    {
+        return Exploitation::create([
+            'viticulturist_id' => $viticulturistId,
+            'exploitation_name' => 'Explotación Test',
+            'holder_name' => 'Test Holder',
+            'holder_nif' => '12345678A',
+            'is_ecological' => false,
+            'is_integrated_production' => false,
+            'is_quality_scheme' => false,
+            'active' => true,
+        ]);
+    }
+
+    private function makeCueExport(int $viticulturistId, int $exploitationId, string $status = 'draft'): CueExport
+    {
+        return CueExport::create([
+            'viticulturist_id' => $viticulturistId,
+            'exploitation_id' => $exploitationId,
+            'campaign_year' => 2024,
+            'period_type' => 'annual',
+            'from_date' => '2024-01-01',
+            'to_date' => '2024-12-31',
+            'status' => $status,
+        ]);
     }
 }

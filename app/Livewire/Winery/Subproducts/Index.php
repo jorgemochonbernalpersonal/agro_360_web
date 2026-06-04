@@ -9,29 +9,42 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search      = '';
-    public string $typeFilter  = '';
-    public string $wineFilter  = '';
+    public string $search = '';
+
+    public string $typeFilter = '';
+
+    public string $wineFilter = '';
 
     protected $queryString = [
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'typeFilter' => ['except' => ''],
         'wineFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void     { $this->resetPage(); }
-    public function updatingTypeFilter(): void { $this->resetPage(); }
-    public function updatingWineFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'typeFilter' => '', 'wineFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingWineFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
     {
         WineSubproduct::where('user_id', $this->wineryId())->findOrFail($id)->delete();
         $this->toastSuccess(__('Subproducto eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'typeFilter' => '', 'wineFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -43,11 +56,11 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(IFNULL(lot_number,\'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(destination_name,\'\')) LIKE ?', [$term])
-                  ->orWhereHas('wine', fn($w) => $w->whereRaw('LOWER(name) LIKE ?', [$term]));
+                    ->orWhereRaw('LOWER(IFNULL(destination_name,\'\')) LIKE ?', [$term])
+                    ->orWhereHas('wine', fn ($w) => $w->whereRaw('LOWER(name) LIKE ?', [$term]));
             });
         }
 
@@ -65,9 +78,15 @@ class Index extends AbstractIndex
         $query->orderByDesc('subproduct_date')->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['subproduct_date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['subproduct_date', 'desc'];
+    }
 
-    protected function perPage(): int { return 20; }
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -78,15 +97,15 @@ class Index extends AbstractIndex
         $base = WineSubproduct::where('user_id', $this->wineryId());
 
         $stats = [
-            'total'     => (clone $base)->count(),
+            'total' => (clone $base)->count(),
             'this_year' => (clone $base)->whereYear('subproduct_date', now()->year)->count(),
         ];
 
         return [
             'subproducts' => $entries,
-            'wines'       => $wines,
-            'types'       => WineSubproduct::typeOptions(),
-            'stats'       => $stats,
+            'wines' => $wines,
+            'types' => WineSubproduct::typeOptions(),
+            'stats' => $stats,
         ];
     }
 }

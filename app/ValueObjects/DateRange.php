@@ -16,6 +16,14 @@ class DateRange
     }
 
     /**
+     * Convertir a string
+     */
+    public function __toString(): string
+    {
+        return $this->format();
+    }
+
+    /**
      * Crear desde strings
      */
     public static function fromStrings(string $start, string $end): self
@@ -91,7 +99,7 @@ class DateRange
      */
     public function overlaps(DateRange $other): bool
     {
-        return $this->start->isBefore($other->end) 
+        return $this->start->isBefore($other->end)
             && $this->end->isAfter($other->start);
     }
 
@@ -100,7 +108,7 @@ class DateRange
      */
     public function format(string $format = 'd/m/Y'): string
     {
-        return $this->start->format($format) . ' - ' . $this->end->format($format);
+        return $this->start->format($format).' - '.$this->end->format($format);
     }
 
     /**
@@ -112,13 +120,5 @@ class DateRange
             'start' => $this->start->toDateString(),
             'end' => $this->end->toDateString(),
         ];
-    }
-
-    /**
-     * Convertir a string
-     */
-    public function __toString(): string
-    {
-        return $this->format();
     }
 }

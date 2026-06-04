@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Validador de cumplimiento de la Política Agraria Común (PAC)
- * 
+ *
  * Valida que las actividades agrícolas cumplan con los requisitos
  * de la PAC española, incluyendo la presencia de códigos SIGPAC,
  * superficies declaradas, y otros datos obligatorios.
@@ -16,8 +16,9 @@ class PacComplianceValidator
 {
     /**
      * Validar cumplimiento PAC de un conjunto de actividades
-     * 
+     *
      * @param Collection $activities Colección de AgriculturalActivity
+     *
      * @return array ['is_compliant' => bool, 'errors' => array, 'warnings' => array, 'stats' => array]
      */
     public function validateActivities(Collection $activities): array
@@ -34,8 +35,8 @@ class PacComplianceValidator
 
         foreach ($activities as $activity) {
             $activityErrors = $this->validateActivity($activity);
-            
-            if (!empty($activityErrors['errors'])) {
+
+            if (! empty($activityErrors['errors'])) {
                 $errors[] = [
                     'activity_id' => $activity->id,
                     'activity_date' => $activity->activity_date->format('Y-m-d'),
@@ -44,7 +45,7 @@ class PacComplianceValidator
                 ];
             }
 
-            if (!empty($activityErrors['warnings'])) {
+            if (! empty($activityErrors['warnings'])) {
                 $warnings[] = [
                     'activity_id' => $activity->id,
                     'activity_date' => $activity->activity_date->format('Y-m-d'),
@@ -70,7 +71,7 @@ class PacComplianceValidator
 
         return [
             'is_compliant' => empty($errors),
-            'has_warnings' => !empty($warnings),
+            'has_warnings' => ! empty($warnings),
             'errors' => $errors,
             'warnings' => $warnings,
             'stats' => $stats,
@@ -78,10 +79,145 @@ class PacComplianceValidator
     }
 
     /**
+     * Generar reporte de cumplimiento en formato de texto
+     *
+     * @param array $validation Resultado de validateActivities()
+     */
+    public function generateComplianceReport(array $validation): string
+    {
+        $report = "=== REPORTE DE CUMPLIMIENTO PAC ===\n\n";
+
+        // Resumen
+        $stats = $validation['stats'];
+        $report .= "RESUMEN:\n";
+        $report .= sprintf("- Total actividades analizadas: %d\n", $stats['total_activities']);
+        $report .= sprintf("- Actividades con SIGPAC: %d (%.1f%%)\n",
+            $stats['with_sigpac'],
+            $stats['total_activities'] > 0 ? ($stats['with_sigpac'] / $stats['total_activities']) * 100 : 0
+        );
+        $report .= sprintf("- Actividades sin SIGPAC: %d\n", $stats['without_sigpac']);
+        $report .= sprintf("- SIGPAC válidos: %d\n", $stats['with_valid_sigpac']);
+        $report .= sprintf("- Actividades sin parcela: %d\n", $stats['missing_plot']);
+
+        // Estado de cumplimiento
+        $report .= "\nESTADO: ";
+        if ($validation['is_compliant']) {
+            $report .= "✓ CUMPLE CON REQUISITOS PAC\n";
+        } else {
+            $report .= "✗ NO CUMPLE - Se requiere corrección\n";
+        }
+
+        if ($validation['has_warnings']) {
+            $report .= "⚠ Hay advertencias que revisar\n";
+        }
+
+        // Errores críticos
+        if (! empty($validation['errors'])) {
+            $report .= "\nERRORES CRÍTICOS (deben corregirse):\n";
+            foreach ($validation['errors'] as $error) {
+                $report .= sprintf(
+                    "\n- Actividad #%d (%s - %s):\n",
+                    $error['activity_id'],
+                    $error['activity_date'],
+                    $error['activity_type']
+                );
+                foreach ($error['errors'] as $msg) {
+                    $report .= "  • $msg\n";
+                }
+            }
+        }
+
+        // Advertencias
+        if (! empty($validation['warnings'])) {
+            $report .= "\nADVERTENCIAS (recomendado revisar):\n";
+            $count = 0;
+            foreach ($validation['warnings'] as $warning) {
+                if ($count >= 10) {
+                    $report .= sprintf("\n... y %d advertencias más.\n", count($validation['warnings']) - 10);
+                    break;
+                }
+                $report .= sprintf(
+                    "\n- Actividad #%d (%s - %s):\n",
+                    $warning['activity_id'],
+                    $warning['activity_date'],
+                    $warning['activity_type']
+                );
+                foreach ($warning['warnings'] as $msg) {
+                    $report .= "  • $msg\n";
+                }
+                $count++;
+            }
+        }
+
+        return $report;
+    }
+
+    /**
+     * Verificar si las parcelas de las actividades tienen SIGPAC
+     */
+    public function allActivitiesHaveSigpac(Collection $activities): bool
+    {
+        foreach ($activities as $activity) {
+            if (! $activity->plot || $activity->plot->sigpacCodes->isEmpty()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Obtener porcentaje de cumplimiento
+     *
+     * @param array $validation Resultado de validateActivities()
+     *
+     * @return float Porcentaje de 0 a 100
+     */
+    public function getCompliancePercentage(array $validation): float
+    {
+        $stats = $validation['stats'];
+        if ($stats['total_activities'] === 0) {
+            return 100.0;
+        }
+
+        // Calcular actividades conformes (sin errores críticos)
+        $activitiesWithErrors = count($validation['errors']);
+        $compliantActivities = $stats['total_activities'] - $activitiesWithErrors;
+
+        return ($compliantActivities / $stats['total_activities']) * 100;
+    }
+
+    /**
+     * Obtener estadísticas detalladas de cumplimiento por tipo de actividad
+     */
+    public function getComplianceStats(Collection $activities): array
+    {
+        $statsByType = [];
+        $activityTypes = ['phytosanitary', 'irrigation', 'fertilization', 'harvest', 'cultural', 'observation'];
+
+        foreach ($activityTypes as $type) {
+            $typeActivities = $activities->where('activity_type', $type);
+
+            if ($typeActivities->isEmpty()) {
+                continue;
+            }
+
+            $validation = $this->validateActivities($typeActivities);
+
+            $statsByType[$type] = [
+                'total' => $typeActivities->count(),
+                'compliant' => $typeActivities->count() - count($validation['errors']),
+                'errors' => count($validation['errors']),
+                'warnings' => count($validation['warnings']),
+                'percentage' => $this->getCompliancePercentage($validation),
+            ];
+        }
+
+        return $statsByType;
+    }
+
+    /**
      * Validar una actividad individual
-     * 
-     * @param AgriculturalActivity $activity
-     * @return array
      */
     protected function validateActivity(AgriculturalActivity $activity): array
     {
@@ -92,7 +228,7 @@ class PacComplianceValidator
         $sigpac_valid = false;
 
         // 1. Validar que tenga parcela asignada
-        if (!$activity->plot_id || !$activity->plot) {
+        if (! $activity->plot_id || ! $activity->plot) {
             $errors[] = 'Actividad sin parcela asignada';
         } else {
             $has_plot = true;
@@ -133,15 +269,13 @@ class PacComplianceValidator
             }
 
             // 6. Validar superficie total de la parcela
-            if (!$plot->area || $plot->area <= 0) {
+            if (! $plot->area || $plot->area <= 0) {
                 $warnings[] = 'Parcela sin superficie total definida';
             }
         }
 
-
-        
         // 8. Validar Estadio Fenológico (Recomendado para todas las actividades)
-        if (!$activity->phenological_stage) {
+        if (! $activity->phenological_stage) {
             $warnings[] = 'Falta estadio fenológico (recomendado para trazabilidad)';
         }
 
@@ -175,40 +309,38 @@ class PacComplianceValidator
 
     /**
      * Validar tratamiento fitosanitario específicamente
-     * 
-     * @param AgriculturalActivity $activity
-     * @return array
      */
     protected function validatePhytosanitaryTreatment(AgriculturalActivity $activity): array
     {
         $errors = [];
         $warnings = [];
 
-        if (!$activity->phytosanitaryTreatment) {
+        if (! $activity->phytosanitaryTreatment) {
             $errors[] = 'Tratamiento fitosanitario sin datos específicos';
+
             return ['errors' => $errors, 'warnings' => $warnings];
         }
 
         $treatment = $activity->phytosanitaryTreatment;
 
         // Validar producto
-        if (!$treatment->product_id || !$treatment->product) {
+        if (! $treatment->product_id || ! $treatment->product) {
             $errors[] = 'Tratamiento sin producto fitosanitario definido';
         } else {
             $product = $treatment->product;
-            
+
             // Validar número de registro del producto (OBLIGATORIO)
-            if (!$product->registration_number) {
+            if (! $product->registration_number) {
                 $errors[] = 'Producto sin número de registro oficial - Campo PAC OBLIGATORIO';
             } else {
                 // Validar formato del número de registro
-                if (!preg_match('/^ES-\d{8}$/', $product->registration_number)) {
+                if (! preg_match('/^ES-\d{8}$/', $product->registration_number)) {
                     $errors[] = 'Número de registro con formato inválido (debe ser ES-00000000)';
                 }
             }
 
             // Validar que el registro esté activo y vigente
-            if (!$product->isRegistrationValid()) {
+            if (! $product->isRegistrationValid()) {
                 if ($product->registration_status === 'revoked') {
                     $errors[] = 'Producto con registro REVOCADO - No se puede usar';
                 } elseif ($product->registration_status === 'expired') {
@@ -228,34 +360,34 @@ class PacComplianceValidator
         }
 
         // Validar dosis
-        if (!$treatment->dose_per_hectare) {
+        if (! $treatment->dose_per_hectare) {
             $warnings[] = 'Tratamiento sin dosis por hectárea especificada';
         }
 
         // Validar área tratada
-        if (!$treatment->area_treated) {
+        if (! $treatment->area_treated) {
             $errors[] = 'Tratamiento sin área tratada especificada - Campo PAC OBLIGATORIO';
         }
 
         // VALIDACIONES PAC OBLIGATORIAS
-        
+
         // 1. Justificación del tratamiento (obligatorio)
-        if (!$treatment->treatment_justification || trim($treatment->treatment_justification) === '') {
+        if (! $treatment->treatment_justification || trim($treatment->treatment_justification) === '') {
             $errors[] = 'Falta justificación del tratamiento (plaga/enfermedad detectada) - Campo PAC obligatorio';
         }
 
         // 2. Número ROPO del aplicador (recomendado)
-        if (!$treatment->applicator_ropo_number || trim($treatment->applicator_ropo_number) === '') {
+        if (! $treatment->applicator_ropo_number || trim($treatment->applicator_ropo_number) === '') {
             $warnings[] = 'Falta número ROPO del aplicador - Campo PAC recomendado';
         }
 
         // 3. Plazo de reentrada (obligatorio)
-        if (!$treatment->reentry_period_days) {
+        if (! $treatment->reentry_period_days) {
             $errors[] = 'Falta plazo de reentrada (días sin acceso a parcela) - Campo PAC obligatorio';
         }
 
         // 4. Volumen de caldo (obligatorio)
-        if (!$treatment->spray_volume || $treatment->spray_volume <= 0) {
+        if (! $treatment->spray_volume || $treatment->spray_volume <= 0) {
             $errors[] = 'Falta volumen de caldo aplicado - Campo PAC obligatorio';
         }
 
@@ -267,39 +399,37 @@ class PacComplianceValidator
 
     /**
      * Validar actividad de riego (PAC condicionalidad reforzada)
-     * 
-     * @param AgriculturalActivity $activity
-     * @return array
      */
     protected function validateIrrigation(AgriculturalActivity $activity): array
     {
         $errors = [];
         $warnings = [];
 
-        if (!$activity->irrigation) {
+        if (! $activity->irrigation) {
             $errors[] = 'Actividad de riego sin datos específicos';
+
             return ['errors' => $errors, 'warnings' => $warnings];
         }
 
         $irrigation = $activity->irrigation;
 
         // 1. Origen del agua (obligatorio)
-        if (!$irrigation->water_source) {
+        if (! $irrigation->water_source) {
             $errors[] = 'Falta origen del agua (pozo, río, etc.) - Campo PAC obligatorio';
         }
 
         // 2. Número de concesión (obligatorio)
-        if (!$irrigation->water_concession) {
+        if (! $irrigation->water_concession) {
             $errors[] = 'Falta número de concesión de agua - Campo PAC obligatorio';
         }
 
         // 3. Caudal (obligatorio)
-        if (!$irrigation->flow_rate || $irrigation->flow_rate <= 0) {
+        if (! $irrigation->flow_rate || $irrigation->flow_rate <= 0) {
             $errors[] = 'Falta caudal de riego (L/h) - Campo PAC obligatorio';
         }
-        
+
         // 4. Volumen total (recomendado/obligatorio según CCAA)
-        if (!$irrigation->water_volume || $irrigation->water_volume <= 0) {
+        if (! $irrigation->water_volume || $irrigation->water_volume <= 0) {
             $warnings[] = 'Falta volumen total de agua aplicada - Campo PAC importante';
         }
 
@@ -308,7 +438,7 @@ class PacComplianceValidator
             'warnings' => $warnings,
         ];
     }
-    
+
     /**
      * Validar actividad de fertilización (PAC Nutrición)
      */
@@ -317,8 +447,9 @@ class PacComplianceValidator
         $errors = [];
         $warnings = [];
 
-        if (!$activity->fertilization) {
+        if (! $activity->fertilization) {
             $errors[] = 'Actividad de fertilización sin datos específicos';
+
             return ['errors' => $errors, 'warnings' => $warnings];
         }
 
@@ -332,18 +463,18 @@ class PacComplianceValidator
         // 2. Si es orgánico, validar detalles de estiércol
         // Heurística simple: si el tipo menciona orgánico/estiércol/purín
         $type = strtolower($fert->fertilizer_type ?? '');
-        $isOrganic = str_contains($type, 'organico') || str_contains($type, 'orgánico') || 
-                     str_contains($type, 'estiercol') || str_contains($type, 'estiércol') || 
+        $isOrganic = str_contains($type, 'organico') || str_contains($type, 'orgánico') ||
+                     str_contains($type, 'estiercol') || str_contains($type, 'estiércol') ||
                      str_contains($type, 'purin') || str_contains($type, 'purín');
 
         if ($isOrganic) {
-            if (!$fert->manure_type) {
+            if (! $fert->manure_type) {
                 $errors[] = 'Fertilizante orgánico: Falta especificar el tipo de estiércol - Obligatorio PAC';
             }
-            if (!$fert->burial_date) {
+            if (! $fert->burial_date) {
                 $errors[] = 'Fertilizante orgánico: Falta fecha de enterrado - Importante para reducción de emisiones';
             }
-            if (!$fert->emission_reduction_method) {
+            if (! $fert->emission_reduction_method) {
                 $errors[] = 'Fertilizante orgánico: Falta método de reducción de emisiones';
             }
         }
@@ -362,27 +493,28 @@ class PacComplianceValidator
         $errors = [];
         $warnings = [];
 
-        if (!$activity->harvest) {
+        if (! $activity->harvest) {
             $errors[] = 'Actividad de cosecha sin datos específicos';
+
             return ['errors' => $errors, 'warnings' => $warnings];
         }
 
         $harvest = $activity->harvest;
 
         // 1. Validar plazo de seguridad usando WithdrawalPeriodValidator
-        $withdrawalValidator = new \App\Services\Validators\WithdrawalPeriodValidator();
+        $withdrawalValidator = new \App\Services\Validators\WithdrawalPeriodValidator;
         $withdrawalValidation = $withdrawalValidator->validateHarvest($harvest);
-        
-        if (!$withdrawalValidation['is_valid']) {
+
+        if (! $withdrawalValidation['is_valid']) {
             $errors = array_merge($errors, $withdrawalValidation['errors']);
         }
-        
-        if (!empty($withdrawalValidation['warnings'])) {
+
+        if (! empty($withdrawalValidation['warnings'])) {
             $warnings = array_merge($warnings, $withdrawalValidation['warnings']);
         }
 
         // 2. Documento de Transporte (Obligatorio para movimiento de uva)
-        if (!$harvest->transport_document_number) {
+        if (! $harvest->transport_document_number) {
             // Si el destino NO es autoconsumo, es obligatorio/muy recomendado
             if ($harvest->destination_type !== 'self_consumption') {
                 $warnings[] = 'Falta Documento de Transporte/Guía - Obligatorio para trazabilidad';
@@ -390,158 +522,15 @@ class PacComplianceValidator
         }
 
         // 3. Código REGA de destino
-        if (!$harvest->destination_rega_code) {
-             if ($harvest->destination_type !== 'self_consumption') {
+        if (! $harvest->destination_rega_code) {
+            if ($harvest->destination_type !== 'self_consumption') {
                 $warnings[] = 'Falta Código REGA de destino - Esencial para trazabilidad SIEX';
-             }
+            }
         }
 
         return [
             'errors' => $errors,
             'warnings' => $warnings,
         ];
-    }
-
-    /**
-     * Generar reporte de cumplimiento en formato de texto
-     * 
-     * @param array $validation Resultado de validateActivities()
-     * @return string
-     */
-    public function generateComplianceReport(array $validation): string
-    {
-        $report = "=== REPORTE DE CUMPLIMIENTO PAC ===\n\n";
-
-        // Resumen
-        $stats = $validation['stats'];
-        $report .= "RESUMEN:\n";
-        $report .= sprintf("- Total actividades analizadas: %d\n", $stats['total_activities']);
-        $report .= sprintf("- Actividades con SIGPAC: %d (%.1f%%)\n", 
-            $stats['with_sigpac'],
-            $stats['total_activities'] > 0 ? ($stats['with_sigpac'] / $stats['total_activities']) * 100 : 0
-        );
-        $report .= sprintf("- Actividades sin SIGPAC: %d\n", $stats['without_sigpac']);
-        $report .= sprintf("- SIGPAC válidos: %d\n", $stats['with_valid_sigpac']);
-        $report .= sprintf("- Actividades sin parcela: %d\n", $stats['missing_plot']);
-
-        // Estado de cumplimiento
-        $report .= "\nESTADO: ";
-        if ($validation['is_compliant']) {
-            $report .= "✓ CUMPLE CON REQUISITOS PAC\n";
-        } else {
-            $report .= "✗ NO CUMPLE - Se requiere corrección\n";
-        }
-
-        if ($validation['has_warnings']) {
-            $report .= "⚠ Hay advertencias que revisar\n";
-        }
-
-        // Errores críticos
-        if (!empty($validation['errors'])) {
-            $report .= "\nERRORES CRÍTICOS (deben corregirse):\n";
-            foreach ($validation['errors'] as $error) {
-                $report .= sprintf(
-                    "\n- Actividad #%d (%s - %s):\n",
-                    $error['activity_id'],
-                    $error['activity_date'],
-                    $error['activity_type']
-                );
-                foreach ($error['errors'] as $msg) {
-                    $report .= "  • $msg\n";
-                }
-            }
-        }
-
-        // Advertencias
-        if (!empty($validation['warnings'])) {
-            $report .= "\nADVERTENCIAS (recomendado revisar):\n";
-            $count = 0;
-            foreach ($validation['warnings'] as $warning) {
-                if ($count >= 10) {
-                    $report .= sprintf("\n... y %d advertencias más.\n", count($validation['warnings']) - 10);
-                    break;
-                }
-                $report .= sprintf(
-                    "\n- Actividad #%d (%s - %s):\n",
-                    $warning['activity_id'],
-                    $warning['activity_date'],
-                    $warning['activity_type']
-                );
-                foreach ($warning['warnings'] as $msg) {
-                    $report .= "  • $msg\n";
-                }
-                $count++;
-            }
-        }
-
-        return $report;
-    }
-
-    /**
-     * Verificar si las parcelas de las actividades tienen SIGPAC
-     * 
-     * @param Collection $activities
-     * @return bool
-     */
-    public function allActivitiesHaveSigpac(Collection $activities): bool
-    {
-        foreach ($activities as $activity) {
-            if (!$activity->plot || $activity->plot->sigpacCodes->isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Obtener porcentaje de cumplimiento
-     * 
-     * @param array $validation Resultado de validateActivities()
-     * @return float Porcentaje de 0 a 100
-     */
-    public function getCompliancePercentage(array $validation): float
-    {
-        $stats = $validation['stats'];
-        if ($stats['total_activities'] === 0) {
-            return 100.0;
-        }
-
-        // Calcular actividades conformes (sin errores críticos)
-        $activitiesWithErrors = count($validation['errors']);
-        $compliantActivities = $stats['total_activities'] - $activitiesWithErrors;
-
-        return ($compliantActivities / $stats['total_activities']) * 100;
-    }
-    
-    /**
-     * Obtener estadísticas detalladas de cumplimiento por tipo de actividad
-     * 
-     * @param Collection $activities
-     * @return array
-     */
-    public function getComplianceStats(Collection $activities): array
-    {
-        $statsByType = [];
-        $activityTypes = ['phytosanitary', 'irrigation', 'fertilization', 'harvest', 'cultural', 'observation'];
-        
-        foreach ($activityTypes as $type) {
-            $typeActivities = $activities->where('activity_type', $type);
-            
-            if ($typeActivities->isEmpty()) {
-                continue;
-            }
-            
-            $validation = $this->validateActivities($typeActivities);
-            
-            $statsByType[$type] = [
-                'total' => $typeActivities->count(),
-                'compliant' => $typeActivities->count() - count($validation['errors']),
-                'errors' => count($validation['errors']),
-                'warnings' => count($validation['warnings']),
-                'percentage' => $this->getCompliancePercentage($validation),
-            ];
-        }
-        
-        return $statsByType;
     }
 }

@@ -37,9 +37,9 @@ class WineryJoinRequestedNotification extends Notification implements ShouldQueu
         }
 
         return (new MailMessage)
-            ->subject(__('Nueva solicitud de vinculación — ') . $this->viticulturist->name)
+            ->subject(__('Nueva solicitud de vinculación — ').$this->viticulturist->name)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line(__('El viticultor **') . $this->viticulturist->name . '** ha solicitado vincularse a tu bodega.')
+            ->line(__('El viticultor **').$this->viticulturist->name.'** ha solicitado vincularse a tu bodega.')
             ->line(__('Puedes aprobar o rechazar la solicitud desde el panel de viticultores.'))
             ->action(__('Ver solicitudes'), $url)
             ->salutation(__('Saludos,\nAgro365'));
@@ -48,7 +48,7 @@ class WineryJoinRequestedNotification extends Notification implements ShouldQueu
     public function toArray(object $notifiable): array
     {
         return [
-            'viticulturist_id'   => $this->viticulturist->id,
+            'viticulturist_id' => $this->viticulturist->id,
             'viticulturist_name' => $this->viticulturist->name,
         ];
     }

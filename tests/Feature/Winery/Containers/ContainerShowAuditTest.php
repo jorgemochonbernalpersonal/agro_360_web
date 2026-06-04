@@ -19,10 +19,10 @@ class ContainerShowAuditTest extends TestCase
 
     public function test_show_renders_change_history_section(): void
     {
-        $user      = User::factory()->create(['role' => 'winery']);
+        $user = User::factory()->create(['role' => 'winery']);
         $container = Container::factory()->create([
-            'user_id'  => $user->id,
-            'name'     => 'Tanque A',
+            'user_id' => $user->id,
+            'name' => 'Tanque A',
             'capacity' => 1000.0,
         ]);
 

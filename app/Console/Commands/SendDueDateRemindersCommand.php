@@ -8,7 +8,8 @@ use Illuminate\Console\Command;
 
 class SendDueDateRemindersCommand extends Command
 {
-    protected $signature   = 'supervisor-requests:due-reminders {--days=* : Días antes del vencimiento (default: 3 y 1)}';
+    protected $signature = 'supervisor-requests:due-reminders {--days=* : Días antes del vencimiento (default: 3 y 1)}';
+
     protected $description = 'Avisa a las bodegas de solicitudes próximas a vencer';
 
     public function handle(): int
@@ -22,8 +23,8 @@ class SendDueDateRemindersCommand extends Command
         $sent = 0;
 
         foreach ($daysList as $days) {
-            $days     = (int) $days;
-            $target   = today()->addDays($days);
+            $days = (int) $days;
+            $target = today()->addDays($days);
 
             $requests = SupervisorRequest::whereDate('due_date', $target)
                 ->whereIn('status', [SupervisorRequest::STATUS_PENDING, SupervisorRequest::STATUS_IN_REVIEW])
@@ -43,6 +44,7 @@ class SendDueDateRemindersCommand extends Command
         }
 
         $this->info("Avisos de vencimiento enviados: {$sent}");
+
         return self::SUCCESS;
     }
 }

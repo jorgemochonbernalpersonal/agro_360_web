@@ -19,13 +19,14 @@ use Tests\Feature\WineryTestCase;
 class SupervisorSourceEditGuardTest extends WineryTestCase
 {
     protected User $winery;
+
     protected User $supervisor;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->winery     = $this->makeWinery();
+        $this->winery = $this->makeWinery();
         $this->supervisor = User::factory()->create(['role' => 'supervisor']);
 
         $this->actingAs($this->winery);
@@ -38,11 +39,11 @@ class SupervisorSourceEditGuardTest extends WineryTestCase
         $vitic = User::factory()->create(['role' => 'viticulturist']);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $vitic->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $this->supervisor->id,
-            'assigned_by'      => $this->supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $this->supervisor->id,
+            'assigned_by' => $this->supervisor->id,
         ]);
 
         // mount() filters ->where('source', SOURCE_OWN) → firstOrFail throws
@@ -56,16 +57,16 @@ class SupervisorSourceEditGuardTest extends WineryTestCase
     public function test_winery_can_edit_own_assigned_viticulturist(): void
     {
         $vitic = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => false,
-            'email'     => 'viticultores.' . uniqid() . '@placeholder.agro365.es',
+            'email' => 'viticultores.'.uniqid().'@placeholder.agro365.es',
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $vitic->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         Livewire::test(Edit::class, ['viticulturist' => $vitic])
@@ -77,13 +78,13 @@ class SupervisorSourceEditGuardTest extends WineryTestCase
     public function test_winery_cannot_edit_viticulturist_owned_by_different_winery(): void
     {
         $otherWinery = $this->makeOtherWinery();
-        $vitic       = User::factory()->create(['role' => 'viticulturist']);
+        $vitic = User::factory()->create(['role' => 'viticulturist']);
 
         WineryViticulturist::create([
-            'winery_id'        => $otherWinery->id,
+            'winery_id' => $otherWinery->id,
             'viticulturist_id' => $vitic->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $otherWinery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $otherWinery->id,
         ]);
 
         // No relation exists for $this->winery → firstOrFail throws
@@ -97,15 +98,15 @@ class SupervisorSourceEditGuardTest extends WineryTestCase
     public function test_winery_cannot_edit_sub_viticulturist_created_by_another_viticulturist(): void
     {
         $parentVitic = User::factory()->create(['role' => 'viticulturist']);
-        $subVitic    = User::factory()->create(['role' => 'viticulturist']);
+        $subVitic = User::factory()->create(['role' => 'viticulturist']);
 
         // Sub-viticulturist created by parentVitic (not by the winery directly)
         WineryViticulturist::create([
-            'winery_id'               => $this->winery->id,
-            'viticulturist_id'        => $subVitic->id,
-            'source'                  => WineryViticulturist::SOURCE_VITICULTURIST,
+            'winery_id' => $this->winery->id,
+            'viticulturist_id' => $subVitic->id,
+            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
             'parent_viticulturist_id' => $parentVitic->id,
-            'assigned_by'             => $parentVitic->id,
+            'assigned_by' => $parentVitic->id,
         ]);
 
         // source != OWN → mount() rejects it

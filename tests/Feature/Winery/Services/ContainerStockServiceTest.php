@@ -3,7 +3,6 @@
 namespace Tests\Feature\Winery\Services;
 
 use App\Models\Container;
-use App\Models\ContainerCurrentState;
 use App\Models\Harvest;
 use App\Models\HarvestStock;
 use App\Services\ContainerStockService;
@@ -21,6 +20,7 @@ class ContainerStockServiceTest extends WineryTestCase
     use CreatesDeliveryScenario;
 
     private ContainerStockService $service;
+
     private Container $container;
 
     protected function setUp(): void
@@ -41,11 +41,11 @@ class ContainerStockServiceTest extends WineryTestCase
         $this->service->initializeStock($harvest);
 
         $this->assertDatabaseHas('harvest_stocks', [
-            'harvest_id'    => $harvest->id,
+            'harvest_id' => $harvest->id,
             'movement_type' => 'initial',
             'available_qty' => 500,
-            'reserved_qty'  => 0,
-            'sold_qty'      => 0,
+            'reserved_qty' => 0,
+            'sold_qty' => 0,
         ]);
     }
 
@@ -67,8 +67,8 @@ class ContainerStockServiceTest extends WineryTestCase
 
         $this->assertDatabaseHas('container_current_states', [
             'container_id' => $this->container->id,
-            'harvest_id'   => $harvest->id,
-            'available_qty'=> 400,
+            'harvest_id' => $harvest->id,
+            'available_qty' => 400,
         ]);
     }
 
@@ -190,13 +190,13 @@ class ContainerStockServiceTest extends WineryTestCase
     private function makeHarvest(array $attrs = []): Harvest
     {
         return Harvest::withoutEvents(fn () => Harvest::create(array_merge([
-            'winery_id'          => $this->winery->id,
-            'container_id'       => $this->container->id,
-            'plot_planting_id'   => $this->planting->id,
-            'total_weight'       => 500,
+            'winery_id' => $this->winery->id,
+            'container_id' => $this->container->id,
+            'plot_planting_id' => $this->planting->id,
+            'total_weight' => 500,
             'harvest_start_date' => '2024-09-15',
-            'status'             => 'active',
-            'vintage'            => 2024,
+            'status' => 'active',
+            'vintage' => 2024,
         ], $attrs)));
     }
 

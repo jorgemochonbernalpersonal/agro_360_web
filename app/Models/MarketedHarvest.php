@@ -5,23 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Invoice;
 
 class MarketedHarvest extends Model
 {
     use HasFactory;
 
     const DESTINATION_TYPES = [
-        'own_winery'  => 'Bodega propia',
+        'own_winery' => 'Bodega propia',
         'cooperative' => 'Cooperativa',
         'third_party' => 'Terceros',
-        'other'       => 'Otro',
+        'other' => 'Otro',
     ];
-
-    public static function destinationTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::DESTINATION_TYPES);
-    }
 
     protected $fillable = [
         'harvest_id',
@@ -43,11 +37,16 @@ class MarketedHarvest extends Model
 
     protected $casts = [
         'delivery_date' => 'date',
-        'quantity_kg'   => 'decimal:3',
-        'price_per_kg'  => 'decimal:4',
-        'total_value'   => 'decimal:2',
-        'active'        => 'boolean',
+        'quantity_kg' => 'decimal:3',
+        'price_per_kg' => 'decimal:4',
+        'total_value' => 'decimal:2',
+        'active' => 'boolean',
     ];
+
+    public static function destinationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::DESTINATION_TYPES);
+    }
 
     public function harvest(): BelongsTo
     {

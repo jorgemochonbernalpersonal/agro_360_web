@@ -8,20 +8,23 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search     = '';
+    public string $search = '';
+
     public string $typeFilter = '';
 
     protected $queryString = [
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'typeFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void    { $this->resetPage(); }
-    public function updatingTypeFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'typeFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
@@ -29,6 +32,11 @@ class Index extends AbstractIndex
         $document = WineryDocument::where('user_id', $this->wineryId())->findOrFail($id);
         $document->delete();
         $this->toastSuccess(__('Documento eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'typeFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -39,11 +47,11 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(title) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(reference_number, \'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(issuing_authority, \'\')) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(IFNULL(reference_number, \'\')) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(IFNULL(issuing_authority, \'\')) LIKE ?', [$term]);
             });
         }
         if ($this->typeFilter) {
@@ -56,14 +64,21 @@ class Index extends AbstractIndex
         $query->orderBy('title');
     }
 
-    protected function defaultOrderBy(): array { return ['title', 'asc']; }
-    protected function perPage(): int          { return 20; }
+    protected function defaultOrderBy(): array
+    {
+        return ['title', 'asc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
         return [
             'documents' => $entries,
-            'types'     => WineryDocument::documentTypeOptions(),
+            'types' => WineryDocument::documentTypeOptions(),
         ];
     }
 }

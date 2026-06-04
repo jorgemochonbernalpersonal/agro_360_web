@@ -28,6 +28,7 @@ class WineryFermentationControlsSeeder extends Seeder
 
         if (empty($wines)) {
             $this->command->warn('No hay vinos activos. Ejecuta WineryWinesSeeder primero.');
+
             return;
         }
 
@@ -42,6 +43,7 @@ class WineryFermentationControlsSeeder extends Seeder
 
         if (empty($containers)) {
             $this->command->warn('No hay contenedores. Ejecuta WineryContainersSeeder primero.');
+
             return;
         }
 
@@ -64,36 +66,36 @@ class WineryFermentationControlsSeeder extends Seeder
 
                 // Evolución realista de la fermentación
                 $fermentationDay = $numControls - $i;
-                $brix     = $wine->status === 'in_progress'
+                $brix = $wine->status === 'in_progress'
                     ? round(22 - ($i * 2.5) + (mt_rand(-5, 5) / 10), 1)
                     : round(mt_rand(0, 5) / 10, 1);
-                $baume    = round($brix * 0.55, 1);
-                $density  = round(1.090 - ($i * 0.008) + (mt_rand(-2, 2) / 1000), 4);
-                $temp     = round(16 + (mt_rand(-20, 20) / 10), 1); // 14-18°C
-                $ph       = round(3.3 + (mt_rand(-10, 10) / 100), 2);
-                $va       = round(0.15 + ($i * 0.02) + (mt_rand(0, 5) / 100), 2);
+                $baume = round($brix * 0.55, 1);
+                $density = round(1.090 - ($i * 0.008) + (mt_rand(-2, 2) / 1000), 4);
+                $temp = round(16 + (mt_rand(-20, 20) / 10), 1); // 14-18°C
+                $ph = round(3.3 + (mt_rand(-10, 10) / 100), 2);
+                $va = round(0.15 + ($i * 0.02) + (mt_rand(0, 5) / 100), 2);
 
                 $rows[] = [
-                    'wine_id'          => $wine->id,
-                    'container_id'     => $containerId,
-                    'control_date'     => $controlDate,
-                    'temperature'      => $temp,
-                    'brix_degree'      => $brix,
-                    'baume_degree'     => $baume,
-                    'density'          => $density,
-                    'ph'               => $ph,
+                    'wine_id' => $wine->id,
+                    'container_id' => $containerId,
+                    'control_date' => $controlDate,
+                    'temperature' => $temp,
+                    'brix_degree' => $brix,
+                    'baume_degree' => $baume,
+                    'density' => $density,
+                    'ph' => $ph,
                     'volatile_acidity' => $va,
-                    'notes'            => $i === 0 ? 'Control inicial de fermentación.' : null,
-                    'created_by'       => self::WINERY_USER_ID,
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
+                    'notes' => $i === 0 ? 'Control inicial de fermentación.' : null,
+                    'created_by' => self::WINERY_USER_ID,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
             }
         }
 
         DB::table('wine_fermentation_controls')->insert($rows);
 
-        $this->command->info('✅ Controles de fermentación: ' . count($rows) . ' registros');
+        $this->command->info('✅ Controles de fermentación: '.count($rows).' registros');
     }
 
     private function cleanup(): void

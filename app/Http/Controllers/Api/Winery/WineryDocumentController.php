@@ -25,16 +25,16 @@ class WineryDocumentController extends Controller
         }
 
         $perPage = $this->resolvePerPage($request, 20, 100);
-        $items   = $query->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
             'data' => $items->map(fn ($d) => $this->format($d)),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'types'        => WineryDocument::DOCUMENT_TYPES,
+                'last_page' => $items->lastPage(),
+                'types' => WineryDocument::DOCUMENT_TYPES,
             ],
         ]);
     }
@@ -55,14 +55,14 @@ class WineryDocumentController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'title'              => 'required|string|max:255',
-            'document_type'      => 'required|string|in:' . implode(',', array_keys(WineryDocument::DOCUMENT_TYPES)),
-            'reference_number'   => 'nullable|string|max:100',
-            'issue_date'         => 'nullable|date',
-            'expiry_date'        => 'nullable|date',
-            'issuing_authority'  => 'nullable|string|max:255',
-            'notes'              => 'nullable|string|max:1000',
-            'active'             => 'boolean',
+            'title' => 'required|string|max:255',
+            'document_type' => 'required|string|in:'.implode(',', array_keys(WineryDocument::DOCUMENT_TYPES)),
+            'reference_number' => 'nullable|string|max:100',
+            'issue_date' => 'nullable|date',
+            'expiry_date' => 'nullable|date',
+            'issuing_authority' => 'nullable|string|max:255',
+            'notes' => 'nullable|string|max:1000',
+            'active' => 'boolean',
         ]);
 
         $validated['user_id'] = $user->id;
@@ -71,7 +71,7 @@ class WineryDocumentController extends Controller
         $document = WineryDocument::create($validated);
 
         return response()->json([
-            'data'    => $this->format($document),
+            'data' => $this->format($document),
             'message' => __('Documento creado correctamente.'),
         ], 201);
     }
@@ -84,14 +84,14 @@ class WineryDocumentController extends Controller
         $document = WineryDocument::forUser($user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'title'             => 'sometimes|string|max:255',
-            'document_type'     => 'sometimes|string|in:' . implode(',', array_keys(WineryDocument::DOCUMENT_TYPES)),
-            'reference_number'  => 'sometimes|nullable|string|max:100',
-            'issue_date'        => 'sometimes|nullable|date',
-            'expiry_date'       => 'sometimes|nullable|date',
+            'title' => 'sometimes|string|max:255',
+            'document_type' => 'sometimes|string|in:'.implode(',', array_keys(WineryDocument::DOCUMENT_TYPES)),
+            'reference_number' => 'sometimes|nullable|string|max:100',
+            'issue_date' => 'sometimes|nullable|date',
+            'expiry_date' => 'sometimes|nullable|date',
             'issuing_authority' => 'sometimes|nullable|string|max:255',
-            'notes'             => 'sometimes|nullable|string|max:1000',
-            'active'            => 'sometimes|boolean',
+            'notes' => 'sometimes|nullable|string|max:1000',
+            'active' => 'sometimes|boolean',
         ]);
 
         $document->update($validated);
@@ -113,19 +113,19 @@ class WineryDocumentController extends Controller
     private function format(WineryDocument $d): array
     {
         return [
-            'id'                => $d->id,
-            'title'             => $d->title,
-            'document_type'     => $d->document_type,
-            'type_label'        => $d->type_label,
-            'reference_number'  => $d->reference_number,
-            'issue_date'        => $d->issue_date?->toDateString(),
-            'expiry_date'       => $d->expiry_date?->toDateString(),
+            'id' => $d->id,
+            'title' => $d->title,
+            'document_type' => $d->document_type,
+            'type_label' => $d->type_label,
+            'reference_number' => $d->reference_number,
+            'issue_date' => $d->issue_date?->toDateString(),
+            'expiry_date' => $d->expiry_date?->toDateString(),
             'issuing_authority' => $d->issuing_authority,
-            'active'            => $d->active,
-            'expiring_soon'     => $d->isExpiringSoon(),
-            'expired'           => $d->isExpired(),
-            'notes'             => $d->notes,
-            'created_at'        => $d->created_at->toIso8601String(),
+            'active' => $d->active,
+            'expiring_soon' => $d->isExpiringSoon(),
+            'expired' => $d->isExpired(),
+            'notes' => $d->notes,
+            'created_at' => $d->created_at->toIso8601String(),
         ];
     }
 }

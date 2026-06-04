@@ -35,13 +35,13 @@ class IndexTest extends WineryTestCase
 
     public function test_shows_supervisor_name_when_assigned(): void
     {
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $supervisor = User::factory()->create(['role' => 'supervisor', 'name' => 'DO Rioja']);
 
         SupervisorWinery::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $supervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         Livewire::actingAs($winery)
@@ -54,22 +54,22 @@ class IndexTest extends WineryTestCase
 
     public function test_shows_viticulturists_assigned_by_supervisor(): void
     {
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $supervisor = User::factory()->create(['role' => 'supervisor']);
-        $vit        = User::factory()->create(['role' => 'viticulturist', 'name' => 'Vit DO Test']);
+        $vit = User::factory()->create(['role' => 'viticulturist', 'name' => 'Vit DO Test']);
 
         SupervisorWinery::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $supervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         Livewire::actingAs($winery)
@@ -79,22 +79,22 @@ class IndexTest extends WineryTestCase
 
     public function test_does_not_show_own_viticulturists_in_do_section(): void
     {
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $supervisor = User::factory()->create(['role' => 'supervisor']);
-        $ownVit     = User::factory()->create(['role' => 'viticulturist', 'name' => 'Vit Propio']);
+        $ownVit = User::factory()->create(['role' => 'viticulturist', 'name' => 'Vit Propio']);
 
         SupervisorWinery::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $supervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         // Viticultor source=own (no del supervisor)
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $ownVit->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
         ]);
 
         Livewire::actingAs($winery)
@@ -106,15 +106,15 @@ class IndexTest extends WineryTestCase
 
     public function test_winery_only_sees_their_own_supervisor(): void
     {
-        $winery      = $this->makeWinery();
+        $winery = $this->makeWinery();
         $otherWinery = $this->makeOtherWinery();
-        $supervisor  = User::factory()->create(['role' => 'supervisor', 'name' => 'DO Ajena']);
+        $supervisor = User::factory()->create(['role' => 'supervisor', 'name' => 'DO Ajena']);
 
         // Solo otherWinery está adscrita a esta DO
         SupervisorWinery::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $otherWinery->id,
-            'assigned_by'   => $supervisor->id,
+            'winery_id' => $otherWinery->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         Livewire::actingAs($winery)

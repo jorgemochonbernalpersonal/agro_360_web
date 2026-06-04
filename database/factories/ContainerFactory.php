@@ -17,9 +17,9 @@ class ContainerFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->randomElement(['Cuba', 'Depósito', 'Contenedor', 'Tanque', 'Silo']) . ' ' . $this->faker->numberBetween(1, 100),
+            'name' => $this->faker->randomElement(['Cuba', 'Depósito', 'Contenedor', 'Tanque', 'Silo']).' '.$this->faker->numberBetween(1, 100),
             'description' => $this->faker->optional()->sentence(),
-            'serial_number' => 'CONT-' . $this->faker->unique()->numberBetween(1000, 9999),
+            'serial_number' => 'CONT-'.$this->faker->unique()->numberBetween(1000, 9999),
             'quantity' => $this->faker->numberBetween(1, 10),
             'capacity' => $capacity,
             'used_capacity' => $usedCapacity,
@@ -62,4 +62,3 @@ class ContainerFactory extends Factory
         ]);
     }
 }
-

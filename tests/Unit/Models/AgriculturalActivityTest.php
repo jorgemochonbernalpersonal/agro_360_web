@@ -5,10 +5,10 @@ namespace Tests\Unit\Models;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Crew;
+use App\Models\GrapeVariety;
 use App\Models\Machinery;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Models\GrapeVariety;
 use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
 use Database\Seeders\MunicipalitySeeder;
@@ -31,31 +31,12 @@ class AgriculturalActivityTest extends TestCase
             MunicipalitySeeder::class,
         ]);
     }
-    
-    /**
-     * Helper para crear una plantación activa en una parcela
-     */
-    private function createPlantingForPlot(Plot $plot): PlotPlanting
-    {
-        $grapeVariety = GrapeVariety::firstOrCreate(
-            ['code' => 'TEMP'],
-            ['name' => 'Tempranillo', 'color' => 'red']
-        );
-        
-        return PlotPlanting::create([
-            'plot_id' => $plot->id,
-            'grape_variety_id' => $grapeVariety->id,
-            'area_planted' => $plot->area * 0.8,
-            'planting_year' => now()->year - 5,
-            'status' => 'active',
-        ]);
-    }
 
     public function test_activity_relationships_are_configured_correctly(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
-        
+
         // Crear una plantación activa para la parcela
         $grapeVariety = GrapeVariety::firstOrCreate(
             ['code' => 'TEMP'],
@@ -68,7 +49,7 @@ class AgriculturalActivityTest extends TestCase
             'planting_year' => now()->year - 5,
             'status' => 'active',
         ]);
-        
+
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
         $crew = Crew::create([
             'name' => 'Cuadrilla Test',
@@ -106,7 +87,7 @@ class AgriculturalActivityTest extends TestCase
 
         $plot1 = Plot::factory()->state(['viticulturist_id' => $viticulturist1->id])->create();
         $plot2 = Plot::factory()->state(['viticulturist_id' => $viticulturist2->id])->create();
-        
+
         $planting1 = $this->createPlantingForPlot($plot1);
         $planting2 = $this->createPlantingForPlot($plot2);
 
@@ -500,6 +481,23 @@ class AgriculturalActivityTest extends TestCase
         $this->assertCount(1, $results);
         $this->assertEquals($activity1->id, $results->first()->id);
     }
+
+    /**
+     * Helper para crear una plantación activa en una parcela
+     */
+    private function createPlantingForPlot(Plot $plot): PlotPlanting
+    {
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+
+        return PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => $plot->area * 0.8,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
+    }
 }
-
-

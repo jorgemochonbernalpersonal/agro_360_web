@@ -60,7 +60,7 @@ class ExportReadyNotification extends Notification implements ShouldQueue
             'export_type_name' => $typeLabels[$this->exportType] ?? $this->exportType,
             'format' => $this->format,
             'message' => '📦 Tu exportación está lista para descargar',
-            'download_url' => url('/storage/' . $this->filename),
+            'download_url' => url('/storage/'.$this->filename),
         ];
     }
 }

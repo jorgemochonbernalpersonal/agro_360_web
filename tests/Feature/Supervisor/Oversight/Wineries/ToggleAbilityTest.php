@@ -10,15 +10,6 @@ use Tests\Feature\SupervisorTestCase;
 
 class ToggleAbilityTest extends SupervisorTestCase
 {
-    private function makeAbility(): Ability
-    {
-        return Ability::create([
-            'code'   => 'test_ability',
-            'name'   => 'Módulo de prueba',
-            'module' => 'winery',
-        ]);
-    }
-
     // ── grant ─────────────────────────────────────────────────────────────────
 
     public function test_supervisor_can_grant_ability_to_winery(): void
@@ -32,7 +23,7 @@ class ToggleAbilityTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('user_abilities', [
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $ability->id,
             'granted_by' => $supervisor->id,
         ]);
@@ -46,7 +37,7 @@ class ToggleAbilityTest extends SupervisorTestCase
         $ability = $this->makeAbility();
 
         UserAbility::create([
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $ability->id,
             'granted_by' => $supervisor->id,
             'granted_at' => now(),
@@ -58,7 +49,7 @@ class ToggleAbilityTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseMissing('user_abilities', [
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $ability->id,
         ]);
     }
@@ -92,7 +83,7 @@ class ToggleAbilityTest extends SupervisorTestCase
         $ability = $this->makeAbility();
 
         UserAbility::create([
-            'user_id'    => $winery->id,
+            'user_id' => $winery->id,
             'ability_id' => $ability->id,
             'granted_by' => $supervisor->id,
             'granted_at' => now(),
@@ -118,7 +109,7 @@ class ToggleAbilityTest extends SupervisorTestCase
     public function test_other_supervisor_cannot_toggle_ability(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
         $ability = $this->makeAbility();
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -126,5 +117,14 @@ class ToggleAbilityTest extends SupervisorTestCase
         Livewire::actingAs($otherSupervisor)
             ->test(Show::class, ['winery' => $winery])
             ->call('toggleAbility', $ability->id);
+    }
+
+    private function makeAbility(): Ability
+    {
+        return Ability::create([
+            'code' => 'test_ability',
+            'name' => 'Módulo de prueba',
+            'module' => 'winery',
+        ]);
     }
 }

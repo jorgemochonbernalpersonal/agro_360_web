@@ -31,96 +31,6 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
         $this->actingAs($this->viticulturist);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makeClient(): Client
-    {
-        return Client::create([
-            'user_id'      => $this->viticulturist->id,
-            'client_type'  => 'company',
-            'company_name' => 'Distribuidora Test S.L.',
-            'email'        => 'calc-test@test.com',
-            'active'       => true,
-        ]);
-    }
-
-    private function makeAddress(Client $client): ClientAddress
-    {
-        return ClientAddress::create([
-            'client_id'  => $client->id,
-            'first_name' => 'Test',
-            'address'    => 'Calle Viñedo 1',
-            'is_default' => true,
-        ]);
-    }
-
-    private function makeTax(float $rate, string $name = null): Tax
-    {
-        return Tax::create([
-            'name'       => $name ?? "IVA {$rate}%",
-            'code'       => 'IVA',
-            'rate'       => $rate,
-            'active'     => true,
-            'is_default' => false,
-        ]);
-    }
-
-    private function makeItem(string $name, float $qty, float $price, ?int $taxId, float $discount = 0, string $concept = 'other'): array
-    {
-        return [
-            'harvest_id'          => null,
-            'name'                => $name,
-            'description'         => '',
-            'sku'                 => '',
-            'quantity'            => $qty,
-            'unit'                => 'kg',
-            'unit_price'          => $price,
-            'discount_percentage' => $discount,
-            'tax_id'              => $taxId,
-            'concept_type'        => $concept,
-        ];
-    }
-
-    private function makeInvoice(array $items, array $invoiceAttrs = []): Invoice
-    {
-        $client  = $this->makeClient();
-        $address = $this->makeAddress($client);
-
-        $invoice = Invoice::create(array_merge([
-            'user_id'            => $this->viticulturist->id,
-            'client_id'          => $client->id,
-            'client_address_id'  => $address->id,
-            'invoice_type'       => 'wine_sale',
-            'delivery_note_code' => 'ALB-CALC-0001',
-            'invoice_date'       => '2024-10-15',
-            'delivery_note_date' => '2024-10-15',
-            'order_date'         => '2024-10-15',
-            'status'             => 'draft',
-            'payment_status'     => 'unpaid',
-            'delivery_status'    => 'pending',
-            'subtotal'           => 0,
-            'discount_amount'    => 0,
-            'tax_base'           => 0,
-            'tax_amount'         => 0,
-            'total_amount'       => 0,
-        ], $invoiceAttrs));
-
-        foreach ($items as $itemData) {
-            InvoiceItem::create(array_merge([
-                'invoice_id'          => $invoice->id,
-                'concept_type'        => 'other',
-                'discount_percentage' => 0,
-                'subtotal'            => 0,
-                'tax_base'            => 0,
-                'tax_amount'          => 0,
-                'total'               => 0,
-            ], $itemData));
-        }
-
-        // Reload with items so loadInvoiceData() sees them
-        return $invoice->fresh()->load('items');
-    }
-
     // ── Create: múltiples tipos de IVA ───────────────────────────────────────
 
     public function test_create_with_multiple_tax_rates(): void
@@ -128,10 +38,10 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
         // Item 1: 100 kg × 2 €/kg = 200, IVA 21% = 42
         // Item 2: 50 litros × 5 €/l = 250, IVA 4% = 10
         // Subtotal = 450, tax = 52, total = 502
-        $client  = $this->makeClient();
+        $client = $this->makeClient();
         $address = $this->makeAddress($client);
-        $iva21   = $this->makeTax(21);
-        $iva4    = $this->makeTax(4, 'IVA Superreducido 4%');
+        $iva21 = $this->makeTax(21);
+        $iva4 = $this->makeTax(4, 'IVA Superreducido 4%');
 
         Livewire::test(Create::class)
             ->set('client_id', $client->id)
@@ -147,7 +57,7 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
 
         $invoice = Invoice::where('user_id', $this->viticulturist->id)->first();
         $this->assertEquals(450.0, (float) $invoice->subtotal);
-        $this->assertEquals(52.0,  (float) $invoice->tax_amount);
+        $this->assertEquals(52.0, (float) $invoice->tax_amount);
         $this->assertEquals(502.0, (float) $invoice->total_amount);
         $this->assertEquals(2, $invoice->items()->count());
     }
@@ -155,9 +65,9 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
     public function test_create_with_100_percent_discount(): void
     {
         // 100 × 10 = 1000, 100% discount = 1000 off → base 0, tax 0, total 0
-        $client  = $this->makeClient();
+        $client = $this->makeClient();
         $address = $this->makeAddress($client);
-        $tax     = $this->makeTax(21);
+        $tax = $this->makeTax(21);
 
         Livewire::test(Create::class)
             ->set('client_id', $client->id)
@@ -171,16 +81,16 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $invoice = Invoice::where('user_id', $this->viticulturist->id)->first();
-        $this->assertEquals(0.0,    (float) $invoice->subtotal);
+        $this->assertEquals(0.0, (float) $invoice->subtotal);
         $this->assertEquals(1000.0, (float) $invoice->discount_amount);
-        $this->assertEquals(0.0,    (float) $invoice->tax_amount);
-        $this->assertEquals(0.0,    (float) $invoice->total_amount);
+        $this->assertEquals(0.0, (float) $invoice->tax_amount);
+        $this->assertEquals(0.0, (float) $invoice->total_amount);
     }
 
     public function test_create_item_without_tax(): void
     {
         // 200 × 3 = 600 sin IVA → subtotal 600, tax 0, total 600
-        $client  = $this->makeClient();
+        $client = $this->makeClient();
         $address = $this->makeAddress($client);
 
         Livewire::test(Create::class)
@@ -196,16 +106,16 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
 
         $invoice = Invoice::where('user_id', $this->viticulturist->id)->first();
         $this->assertEquals(600.0, (float) $invoice->subtotal);
-        $this->assertEquals(0.0,   (float) $invoice->tax_amount);
+        $this->assertEquals(0.0, (float) $invoice->tax_amount);
         $this->assertEquals(600.0, (float) $invoice->total_amount);
     }
 
     public function test_create_item_with_zero_price(): void
     {
         // 100 × 0 = 0 → todo a 0
-        $client  = $this->makeClient();
+        $client = $this->makeClient();
         $address = $this->makeAddress($client);
-        $tax     = $this->makeTax(21);
+        $tax = $this->makeTax(21);
 
         Livewire::test(Create::class)
             ->set('client_id', $client->id)
@@ -229,10 +139,10 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
         // Item 1: 100 × 10 = 1000, 5% disc = 50 → base 950, IVA 21% = 199.50
         // Item 2: 50  × 4  = 200,  0% disc     → base 200, IVA 10% = 20
         // Subtotal = 1150, discount = 50, tax = 219.50, total = 1369.50
-        $client  = $this->makeClient();
+        $client = $this->makeClient();
         $address = $this->makeAddress($client);
-        $iva21   = $this->makeTax(21);
-        $iva10   = $this->makeTax(10, 'IVA Reducido 10%');
+        $iva21 = $this->makeTax(21);
+        $iva10 = $this->makeTax(10, 'IVA Reducido 10%');
 
         Livewire::test(Create::class)
             ->set('client_id', $client->id)
@@ -247,10 +157,10 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $invoice = Invoice::where('user_id', $this->viticulturist->id)->first();
-        $this->assertEquals(1150.0,  (float) $invoice->subtotal);
-        $this->assertEquals(50.0,    (float) $invoice->discount_amount);
-        $this->assertEquals(219.5,   (float) $invoice->tax_amount);
-        $this->assertEquals(1369.5,  (float) $invoice->total_amount);
+        $this->assertEquals(1150.0, (float) $invoice->subtotal);
+        $this->assertEquals(50.0, (float) $invoice->discount_amount);
+        $this->assertEquals(219.5, (float) $invoice->tax_amount);
+        $this->assertEquals(1369.5, (float) $invoice->total_amount);
     }
 
     // ── Edit: computed properties ────────────────────────────────────────────
@@ -258,7 +168,7 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
     public function test_edit_computed_subtotal_with_multiple_items(): void
     {
         $tax21 = $this->makeTax(21);
-        $tax4  = $this->makeTax(4, 'IVA Superreducido');
+        $tax4 = $this->makeTax(4, 'IVA Superreducido');
 
         $invoice = $this->makeInvoice([
             ['name' => 'Uva', 'quantity' => 100, 'unit' => 'kg', 'unit_price' => 2.5, 'tax_id' => $tax21->id, 'tax_rate' => 21],
@@ -333,9 +243,9 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
         $component = Livewire::test(Edit::class, ['invoice' => $invoice]);
 
         // 200×5 = 1000, 10% disc = 100 → base 900, 21% tax = 189, total = 1089
-        $this->assertEquals(900.0,  $component->instance()->subtotal);
-        $this->assertEquals(100.0,  $component->instance()->discountAmount);
-        $this->assertEquals(189.0,  $component->instance()->taxAmount);
+        $this->assertEquals(900.0, $component->instance()->subtotal);
+        $this->assertEquals(100.0, $component->instance()->discountAmount);
+        $this->assertEquals(189.0, $component->instance()->taxAmount);
         $this->assertEquals(1089.0, $component->instance()->totalAmount);
     }
 
@@ -348,7 +258,7 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
         $component = Livewire::test(Edit::class, ['invoice' => $invoice]);
 
         $this->assertEquals(500.0, $component->instance()->subtotal);
-        $this->assertEquals(0.0,   $component->instance()->taxAmount);
+        $this->assertEquals(0.0, $component->instance()->taxAmount);
         $this->assertEquals(500.0, $component->instance()->totalAmount);
     }
 
@@ -381,7 +291,7 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
 
         $fresh = $invoice->fresh();
         $this->assertEquals(1400.0, (float) $fresh->subtotal);
-        $this->assertEquals(206.0,  (float) $fresh->tax_amount);
+        $this->assertEquals(206.0, (float) $fresh->tax_amount);
         $this->assertEquals(1606.0, (float) $fresh->total_amount);
         $this->assertEquals(2, $fresh->items()->count());
     }
@@ -393,9 +303,9 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
         // 33.33 × 1.11 = 36.9963 (Create no redondea por item, se almacena raw)
         // IVA 21% of 36.9963 = 7.769223
         // Total = 36.9963 + 7.769223 = 44.765523
-        $client  = $this->makeClient();
+        $client = $this->makeClient();
         $address = $this->makeAddress($client);
-        $tax     = $this->makeTax(21);
+        $tax = $this->makeTax(21);
 
         Livewire::test(Create::class)
             ->set('client_id', $client->id)
@@ -411,11 +321,101 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
         $invoice = Invoice::where('user_id', $this->viticulturist->id)->first();
         // Subtotal stored without per-item rounding
         $rawSubtotal = 33.33 * 1.11;
-        $rawTax      = $rawSubtotal * 0.21;
+        $rawTax = $rawSubtotal * 0.21;
 
         // Verify stored values are close (DB decimal precision may truncate)
         $this->assertEqualsWithDelta($rawSubtotal, (float) $invoice->subtotal, 0.01);
         $this->assertEqualsWithDelta($rawTax, (float) $invoice->tax_amount, 0.01);
         $this->assertEqualsWithDelta($rawSubtotal + $rawTax, (float) $invoice->total_amount, 0.01);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makeClient(): Client
+    {
+        return Client::create([
+            'user_id' => $this->viticulturist->id,
+            'client_type' => 'company',
+            'company_name' => 'Distribuidora Test S.L.',
+            'email' => 'calc-test@test.com',
+            'active' => true,
+        ]);
+    }
+
+    private function makeAddress(Client $client): ClientAddress
+    {
+        return ClientAddress::create([
+            'client_id' => $client->id,
+            'first_name' => 'Test',
+            'address' => 'Calle Viñedo 1',
+            'is_default' => true,
+        ]);
+    }
+
+    private function makeTax(float $rate, ?string $name = null): Tax
+    {
+        return Tax::create([
+            'name' => $name ?? "IVA {$rate}%",
+            'code' => 'IVA',
+            'rate' => $rate,
+            'active' => true,
+            'is_default' => false,
+        ]);
+    }
+
+    private function makeItem(string $name, float $qty, float $price, ?int $taxId, float $discount = 0, string $concept = 'other'): array
+    {
+        return [
+            'harvest_id' => null,
+            'name' => $name,
+            'description' => '',
+            'sku' => '',
+            'quantity' => $qty,
+            'unit' => 'kg',
+            'unit_price' => $price,
+            'discount_percentage' => $discount,
+            'tax_id' => $taxId,
+            'concept_type' => $concept,
+        ];
+    }
+
+    private function makeInvoice(array $items, array $invoiceAttrs = []): Invoice
+    {
+        $client = $this->makeClient();
+        $address = $this->makeAddress($client);
+
+        $invoice = Invoice::create(array_merge([
+            'user_id' => $this->viticulturist->id,
+            'client_id' => $client->id,
+            'client_address_id' => $address->id,
+            'invoice_type' => 'wine_sale',
+            'delivery_note_code' => 'ALB-CALC-0001',
+            'invoice_date' => '2024-10-15',
+            'delivery_note_date' => '2024-10-15',
+            'order_date' => '2024-10-15',
+            'status' => 'draft',
+            'payment_status' => 'unpaid',
+            'delivery_status' => 'pending',
+            'subtotal' => 0,
+            'discount_amount' => 0,
+            'tax_base' => 0,
+            'tax_amount' => 0,
+            'total_amount' => 0,
+        ], $invoiceAttrs));
+
+        foreach ($items as $itemData) {
+            InvoiceItem::create(array_merge([
+                'invoice_id' => $invoice->id,
+                'concept_type' => 'other',
+                'discount_percentage' => 0,
+                'subtotal' => 0,
+                'tax_base' => 0,
+                'tax_amount' => 0,
+                'total' => 0,
+            ], $itemData));
+        }
+
+        // Reload with items so loadInvoiceData() sees them
+        return $invoice->fresh()->load('items');
     }
 }

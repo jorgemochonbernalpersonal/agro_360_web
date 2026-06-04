@@ -16,7 +16,7 @@ class WineHarvest extends Model
 
     protected $casts = [
         'quantity_kg' => 'decimal:3',
-        'percentage'  => 'decimal:2',
+        'percentage' => 'decimal:2',
     ];
 
     public function wine(): BelongsTo

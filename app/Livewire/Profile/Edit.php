@@ -3,12 +3,10 @@
 namespace App\Livewire\Profile;
 
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Models\UserProfile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -18,21 +16,35 @@ class Edit extends Component
 
     // Información Personal
     public $name;
+
     public $email;
+
     public $profile_image;
+
     public $current_profile_image;
+
     public $profile_image_preview;
+
     // Cambio de Contraseña
     public $current_password = '';
+
     public $password = '';
+
     public $password_confirmation = '';
+
     // Información de Contacto
     public $address;
+
     public $city;
+
     public $postal_code;
+
     public $province_id;
+
     public $country = 'España';
+
     public $phone;
+
     // Control de Tabs
     public $activeTab = 'personal';
 
@@ -83,7 +95,7 @@ class Edit extends Component
     {
         $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.Auth::id()],
             'profile_image' => ['nullable', 'image', 'max:2048'],  // Max 2MB
         ]);
 
@@ -105,7 +117,7 @@ class Edit extends Component
                 // Guardar nueva imagen
                 $path = $this->profile_image->store('profile-images', 'public');
 
-                if (!$path) {
+                if (! $path) {
                     throw new \Exception(__('No se pudo guardar la imagen. Verifica los permisos del directorio.'));
                 }
 
@@ -131,11 +143,12 @@ class Edit extends Component
                 // Disparar evento para actualizar la imagen en el DOM sin recargar
                 $this->dispatch('profile-image-updated', imageUrl: \Illuminate\Support\Facades\Storage::url($path));
             } catch (\Exception $e) {
-                \Log::error('Error al guardar imagen de perfil: ' . $e->getMessage(), [
+                \Log::error('Error al guardar imagen de perfil: '.$e->getMessage(), [
                     'user_id' => $user->id,
-                    'exception' => $e
+                    'exception' => $e,
                 ]);
                 $this->addError('profile_image', __('Error al guardar la imagen: :message', ['message' => $e->getMessage()]));
+
                 return;
             }
         }
@@ -143,7 +156,7 @@ class Edit extends Component
         $this->toastSuccess(__('Información personal actualizada correctamente.'));
 
         // Solo disparar evento de recarga si no se actualizó la imagen
-        if (!$imageUpdated) {
+        if (! $imageUpdated) {
             $this->dispatch('profile-updated');
         }
     }

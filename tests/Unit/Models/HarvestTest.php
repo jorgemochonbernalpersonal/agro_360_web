@@ -12,26 +12,6 @@ class HarvestTest extends TestCase
 {
     use RefreshDatabase;
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makeHarvest(array $overrides = []): Harvest
-    {
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $activity = AgriculturalActivity::create([
-            'viticulturist_id' => $viticulturist->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => now()->format('Y-m-d'),
-        ]);
-
-        return Harvest::withoutEvents(fn () => Harvest::create(array_merge([
-            'activity_id'        => $activity->id,
-            'harvest_start_date' => now()->format('Y-m-d'),
-            'total_weight'       => 1000.00,
-            'status'             => 'active',
-        ], $overrides)));
-    }
-
     // ── Date casts ────────────────────────────────────────────────────────────
 
     public function test_harvest_start_date_is_cast_to_date(): void
@@ -78,7 +58,7 @@ class HarvestTest extends TestCase
     public function test_sanitary_state_cast_decimal2(): void
     {
         $harvest = $this->makeHarvest([
-            'sanitary_state_grapes'   => 85.5,
+            'sanitary_state_grapes' => 85.5,
             'sanitary_state_botrytis' => 5.25,
         ]);
 
@@ -180,12 +160,32 @@ class HarvestTest extends TestCase
     {
         $harvest = $this->makeHarvest([
             'transport_document_number' => null,
-            'destination_rega_code'     => null,
-            'vehicle_plate'             => null,
+            'destination_rega_code' => null,
+            'vehicle_plate' => null,
         ]);
 
         $this->assertNull($harvest->transport_document_number);
         $this->assertNull($harvest->destination_rega_code);
         $this->assertNull($harvest->vehicle_plate);
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makeHarvest(array $overrides = []): Harvest
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+
+        $activity = AgriculturalActivity::create([
+            'viticulturist_id' => $viticulturist->id,
+            'activity_type' => 'harvest',
+            'activity_date' => now()->format('Y-m-d'),
+        ]);
+
+        return Harvest::withoutEvents(fn () => Harvest::create(array_merge([
+            'activity_id' => $activity->id,
+            'harvest_start_date' => now()->format('Y-m-d'),
+            'total_weight' => 1000.00,
+            'status' => 'active',
+        ], $overrides)));
     }
 }

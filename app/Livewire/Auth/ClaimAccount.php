@@ -5,25 +5,34 @@ namespace App\Livewire\Auth;
 use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
 class ClaimAccount extends Component
 {
-    public string $token    = '';
-    public string $name     = '';
-    public string $email    = '';
+    public string $token = '';
+
+    public string $name = '';
+
+    public string $email = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
-    public bool   $shareCuaderno = true;
+
+    public bool $shareCuaderno = true;
 
     // Estado
-    public bool   $tokenValid    = false;
-    public bool   $activated     = false;
-    public ?User  $pendingUser   = null;
-    public ?string $wineryName   = null;  // bodega o DO que invitó
-    public string  $invitorType  = 'winery'; // 'winery' | 'supervisor'
+    public bool $tokenValid = false;
+
+    public bool $activated = false;
+
+    public ?User $pendingUser = null;
+
+    public ?string $wineryName = null;  // bodega o DO que invitó
+
+    public string $invitorType = 'winery'; // 'winery' | 'supervisor'
 
     public function mount(string $token): void
     {
@@ -35,17 +44,18 @@ class ClaimAccount extends Component
             ->where('invitation_token', hash('sha256', $token))
             ->first();
 
-        if (!$user) {
+        if (! $user) {
             $this->tokenValid = false;
+
             return;
         }
 
-        $this->tokenValid  = true;
+        $this->tokenValid = true;
         $this->pendingUser = $user;
-        $this->name        = $user->name;
+        $this->name = $user->name;
 
         // Pre-rellenar email si ya tiene uno real
-        if ($user->email && !str_starts_with($user->email, 'viticultores.')) {
+        if ($user->email && ! str_starts_with($user->email, 'viticultores.')) {
             $this->email = $user->email;
         }
 
@@ -57,7 +67,8 @@ class ClaimAccount extends Component
 
         if ($wineryRelation) {
             $this->invitorType = 'winery';
-            $this->wineryName  = $wineryRelation->winery->name;
+            $this->wineryName = $wineryRelation->winery->name;
+
             return;
         }
 
@@ -68,7 +79,8 @@ class ClaimAccount extends Component
 
         if ($supervisorRelation) {
             $this->invitorType = 'supervisor';
-            $this->wineryName  = $supervisorRelation->supervisor->name;
+            $this->wineryName = $supervisorRelation->supervisor->name;
+
             return;
         }
 
@@ -76,34 +88,9 @@ class ClaimAccount extends Component
         $this->tokenValid = false;
     }
 
-    protected function rules(): array
-    {
-        return [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => [
-                'required', 'email', 'max:255',
-                'unique:users,email,' . ($this->pendingUser?->id ?? 0),
-            ],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ];
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'name.required'      => __('El nombre es obligatorio.'),
-            'email.required'     => __('El email es obligatorio.'),
-            'email.email'        => __('El email no es válido.'),
-            'email.unique'       => __('Este email ya está registrado.'),
-            'password.required'  => __('La contraseña es obligatoria.'),
-            'password.min'       => __('La contraseña debe tener al menos 8 caracteres.'),
-            'password.confirmed' => __('Las contraseñas no coinciden.'),
-        ];
-    }
-
     public function activate(): void
     {
-        if (!$this->tokenValid || !$this->pendingUser) {
+        if (! $this->tokenValid || ! $this->pendingUser) {
             return;
         }
 
@@ -113,18 +100,18 @@ class ClaimAccount extends Component
         $emailMatches = strtolower($this->pendingUser->email) === strtolower($this->email);
 
         $this->pendingUser->update([
-            'name'                   => $this->name,
-            'email'                  => $this->email,
-            'password'               => Hash::make($this->password),
-            'can_login'              => true,
-            'email_verified_at'      => $emailMatches ? ($this->pendingUser->email_verified_at ?? now()) : null,
-            'invitation_token'       => null,
-            'invitation_expires_at'  => null,
-            'invitation_sent_at'     => null,
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => Hash::make($this->password),
+            'can_login' => true,
+            'email_verified_at' => $emailMatches ? ($this->pendingUser->email_verified_at ?? now()) : null,
+            'invitation_token' => null,
+            'invitation_expires_at' => null,
+            'invitation_sent_at' => null,
         ]);
 
         // Si el email cambió, enviar verificación
-        if (!$emailMatches) {
+        if (! $emailMatches) {
             $this->pendingUser->fresh()->sendEmailVerificationNotification();
         }
 
@@ -133,7 +120,7 @@ class ClaimAccount extends Component
             if ($this->invitorType === 'supervisor') {
                 SupervisorViticulturist::where('viticulturist_id', $this->pendingUser->id)
                     ->update([
-                        'notebook_access'     => true,
+                        'notebook_access' => true,
                         'notebook_granted_at' => now(),
                         'notebook_revoked_at' => null,
                     ]);
@@ -141,7 +128,7 @@ class ClaimAccount extends Component
                 WineryViticulturist::where('viticulturist_id', $this->pendingUser->id)
                     ->whereNotNull('winery_id')
                     ->update([
-                        'notebook_access'     => true,
+                        'notebook_access' => true,
                         'notebook_granted_at' => now(),
                         'notebook_revoked_at' => null,
                     ]);
@@ -160,5 +147,30 @@ class ClaimAccount extends Component
     {
         return view('livewire.auth.claim-account')
             ->layout('layouts.guest');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required', 'email', 'max:255',
+                'unique:users,email,'.($this->pendingUser?->id ?? 0),
+            ],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'name.required' => __('El nombre es obligatorio.'),
+            'email.required' => __('El email es obligatorio.'),
+            'email.email' => __('El email no es válido.'),
+            'email.unique' => __('Este email ya está registrado.'),
+            'password.required' => __('La contraseña es obligatoria.'),
+            'password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
+            'password.confirmed' => __('Las contraseñas no coinciden.'),
+        ];
     }
 }

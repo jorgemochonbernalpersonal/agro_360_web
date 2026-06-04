@@ -19,8 +19,8 @@ class AgriculturalActivityRepository
     ): LengthAwarePaginator {
         $query = AgriculturalActivity::forViticulturist($user->id)
             ->with(['plot', 'plotPlanting.grapeVariety', 'crew', 'crewMember.viticulturist', 'campaign',
-                    'phytosanitaryTreatment.product', 'fertilization', 'irrigation', 'culturalWork',
-                    'observation', 'harvest', 'postHarvestTreatment.product'])
+                'phytosanitaryTreatment.product', 'fertilization', 'irrigation', 'culturalWork',
+                'observation', 'harvest', 'postHarvestTreatment.product'])
             ->orderBy('activity_date', 'desc');
 
         // Aplicar filtros
@@ -87,7 +87,7 @@ class AgriculturalActivityRepository
     /**
      * Obtener actividades por tipo
      */
-    public function getByType(int $userId, string $type, int $limit = null): Collection
+    public function getByType(int $userId, string $type, ?int $limit = null): Collection
     {
         $query = AgriculturalActivity::forViticulturist($userId)
             ->ofType($type)
@@ -118,6 +118,8 @@ class AgriculturalActivityRepository
 
     /**
      * Aplicar filtros a la query
+     *
+     * @param mixed $query
      */
     protected function applyFilters($query, array $filters)
     {
@@ -142,23 +144,23 @@ class AgriculturalActivityRepository
         }
 
         if (isset($filters['search'])) {
-            $search = '%' . strtolower($filters['search']) . '%';
-            $query->where(function($q) use ($search) {
+            $search = '%'.strtolower($filters['search']).'%';
+            $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(notes) LIKE ?', [$search])
-                  ->orWhereHas('plot', function($plotQuery) use ($search) {
-                      $plotQuery->whereRaw('LOWER(name) LIKE ?', [$search]);
-                  })
-                  ->orWhereHas('phytosanitaryTreatment.product', function($productQuery) use ($search) {
-                      $productQuery->whereRaw('LOWER(name) LIKE ?', [$search]);
-                  })
-                  ->orWhereHas('fertilization', function($fertQuery) use ($search) {
-                      $fertQuery->whereRaw('LOWER(fertilizer_name) LIKE ?', [$search]);
-                  });
+                    ->orWhereHas('plot', function ($plotQuery) use ($search) {
+                        $plotQuery->whereRaw('LOWER(name) LIKE ?', [$search]);
+                    })
+                    ->orWhereHas('phytosanitaryTreatment.product', function ($productQuery) use ($search) {
+                        $productQuery->whereRaw('LOWER(name) LIKE ?', [$search]);
+                    })
+                    ->orWhereHas('fertilization', function ($fertQuery) use ($search) {
+                        $fertQuery->whereRaw('LOWER(fertilizer_name) LIKE ?', [$search]);
+                    });
             });
         }
 
         if (isset($filters['product_filter']) && $filters['activity_type'] === 'phytosanitary') {
-            $query->whereHas('phytosanitaryTreatment', function($treatmentQuery) use ($filters) {
+            $query->whereHas('phytosanitaryTreatment', function ($treatmentQuery) use ($filters) {
                 $treatmentQuery->where('product_id', $filters['product_filter']);
             });
         }

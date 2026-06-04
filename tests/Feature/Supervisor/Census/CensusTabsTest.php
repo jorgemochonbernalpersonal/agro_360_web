@@ -10,30 +10,13 @@ use Tests\Feature\SupervisorTestCase;
 
 class CensusTabsTest extends SupervisorTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeViticulturistForCensus(User $supervisor, User $winery): User
-    {
-        $vit = User::factory()->create(['role' => 'viticulturist']);
-
-        WineryViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'assigned_by'      => $supervisor->id,
-        ]);
-
-        return $vit;
-    }
-
     // ── assignWinery: producer allowed ────────────────────────────────────────
 
     public function test_supervisor_can_assign_a_producer(): void
     {
         $supervisor = $this->makeSupervisor();
-        $producer   = User::factory()->create([
-            'role'              => 'producer',
+        $producer = User::factory()->create([
+            'role' => 'producer',
             'email_verified_at' => now(),
         ]);
 
@@ -44,7 +27,7 @@ class CensusTabsTest extends SupervisorTestCase
 
         $this->assertDatabaseHas('supervisor_winery', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $producer->id,
+            'winery_id' => $producer->id,
         ]);
     }
 
@@ -103,12 +86,12 @@ class CensusTabsTest extends SupervisorTestCase
     public function test_winery_count_reflects_linked_wineries(): void
     {
         [$supervisor] = $this->makeSupervisorWithWinery();
-        $winery2      = $this->makeWinery();
+        $winery2 = $this->makeWinery();
 
         \App\Models\SupervisorWinery::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery2->id,
-            'assigned_by'   => $supervisor->id,
+            'winery_id' => $winery2->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -138,8 +121,7 @@ class CensusTabsTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('vitCountByWinery', fn ($map) =>
-                ($map[$winery->id] ?? null) == 2
+            ->assertViewHas('vitCountByWinery', fn ($map) => ($map[$winery->id] ?? null) == 2
             );
     }
 
@@ -150,7 +132,7 @@ class CensusTabsTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
 
         $visible = User::factory()->create(['role' => 'winery', 'name' => 'Bodega Seleccionada']);
-        $hidden  = User::factory()->create(['role' => 'winery', 'name' => 'Otra Bodega']);
+        $hidden = User::factory()->create(['role' => 'winery', 'name' => 'Otra Bodega']);
 
         \App\Models\SupervisorWinery::create(['supervisor_id' => $supervisor->id, 'winery_id' => $visible->id, 'assigned_by' => $supervisor->id]);
         \App\Models\SupervisorWinery::create(['supervisor_id' => $supervisor->id, 'winery_id' => $hidden->id,  'assigned_by' => $supervisor->id]);
@@ -158,9 +140,8 @@ class CensusTabsTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->set('search', 'seleccionada')
-            ->assertViewHas('items', fn ($items) =>
-                $items->pluck('id')->contains($visible->id) &&
-                !$items->pluck('id')->contains($hidden->id)
+            ->assertViewHas('items', fn ($items) => $items->pluck('id')->contains($visible->id) &&
+                ! $items->pluck('id')->contains($hidden->id)
             );
     }
 
@@ -184,7 +165,7 @@ class CensusTabsTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $visible = User::factory()->create(['role' => 'viticulturist', 'name' => 'Ana Viñedo']);
-        $hidden  = User::factory()->create(['role' => 'viticulturist', 'name' => 'Pedro Campo']);
+        $hidden = User::factory()->create(['role' => 'viticulturist', 'name' => 'Pedro Campo']);
 
         WineryViticulturist::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'viticulturist_id' => $visible->id, 'source' => WineryViticulturist::SOURCE_SUPERVISOR, 'assigned_by' => $supervisor->id]);
         WineryViticulturist::create(['supervisor_id' => $supervisor->id, 'winery_id' => $winery->id, 'viticulturist_id' => $hidden->id,  'source' => WineryViticulturist::SOURCE_SUPERVISOR, 'assigned_by' => $supervisor->id]);
@@ -193,9 +174,24 @@ class CensusTabsTest extends SupervisorTestCase
             ->test(Index::class)
             ->call('switchTab', 'viticulturists')
             ->set('search', 'viñedo')
-            ->assertViewHas('items', fn ($items) =>
-                $items->pluck('id')->contains($visible->id) &&
-                !$items->pluck('id')->contains($hidden->id)
+            ->assertViewHas('items', fn ($items) => $items->pluck('id')->contains($visible->id) &&
+                ! $items->pluck('id')->contains($hidden->id)
             );
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeViticulturistForCensus(User $supervisor, User $winery): User
+    {
+        $vit = User::factory()->create(['role' => 'viticulturist']);
+
+        WineryViticulturist::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $vit->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'assigned_by' => $supervisor->id,
+        ]);
+
+        return $vit;
     }
 }

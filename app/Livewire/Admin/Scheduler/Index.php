@@ -24,7 +24,7 @@ class Index extends Component
         ['command' => 'viticulturists:clean-stale-invitations', 'schedule' => 'Lunes 04:00', 'desc' => 'Limpia invitaciones de viticultores caducadas (>30 días)',   'icon' => 'envelope-open',       'color' => 'zinc'],
         ['command' => 'agro:regulatory-reminders',         'schedule' => 'Diario 08:30',      'desc' => 'Recordatorios de plazos INFOVI (7 días y 1 día antes)',     'icon' => 'bell-alert',          'color' => 'yellow'],
         ['command' => 'agro:notebook-access-reminders',    'schedule' => 'Lunes 09:00',       'desc' => 'Recordatorios de solicitudes de cuaderno sin respuesta',    'icon' => 'book-open',           'color' => 'blue'],
-        ['command' => 'alerts:check',                      'schedule' => 'Diario 09:00',      'desc' => 'Alertas de NDVI bajo umbral configurado',                   'icon' => 'exclamation-triangle','color' => 'red'],
+        ['command' => 'alerts:check',                      'schedule' => 'Diario 09:00',      'desc' => 'Alertas de NDVI bajo umbral configurado',                   'icon' => 'exclamation-triangle', 'color' => 'red'],
         ['command' => 'treatments:send-withdrawal-alerts', 'schedule' => 'Diario 08:15',      'desc' => 'Alertas de plazo de seguridad fitosanitario',               'icon' => 'shield-check',        'color' => 'green'],
         ['command' => 'notifications:send-digest',         'schedule' => 'Diario 08:00',      'desc' => 'Digest diario de notificaciones (modo digest)',             'icon' => 'inbox',               'color' => 'blue'],
         ['command' => 'supervisor-requests:due-reminders', 'schedule' => 'Diario 09:00',      'desc' => 'Avisos de vencimiento de solicitudes DO',                   'icon' => 'clock',               'color' => 'purple'],
@@ -43,6 +43,7 @@ class Index extends Component
         $allowed = array_diff(array_column(self::TASKS, 'command'), ['queue:work']);
         if (! in_array($command, $allowed, true)) {
             $this->toastError(__('Comando no permitido.'));
+
             return;
         }
 
@@ -59,21 +60,23 @@ class Index extends Component
     {
         $tasks = collect(self::TASKS)->map(function ($task) {
             $cacheKey = "scheduler.last_run.{$task['command']}";
-            $lastRun  = Cache::get($cacheKey);
+            $lastRun = Cache::get($cacheKey);
             $task['last_run'] = $lastRun
                 ? \Carbon\Carbon::createFromTimestamp($lastRun)->diffForHumans()
                 : null;
+
             return $task;
         });
 
         $failedCount = 0;
         try {
             $failedCount = \Illuminate\Support\Facades\DB::table('failed_jobs')->count();
-        } catch (\Throwable) {}
+        } catch (\Throwable) {
+        }
 
         return view('livewire.admin.scheduler.index', compact('tasks', 'failedCount'))
             ->layout('layouts.app', [
-                'title'       => 'Scheduler - Admin - Agro365',
+                'title' => 'Scheduler - Admin - Agro365',
                 'description' => 'Monitor de tareas programadas del sistema',
             ]);
     }

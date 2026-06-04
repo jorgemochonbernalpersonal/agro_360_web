@@ -28,19 +28,19 @@ class ComplianceController extends Controller
             : Campaign::getOrCreateActiveForYear($user->id);
 
         $campaignId = $campaign?->id;
-        $userId     = $user->id;
+        $userId = $user->id;
 
         return response()->json([
             'data' => [
-                'campaign_id'    => $campaignId,
-                'campaign_year'  => $campaign?->year,
-                'score'          => $this->calculateScore($userId, $campaignId),
-                'phytosanitary'  => $this->phytosanitaryStats($userId, $campaignId),
-                'observations'   => $this->observationStats($userId, $campaignId),
-                'post_harvest'   => $this->postHarvestStats($userId, $campaignId),
+                'campaign_id' => $campaignId,
+                'campaign_year' => $campaign?->year,
+                'score' => $this->calculateScore($userId, $campaignId),
+                'phytosanitary' => $this->phytosanitaryStats($userId, $campaignId),
+                'observations' => $this->observationStats($userId, $campaignId),
+                'post_harvest' => $this->postHarvestStats($userId, $campaignId),
                 'cultural_works' => $this->culturalStats($userId, $campaignId),
-                'locking'        => $this->lockStats($userId, $campaignId),
-                'yields'         => $this->estimatedYieldStats($userId, $campaignId),
+                'locking' => $this->lockStats($userId, $campaignId),
+                'yields' => $this->estimatedYieldStats($userId, $campaignId),
             ],
         ]);
     }
@@ -65,10 +65,10 @@ class ComplianceController extends Controller
         $withR = (int) ($row->with_ropo ?? 0);
 
         return [
-            'total'              => $total,
+            'total' => $total,
             'with_justification' => $withJ,
-            'with_ropo'          => $withR,
-            'completion_pct'     => $total > 0
+            'with_ropo' => $withR,
+            'completion_pct' => $total > 0
                 ? (int) round((($withJ + $withR) / ($total * 2)) * 100)
                 : 100,
         ];
@@ -88,9 +88,9 @@ class ComplianceController extends Controller
             ->first();
 
         return [
-            'total'              => (int) ($row->total ?? 0),
+            'total' => (int) ($row->total ?? 0),
             'threshold_exceeded' => (int) ($row->threshold_exceeded ?? 0),
-            'pending_follow_up'  => (int) ($row->pending_follow_up ?? 0),
+            'pending_follow_up' => (int) ($row->pending_follow_up ?? 0),
         ];
     }
 
@@ -107,7 +107,7 @@ class ComplianceController extends Controller
             ->first();
 
         return [
-            'total'        => (int) ($row->total ?? 0),
+            'total' => (int) ($row->total ?? 0),
             'with_reentry' => (int) ($row->with_reentry ?? 0),
         ];
     }
@@ -125,7 +125,7 @@ class ComplianceController extends Controller
             ->first();
 
         return [
-            'total'                   => (int) ($row->total ?? 0),
+            'total' => (int) ($row->total ?? 0),
             'with_residue_management' => (int) ($row->with_residue_management ?? 0),
         ];
     }
@@ -140,21 +140,20 @@ class ComplianceController extends Controller
             ')
             ->first();
 
-        $total  = (int) ($row->total ?? 0);
+        $total = (int) ($row->total ?? 0);
         $locked = (int) ($row->locked ?? 0);
 
         return [
-            'total'    => $total,
-            'locked'   => $locked,
+            'total' => $total,
+            'locked' => $locked,
             'unlocked' => $total - $locked,
         ];
     }
 
     private function estimatedYieldStats(int $userId, ?int $campaignId): array
     {
-        $row = EstimatedYield::whereHas('plotPlanting', fn ($q) =>
-                $q->whereHas('plot', fn ($q2) => $q2->where('viticulturist_id', $userId))
-            )
+        $row = EstimatedYield::whereHas('plotPlanting', fn ($q) => $q->whereHas('plot', fn ($q2) => $q2->where('viticulturist_id', $userId))
+        )
             ->where('active', true)
             ->when($campaignId, fn ($q) => $q->where('campaign_id', $campaignId))
             ->selectRaw('
@@ -163,13 +162,13 @@ class ComplianceController extends Controller
             ')
             ->first();
 
-        $total     = (int) ($row->total ?? 0);
+        $total = (int) ($row->total ?? 0);
         $confirmed = (int) ($row->confirmed ?? 0);
 
         return [
-            'total'     => $total,
+            'total' => $total,
             'confirmed' => $confirmed,
-            'draft'     => $total - $confirmed,
+            'draft' => $total - $confirmed,
         ];
     }
 
@@ -180,15 +179,15 @@ class ComplianceController extends Controller
             ->when($campaignId, fn ($q) => $q->forCampaign($campaignId))
             ->leftJoin('phytosanitary_treatments as pt', function ($join) {
                 $join->on('pt.activity_id', '=', 'agricultural_activities.id')
-                     ->where('agricultural_activities.activity_type', 'phytosanitary');
+                    ->where('agricultural_activities.activity_type', 'phytosanitary');
             })
             ->leftJoin('observations as ob', function ($join) {
                 $join->on('ob.activity_id', '=', 'agricultural_activities.id')
-                     ->where('agricultural_activities.activity_type', 'observation');
+                    ->where('agricultural_activities.activity_type', 'observation');
             })
             ->leftJoin('cultural_works as cw', function ($join) {
                 $join->on('cw.activity_id', '=', 'agricultural_activities.id')
-                     ->whereIn('agricultural_activities.activity_type', ['cultural', 'pruning']);
+                    ->whereIn('agricultural_activities.activity_type', ['cultural', 'pruning']);
             })
             ->selectRaw('
                 SUM(CASE WHEN agricultural_activities.activity_type = "phytosanitary" THEN 1 ELSE 0 END) as phyto_total,
@@ -211,32 +210,32 @@ class ComplianceController extends Controller
             ->first();
 
         $points = 0;
-        $max    = 0;
+        $max = 0;
 
         // Fitosanitarios (peso 40%): justificación + ROPO
         $phytoTotal = (int) ($row->phyto_total ?? 0);
         if ($phytoTotal > 0) {
-            $max    += 40;
-            $filled  = (int) ($row->phyto_justified ?? 0) + (int) ($row->phyto_ropo ?? 0);
+            $max += 40;
+            $filled = (int) ($row->phyto_justified ?? 0) + (int) ($row->phyto_ropo ?? 0);
             $points += ($filled / ($phytoTotal * 2)) * 40;
         }
 
         // Observaciones (peso 30%): seguimiento de umbrales superados
-        $obsTotal    = (int) ($row->obs_total ?? 0);
+        $obsTotal = (int) ($row->obs_total ?? 0);
         $obsExceeded = (int) ($row->obs_exceeded ?? 0);
         if ($obsTotal > 0) {
-            $max     += 30;
-            $pending  = (int) ($row->obs_pending ?? 0);
+            $max += 30;
+            $pending = (int) ($row->obs_pending ?? 0);
             $followed = max(0, $obsExceeded - $pending);
-            $ratio    = $obsExceeded > 0 ? ($followed / $obsExceeded) : 1.0;
-            $points  += $ratio * 30;
+            $ratio = $obsExceeded > 0 ? ($followed / $obsExceeded) : 1.0;
+            $points += $ratio * 30;
         }
 
         // Labores culturales (peso 30%): gestión de residuos BCAM 6
         $culturalTotal = (int) ($row->cultural_total ?? 0);
         if ($culturalTotal > 0) {
-            $max    += 30;
-            $ratio   = (int) ($row->cultural_residue ?? 0) / $culturalTotal;
+            $max += 30;
+            $ratio = (int) ($row->cultural_residue ?? 0) / $culturalTotal;
             $points += $ratio * 30;
         }
 

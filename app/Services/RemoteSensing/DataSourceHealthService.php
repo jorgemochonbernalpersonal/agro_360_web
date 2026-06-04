@@ -20,31 +20,31 @@ class DataSourceHealthService
      */
     public function getStatus(): array
     {
-        $copernicusUsage  = $this->rateLimitService->getCopernicusMonthlyUsage();
-        $copernicusLimit  = 30000;
+        $copernicusUsage = $this->rateLimitService->getCopernicusMonthlyUsage();
+        $copernicusLimit = 30000;
         $copernicusWarning = $this->rateLimitService->isCopernicusLimitApproaching();
-        $copernicusOk     = $this->rateLimitService->canUseCopernicus();
+        $copernicusOk = $this->rateLimitService->canUseCopernicus();
 
         return [
             'copernicus' => [
-                'available'     => Cache::has('copernicus_access_token'),
-                'mock'          => false,
-                'label'         => __('Sentinel-2'),
-                'last_fetch'    => $this->getLastFetchDate(),
+                'available' => Cache::has('copernicus_access_token'),
+                'mock' => false,
+                'label' => __('Sentinel-2'),
+                'last_fetch' => $this->getLastFetchDate(),
                 'monthly_usage' => $copernicusUsage,
                 'monthly_limit' => $copernicusLimit,
                 'limit_warning' => $copernicusWarning,
-                'limit_ok'      => $copernicusOk,
+                'limit_ok' => $copernicusOk,
             ],
             'nasa_lai' => [
                 'available' => true,
-                'mock'      => config('services.nasa_earthdata.mock', false),
-                'label'     => __('NASA LAI'),
+                'mock' => config('services.nasa_earthdata.mock', false),
+                'label' => __('NASA LAI'),
             ],
             'open_meteo' => [
                 'available' => true,
-                'mock'      => config('services.open_meteo.mock', false),
-                'label'     => __('Open-Meteo'),
+                'mock' => config('services.open_meteo.mock', false),
+                'label' => __('Open-Meteo'),
             ],
         ];
     }

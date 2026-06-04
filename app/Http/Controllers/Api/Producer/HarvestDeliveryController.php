@@ -25,22 +25,22 @@ class HarvestDeliveryController extends Controller
 
         $paginated = $query->paginate(50);
 
-        $items = $paginated->getCollection()->map(fn($d) => [
-            'id'            => $d->id,
+        $items = $paginated->getCollection()->map(fn ($d) => [
+            'id' => $d->id,
             'delivery_date' => $d->delivery_date,
-            'weight_kg'     => (float) $d->delivered_kg,
-            'price_per_kg'  => $d->price_per_kg !== null ? (float) $d->price_per_kg : null,
-            'status'        => $this->mapStatus($d->status),
-            'is_disputed'   => $d->status === 'disputed',
-            'plot_name'     => $d->plotPlanting?->plot?->name,
-            'variety'       => $d->plotPlanting?->grapeVariety?->name,
-            'notes'         => $d->notes,
+            'weight_kg' => (float) $d->delivered_kg,
+            'price_per_kg' => $d->price_per_kg !== null ? (float) $d->price_per_kg : null,
+            'status' => $this->mapStatus($d->status),
+            'is_disputed' => $d->status === 'disputed',
+            'plot_name' => $d->plotPlanting?->plot?->name,
+            'variety' => $d->plotPlanting?->grapeVariety?->name,
+            'notes' => $d->notes,
         ]);
 
         return response()->json([
-            'data'     => $items,
+            'data' => $items,
             'has_more' => $paginated->hasMorePages(),
-            'total'    => $paginated->total(),
+            'total' => $paginated->total(),
         ]);
     }
 
@@ -51,8 +51,8 @@ class HarvestDeliveryController extends Controller
     {
         return match ($status) {
             'matched', 'resolved' => 'paid',
-            'disputed'            => 'disputed',
-            default               => 'pending',
+            'disputed' => 'disputed',
+            default => 'pending',
         };
     }
 }

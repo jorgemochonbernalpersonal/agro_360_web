@@ -8,9 +8,7 @@ use App\Models\AutonomousCommunity;
 use App\Models\Campaign;
 use App\Models\FieldApplicator;
 use App\Models\Municipality;
-use App\Models\Pest;
 use App\Models\PhytosanitaryProduct;
-use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
 use App\Models\Province;
 use Livewire\Livewire;
@@ -18,62 +16,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class CreateTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makePlot($viticulturist): Plot
-    {
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
-        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
-        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
-
-        return Plot::factory()->create([
-            'viticulturist_id'        => $viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
-        ]);
-    }
-
-    private function makeProduct($viticulturist): PhytosanitaryProduct
-    {
-        return PhytosanitaryProduct::create([
-            'user_id'              => $viticulturist->id,
-            'name'                 => 'Fungicida Test',
-            'active_ingredient'    => 'Cobre',
-            'registration_number'  => 'ES-00000001',
-            'withdrawal_period_days' => 14,
-            'active'               => true,
-        ]);
-    }
-
-    private function makeCampaign($viticulturist): Campaign
-    {
-        return Campaign::factory()->active()->create([
-            'viticulturist_id' => $viticulturist->id,
-            'year'             => now()->year,
-        ]);
-    }
-
-    private function validPayload(Plot $plot, PhytosanitaryProduct $product, Campaign $campaign): array
-    {
-        return [
-            'plot_id'                  => $plot->id,
-            'campaign_id'              => $campaign->id,
-            'activity_date'            => now()->format('Y-m-d'),
-            'phenological_stage'       => 'Floración',
-            'product_id'               => $product->id,
-            'dose_per_hectare'         => 2.5,
-            'area_treated'             => 1.0,
-            'workType'                 => 'individual',
-            'crew_member_id'           => '', // se omite individual sin crew
-            'treatment_justification'  => 'Detección de mildiu en hojas basales.',
-            'applicator_ropo_number'   => 'ROPO-TEST-001',
-            'reentry_period_days'      => 3,
-            'spray_volume'             => 400.0,
-        ];
-    }
-
     // ── Render ─────────────────────────────────────────────────────────────────
 
     public function test_component_renders_for_viticulturist(): void
@@ -139,15 +81,15 @@ class CreateTest extends ViticulturistTestCase
     public function test_ropo_always_required_even_when_applicator_selected(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $product       = $this->makeProduct($viticulturist);
-        $applicator    = FieldApplicator::create([
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $product = $this->makeProduct($viticulturist);
+        $applicator = FieldApplicator::create([
             'viticulturist_id' => $viticulturist->id,
-            'name'             => 'Aplicador Test',
-            'ropo_number'      => 'ROPO-123',
-            'ropo_category'    => 'basic',
-            'active'           => true,
+            'name' => 'Aplicador Test',
+            'ropo_number' => 'ROPO-123',
+            'ropo_category' => 'basic',
+            'active' => true,
         ]);
 
         $this->actingAs($viticulturist);
@@ -180,10 +122,10 @@ class CreateTest extends ViticulturistTestCase
         $this->makeCampaign($viticulturist);
         $applicator = FieldApplicator::create([
             'viticulturist_id' => $viticulturist->id,
-            'name'             => 'Aplicador Auto',
-            'ropo_number'      => 'ROPO-AUTO-999',
-            'ropo_category'    => 'qualified',
-            'active'           => true,
+            'name' => 'Aplicador Auto',
+            'ropo_number' => 'ROPO-AUTO-999',
+            'ropo_category' => 'qualified',
+            'active' => true,
         ]);
 
         $this->actingAs($viticulturist);
@@ -227,9 +169,9 @@ class CreateTest extends ViticulturistTestCase
     public function test_worktype_required(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $product       = $this->makeProduct($viticulturist);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $product = $this->makeProduct($viticulturist);
         $this->actingAs($viticulturist);
 
         Livewire::test(CreatePhytosanitaryTreatment::class)
@@ -254,9 +196,9 @@ class CreateTest extends ViticulturistTestCase
     public function test_saves_treatment_with_all_pac_fields(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $product       = $this->makeProduct($viticulturist);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $product = $this->makeProduct($viticulturist);
         $this->actingAs($viticulturist);
 
         Livewire::test(CreatePhytosanitaryTreatment::class)
@@ -283,20 +225,20 @@ class CreateTest extends ViticulturistTestCase
             ->firstOrFail();
 
         $this->assertDatabaseHas('phytosanitary_treatments', [
-            'activity_id'             => $activity->id,
-            'product_id'              => $product->id,
+            'activity_id' => $activity->id,
+            'product_id' => $product->id,
             'treatment_justification' => 'Detección de mildiu en hojas basales.',
-            'applicator_ropo_number'  => 'ROPO-PAC-001',
-            'reentry_period_days'     => 3,
+            'applicator_ropo_number' => 'ROPO-PAC-001',
+            'reentry_period_days' => 3,
         ]);
     }
 
     public function test_saves_treatment_with_buffer_zone(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $product       = $this->makeProduct($viticulturist);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $product = $this->makeProduct($viticulturist);
         $this->actingAs($viticulturist);
 
         Livewire::test(CreatePhytosanitaryTreatment::class)
@@ -323,18 +265,18 @@ class CreateTest extends ViticulturistTestCase
             ->firstOrFail();
 
         $this->assertDatabaseHas('phytosanitary_treatments', [
-            'activity_id'          => $activity->id,
+            'activity_id' => $activity->id,
             'buffer_zone_respected' => true,
-            'distance_to_water_m'  => 5.0,
+            'distance_to_water_m' => 5.0,
         ]);
     }
 
     public function test_saves_treatment_with_advisory_and_ipm_flags(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $product       = $this->makeProduct($viticulturist);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $product = $this->makeProduct($viticulturist);
         $this->actingAs($viticulturist);
 
         Livewire::test(CreatePhytosanitaryTreatment::class)
@@ -364,11 +306,11 @@ class CreateTest extends ViticulturistTestCase
             ->firstOrFail();
 
         $this->assertDatabaseHas('phytosanitary_treatments', [
-            'activity_id'              => $activity->id,
-            'under_advisory'           => true,
-            'plague_monitoring'        => true,
+            'activity_id' => $activity->id,
+            'under_advisory' => true,
+            'plague_monitoring' => true,
             'prior_non_chemical_methods' => true,
-            'biological_control'       => true,
+            'biological_control' => true,
         ]);
     }
 
@@ -391,18 +333,18 @@ class CreateTest extends ViticulturistTestCase
     public function test_applications_this_campaign_counts_existing_treatments(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $product       = $this->makeProduct($viticulturist);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $product = $this->makeProduct($viticulturist);
 
         // Crear una actividad previa con el mismo producto en esta campaña
         AgriculturalActivity::factory()
             ->withPhytosanitaryTreatment(['product_id' => $product->id])
             ->create([
                 'viticulturist_id' => $viticulturist->id,
-                'plot_id'          => $plot->id,
-                'campaign_id'      => $campaign->id,
-                'activity_type'    => 'phytosanitary',
+                'plot_id' => $plot->id,
+                'campaign_id' => $campaign->id,
+                'activity_type' => 'phytosanitary',
             ]);
 
         $this->actingAs($viticulturist);
@@ -411,5 +353,60 @@ class CreateTest extends ViticulturistTestCase
             ->set('campaign_id', $campaign->id)
             ->set('product_id', $product->id)
             ->assertSet('applicationsThisCampaign', 1);
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makePlot($viticulturist): Plot
+    {
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
+        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
+
+        return Plot::factory()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
+        ]);
+    }
+
+    private function makeProduct($viticulturist): PhytosanitaryProduct
+    {
+        return PhytosanitaryProduct::create([
+            'user_id' => $viticulturist->id,
+            'name' => 'Fungicida Test',
+            'active_ingredient' => 'Cobre',
+            'registration_number' => 'ES-00000001',
+            'withdrawal_period_days' => 14,
+            'active' => true,
+        ]);
+    }
+
+    private function makeCampaign($viticulturist): Campaign
+    {
+        return Campaign::factory()->active()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'year' => now()->year,
+        ]);
+    }
+
+    private function validPayload(Plot $plot, PhytosanitaryProduct $product, Campaign $campaign): array
+    {
+        return [
+            'plot_id' => $plot->id,
+            'campaign_id' => $campaign->id,
+            'activity_date' => now()->format('Y-m-d'),
+            'phenological_stage' => 'Floración',
+            'product_id' => $product->id,
+            'dose_per_hectare' => 2.5,
+            'area_treated' => 1.0,
+            'workType' => 'individual',
+            'crew_member_id' => '', // se omite individual sin crew
+            'treatment_justification' => 'Detección de mildiu en hojas basales.',
+            'applicator_ropo_number' => 'ROPO-TEST-001',
+            'reentry_period_days' => 3,
+            'spray_volume' => 400.0,
+        ];
     }
 }

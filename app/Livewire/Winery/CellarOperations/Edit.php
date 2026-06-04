@@ -15,42 +15,35 @@ class Edit extends Component
 
     public CellarOperation $operation;
 
-    public string $operation_type      = '';
-    public string $operation_date      = '';
+    public string $operation_type = '';
+
+    public string $operation_date = '';
+
     public string $source_container_id = '';
+
     public string $target_container_id = '';
-    public string $volume_liters       = '';
-    public string $responsible_person  = '';
-    public string $status              = '';
-    public string $notes               = '';
+
+    public string $volume_liters = '';
+
+    public string $responsible_person = '';
+
+    public string $status = '';
+
+    public string $notes = '';
 
     public function mount(CellarOperation $operation): void
     {
         abort_if($operation->user_id !== Auth::id(), 403);
 
-        $this->operation           = $operation;
-        $this->operation_type      = $operation->operation_type;
-        $this->operation_date      = $operation->operation_date->toDateString();
+        $this->operation = $operation;
+        $this->operation_type = $operation->operation_type;
+        $this->operation_date = $operation->operation_date->toDateString();
         $this->source_container_id = (string) ($operation->source_container_id ?? '');
         $this->target_container_id = (string) ($operation->target_container_id ?? '');
-        $this->volume_liters       = $operation->volume_liters !== null ? (string) $operation->volume_liters : '';
-        $this->responsible_person  = $operation->responsible_person ?? '';
-        $this->status              = $operation->status;
-        $this->notes               = $operation->notes ?? '';
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'operation_type'      => ['required', 'in:' . implode(',', array_keys(CellarOperation::OPERATION_TYPES))],
-            'operation_date'      => ['required', 'date'],
-            'source_container_id' => $this->ownedContainerRule(false),
-            'target_container_id' => $this->ownedContainerRule(false),
-            'volume_liters'       => ['nullable', 'numeric', 'min:0'],
-            'responsible_person'  => ['nullable', 'string', 'max:150'],
-            'status'              => ['required', 'in:' . implode(',', array_keys(CellarOperation::STATUSES))],
-            'notes'               => ['nullable', 'string'],
-        ];
+        $this->volume_liters = $operation->volume_liters !== null ? (string) $operation->volume_liters : '';
+        $this->responsible_person = $operation->responsible_person ?? '';
+        $this->status = $operation->status;
+        $this->notes = $operation->notes ?? '';
     }
 
     public function save(): void
@@ -58,14 +51,14 @@ class Edit extends Component
         $this->validate();
 
         $this->operation->update([
-            'operation_type'      => $this->operation_type,
-            'operation_date'      => $this->operation_date,
+            'operation_type' => $this->operation_type,
+            'operation_date' => $this->operation_date,
             'source_container_id' => $this->source_container_id ?: null,
             'target_container_id' => $this->target_container_id ?: null,
-            'volume_liters'       => $this->volume_liters !== '' ? $this->volume_liters : null,
-            'responsible_person'  => $this->responsible_person ?: null,
-            'status'              => $this->status,
-            'notes'               => $this->notes ?: null,
+            'volume_liters' => $this->volume_liters !== '' ? $this->volume_liters : null,
+            'responsible_person' => $this->responsible_person ?: null,
+            'status' => $this->status,
+            'notes' => $this->notes ?: null,
         ]);
 
         $this->toastSuccess(__('Operación actualizada correctamente.'));
@@ -79,8 +72,22 @@ class Edit extends Component
                 ->where('archived', false)
                 ->orderBy('name')
                 ->get(),
-            'types'    => CellarOperation::operationTypeOptions(),
+            'types' => CellarOperation::operationTypeOptions(),
             'statuses' => CellarOperation::statusOptions(),
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'operation_type' => ['required', 'in:'.implode(',', array_keys(CellarOperation::OPERATION_TYPES))],
+            'operation_date' => ['required', 'date'],
+            'source_container_id' => $this->ownedContainerRule(false),
+            'target_container_id' => $this->ownedContainerRule(false),
+            'volume_liters' => ['nullable', 'numeric', 'min:0'],
+            'responsible_person' => ['nullable', 'string', 'max:150'],
+            'status' => ['required', 'in:'.implode(',', array_keys(CellarOperation::STATUSES))],
+            'notes' => ['nullable', 'string'],
+        ];
     }
 }

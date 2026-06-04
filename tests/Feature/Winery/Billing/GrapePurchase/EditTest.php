@@ -21,44 +21,6 @@ class EditTest extends WineryTestCase
         $this->actingAs($this->winery);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makeInvoice(array $attrs = []): Invoice
-    {
-        return Invoice::create(array_merge([
-            'user_id'          => $this->winery->id,
-            'viticulturist_id' => $this->viticulturist->id,
-            'invoice_type'     => 'grape_purchase',
-            'invoice_number'   => 'GP-2024-0001',
-            'delivery_note_code' => 'LIQ-2024-0001',
-            'invoice_date'     => '2024-10-01',
-            'status'           => 'draft',
-            'payment_status'   => 'unpaid',
-            'subtotal'         => 225,
-            'tax_base'         => 225,
-            'tax_amount'       => 4.5,
-            'total_amount'     => 220.5,
-        ], $attrs));
-    }
-
-    private function attachHarvest(Invoice $invoice, Harvest $harvest): InvoiceItem
-    {
-        // withoutEvents: GrapePurchase tests cover invoice state, not HarvestStock movements.
-        return InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
-            'invoice_id'   => $invoice->id,
-            'harvest_id'   => $harvest->id,
-            'concept_type' => 'harvest',
-            'name'         => 'Vendimia test',
-            'quantity'     => 500,
-            'unit_price'   => 0.45,
-            'tax_rate'     => 2,
-            'subtotal'     => 225,
-            'tax_base'     => 225,
-            'tax_amount'   => 4.5,
-            'total'        => 220.5,
-        ]));
-    }
-
     // ── Happy path ────────────────────────────────────────────────────────────
 
     public function test_updates_invoice_and_recalculates_totals(): void
@@ -73,10 +35,10 @@ class EditTest extends WineryTestCase
             ->set('invoice_date', '2024-11-15')
             ->set('payment_type', 'cash')
             ->set('lines', [[
-                'harvest_id'  => $harvest->id,
-                'quantity'    => '1000',
-                'unit_price'  => '0.500',
-                'tax_rate'    => '2',
+                'harvest_id' => $harvest->id,
+                'quantity' => '1000',
+                'unit_price' => '0.500',
+                'tax_rate' => '2',
                 'description' => '',
             ]])
             ->call('save')
@@ -85,7 +47,7 @@ class EditTest extends WineryTestCase
 
         $invoice->refresh();
         $this->assertEquals(500.0, (float) $invoice->subtotal);
-        $this->assertEquals(10.0,  (float) $invoice->tax_amount);
+        $this->assertEquals(10.0, (float) $invoice->tax_amount);
         $this->assertEquals(490.0, (float) $invoice->total_amount);
         $this->assertEquals('2024-11-15', $invoice->invoice_date->format('Y-m-d'));
     }
@@ -99,10 +61,10 @@ class EditTest extends WineryTestCase
         Livewire::test(Edit::class, ['id' => $invoice->id])
             ->set('invoice_date', '2024-11-01')
             ->set('lines', [[
-                'harvest_id'  => $harvest->id,
-                'quantity'    => '500',
-                'unit_price'  => '0.450',
-                'tax_rate'    => '2',
+                'harvest_id' => $harvest->id,
+                'quantity' => '500',
+                'unit_price' => '0.450',
+                'tax_rate' => '2',
                 'description' => '',
             ]])
             ->call('save')
@@ -122,10 +84,10 @@ class EditTest extends WineryTestCase
         Livewire::test(Edit::class, ['id' => $invoice->id])
             ->set('invoice_date', '2024-12-01')
             ->set('lines', [[
-                'harvest_id'  => $harvest->id,
-                'quantity'    => '999',
-                'unit_price'  => '0.999',
-                'tax_rate'    => '0',
+                'harvest_id' => $harvest->id,
+                'quantity' => '999',
+                'unit_price' => '0.999',
+                'tax_rate' => '0',
                 'description' => '',
             ]])
             ->call('save');
@@ -143,10 +105,10 @@ class EditTest extends WineryTestCase
         Livewire::test(Edit::class, ['id' => $invoice->id])
             ->set('invoice_date', '2024-12-01')
             ->set('lines', [[
-                'harvest_id'  => $harvest->id,
-                'quantity'    => '999',
-                'unit_price'  => '0.999',
-                'tax_rate'    => '0',
+                'harvest_id' => $harvest->id,
+                'quantity' => '999',
+                'unit_price' => '0.999',
+                'tax_rate' => '0',
                 'description' => '',
             ]])
             ->call('save');
@@ -195,5 +157,43 @@ class EditTest extends WineryTestCase
 
         $this->get(route('winery.invoices.grape-purchase.edit', $invoice->id))
             ->assertStatus(404);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makeInvoice(array $attrs = []): Invoice
+    {
+        return Invoice::create(array_merge([
+            'user_id' => $this->winery->id,
+            'viticulturist_id' => $this->viticulturist->id,
+            'invoice_type' => 'grape_purchase',
+            'invoice_number' => 'GP-2024-0001',
+            'delivery_note_code' => 'LIQ-2024-0001',
+            'invoice_date' => '2024-10-01',
+            'status' => 'draft',
+            'payment_status' => 'unpaid',
+            'subtotal' => 225,
+            'tax_base' => 225,
+            'tax_amount' => 4.5,
+            'total_amount' => 220.5,
+        ], $attrs));
+    }
+
+    private function attachHarvest(Invoice $invoice, Harvest $harvest): InvoiceItem
+    {
+        // withoutEvents: GrapePurchase tests cover invoice state, not HarvestStock movements.
+        return InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $harvest->id,
+            'concept_type' => 'harvest',
+            'name' => 'Vendimia test',
+            'quantity' => 500,
+            'unit_price' => 0.45,
+            'tax_rate' => 2,
+            'subtotal' => 225,
+            'tax_base' => 225,
+            'tax_amount' => 4.5,
+            'total' => 220.5,
+        ]));
     }
 }

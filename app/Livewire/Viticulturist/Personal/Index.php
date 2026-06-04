@@ -2,20 +2,20 @@
 
 namespace App\Livewire\Viticulturist\Personal;
 
-use App\Models\Crew;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\WithPagination;
+use App\Models\Crew;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
     public $search = '';
+
     public $wineryFilter = '';
 
     protected $queryString = ['search', 'wineryFilter'];
@@ -23,8 +23,8 @@ class Index extends Component
     public function render()
     {
         $user = Auth::user();
-        
-        if (!$user->can('viewAny', Crew::class)) {
+
+        if (! $user->can('viewAny', Crew::class)) {
             abort(403, __('No tienes permiso para ver cuadrillas.'));
         }
 
@@ -32,11 +32,11 @@ class Index extends Component
             ->with(['winery', 'viticulturist'])
             ->withCount(['members', 'activities'])
             ->when($this->search, function ($query) {
-                $search = '%' . strtolower($this->search) . '%';
+                $search = '%'.strtolower($this->search).'%';
                 $query->whereRaw('LOWER(name) LIKE ?', [$search])
-                      ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
             })
-            ->when($this->wineryFilter, fn($q) => $q->forWinery($this->wineryFilter))
+            ->when($this->wineryFilter, fn ($q) => $q->forWinery($this->wineryFilter))
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -44,27 +44,29 @@ class Index extends Component
 
         $base = Crew::forViticulturist($user->id)->withCount(['members', 'activities']);
         $stats = [
-            'total'    => Crew::forViticulturist($user->id)->count(),
-            'members'  => Crew::forViticulturist($user->id)->withCount('members')->get()->sum('members_count'),
+            'total' => Crew::forViticulturist($user->id)->count(),
+            'members' => Crew::forViticulturist($user->id)->withCount('members')->get()->sum('members_count'),
             'with_activities' => Crew::forViticulturist($user->id)->has('activities')->count(),
         ];
 
         return view('livewire.viticulturist.personal.index', [
-            'crews'    => $crews,
+            'crews' => $crews,
             'wineries' => $wineries,
-            'stats'    => $stats,
+            'stats' => $stats,
         ]);
     }
 
     public function delete(Crew $crew)
     {
-        if (!Auth::user()->can('delete', $crew)) {
+        if (! Auth::user()->can('delete', $crew)) {
             $this->toastError(__('No tienes permiso para eliminar esta cuadrilla.'));
+
             return;
         }
 
         if ($crew->activities()->exists()) {
             $this->toastError(__('No se puede eliminar una cuadrilla con actividades asociadas.'));
+
             return;
         }
 
@@ -74,7 +76,7 @@ class Index extends Component
                 $crew->members()->delete();
                 $crew->delete();
             });
-            
+
             $this->toastSuccess(__('Cuadrilla eliminada correctamente.'));
         } catch (\Exception $e) {
             Log::error('Error deleting crew', [
@@ -94,4 +96,3 @@ class Index extends Component
         $this->resetPage();
     }
 }
-

@@ -2,17 +2,17 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Crew;
-use App\Models\User;
-use App\Models\CrewMember;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\Crew;
+use App\Models\CrewMember;
+use App\Models\GrapeVariety;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Models\GrapeVariety;
-use App\Models\Campaign;
+use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
 use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,7 +23,7 @@ class CrewTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Ejecutar seeders necesarios para plots
         $this->seed([
             AutonomousCommunitySeeder::class,
@@ -47,7 +47,7 @@ class CrewTest extends TestCase
     {
         $winery = User::factory()->create(['role' => 'winery']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $crew = Crew::create([
             'name' => 'Test Crew',
             'viticulturist_id' => $viticulturist->id,
@@ -60,7 +60,7 @@ class CrewTest extends TestCase
     public function test_crew_can_have_null_winery(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $crew = Crew::create([
             'name' => 'Test Crew',
             'viticulturist_id' => $viticulturist->id,
@@ -75,7 +75,7 @@ class CrewTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $member1 = User::factory()->create(['role' => 'viticulturist']);
         $member2 = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $crew = Crew::create([
             'name' => 'Test Crew',
             'viticulturist_id' => $viticulturist->id,
@@ -100,7 +100,7 @@ class CrewTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
-        
+
         $grapeVariety = GrapeVariety::firstOrCreate(
             ['code' => 'TEMP'],
             ['name' => 'Tempranillo', 'color' => 'red']
@@ -112,7 +112,7 @@ class CrewTest extends TestCase
             'planting_year' => now()->year - 5,
             'status' => 'active',
         ]);
-        
+
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
         $crew = Crew::create([
             'name' => 'Test Crew',
@@ -142,11 +142,11 @@ class CrewTest extends TestCase
         $this->assertCount(2, $crew->activities);
     }
 
-    public function test_scopeForViticulturist_filters_correctly(): void
+    public function test_scope_for_viticulturist_filters_correctly(): void
     {
         $viticulturist1 = User::factory()->create(['role' => 'viticulturist']);
         $viticulturist2 = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $crew1 = Crew::create([
             'name' => 'Crew 1',
             'viticulturist_id' => $viticulturist1->id,
@@ -163,12 +163,12 @@ class CrewTest extends TestCase
         $this->assertEquals($crew1->id, $crews->first()->id);
     }
 
-    public function test_scopeForWinery_filters_correctly(): void
+    public function test_scope_for_winery_filters_correctly(): void
     {
         $winery1 = User::factory()->create(['role' => 'winery']);
         $winery2 = User::factory()->create(['role' => 'winery']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $crew1 = Crew::create([
             'name' => 'Crew 1',
             'viticulturist_id' => $viticulturist->id,
@@ -187,12 +187,12 @@ class CrewTest extends TestCase
         $this->assertEquals($crew1->id, $crews->first()->id);
     }
 
-    public function test_getMembersCountAttribute_returns_correct_count(): void
+    public function test_get_members_count_attribute_returns_correct_count(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $member1 = User::factory()->create(['role' => 'viticulturist']);
         $member2 = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $crew = Crew::create([
             'name' => 'Test Crew',
             'viticulturist_id' => $viticulturist->id,
@@ -213,11 +213,11 @@ class CrewTest extends TestCase
         $this->assertEquals(2, $crew->members_count);
     }
 
-    public function test_getActivitiesCountAttribute_returns_correct_count(): void
+    public function test_get_activities_count_attribute_returns_correct_count(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
-        
+
         $grapeVariety = GrapeVariety::firstOrCreate(
             ['code' => 'TEMP'],
             ['name' => 'Tempranillo', 'color' => 'red']
@@ -229,7 +229,7 @@ class CrewTest extends TestCase
             'planting_year' => now()->year - 5,
             'status' => 'active',
         ]);
-        
+
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
         $crew = Crew::create([
             'name' => 'Test Crew',
@@ -259,4 +259,3 @@ class CrewTest extends TestCase
         $this->assertEquals(2, $crew->activities_count);
     }
 }
-

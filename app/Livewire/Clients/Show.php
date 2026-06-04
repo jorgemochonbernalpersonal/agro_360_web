@@ -3,12 +3,13 @@
 namespace App\Livewire\Clients;
 
 use App\Models\Client;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Show extends Component
 {
     public Client $client;
+
     public $client_id;
 
     public function mount($client)
@@ -20,22 +21,22 @@ class Show extends Component
         } else {
             $this->client_id = $client;
         }
-        
+
         $this->loadClient();
     }
 
     public function loadClient()
     {
         $user = Auth::user();
-        
+
         // Si ya tenemos el cliente cargado, solo cargar relaciones
-        if (!isset($this->client) || $this->client->id != $this->client_id) {
+        if (! isset($this->client) || $this->client->id != $this->client_id) {
             $this->client = Client::forUser($user->id)
                 ->with([
-                    'addresses.municipality', 
-                    'addresses.province', 
-                    'addresses.autonomousCommunity', 
-                    'invoices'
+                    'addresses.municipality',
+                    'addresses.province',
+                    'addresses.autonomousCommunity',
+                    'invoices',
                 ])
                 ->findOrFail($this->client_id);
         } else {
@@ -44,12 +45,12 @@ class Show extends Component
                 abort(403, __('No tienes permiso para ver este cliente.'));
             }
             // Cargar relaciones si no están cargadas
-            if (!$this->client->relationLoaded('addresses')) {
+            if (! $this->client->relationLoaded('addresses')) {
                 $this->client->load([
-                    'addresses.municipality', 
-                    'addresses.province', 
-                    'addresses.autonomousCommunity', 
-                    'invoices'
+                    'addresses.municipality',
+                    'addresses.province',
+                    'addresses.autonomousCommunity',
+                    'invoices',
                 ]);
             }
         }
@@ -58,10 +59,11 @@ class Show extends Component
     public function render()
     {
         $clientName = $this->client->full_name;
+
         return view('livewire.clients.show')
             ->layout('layouts.app', [
-                'title' => $clientName . ' - Cliente - Agro365',
-                'description' => __('Detalles del cliente ') . $clientName . '. Información de contacto, direcciones, facturas y estadísticas de facturación.',
+                'title' => $clientName.' - Cliente - Agro365',
+                'description' => __('Detalles del cliente ').$clientName.'. Información de contacto, direcciones, facturas y estadísticas de facturación.',
             ]);
     }
 }

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * Tabla para trackear el progreso del onboarding de nuevos viticultores
      */
     public function up(): void
@@ -20,10 +20,10 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->boolean('skipped')->default(false);
             $table->timestamps();
-            
+
             // Un usuario solo puede tener un registro por step
             $table->unique(['user_id', 'step']);
-            
+
             // Índice para queries frecuentes
             $table->index(['user_id', 'completed_at']);
         });

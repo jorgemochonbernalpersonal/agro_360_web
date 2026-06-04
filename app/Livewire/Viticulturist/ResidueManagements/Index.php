@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class Index extends AbstractIndex
 {
     public string $filterCampaign = '';
+
     public string $filterPractice = '';
 
     public function mount(): void
@@ -19,18 +20,25 @@ class Index extends AbstractIndex
         $this->filterCampaign = (string) ($campaign?->id ?? '');
     }
 
-    public function updatingFilterCampaign(): void { $this->resetPage(); }
-    public function updatingFilterPractice(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingFilterCampaign(): void
     {
-        return ['filterCampaign' => '', 'filterPractice' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingFilterPractice(): void
+    {
+        $this->resetPage();
     }
 
     public function deactivate(int $id): void
     {
         $this->findOwned(ResidueManagement::class, $id)->update(['active' => false]);
         $this->toastSuccess(__('Registro archivado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['filterCampaign' => '', 'filterPractice' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -50,26 +58,32 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['date', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
         $base = ResidueManagement::where('viticulturist_id', $this->viticulturistId())->active();
 
         $stats = [
-            'total'        => (clone $base)->count(),
-            'this_campaign'=> $this->filterCampaign ? (clone $base)->where('campaign_id', $this->filterCampaign)->count() : (clone $base)->count(),
-            'composted'    => (clone $base)->where('practice_type', 'composting')->count(),
-            'removed'      => (clone $base)->whereIn('practice_type', ['contractor', 'winery_delivery'])->count(),
+            'total' => (clone $base)->count(),
+            'this_campaign' => $this->filterCampaign ? (clone $base)->where('campaign_id', $this->filterCampaign)->count() : (clone $base)->count(),
+            'composted' => (clone $base)->where('practice_type', 'composting')->count(),
+            'removed' => (clone $base)->whereIn('practice_type', ['contractor', 'winery_delivery'])->count(),
         ];
 
         return [
-            'entries'       => $entries,
-            'campaigns'     => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
+            'entries' => $entries,
+            'campaigns' => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
             'practiceTypes' => ResidueManagement::practiceTypeOptions(),
-            'stats'         => $stats,
+            'stats' => $stats,
         ];
     }
 }

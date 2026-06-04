@@ -10,22 +10,6 @@ use Tests\Feature\WineryTestCase;
 
 class QualificationsTest extends WineryTestCase
 {
-    private function makeSupervisor(): User
-    {
-        return User::factory()->create(['role' => 'supervisor', 'email_verified_at' => now()]);
-    }
-
-    private function makeQualification(User $supervisor, User $winery, array $attrs = []): DoQualification
-    {
-        return DoQualification::create(array_merge([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => 2025,
-            'wine_name'          => 'Vino Test',
-            'qualification_date' => now()->toDateString(),
-        ], $attrs));
-    }
-
     // ── access ────────────────────────────────────────────────────────────────
 
     public function test_winery_can_access_denomination_qualifications(): void
@@ -51,15 +35,15 @@ class QualificationsTest extends WineryTestCase
     public function test_winery_sees_only_own_qualifications(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
-        $other      = $this->makeOtherWinery();
+        $winery = $this->makeWinery();
+        $other = $this->makeOtherWinery();
 
-        $own    = $this->makeQualification($supervisor, $winery);
+        $own = $this->makeQualification($supervisor, $winery);
         $theirs = $this->makeQualification($supervisor, $other);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
-            ->assertViewHas('qualifications', fn($q) => $q->contains('id', $own->id) && !$q->contains('id', $theirs->id));
+            ->assertViewHas('qualifications', fn ($q) => $q->contains('id', $own->id) && ! $q->contains('id', $theirs->id));
     }
 
     // ── counts ────────────────────────────────────────────────────────────────
@@ -67,7 +51,7 @@ class QualificationsTest extends WineryTestCase
     public function test_counts_reflect_qualification_results(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         $this->makeQualification($supervisor, $winery, ['result' => 'qualified']);
         $this->makeQualification($supervisor, $winery, ['result' => 'pending']);
@@ -75,8 +59,7 @@ class QualificationsTest extends WineryTestCase
 
         Livewire::actingAs($winery)
             ->test(Index::class)
-            ->assertViewHas('counts', fn($c) =>
-                $c['all'] === 3 &&
+            ->assertViewHas('counts', fn ($c) => $c['all'] === 3 &&
                 $c['qualified'] === 1 &&
                 $c['pending'] === 1 &&
                 $c['disqualified'] === 1
@@ -88,21 +71,21 @@ class QualificationsTest extends WineryTestCase
     public function test_result_filter_narrows_results(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
-        $qualified    = $this->makeQualification($supervisor, $winery, ['result' => 'qualified']);
+        $qualified = $this->makeQualification($supervisor, $winery, ['result' => 'qualified']);
         $disqualified = $this->makeQualification($supervisor, $winery, ['result' => 'disqualified']);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
             ->set('resultFilter', 'qualified')
-            ->assertViewHas('qualifications', fn($q) => $q->contains('id', $qualified->id) && !$q->contains('id', $disqualified->id));
+            ->assertViewHas('qualifications', fn ($q) => $q->contains('id', $qualified->id) && ! $q->contains('id', $disqualified->id));
     }
 
     public function test_vintage_filter_narrows_results(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         $v2024 = $this->makeQualification($supervisor, $winery, ['vintage' => 2024]);
         $v2025 = $this->makeQualification($supervisor, $winery, ['vintage' => 2025]);
@@ -110,6 +93,22 @@ class QualificationsTest extends WineryTestCase
         Livewire::actingAs($winery)
             ->test(Index::class)
             ->set('vintageFilter', '2024')
-            ->assertViewHas('qualifications', fn($q) => $q->contains('id', $v2024->id) && !$q->contains('id', $v2025->id));
+            ->assertViewHas('qualifications', fn ($q) => $q->contains('id', $v2024->id) && ! $q->contains('id', $v2025->id));
+    }
+
+    private function makeSupervisor(): User
+    {
+        return User::factory()->create(['role' => 'supervisor', 'email_verified_at' => now()]);
+    }
+
+    private function makeQualification(User $supervisor, User $winery, array $attrs = []): DoQualification
+    {
+        return DoQualification::create(array_merge([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => 2025,
+            'wine_name' => 'Vino Test',
+            'qualification_date' => now()->toDateString(),
+        ], $attrs));
     }
 }

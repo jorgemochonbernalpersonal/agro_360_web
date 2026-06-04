@@ -43,7 +43,7 @@ class RemoteSensingServiceProvider extends ServiceProvider
         $this->app->singleton(PlotRemoteSensingRepository::class);
         $this->app->singleton(RemoteSensingCacheService::class);
         $this->app->singleton(RateLimitService::class);
-        
+
         // Register NASA services
         $this->app->singleton(\App\Services\RemoteSensing\NasaLSTService::class);
         $this->app->singleton(\App\Services\RemoteSensing\NasaAreaRequestService::class);
@@ -52,15 +52,15 @@ class RemoteSensingServiceProvider extends ServiceProvider
         $this->app->singleton(\App\Services\RemoteSensing\NasaLAIService::class);
         $this->app->singleton(\App\Services\RemoteSensing\NasaSMAPService::class);
         $this->app->singleton(\App\Services\RemoteSensing\NasaETService::class);
-        
+
         // Register Advanced Calculators
         $this->app->singleton(\App\Services\RemoteSensing\Calculators\LAICalculator::class);
         $this->app->singleton(\App\Services\RemoteSensing\Calculators\ChlorophyllCalculator::class);
         $this->app->singleton(\App\Services\RemoteSensing\Calculators\MaturityCalculator::class);
-        
+
         // Register Detectors
         $this->app->singleton(\App\Services\RemoteSensing\Detectors\AnomalyDetector::class);
-        
+
         // Register Advanced Analysis Service (aggregator)
         $this->app->singleton(\App\Services\RemoteSensing\AdvancedAnalysisService::class);
     }

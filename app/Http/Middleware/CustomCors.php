@@ -11,11 +11,11 @@ class CustomCors
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $origin        = $request->header('Origin');
+        $origin = $request->header('Origin');
         $allowedOrigin = $origin ? $this->resolveAllowedOrigin($origin) : null;
 
         // Preflight OPTIONS — responder sin pasar al siguiente middleware
@@ -25,6 +25,7 @@ class CustomCors
                 $this->addCorsHeaders($response, $allowedOrigin);
                 $response->headers->set('Access-Control-Max-Age', '86400');
             }
+
             return $response;
         }
 

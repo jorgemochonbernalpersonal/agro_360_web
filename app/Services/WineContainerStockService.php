@@ -53,7 +53,7 @@ class WineContainerStockService
                 if ($fromContainer) {
                     if ((float) $fromContainer->wine_volume_liters < $qty) {
                         throw new \RuntimeException(
-                            "El contenedor «{$fromContainer->name}» no tiene suficiente vino: " .
+                            "El contenedor «{$fromContainer->name}» no tiene suficiente vino: ".
                             "disponible {$fromContainer->wine_volume_liters} L, solicitado {$qty} L."
                         );
                     }
@@ -77,11 +77,11 @@ class WineContainerStockService
             }
 
             Log::info('[WineContainerStockService] Trasvase registrado', [
-                'transfer_id'      => $transfer->id,
-                'wine_id'          => $transfer->wine_id,
-                'from_container'   => $transfer->from_container_id,
-                'to_container'     => $transfer->to_container_id,
-                'quantity'         => $qty,
+                'transfer_id' => $transfer->id,
+                'wine_id' => $transfer->wine_id,
+                'from_container' => $transfer->from_container_id,
+                'to_container' => $transfer->to_container_id,
+                'quantity' => $qty,
             ]);
         });
     }
@@ -131,7 +131,7 @@ class WineContainerStockService
 
             Log::info('[WineContainerStockService] Trasvase revertido', [
                 'transfer_id' => $transfer->id,
-                'quantity'    => $qty,
+                'quantity' => $qty,
             ]);
         });
     }
@@ -140,7 +140,7 @@ class WineContainerStockService
      * Actualiza un trasvase: revierte el antiguo y aplica el nuevo.
      * Permite cambios en contenedores, cantidad o vino.
      *
-     * @param array $oldData  ['wine_id', 'from_container_id', 'to_container_id', 'quantity']
+     * @param array $oldData ['wine_id', 'from_container_id', 'to_container_id', 'quantity']
      */
     public function updateTransfer(WineTransfer $transfer, array $oldData): void
     {
@@ -177,17 +177,17 @@ class WineContainerStockService
             // Limpiar wine_id del estado actual (locked via container above)
             $state = ContainerCurrentState::lockForUpdate()
                 ->firstOrNew(['container_id' => $container->id]);
-            $state->wine_id          = null;
+            $state->wine_id = null;
             $state->last_movement_at = now();
             $state->last_movement_by = Auth::id();
             $state->save();
 
             ContainerHistory::create([
-                'container_id'   => $container->id,
+                'container_id' => $container->id,
                 'operation_type' => 'empty',
-                'quantity'       => -$prevLiters,
-                'created_by'     => Auth::id(),
-                'start_date'     => now(),
+                'quantity' => -$prevLiters,
+                'created_by' => Auth::id(),
+                'start_date' => now(),
             ]);
 
             Log::info('[WineContainerStockService] Contenedor vaciado', [
@@ -206,7 +206,7 @@ class WineContainerStockService
         DB::transaction(function () use ($container, $wineId, $newLiters) {
             Container::whereKey($container->id)->lockForUpdate()->first();
 
-            $prev  = (float) $container->wine_volume_liters;
+            $prev = (float) $container->wine_volume_liters;
             $delta = $newLiters - $prev;
 
             $container->wine_volume_liters = max(0, $newLiters);
@@ -215,19 +215,19 @@ class WineContainerStockService
             $this->updateCurrentState($container, $wineId, $delta);
 
             ContainerHistory::create([
-                'container_id'   => $container->id,
-                'wine_id'        => $wineId,
+                'container_id' => $container->id,
+                'wine_id' => $wineId,
                 'operation_type' => 'adjustment',
-                'quantity'       => $delta,
-                'created_by'     => Auth::id(),
-                'start_date'     => now(),
+                'quantity' => $delta,
+                'created_by' => Auth::id(),
+                'start_date' => now(),
             ]);
 
             Log::info('[WineContainerStockService] Ajuste manual', [
                 'container_id' => $container->id,
-                'prev_liters'  => $prev,
-                'new_liters'   => $newLiters,
-                'delta'        => $delta,
+                'prev_liters' => $prev,
+                'new_liters' => $newLiters,
+                'delta' => $delta,
             ]);
         });
     }
@@ -253,7 +253,7 @@ class WineContainerStockService
 
             if ((float) $container->wine_volume_liters < $qty) {
                 throw new \RuntimeException(
-                    "El contenedor «{$container->name}» no tiene suficiente vino para la merma: " .
+                    "El contenedor «{$container->name}» no tiene suficiente vino para la merma: ".
                     "disponible {$container->wine_volume_liters} L, merma {$qty} L."
                 );
             }
@@ -264,18 +264,18 @@ class WineContainerStockService
             $this->updateCurrentState($container, null, -$qty);
 
             ContainerHistory::create([
-                'container_id'   => $container->id,
-                'wine_id'        => $loss->wine_id,
+                'container_id' => $container->id,
+                'wine_id' => $loss->wine_id,
                 'operation_type' => 'wine_loss',
-                'quantity'       => -$qty,
-                'created_by'     => Auth::id(),
-                'start_date'     => now(),
+                'quantity' => -$qty,
+                'created_by' => Auth::id(),
+                'start_date' => now(),
             ]);
 
             Log::info('[WineContainerStockService] Merma registrada', [
-                'loss_id'      => $loss->id,
+                'loss_id' => $loss->id,
                 'container_id' => $loss->container_id,
-                'quantity'     => $qty,
+                'quantity' => $qty,
             ]);
         });
     }
@@ -303,12 +303,12 @@ class WineContainerStockService
             $this->updateCurrentState($container, $loss->wine_id, $qty);
 
             ContainerHistory::create([
-                'container_id'   => $container->id,
-                'wine_id'        => $loss->wine_id,
+                'container_id' => $container->id,
+                'wine_id' => $loss->wine_id,
                 'operation_type' => 'wine_loss_revert',
-                'quantity'       => $qty,
-                'created_by'     => Auth::id(),
-                'start_date'     => now(),
+                'quantity' => $qty,
+                'created_by' => Auth::id(),
+                'start_date' => now(),
             ]);
         });
     }
@@ -352,19 +352,19 @@ class WineContainerStockService
             $this->updateCurrentState($container, null, -$qty);
 
             ContainerHistory::create([
-                'container_id'           => $container->id,
-                'wine_id'                => $bottling->wine_id,
+                'container_id' => $container->id,
+                'wine_id' => $bottling->wine_id,
                 'wine_process_detail_id' => $bottling->wine_process_detail_id,
-                'operation_type'         => 'bottling',
-                'quantity'               => -$qty,
-                'created_by'             => Auth::id(),
-                'start_date'             => $bottling->bottling_date ?? now(),
+                'operation_type' => 'bottling',
+                'quantity' => -$qty,
+                'created_by' => Auth::id(),
+                'start_date' => $bottling->bottling_date ?? now(),
             ]);
 
             Log::info('[WineContainerStockService] Embotellado registrado', [
-                'bottling_id'  => $bottling->id,
+                'bottling_id' => $bottling->id,
                 'container_id' => $bottling->container_id,
-                'quantity_l'   => $qty,
+                'quantity_l' => $qty,
             ]);
         });
     }
@@ -392,12 +392,12 @@ class WineContainerStockService
             $this->updateCurrentState($container, $bottling->wine_id, $qty);
 
             ContainerHistory::create([
-                'container_id'   => $container->id,
-                'wine_id'        => $bottling->wine_id,
+                'container_id' => $container->id,
+                'wine_id' => $bottling->wine_id,
                 'operation_type' => 'bottling_revert',
-                'quantity'       => $qty,
-                'created_by'     => Auth::id(),
-                'start_date'     => now(),
+                'quantity' => $qty,
+                'created_by' => Auth::id(),
+                'start_date' => now(),
             ]);
         });
     }
@@ -442,20 +442,20 @@ class WineContainerStockService
             $this->updateCurrentState($container, $entry->wine_id, $qty);
 
             ContainerHistory::create([
-                'container_id'   => $container->id,
-                'wine_id'        => $entry->wine_id,
+                'container_id' => $container->id,
+                'wine_id' => $entry->wine_id,
                 'operation_type' => 'wine_stock_entry',
-                'quantity'       => $qty,
-                'created_by'     => Auth::id(),
-                'start_date'     => now(),
+                'quantity' => $qty,
+                'created_by' => Auth::id(),
+                'start_date' => now(),
             ]);
 
             Log::info('[WineContainerStockService] Entrada de stock registrada', [
-                'entry_id'     => $entry->id,
+                'entry_id' => $entry->id,
                 'container_id' => $entry->container_id,
-                'wine_id'      => $entry->wine_id,
-                'quantity_l'   => $qty,
-                'source'       => $entry->source,
+                'wine_id' => $entry->wine_id,
+                'quantity_l' => $qty,
+                'source' => $entry->source,
             ]);
         });
     }
@@ -483,18 +483,18 @@ class WineContainerStockService
             $this->updateCurrentState($container, null, -$qty);
 
             ContainerHistory::create([
-                'container_id'   => $container->id,
-                'wine_id'        => $entry->wine_id,
+                'container_id' => $container->id,
+                'wine_id' => $entry->wine_id,
                 'operation_type' => 'wine_stock_entry_revert',
-                'quantity'       => -$qty,
-                'created_by'     => Auth::id(),
-                'start_date'     => now(),
+                'quantity' => -$qty,
+                'created_by' => Auth::id(),
+                'start_date' => now(),
             ]);
 
             Log::info('[WineContainerStockService] Entrada de stock revertida', [
-                'entry_id'     => $entry->id,
+                'entry_id' => $entry->id,
                 'container_id' => $entry->container_id,
-                'quantity_l'   => $qty,
+                'quantity_l' => $qty,
             ]);
         });
     }
@@ -533,12 +533,12 @@ class WineContainerStockService
     private function recordHistory(Container $container, WineTransfer $transfer, string $operationType, float $quantity, ?int $wineIdOverride = null): void
     {
         ContainerHistory::create([
-            'container_id'   => $container->id,
-            'wine_id'        => $wineIdOverride ?? $transfer->wine_id,
+            'container_id' => $container->id,
+            'wine_id' => $wineIdOverride ?? $transfer->wine_id,
             'operation_type' => $operationType,
-            'quantity'       => $quantity,
-            'created_by'     => Auth::id(),
-            'start_date'     => now(),
+            'quantity' => $quantity,
+            'created_by' => Auth::id(),
+            'start_date' => now(),
         ]);
     }
 }

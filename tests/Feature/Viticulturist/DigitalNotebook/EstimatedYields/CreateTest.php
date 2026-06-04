@@ -15,40 +15,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class CreateTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makePlot($viticulturist): Plot
-    {
-        $ac   = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
-        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
-        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
-
-        return Plot::factory()->create([
-            'viticulturist_id'        => $viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $prov->id,
-            'municipality_id'         => $muni->id,
-            'active'                  => true,
-        ]);
-    }
-
-    private function makeCampaign($viticulturist): Campaign
-    {
-        return Campaign::factory()->active()->create([
-            'viticulturist_id' => $viticulturist->id,
-            'year'             => now()->year,
-        ]);
-    }
-
-    private function makePlanting(Plot $plot): PlotPlanting
-    {
-        return PlotPlanting::create([
-            'plot_id'      => $plot->id,
-            'area_planted' => 2.5,
-            'status'       => 'active',
-        ]);
-    }
-
     // ── mount ──────────────────────────────────────────────────────────────────
 
     public function test_component_renders(): void
@@ -76,7 +42,7 @@ class CreateTest extends ViticulturistTestCase
     public function test_mount_sets_campaign_id(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
+        $campaign = $this->makeCampaign($viticulturist);
 
         $this->actingAs($viticulturist);
 
@@ -100,9 +66,9 @@ class CreateTest extends ViticulturistTestCase
     public function test_can_save_estimated_yield(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $planting      = $this->makePlanting($plot);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $planting = $this->makePlanting($plot);
 
         $this->actingAs($viticulturist);
 
@@ -119,20 +85,20 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('estimated_yields', [
-            'plot_planting_id'            => $planting->id,
-            'campaign_id'                 => $campaign->id,
-            'estimation_round'            => 1,
-            'estimation_method'           => 'visual',
-            'status'                      => 'draft',
+            'plot_planting_id' => $planting->id,
+            'campaign_id' => $campaign->id,
+            'estimation_round' => 1,
+            'estimation_method' => 'visual',
+            'status' => 'draft',
         ]);
     }
 
     public function test_can_save_with_sampling_fields(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $planting      = $this->makePlanting($plot);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $planting = $this->makePlanting($plot);
 
         $this->actingAs($viticulturist);
 
@@ -162,21 +128,21 @@ class CreateTest extends ViticulturistTestCase
     public function test_duplicate_round_is_rejected(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $planting      = $this->makePlanting($plot);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $planting = $this->makePlanting($plot);
 
         // Crear una estimación de ronda 1 previa
         EstimatedYield::create([
-            'plot_planting_id'            => $planting->id,
-            'campaign_id'                 => $campaign->id,
-            'estimated_by'                => $viticulturist->id,
+            'plot_planting_id' => $planting->id,
+            'campaign_id' => $campaign->id,
+            'estimated_by' => $viticulturist->id,
             'estimated_yield_per_hectare' => 5000,
-            'estimated_total_yield'       => 12500,
-            'estimation_date'             => now()->format('Y-m-d'),
-            'estimation_method'           => 'visual',
-            'status'                      => 'draft',
-            'estimation_round'            => 1,
+            'estimated_total_yield' => 12500,
+            'estimation_date' => now()->format('Y-m-d'),
+            'estimation_method' => 'visual',
+            'status' => 'draft',
+            'estimation_round' => 1,
         ]);
 
         $this->actingAs($viticulturist);
@@ -202,9 +168,9 @@ class CreateTest extends ViticulturistTestCase
     public function test_estimated_yield_per_hectare_required(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $planting      = $this->makePlanting($plot);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $planting = $this->makePlanting($plot);
 
         $this->actingAs($viticulturist);
 
@@ -224,9 +190,9 @@ class CreateTest extends ViticulturistTestCase
     public function test_estimated_total_yield_required(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $planting      = $this->makePlanting($plot);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $planting = $this->makePlanting($plot);
 
         $this->actingAs($viticulturist);
 
@@ -246,9 +212,9 @@ class CreateTest extends ViticulturistTestCase
     public function test_potential_alcohol_max_25(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($viticulturist);
-        $planting      = $this->makePlanting($plot);
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+        $planting = $this->makePlanting($plot);
 
         $this->actingAs($viticulturist);
 
@@ -271,15 +237,48 @@ class CreateTest extends ViticulturistTestCase
     public function test_planting_from_other_viticulturist_denied(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $campaign      = $this->makeCampaign($viticulturist);
-        $plot          = $this->makePlot($other); // parcela del otro
-        $planting      = $this->makePlanting($plot);
+        $other = $this->makeOtherViticulturist();
+        $campaign = $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($other); // parcela del otro
+        $planting = $this->makePlanting($plot);
 
         $this->actingAs($viticulturist);
 
         $this->assertFalse(
             $viticulturist->can('update', $plot)
         );
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makePlot($viticulturist): Plot
+    {
+        $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
+        $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);
+        $muni = Municipality::firstOrCreate(['code' => '00000'], ['name' => 'Test Municipality', 'province_id' => $prov->id]);
+
+        return Plot::factory()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $prov->id,
+            'municipality_id' => $muni->id,
+            'active' => true,
+        ]);
+    }
+
+    private function makeCampaign($viticulturist): Campaign
+    {
+        return Campaign::factory()->active()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'year' => now()->year,
+        ]);
+    }
+
+    private function makePlanting(Plot $plot): PlotPlanting
+    {
+        return PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'area_planted' => 2.5,
+            'status' => 'active',
+        ]);
     }
 }

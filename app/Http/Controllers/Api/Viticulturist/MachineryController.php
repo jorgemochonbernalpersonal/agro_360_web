@@ -17,7 +17,7 @@ class MachineryController extends Controller
 
         $request->validate([
             'search' => 'nullable|string|max:255',
-            'type'   => 'nullable|string|max:100',
+            'type' => 'nullable|string|max:100',
         ]);
 
         $query = Machinery::forViticulturist($user->id)
@@ -26,11 +26,11 @@ class MachineryController extends Controller
             ->orderBy('name');
 
         if ($request->filled('search')) {
-            $search = '%' . $request->search . '%';
+            $search = '%'.$request->search.'%';
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', $search)
-                  ->orWhere('brand', 'LIKE', $search)
-                  ->orWhere('model', 'LIKE', $search);
+                    ->orWhere('brand', 'LIKE', $search)
+                    ->orWhere('model', 'LIKE', $search);
             });
         }
 
@@ -43,10 +43,10 @@ class MachineryController extends Controller
         return response()->json([
             'data' => MachineryResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -57,20 +57,20 @@ class MachineryController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'name'               => 'required|string|max:255',
-            'type'               => 'required|string|max:100',
-            'brand'              => 'nullable|string|max:255',
-            'model'              => 'nullable|string|max:255',
-            'year'               => 'nullable|integer|min:1900|max:2100',
-            'is_rented'          => 'nullable|boolean',
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|max:100',
+            'brand' => 'nullable|string|max:255',
+            'model' => 'nullable|string|max:255',
+            'year' => 'nullable|integer|min:1900|max:2100',
+            'is_rented' => 'nullable|boolean',
             'last_revision_date' => 'nullable|date',
-            'notes'              => 'nullable|string|max:2000',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         $record = Machinery::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([
-            'data'    => new MachineryResource($record),
+            'data' => new MachineryResource($record),
             'message' => __('Maquinaria registrada correctamente.'),
         ], 201);
     }

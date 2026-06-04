@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreign('plot_id')->references('id')->on('plots');
             $table->foreign('viticulturist_id')->references('id')->on('users');
             $table->foreign('crew_id')->references('id')->on('crews')->nullOnDelete();
-            
+
             $table->index('plot_id');
             $table->index('viticulturist_id');
             $table->index('activity_type');

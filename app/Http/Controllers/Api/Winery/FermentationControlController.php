@@ -19,21 +19,21 @@ class FermentationControlController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $perPage  = $this->resolvePerPage($request, 30, 100);
+        $perPage = $this->resolvePerPage($request, 30, 100);
         $controls = WineFermentationControl::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
         )
-        ->with(['wine', 'container'])
-        ->orderByDesc('control_date')
-        ->paginate($perPage);
+            ->with(['wine', 'container'])
+            ->orderByDesc('control_date')
+            ->paginate($perPage);
 
         return response()->json([
             'data' => FermentationControlResource::collection($controls->items()),
             'meta' => [
-                'total'        => $controls->total(),
-                'per_page'     => $controls->perPage(),
+                'total' => $controls->total(),
+                'per_page' => $controls->perPage(),
                 'current_page' => $controls->currentPage(),
-                'last_page'    => $controls->lastPage(),
+                'last_page' => $controls->lastPage(),
             ],
         ]);
     }
@@ -46,16 +46,16 @@ class FermentationControlController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'          => 'required|integer|exists:wines,id',
-            'container_id'     => 'nullable|integer',
-            'control_date'     => 'required|date',
-            'temperature'      => 'nullable|numeric|between:-10,60',
-            'brix_degree'      => 'nullable|numeric|between:0,40',
-            'baume_degree'     => 'nullable|numeric|between:0,25',
-            'density'          => 'nullable|numeric|between:0.900,1.200',
-            'ph'               => 'nullable|numeric|between:2,5',
+            'wine_id' => 'required|integer|exists:wines,id',
+            'container_id' => 'nullable|integer',
+            'control_date' => 'required|date',
+            'temperature' => 'nullable|numeric|between:-10,60',
+            'brix_degree' => 'nullable|numeric|between:0,40',
+            'baume_degree' => 'nullable|numeric|between:0,25',
+            'density' => 'nullable|numeric|between:0.900,1.200',
+            'ph' => 'nullable|numeric|between:2,5',
             'volatile_acidity' => 'nullable|numeric|between:0,5',
-            'notes'            => 'nullable|string|max:1000',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         // Verify ownership
@@ -101,15 +101,15 @@ class FermentationControlController extends Controller
         )->findOrFail($id);
 
         $validated = $request->validate([
-            'container_id'     => 'nullable|integer',
-            'control_date'     => 'nullable|date',
-            'temperature'      => 'nullable|numeric|between:-10,60',
-            'brix_degree'      => 'nullable|numeric|between:0,40',
-            'baume_degree'     => 'nullable|numeric|between:0,25',
-            'density'          => 'nullable|numeric|between:0.900,1.200',
-            'ph'               => 'nullable|numeric|between:2,5',
+            'container_id' => 'nullable|integer',
+            'control_date' => 'nullable|date',
+            'temperature' => 'nullable|numeric|between:-10,60',
+            'brix_degree' => 'nullable|numeric|between:0,40',
+            'baume_degree' => 'nullable|numeric|between:0,25',
+            'density' => 'nullable|numeric|between:0.900,1.200',
+            'ph' => 'nullable|numeric|between:2,5',
             'volatile_acidity' => 'nullable|numeric|between:0,5',
-            'notes'            => 'nullable|string|max:1000',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         if (isset($validated['container_id'])) {

@@ -6,12 +6,12 @@ use App\Livewire\Viticulturist\Containers\Create;
 use App\Livewire\Viticulturist\Containers\Edit;
 use App\Livewire\Viticulturist\Containers\Index;
 use App\Models\Container;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\ContainerMaterial;
 use App\Models\ContainerRoom;
 use App\Models\ContainerType;
 use App\Models\UnitOfMeasurement;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -28,8 +28,11 @@ use Tests\Feature\ViticulturistTestCase;
 class ContainersTest extends ViticulturistTestCase
 {
     private User $viticulturist;
+
     private ContainerType $type;
+
     private ContainerMaterial $material;
+
     private UnitOfMeasurement $unit;
 
     protected function setUp(): void
@@ -38,25 +41,9 @@ class ContainersTest extends ViticulturistTestCase
         $this->viticulturist = $this->makeViticulturist();
         $this->actingAs($this->viticulturist);
 
-        $this->type     = ContainerType::firstOrCreate(['name' => 'Barrica']);
+        $this->type = ContainerType::firstOrCreate(['name' => 'Barrica']);
         $this->material = ContainerMaterial::firstOrCreate(['name' => 'Acero Inoxidable'], ['description' => 'Acero 304']);
-        $this->unit     = UnitOfMeasurement::firstOrCreate(['name' => 'Litros'], ['symbol' => 'L', 'type' => 'volume']);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makeContainer(array $attrs = []): Container
-    {
-        return Container::create(array_merge([
-            'user_id'               => $this->viticulturist->id,
-            'name'                  => 'Cuba Viti Base',
-            'type_id'               => $this->type->id,
-            'material_id'           => $this->material->id,
-            'unit_of_measurement_id' => $this->unit->id,
-            'capacity'              => 500,
-            'used_capacity'         => 0,
-            'archived'              => false,
-        ], $attrs));
+        $this->unit = UnitOfMeasurement::firstOrCreate(['name' => 'Litros'], ['symbol' => 'L', 'type' => 'volume']);
     }
 
     // ── INDEX ─────────────────────────────────────────────────────────────────
@@ -173,14 +160,14 @@ class ContainersTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'user_id'               => $this->viticulturist->id,
-            'name'                  => 'Barrica Mínima',
-            'type_id'               => $this->type->id,
-            'material_id'           => $this->material->id,
+            'user_id' => $this->viticulturist->id,
+            'name' => 'Barrica Mínima',
+            'type_id' => $this->type->id,
+            'material_id' => $this->material->id,
             'unit_of_measurement_id' => $this->unit->id,
-            'capacity'              => 225,
-            'used_capacity'         => 0,
-            'archived'              => false,
+            'capacity' => 225,
+            'used_capacity' => 0,
+            'archived' => false,
         ]);
     }
 
@@ -201,11 +188,11 @@ class ContainersTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'name'          => 'Barrica Completa',
+            'name' => 'Barrica Completa',
             'serial_number' => 'BRC-001',
             'supplier_name' => 'Tonnelerie Sud',
-            'oak_type'      => 'Allier',
-            'toast_type'    => 'medium',
+            'oak_type' => 'Allier',
+            'toast_type' => 'medium',
         ]);
     }
 
@@ -213,7 +200,7 @@ class ContainersTest extends ViticulturistTestCase
     {
         $room = ContainerRoom::create([
             'user_id' => $this->viticulturist->id,
-            'name'    => 'Sala Viti',
+            'name' => 'Sala Viti',
         ]);
 
         Livewire::test(Create::class)
@@ -227,7 +214,7 @@ class ContainersTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'name'              => 'Barrica en Sala',
+            'name' => 'Barrica en Sala',
             'container_room_id' => $room->id,
         ]);
     }
@@ -250,7 +237,7 @@ class ContainersTest extends ViticulturistTestCase
 
     public function test_create_rejects_room_from_other_user(): void
     {
-        $other       = $this->makeOtherViticulturist();
+        $other = $this->makeOtherViticulturist();
         $foreignRoom = ContainerRoom::create(['user_id' => $other->id, 'name' => 'Sala Ajena']);
 
         Livewire::test(Create::class)
@@ -271,9 +258,9 @@ class ContainersTest extends ViticulturistTestCase
         $room = ContainerRoom::create(['user_id' => $this->viticulturist->id, 'name' => 'Sala Mount']);
 
         $container = $this->makeContainer([
-            'name'              => 'Barrica Original',
-            'serial_number'     => 'BRC-099',
-            'supplier_name'     => 'Tonnelerie Nord',
+            'name' => 'Barrica Original',
+            'serial_number' => 'BRC-099',
+            'supplier_name' => 'Tonnelerie Nord',
             'container_room_id' => $room->id,
         ]);
         $container->purchase_date = '2022-05-10';
@@ -324,9 +311,9 @@ class ContainersTest extends ViticulturistTestCase
 
     public function test_edit_rejects_room_from_other_user(): void
     {
-        $other       = $this->makeOtherViticulturist();
+        $other = $this->makeOtherViticulturist();
         $foreignRoom = ContainerRoom::create(['user_id' => $other->id, 'name' => 'Sala Ajena Edit']);
-        $container   = $this->makeContainer();
+        $container = $this->makeContainer();
 
         Livewire::test(Edit::class, ['id' => $container->id])
             ->set('container_room_id', (string) $foreignRoom->id)
@@ -346,14 +333,14 @@ class ContainersTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'id'   => $container->id,
+            'id' => $container->id,
             'name' => 'Barrica Renovada',
         ]);
     }
 
     public function test_edit_assigns_room(): void
     {
-        $room      = ContainerRoom::create(['user_id' => $this->viticulturist->id, 'name' => 'Sala Asignada']);
+        $room = ContainerRoom::create(['user_id' => $this->viticulturist->id, 'name' => 'Sala Asignada']);
         $container = $this->makeContainer(['container_room_id' => null]);
 
         Livewire::test(Edit::class, ['id' => $container->id])
@@ -362,14 +349,14 @@ class ContainersTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'id'                => $container->id,
+            'id' => $container->id,
             'container_room_id' => $room->id,
         ]);
     }
 
     public function test_edit_removes_room(): void
     {
-        $room      = ContainerRoom::create(['user_id' => $this->viticulturist->id, 'name' => 'Sala a Quitar']);
+        $room = ContainerRoom::create(['user_id' => $this->viticulturist->id, 'name' => 'Sala a Quitar']);
         $container = $this->makeContainer(['container_room_id' => $room->id]);
 
         Livewire::test(Edit::class, ['id' => $container->id])
@@ -385,7 +372,7 @@ class ContainersTest extends ViticulturistTestCase
 
     public function test_other_viticulturist_cannot_edit_foreign_container_via_livewire(): void
     {
-        $other     = $this->makeOtherViticulturist();
+        $other = $this->makeOtherViticulturist();
         $container = $this->makeContainer();  // pertenece a $this->viticulturist
 
         // Edit usa Container::where('user_id', Auth::id())->findOrFail($id)
@@ -394,5 +381,21 @@ class ContainersTest extends ViticulturistTestCase
         $this->expectException(ModelNotFoundException::class);
 
         Livewire::test(Edit::class, ['id' => $container->id]);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makeContainer(array $attrs = []): Container
+    {
+        return Container::create(array_merge([
+            'user_id' => $this->viticulturist->id,
+            'name' => 'Cuba Viti Base',
+            'type_id' => $this->type->id,
+            'material_id' => $this->material->id,
+            'unit_of_measurement_id' => $this->unit->id,
+            'capacity' => 500,
+            'used_capacity' => 0,
+            'archived' => false,
+        ], $attrs));
     }
 }

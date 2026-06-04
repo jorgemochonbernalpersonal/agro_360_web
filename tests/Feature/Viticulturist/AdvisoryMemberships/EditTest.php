@@ -9,21 +9,10 @@ use Tests\Feature\ViticulturistTestCase;
 
 class EditTest extends ViticulturistTestCase
 {
-    private function makeMembership(int $viticulturistId): AdvisoryMembership
-    {
-        return AdvisoryMembership::create([
-            'viticulturist_id' => $viticulturistId,
-            'advisor_name'     => 'Asesor Original',
-            'license_number'   => 'LIC-ORIG-001',
-            'specialty'        => 'phytosanitary',
-            'active'           => true,
-        ]);
-    }
-
     public function test_mount_fills_fields(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $membership    = $this->makeMembership($viticulturist->id);
+        $membership = $this->makeMembership($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -36,7 +25,7 @@ class EditTest extends ViticulturistTestCase
     public function test_can_update_membership(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $membership    = $this->makeMembership($viticulturist->id);
+        $membership = $this->makeMembership($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -49,17 +38,17 @@ class EditTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.advisory-memberships.index'));
 
         $this->assertDatabaseHas('advisory_memberships', [
-            'id'           => $membership->id,
+            'id' => $membership->id,
             'advisor_name' => 'Asesor Actualizado',
             'license_number' => 'LIC-NEW-001',
-            'specialty'    => 'oenology',
+            'specialty' => 'oenology',
         ]);
     }
 
     public function test_validates_required_fields_on_update(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $membership    = $this->makeMembership($viticulturist->id);
+        $membership = $this->makeMembership($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -73,7 +62,7 @@ class EditTest extends ViticulturistTestCase
     public function test_invalid_email_rejected(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $membership    = $this->makeMembership($viticulturist->id);
+        $membership = $this->makeMembership($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -86,11 +75,22 @@ class EditTest extends ViticulturistTestCase
     public function test_cannot_edit_other_viticulturists_membership(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeViticulturist();
-        $membership    = $this->makeMembership($viticulturist->id);
+        $other = $this->makeViticulturist();
+        $membership = $this->makeMembership($viticulturist->id);
 
         $this->actingAs($other)
             ->get(route('viticulturist.advisory-memberships.edit', $membership))
             ->assertStatus(403);
+    }
+
+    private function makeMembership(int $viticulturistId): AdvisoryMembership
+    {
+        return AdvisoryMembership::create([
+            'viticulturist_id' => $viticulturistId,
+            'advisor_name' => 'Asesor Original',
+            'license_number' => 'LIC-ORIG-001',
+            'specialty' => 'phytosanitary',
+            'active' => true,
+        ]);
     }
 }

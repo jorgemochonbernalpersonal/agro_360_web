@@ -2,18 +2,14 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\PhytosanitaryProduct;
 use App\Models\ProductStock;
 use App\Models\ProductStockMovement;
-use App\Models\PhytosanitaryProduct;
-use App\Models\PhytosanitaryTreatment;
-use App\Models\Warehouse;
 use App\Models\User;
-use App\Models\AgriculturalActivity;
-use App\Models\Plot;
-use App\Models\Campaign;
+use App\Models\Warehouse;
 use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
 use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -279,4 +275,3 @@ class ProductStockTest extends TestCase
         $this->assertFalse($results->contains('id', $zeroStock->id));
     }
 }
-

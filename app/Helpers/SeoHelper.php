@@ -6,8 +6,9 @@ class SeoHelper
 {
     /**
      * Generar schema JSON-LD para BreadcrumbList
-     * 
+     *
      * @param array $items Array de items con 'name' y 'url'
+     *
      * @return string JSON encoded schema
      */
     public static function breadcrumbSchema(array $items): string
@@ -15,27 +16,28 @@ class SeoHelper
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => __('BreadcrumbList'),
-            'itemListElement' => []
+            'itemListElement' => [],
         ];
-        
+
         $position = 1;
         foreach ($items as $item) {
             $schema['itemListElement'][] = [
                 '@type' => __('ListItem'),
                 'position' => $position++,
                 'name' => $item['name'],
-                'item' => $item['url']
+                'item' => $item['url'],
             ];
         }
-        
+
         return json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 
     /**
      * Obtener meta description específica por ruta
-     * 
-     * @param string $path Ruta actual
+     *
+     * @param string      $path              Ruta actual
      * @param string|null $customDescription Descripción personalizada (opcional)
+     *
      * @return string Meta description
      */
     public static function getMetaDescription(string $path, ?string $customDescription = null): string
@@ -75,8 +77,9 @@ class SeoHelper
 
     /**
      * Generar schema JSON-LD para FAQPage
-     * 
+     *
      * @param array $faqs Array de FAQs con 'question' y 'answer'
+     *
      * @return string JSON encoded schema
      */
     public static function faqSchema(array $faqs): string
@@ -84,28 +87,29 @@ class SeoHelper
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => __('FAQPage'),
-            'mainEntity' => []
+            'mainEntity' => [],
         ];
-        
+
         foreach ($faqs as $faq) {
             $schema['mainEntity'][] = [
                 '@type' => __('Question'),
                 'name' => $faq['question'],
                 'acceptedAnswer' => [
                     '@type' => __('Answer'),
-                    'text' => $faq['answer']
-                ]
+                    'text' => $faq['answer'],
+                ],
             ];
         }
-        
+
         return json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 
     /**
      * ✅ SEO: Obtener enlaces relacionados para una página
      * Mejora el link juice interno y ayuda a Google a entender la estructura
-     * 
+     *
      * @param string $currentPath Ruta actual
+     *
      * @return array Array de enlaces relacionados con 'url', 'title', 'description'
      */
     public static function getRelatedLinks(string $currentPath): array
@@ -169,4 +173,3 @@ class SeoHelper
         ];
     }
 }
-

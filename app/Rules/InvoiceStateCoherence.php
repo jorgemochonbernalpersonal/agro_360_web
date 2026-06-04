@@ -7,8 +7,11 @@ use Illuminate\Contracts\Validation\Rule;
 class InvoiceStateCoherence implements Rule
 {
     protected $status;
+
     protected $paymentStatus;
+
     protected $deliveryStatus;
+
     protected $failureMessage;
 
     public function __construct($status, $paymentStatus, $deliveryStatus)
@@ -20,30 +23,37 @@ class InvoiceStateCoherence implements Rule
 
     /**
      * Determine if the validation rule passes.
+     *
+     * @param mixed $attribute
+     * @param mixed $value
      */
     public function passes($attribute, $value): bool
     {
         // Regla 1: Si está cancelada, no puede estar pagada
         if ($this->status === 'cancelled' && $this->paymentStatus === 'paid') {
             $this->failureMessage = 'Una factura cancelada no puede estar marcada como pagada.';
+
             return false;
         }
 
         // Regla 2: Si está cancelada, no puede estar entregada
         if ($this->status === 'cancelled' && $this->deliveryStatus === 'delivered') {
             $this->failureMessage = 'Una factura cancelada no puede estar marcada como entregada.';
+
             return false;
         }
 
         // Regla 3: Si está en borrador, no puede estar entregada
         if ($this->status === 'draft' && $this->deliveryStatus === 'delivered') {
             $this->failureMessage = 'No puedes marcar como entregada una factura en borrador.';
+
             return false;
         }
 
         // Regla 4: Si está en borrador, no puede estar pagada
         if ($this->status === 'draft' && $this->paymentStatus === 'paid') {
             $this->failureMessage = 'No puedes marcar como pagada una factura en borrador.';
+
             return false;
         }
 

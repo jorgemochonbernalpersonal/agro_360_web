@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('harvest_stocks', function (Blueprint $table) {
             $table->id();
-            
+
             // Referencias
             $table->foreignId('harvest_id')->constrained('harvests')->onDelete('cascade');
             $table->foreignId('container_id')->nullable()->constrained('harvest_containers')->onDelete('set null');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('invoice_item_id')->nullable()->constrained('invoice_items')->onDelete('set null');
-            
+
             // Tipo de movimiento
             $table->enum('movement_type', [
                 'initial',      // Registro inicial al crear harvest
@@ -29,26 +29,26 @@ return new class extends Migration
                 'unreserve',    // Cancelación de reserva
                 'gift',         // Regalo/donación
                 'loss',         // Pérdida/merma
-                'return'        // Devolución
+                'return',        // Devolución
             ])->default('initial');
-            
+
             // Cantidades - Cambio y resultado
             $table->decimal('quantity_change', 10, 3)->comment('Cambio en cantidad (+ o -)');
             $table->decimal('quantity_after', 10, 3)->comment('Cantidad total después del movimiento');
-            
+
             // Desglose del stock después del movimiento
             $table->decimal('available_qty', 10, 3)->default(0.000)->comment('Disponible para venta');
             $table->decimal('reserved_qty', 10, 3)->default(0.000)->comment('Reservado (pendiente factura)');
             $table->decimal('sold_qty', 10, 3)->default(0.000)->comment('Vendido (facturado)');
             $table->decimal('gifted_qty', 10, 3)->default(0.000)->comment('Regalado');
             $table->decimal('lost_qty', 10, 3)->default(0.000)->comment('Pérdidas/mermas');
-            
+
             // Metadatos
             $table->text('notes')->nullable()->comment('Razón del movimiento');
             $table->string('reference_number', 100)->nullable()->comment('Número de referencia externo');
-            
+
             $table->timestamps();
-            
+
             // Índices para optimizar consultas
             $table->index('harvest_id');
             $table->index('container_id');

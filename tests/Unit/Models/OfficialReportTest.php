@@ -88,7 +88,7 @@ class OfficialReportTest extends TestCase
         $nonce = bin2hex(random_bytes(16));
         $data['nonce'] = $nonce;
         $result1 = OfficialReport::generateSignatureHash($data);
-        
+
         // Usar el mismo nonce para que el hash sea el mismo
         $data['nonce'] = $nonce;
         $result2 = OfficialReport::generateSignatureHash($data);
@@ -109,7 +109,7 @@ class OfficialReportTest extends TestCase
         ];
 
         $signature = OfficialReport::generateSignatureHash($data);
-        
+
         // Incluir el nonce en los datos para la verificación
         $data['nonce'] = $signature['nonce'];
         $data['signature_version'] = $signature['version'];
@@ -419,4 +419,3 @@ class OfficialReportTest extends TestCase
         $this->assertFalse($results->contains('id', $invalidReport->id));
     }
 }
-

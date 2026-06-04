@@ -7,6 +7,33 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DoQualification extends Model
 {
+    public const RESULT_QUALIFIED = 'qualified';
+
+    public const RESULT_DISQUALIFIED = 'disqualified';
+
+    public const RESULT_PENDING = 'pending';
+
+    public const RESULT_LABELS = [
+        'qualified' => 'Calificado',
+        'disqualified' => 'Descalificado',
+        'pending' => 'Pendiente',
+    ];
+
+    public const RESULT_COLORS = [
+        'qualified' => 'agro',
+        'disqualified' => 'red',
+        'pending' => 'yellow',
+    ];
+
+    public const COLOR_LABELS = [
+        'tinto' => 'Tinto',
+        'blanco' => 'Blanco',
+        'rosado' => 'Rosado',
+        'espumoso' => 'Espumoso',
+        'dulce' => 'Dulce',
+        'otro' => 'Otro',
+    ];
+
     protected $table = 'do_qualifications';
 
     protected $fillable = [
@@ -31,42 +58,17 @@ class DoQualification extends Model
 
     protected $casts = [
         'qualification_date' => 'date',
-        'vintage'            => 'integer',
+        'vintage' => 'integer',
         'alcohol_percentage' => 'decimal:2',
-        'brix_degree'        => 'decimal:2',
-        'acidity_level'      => 'decimal:2',
-        'ph_level'           => 'decimal:2',
-    ];
-
-    public const RESULT_QUALIFIED    = 'qualified';
-    public const RESULT_DISQUALIFIED = 'disqualified';
-    public const RESULT_PENDING      = 'pending';
-
-    public const RESULT_LABELS = [
-        'qualified'    => 'Calificado',
-        'disqualified' => 'Descalificado',
-        'pending'      => 'Pendiente',
+        'brix_degree' => 'decimal:2',
+        'acidity_level' => 'decimal:2',
+        'ph_level' => 'decimal:2',
     ];
 
     public static function resultLabelOptions(): array
     {
         return array_map(fn ($v) => __($v), static::RESULT_LABELS);
     }
-
-    public const RESULT_COLORS = [
-        'qualified'    => 'agro',
-        'disqualified' => 'red',
-        'pending'      => 'yellow',
-    ];
-
-    public const COLOR_LABELS = [
-        'tinto'    => 'Tinto',
-        'blanco'   => 'Blanco',
-        'rosado'   => 'Rosado',
-        'espumoso' => 'Espumoso',
-        'dulce'    => 'Dulce',
-        'otro'     => 'Otro',
-    ];
 
     public static function colorLabelOptions(): array
     {

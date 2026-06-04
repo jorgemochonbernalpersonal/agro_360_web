@@ -13,7 +13,7 @@ class ApiRole
     {
         $user = $request->user();
 
-        $roleMatch  = empty($roles) || in_array($user->role, $roles);
+        $roleMatch = empty($roles) || in_array($user->role, $roles);
         $tokenMatch = empty($roles) || collect($roles)->contains(fn ($r) => $user->tokenCan($r));
 
         if ($roleMatch && $tokenMatch) {
@@ -23,7 +23,7 @@ class ApiRole
         SecurityLogger::logAccessDenied(
             $user->id,
             $request->path(),
-            'api_role_mismatch: required=' . implode(',', $roles) . ' actual=' . $user->role
+            'api_role_mismatch: required='.implode(',', $roles).' actual='.$user->role
         );
 
         return response()->json(['message' => __('No tienes permiso para acceder a este recurso.')], 403);

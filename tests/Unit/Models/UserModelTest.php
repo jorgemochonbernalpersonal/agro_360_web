@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\User;
-use App\Models\SupervisorWinery;
-use App\Models\WineryViticulturist;
-use App\Models\SupervisorViticulturist;
 use App\Models\Crew;
 use App\Models\CrewMember;
+use App\Models\SupervisorViticulturist;
+use App\Models\SupervisorWinery;
+use App\Models\User;
+use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,7 +23,7 @@ class UserModelTest extends TestCase
         $this->assertEquals('viticulturist', User::ROLE_VITICULTURIST);
     }
 
-    public function test_isAdmin_returns_true_for_admin_role(): void
+    public function test_is_admin_returns_true_for_admin_role(): void
     {
         $user = User::factory()->create(['role' => 'admin']);
 
@@ -33,7 +33,7 @@ class UserModelTest extends TestCase
         $this->assertFalse($user->isViticulturist());
     }
 
-    public function test_isSupervisor_returns_true_for_supervisor_role(): void
+    public function test_is_supervisor_returns_true_for_supervisor_role(): void
     {
         $user = User::factory()->create(['role' => 'supervisor']);
 
@@ -43,7 +43,7 @@ class UserModelTest extends TestCase
         $this->assertFalse($user->isViticulturist());
     }
 
-    public function test_isWinery_returns_true_for_winery_role(): void
+    public function test_is_winery_returns_true_for_winery_role(): void
     {
         $user = User::factory()->create(['role' => 'winery']);
 
@@ -53,7 +53,7 @@ class UserModelTest extends TestCase
         $this->assertFalse($user->isViticulturist());
     }
 
-    public function test_isViticulturist_returns_true_for_viticulturist_role(): void
+    public function test_is_viticulturist_returns_true_for_viticulturist_role(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
 
@@ -227,7 +227,7 @@ class UserModelTest extends TestCase
         $this->assertFalse($unverifiedUser->hasVerifiedEmail());
     }
 
-    public function test_wasCreatedByAnotherUser_returns_true_when_created_by_another_user(): void
+    public function test_was_created_by_another_user_returns_true_when_created_by_another_user(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
         $created = User::factory()->create(['role' => 'viticulturist']);
@@ -242,14 +242,14 @@ class UserModelTest extends TestCase
         $this->assertTrue($created->wasCreatedByAnotherUser());
     }
 
-    public function test_wasCreatedByAnotherUser_returns_false_when_self_registered(): void
+    public function test_was_created_by_another_user_returns_false_when_self_registered(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
 
         $this->assertFalse($user->wasCreatedByAnotherUser());
     }
 
-    public function test_needsPasswordChange_returns_true_when_created_by_another_user(): void
+    public function test_needs_password_change_returns_true_when_created_by_another_user(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
         $created = User::factory()->create([
@@ -267,7 +267,7 @@ class UserModelTest extends TestCase
         $this->assertTrue($created->needsPasswordChange());
     }
 
-    public function test_needsPasswordChange_returns_false_when_password_changed(): void
+    public function test_needs_password_change_returns_false_when_password_changed(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
         $created = User::factory()->create([
@@ -285,7 +285,7 @@ class UserModelTest extends TestCase
         $this->assertFalse($created->needsPasswordChange());
     }
 
-    public function test_getWineriesAttribute_returns_cached_wineries(): void
+    public function test_get_wineries_attribute_returns_cached_wineries(): void
     {
         $winery1 = User::factory()->create(['role' => 'winery']);
         $winery2 = User::factory()->create(['role' => 'winery']);
@@ -315,7 +315,7 @@ class UserModelTest extends TestCase
         $this->assertSame($wineries1, $wineries2); // Misma instancia = cache
     }
 
-    public function test_getSupervisorAttribute_returns_cached_supervisor(): void
+    public function test_get_supervisor_attribute_returns_cached_supervisor(): void
     {
         $supervisor = User::factory()->create(['role' => 'supervisor']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
@@ -338,7 +338,7 @@ class UserModelTest extends TestCase
         $this->assertSame($supervisor1, $supervisor2); // Misma instancia = cache
     }
 
-    public function test_clearAttributeCache_clears_all_caches(): void
+    public function test_clear_attribute_cache_clears_all_caches(): void
     {
         $winery = User::factory()->create(['role' => 'winery']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
@@ -361,7 +361,7 @@ class UserModelTest extends TestCase
         $this->assertCount(1, $viticulturist->wineries);
     }
 
-    public function test_individualWorkers_returns_only_workers_without_crew(): void
+    public function test_individual_workers_returns_only_workers_without_crew(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $worker1 = User::factory()->create(['role' => 'viticulturist']);
@@ -390,4 +390,3 @@ class UserModelTest extends TestCase
         $this->assertEquals($worker1->id, $individualWorkers->first()->viticulturist_id);
     }
 }
-

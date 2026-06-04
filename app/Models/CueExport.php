@@ -11,24 +11,19 @@ class CueExport extends Model
     use HasFactory;
 
     const STATUSES = [
-        'draft'     => 'Borrador',
+        'draft' => 'Borrador',
         'generated' => 'Generado',
-        'sent'      => 'Enviado',
-        'accepted'  => 'Aceptado',
-        'rejected'  => 'Rechazado',
+        'sent' => 'Enviado',
+        'accepted' => 'Aceptado',
+        'rejected' => 'Rechazado',
     ];
 
-    public static function statusOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::STATUSES);
-    }
-
     const STATUS_COLORS = [
-        'draft'     => 'zinc',
+        'draft' => 'zinc',
         'generated' => 'blue',
-        'sent'      => 'amber',
-        'accepted'  => 'green',
-        'rejected'  => 'red',
+        'sent' => 'amber',
+        'accepted' => 'green',
+        'rejected' => 'red',
     ];
 
     protected $fillable = [
@@ -49,15 +44,20 @@ class CueExport extends Model
     ];
 
     protected $casts = [
-        'from_date'      => 'date',
-        'to_date'        => 'date',
-        'campaign_year'  => 'integer',
-        'payload_json'   => 'array',
-        'response_json'  => 'array',
-        'generated_at'   => 'datetime',
-        'sent_at'        => 'datetime',
-        'accepted_at'    => 'datetime',
+        'from_date' => 'date',
+        'to_date' => 'date',
+        'campaign_year' => 'integer',
+        'payload_json' => 'array',
+        'response_json' => 'array',
+        'generated_at' => 'datetime',
+        'sent_at' => 'datetime',
+        'accepted_at' => 'datetime',
     ];
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
 
     public function exploitation(): BelongsTo
     {
@@ -81,6 +81,6 @@ class CueExport extends Model
 
     public function scopeForViticulturist($query, int $viticulturistId)
     {
-        return $query->whereHas('exploitation', fn($q) => $q->where('viticulturist_id', $viticulturistId));
+        return $query->whereHas('exploitation', fn ($q) => $q->where('viticulturist_id', $viticulturistId));
     }
 }

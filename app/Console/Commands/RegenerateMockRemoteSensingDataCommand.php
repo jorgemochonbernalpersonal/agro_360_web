@@ -31,20 +31,22 @@ class RegenerateMockRemoteSensingDataCommand extends Command
      */
     public function handle(): int
     {
-        if (!config('services.nasa_earthdata.mock')) {
+        if (! config('services.nasa_earthdata.mock')) {
             $this->error('Mock mode is disabled. Enable NASA_EARTHDATA_MOCK=true in .env');
+
             return self::FAILURE;
         }
 
         $plotId = $this->option('plot-id');
         $clear = $this->option('clear');
 
-        $plots = $plotId 
-            ? Plot::where('id', $plotId)->get() 
+        $plots = $plotId
+            ? Plot::where('id', $plotId)->get()
             : Plot::all();
 
         if ($plots->isEmpty()) {
             $this->error('No plots found.');
+
             return self::FAILURE;
         }
 

@@ -9,18 +9,6 @@ use Tests\Feature\WineryTestCase;
 
 class IndexTest extends WineryTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeWine(int $wineryId, array $attrs = []): Wine
-    {
-        return Wine::create(array_merge([
-            'user_id'   => $wineryId,
-            'name'      => 'Vino Test',
-            'wine_type' => 'red',
-            'status'    => 'in_progress',
-        ], $attrs));
-    }
-
     // ── access ────────────────────────────────────────────────────────────────
 
     public function test_winery_can_access_product_sheets_index(): void
@@ -128,8 +116,7 @@ class IndexTest extends WineryTestCase
 
         Livewire::actingAs($winery)
             ->test(Index::class)
-            ->assertViewHas('stats', fn($s) =>
-                $s['total'] === 3 && $s['active'] === 2 && $s['bottled'] === 1
+            ->assertViewHas('stats', fn ($s) => $s['total'] === 3 && $s['active'] === 2 && $s['bottled'] === 1
             );
     }
 
@@ -142,6 +129,17 @@ class IndexTest extends WineryTestCase
 
         Livewire::actingAs($winery1)
             ->test(Index::class)
-            ->assertViewHas('stats', fn($s) => $s['total'] === 1);
+            ->assertViewHas('stats', fn ($s) => $s['total'] === 1);
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeWine(int $wineryId, array $attrs = []): Wine
+    {
+        return Wine::create(array_merge([
+            'user_id' => $wineryId,
+            'name' => 'Vino Test',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
+        ], $attrs));
     }
 }

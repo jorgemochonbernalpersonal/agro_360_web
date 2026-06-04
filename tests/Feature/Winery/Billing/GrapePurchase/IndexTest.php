@@ -20,61 +20,22 @@ class IndexTest extends WineryTestCase
         $this->actingAs($this->winery);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makeInvoice(array $attrs = []): Invoice
-    {
-        return Invoice::create(array_merge([
-            'user_id'          => $this->winery->id,
-            'viticulturist_id' => $this->viticulturist->id,
-            'invoice_type'     => 'grape_purchase',
-            'invoice_number'   => 'GP-2024-' . rand(1, 9999),
-            'invoice_date'     => '2024-10-01',
-            'status'           => 'draft',
-            'payment_status'   => 'unpaid',
-            'subtotal'         => 225,
-            'tax_base'         => 225,
-            'tax_amount'       => 4.5,
-            'total_amount'     => 220.5,
-        ], $attrs));
-    }
-
-    private function attachHarvest(Invoice $invoice): InvoiceItem
-    {
-        $harvest = $this->makeWineryReception();
-
-        // withoutEvents: GrapePurchase tests cover invoice state, not HarvestStock movements.
-        return InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
-            'invoice_id'   => $invoice->id,
-            'harvest_id'   => $harvest->id,
-            'concept_type' => 'harvest',
-            'name'         => 'Vendimia test',
-            'quantity'     => 500,
-            'unit_price'   => 0.45,
-            'tax_rate'     => 2,
-            'subtotal'     => 225,
-            'tax_base'     => 225,
-            'tax_amount'   => 4.5,
-            'total'        => 220.5,
-        ]));
-    }
-
     // ── Visibility ────────────────────────────────────────────────────────────
 
     public function test_shows_own_invoices_only(): void
     {
-        $own   = $this->makeInvoice(['invoice_number' => 'GP-2024-0001']);
+        $own = $this->makeInvoice(['invoice_number' => 'GP-2024-0001']);
         $other = Invoice::create([
-            'user_id'        => $this->makeOtherWinery()->id,
-            'invoice_type'   => 'grape_purchase',
+            'user_id' => $this->makeOtherWinery()->id,
+            'invoice_type' => 'grape_purchase',
             'invoice_number' => 'GP-2024-0099',
-            'invoice_date'   => '2024-10-01',
-            'status'         => 'draft',
+            'invoice_date' => '2024-10-01',
+            'status' => 'draft',
             'payment_status' => 'unpaid',
-            'subtotal'       => 0,
-            'tax_base'       => 0,
-            'tax_amount'     => 0,
-            'total_amount'   => 0,
+            'subtotal' => 0,
+            'tax_base' => 0,
+            'tax_amount' => 0,
+            'total_amount' => 0,
         ]);
 
         Livewire::test(Index::class)
@@ -119,16 +80,16 @@ class IndexTest extends WineryTestCase
     {
         $otherWinery = $this->makeOtherWinery();
         $foreign = Invoice::create([
-            'user_id'        => $otherWinery->id,
-            'invoice_type'   => 'grape_purchase',
+            'user_id' => $otherWinery->id,
+            'invoice_type' => 'grape_purchase',
             'invoice_number' => 'GP-2024-0099',
-            'invoice_date'   => '2024-10-01',
-            'status'         => 'draft',
+            'invoice_date' => '2024-10-01',
+            'status' => 'draft',
             'payment_status' => 'unpaid',
-            'subtotal'       => 0,
-            'tax_base'       => 0,
-            'tax_amount'     => 0,
-            'total_amount'   => 0,
+            'subtotal' => 0,
+            'tax_base' => 0,
+            'tax_amount' => 0,
+            'total_amount' => 0,
         ]);
 
         Livewire::test(Index::class)
@@ -142,7 +103,7 @@ class IndexTest extends WineryTestCase
     public function test_cancel_sets_status_cancelled(): void
     {
         $invoice = $this->makeInvoice();
-        $item    = $this->attachHarvest($invoice);
+        $item = $this->attachHarvest($invoice);
 
         Livewire::test(Index::class)
             ->call('cancel', $invoice->id);
@@ -157,7 +118,7 @@ class IndexTest extends WineryTestCase
     public function test_cancel_frees_harvest_for_new_invoice(): void
     {
         $invoice = $this->makeInvoice();
-        $item    = $this->attachHarvest($invoice);
+        $item = $this->attachHarvest($invoice);
         $harvestId = $item->harvest_id;
 
         Livewire::test(Index::class)
@@ -180,5 +141,44 @@ class IndexTest extends WineryTestCase
             ->call('cancel', $invoice->id);
 
         $this->assertEquals('draft', $invoice->fresh()->status);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makeInvoice(array $attrs = []): Invoice
+    {
+        return Invoice::create(array_merge([
+            'user_id' => $this->winery->id,
+            'viticulturist_id' => $this->viticulturist->id,
+            'invoice_type' => 'grape_purchase',
+            'invoice_number' => 'GP-2024-'.rand(1, 9999),
+            'invoice_date' => '2024-10-01',
+            'status' => 'draft',
+            'payment_status' => 'unpaid',
+            'subtotal' => 225,
+            'tax_base' => 225,
+            'tax_amount' => 4.5,
+            'total_amount' => 220.5,
+        ], $attrs));
+    }
+
+    private function attachHarvest(Invoice $invoice): InvoiceItem
+    {
+        $harvest = $this->makeWineryReception();
+
+        // withoutEvents: GrapePurchase tests cover invoice state, not HarvestStock movements.
+        return InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $harvest->id,
+            'concept_type' => 'harvest',
+            'name' => 'Vendimia test',
+            'quantity' => 500,
+            'unit_price' => 0.45,
+            'tax_rate' => 2,
+            'subtotal' => 225,
+            'tax_base' => 225,
+            'tax_amount' => 4.5,
+            'total' => 220.5,
+        ]));
     }
 }

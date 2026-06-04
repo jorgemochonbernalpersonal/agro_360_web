@@ -4,18 +4,19 @@ namespace App\Exports;
 
 use App\Models\Plot;
 use App\Services\RemoteSensing\ExportService;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Carbon\Carbon;
 
 class RemoteSensingExport implements FromCollection, WithHeadings, WithStyles, WithTitle
 {
     protected Plot $plot;
+
     protected ?Carbon $startDate;
+
     protected ?Carbon $endDate;
 
     public function __construct(Plot $plot, ?Carbon $startDate = null, ?Carbon $endDate = null)
@@ -27,7 +28,8 @@ class RemoteSensingExport implements FromCollection, WithHeadings, WithStyles, W
 
     public function collection()
     {
-        $service = new ExportService();
+        $service = new ExportService;
+
         return $service->getExcelData($this->plot, $this->startDate, $this->endDate);
     }
 
@@ -63,6 +65,6 @@ class RemoteSensingExport implements FromCollection, WithHeadings, WithStyles, W
 
     public function title(): string
     {
-        return 'Datos Teledetección - ' . $this->plot->name;
+        return 'Datos Teledetección - '.$this->plot->name;
     }
 }

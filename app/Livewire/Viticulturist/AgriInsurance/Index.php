@@ -13,15 +13,23 @@ class Index extends Component
     use WithPagination, WithToastNotifications;
 
     public string $filter_status = '';
+
     public string $filter_coverage_type = '';
 
     protected $queryString = [
-        'filter_status'        => ['except' => '', 'as' => 'status'],
+        'filter_status' => ['except' => '', 'as' => 'status'],
         'filter_coverage_type' => ['except' => '', 'as' => 'coverage'],
     ];
 
-    public function updatingFilterStatus(): void { $this->resetPage(); }
-    public function updatingFilterCoverageType(): void { $this->resetPage(); }
+    public function updatingFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterCoverageType(): void
+    {
+        $this->resetPage();
+    }
 
     public function delete(int $id): void
     {
@@ -46,19 +54,19 @@ class Index extends Component
 
         $base = AgriInsurance::where('viticulturist_id', $user->id);
         $stats = [
-            'total'    => (clone $base)->count(),
-            'active'   => (clone $base)->active()->count(),
+            'total' => (clone $base)->count(),
+            'active' => (clone $base)->active()->count(),
             'expiring' => (clone $base)->active()->whereBetween('end_date', [now(), now()->addDays(30)])->count(),
-            'expired'  => (clone $base)->where('status', 'expired')->count(),
+            'expired' => (clone $base)->where('status', 'expired')->count(),
         ];
 
         return view('livewire.viticulturist.agri-insurance.index', [
-            'insurances'    => $insurances,
-            'stats'         => $stats,
-            'expiringSoon'  => $stats['expiring'],
-            'activeCount'   => $stats['active'],
+            'insurances' => $insurances,
+            'stats' => $stats,
+            'expiringSoon' => $stats['expiring'],
+            'activeCount' => $stats['active'],
             'coverageTypes' => AgriInsurance::coverageTypeOptions(),
-            'statuses'      => AgriInsurance::statusOptions(),
+            'statuses' => AgriInsurance::statusOptions(),
         ])->layout('layouts.app');
     }
 }

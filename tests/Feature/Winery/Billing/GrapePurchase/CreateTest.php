@@ -6,7 +6,6 @@ use App\Livewire\Winery\Billing\GrapePurchase\Create;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\User;
-use App\Models\WineryViticulturist;
 use Livewire\Livewire;
 use Tests\Feature\WineryTestCase;
 use Tests\Traits\CreatesDeliveryScenario;
@@ -20,19 +19,6 @@ class CreateTest extends WineryTestCase
         parent::setUp();
         $this->setUpScenario();
         $this->actingAs($this->winery);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function validLines(int $harvestId, string $qty = '500', string $price = '0.450', string $tax = '2'): array
-    {
-        return [[
-            'harvest_id'  => $harvestId,
-            'quantity'    => $qty,
-            'unit_price'  => $price,
-            'tax_rate'    => $tax,
-            'description' => '',
-        ]];
     }
 
     // ── Happy path ────────────────────────────────────────────────────────────
@@ -51,10 +37,10 @@ class CreateTest extends WineryTestCase
             ->assertRedirect(route('winery.invoices.grape-purchase.index'));
 
         $this->assertDatabaseHas('invoices', [
-            'user_id'        => $this->winery->id,
+            'user_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'invoice_type'   => 'grape_purchase',
-            'status'         => 'draft',
+            'invoice_type' => 'grape_purchase',
+            'status' => 'draft',
             'payment_status' => 'unpaid',
         ]);
 
@@ -63,8 +49,8 @@ class CreateTest extends WineryTestCase
             ->first();
 
         $this->assertDatabaseHas('invoice_items', [
-            'invoice_id'   => $invoice->id,
-            'harvest_id'   => $harvest->id,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $harvest->id,
             'concept_type' => 'harvest',
         ]);
     }
@@ -101,9 +87,9 @@ class CreateTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $invoice = Invoice::where('user_id', $this->winery->id)->first();
-        $this->assertEquals(225.0,  (float) $invoice->subtotal);
-        $this->assertEquals(4.5,    (float) $invoice->tax_amount);
-        $this->assertEquals(220.5,  (float) $invoice->total_amount);
+        $this->assertEquals(225.0, (float) $invoice->subtotal);
+        $this->assertEquals(4.5, (float) $invoice->tax_amount);
+        $this->assertEquals(220.5, (float) $invoice->total_amount);
     }
 
     // ── Validation ────────────────────────────────────────────────────────────
@@ -126,10 +112,10 @@ class CreateTest extends WineryTestCase
             ->set('viticulturist_id', (string) $this->viticulturist->id)
             ->set('invoice_date', '2024-10-31')
             ->set('lines', [[
-                'harvest_id'  => $harvest->id,
-                'quantity'    => '',        // required
-                'unit_price'  => '',        // required
-                'tax_rate'    => '150',     // max:100
+                'harvest_id' => $harvest->id,
+                'quantity' => '',        // required
+                'unit_price' => '',        // required
+                'tax_rate' => '150',     // max:100
                 'description' => '',
             ]])
             ->call('save')
@@ -145,7 +131,7 @@ class CreateTest extends WineryTestCase
     public function test_viticulturist_not_linked_to_winery_fails_validation(): void
     {
         $stranger = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
         $harvest = $this->makeWineryReception();
@@ -186,31 +172,31 @@ class CreateTest extends WineryTestCase
 
         // Create an existing active invoice for that harvest
         $existing = Invoice::create([
-            'user_id'         => $this->winery->id,
+            'user_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'invoice_type'    => 'grape_purchase',
-            'invoice_number'  => 'GP-2024-0001',
-            'invoice_date'    => '2024-10-01',
-            'status'          => 'draft',
-            'payment_status'  => 'unpaid',
-            'subtotal'        => 0,
-            'tax_base'        => 0,
-            'tax_amount'      => 0,
-            'total_amount'    => 0,
+            'invoice_type' => 'grape_purchase',
+            'invoice_number' => 'GP-2024-0001',
+            'invoice_date' => '2024-10-01',
+            'status' => 'draft',
+            'payment_status' => 'unpaid',
+            'subtotal' => 0,
+            'tax_base' => 0,
+            'tax_amount' => 0,
+            'total_amount' => 0,
         ]);
         // withoutEvents: bypass InvoiceItemObserver to avoid HarvestStock side-effects
         InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
-            'invoice_id'   => $existing->id,
-            'harvest_id'   => $harvest->id,
+            'invoice_id' => $existing->id,
+            'harvest_id' => $harvest->id,
             'concept_type' => 'harvest',
-            'name'         => 'Test',
-            'quantity'     => 500,
-            'unit_price'   => 0.45,
-            'tax_rate'     => 2,
-            'subtotal'     => 225,
-            'tax_base'     => 225,
-            'tax_amount'   => 4.5,
-            'total'        => 220.5,
+            'name' => 'Test',
+            'quantity' => 500,
+            'unit_price' => 0.45,
+            'tax_rate' => 2,
+            'subtotal' => 225,
+            'tax_base' => 225,
+            'tax_amount' => 4.5,
+            'total' => 220.5,
         ]));
 
         Livewire::test(Create::class)
@@ -229,31 +215,31 @@ class CreateTest extends WineryTestCase
 
         // Cancelled invoice — harvest should be free again
         $cancelled = Invoice::create([
-            'user_id'         => $this->winery->id,
+            'user_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'invoice_type'    => 'grape_purchase',
-            'invoice_number'  => 'GP-2024-0001',
-            'invoice_date'    => '2024-10-01',
-            'status'          => 'cancelled',
-            'payment_status'  => 'unpaid',
-            'subtotal'        => 0,
-            'tax_base'        => 0,
-            'tax_amount'      => 0,
-            'total_amount'    => 0,
+            'invoice_type' => 'grape_purchase',
+            'invoice_number' => 'GP-2024-0001',
+            'invoice_date' => '2024-10-01',
+            'status' => 'cancelled',
+            'payment_status' => 'unpaid',
+            'subtotal' => 0,
+            'tax_base' => 0,
+            'tax_amount' => 0,
+            'total_amount' => 0,
         ]);
         // withoutEvents: invoice is cancelled, observer would skip anyway, but explicit is clearer
         InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
-            'invoice_id'   => $cancelled->id,
-            'harvest_id'   => $harvest->id,
+            'invoice_id' => $cancelled->id,
+            'harvest_id' => $harvest->id,
             'concept_type' => 'harvest',
-            'name'         => 'Test',
-            'quantity'     => 500,
-            'unit_price'   => 0.45,
-            'tax_rate'     => 2,
-            'subtotal'     => 225,
-            'tax_base'     => 225,
-            'tax_amount'   => 4.5,
-            'total'        => 220.5,
+            'name' => 'Test',
+            'quantity' => 500,
+            'unit_price' => 0.45,
+            'tax_rate' => 2,
+            'subtotal' => 225,
+            'tax_base' => 225,
+            'tax_amount' => 4.5,
+            'total' => 220.5,
         ]));
 
         Livewire::test(Create::class)
@@ -264,5 +250,18 @@ class CreateTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseCount('invoices', 2);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function validLines(int $harvestId, string $qty = '500', string $price = '0.450', string $tax = '2'): array
+    {
+        return [[
+            'harvest_id' => $harvestId,
+            'quantity' => $qty,
+            'unit_price' => $price,
+            'tax_rate' => $tax,
+            'description' => '',
+        ]];
     }
 }

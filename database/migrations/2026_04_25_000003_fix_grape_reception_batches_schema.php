@@ -36,7 +36,7 @@ return new class extends Migration
 
         Schema::table('grape_reception_batches', function (Blueprint $table) use ($foreignKeys) {
             // 2. Make plot_planting_id nullable
-            $fkPlot = collect($foreignKeys)->first(fn($k) => str_contains($k, 'plot_planting_id'));
+            $fkPlot = collect($foreignKeys)->first(fn ($k) => str_contains($k, 'plot_planting_id'));
             if ($fkPlot) {
                 $table->dropForeign(['plot_planting_id']);
             }
@@ -49,7 +49,7 @@ return new class extends Migration
             }
 
             // 3. Make campaign_id nullable
-            $fkCampaign = collect($foreignKeys)->first(fn($k) => str_contains($k, 'campaign_id'));
+            $fkCampaign = collect($foreignKeys)->first(fn ($k) => str_contains($k, 'campaign_id'));
             if ($fkCampaign) {
                 $table->dropForeign(['campaign_id']);
             }

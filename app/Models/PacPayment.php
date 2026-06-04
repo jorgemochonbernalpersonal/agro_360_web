@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PacPayment extends Model
 {
+    public const PAYMENT_TYPES = [
+        'basic_payment' => 'Pago básico',
+        'eco_scheme' => 'Eco-régimen',
+        'associated_aid' => 'Ayuda asociada viñedo',
+        'transitional' => 'Pago transitorio',
+        'other' => 'Otro',
+    ];
+
     protected $fillable = [
         'viticulturist_id',
         'declaration_id',
@@ -19,17 +27,9 @@ class PacPayment extends Model
     ];
 
     protected $casts = [
-        'amount'       => 'decimal:2',
+        'amount' => 'decimal:2',
         'payment_date' => 'date',
-        'year'         => 'integer',
-    ];
-
-    public const PAYMENT_TYPES = [
-        'basic_payment'   => 'Pago básico',
-        'eco_scheme'      => 'Eco-régimen',
-        'associated_aid'  => 'Ayuda asociada viñedo',
-        'transitional'    => 'Pago transitorio',
-        'other'           => 'Otro',
+        'year' => 'integer',
     ];
 
     public static function paymentTypeOptions(): array

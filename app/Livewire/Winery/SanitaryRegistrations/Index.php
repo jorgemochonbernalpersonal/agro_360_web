@@ -8,23 +8,31 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search       = '';
-    public string $typeFilter   = '';
+    public string $search = '';
+
+    public string $typeFilter = '';
+
     public string $statusFilter = '';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'typeFilter'   => ['except' => ''],
+        'search' => ['except' => ''],
+        'typeFilter' => ['except' => ''],
         'statusFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void        { $this->resetPage(); }
-    public function updatingTypeFilter(): void    { $this->resetPage(); }
-    public function updatingStatusFilter(): void  { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'typeFilter' => '', 'statusFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
@@ -32,6 +40,11 @@ class Index extends AbstractIndex
         $registration = SanitaryRegistration::where('user_id', $this->wineryId())->findOrFail($id);
         $registration->delete();
         $this->toastSuccess(__('Registro sanitario eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'typeFilter' => '', 'statusFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -42,11 +55,11 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(registration_number) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(activity_description, \'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(issuing_authority, \'\')) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(IFNULL(activity_description, \'\')) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(IFNULL(issuing_authority, \'\')) LIKE ?', [$term]);
             });
         }
         if ($this->typeFilter) {
@@ -62,26 +75,33 @@ class Index extends AbstractIndex
         $query->orderBy('registration_number');
     }
 
-    protected function defaultOrderBy(): array { return ['registration_number', 'asc']; }
-    protected function perPage(): int          { return 20; }
+    protected function defaultOrderBy(): array
+    {
+        return ['registration_number', 'asc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
         $base = SanitaryRegistration::where('user_id', $this->wineryId());
 
         $stats = [
-            'total'    => (clone $base)->count(),
-            'active'   => (clone $base)->where('status', 'active')->count(),
+            'total' => (clone $base)->count(),
+            'active' => (clone $base)->where('status', 'active')->count(),
             'expiring' => (clone $base)->where('status', 'active')->whereNotNull('renewal_date')
                 ->whereBetween('renewal_date', [today(), today()->addDays(90)])->count(),
-            'expired'  => (clone $base)->where('status', 'expired')->count(),
+            'expired' => (clone $base)->where('status', 'expired')->count(),
         ];
 
         return [
             'registrations' => $entries,
-            'types'         => SanitaryRegistration::registrationTypeOptions(),
-            'statuses'      => SanitaryRegistration::statusOptions(),
-            'stats'         => $stats,
+            'types' => SanitaryRegistration::registrationTypeOptions(),
+            'statuses' => SanitaryRegistration::statusOptions(),
+            'stats' => $stats,
         ];
     }
 }

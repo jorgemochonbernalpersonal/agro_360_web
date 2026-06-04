@@ -10,35 +10,25 @@ class ResidueManagement extends Model
 {
     use HasFactory;
 
-    protected $table = 'residue_managements';
-
     const PRACTICE_TYPES = [
         'incorporation' => 'Triturado e incorporación al suelo',
-        'removal'       => 'Retirada de la explotación',
-        'burning'       => 'Quema (cuando permitido)',
-        'composting'    => 'Compostaje',
-        'biogas'        => 'Biogás',
-        'sale'          => 'Venta',
-        'other'         => 'Otro',
+        'removal' => 'Retirada de la explotación',
+        'burning' => 'Quema (cuando permitido)',
+        'composting' => 'Compostaje',
+        'biogas' => 'Biogás',
+        'sale' => 'Venta',
+        'other' => 'Otro',
     ];
-
-    public static function practiceTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::PRACTICE_TYPES);
-    }
 
     const MATERIAL_TYPES = [
         'pruning_wood' => 'Madera/leña de poda',
-        'grape_marc'   => 'Orujo',
-        'vine_leaves'  => 'Hojas de vid',
-        'grass'        => 'Cubierta vegetal',
-        'other'        => 'Otro',
+        'grape_marc' => 'Orujo',
+        'vine_leaves' => 'Hojas de vid',
+        'grass' => 'Cubierta vegetal',
+        'other' => 'Otro',
     ];
 
-    public static function materialTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::MATERIAL_TYPES);
-    }
+    protected $table = 'residue_managements';
 
     protected $fillable = [
         'campaign_id',
@@ -56,10 +46,20 @@ class ResidueManagement extends Model
     ];
 
     protected $casts = [
-        'date'               => 'date',
+        'date' => 'date',
         'estimated_quantity' => 'decimal:2',
-        'active'             => 'boolean',
+        'active' => 'boolean',
     ];
+
+    public static function practiceTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::PRACTICE_TYPES);
+    }
+
+    public static function materialTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::MATERIAL_TYPES);
+    }
 
     public function campaign(): BelongsTo
     {

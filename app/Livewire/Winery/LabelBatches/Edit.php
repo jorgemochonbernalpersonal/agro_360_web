@@ -15,33 +15,41 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
 
     public LabelBatch $batch;
 
     // ── Metadatos del lote ────────────────────────────────────────────────────
-    public string $name    = '';
+    public string $name = '';
+
     public string $wine_id = '';
-    public string $source  = 'own';
-    public string $notes   = '';
+
+    public string $source = 'own';
+
+    public string $notes = '';
 
     // ── Formulario de nueva merma ─────────────────────────────────────────────
-    public bool   $showWasteForm  = false;
-    public string $waste_quantity   = '';
-    public string $waste_from       = '';
-    public string $waste_to         = '';
-    public string $waste_reason     = '';
-    public string $waste_date       = '';
+    public bool $showWasteForm = false;
+
+    public string $waste_quantity = '';
+
+    public string $waste_from = '';
+
+    public string $waste_to = '';
+
+    public string $waste_reason = '';
+
+    public string $waste_date = '';
 
     public function mount(LabelBatch $batch): void
     {
         abort_if($batch->user_id !== Auth::id(), 403);
 
-        $this->batch   = $batch;
-        $this->name    = $batch->name;
+        $this->batch = $batch;
+        $this->name = $batch->name;
         $this->wine_id = (string) ($batch->wine_id ?? '');
-        $this->source  = $batch->source;
-        $this->notes   = $batch->notes ?? '';
+        $this->source = $batch->source;
+        $this->notes = $batch->notes ?? '';
         $this->waste_date = now()->toDateString();
     }
 
@@ -57,16 +65,6 @@ class Edit extends Component
         return $this->batch->wastes()->get();
     }
 
-    protected function rules(): array
-    {
-        return [
-            'name'    => ['required', 'string', 'max:255'],
-            'wine_id' => $this->ownedWineRule(false),
-            'source'  => ['required', 'in:own,do_assigned,other'],
-            'notes'   => ['nullable', 'string'],
-        ];
-    }
-
     public function save(): void
     {
         $data = $this->validate();
@@ -77,9 +75,9 @@ class Edit extends Component
 
         $this->batch->update([
             'wine_id' => $data['wine_id'] ?: null,
-            'name'    => $data['name'],
-            'source'  => $data['source'],
-            'notes'   => $data['notes'] ?: null,
+            'name' => $data['name'],
+            'source' => $data['source'],
+            'notes' => $data['notes'] ?: null,
         ]);
 
         $this->toastSuccess(__('Lote actualizado correctamente.'));
@@ -90,17 +88,6 @@ class Edit extends Component
     {
         $this->showWasteForm = ! $this->showWasteForm;
         $this->resetWasteForm();
-    }
-
-    protected function wasteRules(): array
-    {
-        return [
-            'waste_quantity' => ['required', 'integer', 'min:1'],
-            'waste_from'     => ['nullable', 'integer', 'min:1'],
-            'waste_to'       => ['nullable', 'integer', 'min:1', 'gte:waste_from'],
-            'waste_reason'   => ['nullable', 'string'],
-            'waste_date'     => ['required', 'date'],
-        ];
     }
 
     public function saveWaste(): void
@@ -121,13 +108,13 @@ class Edit extends Component
 
             LabelWaste::create([
                 'label_batch_id' => $fresh->id,
-                'user_id'        => Auth::id(),
-                'quantity'       => $qty,
-                'from_number'    => $data['waste_from'] ?: null,
-                'to_number'      => $data['waste_to'] ?: null,
-                'reason'         => $data['waste_reason'] ?: null,
-                'waste_date'     => $data['waste_date'],
-                'created_by'     => Auth::id(),
+                'user_id' => Auth::id(),
+                'quantity' => $qty,
+                'from_number' => $data['waste_from'] ?: null,
+                'to_number' => $data['waste_to'] ?: null,
+                'reason' => $data['waste_reason'] ?: null,
+                'waste_date' => $data['waste_date'],
+                'created_by' => Auth::id(),
             ]);
 
             $fresh->increment('wasted_quantity', $qty);
@@ -138,6 +125,7 @@ class Edit extends Component
 
         if ($error) {
             $this->addError('waste_quantity', $error);
+
             return;
         }
 
@@ -150,7 +138,7 @@ class Edit extends Component
     public function deleteWaste(int $wasteId): void
     {
         DB::transaction(function () use ($wasteId) {
-            $waste = LabelWaste::whereHas('labelBatch', fn($q) => $q->where('user_id', Auth::id()))
+            $waste = LabelWaste::whereHas('labelBatch', fn ($q) => $q->where('user_id', Auth::id()))
                 ->findOrFail($wasteId);
 
             $qty = $waste->quantity;
@@ -164,21 +152,42 @@ class Edit extends Component
         $this->toastSuccess(__('Merma eliminada.'));
     }
 
-    protected function resetWasteForm(): void
-    {
-        $this->waste_quantity = '';
-        $this->waste_from     = '';
-        $this->waste_to       = '';
-        $this->waste_reason   = '';
-        $this->waste_date     = now()->toDateString();
-    }
-
     public function render()
     {
         return view('livewire.winery.label-batches.edit', [
             'sources' => LabelBatch::SOURCES,
-            'wines'   => $this->wines,
-            'wastes'  => $this->wastes,
+            'wines' => $this->wines,
+            'wastes' => $this->wastes,
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'wine_id' => $this->ownedWineRule(false),
+            'source' => ['required', 'in:own,do_assigned,other'],
+            'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function wasteRules(): array
+    {
+        return [
+            'waste_quantity' => ['required', 'integer', 'min:1'],
+            'waste_from' => ['nullable', 'integer', 'min:1'],
+            'waste_to' => ['nullable', 'integer', 'min:1', 'gte:waste_from'],
+            'waste_reason' => ['nullable', 'string'],
+            'waste_date' => ['required', 'date'],
+        ];
+    }
+
+    protected function resetWasteForm(): void
+    {
+        $this->waste_quantity = '';
+        $this->waste_from = '';
+        $this->waste_to = '';
+        $this->waste_reason = '';
+        $this->waste_date = now()->toDateString();
     }
 }

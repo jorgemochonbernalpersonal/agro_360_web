@@ -15,28 +15,46 @@ class Index extends Component
     use WithPagination, WithToastNotifications;
 
     public string $filter_campaign_id = '';
+
     public string $filter_plot_id = '';
+
     public string $filter_service_type = '';
+
     public string $filter_invoiced = '';
 
     protected $queryString = [
-        'filter_campaign_id'   => ['except' => '', 'as' => 'campaign'],
-        'filter_plot_id'       => ['except' => '', 'as' => 'plot'],
-        'filter_service_type'  => ['except' => '', 'as' => 'type'],
-        'filter_invoiced'      => ['except' => '', 'as' => 'invoiced'],
+        'filter_campaign_id' => ['except' => '', 'as' => 'campaign'],
+        'filter_plot_id' => ['except' => '', 'as' => 'plot'],
+        'filter_service_type' => ['except' => '', 'as' => 'type'],
+        'filter_invoiced' => ['except' => '', 'as' => 'invoiced'],
     ];
 
-    public function updatingFilterCampaignId(): void { $this->resetPage(); }
-    public function updatingFilterPlotId(): void { $this->resetPage(); }
-    public function updatingFilterServiceType(): void { $this->resetPage(); }
-    public function updatingFilterInvoiced(): void { $this->resetPage(); }
+    public function updatingFilterCampaignId(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterPlotId(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterServiceType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterInvoiced(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->filter_campaign_id  = '';
-        $this->filter_plot_id      = '';
+        $this->filter_campaign_id = '';
+        $this->filter_plot_id = '';
         $this->filter_service_type = '';
-        $this->filter_invoiced     = '';
+        $this->filter_invoiced = '';
         $this->resetPage();
     }
 
@@ -49,7 +67,7 @@ class Index extends Component
     public function toggleInvoiced(int $id): void
     {
         $record = Subcontracting::where('viticulturist_id', Auth::id())->findOrFail($id);
-        $record->update(['invoiced' => !$record->invoiced]);
+        $record->update(['invoiced' => ! $record->invoiced]);
         $this->toastSuccess($record->invoiced ? __('Marcado como facturado.') : __('Marcado como pendiente de factura.'));
     }
 
@@ -77,20 +95,20 @@ class Index extends Component
 
         $base = Subcontracting::where('viticulturist_id', $user->id);
         $stats = [
-            'total'        => (clone $base)->count(),
+            'total' => (clone $base)->count(),
             'total_amount' => (clone $base)->whereNotNull('amount')->sum('amount'),
-            'invoiced'     => (clone $base)->where('invoiced', true)->count(),
-            'pending'      => (clone $base)->where('invoiced', false)->count(),
+            'invoiced' => (clone $base)->where('invoiced', true)->count(),
+            'pending' => (clone $base)->where('invoiced', false)->count(),
         ];
 
-        $campaigns    = Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get();
-        $plots        = Plot::where('viticulturist_id', $user->id)->orderBy('name')->get();
+        $campaigns = Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get();
+        $plots = Plot::where('viticulturist_id', $user->id)->orderBy('name')->get();
 
         return view('livewire.viticulturist.subcontracting.index', [
-            'records'      => $records,
-            'stats'        => $stats,
-            'campaigns'    => $campaigns,
-            'plots'        => $plots,
+            'records' => $records,
+            'stats' => $stats,
+            'campaigns' => $campaigns,
+            'plots' => $plots,
             'serviceTypes' => Subcontracting::serviceTypeOptions(),
         ])->layout('layouts.app');
     }

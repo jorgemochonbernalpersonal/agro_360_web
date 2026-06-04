@@ -96,14 +96,14 @@ class WineryDocumentsSeeder extends Seeder
     ];
 
     private const AUTHORITIES = [
-        'license'       => ['Ayuntamiento de Agaete', 'Cabildo de Gran Canaria', 'Gobierno de Canarias', 'Ayuntamiento de Las Palmas'],
-        'sanitary'      => ['AESAN', 'Consejería de Sanidad de Canarias', 'Ministerio de Sanidad', 'Dirección General de Salud Pública'],
+        'license' => ['Ayuntamiento de Agaete', 'Cabildo de Gran Canaria', 'Gobierno de Canarias', 'Ayuntamiento de Las Palmas'],
+        'sanitary' => ['AESAN', 'Consejería de Sanidad de Canarias', 'Ministerio de Sanidad', 'Dirección General de Salud Pública'],
         'authorization' => ['OIVE', 'Consejo Regulador D.O. Gran Canaria', 'MAPA', 'Gobierno de Canarias', 'Agencia Tributaria'],
         'certification' => ['CAAE', 'Consejo Regulador D.O. Gran Canaria', 'Bureau Veritas', 'AENOR', 'SGS Ibérica'],
-        'contract'      => ['Mapfre Seguros', 'Gestora Ambiental Canarias S.L.', 'Botella & Corcho Canarias', 'Laboratorio Atlántico', 'Tecnivin S.A.'],
-        'plan'          => ['Asesoría PRL Canarias', 'Consultora Enológica Atlántico', 'Recursos Humanos Externos S.L.', null],
-        'declaration'   => ['Consejería de Agricultura de Canarias', 'AEAT', 'Consejo Regulador D.O. Gran Canaria', 'Ministerio de Agricultura'],
-        'permit'        => ['Confederación Hidrográfica del Sur', 'Ayuntamiento de Agaete', 'Cabildo de Gran Canaria', 'Industria y Energía GC'],
+        'contract' => ['Mapfre Seguros', 'Gestora Ambiental Canarias S.L.', 'Botella & Corcho Canarias', 'Laboratorio Atlántico', 'Tecnivin S.A.'],
+        'plan' => ['Asesoría PRL Canarias', 'Consultora Enológica Atlántico', 'Recursos Humanos Externos S.L.', null],
+        'declaration' => ['Consejería de Agricultura de Canarias', 'AEAT', 'Consejo Regulador D.O. Gran Canaria', 'Ministerio de Agricultura'],
+        'permit' => ['Confederación Hidrográfica del Sur', 'Ayuntamiento de Agaete', 'Cabildo de Gran Canaria', 'Industria y Energía GC'],
     ];
 
     // Años de emisión con peso (más 2025 y 2026)
@@ -111,38 +111,38 @@ class WineryDocumentsSeeder extends Seeder
 
     // Vigencia en años por tipo (null = indefinido)
     private const VALIDITY_YEARS = [
-        'license'       => 10,
-        'sanitary'      => null,
+        'license' => 10,
+        'sanitary' => null,
         'authorization' => 5,
         'certification' => 1,
-        'contract'      => 1,
-        'plan'          => 2,
-        'declaration'   => null,
-        'permit'        => 5,
+        'contract' => 1,
+        'plan' => 2,
+        'declaration' => null,
+        'permit' => 5,
     ];
 
     public function run(): void
     {
         $this->cleanup();
 
-        $now  = now();
+        $now = now();
         $rows = [];
 
         // Contadores por tipo para títulos únicos dentro de cada tipo
         $typeCounters = array_fill_keys(self::TYPES, 0);
 
         for ($i = 0; $i < 450; $i++) {
-            $type    = self::TYPES[$i % count(self::TYPES)];
+            $type = self::TYPES[$i % count(self::TYPES)];
             $typeCounters[$type]++;
-            $tc      = $typeCounters[$type];
+            $tc = $typeCounters[$type];
 
-            $titles    = self::TITLES[$type];
+            $titles = self::TITLES[$type];
             $baseTtitle = $titles[($i) % count($titles)];
 
             // Año de emisión (pool ponderado hacia 2025–2026)
             $issueYear = self::YEAR_POOL[$i % count(self::YEAR_POOL)];
-            $issueDay  = str_pad(($i % 28) + 1, 2, '0', STR_PAD_LEFT);
-            $issueMon  = str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT);
+            $issueDay = str_pad(($i % 28) + 1, 2, '0', STR_PAD_LEFT);
+            $issueMon = str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT);
             $issueDate = "$issueYear-$issueMon-$issueDay";
 
             // Expiry date
@@ -153,14 +153,14 @@ class WineryDocumentsSeeder extends Seeder
 
             // Autoridad emisora
             $authorities = self::AUTHORITIES[$type];
-            $authority   = $authorities[$i % count($authorities)];
+            $authority = $authorities[$i % count($authorities)];
 
             // Número de referencia único
             $refPrefix = strtoupper(substr($type, 0, 3));
-            $refNumber = "{$refPrefix}-GC-{$issueYear}-" . str_pad($tc, 5, '0', STR_PAD_LEFT);
+            $refNumber = "{$refPrefix}-GC-{$issueYear}-".str_pad($tc, 5, '0', STR_PAD_LEFT);
 
             // Título con año para unicidad
-            $title = $baseTtitle . " — {$issueYear}";
+            $title = $baseTtitle." — {$issueYear}";
             if ($tc > count(self::YEAR_POOL)) {
                 $title .= " (Nº $tc)";
             }
@@ -169,17 +169,17 @@ class WineryDocumentsSeeder extends Seeder
             $active = $expiryDate === null || $expiryDate >= now()->toDateString();
 
             $rows[] = [
-                'user_id'           => self::WINERY_USER_ID,
-                'title'             => $title,
-                'document_type'     => $type,
-                'reference_number'  => $refNumber,
-                'issue_date'        => $issueDate,
-                'expiry_date'       => $expiryDate,
+                'user_id' => self::WINERY_USER_ID,
+                'title' => $title,
+                'document_type' => $type,
+                'reference_number' => $refNumber,
+                'issue_date' => $issueDate,
+                'expiry_date' => $expiryDate,
                 'issuing_authority' => $authority,
-                'notes'             => "Documento de tipo {$type} emitido en {$issueYear}. Nº interno: {$tc}.",
-                'active'            => $active,
-                'created_at'        => $now,
-                'updated_at'        => $now,
+                'notes' => "Documento de tipo {$type} emitido en {$issueYear}. Nº interno: {$tc}.",
+                'active' => $active,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -187,9 +187,9 @@ class WineryDocumentsSeeder extends Seeder
             DB::table('winery_documents')->insert($chunk);
         }
 
-        $activos   = count(array_filter($rows, fn($r) => $r['active']));
-        $doc2026   = count(array_filter($rows, fn($r) => str_starts_with($r['issue_date'], '2026')));
-        $this->command->info("✅ Documentos de bodega: " . count($rows) . " registros ({$activos} activos, {$doc2026} emitidos en 2026)");
+        $activos = count(array_filter($rows, fn ($r) => $r['active']));
+        $doc2026 = count(array_filter($rows, fn ($r) => str_starts_with($r['issue_date'], '2026')));
+        $this->command->info('✅ Documentos de bodega: '.count($rows)." registros ({$activos} activos, {$doc2026} emitidos en 2026)");
     }
 
     private function cleanup(): void

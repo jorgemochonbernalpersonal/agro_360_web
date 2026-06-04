@@ -12,32 +12,39 @@ use Illuminate\Support\Facades\Auth;
 
 class Index extends AbstractIndex
 {
+    public string $search = '';
 
-    public string $search              = '';
-    public string $campaignFilter      = '';
+    public string $campaignFilter = '';
+
     public string $viticulturistFilter = '';
-    public string $statusFilter        = '';
+
+    public string $statusFilter = '';
 
     protected $queryString = [
-        'search'              => ['except' => ''],
-        'campaignFilter'      => ['except' => ''],
+        'search' => ['except' => ''],
+        'campaignFilter' => ['except' => ''],
         'viticulturistFilter' => ['except' => ''],
-        'statusFilter'        => ['except' => ''],
+        'statusFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void              { $this->resetPage(); }
-    public function updatingCampaignFilter(): void      { $this->resetPage(); }
-    public function updatingViticulturistFilter(): void { $this->resetPage(); }
-    public function updatingStatusFilter(): void        { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return [
-            'search'              => '',
-            'campaignFilter'      => '',
-            'viticulturistFilter' => '',
-            'statusFilter'        => '',
-        ];
+        $this->resetPage();
+    }
+
+    public function updatingCampaignFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingViticulturistFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function confirm(int $id): void
@@ -52,6 +59,16 @@ class Index extends AbstractIndex
         $forecast = WineryYieldForecast::where('winery_id', Auth::id())->findOrFail($id);
         $forecast->delete();
         $this->toastSuccess(__('Previsión eliminada.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return [
+            'search' => '',
+            'campaignFilter' => '',
+            'viticulturistFilter' => '',
+            'statusFilter' => '',
+        ];
     }
 
     protected function baseQuery(): Builder
@@ -79,17 +96,14 @@ class Index extends AbstractIndex
         }
 
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function (Builder $q) use ($term) {
-                $q->whereHas('viticulturist', fn($q2) =>
-                    $q2->whereRaw('LOWER(name) LIKE ?', [$term])
+                $q->whereHas('viticulturist', fn ($q2) => $q2->whereRaw('LOWER(name) LIKE ?', [$term])
                 )
-                ->orWhereHas('plotPlanting.grapeVariety', fn($q2) =>
-                    $q2->whereRaw('LOWER(name) LIKE ?', [$term])
-                )
-                ->orWhereHas('plotPlanting.plot', fn($q2) =>
-                    $q2->whereRaw('LOWER(name) LIKE ?', [$term])
-                );
+                    ->orWhereHas('plotPlanting.grapeVariety', fn ($q2) => $q2->whereRaw('LOWER(name) LIKE ?', [$term])
+                    )
+                    ->orWhereHas('plotPlanting.plot', fn ($q2) => $q2->whereRaw('LOWER(name) LIKE ?', [$term])
+                    );
             });
         }
     }
@@ -99,9 +113,15 @@ class Index extends AbstractIndex
         $query->orderByDesc('estimation_date');
     }
 
-    protected function defaultOrderBy(): array { return ['estimation_date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['estimation_date', 'desc'];
+    }
 
-    protected function perPage(): int { return 20; }
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -121,28 +141,28 @@ class Index extends AbstractIndex
         }
 
         // Cargar kg recibidos por batch para calcular ejecución en la vista
-        $collection  = $entries->getCollection();
+        $collection = $entries->getCollection();
         $batchTotals = GrapeReceptionBatch::where('winery_id', $wineryId)
             ->whereIn('plot_planting_id', $collection->pluck('plot_planting_id'))
             ->whereIn('campaign_id', $collection->pluck('campaign_id'))
             ->get(['plot_planting_id', 'campaign_id', 'total_weight_kg'])
-            ->keyBy(fn($b) => $b->plot_planting_id . '_' . $b->campaign_id);
+            ->keyBy(fn ($b) => $b->plot_planting_id.'_'.$b->campaign_id);
 
         $stats = [
-            'total'     => WineryYieldForecast::where('winery_id', $wineryId)->count(),
+            'total' => WineryYieldForecast::where('winery_id', $wineryId)->count(),
             'confirmed' => WineryYieldForecast::where('winery_id', $wineryId)->where('status', 'confirmed')->count(),
-            'draft'     => WineryYieldForecast::where('winery_id', $wineryId)->where('status', 'draft')->count(),
-            'total_kg'  => WineryYieldForecast::where('winery_id', $wineryId)->where('status', 'confirmed')
-                ->when($this->campaignFilter, fn($q) => $q->where('campaign_id', $this->campaignFilter))
+            'draft' => WineryYieldForecast::where('winery_id', $wineryId)->where('status', 'draft')->count(),
+            'total_kg' => WineryYieldForecast::where('winery_id', $wineryId)->where('status', 'confirmed')
+                ->when($this->campaignFilter, fn ($q) => $q->where('campaign_id', $this->campaignFilter))
                 ->sum('estimated_kg'),
         ];
 
         return [
-            'forecasts'            => $entries,
-            'campaigns'            => $campaigns,
+            'forecasts' => $entries,
+            'campaigns' => $campaigns,
             'linkedViticulturists' => $linkedViticulturists,
-            'batchTotals'          => $batchTotals,
-            'stats'                => $stats,
+            'batchTotals' => $batchTotals,
+            'stats' => $stats,
         ];
     }
 }

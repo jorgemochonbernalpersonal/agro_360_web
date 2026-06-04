@@ -43,7 +43,7 @@ class ActivityFiltersData
             'date_from' => $this->dateFrom,
             'date_to' => $this->dateTo,
             'product_filter' => $this->productFilter,
-        ], fn($value) => !is_null($value));
+        ], fn ($value) => ! is_null($value));
     }
 
     /**
@@ -79,7 +79,7 @@ class ActivityFiltersData
         }
 
         if ($this->dateFrom || $this->dateTo) {
-            $parts[] = "Periodo: " . ($this->dateFrom ?? '...') . " - " . ($this->dateTo ?? '...');
+            $parts[] = 'Periodo: '.($this->dateFrom ?? '...').' - '.($this->dateTo ?? '...');
         }
 
         return empty($parts) ? 'Sin filtros' : implode(', ', $parts);

@@ -13,7 +13,6 @@ use App\Models\WineStockSnapshot;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class DashboardAlertsService
 {
@@ -43,6 +42,14 @@ class DashboardAlertsService
     }
 
     /**
+     * Get alert count
+     */
+    public function getAlertCount(User $user): int
+    {
+        return $this->getAlerts($user)->count();
+    }
+
+    /**
      * Winery-specific alerts: INFOVI deadlines and snapshot freshness
      */
     private function checkWineryAlerts(User $user, Collection $alerts): void
@@ -53,7 +60,7 @@ class DashboardAlertsService
 
     private function checkInforviDeadlineAlert(User $user, Collection $alerts): void
     {
-        $today   = now()->startOfDay();
+        $today = now()->startOfDay();
         $isLarge = $this->isLargeProducer($user->id);
 
         $deadlines = $isLarge
@@ -66,12 +73,12 @@ class DashboardAlertsService
             if ($daysLeft >= 0 && $daysLeft <= 7) {
                 $urgency = $daysLeft <= 1 ? 'danger' : 'warning';
                 $alerts->push([
-                    'id'          => 'infovi_deadline_' . $deadline['date'],
-                    'type'        => $urgency,
-                    'icon'        => $daysLeft <= 1 ? '⚠️' : '📋',
-                    'title'       => $daysLeft === 0 ? __('Declaración INFOVI — vence hoy') : __('Declaración INFOVI en :days :unit', ['days' => $daysLeft, 'unit' => $daysLeft === 1 ? __('día') : __('días')]),
-                    'message'     => $deadline['label'],
-                    'action_url'  => route('winery.silicie.infovi'),
+                    'id' => 'infovi_deadline_'.$deadline['date'],
+                    'type' => $urgency,
+                    'icon' => $daysLeft <= 1 ? '⚠️' : '📋',
+                    'title' => $daysLeft === 0 ? __('Declaración INFOVI — vence hoy') : __('Declaración INFOVI en :days :unit', ['days' => $daysLeft, 'unit' => $daysLeft === 1 ? __('día') : __('días')]),
+                    'message' => $deadline['label'],
+                    'action_url' => route('winery.silicie.infovi'),
                     'action_text' => __('Ver INFOVI'),
                 ]);
                 break; // only show the nearest deadline
@@ -84,28 +91,29 @@ class DashboardAlertsService
         $lastSnapshot = WineStockSnapshot::where('user_id', $user->id)
             ->max('snapshot_date');
 
-        if (!$lastSnapshot) {
+        if (! $lastSnapshot) {
             $alerts->push([
-                'id'          => 'silicie_no_snapshot',
-                'type'        => 'info',
-                'icon'        => '📷',
-                'title'       => __('SILICIE sin instantánea'),
-                'message'     => __('Registra una instantánea de existencias para mantener el libro al día'),
-                'action_url'  => route('winery.silicie.dashboard'),
+                'id' => 'silicie_no_snapshot',
+                'type' => 'info',
+                'icon' => '📷',
+                'title' => __('SILICIE sin instantánea'),
+                'message' => __('Registra una instantánea de existencias para mantener el libro al día'),
+                'action_url' => route('winery.silicie.dashboard'),
                 'action_text' => __('Ir a SILICIE'),
             ]);
+
             return;
         }
 
         $daysSince = (int) now()->diffInDays(Carbon::parse($lastSnapshot));
         if ($daysSince > 30) {
             $alerts->push([
-                'id'          => 'silicie_stale_snapshot',
-                'type'        => 'warning',
-                'icon'        => '📷',
-                'title'       => __('Instantánea SILICIE desactualizada'),
-                'message'     => __('La última instantánea tiene :days días — recomendable actualizar mensualmente', ['days' => $daysSince]),
-                'action_url'  => route('winery.silicie.dashboard'),
+                'id' => 'silicie_stale_snapshot',
+                'type' => 'warning',
+                'icon' => '📷',
+                'title' => __('Instantánea SILICIE desactualizada'),
+                'message' => __('La última instantánea tiene :days días — recomendable actualizar mensualmente', ['days' => $daysSince]),
+                'action_url' => route('winery.silicie.dashboard'),
                 'action_text' => __('Actualizar instantánea'),
             ]);
         }
@@ -123,12 +131,12 @@ class DashboardAlertsService
         if ($pending > 0) {
             $label = $pending === 1 ? '1 solicitud pendiente' : "{$pending} solicitudes pendientes";
             $alerts->push([
-                'id'          => 'notebook_access_pending',
-                'type'        => 'info',
-                'icon'        => '📓',
-                'title'       => __('Acceso al cuaderno de campo'),
-                'message'     => $label . ' de acceso sin responder',
-                'action_url'  => route('viticulturist.winery-access.index'),
+                'id' => 'notebook_access_pending',
+                'type' => 'info',
+                'icon' => '📓',
+                'title' => __('Acceso al cuaderno de campo'),
+                'message' => $label.' de acceso sin responder',
+                'action_url' => route('viticulturist.winery-access.index'),
                 'action_text' => __('Gestionar accesos'),
             ]);
         }
@@ -151,30 +159,33 @@ class DashboardAlertsService
     private function monthlyDeadlines(Carbon $today): array
     {
         $next = $today->copy()->addMonth()->startOfMonth()->setDay(19);
+
         return [[
             'label' => __('Declaración mensual :month', ['month' => $next->translatedFormat('F Y')]),
-            'date'  => $next->toDateString(),
+            'date' => $next->toDateString(),
         ]];
     }
 
     private function semiAnnualDeadlines(Carbon $today): array
     {
         $candidates = [
-            $today->year . '-08-19',
-            $today->year . '-12-19',
-            ($today->year + 1) . '-08-19',
-            ($today->year + 1) . '-12-19',
+            $today->year.'-08-19',
+            $today->year.'-12-19',
+            ($today->year + 1).'-08-19',
+            ($today->year + 1).'-12-19',
         ];
         foreach ($candidates as $d) {
             if ($d >= $today->toDateString()) {
-                $date  = Carbon::parse($d);
+                $date = Carbon::parse($d);
                 $month = $date->month === 12 ? 'diciembre' : 'agosto';
+
                 return [[
                     'label' => __('Declaración ampliada :month :year', ['month' => $month, 'year' => $date->year]),
-                    'date'  => $d,
+                    'date' => $d,
                 ]];
             }
         }
+
         return [];
     }
 
@@ -184,7 +195,7 @@ class DashboardAlertsService
     private function checkContainerAlerts(User $user, Collection $alerts): void
     {
         // Solo mostrar alertas de contenedores si el viticultor tiene bodega vinculada
-        if ($user->isViticulturist() && !WineryViticulturist::where('viticulturist_id', $user->id)->exists()) {
+        if ($user->isViticulturist() && ! WineryViticulturist::where('viticulturist_id', $user->id)->exists()) {
             return;
         }
 
@@ -245,7 +256,7 @@ class DashboardAlertsService
     private function checkRemoteSensingAlerts(User $user, Collection $alerts): void
     {
         $userPlotIds = Plot::forUser($user)->pluck('id');
-        
+
         // Check for low NDVI
         $lowNdviPlots = PlotRemoteSensing::whereIn('plot_id', $userPlotIds)
             ->where('ndvi_mean', '<', 0.35)
@@ -256,7 +267,7 @@ class DashboardAlertsService
 
         foreach ($lowNdviPlots as $data) {
             $alerts->push([
-                'id' => 'low_ndvi_' . $data->plot_id,
+                'id' => 'low_ndvi_'.$data->plot_id,
                 'type' => 'warning',
                 'icon' => '🌱',
                 'title' => __('NDVI bajo'),
@@ -265,13 +276,5 @@ class DashboardAlertsService
                 'action_text' => __('Ver teledetección'),
             ]);
         }
-    }
-
-    /**
-     * Get alert count
-     */
-    public function getAlertCount(User $user): int
-    {
-        return $this->getAlerts($user)->count();
     }
 }

@@ -11,7 +11,7 @@ class EnsureProducerBuysExternalGrape
     {
         $user = auth()->user();
 
-        if (!$user?->isProducer() || !$user->compra_uva_externa) {
+        if (! $user?->isProducer() || ! $user->compra_uva_externa) {
             abort(403, __('Este módulo requiere tener activa la opción de compra de uva externa.'));
         }
 

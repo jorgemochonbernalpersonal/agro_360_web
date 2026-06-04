@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Province;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class MunicipalitySeeder extends Seeder
 {
@@ -23,7 +22,7 @@ class MunicipalitySeeder extends Seeder
         $excelPath2 = database_path('seeders/data/municipalities.xls');
 
         if (file_exists($csvPath)) {
-            $this->command->info('✅ Archivo CSV encontrado: ' . $csvPath);
+            $this->command->info('✅ Archivo CSV encontrado: '.$csvPath);
             $this->command->info('Importando desde archivo CSV...');
             $this->importFromCsv($csvPath, $provinces);
         } elseif (file_exists($jsonPath)) {
@@ -40,7 +39,7 @@ class MunicipalitySeeder extends Seeder
             $this->command->warn('No se encontró archivo de datos. Usando datos de ejemplo...');
             $this->command->info('Para importar todos los municipios:');
             $this->command->info('  1. Convierte tu Excel a CSV (Archivo > Guardar como > CSV)');
-            $this->command->info('  2. Colócalo en: ' . $csvPath);
+            $this->command->info('  2. Colócalo en: '.$csvPath);
             $this->command->info('  3. O ejecuta: php artisan municipalities:import-excel ruta/al/archivo.csv');
             $this->downloadAndImport($provinces);
         }
@@ -48,14 +47,16 @@ class MunicipalitySeeder extends Seeder
 
     /**
      * Descarga e importa municipios desde una fuente externa
+     *
+     * @param mixed $provinces
      */
     private function downloadAndImport($provinces): void
     {
         // URL alternativa: puedes usar una API o archivo público
         // Por ahora, usaremos datos básicos de ejemplo
         $this->command->info('Usando datos de ejemplo. Para datos completos, coloca un archivo CSV o JSON en:');
-        $this->command->info('  - ' . database_path('seeders/data/municipalities.csv'));
-        $this->command->info('  - ' . database_path('seeders/data/municipalities.json'));
+        $this->command->info('  - '.database_path('seeders/data/municipalities.csv'));
+        $this->command->info('  - '.database_path('seeders/data/municipalities.json'));
 
         // Insertar algunos municipios de ejemplo por provincia
         $this->insertSampleMunicipalities($provinces);
@@ -65,6 +66,8 @@ class MunicipalitySeeder extends Seeder
      * Inserta municipios de ejemplo (solo si no hay archivo CSV)
      * NOTA: Estos son solo datos de ejemplo (capitales de provincia).
      * Los datos reales se importan desde el archivo CSV.
+     *
+     * @param mixed $provinces
      */
     private function insertSampleMunicipalities($provinces): void
     {
@@ -125,7 +128,7 @@ class MunicipalitySeeder extends Seeder
             ['code' => '52001', 'name' => 'Melilla', 'province_code' => '52'],  // Melilla
         ];
 
-        $this->command->info('Insertando ' . count($sampleMunicipalities) . ' municipios de ejemplo (capitales de provincia)...');
+        $this->command->info('Insertando '.count($sampleMunicipalities).' municipios de ejemplo (capitales de provincia)...');
         $this->processMunicipalities($sampleMunicipalities, $provinces);
     }
 
@@ -133,6 +136,8 @@ class MunicipalitySeeder extends Seeder
      * Importa desde archivo CSV
      * Si el CSV solo tiene 'code' y 'name', extrae automáticamente el province_code
      * de los primeros 2 dígitos del código del municipio
+     *
+     * @param mixed $provinces
      */
     private function importFromCsv(string $csvPath, $provinces): void
     {
@@ -147,6 +152,7 @@ class MunicipalitySeeder extends Seeder
                 $normalized = strtolower(trim($h));
                 // Normalizar caracteres especiales (catalán/valenciano)
                 $normalized = str_replace(['ó', 'í', 'é', 'à', 'è', 'ò', 'ú', 'ü', 'ç', 'ñ'], ['o', 'i', 'e', 'a', 'e', 'o', 'u', 'u', 'c', 'n'], $normalized);
+
                 return $normalized;
             }, $headers);
 
@@ -159,6 +165,7 @@ class MunicipalitySeeder extends Seeder
             if ($codeIndex === false || $nameIndex === false) {
                 $this->command->error('El CSV debe tener al menos las columnas: code, name');
                 fclose($handle);
+
                 return;
             }
 
@@ -170,7 +177,7 @@ class MunicipalitySeeder extends Seeder
                     $name = trim($data[$nameIndex]);
 
                     // Prioridad 1: Usar la columna "Codi Província" si existe y tiene valor
-                    if ($provinceCodeIndex !== false && isset($data[$provinceCodeIndex]) && !empty(trim($data[$provinceCodeIndex]))) {
+                    if ($provinceCodeIndex !== false && isset($data[$provinceCodeIndex]) && ! empty(trim($data[$provinceCodeIndex]))) {
                         $provinceCode = trim($data[$provinceCodeIndex]);
                         // Normalizar a 2 dígitos (agregar cero a la izquierda si es necesario)
                         // Ejemplo: "5" -> "05", "6" -> "06"
@@ -189,7 +196,7 @@ class MunicipalitySeeder extends Seeder
                         continue;  // Saltar estos casos especiales
                     }
 
-                    if (!empty($code) && !empty($name) && !empty($provinceCode) && strlen($code) >= 5) {
+                    if (! empty($code) && ! empty($name) && ! empty($provinceCode) && strlen($code) >= 5) {
                         $municipalities[] = [
                             'code' => $code,
                             'name' => $name,
@@ -201,12 +208,14 @@ class MunicipalitySeeder extends Seeder
             fclose($handle);
         }
 
-        $this->command->info('Importando ' . count($municipalities) . ' municipios desde CSV...');
+        $this->command->info('Importando '.count($municipalities).' municipios desde CSV...');
         $this->processMunicipalities($municipalities, $provinces);
     }
 
     /**
      * Importa desde archivo JSON
+     *
+     * @param mixed $provinces
      */
     private function importFromJson(string $jsonPath, $provinces): void
     {
@@ -214,16 +223,19 @@ class MunicipalitySeeder extends Seeder
         $municipalities = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->command->error('Error al parsear JSON: ' . json_last_error_msg());
+            $this->command->error('Error al parsear JSON: '.json_last_error_msg());
+
             return;
         }
 
-        $this->command->info('Importando ' . count($municipalities) . ' municipios desde JSON...');
+        $this->command->info('Importando '.count($municipalities).' municipios desde JSON...');
         $this->processMunicipalities($municipalities, $provinces);
     }
 
     /**
      * Procesa e inserta los municipios
+     *
+     * @param mixed $provinces
      */
     private function processMunicipalities(array $municipalities, $provinces): void
     {
@@ -243,15 +255,16 @@ class MunicipalitySeeder extends Seeder
                 $provinceCode = $municipality['province_code'] ?? substr($municipality['code'], 0, 2);
                 $province = $provinces->get($provinceCode);
 
-                if (!$province) {
+                if (! $province) {
                     $errors++;
-                    if (!isset($missingProvinces[$provinceCode])) {
+                    if (! isset($missingProvinces[$provinceCode])) {
                         $missingProvinces[$provinceCode] = 0;
                     }
                     $missingProvinces[$provinceCode]++;
                     if (count($errorDetails) < 10) {
                         $errorDetails[] = "Provincia '{$provinceCode}' no encontrada para: {$municipality['name']} (code: {$municipality['code']})";
                     }
+
                     continue;
                 }
 
@@ -264,12 +277,12 @@ class MunicipalitySeeder extends Seeder
                 ];
             }
 
-            if (!empty($dataToInsert)) {
+            if (! empty($dataToInsert)) {
                 try {
                     DB::table('municipalities')->insertOrIgnore($dataToInsert);
                     $inserted += count($dataToInsert);
                 } catch (\Exception $e) {
-                    $this->command->error("\nError al insertar lote: " . $e->getMessage());
+                    $this->command->error("\nError al insertar lote: ".$e->getMessage());
                     $errors += count($dataToInsert);
                 }
             }
@@ -311,6 +324,7 @@ class MunicipalitySeeder extends Seeder
                 return $index;
             }
         }
+
         return false;
     }
 }

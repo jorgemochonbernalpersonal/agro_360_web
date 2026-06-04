@@ -19,42 +19,39 @@ class Index extends Component
     public string $statusFilter = '';
 
     // ── Responder (supervisor → bodega) ───────────────────────────────────────
-    public ?int   $respondingId  = null;
+    public ?int $respondingId = null;
+
     public string $responseNotes = '';
 
     // ── Crear solicitud (bodega → supervisor) ─────────────────────────────────
-    public bool   $showCreate  = false;
-    public string $createType  = '';
+    public bool $showCreate = false;
+
+    public string $createType = '';
+
     public string $createTitle = '';
+
     public string $createNotes = '';
 
     protected $queryString = [
         'statusFilter' => ['except' => ''],
     ];
 
-    protected function rules(): array
+    public function updatingStatusFilter(): void
     {
-        return [
-            'responseNotes' => 'nullable|string|max:2000',
-            'createType'    => 'required|in:' . implode(',', SupervisorRequest::WINERY_INITIATED),
-            'createTitle'   => 'required|string|max:255',
-            'createNotes'   => 'nullable|string|max:2000',
-        ];
+        $this->resetPage();
     }
-
-    public function updatingStatusFilter(): void { $this->resetPage(); }
 
     // ── Responder ─────────────────────────────────────────────────────────────
 
     public function startResponding(int $requestId): void
     {
-        $this->respondingId  = $requestId;
+        $this->respondingId = $requestId;
         $this->responseNotes = '';
     }
 
     public function cancelResponding(): void
     {
-        $this->respondingId  = null;
+        $this->respondingId = null;
         $this->responseNotes = '';
     }
 
@@ -73,7 +70,7 @@ class Index extends Component
         $request->supervisor?->notify(new SupervisorRequestRespondedNotification($request));
         Cache::forget("supervisor:{$request->supervisor_id}:inbox_count");
 
-        $this->respondingId  = null;
+        $this->respondingId = null;
         $this->responseNotes = '';
 
         $this->dispatch('toast', message: __('Respuesta enviada a la denominación.'), type: 'success');
@@ -102,8 +99,8 @@ class Index extends Component
 
     public function openCreate(): void
     {
-        $this->showCreate  = true;
-        $this->createType  = '';
+        $this->showCreate = true;
+        $this->createType = '';
         $this->createTitle = '';
         $this->createNotes = '';
         $this->resetErrorBag();
@@ -125,17 +122,18 @@ class Index extends Component
 
         if (! $supervisorRelation) {
             $this->dispatch('toast', message: __('No tienes una denominación de origen asignada.'), type: 'error');
+
             return;
         }
 
         $newRequest = SupervisorRequest::create([
             'supervisor_id' => $supervisorRelation->supervisor_id,
-            'winery_id'     => $wineryId,
-            'type'          => $this->createType,
-            'status'        => SupervisorRequest::STATUS_PENDING,
-            'title'         => $this->createTitle,
-            'notes'         => $this->createNotes ?: null,
-            'sent_at'       => now(),
+            'winery_id' => $wineryId,
+            'type' => $this->createType,
+            'status' => SupervisorRequest::STATUS_PENDING,
+            'title' => $this->createTitle,
+            'notes' => $this->createNotes ?: null,
+            'sent_at' => now(),
         ]);
 
         Cache::forget("winery:{$wineryId}:pending_do_requests");
@@ -164,7 +162,7 @@ class Index extends Component
             $query->where('status', $this->statusFilter);
         }
 
-        $requests     = $query->orderByDesc('created_at')->paginate(15);
+        $requests = $query->orderByDesc('created_at')->paginate(15);
         $pendingCount = SupervisorRequest::forWinery($wineryId)->where('status', SupervisorRequest::STATUS_PENDING)->count();
 
         $translatedTypeLabels = SupervisorRequest::typeLabelOptions();
@@ -172,12 +170,22 @@ class Index extends Component
             ->mapWithKeys(fn ($type) => [$type => $translatedTypeLabels[$type]]);
 
         return view('livewire.winery.denomination.requests.index', [
-            'requests'              => $requests,
-            'pendingCount'          => $pendingCount,
-            'typeLabels'            => $translatedTypeLabels,
-            'statusLabels'          => SupervisorRequest::statusLabelOptions(),
-            'statusColors'          => SupervisorRequest::STATUS_COLORS,
+            'requests' => $requests,
+            'pendingCount' => $pendingCount,
+            'typeLabels' => $translatedTypeLabels,
+            'statusLabels' => SupervisorRequest::statusLabelOptions(),
+            'statusColors' => SupervisorRequest::STATUS_COLORS,
             'wineryInitiatedLabels' => $wineryInitiatedLabels,
         ]);
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'responseNotes' => 'nullable|string|max:2000',
+            'createType' => 'required|in:'.implode(',', SupervisorRequest::WINERY_INITIATED),
+            'createTitle' => 'required|string|max:255',
+            'createNotes' => 'nullable|string|max:2000',
+        ];
     }
 }

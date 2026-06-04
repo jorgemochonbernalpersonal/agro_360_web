@@ -76,8 +76,9 @@ class ProvinceSeeder extends Seeder
             // Buscar la comunidad autónoma por su código para obtener su ID real
             $community = $communities->get($provinceData['community_code']);
 
-            if (!$community) {
+            if (! $community) {
                 $this->command->warn("No se encontró la comunidad autónoma con código: {$provinceData['community_code']} para la provincia: {$provinceData['name']}");
+
                 continue;
             }
 

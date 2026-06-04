@@ -2,17 +2,17 @@
 
 namespace Tests\Feature\Plots;
 
-use App\Models\User;
-use App\Models\Plot;
-use App\Models\WineryViticulturist;
 use App\Models\AutonomousCommunity;
-use App\Models\Province;
 use App\Models\Municipality;
-use App\Models\SigpacUse;
+use App\Models\Plot;
+use App\Models\Province;
 use App\Models\SigpacCode;
+use App\Models\SigpacUse;
+use App\Models\User;
+use App\Models\WineryViticulturist;
 use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
 use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -24,7 +24,7 @@ class CreateTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Ejecutar seeders necesarios
         $this->seed([
             AutonomousCommunitySeeder::class,
@@ -341,4 +341,3 @@ class CreateTest extends TestCase
         ]);
     }
 }
-

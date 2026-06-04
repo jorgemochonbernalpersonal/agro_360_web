@@ -15,16 +15,23 @@ class Edit extends Component
 {
     use WithOwnershipRules, WithToastNotifications;
 
-    public Wine              $wine;
+    public Wine $wine;
+
     public WineProcessDetail $process;
 
-    public string $process_type           = '';
-    public string $container_id           = '';
-    public string $start_date             = '';
-    public string $end_date               = '';
-    public string $quantity               = '';
+    public string $process_type = '';
+
+    public string $container_id = '';
+
+    public string $start_date = '';
+
+    public string $end_date = '';
+
+    public string $quantity = '';
+
     public string $unit_of_measurement_id = '';
-    public string $observations           = '';
+
+    public string $observations = '';
 
     public array $extraContainers = [];
 
@@ -33,21 +40,21 @@ class Edit extends Component
         abort_if($wine->user_id !== Auth::id(), 403);
         abort_if($process->wine_id !== $wine->id, 404);
 
-        $this->wine    = $wine;
+        $this->wine = $wine;
         $this->process = $process;
 
-        $this->process_type           = $process->process_type;
-        $this->container_id           = (string) ($process->container_id ?? '');
-        $this->start_date             = $process->start_date?->toDateString() ?? '';
-        $this->end_date               = $process->end_date?->toDateString() ?? '';
-        $this->quantity               = (string) ($process->quantity ?? '');
+        $this->process_type = $process->process_type;
+        $this->container_id = (string) ($process->container_id ?? '');
+        $this->start_date = $process->start_date?->toDateString() ?? '';
+        $this->end_date = $process->end_date?->toDateString() ?? '';
+        $this->quantity = (string) ($process->quantity ?? '');
         $this->unit_of_measurement_id = (string) ($process->unit_of_measurement_id ?? '');
-        $this->observations           = $process->observations ?? '';
+        $this->observations = $process->observations ?? '';
 
         $this->extraContainers = $process->containers
-            ->map(fn($c) => [
+            ->map(fn ($c) => [
                 'container_id' => (string) $c->id,
-                'quantity'     => (string) ($c->pivot->quantity ?? ''),
+                'quantity' => (string) ($c->pivot->quantity ?? ''),
             ])
             ->toArray();
     }
@@ -62,41 +69,28 @@ class Edit extends Component
         array_splice($this->extraContainers, $index, 1);
     }
 
-    protected function rules(): array
-    {
-        return [
-            'process_type'           => ['required', 'in:' . implode(',', array_keys(WineProcessDetail::PROCESS_TYPES))],
-            'container_id'           => $this->ownedContainerRule(false),
-            'start_date'             => ['required', 'date'],
-            'end_date'               => ['nullable', 'date', 'after_or_equal:start_date'],
-            'quantity'               => ['nullable', 'numeric', 'min:0'],
-            'unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
-            'observations'           => ['nullable', 'string'],
-            'extraContainers.*.container_id' => $this->ownedContainerRule(false),
-            'extraContainers.*.quantity'     => ['nullable', 'numeric', 'min:0'],
-        ];
-    }
-
     public function save(): void
     {
         $this->validate();
 
         $this->process->update([
-            'process_type'           => $this->process_type,
-            'container_id'           => $this->container_id ?: null,
-            'start_date'             => $this->start_date,
-            'end_date'               => $this->end_date ?: null,
-            'quantity'               => $this->quantity ?: null,
+            'process_type' => $this->process_type,
+            'container_id' => $this->container_id ?: null,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date ?: null,
+            'quantity' => $this->quantity ?: null,
             'unit_of_measurement_id' => $this->unit_of_measurement_id ?: null,
-            'observations'           => $this->observations ?: null,
+            'observations' => $this->observations ?: null,
         ]);
 
         // Sync extra containers
         $sync = [];
         foreach ($this->extraContainers as $row) {
-            if (empty($row['container_id'])) continue;
+            if (empty($row['container_id'])) {
+                continue;
+            }
             $sync[$row['container_id']] = [
-                'quantity'               => $row['quantity'] ?: null,
+                'quantity' => $row['quantity'] ?: null,
                 'unit_of_measurement_id' => $this->unit_of_measurement_id ?: null,
             ];
         }
@@ -115,8 +109,23 @@ class Edit extends Component
 
         return view('livewire.winery.wines.process.edit', [
             'processTypes' => WineProcessDetail::processTypeOptions(),
-            'containers'   => $containers,
-            'units'        => UnitOfMeasurement::orderBy('name')->get(),
+            'containers' => $containers,
+            'units' => UnitOfMeasurement::orderBy('name')->get(),
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'process_type' => ['required', 'in:'.implode(',', array_keys(WineProcessDetail::PROCESS_TYPES))],
+            'container_id' => $this->ownedContainerRule(false),
+            'start_date' => ['required', 'date'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+            'quantity' => ['nullable', 'numeric', 'min:0'],
+            'unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
+            'observations' => ['nullable', 'string'],
+            'extraContainers.*.container_id' => $this->ownedContainerRule(false),
+            'extraContainers.*.quantity' => ['nullable', 'numeric', 'min:0'],
+        ];
     }
 }

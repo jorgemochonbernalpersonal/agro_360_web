@@ -14,8 +14,8 @@ class PlotPlantingFactory extends Factory
     public function definition(): array
     {
         return [
-            'plot_id'      => Plot::factory(),
-            'status'       => 'active',
+            'plot_id' => Plot::factory(),
+            'status' => 'active',
             'area_planted' => $this->faker->randomFloat(3, 0.1, 5.0),
         ];
     }

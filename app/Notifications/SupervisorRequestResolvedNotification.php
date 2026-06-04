@@ -5,8 +5,8 @@ namespace App\Notifications;
 use App\Models\SupervisorRequest;
 use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -34,30 +34,30 @@ class SupervisorRequestResolvedNotification extends Notification implements Shou
 
     public function toMail(object $notifiable): MailMessage
     {
-        $req        = $this->supervisorRequest;
+        $req = $this->supervisorRequest;
         $supervisor = $req->supervisor;
-        $typeLabel  = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
-        $approved   = $this->resolution === SupervisorRequest::STATUS_APPROVED;
-        $url        = AppLink::url(route('winery.denomination.requests.index'), 'agro365://home');
+        $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
+        $approved = $this->resolution === SupervisorRequest::STATUS_APPROVED;
+        $url = AppLink::url(route('winery.denomination.requests.index'), 'agro365://home');
 
         if (app()->environment('production')) {
             $url = str_replace('http://', 'https://', $url);
         }
 
         $subject = $approved
-            ? '✅ Solicitud aprobada por tu DO — ' . $typeLabel
-            : '❌ Solicitud no aprobada por tu DO — ' . $typeLabel;
+            ? '✅ Solicitud aprobada por tu DO — '.$typeLabel
+            : '❌ Solicitud no aprobada por tu DO — '.$typeLabel;
 
         return (new MailMessage)
             ->subject($subject)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line(
                 $approved
-                    ? 'Tu Denominación de Origen **' . $supervisor->name . '** ha **aprobado** tu solicitud.'
-                    : 'Tu Denominación de Origen **' . $supervisor->name . '** ha **rechazado** tu solicitud.'
+                    ? 'Tu Denominación de Origen **'.$supervisor->name.'** ha **aprobado** tu solicitud.'
+                    : 'Tu Denominación de Origen **'.$supervisor->name.'** ha **rechazado** tu solicitud.'
             )
-            ->line('**Tipo:** ' . $typeLabel)
-            ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
+            ->line('**Tipo:** '.$typeLabel)
+            ->when($req->title, fn ($m) => $m->line('**Asunto:** '.$req->title))
             ->action(__('Ver detalle'), $url)
             ->when(
                 ! $approved,
@@ -68,21 +68,21 @@ class SupervisorRequestResolvedNotification extends Notification implements Shou
 
     public function toArray(object $notifiable): array
     {
-        $req       = $this->supervisorRequest;
-        $approved  = $this->resolution === SupervisorRequest::STATUS_APPROVED;
+        $req = $this->supervisorRequest;
+        $approved = $this->resolution === SupervisorRequest::STATUS_APPROVED;
         $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
 
         return [
-            'request_id'      => $req->id,
-            'request_type'    => $req->type,
-            'request_title'   => $req->title,
-            'resolution'      => $this->resolution,
-            'supervisor_id'   => $req->supervisor_id,
+            'request_id' => $req->id,
+            'request_type' => $req->type,
+            'request_title' => $req->title,
+            'resolution' => $this->resolution,
+            'supervisor_id' => $req->supervisor_id,
             'supervisor_name' => $req->supervisor?->name,
-            'icon'            => $approved ? '✅' : '❌',
-            'message'         => ($approved ? 'Aprobada' : 'Rechazada') . ': ' . $typeLabel,
-            'action_url'      => route('winery.denomination.requests.index'),
-            'action_text'     => __('Ver detalle'),
+            'icon' => $approved ? '✅' : '❌',
+            'message' => ($approved ? 'Aprobada' : 'Rechazada').': '.$typeLabel,
+            'action_url' => route('winery.denomination.requests.index'),
+            'action_text' => __('Ver detalle'),
         ];
     }
 }

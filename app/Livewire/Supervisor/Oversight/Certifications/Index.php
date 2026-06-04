@@ -14,24 +14,37 @@ class Index extends Component
 {
     use WithPagination;
 
-    public string $filterVit    = '';
-    public string $filterType   = '';
+    public string $filterVit = '';
+
+    public string $filterType = '';
+
     public string $filterStatus = ''; // 'active', 'expiring', 'expired'
 
     protected $queryString = [
-        'filterVit'    => ['except' => ''],
-        'filterType'   => ['except' => ''],
+        'filterVit' => ['except' => ''],
+        'filterType' => ['except' => ''],
         'filterStatus' => ['except' => ''],
     ];
 
-    public function updatingFilterVit(): void    { $this->resetPage(); }
-    public function updatingFilterType(): void   { $this->resetPage(); }
-    public function updatingFilterStatus(): void { $this->resetPage(); }
+    public function updatingFilterVit(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->filterVit    = '';
-        $this->filterType   = '';
+        $this->filterVit = '';
+        $this->filterType = '';
         $this->filterStatus = '';
         $this->resetPage();
     }
@@ -64,11 +77,10 @@ class Index extends Component
             $query->where('active', true)->whereDate('expiry_date', '<', now());
         } elseif ($this->filterStatus === 'expiring') {
             $query->where('active', true)
-                  ->whereDate('expiry_date', '>=', now())
-                  ->whereDate('expiry_date', '<=', now()->addDays(60));
+                ->whereDate('expiry_date', '>=', now())
+                ->whereDate('expiry_date', '<=', now()->addDays(60));
         } elseif ($this->filterStatus === 'active') {
-            $query->where('active', true)->where(fn($q) =>
-                $q->whereNull('expiry_date')->orWhereDate('expiry_date', '>=', now())
+            $query->where('active', true)->where(fn ($q) => $q->whereNull('expiry_date')->orWhereDate('expiry_date', '>=', now())
             );
         }
 
@@ -76,19 +88,19 @@ class Index extends Component
 
         // Resumen
         $allCerts = Certification::whereIn('viticulturist_id', $viticulturistIds)->where('active', true)->get();
-        $totalActive   = $allCerts->filter(fn($c) => !$c->is_expired)->count();
-        $totalExpiring = $allCerts->filter(fn($c) => $c->is_expiring_soon)->count();
-        $totalExpired  = $allCerts->filter(fn($c) => $c->is_expired)->count();
+        $totalActive = $allCerts->filter(fn ($c) => ! $c->is_expired)->count();
+        $totalExpiring = $allCerts->filter(fn ($c) => $c->is_expiring_soon)->count();
+        $totalExpired = $allCerts->filter(fn ($c) => $c->is_expired)->count();
 
         $certTypes = Certification::CERTIFICATION_TYPES;
 
         return view('livewire.supervisor.oversight.certifications.index', [
             'certifications' => $certifications,
             'viticulturists' => $viticulturists,
-            'certTypes'      => $certTypes,
-            'totalActive'    => $totalActive,
-            'totalExpiring'  => $totalExpiring,
-            'totalExpired'   => $totalExpired,
+            'certTypes' => $certTypes,
+            'totalActive' => $totalActive,
+            'totalExpiring' => $totalExpiring,
+            'totalExpired' => $totalExpired,
         ]);
     }
 }

@@ -13,11 +13,6 @@ class MachineryType extends Model
 
     public array $translatable = ['name'];
 
-    public function useFallbackLocale(): bool
-    {
-        return true;
-    }
-
     protected $table = 'machinery_types';
 
     protected $fillable = [
@@ -29,6 +24,11 @@ class MachineryType extends Model
         'active' => 'boolean',
     ];
 
+    public function useFallbackLocale(): bool
+    {
+        return true;
+    }
+
     /**
      * Maquinaria asociada a este tipo.
      */
@@ -37,5 +37,3 @@ class MachineryType extends Model
         return $this->hasMany(Machinery::class, 'machinery_type_id');
     }
 }
-
-

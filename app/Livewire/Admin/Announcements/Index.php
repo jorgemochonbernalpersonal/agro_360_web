@@ -11,20 +11,26 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithToastNotifications, WithReadOnlyGuard;
+    use WithReadOnlyGuard, WithToastNotifications;
 
-    public bool   $showModal   = false;
-    public ?int   $editingId   = null;
-    public string $title       = '';
-    public string $message     = '';
-    public string $type        = 'info';
-    public string $expires_at  = '';
-    public bool   $is_active   = true;
+    public bool $showModal = false;
+
+    public ?int $editingId = null;
+
+    public string $title = '';
+
+    public string $message = '';
+
+    public string $type = 'info';
+
+    public string $expires_at = '';
+
+    public bool $is_active = true;
 
     public function openCreate(): void
     {
         $this->reset(['title', 'message', 'expires_at', 'editingId']);
-        $this->type      = 'info';
+        $this->type = 'info';
         $this->is_active = true;
         $this->showModal = true;
         $this->resetValidation();
@@ -32,11 +38,11 @@ class Index extends Component
 
     public function openEdit(int $id): void
     {
-        $ann             = AdminAnnouncement::findOrFail($id);
+        $ann = AdminAnnouncement::findOrFail($id);
         $this->editingId = $id;
-        $this->title     = $ann->title;
-        $this->message   = $ann->message;
-        $this->type      = $ann->type;
+        $this->title = $ann->title;
+        $this->message = $ann->message;
+        $this->type = $ann->type;
         $this->is_active = $ann->is_active;
         $this->expires_at = $ann->expires_at?->format('Y-m-d') ?? '';
         $this->showModal = true;
@@ -56,23 +62,23 @@ class Index extends Component
         }
 
         $this->validate([
-            'title'      => 'required|string|max:120',
-            'message'    => 'required|string|max:1000',
-            'type'       => 'required|in:info,warning,success,danger',
+            'title' => 'required|string|max:120',
+            'message' => 'required|string|max:1000',
+            'type' => 'required|in:info,warning,success,danger',
             'expires_at' => 'nullable|date|after:today',
         ], [
-            'title.required'      => __('El título es obligatorio.'),
-            'message.required'    => __('El mensaje es obligatorio.'),
-            'expires_at.after'    => __('La fecha de expiración debe ser futura.'),
+            'title.required' => __('El título es obligatorio.'),
+            'message.required' => __('El mensaje es obligatorio.'),
+            'expires_at.after' => __('La fecha de expiración debe ser futura.'),
         ]);
 
         $data = [
-            'title'      => $this->title,
-            'message'    => $this->message,
-            'type'       => $this->type,
-            'is_active'  => $this->is_active,
+            'title' => $this->title,
+            'message' => $this->message,
+            'type' => $this->type,
+            'is_active' => $this->is_active,
             'expires_at' => $this->expires_at ?: null,
-            'admin_id'   => Auth::id(),
+            'admin_id' => Auth::id(),
         ];
 
         if ($this->editingId) {
@@ -94,7 +100,7 @@ class Index extends Component
         }
 
         $ann = AdminAnnouncement::findOrFail($id);
-        $ann->update(['is_active' => !$ann->is_active]);
+        $ann->update(['is_active' => ! $ann->is_active]);
         $this->toastSuccess($ann->is_active ? __('Anuncio activado.') : __('Anuncio desactivado.'));
     }
 
@@ -118,7 +124,7 @@ class Index extends Component
 
         return view('livewire.admin.announcements.index', compact('announcements', 'activeCount'))
             ->layout('layouts.app', [
-                'title'       => __('Anuncios - Admin - Agro365'),
+                'title' => __('Anuncios - Admin - Agro365'),
                 'description' => __('Gestiona los banners de anuncio visibles para los usuarios'),
             ]);
     }

@@ -12,13 +12,16 @@ use Livewire\WithPagination;
 
 class Approvals extends Component
 {
-    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
+    use WithPagination, WithReadOnlyGuard, WithToastNotifications;
 
     public string $search = '';
 
     protected $queryString = ['search' => ['except' => '']];
 
-    public function updatingSearch(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
 
     public function approve(int $userId): void
     {
@@ -31,8 +34,8 @@ class Approvals extends Component
         $user->save();
 
         SecurityLogger::logSecurityEvent('user_approved_by_admin', [
-            'admin_id'   => Auth::id(),
-            'user_id'    => $user->id,
+            'admin_id' => Auth::id(),
+            'user_id' => $user->id,
             'user_email' => $user->email,
         ]);
 
@@ -49,8 +52,8 @@ class Approvals extends Component
         $name = $user->name;
 
         SecurityLogger::logSecurityEvent('user_rejected_by_admin', [
-            'admin_id'   => Auth::id(),
-            'user_id'    => $user->id,
+            'admin_id' => Auth::id(),
+            'user_id' => $user->id,
             'user_email' => $user->email,
         ]);
 
@@ -68,16 +71,16 @@ class Approvals extends Component
             ->orderBy('email_verified_at');
 
         if ($this->search) {
-            $s = '%' . $this->search . '%';
+            $s = '%'.$this->search.'%';
             $query->where(fn ($q) => $q->where('name', 'like', $s)->orWhere('email', 'like', $s));
         }
 
         $pending = $query->paginate(20);
-        $total   = User::query()->where('can_login', false)->whereNotNull('email_verified_at')->where('role', '!=', 'admin')->count();
+        $total = User::query()->where('can_login', false)->whereNotNull('email_verified_at')->where('role', '!=', 'admin')->count();
 
         return view('livewire.admin.users.approvals', compact('pending', 'total'))
             ->layout('layouts.app', [
-                'title'       => __('Aprobaciones - Admin - Agro365'),
+                'title' => __('Aprobaciones - Admin - Agro365'),
                 'description' => __('Usuarios verificados pendientes de activación manual'),
             ]);
     }

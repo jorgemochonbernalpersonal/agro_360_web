@@ -9,36 +9,49 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MaintenanceGlobal extends AbstractIndex
 {
-    public string $search          = '';
-    public string $statusFilter    = '';
-    public string $typeFilter      = '';
+    public string $search = '';
+
+    public string $statusFilter = '';
+
+    public string $typeFilter = '';
+
     public string $containerFilter = '';
 
     protected $queryString = [
-        'search'          => ['except' => ''],
-        'statusFilter'    => ['except' => ''],
-        'typeFilter'      => ['except' => ''],
+        'search' => ['except' => ''],
+        'statusFilter' => ['except' => ''],
+        'typeFilter' => ['except' => ''],
         'containerFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void          { $this->resetPage(); }
-    public function updatingStatusFilter(): void    { $this->resetPage(); }
-    public function updatingTypeFilter(): void      { $this->resetPage(); }
-    public function updatingContainerFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'statusFilter' => '', 'typeFilter' => '', 'containerFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingContainerFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function transition(int $id, string $status): void
     {
-        $maintenance = ContainerMaintenance::whereHas('container', fn($q) => $q->where('user_id', $this->wineryId()))
+        $maintenance = ContainerMaintenance::whereHas('container', fn ($q) => $q->where('user_id', $this->wineryId()))
             ->findOrFail($id);
 
         $updates = ['status' => $status];
 
-        if (in_array($status, ['in_progress', 'in_review']) && !$maintenance->performed_date) {
+        if (in_array($status, ['in_progress', 'in_review']) && ! $maintenance->performed_date) {
             $updates['performed_date'] = now()->toDateString();
         }
 
@@ -61,25 +74,30 @@ class MaintenanceGlobal extends AbstractIndex
 
     public function delete(int $id): void
     {
-        ContainerMaintenance::whereHas('container', fn($q) => $q->where('user_id', $this->wineryId()))
+        ContainerMaintenance::whereHas('container', fn ($q) => $q->where('user_id', $this->wineryId()))
             ->findOrFail($id)
             ->delete();
         $this->toastSuccess(__('Mantenimiento eliminado.'));
     }
 
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'statusFilter' => '', 'typeFilter' => '', 'containerFilter' => ''];
+    }
+
     protected function baseQuery(): Builder
     {
         return ContainerMaintenance::with(['container'])
-            ->whereHas('container', fn($q) => $q->where('user_id', $this->wineryId()));
+            ->whereHas('container', fn ($q) => $q->where('user_id', $this->wineryId()));
     }
 
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(description) LIKE ?', [$term])
-                  ->orWhereHas('container', fn($c) => $c->whereRaw('LOWER(name) LIKE ?', [$term]));
+                    ->orWhereHas('container', fn ($c) => $c->whereRaw('LOWER(name) LIKE ?', [$term]));
             });
         }
 
@@ -101,26 +119,33 @@ class MaintenanceGlobal extends AbstractIndex
         $query->orderByDesc('scheduled_date')->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['scheduled_date', 'desc']; }
-    protected function perPage(): int          { return 20; }
+    protected function defaultOrderBy(): array
+    {
+        return ['scheduled_date', 'desc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
-        $base = ContainerMaintenance::whereHas('container', fn($q) => $q->where('user_id', $this->wineryId()));
+        $base = ContainerMaintenance::whereHas('container', fn ($q) => $q->where('user_id', $this->wineryId()));
 
         $stats = [
-            'total'      => (clone $base)->count(),
-            'scheduled'  => (clone $base)->where('status', 'scheduled')->count(),
-            'completed'  => (clone $base)->where('status', 'completed')->count(),
+            'total' => (clone $base)->count(),
+            'scheduled' => (clone $base)->where('status', 'scheduled')->count(),
+            'completed' => (clone $base)->where('status', 'completed')->count(),
             'total_cost' => (clone $base)->where('status', 'completed')->sum('cost'),
         ];
 
         return [
             'maintenances' => $entries,
-            'containers'   => Container::where('user_id', $this->wineryId())->where('archived', false)->orderBy('name')->get(),
-            'types'        => ContainerMaintenance::typeOptions(),
-            'statuses'     => ContainerMaintenance::statusOptions(),
-            'stats'        => $stats,
+            'containers' => Container::where('user_id', $this->wineryId())->where('archived', false)->orderBy('name')->get(),
+            'types' => ContainerMaintenance::typeOptions(),
+            'statuses' => ContainerMaintenance::statusOptions(),
+            'stats' => $stats,
         ];
     }
 }

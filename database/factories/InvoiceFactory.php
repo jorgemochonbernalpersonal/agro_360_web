@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Invoice;
 use App\Models\Client;
+use App\Models\Invoice;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -16,7 +16,7 @@ class InvoiceFactory extends Factory
         return [
             'user_id' => User::factory(),
             'client_id' => Client::factory(),
-            'invoice_number' => 'FAC-' . $this->faker->unique()->numberBetween(1000, 9999),
+            'invoice_number' => 'FAC-'.$this->faker->unique()->numberBetween(1000, 9999),
             'invoice_date' => now(),
             'subtotal' => 0,
             'discount_amount' => 0,

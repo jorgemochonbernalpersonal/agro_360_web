@@ -19,10 +19,10 @@ class CampaignDocumentController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'campaign_id'   => 'nullable|integer',
+            'campaign_id' => 'nullable|integer',
             'document_type' => 'nullable|string',
-            'search'        => 'nullable|string|max:100',
-            'per_page'      => 'nullable|integer|min:1|max:100',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = CampaignDocument::forViticulturist($user->id)
@@ -46,10 +46,10 @@ class CampaignDocumentController extends Controller
         return response()->json([
             'data' => CampaignDocumentResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -60,10 +60,10 @@ class CampaignDocumentController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'    => 'nullable|integer|exists:campaigns,id',
-            'name'           => 'required|string|max:255',
-            'document_type'  => 'required|in:invoice,certificate,lab_report,authorization,map,analysis,other',
-            'notes'          => 'nullable|string|max:2000',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'name' => 'required|string|max:255',
+            'document_type' => 'required|in:invoice,certificate,lab_report,authorization,map,analysis,other',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (empty($validated['campaign_id'])) {
@@ -75,7 +75,7 @@ class CampaignDocumentController extends Controller
         $record = \App\Models\CampaignDocument::create([...$validated, 'viticulturist_id' => $user->id]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\CampaignDocumentResource($record),
+            'data' => new \App\Http\Resources\Api\CampaignDocumentResource($record),
             'message' => __('Documento registrado correctamente.'),
         ], 201);
     }

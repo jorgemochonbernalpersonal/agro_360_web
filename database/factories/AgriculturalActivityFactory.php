@@ -3,10 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\User;
-use App\Models\Campaign;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -56,18 +56,18 @@ class AgriculturalActivityFactory extends Factory
         $activePlanting = PlotPlanting::where('plot_id', $plot->id)
             ->where('status', 'active')
             ->first();
-        
+
         if ($activePlanting) {
             $plotPlantingId = $activePlanting->id;
         }
-        
+
         return $this->state(fn (array $attributes) => [
             'plot_id' => $plot->id,
             'plot_planting_id' => $plotPlantingId,
             'viticulturist_id' => $plot->viticulturist_id,
         ]);
     }
-    
+
     /**
      * Indicate that the activity belongs to a specific planting.
      */
@@ -105,7 +105,7 @@ class AgriculturalActivityFactory extends Factory
 
             // Crear producto fitosanitario si no existe
             $product = \App\Models\PhytosanitaryProduct::firstOrCreate(
-                ['registration_number' => 'TEST-' . fake()->unique()->numberBetween(1000, 9999)],
+                ['registration_number' => 'TEST-'.fake()->unique()->numberBetween(1000, 9999)],
                 [
                     'name' => fake()->words(2, true),
                     'active_ingredient' => fake()->word(),

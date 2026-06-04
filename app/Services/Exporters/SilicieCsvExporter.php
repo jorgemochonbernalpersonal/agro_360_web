@@ -37,22 +37,23 @@ class SilicieCsvExporter
     // ── Códigos NC para productos del sector vitivinícola ─────────────────
     // 4 dígitos = no sujeto; 8 dígitos = sujeto impuesto especial
     const NC_CODES = [
-        'grapes'      => '0806',     // Uva fresca — no sujeta
-        'must'        => '22043096', // Mosto de uva parcialmente fermentado
-        'bulk_wine'   => '22042199', // Vino tranquilo >2L a granel
-        'red_wine'    => '22042199', // Vino tinto >2L
-        'white_wine'  => '22042199', // Vino blanco >2L
-        'rose_wine'   => '22042199', // Vino rosado >2L
-        'sparkling'   => '22041000', // Vino espumoso
-        'fortified'   => '22042199', // Vino licoroso
-        'pomace'      => '2308',     // Orujo de uva — no sujeto
-        'lees'        => '2307',     // Lías de vino — no sujeto
-        'vinasse'     => '2307',     // Vinaza — asimilado lías
+        'grapes' => '0806',     // Uva fresca — no sujeta
+        'must' => '22043096', // Mosto de uva parcialmente fermentado
+        'bulk_wine' => '22042199', // Vino tranquilo >2L a granel
+        'red_wine' => '22042199', // Vino tinto >2L
+        'white_wine' => '22042199', // Vino blanco >2L
+        'rose_wine' => '22042199', // Vino rosado >2L
+        'sparkling' => '22041000', // Vino espumoso
+        'fortified' => '22042199', // Vino licoroso
+        'pomace' => '2308',     // Orujo de uva — no sujeto
+        'lees' => '2307',     // Lías de vino — no sujeto
+        'vinasse' => '2307',     // Vinaza — asimilado lías
     ];
 
     // ── Unidades SILICIE ───────────────────────────────────────────────────
-    const UNIT_HL   = 'HL';  // Hectolitros (vino, mosto)
-    const UNIT_KG   = 'KG';  // Kilogramos (uva, subproductos sólidos)
+    const UNIT_HL = 'HL';  // Hectolitros (vino, mosto)
+
+    const UNIT_KG = 'KG';  // Kilogramos (uva, subproductos sólidos)
 
     // ── Tipo de documento SILICIE 2.0 (Orden HAC/1505/2024) ──────────────
     // Mandatory since 01/01/2025
@@ -106,19 +107,19 @@ class SilicieCsvExporter
 
         foreach ($harvests as $h) {
             $rows[] = [
-                'TIPO_MOVIMIENTO'       => 'A02',
-                'FECHA_OPERACION'       => $this->formatDate($h->harvest_start_date),
-                'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP['A02'],
-                'PERIODO_FISCAL'        => $this->fiscalPeriod($h->harvest_start_date),
-                'CODIGO_NC'             => self::NC_CODES['grapes'],
-                'DESCRIPCION_PRODUCTO'  => 'Uva fresca - vendimia propia',
-                'CANTIDAD'              => $this->formatQty((float) ($h->total_weight ?? 0)),
-                'UNIDAD_MEDIDA'         => self::UNIT_KG,
-                'ORIGEN_DESTINO_NIF'    => '',
+                'TIPO_MOVIMIENTO' => 'A02',
+                'FECHA_OPERACION' => $this->formatDate($h->harvest_start_date),
+                'TIPO_DOCUMENTO' => self::DOCUMENT_TYPE_MAP['A02'],
+                'PERIODO_FISCAL' => $this->fiscalPeriod($h->harvest_start_date),
+                'CODIGO_NC' => self::NC_CODES['grapes'],
+                'DESCRIPCION_PRODUCTO' => 'Uva fresca - vendimia propia',
+                'CANTIDAD' => $this->formatQty((float) ($h->total_weight ?? 0)),
+                'UNIDAD_MEDIDA' => self::UNIT_KG,
+                'ORIGEN_DESTINO_NIF' => '',
                 'ORIGEN_DESTINO_NOMBRE' => $h->viti_name ?? '',
-                'NUM_DOCUMENTO'         => 'REC-' . $h->id,
-                'REFERENCIA_INTERNA'    => 'HARVEST-' . $h->id,
-                'OBSERVACIONES'         => 'Vendimia ' . $vintage,
+                'NUM_DOCUMENTO' => 'REC-'.$h->id,
+                'REFERENCIA_INTERNA' => 'HARVEST-'.$h->id,
+                'OBSERVACIONES' => 'Vendimia '.$vintage,
             ];
         }
 
@@ -139,28 +140,28 @@ class SilicieCsvExporter
             ->get();
 
         foreach ($external as $eg) {
-            $ncCode      = self::NC_CODES[$eg->grape_type] ?? self::NC_CODES['bulk_wine'];
+            $ncCode = self::NC_CODES[$eg->grape_type] ?? self::NC_CODES['bulk_wine'];
             $description = match ($eg->grape_type) {
-                'grapes'    => 'Uva comprada - ' . ($eg->variety_name ?? 'sin variedad'),
-                'must'      => 'Mosto comprado - ' . ($eg->protection_level ?? 'sin DO'),
-                'bulk_wine' => 'Vino a granel comprado - ' . ($eg->protection_level ?? 'sin DO'),
-                default     => 'Entrada exterior',
+                'grapes' => 'Uva comprada - '.($eg->variety_name ?? 'sin variedad'),
+                'must' => 'Mosto comprado - '.($eg->protection_level ?? 'sin DO'),
+                'bulk_wine' => 'Vino a granel comprado - '.($eg->protection_level ?? 'sin DO'),
+                default => 'Entrada exterior',
             };
 
             $rows[] = [
-                'TIPO_MOVIMIENTO'       => 'A02',
-                'FECHA_OPERACION'       => $this->formatDate($eg->entry_date),
-                'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP['A02'],
-                'PERIODO_FISCAL'        => $this->fiscalPeriod($eg->entry_date),
-                'CODIGO_NC'             => $ncCode,
-                'DESCRIPCION_PRODUCTO'  => $description,
-                'CANTIDAD'              => $this->formatQty((float) $eg->total_weight_kg),
-                'UNIDAD_MEDIDA'         => self::UNIT_KG,
-                'ORIGEN_DESTINO_NIF'    => '',
+                'TIPO_MOVIMIENTO' => 'A02',
+                'FECHA_OPERACION' => $this->formatDate($eg->entry_date),
+                'TIPO_DOCUMENTO' => self::DOCUMENT_TYPE_MAP['A02'],
+                'PERIODO_FISCAL' => $this->fiscalPeriod($eg->entry_date),
+                'CODIGO_NC' => $ncCode,
+                'DESCRIPCION_PRODUCTO' => $description,
+                'CANTIDAD' => $this->formatQty((float) $eg->total_weight_kg),
+                'UNIDAD_MEDIDA' => self::UNIT_KG,
+                'ORIGEN_DESTINO_NIF' => '',
                 'ORIGEN_DESTINO_NOMBRE' => $eg->supplier_name ?? '',
-                'NUM_DOCUMENTO'         => 'EXT-' . $eg->id,
-                'REFERENCIA_INTERNA'    => 'EXTGRAPE-' . $eg->id,
-                'OBSERVACIONES'         => ucfirst($eg->grape_type) . ' - ' . ($eg->protection_level ?? ''),
+                'NUM_DOCUMENTO' => 'EXT-'.$eg->id,
+                'REFERENCIA_INTERNA' => 'EXTGRAPE-'.$eg->id,
+                'OBSERVACIONES' => ucfirst($eg->grape_type).' - '.($eg->protection_level ?? ''),
             ];
         }
 
@@ -176,24 +177,24 @@ class SilicieCsvExporter
             if (! $w->volume_liters) {
                 continue;
             }
-            $ncCode      = $this->ncCodeForWineType($w->wine_type);
-            $description = $this->wineDescription($w->wine_type) . ' - ' . ($w->name ?? 'Vino ' . $w->wine_type);
+            $ncCode = $this->ncCodeForWineType($w->wine_type);
+            $description = $this->wineDescription($w->wine_type).' - '.($w->name ?? 'Vino '.$w->wine_type);
 
             $productionDate = now()->year($vintage)->endOfYear()->format('Y-m-d');
             $rows[] = [
-                'TIPO_MOVIMIENTO'       => 'A15',
-                'FECHA_OPERACION'       => $this->formatDate($productionDate),
-                'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP['A15'],
-                'PERIODO_FISCAL'        => $this->fiscalPeriod($productionDate),
-                'CODIGO_NC'             => $ncCode,
-                'DESCRIPCION_PRODUCTO'  => $description,
-                'CANTIDAD'              => $this->formatQty($w->volume_liters / 100), // L→HL
-                'UNIDAD_MEDIDA'         => self::UNIT_HL,
-                'ORIGEN_DESTINO_NIF'    => '',
+                'TIPO_MOVIMIENTO' => 'A15',
+                'FECHA_OPERACION' => $this->formatDate($productionDate),
+                'TIPO_DOCUMENTO' => self::DOCUMENT_TYPE_MAP['A15'],
+                'PERIODO_FISCAL' => $this->fiscalPeriod($productionDate),
+                'CODIGO_NC' => $ncCode,
+                'DESCRIPCION_PRODUCTO' => $description,
+                'CANTIDAD' => $this->formatQty($w->volume_liters / 100), // L→HL
+                'UNIDAD_MEDIDA' => self::UNIT_HL,
+                'ORIGEN_DESTINO_NIF' => '',
                 'ORIGEN_DESTINO_NOMBRE' => 'Producción propia',
-                'NUM_DOCUMENTO'         => 'WINE-' . $w->id,
-                'REFERENCIA_INTERNA'    => $w->trace_token ?? ('WINE-' . $w->id),
-                'OBSERVACIONES'         => 'Añada ' . $vintage,
+                'NUM_DOCUMENTO' => 'WINE-'.$w->id,
+                'REFERENCIA_INTERNA' => $w->trace_token ?? ('WINE-'.$w->id),
+                'OBSERVACIONES' => 'Añada '.$vintage,
             ];
         }
 
@@ -211,19 +212,19 @@ class SilicieCsvExporter
 
         foreach ($invoices as $inv) {
             $rows[] = [
-                'TIPO_MOVIMIENTO'       => 'A08',
-                'FECHA_OPERACION'       => $this->formatDate($inv->invoice_date),
-                'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP['A08'],
-                'PERIODO_FISCAL'        => $this->fiscalPeriod($inv->invoice_date),
-                'CODIGO_NC'             => self::NC_CODES['bulk_wine'],
-                'DESCRIPCION_PRODUCTO'  => 'Venta de vino / producto',
-                'CANTIDAD'              => '',   // Requiere items detallados
-                'UNIDAD_MEDIDA'         => self::UNIT_HL,
-                'ORIGEN_DESTINO_NIF'    => '',
+                'TIPO_MOVIMIENTO' => 'A08',
+                'FECHA_OPERACION' => $this->formatDate($inv->invoice_date),
+                'TIPO_DOCUMENTO' => self::DOCUMENT_TYPE_MAP['A08'],
+                'PERIODO_FISCAL' => $this->fiscalPeriod($inv->invoice_date),
+                'CODIGO_NC' => self::NC_CODES['bulk_wine'],
+                'DESCRIPCION_PRODUCTO' => 'Venta de vino / producto',
+                'CANTIDAD' => '',   // Requiere items detallados
+                'UNIDAD_MEDIDA' => self::UNIT_HL,
+                'ORIGEN_DESTINO_NIF' => '',
                 'ORIGEN_DESTINO_NOMBRE' => $inv->client_name ?? '',
-                'NUM_DOCUMENTO'         => $inv->invoice_number ?? ('FAC-' . $inv->id),
-                'REFERENCIA_INTERNA'    => 'INV-' . $inv->id,
-                'OBSERVACIONES'         => 'Factura ' . ($inv->invoice_number ?? $inv->id),
+                'NUM_DOCUMENTO' => $inv->invoice_number ?? ('FAC-'.$inv->id),
+                'REFERENCIA_INTERNA' => 'INV-'.$inv->id,
+                'OBSERVACIONES' => 'Factura '.($inv->invoice_number ?? $inv->id),
             ];
         }
 
@@ -242,19 +243,19 @@ class SilicieCsvExporter
                 : 'A29';
 
             $rows[] = [
-                'TIPO_MOVIMIENTO'       => $type,
-                'FECHA_OPERACION'       => $this->formatDate($l->loss_date),
-                'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP[$type],
-                'PERIODO_FISCAL'        => $this->fiscalPeriod($l->loss_date),
-                'CODIGO_NC'             => $this->ncCodeForWineType($l->wine_type),
-                'DESCRIPCION_PRODUCTO'  => 'Pérdida - ' . $l->wine_name,
-                'CANTIDAD'              => $this->formatQty($l->quantity / 100),
-                'UNIDAD_MEDIDA'         => self::UNIT_HL,
-                'ORIGEN_DESTINO_NIF'    => '',
+                'TIPO_MOVIMIENTO' => $type,
+                'FECHA_OPERACION' => $this->formatDate($l->loss_date),
+                'TIPO_DOCUMENTO' => self::DOCUMENT_TYPE_MAP[$type],
+                'PERIODO_FISCAL' => $this->fiscalPeriod($l->loss_date),
+                'CODIGO_NC' => $this->ncCodeForWineType($l->wine_type),
+                'DESCRIPCION_PRODUCTO' => 'Pérdida - '.$l->wine_name,
+                'CANTIDAD' => $this->formatQty($l->quantity / 100),
+                'UNIDAD_MEDIDA' => self::UNIT_HL,
+                'ORIGEN_DESTINO_NIF' => '',
                 'ORIGEN_DESTINO_NOMBRE' => '',
-                'NUM_DOCUMENTO'         => $l->regulatory_reference ?? ('LOSS-' . $l->id),
-                'REFERENCIA_INTERNA'    => 'LOSS-' . $l->id,
-                'OBSERVACIONES'         => 'Tipo: ' . $l->loss_type,
+                'NUM_DOCUMENTO' => $l->regulatory_reference ?? ('LOSS-'.$l->id),
+                'REFERENCIA_INTERNA' => 'LOSS-'.$l->id,
+                'OBSERVACIONES' => 'Tipo: '.$l->loss_type,
             ];
         }
 
@@ -268,22 +269,22 @@ class SilicieCsvExporter
 
         foreach ($subproducts as $s) {
             $ncCode = self::NC_CODES[$s->type] ?? self::NC_CODES['pomace'];
-            $type   = $s->destination === 'distillery' ? 'A28' : 'A08';
+            $type = $s->destination === 'distillery' ? 'A28' : 'A08';
 
             $rows[] = [
-                'TIPO_MOVIMIENTO'       => $type,
-                'FECHA_OPERACION'       => $this->formatDate($s->subproduct_date),
-                'TIPO_DOCUMENTO'        => self::DOCUMENT_TYPE_MAP[$type] ?? 'OTR',
-                'PERIODO_FISCAL'        => $this->fiscalPeriod($s->subproduct_date),
-                'CODIGO_NC'             => $ncCode,
-                'DESCRIPCION_PRODUCTO'  => 'Subproducto - ' . $s->type,
-                'CANTIDAD'              => $this->formatQty($s->quantity / 100),
-                'UNIDAD_MEDIDA'         => self::UNIT_KG,
-                'ORIGEN_DESTINO_NIF'    => '',
+                'TIPO_MOVIMIENTO' => $type,
+                'FECHA_OPERACION' => $this->formatDate($s->subproduct_date),
+                'TIPO_DOCUMENTO' => self::DOCUMENT_TYPE_MAP[$type] ?? 'OTR',
+                'PERIODO_FISCAL' => $this->fiscalPeriod($s->subproduct_date),
+                'CODIGO_NC' => $ncCode,
+                'DESCRIPCION_PRODUCTO' => 'Subproducto - '.$s->type,
+                'CANTIDAD' => $this->formatQty($s->quantity / 100),
+                'UNIDAD_MEDIDA' => self::UNIT_KG,
+                'ORIGEN_DESTINO_NIF' => '',
                 'ORIGEN_DESTINO_NOMBRE' => $s->destination_name ?? $s->destination,
-                'NUM_DOCUMENTO'         => $s->lot_number ?? ('SUB-' . $s->id),
-                'REFERENCIA_INTERNA'    => 'SUB-' . $s->id,
-                'OBSERVACIONES'         => 'Destino: ' . $s->destination,
+                'NUM_DOCUMENTO' => $s->lot_number ?? ('SUB-'.$s->id),
+                'REFERENCIA_INTERNA' => 'SUB-'.$s->id,
+                'OBSERVACIONES' => 'Destino: '.$s->destination,
             ];
         }
 
@@ -299,23 +300,23 @@ class SilicieCsvExporter
     private function ncCodeForWineType(string $type): string
     {
         return match ($type) {
-            'sparkling'             => self::NC_CODES['sparkling'],
-            'fortified', 'sweet'    => self::NC_CODES['fortified'],
-            default                 => self::NC_CODES['bulk_wine'],
+            'sparkling' => self::NC_CODES['sparkling'],
+            'fortified', 'sweet' => self::NC_CODES['fortified'],
+            default => self::NC_CODES['bulk_wine'],
         };
     }
 
     private function wineDescription(string $type): string
     {
         return match ($type) {
-            'red'        => 'Vino tinto tranquilo',
-            'white'      => 'Vino blanco tranquilo',
-            'rose'       => 'Vino rosado tranquilo',
-            'sparkling'  => 'Vino espumoso',
-            'fortified'  => 'Vino licoroso',
-            'sweet'      => 'Vino dulce',
+            'red' => 'Vino tinto tranquilo',
+            'white' => 'Vino blanco tranquilo',
+            'rose' => 'Vino rosado tranquilo',
+            'sparkling' => 'Vino espumoso',
+            'fortified' => 'Vino licoroso',
+            'sweet' => 'Vino dulce',
             'semi_sweet' => 'Vino semidulce',
-            default      => 'Vino (otro)',
+            default => 'Vino (otro)',
         };
     }
 
@@ -367,7 +368,7 @@ class SilicieCsvExporter
         }
 
         // BOM UTF-8 para compatibilidad con Excel/software español
-        return "\xEF\xBB\xBF" . implode("\r\n", $lines);
+        return "\xEF\xBB\xBF".implode("\r\n", $lines);
     }
 
     private function cleanValue(string $value): string
@@ -376,8 +377,9 @@ class SilicieCsvExporter
         $value = str_replace(["\r\n", "\n", "\r"], ' ', $value);
         // Si contiene ; o " → envolver en comillas dobles
         if (str_contains($value, ';') || str_contains($value, '"') || str_contains($value, "\n")) {
-            $value = '"' . str_replace('"', '""', $value) . '"';
+            $value = '"'.str_replace('"', '""', $value).'"';
         }
+
         return $value;
     }
 }

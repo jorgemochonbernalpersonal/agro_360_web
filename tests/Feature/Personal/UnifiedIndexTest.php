@@ -3,9 +3,9 @@
 namespace Tests\Feature\Personal;
 
 use App\Livewire\Viticulturist\Personal\UnifiedIndex;
-use App\Models\User;
 use App\Models\Crew;
 use App\Models\CrewMember;
+use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -23,15 +23,15 @@ class UnifiedIndexTest extends TestCase
     public function test_viticulturist_can_view_unified_index(): void
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
-            'is_beta_user'      => true,
+            'is_beta_user' => true,
         ]);
 
         $this->actingAs($viticulturist);
 
         $response = $this->get(route('viticulturist.personal.index'));
-        
+
         $response->assertStatus(200);
         $response->assertSeeLivewire('viticulturist.personal.unified-index');
     }
@@ -473,7 +473,6 @@ class UnifiedIndexTest extends TestCase
         $component->assertDispatched('toast');
     }
 
-
     public function test_delete_viticulturist_without_relations_works(): void
     {
         $viticulturist = User::factory()->create([
@@ -803,7 +802,7 @@ class UnifiedIndexTest extends TestCase
         ]);
 
         $campaign = \App\Models\Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         // Crear una plantación activa para la parcela
         $grapeVariety = \App\Models\GrapeVariety::firstOrCreate(
             ['code' => 'TEMP'],
@@ -842,4 +841,3 @@ class UnifiedIndexTest extends TestCase
         $component->assertDispatched('toast', type: 'error');
     }
 }
-

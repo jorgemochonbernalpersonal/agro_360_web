@@ -9,27 +9,17 @@ class SanitaryRegistration extends Model
 {
     const REGISTRATION_TYPES = [
         'rgseaa' => 'RGSEAA (Alimentario)',
-        'resa'   => 'RESA (Actividad Alimentaria)',
-        'rpo'    => 'RPO (Operador)',
-        'other'  => 'Otro',
+        'resa' => 'RESA (Actividad Alimentaria)',
+        'rpo' => 'RPO (Operador)',
+        'other' => 'Otro',
     ];
 
-    public static function registrationTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::REGISTRATION_TYPES);
-    }
-
     const STATUSES = [
-        'active'    => 'Activo',
-        'expired'   => 'Caducado',
+        'active' => 'Activo',
+        'expired' => 'Caducado',
         'suspended' => 'Suspendido',
         'cancelled' => 'Cancelado',
     ];
-
-    public static function statusOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::STATUSES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -45,8 +35,18 @@ class SanitaryRegistration extends Model
 
     protected $casts = [
         'registration_date' => 'date',
-        'renewal_date'      => 'date',
+        'renewal_date' => 'date',
     ];
+
+    public static function registrationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::REGISTRATION_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
 
     public function user(): BelongsTo
     {

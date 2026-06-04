@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Campaign;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,19 +14,19 @@ class CampaignPolicyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Crear usuarios de prueba
         $this->viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $this->otherViticulturist = User::factory()->create(['role' => 'viticulturist']);
         $this->winery = User::factory()->create(['role' => 'winery']);
         $this->admin = User::factory()->create(['role' => 'admin']);
-        
+
         // Crear campañas
         $this->campaign = Campaign::factory()->create([
             'viticulturist_id' => $this->viticulturist->id,
             'year' => now()->year,
         ]);
-        
+
         $this->otherCampaign = Campaign::factory()->create([
             'viticulturist_id' => $this->otherViticulturist->id,
             'year' => now()->year,
@@ -45,7 +45,7 @@ class CampaignPolicyTest extends TestCase
         $this->assertFalse(
             $this->winery->can('viewAny', Campaign::class)
         );
-        
+
         $this->assertFalse(
             $this->admin->can('viewAny', Campaign::class)
         );
@@ -77,7 +77,7 @@ class CampaignPolicyTest extends TestCase
         $this->assertFalse(
             $this->winery->can('create', Campaign::class)
         );
-        
+
         $this->assertFalse(
             $this->admin->can('create', Campaign::class)
         );

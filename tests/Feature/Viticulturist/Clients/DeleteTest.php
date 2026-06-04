@@ -17,32 +17,12 @@ class DeleteTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function makeViticulturist(): User
-    {
-        return User::factory()->create([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ]);
-    }
-
-    private function makeClient(int $userId): Client
-    {
-        return Client::create([
-            'user_id'      => $userId,
-            'client_type'  => 'individual',
-            'first_name'   => 'Test',
-            'last_name'    => 'Cliente',
-            'email'        => 'test@cliente.com',
-            'active'       => true,
-        ]);
-    }
-
     // ── happy path ────────────────────────────────────────────────────────────
 
     public function test_can_delete_client_without_invoices(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $client        = $this->makeClient($viticulturist->id);
+        $client = $this->makeClient($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -57,19 +37,19 @@ class DeleteTest extends TestCase
     public function test_cannot_delete_client_with_invoices(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $client        = $this->makeClient($viticulturist->id);
+        $client = $this->makeClient($viticulturist->id);
 
         // Create a minimal invoice linked to this client
         Invoice::create([
-            'user_id'        => $viticulturist->id,
-            'client_id'      => $client->id,
-            'status'         => 'draft',
+            'user_id' => $viticulturist->id,
+            'client_id' => $client->id,
+            'status' => 'draft',
             'payment_status' => 'unpaid',
-            'delivery_status'=> 'pending',
-            'subtotal'       => 0,
-            'tax_base'       => 0,
-            'tax_amount'     => 0,
-            'total_amount'   => 0,
+            'delivery_status' => 'pending',
+            'subtotal' => 0,
+            'tax_base' => 0,
+            'tax_amount' => 0,
+            'total_amount' => 0,
         ]);
 
         $this->actingAs($viticulturist);
@@ -85,8 +65,8 @@ class DeleteTest extends TestCase
     public function test_cannot_delete_another_users_client(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeViticulturist();
-        $client        = $this->makeClient($other->id);
+        $other = $this->makeViticulturist();
+        $client = $this->makeClient($other->id);
 
         $this->actingAs($viticulturist);
 
@@ -94,5 +74,25 @@ class DeleteTest extends TestCase
 
         Livewire::test(Index::class)
             ->call('delete', $client->id);
+    }
+
+    private function makeViticulturist(): User
+    {
+        return User::factory()->create([
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
+        ]);
+    }
+
+    private function makeClient(int $userId): Client
+    {
+        return Client::create([
+            'user_id' => $userId,
+            'client_type' => 'individual',
+            'first_name' => 'Test',
+            'last_name' => 'Cliente',
+            'email' => 'test@cliente.com',
+            'active' => true,
+        ]);
     }
 }

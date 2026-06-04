@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\GrapeVariety;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Models\GrapeVariety;
-use App\Models\Campaign;
-use App\Models\AgriculturalActivity;
+use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
 use Database\Seeders\MunicipalitySeeder;
 use Database\Seeders\ProvinceSeeder;
@@ -33,11 +33,11 @@ class AgriculturalActivityPolicyTest extends TestCase
         $this->otherViticulturist = User::factory()->create(['role' => 'viticulturist']);
         $this->winery = User::factory()->create(['role' => 'winery']);
         $this->admin = User::factory()->create(['role' => 'admin']);
-        
+
         // Crear parcelas
         $this->plot = Plot::factory()->create(['viticulturist_id' => $this->viticulturist->id]);
         $this->otherPlot = Plot::factory()->create(['viticulturist_id' => $this->otherViticulturist->id]);
-        
+
         // Crear plantaciones activas para las parcelas
         $grapeVariety = GrapeVariety::firstOrCreate(
             ['code' => 'TEMP'],
@@ -50,13 +50,13 @@ class AgriculturalActivityPolicyTest extends TestCase
             'planting_year' => now()->year - 5,
             'status' => 'active',
         ]);
-        
+
         // Crear campaña
         $this->campaign = Campaign::factory()->create([
             'viticulturist_id' => $this->viticulturist->id,
             'year' => now()->year,
         ]);
-        
+
         // Crear actividad
         $this->activity = AgriculturalActivity::factory()->create([
             'viticulturist_id' => $this->viticulturist->id,
@@ -78,7 +78,7 @@ class AgriculturalActivityPolicyTest extends TestCase
         $this->assertFalse(
             $this->winery->can('viewAny', AgriculturalActivity::class)
         );
-        
+
         $this->assertFalse(
             $this->admin->can('viewAny', AgriculturalActivity::class)
         );
@@ -124,7 +124,7 @@ class AgriculturalActivityPolicyTest extends TestCase
         $this->assertFalse(
             $this->winery->can('create', AgriculturalActivity::class)
         );
-        
+
         $this->assertFalse(
             $this->admin->can('create', AgriculturalActivity::class)
         );

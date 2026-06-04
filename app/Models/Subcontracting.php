@@ -10,6 +10,18 @@ class Subcontracting extends Model
 {
     use HasFactory;
 
+    public const SERVICE_TYPES = [
+        'harvesting' => 'Vendimia',
+        'pruning' => 'Poda',
+        'treatment' => 'Tratamientos fitosanitarios',
+        'fertilization' => 'Abonado / Fertilización',
+        'irrigation' => 'Riego',
+        'soil_work' => 'Laboreo del suelo',
+        'transport' => 'Transporte',
+        'analysis' => 'Análisis / Asesoría',
+        'other' => 'Otros servicios',
+    ];
+
     protected $fillable = [
         'viticulturist_id',
         'plot_id',
@@ -28,22 +40,10 @@ class Subcontracting extends Model
     ];
 
     protected $casts = [
-        'service_date'     => 'date',
+        'service_date' => 'date',
         'service_end_date' => 'date',
-        'amount'           => 'decimal:2',
-        'invoiced'         => 'boolean',
-    ];
-
-    public const SERVICE_TYPES = [
-        'harvesting'    => 'Vendimia',
-        'pruning'       => 'Poda',
-        'treatment'     => 'Tratamientos fitosanitarios',
-        'fertilization' => 'Abonado / Fertilización',
-        'irrigation'    => 'Riego',
-        'soil_work'     => 'Laboreo del suelo',
-        'transport'     => 'Transporte',
-        'analysis'      => 'Análisis / Asesoría',
-        'other'         => 'Otros servicios',
+        'amount' => 'decimal:2',
+        'invoiced' => 'boolean',
     ];
 
     public static function serviceTypeOptions(): array

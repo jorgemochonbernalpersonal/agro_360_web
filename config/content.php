@@ -52,7 +52,7 @@ return [
         'content.viticultores-rias-baixas' => 'software-viticultores-rias-baixas',
         'content.viticultores-toro' => 'software-viticultores-toro',
         'content.viticultores-jumilla' => 'software-viticultores-jumilla',
-        
+
         // Blog posts
         'blog.pac-2025' => 'novedades-pac-2025',
         'blog.errores-cuaderno' => 'errores-cuaderno-campo',

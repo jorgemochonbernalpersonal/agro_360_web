@@ -29,16 +29,16 @@ class WineAdditiveController extends Controller
             $query->where('wine_id', $request->integer('wine_id'));
         }
 
-        $perPage   = $this->resolvePerPage($request, 20, 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $additives = $query->paginate($perPage);
 
         return response()->json([
             'data' => $additives->map(fn ($a) => $this->format($a)),
             'meta' => [
-                'total'        => $additives->total(),
-                'per_page'     => $additives->perPage(),
+                'total' => $additives->total(),
+                'per_page' => $additives->perPage(),
                 'current_page' => $additives->currentPage(),
-                'last_page'    => $additives->lastPage(),
+                'last_page' => $additives->lastPage(),
             ],
         ]);
     }
@@ -62,7 +62,7 @@ class WineAdditiveController extends Controller
 
         Container::where('user_id', $user->id)->findOrFail($containerId);
 
-        $perPage   = $this->resolvePerPage($request, 20, 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $additives = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
             ->whereHas('wine', function ($q) use ($containerId) {
                 $q->whereHas('containers', fn ($cq) => $cq->where('containers.id', $containerId));
@@ -74,10 +74,10 @@ class WineAdditiveController extends Controller
         return response()->json([
             'data' => $additives->map(fn ($a) => $this->format($a)),
             'meta' => [
-                'total'        => $additives->total(),
-                'per_page'     => $additives->perPage(),
+                'total' => $additives->total(),
+                'per_page' => $additives->perPage(),
                 'current_page' => $additives->currentPage(),
-                'last_page'    => $additives->lastPage(),
+                'last_page' => $additives->lastPage(),
             ],
         ]);
     }
@@ -88,15 +88,15 @@ class WineAdditiveController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'                => 'required|integer|exists:wines,id',
+            'wine_id' => 'required|integer|exists:wines,id',
             'wine_process_detail_id' => 'nullable|integer|exists:wine_process_details,id',
-            'winery_supply_id'       => 'nullable|integer|exists:winery_supplies,id',
-            'oenologist_id'          => 'nullable|integer|exists:oenologists,id',
+            'winery_supply_id' => 'nullable|integer|exists:winery_supplies,id',
+            'oenologist_id' => 'nullable|integer|exists:oenologists,id',
             'unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-            'additive_name'          => 'required|string|max:255',
-            'quantity'               => 'required|numeric|min:0',
-            'application_date'       => 'required|date',
-            'notes'                  => 'nullable|string|max:1000',
+            'additive_name' => 'required|string|max:255',
+            'quantity' => 'required|numeric|min:0',
+            'application_date' => 'required|date',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
@@ -109,26 +109,26 @@ class WineAdditiveController extends Controller
         $additive->load(['wine', 'supply', 'oenologist', 'unitOfMeasurement']);
 
         return response()->json([
-            'data'    => $this->format($additive),
+            'data' => $this->format($additive),
             'message' => __('Aditivo registrado correctamente.'),
         ], 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
-        $user     = $request->user();
+        $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
         $additive = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))->findOrFail($id);
 
         $validated = $request->validate([
-            'winery_supply_id'       => 'sometimes|nullable|integer|exists:winery_supplies,id',
-            'oenologist_id'          => 'sometimes|nullable|integer|exists:oenologists,id',
+            'winery_supply_id' => 'sometimes|nullable|integer|exists:winery_supplies,id',
+            'oenologist_id' => 'sometimes|nullable|integer|exists:oenologists,id',
             'unit_of_measurement_id' => 'sometimes|nullable|integer|exists:unit_of_measurements,id',
-            'additive_name'          => 'sometimes|string|max:255',
-            'quantity'               => 'sometimes|numeric|min:0',
-            'application_date'       => 'sometimes|date',
-            'notes'                  => 'sometimes|nullable|string|max:1000',
+            'additive_name' => 'sometimes|string|max:255',
+            'quantity' => 'sometimes|numeric|min:0',
+            'application_date' => 'sometimes|date',
+            'notes' => 'sometimes|nullable|string|max:1000',
         ]);
 
         $additive->update($validated);
@@ -139,7 +139,7 @@ class WineAdditiveController extends Controller
 
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $user     = $request->user();
+        $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
         $additive = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))->findOrFail($id);
@@ -151,17 +151,17 @@ class WineAdditiveController extends Controller
     private function format(WineAdditive $a): array
     {
         return [
-            'id'               => $a->id,
-            'wine_id'          => $a->wine_id,
-            'wine_name'        => $a->wine?->name,
-            'additive_name'    => $a->additive_name,
-            'supply'           => $a->supply ? ['id' => $a->supply->id, 'name' => $a->supply->name] : null,
-            'oenologist'       => $a->oenologist ? ['id' => $a->oenologist->id, 'name' => $a->oenologist->full_name] : null,
-            'quantity'         => $a->quantity !== null ? (float) $a->quantity : null,
-            'unit'             => $a->unitOfMeasurement ? ['id' => $a->unitOfMeasurement->id, 'symbol' => $a->unitOfMeasurement->symbol ?? $a->unitOfMeasurement->name] : null,
+            'id' => $a->id,
+            'wine_id' => $a->wine_id,
+            'wine_name' => $a->wine?->name,
+            'additive_name' => $a->additive_name,
+            'supply' => $a->supply ? ['id' => $a->supply->id, 'name' => $a->supply->name] : null,
+            'oenologist' => $a->oenologist ? ['id' => $a->oenologist->id, 'name' => $a->oenologist->full_name] : null,
+            'quantity' => $a->quantity !== null ? (float) $a->quantity : null,
+            'unit' => $a->unitOfMeasurement ? ['id' => $a->unitOfMeasurement->id, 'symbol' => $a->unitOfMeasurement->symbol ?? $a->unitOfMeasurement->name] : null,
             'application_date' => $a->application_date?->toDateString(),
-            'notes'            => $a->notes,
-            'created_at'       => $a->created_at->toIso8601String(),
+            'notes' => $a->notes,
+            'created_at' => $a->created_at->toIso8601String(),
         ];
     }
 }

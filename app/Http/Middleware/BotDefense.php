@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\SecurityLogger;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 class BotDefense
 {
@@ -42,7 +42,7 @@ class BotDefense
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -61,10 +61,10 @@ class BotDefense
                 SecurityLogger::logAccessDenied(
                     auth()->id() ?? 0,
                     $request->fullUrl(),
-                    'bot_detection: matched_path=' . $maliciousPath . ' ip=' . $request->ip()
+                    'bot_detection: matched_path='.$maliciousPath.' ip='.$request->ip()
                 );
 
-                Log::warning("Bot detection: Suspicious request to '{$path}' from IP: " . $request->ip());
+                Log::warning("Bot detection: Suspicious request to '{$path}' from IP: ".$request->ip());
 
                 // Return a 404 instead of 403 to avoid confirming the path exists (security by obscurity)
                 // or just slow down the bot.

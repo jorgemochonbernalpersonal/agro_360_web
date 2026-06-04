@@ -3,8 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\PlotLocked;
-use Illuminate\Support\Facades\Log;
 use App\Services\SecurityLogger;
+use Illuminate\Support\Facades\Log;
 
 class LogPlotLocking
 {

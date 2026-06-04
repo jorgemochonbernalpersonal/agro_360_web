@@ -2,16 +2,16 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Irrigation;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\Irrigation;
 use App\Models\Plot;
 use App\Models\User;
-use App\Models\Campaign;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
 
 class IrrigationTest extends TestCase
 {
@@ -181,10 +181,10 @@ class IrrigationTest extends TestCase
         ]);
 
         $irrigation = Irrigation::create([
-            'activity_id'      => $activity->id,
-            'water_source'     => 'Pozo legalizado',
+            'activity_id' => $activity->id,
+            'water_source' => 'Pozo legalizado',
             'water_concession' => 'EXP-2024/001',
-            'flow_rate'        => 2500.50,
+            'flow_rate' => 2500.50,
         ]);
 
         $this->assertEquals('Pozo legalizado', $irrigation->water_source);
@@ -210,7 +210,7 @@ class IrrigationTest extends TestCase
 
         $irrigation = Irrigation::create([
             'activity_id' => $activity->id,
-            'flow_rate'   => 1800,
+            'flow_rate' => 1800,
         ]);
 
         $this->assertIsString($irrigation->flow_rate);
@@ -232,10 +232,10 @@ class IrrigationTest extends TestCase
         ]);
 
         $irrigation = Irrigation::create([
-            'activity_id'      => $activity->id,
-            'water_source'     => null,
+            'activity_id' => $activity->id,
+            'water_source' => null,
             'water_concession' => null,
-            'flow_rate'        => null,
+            'flow_rate' => null,
         ]);
 
         $this->assertNull($irrigation->water_source);
@@ -243,4 +243,3 @@ class IrrigationTest extends TestCase
         $this->assertNull($irrigation->flow_rate);
     }
 }
-

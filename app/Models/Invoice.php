@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\SifRecord;
 
 class Invoice extends Model
 {
@@ -236,6 +235,8 @@ class Invoice extends Model
 
     /**
      * Scope para facturas de un usuario
+     *
+     * @param mixed $query
      */
     public function scopeForUser($query, int $userId)
     {
@@ -244,6 +245,8 @@ class Invoice extends Model
 
     /**
      * Scope para facturas pagadas
+     *
+     * @param mixed $query
      */
     public function scopePaid($query)
     {
@@ -252,6 +255,8 @@ class Invoice extends Model
 
     /**
      * Scope para facturas pendientes
+     *
+     * @param mixed $query
      */
     public function scopeUnpaid($query)
     {
@@ -260,6 +265,8 @@ class Invoice extends Model
 
     /**
      * Scope para facturas vencidas
+     *
+     * @param mixed $query
      */
     public function scopeOverdue($query)
     {

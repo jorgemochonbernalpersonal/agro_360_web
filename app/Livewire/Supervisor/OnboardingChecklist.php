@@ -14,7 +14,9 @@ class OnboardingChecklist extends Component
     use WithToastNotifications;
 
     public bool $show = true;
+
     public array $steps = [];
+
     public int $progressPercentage = 0;
 
     public function mount(): void
@@ -35,7 +37,7 @@ class OnboardingChecklist extends Component
 
         $this->show = $completedSteps < count(OnboardingProgress::SUPERVISOR_STEPS);
 
-        if (!$this->show) {
+        if (! $this->show) {
             return;
         }
 
@@ -43,13 +45,13 @@ class OnboardingChecklist extends Component
             $progress = OnboardingProgress::getOrCreate($userId, $step);
 
             return [
-                'key'         => $step,
-                'title'       => $this->getStepTitle($step),
+                'key' => $step,
+                'title' => $this->getStepTitle($step),
                 'description' => $this->getStepDescription($step),
-                'icon'        => $this->getStepIcon($step),
-                'route'       => $this->getStepRoute($step),
-                'completed'   => $progress->isCompleted(),
-                'skipped'     => $progress->skipped,
+                'icon' => $this->getStepIcon($step),
+                'route' => $this->getStepRoute($step),
+                'completed' => $progress->isCompleted(),
+                'skipped' => $progress->skipped,
             ];
         })->toArray();
 
@@ -64,7 +66,7 @@ class OnboardingChecklist extends Component
         $userId = auth()->id();
         foreach (OnboardingProgress::SUPERVISOR_STEPS as $step) {
             $progress = OnboardingProgress::getOrCreate($userId, $step);
-            if (!$progress->isCompleted()) {
+            if (! $progress->isCompleted()) {
                 $progress->markAsSkipped();
             }
         }
@@ -81,25 +83,27 @@ class OnboardingChecklist extends Component
         $this->toastSuccess(__('Tour reiniciado.'));
     }
 
+    public function render()
+    {
+        return view('livewire.supervisor.onboarding-checklist');
+    }
+
     private function autoCompleteExistingData(int $userId): void
     {
         $checks = [
-            OnboardingProgress::STEP_SUPERVISOR_PROFILE => fn () =>
-                InvoicingSetting::where('user_id', $userId)
-                    ->whereNotNull('issuer_legal_name')
-                    ->where('issuer_legal_name', '!=', '')
-                    ->exists(),
+            OnboardingProgress::STEP_SUPERVISOR_PROFILE => fn () => InvoicingSetting::where('user_id', $userId)
+                ->whereNotNull('issuer_legal_name')
+                ->where('issuer_legal_name', '!=', '')
+                ->exists(),
 
-            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY => fn () =>
-                SupervisorWinery::where('supervisor_id', $userId)->exists(),
+            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY => fn () => SupervisorWinery::where('supervisor_id', $userId)->exists(),
 
-            OnboardingProgress::STEP_SUPERVISOR_ADD_VITICULTURIST => fn () =>
-                SupervisorViticulturist::where('supervisor_id', $userId)->exists(),
+            OnboardingProgress::STEP_SUPERVISOR_ADD_VITICULTURIST => fn () => SupervisorViticulturist::where('supervisor_id', $userId)->exists(),
         ];
 
         foreach ($checks as $step => $hasData) {
             $progress = OnboardingProgress::getOrCreate($userId, $step);
-            if (!$progress->isCompleted() && $hasData()) {
+            if (! $progress->isCompleted() && $hasData()) {
                 $progress->markAsCompleted();
             }
         }
@@ -108,8 +112,8 @@ class OnboardingChecklist extends Component
     private function getStepTitle(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_SUPERVISOR_PROFILE          => __('Configura el perfil de la DO'),
-            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY       => __('Vincula tu primera bodega'),
+            OnboardingProgress::STEP_SUPERVISOR_PROFILE => __('Configura el perfil de la DO'),
+            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY => __('Vincula tu primera bodega'),
             OnboardingProgress::STEP_SUPERVISOR_ADD_VITICULTURIST => __('Añade tu primer viticultor'),
             default => __('Paso desconocido'),
         };
@@ -118,8 +122,8 @@ class OnboardingChecklist extends Component
     private function getStepDescription(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_SUPERVISOR_PROFILE          => __('Razón social, NIF y datos de la denominación para certificados y documentos oficiales'),
-            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY       => __('Las bodegas adscritas podrán declarar bajo el amparo de tu DO'),
+            OnboardingProgress::STEP_SUPERVISOR_PROFILE => __('Razón social, NIF y datos de la denominación para certificados y documentos oficiales'),
+            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY => __('Las bodegas adscritas podrán declarar bajo el amparo de tu DO'),
             OnboardingProgress::STEP_SUPERVISOR_ADD_VITICULTURIST => '¡Ya puedes supervisar el cuaderno de campo de tus viticultores!',
             default => '',
         };
@@ -128,8 +132,8 @@ class OnboardingChecklist extends Component
     private function getStepIcon(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_SUPERVISOR_PROFILE          => '🏛️',
-            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY       => '🏭',
+            OnboardingProgress::STEP_SUPERVISOR_PROFILE => '🏛️',
+            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY => '🏭',
             OnboardingProgress::STEP_SUPERVISOR_ADD_VITICULTURIST => '👤',
             default => '✓',
         };
@@ -138,15 +142,10 @@ class OnboardingChecklist extends Component
     private function getStepRoute(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_SUPERVISOR_PROFILE          => route('supervisor.settings.index'),
-            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY       => route('supervisor.oversight.wineries.index'),
+            OnboardingProgress::STEP_SUPERVISOR_PROFILE => route('supervisor.settings.index'),
+            OnboardingProgress::STEP_SUPERVISOR_ADD_WINERY => route('supervisor.oversight.wineries.index'),
             OnboardingProgress::STEP_SUPERVISOR_ADD_VITICULTURIST => route('supervisor.growers.index'),
             default => route('supervisor.dashboard'),
         };
-    }
-
-    public function render()
-    {
-        return view('livewire.supervisor.onboarding-checklist');
     }
 }

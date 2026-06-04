@@ -21,18 +21,25 @@ class Show extends Component
 {
     public User $winery;
 
-    public bool   $showAssignModal = false;
-    public string $poolSearch      = '';
+    public bool $showAssignModal = false;
+
+    public string $poolSearch = '';
 
     // ── Cuaderno DO ───────────────────────────────────────────────────────────
-    public bool   $showNoteForm  = false;
-    public string $noteType      = 'note';
-    public string $noteDate      = '';
-    public string $noteContent   = '';
+    public bool $showNoteForm = false;
 
-    public ?int   $editNoteId      = null;
-    public string $editNoteType    = 'note';
-    public string $editNoteDate    = '';
+    public string $noteType = 'note';
+
+    public string $noteDate = '';
+
+    public string $noteContent = '';
+
+    public ?int $editNoteId = null;
+
+    public string $editNoteType = 'note';
+
+    public string $editNoteDate = '';
+
     public string $editNoteContent = '';
 
     public function updatingPoolSearch(): void
@@ -42,14 +49,14 @@ class Show extends Component
 
     public function openAssignModal(): void
     {
-        $this->poolSearch      = '';
+        $this->poolSearch = '';
         $this->showAssignModal = true;
     }
 
     public function closeAssignModal(): void
     {
         $this->showAssignModal = false;
-        $this->poolSearch      = '';
+        $this->poolSearch = '';
     }
 
     public function assignViticulturist(int $viticulturistId): void
@@ -62,13 +69,13 @@ class Show extends Component
         [$relation, $created] = [
             WineryViticulturist::firstOrCreate(
                 [
-                    'winery_id'        => $this->winery->id,
+                    'winery_id' => $this->winery->id,
                     'viticulturist_id' => $viticulturistId,
                 ],
                 [
-                    'source'        => WineryViticulturist::SOURCE_SUPERVISOR,
+                    'source' => WineryViticulturist::SOURCE_SUPERVISOR,
                     'supervisor_id' => Auth::id(),
-                    'assigned_by'   => Auth::id(),
+                    'assigned_by' => Auth::id(),
                 ]
             ),
             false,
@@ -120,7 +127,7 @@ class Show extends Component
             $this->dispatch('toast', message: __('Módulo «:name» desactivado.', ['name' => $ability->name]), type: 'warning');
         } else {
             UserAbility::create([
-                'user_id'    => $this->winery->id,
+                'user_id' => $this->winery->id,
                 'ability_id' => $abilityId,
                 'granted_by' => Auth::id(),
                 'granted_at' => now(),
@@ -138,16 +145,16 @@ class Show extends Component
             ->where('winery_id', $winery->id)
             ->firstOrFail();
 
-        $this->winery    = $winery;
-        $this->noteDate  = now()->format('Y-m-d');
+        $this->winery = $winery;
+        $this->noteDate = now()->format('Y-m-d');
     }
 
     // ── Cuaderno DO ───────────────────────────────────────────────────────────
 
     public function openNoteForm(): void
     {
-        $this->noteType    = 'note';
-        $this->noteDate    = now()->format('Y-m-d');
+        $this->noteType = 'note';
+        $this->noteDate = now()->format('Y-m-d');
         $this->noteContent = '';
         $this->showNoteForm = true;
         $this->resetValidation();
@@ -162,8 +169,8 @@ class Show extends Component
     public function saveNote(): void
     {
         $this->validate([
-            'noteType'    => 'required|in:' . implode(',', array_keys(SupervisorWineryNote::TYPE_LABELS)),
-            'noteDate'    => 'required|date',
+            'noteType' => 'required|in:'.implode(',', array_keys(SupervisorWineryNote::TYPE_LABELS)),
+            'noteDate' => 'required|date',
             'noteContent' => 'required|string|max:2000',
         ]);
 
@@ -173,10 +180,10 @@ class Show extends Component
 
         SupervisorWineryNote::create([
             'supervisor_id' => Auth::id(),
-            'winery_id'     => $this->winery->id,
-            'type'          => $this->noteType,
-            'note_date'     => $this->noteDate,
-            'content'       => $this->noteContent,
+            'winery_id' => $this->winery->id,
+            'type' => $this->noteType,
+            'note_date' => $this->noteDate,
+            'content' => $this->noteContent,
         ]);
 
         $this->showNoteForm = false;
@@ -189,9 +196,9 @@ class Show extends Component
             ->where('winery_id', $this->winery->id)
             ->findOrFail($noteId);
 
-        $this->editNoteId      = $noteId;
-        $this->editNoteType    = $note->type;
-        $this->editNoteDate    = $note->note_date->format('Y-m-d');
+        $this->editNoteId = $noteId;
+        $this->editNoteType = $note->type;
+        $this->editNoteDate = $note->note_date->format('Y-m-d');
         $this->editNoteContent = $note->content;
         $this->resetValidation();
     }
@@ -205,8 +212,8 @@ class Show extends Component
     public function updateNote(): void
     {
         $this->validate([
-            'editNoteType'    => 'required|in:' . implode(',', array_keys(SupervisorWineryNote::TYPE_LABELS)),
-            'editNoteDate'    => 'required|date',
+            'editNoteType' => 'required|in:'.implode(',', array_keys(SupervisorWineryNote::TYPE_LABELS)),
+            'editNoteDate' => 'required|date',
             'editNoteContent' => 'required|string|max:2000',
         ]);
 
@@ -214,9 +221,9 @@ class Show extends Component
             ->where('winery_id', $this->winery->id)
             ->findOrFail($this->editNoteId)
             ->update([
-                'type'      => $this->editNoteType,
+                'type' => $this->editNoteType,
                 'note_date' => $this->editNoteDate,
-                'content'   => $this->editNoteContent,
+                'content' => $this->editNoteContent,
             ]);
 
         $this->editNoteId = null;
@@ -254,7 +261,7 @@ class Show extends Component
     public function render()
     {
         $supervisorId = Auth::id();
-        $wineryId     = $this->winery->id;
+        $wineryId = $this->winery->id;
 
         // ── Viticultores aportados por este supervisor a esta bodega ──────────
         $viticulturistRelations = WineryViticulturist::where('supervisor_id', $supervisorId)
@@ -344,10 +351,10 @@ class Show extends Component
         )->whereNotIn('id', $assignedViticulturistIds);
 
         if ($this->poolSearch) {
-            $s = '%' . strtolower($this->poolSearch) . '%';
+            $s = '%'.strtolower($this->poolSearch).'%';
             $poolQuery->where(function ($q) use ($s) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$s])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$s]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$s]);
             });
         }
 
@@ -364,7 +371,7 @@ class Show extends Component
             ->count();
 
         // ── Abilities ─────────────────────────────────────────────────────────
-        $allAbilities      = Ability::orderBy('module')->orderBy('name')->get();
+        $allAbilities = Ability::orderBy('module')->orderBy('name')->get();
         $grantedAbilityIds = UserAbility::where('user_id', $wineryId)->pluck('ability_id');
 
         // ── Cuaderno DO ───────────────────────────────────────────────────────
@@ -376,21 +383,21 @@ class Show extends Component
 
         return view('livewire.supervisor.oversight.wineries.show', [
             'viticulturistRelations' => $viticulturistRelations,
-            'plotStatsByVit'         => $plotStatsByVit,
-            'lastActivityByVit'      => $lastActivityByVit,
-            'recentReceptions'       => $recentReceptions,
-            'vintageStats'           => $vintageStats,
-            'varietyBreakdown'       => $varietyBreakdown,
-            'currentVintage'         => $currentVintage,
-            'containerCount'         => $containerCount,
-            'wineCount'              => $wineCount,
-            'poolViticulturists'     => $poolViticulturists,
-            'allAbilities'           => $allAbilities,
-            'grantedAbilityIds'      => $grantedAbilityIds,
-            'wineryNotes'            => $wineryNotes,
-            'noteTypeLabels'         => SupervisorWineryNote::typeLabelOptions(),
-            'noteTypeIcons'          => SupervisorWineryNote::TYPE_ICONS,
-            'noteTypeColors'         => SupervisorWineryNote::TYPE_COLORS,
+            'plotStatsByVit' => $plotStatsByVit,
+            'lastActivityByVit' => $lastActivityByVit,
+            'recentReceptions' => $recentReceptions,
+            'vintageStats' => $vintageStats,
+            'varietyBreakdown' => $varietyBreakdown,
+            'currentVintage' => $currentVintage,
+            'containerCount' => $containerCount,
+            'wineCount' => $wineCount,
+            'poolViticulturists' => $poolViticulturists,
+            'allAbilities' => $allAbilities,
+            'grantedAbilityIds' => $grantedAbilityIds,
+            'wineryNotes' => $wineryNotes,
+            'noteTypeLabels' => SupervisorWineryNote::typeLabelOptions(),
+            'noteTypeIcons' => SupervisorWineryNote::TYPE_ICONS,
+            'noteTypeColors' => SupervisorWineryNote::TYPE_COLORS,
         ]);
     }
 }

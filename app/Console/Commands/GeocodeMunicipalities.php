@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Http;
 
 class GeocodeMunicipalities extends Command
 {
-    protected $signature   = 'municipalities:geocode {--force : Regeocoda incluso los que ya tienen coordenadas}';
+    protected $signature = 'municipalities:geocode {--force : Regeocoda incluso los que ya tienen coordenadas}';
+
     protected $description = 'Rellena lat/lng de municipios usando Nominatim (OpenStreetMap)';
 
     public function handle(): int
@@ -20,13 +21,14 @@ class GeocodeMunicipalities extends Command
 
         if ($total === 0) {
             $this->info('Todos los municipios ya tienen coordenadas.');
+
             return self::SUCCESS;
         }
 
         $this->info("Geocodificando {$total} municipios...");
-        $bar     = $this->output->createProgressBar($total);
+        $bar = $this->output->createProgressBar($total);
         $updated = 0;
-        $failed  = 0;
+        $failed = 0;
 
         $query->chunk(50, function ($municipalities) use ($bar, &$updated, &$failed) {
             foreach ($municipalities as $municipality) {
@@ -56,7 +58,7 @@ class GeocodeMunicipalities extends Command
     private function geocode(Municipality $municipality): ?array
     {
         $http = Http::withHeaders([
-            'User-Agent'      => 'Agro365/1.0 (info@agro365.es)',
+            'User-Agent' => 'Agro365/1.0 (info@agro365.es)',
             'Accept-Language' => 'es',
         ]);
 
@@ -66,15 +68,15 @@ class GeocodeMunicipalities extends Command
 
         // Limpia nombres bilingües: "Ayala/Aiara" → "Ayala", "Araba/Álava" → "Araba"
         $municipalityName = $this->cleanName($municipality->name);
-        $provinceName     = $this->cleanName($municipality->province?->name ?? '');
+        $provinceName = $this->cleanName($municipality->province?->name ?? '');
 
         // Intento 1: municipio + provincia
         $results = $http->get('https://nominatim.openstreetmap.org/search', [
-            'city'         => $municipalityName,
-            'state'        => $provinceName,
-            'country'      => 'Spain',
-            'format'       => 'json',
-            'limit'        => 1,
+            'city' => $municipalityName,
+            'state' => $provinceName,
+            'country' => 'Spain',
+            'format' => 'json',
+            'limit' => 1,
             'addressdetails' => 0,
         ])->json();
 
@@ -82,14 +84,16 @@ class GeocodeMunicipalities extends Command
         if (empty($results)) {
             usleep(1_100_000);
             $results = $http->get('https://nominatim.openstreetmap.org/search', [
-                'q'            => "{$municipalityName}, Spain",
-                'format'       => 'json',
-                'limit'        => 1,
+                'q' => "{$municipalityName}, Spain",
+                'format' => 'json',
+                'limit' => 1,
                 'countrycodes' => 'es',
             ])->json();
         }
 
-        if (empty($results)) return null;
+        if (empty($results)) {
+            return null;
+        }
 
         return [
             'lat' => round((float) $results[0]['lat'], 6),

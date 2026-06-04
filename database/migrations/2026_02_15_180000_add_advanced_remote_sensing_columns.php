@@ -15,7 +15,7 @@ return new class extends Migration
             // LAI (Leaf Area Index)
             $table->decimal('lai', 5, 2)->nullable()->after('evi_mean')
                 ->comment('Leaf Area Index - predicts yield');
-            
+
             // Chlorophyll indicators
             $table->decimal('gndvi', 7, 4)->nullable()->after('lai')
                 ->comment('Green NDVI - chlorophyll content');
@@ -23,7 +23,7 @@ return new class extends Migration
                 ->comment('Normalized Difference Red Edge');
             $table->decimal('chlorophyll_content', 5, 2)->nullable()->after('ndre')
                 ->comment('Relative chlorophyll content (0-100%)');
-            
+
             // Maturity indicators
             $table->decimal('maturity_index', 5, 2)->nullable()->after('chlorophyll_content')
                 ->comment('Maturity index (0-100)');
@@ -31,7 +31,7 @@ return new class extends Migration
                 ->comment('Predicted sugar content (°Brix)');
             $table->integer('days_to_harvest')->nullable()->after('predicted_brix')
                 ->comment('Estimated days to optimal harvest');
-            
+
             // Anomaly detection
             $table->boolean('anomaly_detected')->default(false)->after('days_to_harvest')
                 ->comment('Whether anomaly was detected');
@@ -39,7 +39,7 @@ return new class extends Migration
                 ->comment('Severity: none, low, medium, high, critical');
             $table->string('anomaly_type', 50)->nullable()->after('anomaly_severity')
                 ->comment('Type of anomaly detected');
-            
+
             // Add indexes for performance
             $table->index(['anomaly_detected', 'anomaly_severity'], 'idx_anomalies');
             $table->index('maturity_index', 'idx_maturity');
@@ -56,7 +56,7 @@ return new class extends Migration
             $table->dropIndex('idx_anomalies');
             $table->dropIndex('idx_maturity');
             $table->dropIndex('idx_lai');
-            
+
             $table->dropColumn([
                 'lai',
                 'gndvi',

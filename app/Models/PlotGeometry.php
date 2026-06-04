@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class PlotGeometry extends Model
@@ -71,6 +71,103 @@ class PlotGeometry extends Model
     }
 
     /**
+     * Obtener coordenadas como array
+     */
+    public function getCoordinatesAsArray(): array
+    {
+        if (! $this->id) {
+            return [];
+        }
+
+        // Obtener WKT desde MySQL usando ST_AsText
+        $result = DB::selectOne(
+            'SELECT ST_AsText(coordinates) as wkt FROM plot_geometry WHERE id = ?',
+            [$this->id]
+        );
+
+        if (! $result || ! $result->wkt) {
+            return [];
+        }
+
+        $wkt = $result->wkt;
+
+        // Parsear WKT POLYGON((lng lat, lng lat, ...))
+        preg_match('/POLYGON\(\(([^)]+)\)\)/', $wkt, $matches);
+        if (! isset($matches[1])) {
+            return [];
+        }
+
+        $points = [];
+        $coords = explode(',', $matches[1]);
+
+        foreach ($coords as $coord) {
+            $parts = explode(' ', trim($coord));
+            if (count($parts) >= 2) {
+                $points[] = [
+                    'lng' => (float) $parts[0],
+                    'lat' => (float) $parts[1],
+                ];
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * Obtener centroide como array [lat, lng]
+     */
+    public function getCentroidAsArray(): ?array
+    {
+        if (! $this->id) {
+            return null;
+        }
+
+        $result = DB::selectOne(
+            'SELECT ST_AsText(centroid) as wkt FROM plot_geometry WHERE id = ?',
+            [$this->id]
+        );
+
+        if (! $result || ! $result->wkt) {
+            return null;
+        }
+
+        $wkt = $result->wkt;
+
+        // Parsear WKT POINT(lng lat)
+        preg_match('/POINT\(([^)]+)\)/', $wkt, $matches);
+        if (! isset($matches[1])) {
+            return null;
+        }
+
+        $parts = explode(' ', trim($matches[1]));
+        if (count($parts) >= 2) {
+            return [
+                'lat' => (float) $parts[1],
+                'lng' => (float) $parts[0],
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * Obtener coordenadas WKT directamente
+     */
+    public function getWktCoordinates(): ?string
+    {
+        if (! $this->id) {
+            return null;
+        }
+
+        $result = DB::selectOne(
+            'SELECT ST_AsText(coordinates) as wkt FROM plot_geometry WHERE id = ?',
+            [$this->id]
+        );
+
+        return $result?->wkt;
+    }
+
+    /**
      * Hook que se ejecuta después de guardar el modelo
      * Actualiza las coordenadas usando prepared statements seguros
      */
@@ -105,6 +202,8 @@ class PlotGeometry extends Model
 
     /**
      * Invalidar caché de geometrías de parcelas relacionadas
+     *
+     * @param mixed $geometry
      */
     private static function invalidatePlotGeometryCache($geometry)
     {
@@ -117,102 +216,5 @@ class PlotGeometry extends Model
         foreach ($plotIds as $plotId) {
             \Illuminate\Support\Facades\Cache::forget("plot_geometries_{$plotId}");
         }
-    }
-
-    /**
-     * Obtener coordenadas como array
-     */
-    public function getCoordinatesAsArray(): array
-    {
-        if (!$this->id) {
-            return [];
-        }
-
-        // Obtener WKT desde MySQL usando ST_AsText
-        $result = DB::selectOne(
-            'SELECT ST_AsText(coordinates) as wkt FROM plot_geometry WHERE id = ?',
-            [$this->id]
-        );
-
-        if (!$result || !$result->wkt) {
-            return [];
-        }
-
-        $wkt = $result->wkt;
-
-        // Parsear WKT POLYGON((lng lat, lng lat, ...))
-        preg_match('/POLYGON\(\(([^)]+)\)\)/', $wkt, $matches);
-        if (!isset($matches[1])) {
-            return [];
-        }
-
-        $points = [];
-        $coords = explode(',', $matches[1]);
-
-        foreach ($coords as $coord) {
-            $parts = explode(' ', trim($coord));
-            if (count($parts) >= 2) {
-                $points[] = [
-                    'lng' => (float) $parts[0],
-                    'lat' => (float) $parts[1],
-                ];
-            }
-        }
-
-        return $points;
-    }
-
-    /**
-     * Obtener centroide como array [lat, lng]
-     */
-    public function getCentroidAsArray(): ?array
-    {
-        if (!$this->id) {
-            return null;
-        }
-
-        $result = DB::selectOne(
-            'SELECT ST_AsText(centroid) as wkt FROM plot_geometry WHERE id = ?',
-            [$this->id]
-        );
-
-        if (!$result || !$result->wkt) {
-            return null;
-        }
-
-        $wkt = $result->wkt;
-
-        // Parsear WKT POINT(lng lat)
-        preg_match('/POINT\(([^)]+)\)/', $wkt, $matches);
-        if (!isset($matches[1])) {
-            return null;
-        }
-
-        $parts = explode(' ', trim($matches[1]));
-        if (count($parts) >= 2) {
-            return [
-                'lat' => (float) $parts[1],
-                'lng' => (float) $parts[0],
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * Obtener coordenadas WKT directamente
-     */
-    public function getWktCoordinates(): ?string
-    {
-        if (!$this->id) {
-            return null;
-        }
-
-        $result = DB::selectOne(
-            'SELECT ST_AsText(coordinates) as wkt FROM plot_geometry WHERE id = ?',
-            [$this->id]
-        );
-
-        return $result?->wkt;
     }
 }

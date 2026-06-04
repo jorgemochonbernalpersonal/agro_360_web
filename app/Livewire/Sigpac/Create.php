@@ -17,7 +17,9 @@ class Create extends Component
     use WithToastNotifications;
 
     public $plot_id = '';
+
     public $sigpac_use = [];
+
     public $sigpacCodes = [];  // Array para múltiples códigos con campos individuales
 
     public function mount()
@@ -36,80 +38,6 @@ class Create extends Component
             $this->updatedPlotId($this->plot_id);
         }
 
-    }
-
-    protected function rules(): array
-    {
-        $rules = [
-            'plot_id' => 'required|exists:plots,id',
-            'sigpac_use' => 'nullable|array',
-            'sigpac_use.*' => 'exists:sigpac_use,id',
-            'sigpacCodes' => 'required|array|min:1',
-        ];
-
-        // Validar cada código SIGPAC
-        foreach ($this->sigpacCodes as $index => $code) {
-            // Validar campos individuales
-            $rules["sigpacCodes.{$index}.code_autonomous_community"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
-            $rules["sigpacCodes.{$index}.code_province"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
-            $rules["sigpacCodes.{$index}.code_municipality"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
-            $rules["sigpacCodes.{$index}.code_aggregate"] = ['nullable', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
-            $rules["sigpacCodes.{$index}.code_zone"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
-            $rules["sigpacCodes.{$index}.code_polygon"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
-            $rules["sigpacCodes.{$index}.code_plot"] = ['required', 'string', 'size:5', 'regex:/^\d{5}$/'];
-            $rules["sigpacCodes.{$index}.code_enclosure"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
-
-            // Validar que el código completo no exista ya en la base de datos
-            $rules["sigpacCodes.{$index}"] = [
-                function ($attribute, $value, $fail) use ($index) {
-                    try {
-                        $fullCode = SigpacCode::buildCodeFromFields($value);
-                        $exists = SigpacCode::where('code', $fullCode)->exists();
-                        if ($exists) {
-                            $fail(__('El código SIGPAC completo ya existe en la base de datos.'));
-                        }
-                    } catch (\Exception $e) {
-                        $fail(__('Error al validar el código: :error', ['error' => $e->getMessage()]));
-                    }
-                }
-            ];
-
-            // Validar que no haya duplicados dentro del mismo formulario
-            // No puede haber dos códigos con el mismo Polígono + Parcela + Recinto
-            $rules["sigpacCodes.{$index}.duplicate_check"] = [
-                function ($attribute, $value, $fail) use ($index) {
-                    $code = $this->sigpacCodes[$index] ?? [];
-                    $polygon = $code['code_polygon'] ?? '';
-                    $plot = $code['code_plot'] ?? '';
-                    $enclosure = $code['code_enclosure'] ?? '';
-
-                    // Solo validar si todos los campos están completos
-                    if (!empty($polygon) && strlen($polygon) <= 3 && strlen($plot) === 5 && strlen($enclosure) === 3) {
-                        // Buscar duplicados en otros códigos del formulario
-                        foreach ($this->sigpacCodes as $otherIndex => $otherCode) {
-                            if ($otherIndex !== $index) {
-                                $otherPolygon = $otherCode['code_polygon'] ?? '';
-                                $otherPlot = $otherCode['code_plot'] ?? '';
-                                $otherEnclosure = $otherCode['code_enclosure'] ?? '';
-
-                                // Si todos los campos están completos y coinciden
-                                if (!empty($otherPolygon) &&
-                                        strlen($otherPolygon) <= 3 &&
-                                        strlen($otherPlot) === 5 &&
-                                        strlen($otherEnclosure) === 3 &&
-                                        $polygon === $otherPolygon &&
-                                        $plot === $otherPlot &&
-                                        $enclosure === $otherEnclosure) {
-                                    $fail("No puedes tener dos códigos SIGPAC con el mismo Polígono ({$polygon}), Parcela ({$plot}) y Recinto ({$enclosure}). Al menos uno de estos campos debe ser diferente.");
-                                }
-                            }
-                        }
-                    }
-                }
-            ];
-        }
-
-        return $rules;
     }
 
     public function addSigpacCode()
@@ -161,7 +89,7 @@ class Create extends Component
      */
     public function fillSigpacCode(int $index, array $fields): void
     {
-        if (!isset($this->sigpacCodes[$index])) {
+        if (! isset($this->sigpacCodes[$index])) {
             return;
         }
 
@@ -172,6 +100,8 @@ class Create extends Component
 
     /**
      * Auto-rellenar códigos cuando se selecciona una parcela
+     *
+     * @param mixed $value
      */
     public function updatedPlotId($value)
     {
@@ -207,10 +137,12 @@ class Create extends Component
 
     /**
      * Construir código completo desde campos individuales
+     *
+     * @param mixed $index
      */
     public function getFullCode($index): string
     {
-        if (!isset($this->sigpacCodes[$index])) {
+        if (! isset($this->sigpacCodes[$index])) {
             return '';
         }
 
@@ -223,10 +155,12 @@ class Create extends Component
 
     /**
      * Verificar si un código está completo y válido
+     *
+     * @param mixed $index
      */
     public function isCodeValid($index): bool
     {
-        if (!isset($this->sigpacCodes[$index])) {
+        if (! isset($this->sigpacCodes[$index])) {
             return false;
         }
 
@@ -243,30 +177,39 @@ class Create extends Component
         }
 
         // Verificar longitudes
-        if (strlen($code['code_autonomous_community'] ?? '') !== 2)
+        if (strlen($code['code_autonomous_community'] ?? '') !== 2) {
             return false;
-        if (strlen($code['code_province'] ?? '') !== 2)
+        }
+        if (strlen($code['code_province'] ?? '') !== 2) {
             return false;
-        if (strlen($code['code_municipality'] ?? '') !== 3)
+        }
+        if (strlen($code['code_municipality'] ?? '') !== 3) {
             return false;
-        if (empty($code['code_zone']) || strlen($code['code_zone']) > 3)
+        }
+        if (empty($code['code_zone']) || strlen($code['code_zone']) > 3) {
             return false;
-        if (empty($code['code_polygon']) || strlen($code['code_polygon']) > 3)
+        }
+        if (empty($code['code_polygon']) || strlen($code['code_polygon']) > 3) {
             return false;
-        if (strlen($code['code_plot'] ?? '') !== 5)
+        }
+        if (strlen($code['code_plot'] ?? '') !== 5) {
             return false;
-        if (strlen($code['code_enclosure'] ?? '') !== 3)
+        }
+        if (strlen($code['code_enclosure'] ?? '') !== 3) {
             return false;
+        }
 
         return true;
     }
 
     /**
      * Verificar si hay duplicados en el formulario
+     *
+     * @param mixed $index
      */
     public function hasDuplicate($index): bool
     {
-        if (!isset($this->sigpacCodes[$index])) {
+        if (! isset($this->sigpacCodes[$index])) {
             return false;
         }
 
@@ -287,7 +230,7 @@ class Create extends Component
                 $otherPlot = $otherCode['code_plot'] ?? '';
                 $otherEnclosure = $otherCode['code_enclosure'] ?? '';
 
-                if (!empty($otherPolygon) &&
+                if (! empty($otherPolygon) &&
                         strlen($otherPolygon) <= 3 &&
                         strlen($otherPlot) === 5 &&
                         strlen($otherEnclosure) === 3 &&
@@ -312,7 +255,7 @@ class Create extends Component
             $plot = Plot::findOrFail($this->plot_id);
 
             // Verificar permisos
-            if (!Auth::user()->can('update', $plot)) {
+            if (! Auth::user()->can('update', $plot)) {
                 throw new \Exception(__('No tienes permisos para asociar códigos SIGPAC a esta parcela.'));
             }
 
@@ -364,7 +307,7 @@ class Create extends Component
             }
 
             // Sincronizar usos SIGPAC con la parcela
-            if (!empty($this->sigpac_use)) {
+            if (! empty($this->sigpac_use)) {
                 $plot->sigpacUses()->sync($this->sigpac_use);
             }
 
@@ -395,5 +338,79 @@ class Create extends Component
             'plots' => $plots,
             'sigpacUses' => SigpacUse::select(['id', 'code', 'description'])->orderBy('code')->get(),
         ]);
+    }
+
+    protected function rules(): array
+    {
+        $rules = [
+            'plot_id' => 'required|exists:plots,id',
+            'sigpac_use' => 'nullable|array',
+            'sigpac_use.*' => 'exists:sigpac_use,id',
+            'sigpacCodes' => 'required|array|min:1',
+        ];
+
+        // Validar cada código SIGPAC
+        foreach ($this->sigpacCodes as $index => $code) {
+            // Validar campos individuales
+            $rules["sigpacCodes.{$index}.code_autonomous_community"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
+            $rules["sigpacCodes.{$index}.code_province"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
+            $rules["sigpacCodes.{$index}.code_municipality"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
+            $rules["sigpacCodes.{$index}.code_aggregate"] = ['nullable', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
+            $rules["sigpacCodes.{$index}.code_zone"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
+            $rules["sigpacCodes.{$index}.code_polygon"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
+            $rules["sigpacCodes.{$index}.code_plot"] = ['required', 'string', 'size:5', 'regex:/^\d{5}$/'];
+            $rules["sigpacCodes.{$index}.code_enclosure"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
+
+            // Validar que el código completo no exista ya en la base de datos
+            $rules["sigpacCodes.{$index}"] = [
+                function ($attribute, $value, $fail) {
+                    try {
+                        $fullCode = SigpacCode::buildCodeFromFields($value);
+                        $exists = SigpacCode::where('code', $fullCode)->exists();
+                        if ($exists) {
+                            $fail(__('El código SIGPAC completo ya existe en la base de datos.'));
+                        }
+                    } catch (\Exception $e) {
+                        $fail(__('Error al validar el código: :error', ['error' => $e->getMessage()]));
+                    }
+                },
+            ];
+
+            // Validar que no haya duplicados dentro del mismo formulario
+            // No puede haber dos códigos con el mismo Polígono + Parcela + Recinto
+            $rules["sigpacCodes.{$index}.duplicate_check"] = [
+                function ($attribute, $value, $fail) use ($index) {
+                    $code = $this->sigpacCodes[$index] ?? [];
+                    $polygon = $code['code_polygon'] ?? '';
+                    $plot = $code['code_plot'] ?? '';
+                    $enclosure = $code['code_enclosure'] ?? '';
+
+                    // Solo validar si todos los campos están completos
+                    if (! empty($polygon) && strlen($polygon) <= 3 && strlen($plot) === 5 && strlen($enclosure) === 3) {
+                        // Buscar duplicados en otros códigos del formulario
+                        foreach ($this->sigpacCodes as $otherIndex => $otherCode) {
+                            if ($otherIndex !== $index) {
+                                $otherPolygon = $otherCode['code_polygon'] ?? '';
+                                $otherPlot = $otherCode['code_plot'] ?? '';
+                                $otherEnclosure = $otherCode['code_enclosure'] ?? '';
+
+                                // Si todos los campos están completos y coinciden
+                                if (! empty($otherPolygon) &&
+                                        strlen($otherPolygon) <= 3 &&
+                                        strlen($otherPlot) === 5 &&
+                                        strlen($otherEnclosure) === 3 &&
+                                        $polygon === $otherPolygon &&
+                                        $plot === $otherPlot &&
+                                        $enclosure === $otherEnclosure) {
+                                    $fail("No puedes tener dos códigos SIGPAC con el mismo Polígono ({$polygon}), Parcela ({$plot}) y Recinto ({$enclosure}). Al menos uno de estos campos debe ser diferente.");
+                                }
+                            }
+                        }
+                    }
+                },
+            ];
+        }
+
+        return $rules;
     }
 }

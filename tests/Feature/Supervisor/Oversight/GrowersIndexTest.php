@@ -35,7 +35,7 @@ class GrowersIndexTest extends SupervisorTestCase
     public function test_viticulturist_cannot_access_oversight_growers_index(): void
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
@@ -51,17 +51,17 @@ class GrowersIndexTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
-            'name'              => 'Viticultor Supervisado',
+            'name' => 'Viticultor Supervisado',
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         $this->actingAs($supervisor)
@@ -71,21 +71,21 @@ class GrowersIndexTest extends SupervisorTestCase
 
     public function test_oversight_growers_index_does_not_show_viticulturist_from_other_supervisor(): void
     {
-        [$supervisor, $winery]         = $this->makeSupervisorWithWinery();
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
-            'name'              => 'Viticultor Ajeno',
+            'name' => 'Viticultor Ajeno',
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $otherWinery->id,
+            'winery_id' => $otherWinery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $otherSupervisor->id,
-            'assigned_by'      => $otherSupervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $otherSupervisor->id,
+            'assigned_by' => $otherSupervisor->id,
         ]);
 
         $this->actingAs($supervisor)
@@ -103,26 +103,6 @@ class GrowersIndexTest extends SupervisorTestCase
             ->assertOk();
     }
 
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeViticulturistForOversight(User $supervisor, User $winery, array $userAttrs = []): User
-    {
-        $vit = User::factory()->create(array_merge([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ], $userAttrs));
-
-        WineryViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'assigned_by'      => $supervisor->id,
-        ]);
-
-        return $vit;
-    }
-
     // ── search ────────────────────────────────────────────────────────────────
 
     public function test_search_by_name_filters_list(): void
@@ -130,14 +110,13 @@ class GrowersIndexTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $visible = $this->makeViticulturistForOversight($supervisor, $winery, ['name' => 'María Viñedo']);
-        $hidden  = $this->makeViticulturistForOversight($supervisor, $winery, ['name' => 'Pedro Llano']);
+        $hidden = $this->makeViticulturistForOversight($supervisor, $winery, ['name' => 'Pedro Llano']);
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->set('search', 'viñedo')
-            ->assertViewHas('growers', fn ($g) =>
-                $g->pluck('id')->contains($visible->id) &&
-                !$g->pluck('id')->contains($hidden->id)
+            ->assertViewHas('growers', fn ($g) => $g->pluck('id')->contains($visible->id) &&
+                ! $g->pluck('id')->contains($hidden->id)
             );
     }
 
@@ -146,14 +125,13 @@ class GrowersIndexTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $visible = $this->makeViticulturistForOversight($supervisor, $winery, ['email' => 'buscar@viña.es']);
-        $hidden  = $this->makeViticulturistForOversight($supervisor, $winery, ['email' => 'otro@dominio.es']);
+        $hidden = $this->makeViticulturistForOversight($supervisor, $winery, ['email' => 'otro@dominio.es']);
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->set('search', 'buscar')
-            ->assertViewHas('growers', fn ($g) =>
-                $g->pluck('id')->contains($visible->id) &&
-                !$g->pluck('id')->contains($hidden->id)
+            ->assertViewHas('growers', fn ($g) => $g->pluck('id')->contains($visible->id) &&
+                ! $g->pluck('id')->contains($hidden->id)
             );
     }
 
@@ -165,7 +143,7 @@ class GrowersIndexTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->set('search', 'xyz')
-            ->assertViewHas('growers', fn ($g) => !$g->pluck('id')->contains($vit->id))
+            ->assertViewHas('growers', fn ($g) => ! $g->pluck('id')->contains($vit->id))
             ->call('clearSearch')
             ->assertSet('search', '')
             ->assertViewHas('growers', fn ($g) => $g->pluck('id')->contains($vit->id));
@@ -190,11 +168,11 @@ class GrowersIndexTest extends SupervisorTestCase
 
         $ownVit = User::factory()->create(['role' => 'viticulturist']);
         WineryViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
-            'winery_id'        => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $ownVit->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -216,8 +194,7 @@ class GrowersIndexTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('plantingCountByVit', fn ($map) =>
-                ($map[$vit->id] ?? null) == 2
+            ->assertViewHas('plantingCountByVit', fn ($map) => ($map[$vit->id] ?? null) == 2
             );
     }
 
@@ -235,8 +212,27 @@ class GrowersIndexTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('lastActivityByVit', fn ($map) =>
-                isset($map[$vit->id]) && str_starts_with($map[$vit->id], '2026-03-20')
+            ->assertViewHas('lastActivityByVit', fn ($map) => isset($map[$vit->id]) && str_starts_with($map[$vit->id], '2026-03-20')
             );
+    }
+
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeViticulturistForOversight(User $supervisor, User $winery, array $userAttrs = []): User
+    {
+        $vit = User::factory()->create(array_merge([
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
+        ], $userAttrs));
+
+        WineryViticulturist::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $vit->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'assigned_by' => $supervisor->id,
+        ]);
+
+        return $vit;
     }
 }

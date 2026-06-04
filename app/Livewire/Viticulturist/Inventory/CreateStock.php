@@ -3,34 +3,45 @@
 namespace App\Livewire\Viticulturist\Inventory;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Models\ProductStock;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\PhytosanitaryProduct;
+use App\Models\ProductStock;
 use App\Models\Unit;
 use App\Models\Warehouse;
-use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class CreateStock extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
 
     public $product_id = '';
+
     public $warehouse_id = '';
+
     public $batch_number = '';
+
     public $expiry_date = '';
+
     public $manufacturing_date = '';
+
     public $quantity = '';
+
     public $unit = 'L';
+
     public $minimum_stock = '';
+
     public $unit_price = '';
+
     public $supplier = '';
+
     public $invoice_number = '';
+
     public $notes = '';
 
     public function mount()
     {
-        if (!Auth::user()->hasViticulturistAccess()) {
+        if (! Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
     }
@@ -79,6 +90,7 @@ class CreateStock extends Component
         ]);
 
         $this->toastSuccess(__('Stock registrado correctamente'));
+
         return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'fitosanitarios']);
     }
 

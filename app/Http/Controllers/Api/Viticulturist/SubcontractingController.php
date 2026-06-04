@@ -18,11 +18,11 @@ class SubcontractingController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'campaign_id'  => 'nullable|integer|min:1',
-            'plot_id'      => 'nullable|integer|min:1',
+            'campaign_id' => 'nullable|integer|min:1',
+            'plot_id' => 'nullable|integer|min:1',
             'service_type' => 'nullable|string|max:50',
-            'search'       => 'nullable|string|max:100',
-            'per_page'     => 'nullable|integer|min:1|max:100',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = Subcontracting::where('viticulturist_id', $user->id)
@@ -33,7 +33,7 @@ class SubcontractingController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('company_name', 'like', "%{$term}%")
-                  ->orWhere('description', 'like', "%{$term}%");
+                    ->orWhere('description', 'like', "%{$term}%");
             });
         }
 
@@ -54,10 +54,10 @@ class SubcontractingController extends Controller
         return response()->json([
             'data' => SubcontractingResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -68,15 +68,15 @@ class SubcontractingController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'plot_id'        => 'nullable|integer|exists:plots,id',
-            'campaign_id'    => 'nullable|integer|exists:campaigns,id',
-            'service_type'   => 'required|in:harvesting,pruning,treatment,fertilization,irrigation,soil_work,transport,analysis,other',
-            'company_name'   => 'required|string|max:255',
-            'service_date'   => 'required|date',
-            'amount'         => 'nullable|numeric|min:0',
-            'invoiced'       => 'nullable|boolean',
-            'description'    => 'nullable|string|max:1000',
-            'notes'          => 'nullable|string|max:2000',
+            'plot_id' => 'nullable|integer|exists:plots,id',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'service_type' => 'required|in:harvesting,pruning,treatment,fertilization,irrigation,soil_work,transport,analysis,other',
+            'company_name' => 'required|string|max:255',
+            'service_date' => 'required|date',
+            'amount' => 'nullable|numeric|min:0',
+            'invoiced' => 'nullable|boolean',
+            'description' => 'nullable|string|max:1000',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (isset($validated['plot_id'])) {
@@ -86,7 +86,7 @@ class SubcontractingController extends Controller
         $record = \App\Models\Subcontracting::create([...$validated, 'viticulturist_id' => $user->id]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\SubcontractingResource($record),
+            'data' => new \App\Http\Resources\Api\SubcontractingResource($record),
             'message' => __('Subcontratación registrada correctamente.'),
         ], 201);
     }

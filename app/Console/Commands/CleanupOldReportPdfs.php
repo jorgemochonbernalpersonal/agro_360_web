@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\OfficialReport;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CleanupOldReportPdfs extends Command
 {
@@ -34,28 +34,29 @@ class CleanupOldReportPdfs extends Command
     {
         $isDryRun = $this->option('dry-run');
         $force = $this->option('force');
-        
+
         // Obtener días de retención
-        $retentionDays = $this->option('days') 
-            ? (int) $this->option('days') 
+        $retentionDays = $this->option('days')
+            ? (int) $this->option('days')
             : config('reports.pdf_retention_days');
 
-        if (!$retentionDays) {
+        if (! $retentionDays) {
             $this->error('PDF retention is disabled (set to null). No cleanup will be performed.');
             $this->info('To enable cleanup, set REPORTS_PDF_RETENTION_DAYS in .env or use --days option.');
+
             return 0;
         }
 
-        $this->info("🗂️  Official Reports PDF Cleanup");
-        $this->info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        $this->info('🗂️  Official Reports PDF Cleanup');
+        $this->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         $this->newLine();
 
         // Calcular fecha límite
         $cutoffDate = Carbon::now()->subDays($retentionDays);
-        
+
         $this->info("Retention policy: {$retentionDays} days");
         $this->info("Cutoff date: {$cutoffDate->format('Y-m-d H:i:s')}");
-        $this->info("Mode: " . ($isDryRun ? 'DRY RUN (no files will be deleted)' : 'LIVE'));
+        $this->info('Mode: '.($isDryRun ? 'DRY RUN (no files will be deleted)' : 'LIVE'));
         $this->newLine();
 
         // Buscar informes antiguos con PDFs
@@ -65,6 +66,7 @@ class CleanupOldReportPdfs extends Command
 
         if ($oldReports->isEmpty()) {
             $this->info('✅ No old PDFs found to clean up.');
+
             return 0;
         }
 
@@ -76,14 +78,14 @@ class CleanupOldReportPdfs extends Command
         $this->newLine();
 
         foreach ($oldReports as $report) {
-            if (!$report->pdfExists()) {
+            if (! $report->pdfExists()) {
                 continue;
             }
 
             try {
                 $size = Storage::disk('local')->size($report->pdf_path);
                 $totalSize += $size;
-                
+
                 $validFiles->push([
                     'report' => $report,
                     'size' => $size,
@@ -95,14 +97,16 @@ class CleanupOldReportPdfs extends Command
 
         if ($validFiles->isEmpty()) {
             $this->info('✅ No valid PDFs found to clean up.');
+
             return 0;
         }
 
         // Mostrar resumen
         $this->table(
             ['Report ID', 'Type', 'Created', 'PDF Size', 'Age (days)'],
-            $validFiles->take(10)->map(function ($item) use ($cutoffDate) {
+            $validFiles->take(10)->map(function ($item) {
                 $report = $item['report'];
+
                 return [
                     $report->id,
                     $report->report_type_name,
@@ -114,18 +118,19 @@ class CleanupOldReportPdfs extends Command
         );
 
         if ($validFiles->count() > 10) {
-            $this->info("... and " . ($validFiles->count() - 10) . " more");
+            $this->info('... and '.($validFiles->count() - 10).' more');
         }
 
         $this->newLine();
         $this->info("Total files to clean: {$validFiles->count()}");
-        $this->info("Total space to free: " . $this->formatBytes($totalSize));
+        $this->info('Total space to free: '.$this->formatBytes($totalSize));
         $this->newLine();
 
         // Confirmación
-        if (!$isDryRun && !$force) {
-            if (!$this->confirm('Do you want to proceed with the cleanup?')) {
+        if (! $isDryRun && ! $force) {
+            if (! $this->confirm('Do you want to proceed with the cleanup?')) {
                 $this->info('Cleanup cancelled.');
+
                 return 0;
             }
         }
@@ -133,6 +138,7 @@ class CleanupOldReportPdfs extends Command
         // Realizar limpieza
         if ($isDryRun) {
             $this->info('🔍 DRY RUN - No files were deleted');
+
             return 0;
         }
 
@@ -144,11 +150,11 @@ class CleanupOldReportPdfs extends Command
 
         foreach ($validFiles as $item) {
             $report = $item['report'];
-            
+
             try {
                 // Eliminar archivo físico
                 Storage::disk('local')->delete($report->pdf_path);
-                
+
                 // Actualizar registro en base de datos
                 $report->update([
                     'pdf_path' => null,
@@ -157,7 +163,7 @@ class CleanupOldReportPdfs extends Command
                 ]);
 
                 $deletedCount++;
-                
+
                 // Log
                 Log::info('PDF cleanup: File deleted', [
                     'report_id' => $report->id,
@@ -165,17 +171,17 @@ class CleanupOldReportPdfs extends Command
                     'size' => $item['size'],
                     'age_days' => $report->created_at->diffInDays(now()),
                 ]);
-                
+
             } catch (\Exception $e) {
                 $failedCount++;
-                
+
                 Log::error('PDF cleanup: Failed to delete file', [
                     'report_id' => $report->id,
                     'pdf_path' => $report->pdf_path,
                     'error' => $e->getMessage(),
                 ]);
             }
-            
+
             $progressBar->advance();
         }
 
@@ -183,16 +189,16 @@ class CleanupOldReportPdfs extends Command
         $this->newLine(2);
 
         // Resumen final
-        $this->info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        $this->info("✅ Cleanup completed!");
-        $this->info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        $this->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        $this->info('✅ Cleanup completed!');
+        $this->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         $this->info("Files deleted: {$deletedCount}");
         $this->info("Failed: {$failedCount}");
-        $this->info("Space freed: " . $this->formatBytes($totalSize));
+        $this->info('Space freed: '.$this->formatBytes($totalSize));
         $this->newLine();
 
         if ($failedCount > 0) {
-            $this->warn("⚠️  Some files could not be deleted. Check the logs for details.");
+            $this->warn('⚠️  Some files could not be deleted. Check the logs for details.');
         }
 
         return 0;
@@ -200,9 +206,6 @@ class CleanupOldReportPdfs extends Command
 
     /**
      * Format bytes to human readable format
-     *
-     * @param int $bytes
-     * @return string
      */
     protected function formatBytes(int $bytes): string
     {
@@ -212,6 +215,6 @@ class CleanupOldReportPdfs extends Command
         $pow = min($pow, count($units) - 1);
         $bytes /= (1 << (10 * $pow));
 
-        return round($bytes, 2) . ' ' . $units[$pow];
+        return round($bytes, 2).' '.$units[$pow];
     }
 }

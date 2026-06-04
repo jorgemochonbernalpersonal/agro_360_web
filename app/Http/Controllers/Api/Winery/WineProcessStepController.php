@@ -31,8 +31,8 @@ class WineProcessStepController extends Controller
         return response()->json([
             'data' => WineProcessStepResource::collection($steps),
             'meta' => [
-                'total'          => $steps->count(),
-                'process_types'  => WineProcessDetail::processTypeOptions(),
+                'total' => $steps->count(),
+                'process_types' => WineProcessDetail::processTypeOptions(),
             ],
         ]);
     }
@@ -47,18 +47,18 @@ class WineProcessStepController extends Controller
         $wine = Wine::forUser($user->id)->findOrFail($wineId);
 
         $validated = $request->validate([
-            'process_type'           => 'required|string|in:' . implode(',', array_keys(WineProcessDetail::PROCESS_TYPES)),
-            'start_date'             => 'required|date',
-            'end_date'               => 'nullable|date|after_or_equal:start_date',
-            'container_id'           => 'nullable|integer|exists:containers,id',
-            'oenologist_id'          => 'nullable|integer|exists:oenologists,id',
-            'quantity'               => 'nullable|numeric|min:0',
+            'process_type' => 'required|string|in:'.implode(',', array_keys(WineProcessDetail::PROCESS_TYPES)),
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'container_id' => 'nullable|integer|exists:containers,id',
+            'oenologist_id' => 'nullable|integer|exists:oenologists,id',
+            'quantity' => 'nullable|numeric|min:0',
             'unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-            'observations'           => 'nullable|string|max:2000',
+            'observations' => 'nullable|string|max:2000',
             // Contenedores adicionales (blending, trasvases múltiples, etc.)
-            'extra_containers'                        => 'nullable|array|max:10',
-            'extra_containers.*.container_id'         => 'required|integer|exists:containers,id',
-            'extra_containers.*.quantity'             => 'nullable|numeric|min:0',
+            'extra_containers' => 'nullable|array|max:10',
+            'extra_containers.*.container_id' => 'required|integer|exists:containers,id',
+            'extra_containers.*.quantity' => 'nullable|numeric|min:0',
             'extra_containers.*.unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
         ]);
 
@@ -75,15 +75,15 @@ class WineProcessStepController extends Controller
 
         $step = WineProcessDetail::create([
             ...$validated,
-            'wine_id'    => $wine->id,
+            'wine_id' => $wine->id,
             'created_by' => $user->id,
         ]);
 
-        if (!empty($extraContainers)) {
+        if (! empty($extraContainers)) {
             $pivot = [];
             foreach ($extraContainers as $ec) {
                 $pivot[$ec['container_id']] = [
-                    'quantity'               => $ec['quantity'] ?? null,
+                    'quantity' => $ec['quantity'] ?? null,
                     'unit_of_measurement_id' => $ec['unit_of_measurement_id'] ?? null,
                 ];
             }
@@ -93,7 +93,7 @@ class WineProcessStepController extends Controller
         $step->load(['container', 'containers', 'oenologist', 'unitOfMeasurement']);
 
         return response()->json([
-            'data'    => new WineProcessStepResource($step),
+            'data' => new WineProcessStepResource($step),
             'message' => __('Paso de proceso registrado correctamente.'),
         ], 201);
     }
@@ -110,17 +110,17 @@ class WineProcessStepController extends Controller
         )->findOrFail($id);
 
         $validated = $request->validate([
-            'process_type'           => 'sometimes|string|in:' . implode(',', array_keys(WineProcessDetail::PROCESS_TYPES)),
-            'start_date'             => 'sometimes|date',
-            'end_date'               => 'sometimes|nullable|date|after_or_equal:' . $step->start_date->toDateString(),
-            'container_id'           => 'sometimes|nullable|integer|exists:containers,id',
-            'oenologist_id'          => 'sometimes|nullable|integer|exists:oenologists,id',
-            'quantity'               => 'sometimes|nullable|numeric|min:0',
+            'process_type' => 'sometimes|string|in:'.implode(',', array_keys(WineProcessDetail::PROCESS_TYPES)),
+            'start_date' => 'sometimes|date',
+            'end_date' => 'sometimes|nullable|date|after_or_equal:'.$step->start_date->toDateString(),
+            'container_id' => 'sometimes|nullable|integer|exists:containers,id',
+            'oenologist_id' => 'sometimes|nullable|integer|exists:oenologists,id',
+            'quantity' => 'sometimes|nullable|numeric|min:0',
             'unit_of_measurement_id' => 'sometimes|nullable|integer|exists:unit_of_measurements,id',
-            'observations'           => 'sometimes|nullable|string|max:2000',
-            'extra_containers'                          => 'sometimes|nullable|array|max:10',
-            'extra_containers.*.container_id'           => 'required|integer|exists:containers,id',
-            'extra_containers.*.quantity'               => 'nullable|numeric|min:0',
+            'observations' => 'sometimes|nullable|string|max:2000',
+            'extra_containers' => 'sometimes|nullable|array|max:10',
+            'extra_containers.*.container_id' => 'required|integer|exists:containers,id',
+            'extra_containers.*.quantity' => 'nullable|numeric|min:0',
             'extra_containers.*.unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
         ]);
 
@@ -141,7 +141,7 @@ class WineProcessStepController extends Controller
             $pivot = [];
             foreach ($extraContainers as $ec) {
                 $pivot[$ec['container_id']] = [
-                    'quantity'               => $ec['quantity'] ?? null,
+                    'quantity' => $ec['quantity'] ?? null,
                     'unit_of_measurement_id' => $ec['unit_of_measurement_id'] ?? null,
                 ];
             }
@@ -182,14 +182,14 @@ class WineProcessStepController extends Controller
         )->findOrFail($id);
 
         $validated = $request->validate([
-            'end_date' => 'nullable|date|after_or_equal:' . $step->start_date->toDateString(),
+            'end_date' => 'nullable|date|after_or_equal:'.$step->start_date->toDateString(),
         ]);
 
         $step->update(['end_date' => $validated['end_date'] ?? now()->toDateString()]);
         $step->load(['container', 'containers', 'oenologist', 'unitOfMeasurement']);
 
         return response()->json([
-            'data'    => new WineProcessStepResource($step),
+            'data' => new WineProcessStepResource($step),
             'message' => __('Paso marcado como completado.'),
         ]);
     }

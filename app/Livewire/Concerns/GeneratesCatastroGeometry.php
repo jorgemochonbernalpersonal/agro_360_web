@@ -22,20 +22,23 @@ trait GeneratesCatastroGeometry
     {
         $plotId = $plotId ?? ($this->plot->id ?? null);
 
-        if (!$plotId) {
+        if (! $plotId) {
             $this->toastError(__('Parcela no encontrada.'));
+
             return;
         }
 
         $plot = Plot::findOrFail($plotId);
 
-        if (!Auth::user()->can('update', $plot)) {
+        if (! Auth::user()->can('update', $plot)) {
             $this->toastError(__('No tienes permiso para modificar esta parcela.'));
+
             return;
         }
 
-        if (!$plot->code_parcel) {
+        if (! $plot->code_parcel) {
             $this->toastError(__('Esta parcela no tiene referencia catastral.'));
+
             return;
         }
 
@@ -46,15 +49,17 @@ trait GeneratesCatastroGeometry
 
             $wkt = $service->fetchWkt($plot->code_parcel);
 
-            if (!$wkt) {
+            if (! $wkt) {
                 DB::rollBack();
                 $this->toastError(__('No se pudo obtener la geometría del catastro para la referencia :ref.', ['ref' => $plot->code_parcel]));
+
                 return;
             }
 
-            if (!preg_match('/^(POLYGON|MULTIPOLYGON)\s*\(.+\)$/i', $wkt)) {
+            if (! preg_match('/^(POLYGON|MULTIPOLYGON)\s*\(.+\)$/i', $wkt)) {
                 DB::rollBack();
                 $this->toastError(__('El catastro devolvió una geometría con formato inválido.'));
+
                 return;
             }
 
@@ -77,9 +82,9 @@ trait GeneratesCatastroGeometry
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error generating map from Catastro', [
-                'plot_id'   => $plot->id,
+                'plot_id' => $plot->id,
                 'reference' => $plot->code_parcel,
-                'error'     => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
             $this->toastError(__('Error al generar la geometría desde el catastro. Por favor, intenta de nuevo.'));
         }

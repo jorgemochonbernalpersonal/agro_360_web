@@ -24,18 +24,18 @@ abstract class ViticulturistTestCase extends TestCase
     protected function makeViticulturist(): User
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
-            'is_beta_user'      => true,
+            'is_beta_user' => true,
         ]);
 
         $winery = User::factory()->create(['role' => 'winery']);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
         ]);
 
         return $viticulturist;
@@ -49,7 +49,7 @@ abstract class ViticulturistTestCase extends TestCase
     protected function makeOtherViticulturist(): User
     {
         return User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
     }

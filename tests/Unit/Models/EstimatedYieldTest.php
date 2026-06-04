@@ -2,18 +2,16 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\EstimatedYield;
-use App\Models\PlotPlanting;
 use App\Models\Campaign;
-use App\Models\User;
+use App\Models\EstimatedYield;
 use App\Models\Plot;
-use App\Models\Harvest;
-use App\Models\AgriculturalActivity;
+use App\Models\PlotPlanting;
+use App\Models\User;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
 
 class EstimatedYieldTest extends TestCase
 {
@@ -58,7 +56,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -82,7 +80,7 @@ class EstimatedYieldTest extends TestCase
         $estimator = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -106,7 +104,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -130,7 +128,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -154,7 +152,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -177,7 +175,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -242,7 +240,7 @@ class EstimatedYieldTest extends TestCase
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign1 = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
         $campaign2 = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -276,20 +274,20 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         // Crear diferentes plantings para evitar constraint único
         $planting1 = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
             'status' => 'active',
         ]);
-        
+
         $planting2 = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
             'status' => 'active',
         ]);
-        
+
         $planting3 = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -336,14 +334,14 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         // Crear diferentes plantings para evitar constraint único
         $planting1 = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
             'status' => 'active',
         ]);
-        
+
         $planting2 = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -379,7 +377,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -403,7 +401,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -427,7 +425,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -451,7 +449,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -475,7 +473,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -499,7 +497,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -523,7 +521,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -546,7 +544,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -569,7 +567,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -600,7 +598,7 @@ class EstimatedYieldTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        
+
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'area_planted' => 1.0,
@@ -618,4 +616,3 @@ class EstimatedYieldTest extends TestCase
         $this->assertInstanceOf(\Carbon\Carbon::class, $yield->estimation_date);
     }
 }
-

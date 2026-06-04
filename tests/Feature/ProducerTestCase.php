@@ -21,10 +21,10 @@ abstract class ProducerTestCase extends TestCase
         // producer pueda acceder a los módulos del plan Completo protegidos por
         // require.complete (bodega, facturas, verifactu, vistas integradas…).
         return User::factory()->create([
-            'role'                => 'producer',
-            'email_verified_at'   => now(),
-            'is_beta_user'        => true,
-            'beta_ends_at'        => now()->addYear(),
+            'role' => 'producer',
+            'email_verified_at' => now(),
+            'is_beta_user' => true,
+            'beta_ends_at' => now()->addYear(),
             'beta_access_granted' => true,
         ]);
     }
@@ -32,10 +32,10 @@ abstract class ProducerTestCase extends TestCase
     protected function makeOtherProducer(): User
     {
         return User::factory()->create([
-            'role'                => 'producer',
-            'email_verified_at'   => now(),
-            'is_beta_user'        => true,
-            'beta_ends_at'        => now()->addYear(),
+            'role' => 'producer',
+            'email_verified_at' => now(),
+            'is_beta_user' => true,
+            'beta_ends_at' => now()->addYear(),
             'beta_access_granted' => true,
         ]);
     }
@@ -43,7 +43,7 @@ abstract class ProducerTestCase extends TestCase
     protected function makeWinery(): User
     {
         return User::factory()->create([
-            'role'              => 'winery',
+            'role' => 'winery',
             'email_verified_at' => now(),
         ]);
     }
@@ -51,7 +51,7 @@ abstract class ProducerTestCase extends TestCase
     protected function makeViticulturist(): User
     {
         return User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
     }

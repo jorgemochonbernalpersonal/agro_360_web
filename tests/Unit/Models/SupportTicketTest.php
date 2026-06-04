@@ -564,7 +564,7 @@ class SupportTicketTest extends TestCase
     public function test_image_url_returns_url_when_image_exists(): void
     {
         Storage::fake('public');
-        
+
         $user = User::factory()->create(['role' => 'viticulturist']);
 
         $ticket = SupportTicket::create([
@@ -599,4 +599,3 @@ class SupportTicketTest extends TestCase
         $this->assertInstanceOf(\Carbon\Carbon::class, $ticket->resolved_at);
     }
 }
-

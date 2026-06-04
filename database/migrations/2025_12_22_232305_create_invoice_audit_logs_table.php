@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('ip_address', 45)->nullable();
             $table->string('user_agent')->nullable();
             $table->timestamps();
-            
+
             $table->index('invoice_id');
             $table->index('user_id');
             $table->index('action');

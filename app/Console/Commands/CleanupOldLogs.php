@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Carbon\Carbon;
 
 class CleanupOldLogs extends Command
 {
@@ -30,11 +30,12 @@ class CleanupOldLogs extends Command
         $days = (int) $this->option('days');
         $cutoffDate = Carbon::now()->subDays($days);
         $logsPath = storage_path('logs');
-        
+
         $this->info("Limpiando logs anteriores a: {$cutoffDate->format('Y-m-d')} (retener {$days} días)");
 
-        if (!File::exists($logsPath)) {
+        if (! File::exists($logsPath)) {
             $this->error("El directorio de logs no existe: {$logsPath}");
+
             return Command::FAILURE;
         }
 
@@ -42,7 +43,7 @@ class CleanupOldLogs extends Command
         $totalSize = 0;
 
         // Obtener todos los archivos de log
-        $logFiles = File::glob($logsPath . '/*.log');
+        $logFiles = File::glob($logsPath.'/*.log');
 
         foreach ($logFiles as $file) {
             $fileInfo = File::lastModified($file);
@@ -51,21 +52,21 @@ class CleanupOldLogs extends Command
 
             // Verificar si el archivo es más antiguo que el cutoff
             if ($fileDate->lt($cutoffDate)) {
-                $this->line("Eliminando: " . basename($file) . " ({$fileDate->format('Y-m-d')}, " . $this->formatBytes($fileSize) . ")");
-                
+                $this->line('Eliminando: '.basename($file)." ({$fileDate->format('Y-m-d')}, ".$this->formatBytes($fileSize).')');
+
                 if (File::delete($file)) {
                     $deletedCount++;
                     $totalSize += $fileSize;
                 } else {
-                    $this->warn("No se pudo eliminar: " . basename($file));
+                    $this->warn('No se pudo eliminar: '.basename($file));
                 }
             }
         }
 
         if ($deletedCount > 0) {
-            $this->info("✅ Se eliminaron {$deletedCount} archivo(s) de log (" . $this->formatBytes($totalSize) . " liberados).");
+            $this->info("✅ Se eliminaron {$deletedCount} archivo(s) de log (".$this->formatBytes($totalSize).' liberados).');
         } else {
-            $this->info("No se encontraron logs antiguos para eliminar.");
+            $this->info('No se encontraron logs antiguos para eliminar.');
         }
 
         return Command::SUCCESS;
@@ -73,6 +74,9 @@ class CleanupOldLogs extends Command
 
     /**
      * Formatear bytes a formato legible
+     *
+     * @param mixed $bytes
+     * @param mixed $precision
      */
     private function formatBytes($bytes, $precision = 2)
     {
@@ -82,6 +86,6 @@ class CleanupOldLogs extends Command
             $bytes /= 1024;
         }
 
-        return round($bytes, $precision) . ' ' . $units[$i];
+        return round($bytes, $precision).' '.$units[$i];
     }
 }

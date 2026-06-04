@@ -23,8 +23,8 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('field_equipment', [
             'viticulturist_id' => $viticulturist->id,
-            'name'             => 'Atomizador 2000',
-            'equipment_type'   => 'sprayer',
+            'name' => 'Atomizador 2000',
+            'equipment_type' => 'sprayer',
         ]);
     }
 
@@ -96,9 +96,9 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('field_equipment', [
-            'viticulturist_id'    => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'registration_number' => 'REG-2024-001',
-            'inspection_entity'   => 'ATRIA Madrid',
+            'inspection_entity' => 'ATRIA Madrid',
         ]);
     }
 }

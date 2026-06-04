@@ -9,14 +9,9 @@ class WineContainerStockEntry extends Model
 {
     const SOURCES = [
         'initial_stock' => 'Stock inicial',
-        'adjustment'    => 'Ajuste de inventario',
-        'correction'    => 'Corrección',
+        'adjustment' => 'Ajuste de inventario',
+        'correction' => 'Corrección',
     ];
-
-    public static function sourceOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::SOURCES);
-    }
 
     protected $fillable = [
         'wine_id',
@@ -30,8 +25,13 @@ class WineContainerStockEntry extends Model
 
     protected $casts = [
         'quantity_liters' => 'decimal:3',
-        'entry_date'      => 'date',
+        'entry_date' => 'date',
     ];
+
+    public static function sourceOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SOURCES);
+    }
 
     public function wine(): BelongsTo
     {

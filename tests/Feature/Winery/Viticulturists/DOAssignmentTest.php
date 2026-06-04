@@ -15,46 +15,12 @@ use Tests\Feature\WineryTestCase;
  */
 class DOAssignmentTest extends WineryTestCase
 {
-    private function makeSupervisor(): User
-    {
-        return User::factory()->create([
-            'role'              => 'supervisor',
-            'email_verified_at' => now(),
-        ]);
-    }
-
-    private function linkSupervisorToWinery(User $supervisor, User $winery): SupervisorWinery
-    {
-        return SupervisorWinery::create([
-            'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $supervisor->id,
-        ]);
-    }
-
-    private function addToSupervisorPool(User $supervisor, User $viticulturist): SupervisorViticulturist
-    {
-        return SupervisorViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
-            'viticulturist_id' => $viticulturist->id,
-            'assigned_by'      => $supervisor->id,
-        ]);
-    }
-
-    private function makeViticulturist(): User
-    {
-        return User::factory()->create([
-            'role'      => 'viticulturist',
-            'can_login' => true,
-        ]);
-    }
-
     // ── assign ────────────────────────────────────────────────────────────────
 
     public function test_winery_can_assign_supervisor_viticulturist(): void
     {
-        $winery      = $this->makeWinery();
-        $supervisor  = $this->makeSupervisor();
+        $winery = $this->makeWinery();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturist();
 
         $this->linkSupervisorToWinery($supervisor, $winery);
@@ -67,28 +33,28 @@ class DOAssignmentTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
         ]);
     }
 
     public function test_assign_is_idempotent_when_already_assigned(): void
     {
-        $winery        = $this->makeWinery();
-        $supervisor    = $this->makeSupervisor();
+        $winery = $this->makeWinery();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturist();
 
         $this->linkSupervisorToWinery($supervisor, $winery);
         $this->addToSupervisorPool($supervisor, $viticulturist);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $winery->id,
         ]);
 
         $this->actingAs($winery);
@@ -103,8 +69,8 @@ class DOAssignmentTest extends WineryTestCase
 
     public function test_winery_cannot_assign_viticulturist_not_in_supervisor_pool(): void
     {
-        $winery        = $this->makeWinery();
-        $supervisor    = $this->makeSupervisor();
+        $winery = $this->makeWinery();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturist();
 
         $this->linkSupervisorToWinery($supervisor, $winery);
@@ -122,18 +88,18 @@ class DOAssignmentTest extends WineryTestCase
 
     public function test_winery_can_unassign_supervisor_viticulturist(): void
     {
-        $winery        = $this->makeWinery();
-        $supervisor    = $this->makeSupervisor();
+        $winery = $this->makeWinery();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturist();
 
         $this->linkSupervisorToWinery($supervisor, $winery);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $winery->id,
         ]);
 
         $this->actingAs($winery);
@@ -143,21 +109,21 @@ class DOAssignmentTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseMissing('winery_viticulturist', [
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
         ]);
     }
 
     public function test_winery_cannot_unassign_own_viticulturist(): void
     {
-        $winery        = $this->makeWinery();
+        $winery = $this->makeWinery();
         $viticulturist = $this->makeViticulturist();
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
         ]);
 
         $this->actingAs($winery);
@@ -182,7 +148,7 @@ class DOAssignmentTest extends WineryTestCase
 
     public function test_do_button_shown_when_supervisor_linked(): void
     {
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $supervisor = $this->makeSupervisor();
 
         $this->linkSupervisorToWinery($supervisor, $winery);
@@ -191,5 +157,39 @@ class DOAssignmentTest extends WineryTestCase
 
         Livewire::test(Index::class)
             ->assertViewHas('hasSupervisors', true);
+    }
+
+    private function makeSupervisor(): User
+    {
+        return User::factory()->create([
+            'role' => 'supervisor',
+            'email_verified_at' => now(),
+        ]);
+    }
+
+    private function linkSupervisorToWinery(User $supervisor, User $winery): SupervisorWinery
+    {
+        return SupervisorWinery::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $supervisor->id,
+        ]);
+    }
+
+    private function addToSupervisorPool(User $supervisor, User $viticulturist): SupervisorViticulturist
+    {
+        return SupervisorViticulturist::create([
+            'supervisor_id' => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+            'assigned_by' => $supervisor->id,
+        ]);
+    }
+
+    private function makeViticulturist(): User
+    {
+        return User::factory()->create([
+            'role' => 'viticulturist',
+            'can_login' => true,
+        ]);
     }
 }

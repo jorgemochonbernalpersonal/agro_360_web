@@ -16,34 +16,53 @@ class Index extends Component
 {
     use WithPagination;
 
-    public string $currentTab     = 'autorizaciones';
-    public string $search         = '';
-    public string $filterVit      = '';
-    public string $filterStatus   = '';
+    public string $currentTab = 'autorizaciones';
+
+    public string $search = '';
+
+    public string $filterVit = '';
+
+    public string $filterStatus = '';
+
     public string $filterRightType = '';
 
     protected $queryString = [
-        'currentTab'      => ['except' => 'autorizaciones', 'as' => 'tab'],
-        'search'          => ['except' => ''],
-        'filterVit'       => ['except' => ''],
-        'filterStatus'    => ['except' => ''],
+        'currentTab' => ['except' => 'autorizaciones', 'as' => 'tab'],
+        'search' => ['except' => ''],
+        'filterVit' => ['except' => ''],
+        'filterStatus' => ['except' => ''],
         'filterRightType' => ['except' => ''],
     ];
 
     public function switchTab(string $tab): void
     {
         $this->currentTab = $tab;
-        $this->search         = '';
-        $this->filterVit      = '';
-        $this->filterStatus   = '';
+        $this->search = '';
+        $this->filterVit = '';
+        $this->filterStatus = '';
         $this->filterRightType = '';
         $this->resetPage();
     }
 
-    public function updatingSearch(): void          { $this->resetPage(); }
-    public function updatingFilterVit(): void       { $this->resetPage(); }
-    public function updatingFilterStatus(): void    { $this->resetPage(); }
-    public function updatingFilterRightType(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterVit(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterRightType(): void
+    {
+        $this->resetPage();
+    }
 
     // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -60,22 +79,22 @@ class Index extends Component
             ->get(['id', 'name']);
 
         $data = match ($this->currentTab) {
-            'autorizaciones'  => $this->getAutorizacionesData($viticulturistIds),
+            'autorizaciones' => $this->getAutorizacionesData($viticulturistIds),
             'certificaciones' => $this->getCertificacionesData($viticulturistIds),
-            'pliego'          => $this->getDocumentData($doId, DoDocument::TYPE_PLIEGO),
-            'reglamento'      => $this->getDocumentData($doId, DoDocument::TYPE_REGLAMENTO),
-            default           => [],
+            'pliego' => $this->getDocumentData($doId, DoDocument::TYPE_PLIEGO),
+            'reglamento' => $this->getDocumentData($doId, DoDocument::TYPE_REGLAMENTO),
+            default => [],
         };
 
         $tabs = [
-            'autorizaciones'  => ['label' => __('Autorizaciones de plantación')],
+            'autorizaciones' => ['label' => __('Autorizaciones de plantación')],
             'certificaciones' => ['label' => __('Certificaciones ecológicas')],
-            'pliego'          => ['label' => __('Pliego de condiciones')],
-            'reglamento'      => ['label' => __('Reglamento interno')],
+            'pliego' => ['label' => __('Pliego de condiciones')],
+            'reglamento' => ['label' => __('Reglamento interno')],
         ];
 
         return view('livewire.supervisor.regulation.index', array_merge($data, [
-            'tabs'           => $tabs,
+            'tabs' => $tabs,
             'viticulturists' => $viticulturists,
         ]));
     }
@@ -98,10 +117,10 @@ class Index extends Component
         }
 
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(planting_authorization) LIKE ?', [$term])
-                  ->orWhereHas('plot', fn($p) => $p->whereRaw('LOWER(name) LIKE ?', [$term]));
+                    ->orWhereHas('plot', fn ($p) => $p->whereRaw('LOWER(name) LIKE ?', [$term]));
             });
         }
 
@@ -109,11 +128,11 @@ class Index extends Component
 
         $allQuery = PlotPlanting::whereIn('plot_id', $plotIds)->whereNotNull('planting_authorization');
         $stats = [
-            'total'        => $allQuery->count(),
-            'nueva'        => (clone $allQuery)->where('right_type', 'nueva')->count(),
+            'total' => $allQuery->count(),
+            'nueva' => (clone $allQuery)->where('right_type', 'nueva')->count(),
             'replantacion' => (clone $allQuery)->where('right_type', 'replantacion')->count(),
-            'conversion'   => (clone $allQuery)->where('right_type', 'conversion')->count(),
-            'transferencia'=> (clone $allQuery)->where('right_type', 'transferencia')->count(),
+            'conversion' => (clone $allQuery)->where('right_type', 'conversion')->count(),
+            'transferencia' => (clone $allQuery)->where('right_type', 'transferencia')->count(),
         ];
 
         return ['items' => $items, 'stats' => $stats];
@@ -130,34 +149,33 @@ class Index extends Component
         }
 
         if ($this->filterStatus === 'active') {
-            $query->where('active', true)->where(fn($q) =>
-                $q->whereNull('expiry_date')->orWhereDate('expiry_date', '>=', now())
+            $query->where('active', true)->where(fn ($q) => $q->whereNull('expiry_date')->orWhereDate('expiry_date', '>=', now())
             );
         } elseif ($this->filterStatus === 'expiring') {
             $query->where('active', true)
-                  ->whereDate('expiry_date', '>=', now())
-                  ->whereDate('expiry_date', '<=', now()->addDays(60));
+                ->whereDate('expiry_date', '>=', now())
+                ->whereDate('expiry_date', '<=', now()->addDays(60));
         } elseif ($this->filterStatus === 'expired') {
             $query->where('active', true)->whereDate('expiry_date', '<', now());
         }
 
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(certificate_number) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(certifying_body) LIKE ?', [$term])
-                  ->orWhereHas('viticulturist', fn($v) => $v->whereRaw('LOWER(name) LIKE ?', [$term]));
+                    ->orWhereRaw('LOWER(certifying_body) LIKE ?', [$term])
+                    ->orWhereHas('viticulturist', fn ($v) => $v->whereRaw('LOWER(name) LIKE ?', [$term]));
             });
         }
 
         $items = $query->orderBy('expiry_date')->paginate(15);
 
-        $all   = Certification::whereIn('viticulturist_id', $viticulturistIds)->where('certification_type', 'ecologico')->where('active', true)->get();
+        $all = Certification::whereIn('viticulturist_id', $viticulturistIds)->where('certification_type', 'ecologico')->where('active', true)->get();
         $stats = [
-            'total'    => $all->count(),
-            'active'   => $all->filter(fn($c) => !$c->is_expired)->count(),
-            'expiring' => $all->filter(fn($c) => $c->is_expiring_soon)->count(),
-            'expired'  => $all->filter(fn($c) => $c->is_expired)->count(),
+            'total' => $all->count(),
+            'active' => $all->filter(fn ($c) => ! $c->is_expired)->count(),
+            'expiring' => $all->filter(fn ($c) => $c->is_expiring_soon)->count(),
+            'expired' => $all->filter(fn ($c) => $c->is_expired)->count(),
         ];
 
         return ['items' => $items, 'stats' => $stats];
@@ -174,8 +192,8 @@ class Index extends Component
         $items = $query->orderByDesc('effective_date')->orderByDesc('created_at')->paginate(15);
 
         $stats = [
-            'draft'    => DoDocument::forSupervisor($doId)->ofType($type)->where('status', 'draft')->count(),
-            'active'   => DoDocument::forSupervisor($doId)->ofType($type)->where('status', 'active')->count(),
+            'draft' => DoDocument::forSupervisor($doId)->ofType($type)->where('status', 'draft')->count(),
+            'active' => DoDocument::forSupervisor($doId)->ofType($type)->where('status', 'active')->count(),
             'archived' => DoDocument::forSupervisor($doId)->ofType($type)->where('status', 'archived')->count(),
         ];
 

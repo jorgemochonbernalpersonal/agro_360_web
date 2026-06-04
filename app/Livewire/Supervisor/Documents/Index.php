@@ -15,13 +15,19 @@ class Index extends Component
     public string $activeTab = 'active';
 
     // ── Create / Edit form ────────────────────────────────────────────────────
-    public bool    $showModal   = false;
-    public ?int    $editingId   = null;
-    public string  $formType    = DoDocument::TYPE_PLIEGO;
-    public string  $formTitle   = '';
-    public string  $formVersion = '';
-    public string  $formDate    = '';
-    public string  $formContent = '';
+    public bool $showModal = false;
+
+    public ?int $editingId = null;
+
+    public string $formType = DoDocument::TYPE_PLIEGO;
+
+    public string $formTitle = '';
+
+    public string $formVersion = '';
+
+    public string $formDate = '';
+
+    public string $formContent = '';
 
     public function setTab(string $tab): void
     {
@@ -32,11 +38,11 @@ class Index extends Component
 
     public function openCreate(): void
     {
-        $this->editingId   = null;
-        $this->formType    = DoDocument::TYPE_PLIEGO;
-        $this->formTitle   = '';
+        $this->editingId = null;
+        $this->formType = DoDocument::TYPE_PLIEGO;
+        $this->formTitle = '';
         $this->formVersion = '';
-        $this->formDate    = '';
+        $this->formDate = '';
         $this->formContent = '';
         $this->resetErrorBag();
         $this->showModal = true;
@@ -48,14 +54,15 @@ class Index extends Component
 
         if ($doc->status !== DoDocument::STATUS_DRAFT) {
             $this->toastError(__('Solo se pueden editar documentos en borrador.'));
+
             return;
         }
 
-        $this->editingId   = $doc->id;
-        $this->formType    = $doc->type;
-        $this->formTitle   = $doc->title;
+        $this->editingId = $doc->id;
+        $this->formType = $doc->type;
+        $this->formTitle = $doc->title;
         $this->formVersion = $doc->version ?? '';
-        $this->formDate    = $doc->effective_date?->format('Y-m-d') ?? '';
+        $this->formDate = $doc->effective_date?->format('Y-m-d') ?? '';
         $this->formContent = $doc->content ?? '';
         $this->resetErrorBag();
         $this->showModal = true;
@@ -69,31 +76,32 @@ class Index extends Component
     public function save(): void
     {
         $this->validate([
-            'formType'    => ['required', 'in:' . DoDocument::TYPE_PLIEGO . ',' . DoDocument::TYPE_REGLAMENTO],
-            'formTitle'   => ['required', 'string', 'max:255'],
+            'formType' => ['required', 'in:'.DoDocument::TYPE_PLIEGO.','.DoDocument::TYPE_REGLAMENTO],
+            'formTitle' => ['required', 'string', 'max:255'],
             'formVersion' => ['nullable', 'string', 'max:50'],
-            'formDate'    => ['nullable', 'date'],
+            'formDate' => ['nullable', 'date'],
             'formContent' => ['nullable', 'string'],
         ], [
-            'formType.required'  => __('Selecciona el tipo de documento.'),
+            'formType.required' => __('Selecciona el tipo de documento.'),
             'formTitle.required' => __('El título es obligatorio.'),
-            'formDate.date'      => __('La fecha de entrada en vigor no es válida.'),
+            'formDate.date' => __('La fecha de entrada en vigor no es válida.'),
         ]);
 
         $data = [
-            'supervisor_id'  => Auth::id(),
-            'type'           => $this->formType,
-            'title'          => $this->formTitle,
-            'version'        => $this->formVersion ?: null,
+            'supervisor_id' => Auth::id(),
+            'type' => $this->formType,
+            'title' => $this->formTitle,
+            'version' => $this->formVersion ?: null,
             'effective_date' => $this->formDate ?: null,
-            'content'        => $this->formContent ?: null,
-            'status'         => DoDocument::STATUS_DRAFT,
+            'content' => $this->formContent ?: null,
+            'status' => DoDocument::STATUS_DRAFT,
         ];
 
         if ($this->editingId) {
             $doc = DoDocument::forSupervisor(Auth::id())->findOrFail($this->editingId);
             if ($doc->status !== DoDocument::STATUS_DRAFT) {
                 $this->toastError(__('Solo se pueden editar documentos en borrador.'));
+
                 return;
             }
             $doc->update($data);
@@ -103,8 +111,8 @@ class Index extends Component
             $this->toastSuccess(__('Documento creado como borrador.'));
         }
 
-        $this->showModal  = false;
-        $this->activeTab  = 'draft';
+        $this->showModal = false;
+        $this->activeTab = 'draft';
     }
 
     // ── Publish ───────────────────────────────────────────────────────────────
@@ -115,6 +123,7 @@ class Index extends Component
 
         if ($doc->status !== DoDocument::STATUS_DRAFT) {
             $this->toastError(__('Solo se pueden publicar documentos en borrador.'));
+
             return;
         }
 
@@ -137,6 +146,7 @@ class Index extends Component
 
         if ($doc->status !== DoDocument::STATUS_ACTIVE) {
             $this->toastError(__('Solo se pueden archivar documentos vigentes.'));
+
             return;
         }
 
@@ -153,6 +163,7 @@ class Index extends Component
 
         if ($doc->status !== DoDocument::STATUS_DRAFT) {
             $this->toastError(__('Solo se pueden eliminar documentos en borrador.'));
+
             return;
         }
 
@@ -173,14 +184,14 @@ class Index extends Component
             ->get();
 
         $counts = [
-            'draft'    => DoDocument::forSupervisor($doId)->where('status', DoDocument::STATUS_DRAFT)->count(),
-            'active'   => DoDocument::forSupervisor($doId)->where('status', DoDocument::STATUS_ACTIVE)->count(),
+            'draft' => DoDocument::forSupervisor($doId)->where('status', DoDocument::STATUS_DRAFT)->count(),
+            'active' => DoDocument::forSupervisor($doId)->where('status', DoDocument::STATUS_ACTIVE)->count(),
             'archived' => DoDocument::forSupervisor($doId)->where('status', DoDocument::STATUS_ARCHIVED)->count(),
         ];
 
         return view('livewire.supervisor.documents.index', [
             'documents' => $documents,
-            'counts'    => $counts,
+            'counts' => $counts,
         ]);
     }
 }

@@ -55,10 +55,10 @@ class ClientsTest extends WineryTestCase
     public function test_other_winery_cannot_edit(): void
     {
         $client = Client::create([
-            'user_id'     => $this->winery->id,
+            'user_id' => $this->winery->id,
             'client_type' => 'individual',
-            'first_name'  => 'Test',
-            'active'      => true,
+            'first_name' => 'Test',
+            'active' => true,
         ]);
 
         $otherWinery = $this->makeOtherWinery();

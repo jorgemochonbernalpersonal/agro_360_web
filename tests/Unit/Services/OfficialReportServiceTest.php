@@ -2,23 +2,22 @@
 
 namespace Tests\Unit\Services;
 
-use App\Services\OfficialReportService;
-use App\Models\OfficialReport;
-use App\Models\User;
-use App\Models\DigitalSignature;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
-use App\Models\Plot;
-use App\Models\PhytosanitaryTreatment;
+use App\Models\DigitalSignature;
+use App\Models\OfficialReport;
 use App\Models\PhytosanitaryProduct;
+use App\Models\PhytosanitaryTreatment;
+use App\Models\Plot;
+use App\Models\User;
+use App\Services\OfficialReportService;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Hash;
-use Tests\TestCase;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
 use Mockery;
+use Tests\TestCase;
 
 class OfficialReportServiceTest extends TestCase
 {
@@ -134,7 +133,7 @@ class OfficialReportServiceTest extends TestCase
             'type' => 'insecticide',
             'withdrawal_period_days' => 14,
         ]);
-        
+
         // Crear actividad fuera del periodo
         $activity = AgriculturalActivity::create([
             'plot_id' => $plot->id,
@@ -267,4 +266,3 @@ class OfficialReportServiceTest extends TestCase
         $this->assertNotEquals($user2->id, $report->user_id);
     }
 }
-

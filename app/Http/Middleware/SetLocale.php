@@ -10,7 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 class SetLocale
 {
     private const SUPPORTED = ['es', 'en', 'ca', 'eu', 'gl'];
+
     private const COOKIE_NAME = 'app_locale';
+
     private const COOKIE_DAYS = 365;
 
     public function handle(Request $request, Closure $next): Response
@@ -26,8 +28,9 @@ class SetLocale
                 $cleanUrl = $request->url();
                 $query = $request->except('lang');
                 if ($query) {
-                    $cleanUrl .= '?' . http_build_query($query);
+                    $cleanUrl .= '?'.http_build_query($query);
                 }
+
                 return redirect($cleanUrl)
                     ->cookie(self::COOKIE_NAME, $lang, 60 * 24 * self::COOKIE_DAYS, '/', null, null, false);
             }
@@ -62,12 +65,14 @@ class SetLocale
         $cookie = $request->cookie(self::COOKIE_NAME);
         if ($cookie && in_array($cookie, self::SUPPORTED, true)) {
             session(['locale' => $cookie]);
+
             return $cookie;
         }
 
         // 3. Preferencia guardada del usuario autenticado
         if (auth()->check() && auth()->user()->locale && in_array(auth()->user()->locale, self::SUPPORTED, true)) {
             session(['locale' => auth()->user()->locale]);
+
             return auth()->user()->locale;
         }
 

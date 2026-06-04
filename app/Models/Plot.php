@@ -3,18 +3,17 @@
 namespace App\Models;
 
 use App\Models\Builders\PlotQueryBuilder;
-use App\Models\PlotAlertPreference;
 use App\Models\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Model;
 
 class Plot extends Model
 {
-    use HasFactory, Auditable;
-    
+    use Auditable, HasFactory;
+
     protected $fillable = [
         'name',
         'description',
@@ -75,20 +74,10 @@ class Plot extends Model
         'slope' => 'decimal:2',
     ];
 
-    protected static function booted(): void
-    {
-        static::saving(function (Plot $plot) {
-            if ($plot->area > 0 && $plot->pac_eligible_area !== null) {
-                $plot->eligibility_coefficient = round(
-                    (float) $plot->pac_eligible_area / (float) $plot->area,
-                    4
-                );
-            }
-        });
-    }
-
     /**
      * Usar Query Builder personalizado
+     *
+     * @param mixed $query
      */
     public function newEloquentBuilder($query): PlotQueryBuilder
     {
@@ -208,7 +197,6 @@ class Plot extends Model
         );
     }
 
-
     /**
      * Actividades agrícolas de la parcela
      */
@@ -241,6 +229,7 @@ class Plot extends Model
     public function getTotalVinesAttribute(): ?int
     {
         $sum = $this->plantings()->where('status', 'active')->sum('vine_count');
+
         return $sum > 0 ? (int) $sum : null;
     }
 
@@ -366,23 +355,35 @@ class Plot extends Model
     public function activeWithdrawalPeriods()
     {
         $today = now();
-        
+
         return $this->agriculturalActivities()
             ->where('activity_type', 'phytosanitary')
-            ->whereHas('phytosanitaryTreatment.product', function($query) {
+            ->whereHas('phytosanitaryTreatment.product', function ($query) {
                 $query->whereNotNull('withdrawal_period_days');
             })
             ->with(['phytosanitaryTreatment.product'])
             ->get()
-            ->filter(function($activity) use ($today) {
-                if (!$activity->phytosanitaryTreatment || !$activity->phytosanitaryTreatment->product) {
+            ->filter(function ($activity) {
+                if (! $activity->phytosanitaryTreatment || ! $activity->phytosanitaryTreatment->product) {
                     return false;
                 }
-                
+
                 $withdrawalDays = $activity->phytosanitaryTreatment->product->withdrawal_period_days;
                 $safeDate = $activity->activity_date->copy()->addDays($withdrawalDays);
-                
+
                 return $safeDate->isFuture();
             });
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Plot $plot) {
+            if ($plot->area > 0 && $plot->pac_eligible_area !== null) {
+                $plot->eligibility_coefficient = round(
+                    (float) $plot->pac_eligible_area / (float) $plot->area,
+                    4
+                );
+            }
+        });
     }
 }

@@ -21,71 +21,25 @@ class IndexTest extends ViticulturistTestCase
         $this->actingAs($this->viticulturist);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makeClient(): Client
-    {
-        return Client::create([
-            'user_id'      => $this->viticulturist->id,
-            'client_type'  => 'individual',
-            'first_name'   => 'Cliente',
-            'last_name'    => 'Test',
-            'active'       => true,
-        ]);
-    }
-
-    private function makeAddress(Client $client): ClientAddress
-    {
-        return ClientAddress::create([
-            'client_id'  => $client->id,
-            'first_name' => 'Test',
-            'address'    => 'Calle Test 1',
-            'is_default' => true,
-        ]);
-    }
-
-    private function makeInvoice(array $attrs = []): Invoice
-    {
-        $client  = $this->makeClient();
-        $address = $this->makeAddress($client);
-
-        return Invoice::create(array_merge([
-            'user_id'            => $this->viticulturist->id,
-            'client_id'          => $client->id,
-            'client_address_id'  => $address->id,
-            'invoice_type'       => 'wine_sale',
-            'delivery_note_code' => 'ALB-2024-0001',
-            'order_date'         => '2024-10-01',
-            'status'             => 'draft',
-            'payment_status'     => 'unpaid',
-            'delivery_status'    => 'pending',
-            'subtotal'           => 250,
-            'discount_amount'    => 0,
-            'tax_base'           => 250,
-            'tax_amount'         => 52.5,
-            'total_amount'       => 302.5,
-        ], $attrs));
-    }
-
     // ── Visibility ────────────────────────────────────────────────────────────
 
     public function test_shows_own_invoices_only(): void
     {
-        $own   = $this->makeInvoice(['delivery_note_code' => 'ALB-2024-0001']);
+        $own = $this->makeInvoice(['delivery_note_code' => 'ALB-2024-0001']);
         $other = $this->makeOtherViticulturist();
         Invoice::create([
-            'user_id'            => $other->id,
-            'invoice_type'       => 'wine_sale',
+            'user_id' => $other->id,
+            'invoice_type' => 'wine_sale',
             'delivery_note_code' => 'ALB-2024-9999',
-            'order_date'         => '2024-10-01',
-            'status'             => 'draft',
-            'payment_status'     => 'unpaid',
-            'delivery_status'    => 'pending',
-            'subtotal'           => 0,
-            'discount_amount'    => 0,
-            'tax_base'           => 0,
-            'tax_amount'         => 0,
-            'total_amount'       => 0,
+            'order_date' => '2024-10-01',
+            'status' => 'draft',
+            'payment_status' => 'unpaid',
+            'delivery_status' => 'pending',
+            'subtotal' => 0,
+            'discount_amount' => 0,
+            'tax_base' => 0,
+            'tax_amount' => 0,
+            'total_amount' => 0,
         ]);
 
         Livewire::test(Index::class)
@@ -125,7 +79,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_confirm_emitir_already_sent_does_nothing(): void
     {
         $invoice = $this->makeInvoice([
-            'status'         => 'sent',
+            'status' => 'sent',
             'invoice_number' => 'FAC-2024-0001',
         ]);
 
@@ -142,16 +96,16 @@ class IndexTest extends ViticulturistTestCase
     public function test_confirm_corrective_creates_negative_invoice(): void
     {
         $invoice = $this->makeInvoice([
-            'status'         => 'sent',
+            'status' => 'sent',
             'invoice_number' => 'FAC-2024-0001',
-            'subtotal'       => 302.5,
-            'tax_amount'     => 63.525,
-            'total_amount'   => 366.025,
+            'subtotal' => 302.5,
+            'tax_amount' => 63.525,
+            'total_amount' => 366.025,
         ]);
 
         Livewire::test(Index::class)
-            ->set('correctiveId',     $invoice->id)
-            ->set('correctiveDate',   '2024-11-01')
+            ->set('correctiveId', $invoice->id)
+            ->set('correctiveDate', '2024-11-01')
             ->set('correctiveReason', 'Error en la factura')
             ->call('confirmCorrective')
             ->assertHasNoErrors();
@@ -169,7 +123,7 @@ class IndexTest extends ViticulturistTestCase
         $draft = $this->makeInvoice(['status' => 'draft']);
 
         Livewire::test(Index::class)
-            ->set('correctiveId',   $draft->id)
+            ->set('correctiveId', $draft->id)
             ->set('correctiveDate', '2024-11-01')
             ->call('confirmCorrective');
 
@@ -179,35 +133,81 @@ class IndexTest extends ViticulturistTestCase
     public function test_corrective_cannot_be_created_twice_for_same_invoice(): void
     {
         $invoice = $this->makeInvoice([
-            'status'         => 'sent',
+            'status' => 'sent',
             'invoice_number' => 'FAC-2024-0001',
         ]);
 
         // Create first corrective
         Invoice::withoutEvents(fn () => Invoice::create([
-            'user_id'              => $this->viticulturist->id,
-            'client_id'            => $invoice->client_id,
+            'user_id' => $this->viticulturist->id,
+            'client_id' => $invoice->client_id,
             'corrected_invoice_id' => $invoice->id,
-            'corrective'           => true,
-            'invoice_type'         => 'wine_sale',
-            'invoice_number'       => 'FAC-2024-0002',
-            'order_date'           => now(),
-            'status'               => 'sent',
-            'payment_status'       => 'unpaid',
-            'delivery_status'      => 'cancelled',
-            'subtotal'             => -302.5,
-            'discount_amount'      => 0,
-            'tax_base'             => -302.5,
-            'tax_amount'           => -63.525,
-            'total_amount'         => -366.025,
+            'corrective' => true,
+            'invoice_type' => 'wine_sale',
+            'invoice_number' => 'FAC-2024-0002',
+            'order_date' => now(),
+            'status' => 'sent',
+            'payment_status' => 'unpaid',
+            'delivery_status' => 'cancelled',
+            'subtotal' => -302.5,
+            'discount_amount' => 0,
+            'tax_base' => -302.5,
+            'tax_amount' => -63.525,
+            'total_amount' => -366.025,
         ]));
 
         Livewire::test(Index::class)
-            ->set('correctiveId',   $invoice->id)
+            ->set('correctiveId', $invoice->id)
             ->set('correctiveDate', '2024-11-15')
             ->call('confirmCorrective');
 
         // Only the pre-existing corrective should exist
         $this->assertEquals(1, Invoice::where('corrected_invoice_id', $invoice->id)->count());
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makeClient(): Client
+    {
+        return Client::create([
+            'user_id' => $this->viticulturist->id,
+            'client_type' => 'individual',
+            'first_name' => 'Cliente',
+            'last_name' => 'Test',
+            'active' => true,
+        ]);
+    }
+
+    private function makeAddress(Client $client): ClientAddress
+    {
+        return ClientAddress::create([
+            'client_id' => $client->id,
+            'first_name' => 'Test',
+            'address' => 'Calle Test 1',
+            'is_default' => true,
+        ]);
+    }
+
+    private function makeInvoice(array $attrs = []): Invoice
+    {
+        $client = $this->makeClient();
+        $address = $this->makeAddress($client);
+
+        return Invoice::create(array_merge([
+            'user_id' => $this->viticulturist->id,
+            'client_id' => $client->id,
+            'client_address_id' => $address->id,
+            'invoice_type' => 'wine_sale',
+            'delivery_note_code' => 'ALB-2024-0001',
+            'order_date' => '2024-10-01',
+            'status' => 'draft',
+            'payment_status' => 'unpaid',
+            'delivery_status' => 'pending',
+            'subtotal' => 250,
+            'discount_amount' => 0,
+            'tax_base' => 250,
+            'tax_amount' => 52.5,
+            'total_amount' => 302.5,
+        ], $attrs));
     }
 }

@@ -21,14 +21,14 @@ class ViticulturistCacheService
     /**
      * Obtener IDs de viticultores visibles para un viticultor
      * Cachea el resultado para evitar queries repetidas
-     * 
-     * @param User $viticulturist
+     *
      * @param int|null $wineryId Opcional: filtrar por winery específica
+     *
      * @return Collection<int> IDs de viticultores visibles
      */
     public function getVisibleViticulturistIds(User $viticulturist, ?int $wineryId = null): Collection
     {
-        if (!$viticulturist->hasViticulturistAccess()) {
+        if (! $viticulturist->hasViticulturistAccess()) {
             return collect();
         }
 
@@ -44,13 +44,12 @@ class ViticulturistCacheService
     /**
      * Obtener viticultores editables por un viticultor
      * Solo incluye viticultores creados directamente por él
-     * 
-     * @param User $viticulturist
+     *
      * @return Collection<int> IDs de viticultores editables
      */
     public function getEditableViticulturistIds(User $viticulturist): Collection
     {
-        if (!$viticulturist->hasViticulturistAccess()) {
+        if (! $viticulturist->hasViticulturistAccess()) {
             return collect();
         }
 
@@ -66,13 +65,12 @@ class ViticulturistCacheService
     /**
      * Obtener todos los IDs de parcelas visibles para un viticultor
      * Incluye sus parcelas y parcelas de viticultores visibles
-     * 
-     * @param User $viticulturist
+     *
      * @return Collection<int> IDs de parcelas visibles
      */
     public function getVisiblePlotIds(User $viticulturist): Collection
     {
-        if (!$viticulturist->hasViticulturistAccess()) {
+        if (! $viticulturist->hasViticulturistAccess()) {
             return collect();
         }
 
@@ -81,10 +79,10 @@ class ViticulturistCacheService
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($viticulturist) {
             // Obtener IDs de viticultores visibles
             $visibleViticulturistIds = $this->getVisibleViticulturistIds($viticulturist);
-            
+
             // Añadir el propio viticultor
             $allViticulturistIds = $visibleViticulturistIds->push($viticulturist->id)->unique();
-            
+
             // Obtener IDs de parcelas
             return \App\Models\Plot::whereIn('viticulturist_id', $allViticulturistIds)
                 ->pluck('id');
@@ -94,19 +92,16 @@ class ViticulturistCacheService
     /**
      * Limpiar cache de un viticultor específico
      * Útil cuando se crean/eliminan relaciones
-     * 
-     * @param int $viticulturistId
-     * @return void
      */
     public function clearCache(int $viticulturistId): void
     {
         // Limpiar todos los tipos de cache para este viticultor
         $patterns = ['visible_ids', 'editable_ids', 'plot_ids'];
-        
+
         foreach ($patterns as $pattern) {
             // Sin winery
             Cache::forget($this->getCacheKey($pattern, $viticulturistId));
-            
+
             // Con winery (probar varias wineries comunes)
             // Nota: Esto es una limitación del cache por clave
             // En producción, considerar usar tags de cache (Redis)
@@ -119,8 +114,6 @@ class ViticulturistCacheService
     /**
      * Limpiar todo el cache de viticultores
      * Útil para mantenimiento o después de migraciones
-     * 
-     * @return void
      */
     public function clearAllCache(): void
     {
@@ -130,29 +123,8 @@ class ViticulturistCacheService
     }
 
     /**
-     * Generar clave de cache consistente
-     * 
-     * @param string $type
-     * @param int $viticulturistId
-     * @param int|null $wineryId
-     * @return string
-     */
-    private function getCacheKey(string $type, int $viticulturistId, ?int $wineryId = null): string
-    {
-        $key = "viticulturist_cache:{$type}:{$viticulturistId}";
-        
-        if ($wineryId !== null) {
-            $key .= ":winery_{$wineryId}";
-        }
-        
-        return $key;
-    }
-
-    /**
      * Verificar si el cache está habilitado
      * Útil para debugging o testing
-     * 
-     * @return bool
      */
     public function isCacheEnabled(): bool
     {
@@ -161,20 +133,31 @@ class ViticulturistCacheService
 
     /**
      * Obtener estadísticas de cache (si están disponibles)
-     * 
-     * @param int $viticulturistId
-     * @return array
      */
     public function getCacheStats(int $viticulturistId): array
     {
         $stats = [];
         $patterns = ['visible_ids', 'editable_ids', 'plot_ids'];
-        
+
         foreach ($patterns as $pattern) {
             $key = $this->getCacheKey($pattern, $viticulturistId);
             $stats[$pattern] = Cache::has($key) ? 'cached' : 'not_cached';
         }
-        
+
         return $stats;
+    }
+
+    /**
+     * Generar clave de cache consistente
+     */
+    private function getCacheKey(string $type, int $viticulturistId, ?int $wineryId = null): string
+    {
+        $key = "viticulturist_cache:{$type}:{$viticulturistId}";
+
+        if ($wineryId !== null) {
+            $key .= ":winery_{$wineryId}";
+        }
+
+        return $key;
     }
 }

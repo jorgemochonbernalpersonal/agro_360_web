@@ -84,6 +84,10 @@ class PhytosanitaryReportGenerator
 
     /**
      * Generar solo el PDF (para uso en Jobs)
+     *
+     * @param mixed $user
+     * @param mixed $treatments
+     * @param mixed $stats
      */
     public function generatePDF(OfficialReport $report, $user, $treatments, $stats): string
     {
@@ -97,11 +101,11 @@ class PhytosanitaryReportGenerator
     {
         $digitalSignature = DigitalSignature::forUser($user->id);
 
-        if (!$digitalSignature) {
+        if (! $digitalSignature) {
             throw new \Exception(__('No tienes una contraseña de firma digital configurada.'));
         }
 
-        if (!$digitalSignature->verifyPassword($password)) {
+        if (! $digitalSignature->verifyPassword($password)) {
             throw new \Exception(__('Contraseña de firma digital incorrecta.'));
         }
     }
@@ -135,7 +139,7 @@ class PhytosanitaryReportGenerator
                     'crew_member_id',
                     'temperature',
                     'notes',
-                    'viticulturist_id'
+                    'viticulturist_id',
                 ])
                 ->orderBy('activity_date', 'asc')
                 ->get();
@@ -146,6 +150,8 @@ class PhytosanitaryReportGenerator
 
     /**
      * Calcular estadísticas del informe
+     *
+     * @param mixed $treatments
      */
     protected function calculateStats($treatments): array
     {

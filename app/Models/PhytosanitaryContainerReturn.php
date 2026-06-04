@@ -8,29 +8,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PhytosanitaryContainerReturn extends Model
 {
     const CONTAINER_TYPES = [
-        'plastic'   => 'Plástico (HDPE/PET)',
-        'glass'     => 'Vidrio',
-        'metal'     => 'Metal / Chapa',
+        'plastic' => 'Plástico (HDPE/PET)',
+        'glass' => 'Vidrio',
+        'metal' => 'Metal / Chapa',
         'cardboard' => 'Cartón / Papel',
-        'flexible'  => 'Flexible / Bolsa',
-        'other'     => 'Otro',
+        'flexible' => 'Flexible / Bolsa',
+        'other' => 'Otro',
     ];
-
-    public static function containerTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::CONTAINER_TYPES);
-    }
 
     const COLLECTION_SYSTEMS = [
         'sigfito' => 'SIGFITO',
-        'field'   => 'FIELD',
-        'other'   => 'Otro sistema',
+        'field' => 'FIELD',
+        'other' => 'Otro sistema',
     ];
-
-    public static function collectionSystemOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::COLLECTION_SYSTEMS);
-    }
 
     protected $fillable = [
         'viticulturist_id',
@@ -51,12 +41,22 @@ class PhytosanitaryContainerReturn extends Model
     ];
 
     protected $casts = [
-        'date'                 => 'date',
-        'container_size_liters'=> 'decimal:3',
-        'containers_quantity'  => 'integer',
-        'total_weight_kg'      => 'decimal:3',
-        'active'               => 'boolean',
+        'date' => 'date',
+        'container_size_liters' => 'decimal:3',
+        'containers_quantity' => 'integer',
+        'total_weight_kg' => 'decimal:3',
+        'active' => 'boolean',
     ];
+
+    public static function containerTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CONTAINER_TYPES);
+    }
+
+    public static function collectionSystemOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::COLLECTION_SYSTEMS);
+    }
 
     public function viticulturist(): BelongsTo
     {

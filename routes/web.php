@@ -47,6 +47,7 @@ if (app()->environment('testing')) {
         $user = \App\Models\User::where('email', $email)->firstOrFail();
         \Illuminate\Support\Facades\Auth::login($user, true);
         session()->regenerate();
+
         return response()->json(['id' => $user->id, 'email' => $user->email, 'role' => $user->role]);
     });
 
@@ -55,13 +56,17 @@ if (app()->environment('testing')) {
         \Illuminate\Support\Facades\Auth::logout();
         session()->invalidate();
         session()->regenerateToken();
+
         return response()->json(['ok' => true]);
     });
 
     // Info de sesión actual (para validación)
     Route::get('/__cypress/me', function () {
         $user = \Illuminate\Support\Facades\Auth::user();
-        if (!$user) return response()->json(null, 401);
+        if (! $user) {
+            return response()->json(null, 401);
+        }
+
         return response()->json(['id' => $user->id, 'email' => $user->email, 'role' => $user->role]);
     });
 }
@@ -69,8 +74,8 @@ if (app()->environment('testing')) {
 // Dusk debug (solo testing)
 Route::get('/dusk-env', function () {
     return response()->json([
-        'env'     => app()->environment(),
-        'db'      => DB::connection()->getDatabaseName(),
+        'env' => app()->environment(),
+        'db' => DB::connection()->getDatabaseName(),
         'session' => config('session.driver'),
     ]);
 })->middleware('throttle:60,1');
@@ -78,9 +83,9 @@ Route::get('/dusk-env', function () {
 // Debug locale (verificar que SetLocale middleware funciona correctamente)
 Route::get('/debug/locale', function () {
     return response()->json([
-        'app_locale'      => app()->getLocale(),
-        'session_locale'  => session('locale'),
-        'user_locale'     => auth()->user()?->locale,
+        'app_locale' => app()->getLocale(),
+        'session_locale' => session('locale'),
+        'user_locale' => auth()->user()?->locale,
         'translated_test' => __('Buscar'),
     ]);
 })->middleware('auth');
@@ -90,14 +95,14 @@ Route::get('/health', function () {
     try {
         // Verificar conexión a base de datos
         \DB::connection()->getPdo();
-        
+
         // Verificar que la aplicación está funcionando
         $checks = [
             'status' => 'ok',
             'database' => 'connected',
             'timestamp' => now()->toIso8601String(),
         ];
-        
+
         return response()->json($checks, 200);
     } catch (\Exception $e) {
         return response()->json([
@@ -109,11 +114,11 @@ Route::get('/health', function () {
 })->middleware('throttle:10,1')->name('health');
 
 // Rutas públicas legales
-Route::get('/privacidad', fn() => view('legal.privacy'))->name('privacy');
-Route::get('/terminos', fn() => view('legal.terms'))->name('terms');
-Route::get('/cookies', fn() => view('legal.cookies'))->name('cookies');
-Route::get('/aviso-legal', fn() => view('legal.aviso-legal'))->name('aviso-legal');
-Route::get('/eliminacion-cuenta', fn() => view('legal.account-deletion'))->name('account-deletion');
+Route::get('/privacidad', fn () => view('legal.privacy'))->name('privacy');
+Route::get('/terminos', fn () => view('legal.terms'))->name('terms');
+Route::get('/cookies', fn () => view('legal.cookies'))->name('cookies');
+Route::get('/aviso-legal', fn () => view('legal.aviso-legal'))->name('aviso-legal');
+Route::get('/eliminacion-cuenta', fn () => view('legal.account-deletion'))->name('account-deletion');
 
 // Sitemap dinámico
 Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
@@ -129,11 +134,10 @@ Route::get('/vino/{token}', [App\Http\Controllers\WineTraceController::class, 's
 // Ruta de beta expirada (requiere auth)
 Route::middleware('auth')->get('/beta/expired', \App\Livewire\Beta\Expired::class)->name('beta.expired');
 
-
 // Ruta para forzar cambio de contraseña (debe estar fuera del middleware 'auth' principal)
-Route::middleware('auth')->get('/password/force-reset', \App\Livewire\Auth\ForcePasswordReset::class)    ->name('password.force-reset');
+Route::middleware('auth')->get('/password/force-reset', \App\Livewire\Auth\ForcePasswordReset::class)->name('password.force-reset');
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 // Activación de cuenta por invitación de bodega (pública, sin auth)
 Route::middleware('guest')->get('/activar-cuenta/{token}', \App\Livewire\Auth\ClaimAccount::class)
@@ -144,17 +148,17 @@ Route::middleware('guest')->get('/activar-cuenta/{token}', \App\Livewire\Auth\Cl
 Route::middleware(['auth', 'check.can_login', 'password.changed', 'require.password.change', 'verified'])->group(function () {
     // Laravel Log Viewer - Solo para administradores
     Route::middleware('role:admin')
-        ->get('logs', fn() => app('\Rap2hpoutre\LaravelLogViewer\LogViewerController')->index())
+        ->get('logs', fn () => app('\Rap2hpoutre\LaravelLogViewer\LogViewerController')->index())
         ->name('logs');
-    
-    require __DIR__ . '/plots.php';
-    require __DIR__ . '/clients.php';
-    require __DIR__ . '/map.php';
-    require __DIR__ . '/sigpac.php';
+
+    require __DIR__.'/plots.php';
+    require __DIR__.'/clients.php';
+    require __DIR__.'/map.php';
+    require __DIR__.'/sigpac.php';
     // require __DIR__ . '/config.php'; // Eliminado - no es útil
-    require __DIR__ . '/profile.php';
-    require __DIR__ . '/subscription.php';
-    require __DIR__ . '/payment.php';
+    require __DIR__.'/profile.php';
+    require __DIR__.'/subscription.php';
+    require __DIR__.'/payment.php';
 
     // Dashboard combinado para productor
     Route::middleware(['role:producer', 'check.beta'])
@@ -162,11 +166,11 @@ Route::middleware(['auth', 'check.can_login', 'password.changed', 'require.passw
         ->name('producer.dashboard');
 
     // Dashboards por rol
-    require __DIR__ . '/admin.php';
-    require __DIR__ . '/supervisor.php';
-    require __DIR__ . '/winery.php';
-    require __DIR__ . '/viticulturist.php';
-    require __DIR__ . '/producer.php';
-    require __DIR__ . '/remote-sensing.php';
-    require __DIR__ . '/do.php';
+    require __DIR__.'/admin.php';
+    require __DIR__.'/supervisor.php';
+    require __DIR__.'/winery.php';
+    require __DIR__.'/viticulturist.php';
+    require __DIR__.'/producer.php';
+    require __DIR__.'/remote-sensing.php';
+    require __DIR__.'/do.php';
 });

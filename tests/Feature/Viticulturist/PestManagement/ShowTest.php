@@ -9,18 +9,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class ShowTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makePest(array $overrides = []): Pest
-    {
-        return Pest::create(array_merge([
-            'type'        => 'pest',
-            'name'        => 'Araña Roja',
-            'description' => 'Ácaro que ataca las hojas.',
-            'active'      => true,
-        ], $overrides));
-    }
-
     // ── Render ────────────────────────────────────────────────────────────────
 
     public function test_renders_show(): void
@@ -46,7 +34,7 @@ class ShowTest extends ViticulturistTestCase
     public function test_shows_scientific_name(): void
     {
         $pest = $this->makePest([
-            'name'            => 'Araña Roja',
+            'name' => 'Araña Roja',
             'scientific_name' => 'Tetranychus urticae',
         ]);
         $viticulturist = $this->makeViticulturist();
@@ -164,5 +152,16 @@ class ShowTest extends ViticulturistTestCase
 
         Livewire::test(Show::class, ['pest' => $pest])
             ->assertSee('5% de racimos afectados');
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makePest(array $overrides = []): Pest
+    {
+        return Pest::create(array_merge([
+            'type' => 'pest',
+            'name' => 'Araña Roja',
+            'description' => 'Ácaro que ataca las hojas.',
+            'active' => true,
+        ], $overrides));
     }
 }

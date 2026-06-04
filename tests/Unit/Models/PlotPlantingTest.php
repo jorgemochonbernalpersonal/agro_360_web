@@ -118,5 +118,3 @@ class PlotPlantingTest extends TestCase
         $this->assertCount(2, $plot->plantings);
     }
 }
-
-

@@ -25,14 +25,14 @@ class HarvestDeliveryAlbaranController extends Controller
         $pdf = Pdf::loadView('reports.viticulturist-harvest-delivery-albaran', [
             'delivery' => $delivery,
         ])
-        ->setPaper('A4', 'portrait')
-        ->setOption('defaultFont', 'DejaVu Sans')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isRemoteEnabled', false);
+            ->setPaper('A4', 'portrait')
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', false);
 
-        $date     = $delivery->delivery_date?->format('d-m-Y') ?? now()->format('d-m-Y');
-        $ticket   = $delivery->ticket_number ? '_' . str_replace(['/', ' '], '-', $delivery->ticket_number) : '';
-        $filename = 'albaran_entrega' . $ticket . '_' . $date . '.pdf';
+        $date = $delivery->delivery_date?->format('d-m-Y') ?? now()->format('d-m-Y');
+        $ticket = $delivery->ticket_number ? '_'.str_replace(['/', ' '], '-', $delivery->ticket_number) : '';
+        $filename = 'albaran_entrega'.$ticket.'_'.$date.'.pdf';
 
         return $pdf->download($filename);
     }

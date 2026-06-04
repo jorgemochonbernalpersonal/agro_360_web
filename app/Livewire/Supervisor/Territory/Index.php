@@ -3,7 +3,6 @@
 namespace App\Livewire\Supervisor\Territory;
 
 use App\Models\SupervisorViticulturist;
-use App\Models\SupervisorWinery;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -77,24 +76,24 @@ class Index extends Component
             ->limit(20)
             ->get();
 
-        $totalArea    = (float) $byProvince->sum('total_area');
-        $totalPlots   = (int)   $byProvince->sum('plot_count');
-        $organicPlots = (int)   $byProvince->sum('organic_count');
+        $totalArea = (float) $byProvince->sum('total_area');
+        $totalPlots = (int) $byProvince->sum('plot_count');
+        $organicPlots = (int) $byProvince->sum('organic_count');
 
         $tabs = [
-            'provinces'     => ['label' => __('Por provincia'),   'count' => $byProvince->count()],
-            'varieties'     => ['label' => __('Por variedad'),    'count' => $byVariety->count()],
-            'municipalities'=> ['label' => __('Por municipio'),   'count' => $byMunicipality->count()],
+            'provinces' => ['label' => __('Por provincia'),   'count' => $byProvince->count()],
+            'varieties' => ['label' => __('Por variedad'),    'count' => $byVariety->count()],
+            'municipalities' => ['label' => __('Por municipio'),   'count' => $byMunicipality->count()],
         ];
 
         return view('livewire.supervisor.territory.index', [
-            'tabs'            => $tabs,
-            'byProvince'      => $byProvince,
-            'byVariety'       => $byVariety,
-            'byMunicipality'  => $byMunicipality,
-            'totalArea'       => $totalArea,
-            'totalPlots'      => $totalPlots,
-            'organicPlots'    => $organicPlots,
+            'tabs' => $tabs,
+            'byProvince' => $byProvince,
+            'byVariety' => $byVariety,
+            'byMunicipality' => $byMunicipality,
+            'totalArea' => $totalArea,
+            'totalPlots' => $totalPlots,
+            'organicPlots' => $organicPlots,
         ]);
     }
 }

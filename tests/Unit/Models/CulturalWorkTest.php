@@ -2,16 +2,16 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\CulturalWork;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\CulturalWork;
 use App\Models\Plot;
 use App\Models\User;
-use App\Models\Campaign;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
 
 class CulturalWorkTest extends TestCase
 {
@@ -148,8 +148,8 @@ class CulturalWorkTest extends TestCase
         ]);
 
         $culturalWork = CulturalWork::create([
-            'activity_id'  => $activity->id,
-            'work_type'    => 'poda',
+            'activity_id' => $activity->id,
+            'work_type' => 'poda',
             'pruning_type' => 'guyot',
         ]);
 
@@ -171,9 +171,9 @@ class CulturalWorkTest extends TestCase
         ]);
 
         $culturalWork = CulturalWork::create([
-            'activity_id'                 => $activity->id,
-            'work_type'                   => 'poda',
-            'pruning_type'               => 'doble_guyot',
+            'activity_id' => $activity->id,
+            'work_type' => 'poda',
+            'pruning_type' => 'doble_guyot',
             'productive_buds_per_hectare' => 45000,
         ]);
 
@@ -196,9 +196,9 @@ class CulturalWorkTest extends TestCase
         ]);
 
         $culturalWork = CulturalWork::create([
-            'activity_id'        => $activity->id,
-            'work_type'          => 'poda',
-            'pruning_type'       => 'guyot',
+            'activity_id' => $activity->id,
+            'work_type' => 'poda',
+            'pruning_type' => 'guyot',
             'residue_management' => 'triturado_incorporado',
         ]);
 
@@ -220,9 +220,9 @@ class CulturalWorkTest extends TestCase
         ]);
 
         $culturalWork = CulturalWork::create([
-            'activity_id'        => $activity->id,
-            'work_type'          => 'poda',
-            'pruning_type'       => 'vaso',
+            'activity_id' => $activity->id,
+            'work_type' => 'poda',
+            'pruning_type' => 'vaso',
             'residue_management' => null,
         ]);
 
@@ -244,9 +244,9 @@ class CulturalWorkTest extends TestCase
         ]);
 
         $culturalWork = CulturalWork::create([
-            'activity_id'                 => $activity->id,
-            'work_type'                   => 'deshojado',
-            'pruning_type'               => null,
+            'activity_id' => $activity->id,
+            'work_type' => 'deshojado',
+            'pruning_type' => null,
             'productive_buds_per_hectare' => null,
         ]);
 
@@ -254,4 +254,3 @@ class CulturalWorkTest extends TestCase
         $this->assertNull($culturalWork->productive_buds_per_hectare);
     }
 }
-

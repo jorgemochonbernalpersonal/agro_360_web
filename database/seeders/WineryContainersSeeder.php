@@ -33,31 +33,31 @@ class WineryContainersSeeder extends Seeder
     {
         $this->cleanup();
 
-        $now  = now();
+        $now = now();
         $rows = [];
         $counter = 1;
 
         foreach (self::DISTRIBUTION as [$typeId, $materialId, $unit, $range, $qty, $prefix, $desc]) {
             for ($i = 1; $i <= $qty; $i++) {
                 $capacity = $this->randomCapacity($range[0], $range[1]);
-                $serial   = strtoupper(substr($prefix, 0, 3)) . '-' . str_pad($counter, 4, '0', STR_PAD_LEFT);
+                $serial = strtoupper(substr($prefix, 0, 3)).'-'.str_pad($counter, 4, '0', STR_PAD_LEFT);
 
                 $rows[] = [
-                    'user_id'             => self::WINERY_USER_ID,
-                    'name'                => "$prefix " . str_pad($counter, 3, '0', STR_PAD_LEFT),
-                    'description'         => $desc,
-                    'capacity'            => $capacity,
-                    'unit'                => $unit,
-                    'used_capacity'       => 0.000,
-                    'wine_volume_liters'  => 0.000,
-                    'quantity'            => 1,
-                    'serial_number'       => $serial,
-                    'type_id'             => $typeId,
-                    'material_id'         => $materialId,
-                    'purchase_date'       => $this->randomPurchaseDate(),
-                    'archived'            => false,
-                    'created_at'          => $now,
-                    'updated_at'          => $now,
+                    'user_id' => self::WINERY_USER_ID,
+                    'name' => "$prefix ".str_pad($counter, 3, '0', STR_PAD_LEFT),
+                    'description' => $desc,
+                    'capacity' => $capacity,
+                    'unit' => $unit,
+                    'used_capacity' => 0.000,
+                    'wine_volume_liters' => 0.000,
+                    'quantity' => 1,
+                    'serial_number' => $serial,
+                    'type_id' => $typeId,
+                    'material_id' => $materialId,
+                    'purchase_date' => $this->randomPurchaseDate(),
+                    'archived' => false,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
 
                 $counter++;
@@ -66,7 +66,7 @@ class WineryContainersSeeder extends Seeder
 
         DB::table('containers')->insert($rows);
 
-        $this->command->info('✓ ' . count($rows) . ' contenedores creados para winery user_id=' . self::WINERY_USER_ID);
+        $this->command->info('✓ '.count($rows).' contenedores creados para winery user_id='.self::WINERY_USER_ID);
     }
 
     private function cleanup(): void
@@ -88,14 +88,14 @@ class WineryContainersSeeder extends Seeder
         DB::table('cellar_operations')
             ->where(function ($q) use ($containerIds) {
                 $q->whereIn('source_container_id', $containerIds)
-                  ->orWhereIn('target_container_id', $containerIds);
+                    ->orWhereIn('target_container_id', $containerIds);
             })->delete();
         DB::table('container_maintenances')->whereIn('container_id', $containerIds)->delete();
         DB::table('container_histories')->whereIn('container_id', $containerIds)->delete();
         DB::table('wine_transfers')
             ->where(function ($q) use ($containerIds) {
                 $q->whereIn('from_container_id', $containerIds)
-                  ->orWhereIn('to_container_id', $containerIds);
+                    ->orWhereIn('to_container_id', $containerIds);
             })->delete();
 
         $deleted = DB::table('containers')
@@ -111,12 +111,14 @@ class WineryContainersSeeder extends Seeder
     {
         // Redondear a múltiplo de 50 para valores realistas
         $raw = mt_rand($min, $max);
+
         return (float) (round($raw / 50) * 50);
     }
 
     private function randomPurchaseDate(): string
     {
         $years = mt_rand(1, 8);
+
         return now()->subYears($years)->subDays(mt_rand(0, 365))->format('Y-m-d');
     }
 }

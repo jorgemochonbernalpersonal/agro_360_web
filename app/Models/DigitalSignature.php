@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Hash;
 
 class DigitalSignature extends Model
@@ -40,6 +40,8 @@ class DigitalSignature extends Model
 
     /**
      * Establecer la contraseña de firma (se hashea automáticamente)
+     *
+     * @param mixed $value
      */
     public function setSignaturePasswordAttribute($value): void
     {
@@ -66,6 +68,7 @@ class DigitalSignature extends Model
             // El mutator hasheará automáticamente la contraseña
             $signature->signature_password = $password;
             $signature->save();
+
             return $signature->fresh();
         }
 

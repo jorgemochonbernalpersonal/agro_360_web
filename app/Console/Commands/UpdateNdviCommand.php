@@ -60,8 +60,9 @@ class UpdateNdviCommand extends Command
     {
         $plot = Plot::find($plotId);
 
-        if (!$plot) {
+        if (! $plot) {
             $this->error("No se encontró la parcela con ID {$plotId}");
+
             return self::FAILURE;
         }
 
@@ -69,15 +70,15 @@ class UpdateNdviCommand extends Command
 
         if ($sync) {
             $data = $service->fetchAndStoreNdvi($plot);
-            
+
             if ($data) {
                 $this->info("✅ NDVI actualizado: {$data->ndvi_mean} ({$data->health_text})");
             } else {
-                $this->warn("⚠️ No se pudo obtener datos NDVI");
+                $this->warn('⚠️ No se pudo obtener datos NDVI');
             }
         } else {
             UpdatePlotNdviJob::dispatch($plot)->onQueue('remote-sensing');
-            $this->info("📤 Job encolado para actualización");
+            $this->info('📤 Job encolado para actualización');
         }
 
         return self::SUCCESS;
@@ -98,7 +99,8 @@ class UpdateNdviCommand extends Command
         $this->info("Encontradas {$count} parcelas con geometrías");
 
         if ($count === 0) {
-            $this->warn("No hay parcelas para actualizar");
+            $this->warn('No hay parcelas para actualizar');
+
             return self::SUCCESS;
         }
 
@@ -126,7 +128,7 @@ class UpdateNdviCommand extends Command
         } else {
             UpdateAllPlotsNdviJob::dispatch()->onQueue('remote-sensing');
             $this->info("📤 Job encolado para actualizar {$count} parcelas");
-            $this->line("Los jobs se procesarán espaciadamente para no saturar la API");
+            $this->line('Los jobs se procesarán espaciadamente para no saturar la API');
         }
 
         return self::SUCCESS;

@@ -14,7 +14,9 @@ class ClientPolicy
 
     public function view(User $user, Client $client): bool
     {
-        if ($user->role === 'admin') return true;
+        if ($user->role === 'admin') {
+            return true;
+        }
 
         return $client->user_id === $user->id;
     }
@@ -26,7 +28,9 @@ class ClientPolicy
 
     public function update(User $user, Client $client): bool
     {
-        if ($user->role === 'admin') return true;
+        if ($user->role === 'admin') {
+            return true;
+        }
 
         return $client->user_id === $user->id;
     }

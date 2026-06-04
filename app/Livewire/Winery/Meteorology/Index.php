@@ -10,11 +10,17 @@ use Livewire\Component;
 class Index extends Component
 {
     public string $selectedPlot = '';
+
     public array $weather = [];
+
     public array $soil = [];
+
     public array $solar = [];
+
     public array $forecast = [];
+
     public bool $showForecast = false;
+
     public string $error = '';
 
     public function mount(): void
@@ -44,10 +50,11 @@ class Index extends Component
 
         if (! $plot) {
             $this->error = __('Parcela no encontrada.');
+
             return;
         }
 
-        $service = new WeatherService();
+        $service = new WeatherService;
 
         try {
             $this->weather = $service->getCurrentWeather($plot, $forceRefresh);
@@ -79,7 +86,7 @@ class Index extends Component
         if ($this->showForecast && empty($this->forecast)) {
             $plot = Plot::where('viticulturist_id', Auth::id())->find($this->selectedPlot);
             if ($plot) {
-                $service = new WeatherService();
+                $service = new WeatherService;
                 $result = $service->getForecast($plot, 7);
                 $this->forecast = $result['forecast'] ?? [];
             }
@@ -90,7 +97,7 @@ class Index extends Component
     {
         $this->loadWeatherData(true);
         $this->dispatch('notify', [
-            'type'    => 'success',
+            'type' => 'success',
             'message' => __('Datos meteorologicos actualizados'),
         ]);
     }
@@ -98,15 +105,15 @@ class Index extends Component
     public function getWaterStressStatus(): array
     {
         $moisture = $this->soil['soil_moisture'] ?? 50;
-        $et0      = $this->solar['et0'] ?? 3;
+        $et0 = $this->solar['et0'] ?? 3;
 
         $stressIndex = ($et0 * 10) - $moisture;
 
         return match (true) {
-            $stressIndex <= 0  => ['status' => 'optimal',  'text' => __('Optimo'),   'color' => 'green',  'icon' => 'check-circle'],
+            $stressIndex <= 0 => ['status' => 'optimal',  'text' => __('Optimo'),   'color' => 'green',  'icon' => 'check-circle'],
             $stressIndex <= 20 => ['status' => 'mild',     'text' => __('Leve'),     'color' => 'amber',  'icon' => 'minus-circle'],
             $stressIndex <= 40 => ['status' => 'moderate', 'text' => __('Moderado'), 'color' => 'orange', 'icon' => 'exclamation-triangle'],
-            default            => ['status' => 'severe',   'text' => __('Severo'),   'color' => 'red',    'icon' => 'exclamation-circle'],
+            default => ['status' => 'severe',   'text' => __('Severo'),   'color' => 'red',    'icon' => 'exclamation-circle'],
         };
     }
 
@@ -119,15 +126,15 @@ class Index extends Component
 
         $plotSummaries = [];
         if ($plots->count() <= 12) {
-            $service = new WeatherService();
+            $service = new WeatherService;
             foreach ($plots as $plot) {
                 try {
                     $w = $service->getCurrentWeather($plot);
                     $plotSummaries[$plot->id] = [
-                        'name'          => $plot->name,
-                        'temperature'   => $w['temperature'] ?? null,
-                        'weather_code'  => $w['weather_code'] ?? 0,
-                        'humidity'      => $w['humidity'] ?? null,
+                        'name' => $plot->name,
+                        'temperature' => $w['temperature'] ?? null,
+                        'weather_code' => $w['weather_code'] ?? 0,
+                        'humidity' => $w['humidity'] ?? null,
                         'precipitation' => $w['precipitation'] ?? 0,
                     ];
                 } catch (\Exception $e) {
@@ -137,11 +144,11 @@ class Index extends Component
         }
 
         return view('livewire.winery.meteorology.index', [
-            'plots'         => $plots,
+            'plots' => $plots,
             'plotSummaries' => $plotSummaries,
-            'waterStress'   => $this->getWaterStressStatus(),
+            'waterStress' => $this->getWaterStressStatus(),
         ])->layout('layouts.app', [
-            'title'       => __('Meteorologia'),
+            'title' => __('Meteorologia'),
             'description' => __('Datos meteorologicos en tiempo real de tus parcelas'),
         ]);
     }

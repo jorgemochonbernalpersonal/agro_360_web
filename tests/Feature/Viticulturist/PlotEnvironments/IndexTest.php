@@ -19,33 +19,11 @@ class IndexTest extends ViticulturistTestCase
         $this->seed(\Database\Seeders\MunicipalitySeeder::class);
     }
 
-    private function makePlot(int $viticulturistId, string $name = 'Parcela Test'): Plot
-    {
-        return Plot::factory()->create([
-            'viticulturist_id' => $viticulturistId,
-            'name'             => $name,
-        ]);
-    }
-
-    private function makePlotEnvironment(int $viticulturistId, int $campaignId, int $plotId, string $zoneType = ''): PlotEnvironment
-    {
-        return PlotEnvironment::create([
-            'viticulturist_id'      => $viticulturistId,
-            'campaign_id'           => $campaignId,
-            'plot_id'               => $plotId,
-            'protected_zone_partial'=> $zoneType !== '',
-            'protection_zone_type'  => $zoneType ?: null,
-            'erosion_risk'          => false,
-            'water_intake_nearby'   => false,
-            'protected_zone_total'  => false,
-        ]);
-    }
-
     public function test_index_shows_plot_environments(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = Campaign::getOrCreateActiveForYear($viticulturist->id);
-        $plot          = $this->makePlot($viticulturist->id, 'Parcela-Visible-Test');
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturist->id);
+        $plot = $this->makePlot($viticulturist->id, 'Parcela-Visible-Test');
 
         $this->makePlotEnvironment($viticulturist->id, $campaign->id, $plot->id);
 
@@ -58,9 +36,9 @@ class IndexTest extends ViticulturistTestCase
     public function test_delete_removes_record(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = Campaign::getOrCreateActiveForYear($viticulturist->id);
-        $plot          = $this->makePlot($viticulturist->id);
-        $env           = $this->makePlotEnvironment($viticulturist->id, $campaign->id, $plot->id);
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturist->id);
+        $plot = $this->makePlot($viticulturist->id);
+        $env = $this->makePlotEnvironment($viticulturist->id, $campaign->id, $plot->id);
 
         $this->actingAs($viticulturist);
 
@@ -73,10 +51,10 @@ class IndexTest extends ViticulturistTestCase
     public function test_cannot_delete_other_viticulturists_environment(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $campaign      = Campaign::getOrCreateActiveForYear($viticulturist->id);
-        $plot          = $this->makePlot($viticulturist->id);
-        $env           = $this->makePlotEnvironment($viticulturist->id, $campaign->id, $plot->id);
+        $other = $this->makeOtherViticulturist();
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturist->id);
+        $plot = $this->makePlot($viticulturist->id);
+        $env = $this->makePlotEnvironment($viticulturist->id, $campaign->id, $plot->id);
 
         $this->actingAs($other);
 
@@ -93,8 +71,8 @@ class IndexTest extends ViticulturistTestCase
         // Campaign A (2022) — mount will NOT select this one
         $campaignA = Campaign::create([
             'viticulturist_id' => $viticulturist->id,
-            'year'             => 2022,
-            'name'             => 'Campaña 2022',
+            'year' => 2022,
+            'name' => 'Campaña 2022',
         ]);
         // Campaign B (current year) — mount will select this one
         $campaignB = Campaign::getOrCreateActiveForYear($viticulturist->id);
@@ -115,5 +93,27 @@ class IndexTest extends ViticulturistTestCase
             ->set('filterCampaign', (string) $campaignA->id)
             ->assertSee('Zona-Campaña-A')
             ->assertDontSee('Zona-Campaña-B');
+    }
+
+    private function makePlot(int $viticulturistId, string $name = 'Parcela Test'): Plot
+    {
+        return Plot::factory()->create([
+            'viticulturist_id' => $viticulturistId,
+            'name' => $name,
+        ]);
+    }
+
+    private function makePlotEnvironment(int $viticulturistId, int $campaignId, int $plotId, string $zoneType = ''): PlotEnvironment
+    {
+        return PlotEnvironment::create([
+            'viticulturist_id' => $viticulturistId,
+            'campaign_id' => $campaignId,
+            'plot_id' => $plotId,
+            'protected_zone_partial' => $zoneType !== '',
+            'protection_zone_type' => $zoneType ?: null,
+            'erosion_risk' => false,
+            'water_intake_nearby' => false,
+            'protected_zone_total' => false,
+        ]);
     }
 }

@@ -4,10 +4,8 @@ namespace Tests\Feature\Winery;
 
 use App\Livewire\Winery\Billing\ProductSale\Create as ProductSaleCreate;
 use App\Livewire\Winery\Billing\ProductSale\Edit as ProductSaleEdit;
-use App\Livewire\Winery\Billing\GrapePurchase\Create as GrapePurchaseCreate;
 use App\Models\Client;
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
 use App\Models\ProductLot;
 use App\Models\User;
 use App\Models\WineryViticulturist;
@@ -24,65 +22,72 @@ class OwnershipValidationTest extends TestCase
     use RefreshDatabase;
 
     private User $winery;
+
     private User $otherWinery;
+
     private User $viticulturist;
+
     private User $foreignViticulturist;
+
     private Client $ownClient;
+
     private Client $foreignClient;
+
     private ProductLot $ownLot;
+
     private ProductLot $foreignLot;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->winery       = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
-        $this->otherWinery  = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
-        $this->viticulturist       = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
+        $this->winery = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
+        $this->otherWinery = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
+        $this->viticulturist = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
         $this->foreignViticulturist = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
 
         // Link own viticulturist to this winery
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         // Own client (user_id = this winery)
         $this->ownClient = Client::create([
-            'user_id'    => $this->winery->id,
+            'user_id' => $this->winery->id,
             'first_name' => 'Cliente',
-            'last_name'  => 'Propio',
-            'client_type'=> 'individual',
-            'active'     => true,
+            'last_name' => 'Propio',
+            'client_type' => 'individual',
+            'active' => true,
         ]);
 
         // Foreign client (belongs to other winery)
         $this->foreignClient = Client::create([
-            'user_id'    => $this->otherWinery->id,
+            'user_id' => $this->otherWinery->id,
             'first_name' => 'Cliente',
-            'last_name'  => 'Ajeno',
-            'client_type'=> 'individual',
-            'active'     => true,
+            'last_name' => 'Ajeno',
+            'client_type' => 'individual',
+            'active' => true,
         ]);
 
         // Own product lot
         $this->ownLot = ProductLot::create([
-            'user_id'     => $this->winery->id,
-            'name'        => 'Lote Propio',
-            'lot_number'  => 'LP-001',
-            'status'      => 'active',
-            'total_liters'=> 1000,
+            'user_id' => $this->winery->id,
+            'name' => 'Lote Propio',
+            'lot_number' => 'LP-001',
+            'status' => 'active',
+            'total_liters' => 1000,
         ]);
 
         // Foreign product lot
         $this->foreignLot = ProductLot::create([
-            'user_id'     => $this->otherWinery->id,
-            'name'        => 'Lote Ajeno',
-            'lot_number'  => 'LA-001',
-            'status'      => 'active',
-            'total_liters'=> 1000,
+            'user_id' => $this->otherWinery->id,
+            'name' => 'Lote Ajeno',
+            'lot_number' => 'LA-001',
+            'status' => 'active',
+            'total_liters' => 1000,
         ]);
     }
 
@@ -97,14 +102,14 @@ class OwnershipValidationTest extends TestCase
             ->set('order_date', now()->toDateString())
             ->set('delivery_note_code', 'ALB-2026-0001')
             ->set('items', [[
-                'name'                => 'Vino Blanco',
-                'quantity'            => '10',
-                'unit_price'          => '5',
-                'tax_id'              => null,
-                'wine_lot_id'         => null,
+                'name' => 'Vino Blanco',
+                'quantity' => '10',
+                'unit_price' => '5',
+                'tax_id' => null,
+                'wine_lot_id' => null,
                 'discount_percentage' => null,
-                'description'         => null,
-                'sku'                 => null,
+                'description' => null,
+                'sku' => null,
             ]])
             ->call('save')
             ->assertHasErrors(['client_id']);
@@ -119,14 +124,14 @@ class OwnershipValidationTest extends TestCase
             ->set('order_date', now()->toDateString())
             ->set('delivery_note_code', 'ALB-2026-0001')
             ->set('items', [[
-                'name'                => 'Vino Blanco',
-                'quantity'            => '10',
-                'unit_price'          => '5',
-                'tax_id'              => null,
-                'wine_lot_id'         => null,
+                'name' => 'Vino Blanco',
+                'quantity' => '10',
+                'unit_price' => '5',
+                'tax_id' => null,
+                'wine_lot_id' => null,
                 'discount_percentage' => null,
-                'description'         => null,
-                'sku'                 => null,
+                'description' => null,
+                'sku' => null,
             ]])
             ->call('save')
             ->assertHasNoErrors(['client_id']);
@@ -143,14 +148,14 @@ class OwnershipValidationTest extends TestCase
             ->set('order_date', now()->toDateString())
             ->set('delivery_note_code', 'ALB-2026-0001')
             ->set('items', [[
-                'name'                => 'Vino Tinto',
-                'quantity'            => '5',
-                'unit_price'          => '8',
-                'tax_id'              => null,
-                'wine_lot_id'         => $this->foreignLot->id,
+                'name' => 'Vino Tinto',
+                'quantity' => '5',
+                'unit_price' => '8',
+                'tax_id' => null,
+                'wine_lot_id' => $this->foreignLot->id,
                 'discount_percentage' => null,
-                'description'         => null,
-                'sku'                 => null,
+                'description' => null,
+                'sku' => null,
             ]])
             ->call('save')
             ->assertHasErrors(['items.0.wine_lot_id']);
@@ -165,7 +170,7 @@ class OwnershipValidationTest extends TestCase
         // Build the same closure the component uses and test it directly
         $wineryId = $this->winery->id;
         $rule = function ($attribute, $value, $fail) use ($wineryId) {
-            if ($value && !\App\Models\WineryViticulturist::where('winery_id', $wineryId)
+            if ($value && ! \App\Models\WineryViticulturist::where('winery_id', $wineryId)
                 ->where('viticulturist_id', $value)
                 ->where('source', 'own')
                 ->exists()) {
@@ -188,7 +193,7 @@ class OwnershipValidationTest extends TestCase
 
         $wineryId = $this->winery->id;
         $rule = function ($attribute, $value, $fail) use ($wineryId) {
-            if ($value && !\App\Models\WineryViticulturist::where('winery_id', $wineryId)
+            if ($value && ! \App\Models\WineryViticulturist::where('winery_id', $wineryId)
                 ->where('viticulturist_id', $value)
                 ->where('source', 'own')
                 ->exists()) {
@@ -201,21 +206,7 @@ class OwnershipValidationTest extends TestCase
             ['viticulturist_id' => ['required', $rule]]
         );
 
-        $this->assertFalse($validator->fails(), 'Own viticulturist should pass: ' . $validator->errors()->first('viticulturist_id'));
-    }
-
-    // ── ProductSale/Edit — client_id & wine_lot_id ─────────────────────────────
-
-    private function makeWineSaleInvoice(): Invoice
-    {
-        return Invoice::factory()->create([
-            'user_id'          => $this->winery->id,
-            'client_id'        => $this->ownClient->id,
-            'invoice_type'     => 'wine_sale',
-            'delivery_status'  => 'pending',
-            'payment_status'   => 'unpaid',
-            'status'           => 'draft',
-        ]);
+        $this->assertFalse($validator->fails(), 'Own viticulturist should pass: '.$validator->errors()->first('viticulturist_id'));
     }
 
     public function test_product_sale_edit_rejects_foreign_client(): void
@@ -275,5 +266,19 @@ class OwnershipValidationTest extends TestCase
         // availableAddresses should be empty (foreign client silently ignored)
         $this->assertEmpty($component->get('availableAddresses'));
         $this->assertSame('', $component->get('client_address_id'));
+    }
+
+    // ── ProductSale/Edit — client_id & wine_lot_id ─────────────────────────────
+
+    private function makeWineSaleInvoice(): Invoice
+    {
+        return Invoice::factory()->create([
+            'user_id' => $this->winery->id,
+            'client_id' => $this->ownClient->id,
+            'invoice_type' => 'wine_sale',
+            'delivery_status' => 'pending',
+            'payment_status' => 'unpaid',
+            'status' => 'draft',
+        ]);
     }
 }

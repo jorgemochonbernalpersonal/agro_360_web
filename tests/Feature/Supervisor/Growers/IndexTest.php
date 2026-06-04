@@ -33,7 +33,7 @@ class IndexTest extends SupervisorTestCase
     public function test_viticulturist_cannot_access_growers_index(): void
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
@@ -49,25 +49,25 @@ class IndexTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
-            'name'              => 'Viticultor Propio',
+            'name' => 'Viticultor Propio',
         ]);
 
         // Add to supervisor pool first
         SupervisorViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'assigned_by'      => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         // Also assign to a winery (optional, but reflects realistic state)
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         $this->actingAs($supervisor)

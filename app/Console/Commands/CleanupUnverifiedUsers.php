@@ -2,16 +2,16 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
-use App\Models\SupervisorWinery;
-use App\Models\SupervisorViticulturist;
-use App\Models\WineryViticulturist;
 use App\Models\Crew;
 use App\Models\CrewMember;
 use App\Models\Plot;
+use App\Models\SupervisorViticulturist;
+use App\Models\SupervisorWinery;
+use App\Models\User;
+use App\Models\WineryViticulturist;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class CleanupUnverifiedUsers extends Command
 {
@@ -46,6 +46,7 @@ class CleanupUnverifiedUsers extends Command
 
         if ($unverifiedUsers->isEmpty()) {
             $this->info('No se encontraron usuarios no verificados para eliminar.');
+
             return Command::SUCCESS;
         }
 

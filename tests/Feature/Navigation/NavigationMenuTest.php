@@ -218,7 +218,7 @@ class NavigationMenuTest extends TestCase
 
         $menu = NavigationHelper::getMenu();
 
-        $billingRoutes     = array_column($menu['billing'], 'route');
+        $billingRoutes = array_column($menu['billing'], 'route');
         $wineryBillingRoutes = array_column($menu['winery_billing'], 'route');
 
         // VeriFactu existe en billing (viñedo) pero NO en winery_billing (bodega)
@@ -307,12 +307,12 @@ class NavigationMenuTest extends TestCase
 
     public function test_get_role_name_returns_correct_labels(): void
     {
-        $this->assertSame('Administrador',          NavigationHelper::getRoleName('admin'));
+        $this->assertSame('Administrador', NavigationHelper::getRoleName('admin'));
         $this->assertSame('Denominación de Origen', NavigationHelper::getRoleName('supervisor'));
         $this->assertSame('Denominación de Origen', NavigationHelper::getRoleName('denomination_of_origin'));
-        $this->assertSame('Bodega',                 NavigationHelper::getRoleName('winery'));
-        $this->assertSame('Viticultor',             NavigationHelper::getRoleName('viticulturist'));
-        $this->assertSame('Productor',              NavigationHelper::getRoleName('producer'));
+        $this->assertSame('Bodega', NavigationHelper::getRoleName('winery'));
+        $this->assertSame('Viticultor', NavigationHelper::getRoleName('viticulturist'));
+        $this->assertSame('Productor', NavigationHelper::getRoleName('producer'));
     }
 
     public function test_get_role_name_fallback_ucfirst(): void
@@ -327,11 +327,12 @@ class NavigationMenuTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
         $winery = User::factory()->create(['role' => 'winery']);
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
         ]);
+
         return $viticulturist;
     }
 

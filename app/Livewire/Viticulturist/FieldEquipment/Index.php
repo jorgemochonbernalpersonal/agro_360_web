@@ -19,25 +19,31 @@ class Index extends AbstractIndex
         return FieldEquipment::where('viticulturist_id', $this->viticulturistId())->active();
     }
 
-    protected function defaultOrderBy(): array { return ['name', 'asc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['name', 'asc'];
+    }
 
-    protected function perPage(): int { return 0; }
+    protected function perPage(): int
+    {
+        return 0;
+    }
 
     protected function viewData(mixed $entries): array
     {
         $base = FieldEquipment::where('viticulturist_id', $this->viticulturistId())->active();
 
         $stats = [
-            'total'   => (clone $base)->count(),
+            'total' => (clone $base)->count(),
             'overdue' => (clone $base)->whereNotNull('next_inspection_date')->where('next_inspection_date', '<', now())->count(),
-            'due'     => (clone $base)->whereNotNull('next_inspection_date')->whereBetween('next_inspection_date', [now(), now()->addDays(90)])->count(),
+            'due' => (clone $base)->whereNotNull('next_inspection_date')->whereBetween('next_inspection_date', [now(), now()->addDays(90)])->count(),
             'no_date' => (clone $base)->whereNull('next_inspection_date')->count(),
         ];
 
         return [
             'equipment' => $entries,
-            'types'     => FieldEquipment::TYPES,
-            'stats'     => $stats,
+            'types' => FieldEquipment::TYPES,
+            'stats' => $stats,
         ];
     }
 }

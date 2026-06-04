@@ -27,7 +27,7 @@ class HarvestObserver
         } catch (\Exception $e) {
             Log::error('[HarvestObserver] Error al inicializar stock', [
                 'harvest_id' => $harvest->id,
-                'error'      => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
             throw $e;
         }
@@ -44,7 +44,7 @@ class HarvestObserver
             } catch (\Exception $e) {
                 Log::warning('[HarvestObserver] Error al enlazar HarvestDelivery', [
                     'harvest_id' => $harvest->id,
-                    'error'      => $e->getMessage(),
+                    'error' => $e->getMessage(),
                 ]);
             }
         }
@@ -55,12 +55,12 @@ class HarvestObserver
      */
     public function updating(Harvest $harvest): void
     {
-        $oldWeight      = (float) $harvest->getOriginal('total_weight');
-        $newWeight      = (float) $harvest->total_weight;
+        $oldWeight = (float) $harvest->getOriginal('total_weight');
+        $newWeight = (float) $harvest->total_weight;
         $oldContainerId = $harvest->getOriginal('container_id');
         $newContainerId = $harvest->container_id;
 
-        $weightChanged    = $oldWeight != $newWeight;
+        $weightChanged = $oldWeight != $newWeight;
         $containerChanged = $oldContainerId != $newContainerId;
 
         try {
@@ -75,7 +75,7 @@ class HarvestObserver
         } catch (\Exception $e) {
             Log::error('[HarvestObserver] Error al actualizar cosecha', [
                 'harvest_id' => $harvest->id,
-                'error'      => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
             throw $e; // Re-throw para que el update falle si el contenedor no tiene capacidad
         }
@@ -93,13 +93,13 @@ class HarvestObserver
         // Si la recepción de bodega pasa a cancelada, liberar la HarvestDelivery enlazada
         if ($harvest->isWineryReception() && $harvest->wasChanged('status') && $harvest->isCancelled()) {
             HarvestDelivery::where('harvest_id', $harvest->id)->update([
-                'harvest_id'              => null,
-                'status'                  => 'pending',
-                'discrepancy_kg'          => null,
-                'dispute_note'            => null,
-                'dispute_submitted_at'    => null,
+                'harvest_id' => null,
+                'status' => 'pending',
+                'discrepancy_kg' => null,
+                'dispute_note' => null,
+                'dispute_submitted_at' => null,
                 'dispute_resolution_note' => null,
-                'dispute_resolved_at'     => null,
+                'dispute_resolved_at' => null,
             ]);
         }
 
@@ -119,20 +119,20 @@ class HarvestObserver
         } catch (\Exception $e) {
             Log::error('[HarvestObserver] Error al liberar stock de cosecha eliminada', [
                 'harvest_id' => $harvest->id,
-                'error'      => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         }
 
         // Si era una recepción de bodega enlazada con una HarvestDelivery, resetearla a pending
         if ($harvest->isWineryReception()) {
             HarvestDelivery::where('harvest_id', $harvest->id)->update([
-                'harvest_id'              => null,
-                'status'                  => 'pending',
-                'discrepancy_kg'          => null,
-                'dispute_note'            => null,
-                'dispute_submitted_at'    => null,
+                'harvest_id' => null,
+                'status' => 'pending',
+                'discrepancy_kg' => null,
+                'dispute_note' => null,
+                'dispute_submitted_at' => null,
                 'dispute_resolution_note' => null,
-                'dispute_resolved_at'     => null,
+                'dispute_resolved_at' => null,
             ]);
         }
     }
@@ -157,24 +157,24 @@ class HarvestObserver
             ->whereIn('status', ['matched', 'disputed'])
             ->first();
 
-        if (!$delivery) {
+        if (! $delivery) {
             return;
         }
 
-        $discrepancyKg  = abs((float) $delivery->delivered_kg - (float) $harvest->total_weight);
+        $discrepancyKg = abs((float) $delivery->delivered_kg - (float) $harvest->total_weight);
         $discrepancyPct = (float) $delivery->delivered_kg > 0
             ? ($discrepancyKg / (float) $delivery->delivered_kg) * 100
             : 0;
 
-        $newStatus   = $discrepancyPct > 5 ? 'disputed' : 'matched';
+        $newStatus = $discrepancyPct > 5 ? 'disputed' : 'matched';
         $statusChanged = $newStatus !== $delivery->status;
 
-        if (!$statusChanged && $discrepancyKg == (float) $delivery->discrepancy_kg) {
+        if (! $statusChanged && $discrepancyKg == (float) $delivery->discrepancy_kg) {
             return; // Nothing changed
         }
 
         $delivery->update([
-            'status'         => $newStatus,
+            'status' => $newStatus,
             'discrepancy_kg' => $discrepancyKg,
         ]);
 
@@ -218,16 +218,16 @@ class HarvestObserver
         }
 
         // 2. Fallback: única entrega pendiente para esa plantación+añada
-        if (!$delivery) {
+        if (! $delivery) {
             $pending = $baseQuery->get();
             $delivery = $pending->count() === 1 ? $pending->first() : null;
         }
 
-        if (!$delivery) {
+        if (! $delivery) {
             return;
         }
 
-        $discrepancyKg  = abs((float) $delivery->delivered_kg - (float) $harvest->total_weight);
+        $discrepancyKg = abs((float) $delivery->delivered_kg - (float) $harvest->total_weight);
         $discrepancyPct = (float) $delivery->delivered_kg > 0
             ? ($discrepancyKg / (float) $delivery->delivered_kg) * 100
             : 0;
@@ -235,8 +235,8 @@ class HarvestObserver
         $newStatus = $discrepancyPct > 5 ? 'disputed' : 'matched';
 
         $delivery->update([
-            'harvest_id'     => $harvest->id,
-            'status'         => $newStatus,
+            'harvest_id' => $harvest->id,
+            'status' => $newStatus,
             'discrepancy_kg' => $discrepancyKg,
         ]);
 
@@ -257,20 +257,20 @@ class HarvestObserver
      */
     private function syncEstimatedYields(Harvest $harvest): void
     {
-        if (!$harvest->plot_planting_id || !$harvest->vintage) {
+        if (! $harvest->plot_planting_id || ! $harvest->vintage) {
             return;
         }
 
         try {
             EstimatedYield::where('plot_planting_id', $harvest->plot_planting_id)
-                ->whereHas('campaign', fn($q) => $q->where('year', $harvest->vintage))
-                ->each(fn(EstimatedYield $ey) => $ey->updateActualYield());
+                ->whereHas('campaign', fn ($q) => $q->where('year', $harvest->vintage))
+                ->each(fn (EstimatedYield $ey) => $ey->updateActualYield());
         } catch (\Exception $e) {
             Log::warning('[HarvestObserver] Error al sincronizar rendimiento estimado', [
-                'harvest_id'      => $harvest->id,
-                'plot_planting_id'=> $harvest->plot_planting_id,
-                'vintage'         => $harvest->vintage,
-                'error'           => $e->getMessage(),
+                'harvest_id' => $harvest->id,
+                'plot_planting_id' => $harvest->plot_planting_id,
+                'vintage' => $harvest->vintage,
+                'error' => $e->getMessage(),
             ]);
         }
     }

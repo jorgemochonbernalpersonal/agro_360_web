@@ -19,10 +19,10 @@ class LabelWaste extends Model
     ];
 
     protected $casts = [
-        'waste_date'  => 'date',
-        'quantity'    => 'integer',
+        'waste_date' => 'date',
+        'quantity' => 'integer',
         'from_number' => 'integer',
-        'to_number'   => 'integer',
+        'to_number' => 'integer',
     ];
 
     public function labelBatch(): BelongsTo

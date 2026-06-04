@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
@@ -13,7 +11,7 @@ return new class extends Migration
         DB::statement("ALTER TABLE subcontractings MODIFY COLUMN service_type VARCHAR(100) NOT NULL DEFAULT 'other'");
 
         // water_concessions.concession_type: ENUM → VARCHAR(100)
-        DB::statement("ALTER TABLE water_concessions MODIFY COLUMN concession_type VARCHAR(100) NOT NULL");
+        DB::statement('ALTER TABLE water_concessions MODIFY COLUMN concession_type VARCHAR(100) NOT NULL');
     }
 
     public function down(): void

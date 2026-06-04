@@ -46,9 +46,9 @@ return [
     */
 
     'google' => [
-        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect'      => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
+        'redirect' => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
     ],
 
     'apple' => [
@@ -121,27 +121,27 @@ return [
     */
 
     'sif_cert' => [
-        'path'     => env('SIF_CERT_PATH', ''),
+        'path' => env('SIF_CERT_PATH', ''),
         'password' => env('SIF_CERT_PASSWORD', ''),
     ],
 
     'sif_aeat' => [
         'environment' => env('SIF_ENVIRONMENT', 'testing'),
         // WSDL — SistemaFacturacion.wsdl (NOT SuministroLR.wsdl which is SII/large companies)
-        'wsdl'        => env('SIF_AEAT_WSDL', base_path('resources/wsdl/SistemaFacturacion.wsdl')),
+        'wsdl' => env('SIF_AEAT_WSDL', base_path('resources/wsdl/SistemaFacturacion.wsdl')),
         // Endpoint test:  https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP
         // Endpoint prod:  https://www1.agenciatributaria.gob.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP
-        'endpoint'    => env('SIF_AEAT_ENDPOINT', 'https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP'),
+        'endpoint' => env('SIF_AEAT_ENDPOINT', 'https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP'),
     ],
 
     // Software vendor identification (SistemaInformatico block — mandatory in XML)
     'sif_software' => [
         'vendor_name' => env('SIF_VENDOR_NAME', 'Agro365'),
-        'vendor_nif'  => env('SIF_VENDOR_NIF', ''),
-        'name'        => env('SIF_SOFTWARE_NAME', 'Agro365'),
-        'id'          => env('SIF_SOFTWARE_ID', 'A3'),        // max 2 chars
-        'version'     => env('SIF_SOFTWARE_VERSION', '1.0.0'),
-        'install_id'  => env('SIF_INSTALL_ID', 'AGR001'),     // max 100 chars
+        'vendor_nif' => env('SIF_VENDOR_NIF', ''),
+        'name' => env('SIF_SOFTWARE_NAME', 'Agro365'),
+        'id' => env('SIF_SOFTWARE_ID', 'A3'),        // max 2 chars
+        'version' => env('SIF_SOFTWARE_VERSION', '1.0.0'),
+        'install_id' => env('SIF_INSTALL_ID', 'AGR001'),     // max 100 chars
     ],
 
 ];

@@ -52,6 +52,6 @@ class MachineryPolicy
         }
 
         // No permitir eliminar si tiene actividades asociadas
-        return !$machinery->activities()->exists();
+        return ! $machinery->activities()->exists();
     }
 }

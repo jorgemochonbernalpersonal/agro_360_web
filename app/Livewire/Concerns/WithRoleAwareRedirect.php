@@ -22,8 +22,8 @@ trait WithRoleAwareRedirect
      * Redirect using the correct route prefix for the authenticated user's role (winery/producer)
      * and Livewire's wire:navigate client-side navigation.
      *
-     * @param  string       $routeSuffix  Route name without the role prefix, e.g. 'grape-reception.index'
-     * @param  mixed        $parameters   Route parameters (array or model)
+     * @param string $routeSuffix Route name without the role prefix, e.g. 'grape-reception.index'
+     * @param mixed  $parameters  Route parameters (array or model)
      */
     protected function roleRedirect(string $routeSuffix, mixed $parameters = []): mixed
     {
@@ -38,8 +38,8 @@ trait WithRoleAwareRedirect
     /**
      * Redirect using the correct route prefix for the authenticated user's role (viticulturist/producer).
      *
-     * @param  string       $routeSuffix  Route name without the role prefix, e.g. 'digital-notebook.treatment.index'
-     * @param  mixed        $parameters   Route parameters (array or model)
+     * @param string $routeSuffix Route name without the role prefix, e.g. 'digital-notebook.treatment.index'
+     * @param mixed  $parameters  Route parameters (array or model)
      */
     protected function viticulturistRoleRedirect(string $routeSuffix, mixed $parameters = []): mixed
     {

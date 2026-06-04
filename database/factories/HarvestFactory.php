@@ -2,10 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Harvest;
 use App\Models\AgriculturalActivity;
-use App\Models\PlotPlanting;
-use App\Models\HarvestContainer;
+use App\Models\Harvest;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class HarvestFactory extends Factory
@@ -15,7 +13,7 @@ class HarvestFactory extends Factory
     public function definition(): array
     {
         $totalWeight = $this->faker->randomFloat(2, 100, 5000);
-        
+
         return [
             'activity_id' => AgriculturalActivity::factory(),
             'plot_planting_id' => null, // Se debe proporcionar explícitamente o crear manualmente

@@ -10,20 +10,23 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search    = '';
+    public string $search = '';
+
     public string $wineFilter = '';
 
     protected $queryString = [
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'wineFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void    { $this->resetPage(); }
-    public function updatingWineFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'wineFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingWineFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
@@ -32,12 +35,18 @@ class Index extends AbstractIndex
 
         if ($bottling->product_lot_id) {
             $this->toastError(__('No se puede eliminar un embotellado vinculado a un lote de producto.'));
+
             return;
         }
 
         app(WineContainerStockService::class)->revertBottling($bottling);
         $bottling->delete();
         $this->toastSuccess(__('Registro de embotellado eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'wineFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -49,10 +58,10 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(IFNULL(lot_number, \'\')) LIKE ?', [$term])
-                  ->orWhereHas('wine', fn($w) => $w->whereRaw('LOWER(name) LIKE ?', [$term]));
+                    ->orWhereHas('wine', fn ($w) => $w->whereRaw('LOWER(name) LIKE ?', [$term]));
             });
         }
 
@@ -66,9 +75,15 @@ class Index extends AbstractIndex
         $query->orderByDesc('bottling_date')->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['bottling_date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['bottling_date', 'desc'];
+    }
 
-    protected function perPage(): int { return 20; }
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -80,16 +95,16 @@ class Index extends AbstractIndex
         $base = WineBottling::where('user_id', $this->wineryId());
 
         $stats = [
-            'total'         => (clone $base)->count(),
-            'this_year'     => (clone $base)->whereYear('bottling_date', now()->year)->count(),
+            'total' => (clone $base)->count(),
+            'this_year' => (clone $base)->whereYear('bottling_date', now()->year)->count(),
             'total_bottles' => (clone $base)->sum('quantity_bottles'),
-            'total_liters'  => (clone $base)->sum('quantity_liters'),
+            'total_liters' => (clone $base)->sum('quantity_liters'),
         ];
 
         return [
             'bottlings' => $entries,
-            'wines'     => $wines,
-            'stats'     => $stats,
+            'wines' => $wines,
+            'stats' => $stats,
         ];
     }
 }

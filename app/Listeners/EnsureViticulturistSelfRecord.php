@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Models\WineryViticulturist;
 use Illuminate\Auth\Events\Login;
-use Illuminate\Support\Facades\Log;
 
 class EnsureViticulturistSelfRecord
 {

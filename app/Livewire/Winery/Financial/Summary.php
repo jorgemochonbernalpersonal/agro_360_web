@@ -30,18 +30,18 @@ class Summary extends Component
             ->whereNotNull('client_id')
             ->whereYear('invoice_date', $this->year);
 
-        $totalRevenue   = (float) (clone $salesBase)->where('status', 'paid')->sum('total_amount');
+        $totalRevenue = (float) (clone $salesBase)->where('status', 'paid')->sum('total_amount');
         $pendingRevenue = (float) (clone $salesBase)->whereIn('status', ['sent', 'draft'])
             ->where('payment_status', '!=', 'paid')->sum('total_amount');
-        $invoiceCount   = (clone $salesBase)->count();
-        $paidCount      = (clone $salesBase)->where('status', 'paid')->count();
+        $invoiceCount = (clone $salesBase)->count();
+        $paidCount = (clone $salesBase)->where('status', 'paid')->count();
 
         // ── Gastos: liquidaciones de compra de uva ───────────────────────────
         $grapeCostBase = Invoice::where('user_id', $userId)
             ->whereNotNull('viticulturist_id')
             ->whereYear('invoice_date', $this->year);
 
-        $totalGrapeCost   = (float) (clone $grapeCostBase)->where('status', 'paid')->sum('total_amount');
+        $totalGrapeCost = (float) (clone $grapeCostBase)->where('status', 'paid')->sum('total_amount');
         $pendingGrapeCost = (float) (clone $grapeCostBase)->whereIn('status', ['sent', 'draft'])
             ->where('payment_status', '!=', 'paid')->sum('total_amount');
 
@@ -54,8 +54,8 @@ class Summary extends Component
             ->sum('cm.cost');
 
         // ── Margen bruto ─────────────────────────────────────────────────────
-        $grossMargin     = $totalRevenue - $totalGrapeCost - $maintenanceCost;
-        $grossMarginPct  = $totalRevenue > 0 ? ($grossMargin / $totalRevenue) * 100 : 0;
+        $grossMargin = $totalRevenue - $totalGrapeCost - $maintenanceCost;
+        $grossMarginPct = $totalRevenue > 0 ? ($grossMargin / $totalRevenue) * 100 : 0;
 
         // ── Ingresos mensuales (ventas pagadas) ──────────────────────────────
         $monthlyRevenue = Invoice::where('user_id', $userId)
@@ -69,7 +69,7 @@ class Summary extends Component
             ->get()
             ->keyBy('month');
 
-        $monthlyData = collect(range(1, 12))->map(fn($m) => [
+        $monthlyData = collect(range(1, 12))->map(fn ($m) => [
             'month' => $m,
             'label' => now()->month($m)->format('M'),
             'total' => (float) ($monthlyRevenue->get($m)?->total ?? 0),
@@ -109,16 +109,16 @@ class Summary extends Component
 
         // ── Stock de bodega ───────────────────────────────────────────────────
         $wineStats = [
-            'total'      => Wine::where('user_id', $userId)->count(),
-            'in_progress'=> Wine::where('user_id', $userId)->where('status', 'in_progress')->count(),
-            'bottled'    => Wine::where('user_id', $userId)->where('status', 'bottled')->count(),
-            'sold'       => Wine::where('user_id', $userId)->where('status', 'sold')->count(),
+            'total' => Wine::where('user_id', $userId)->count(),
+            'in_progress' => Wine::where('user_id', $userId)->where('status', 'in_progress')->count(),
+            'bottled' => Wine::where('user_id', $userId)->where('status', 'bottled')->count(),
+            'sold' => Wine::where('user_id', $userId)->where('status', 'sold')->count(),
         ];
 
-        $containerBase  = Container::where('user_id', $userId)->where('archived', false);
+        $containerBase = Container::where('user_id', $userId)->where('archived', false);
         $containerStats = [
-            'total'         => (clone $containerBase)->count(),
-            'total_capacity'=> (float) (clone $containerBase)->sum('capacity'),
+            'total' => (clone $containerBase)->count(),
+            'total_capacity' => (float) (clone $containerBase)->sum('capacity'),
             'used_capacity' => (float) DB::table('containers')->where('user_id', $userId)->where('archived', false)
                 ->selectRaw('SUM(used_capacity + wine_volume_liters)')->value('SUM(used_capacity + wine_volume_liters)'),
             'maintenance_cost' => $maintenanceCost,
@@ -128,22 +128,22 @@ class Summary extends Component
             : 0;
 
         return view('livewire.winery.financial.summary', [
-            'year'             => $this->year,
-            'availableYears'   => $availableYears,
-            'totalRevenue'     => $totalRevenue,
-            'pendingRevenue'   => $pendingRevenue,
-            'totalGrapeCost'   => $totalGrapeCost,
+            'year' => $this->year,
+            'availableYears' => $availableYears,
+            'totalRevenue' => $totalRevenue,
+            'pendingRevenue' => $pendingRevenue,
+            'totalGrapeCost' => $totalGrapeCost,
             'pendingGrapeCost' => $pendingGrapeCost,
-            'maintenanceCost'  => $maintenanceCost,
-            'grossMargin'      => $grossMargin,
-            'grossMarginPct'   => $grossMarginPct,
-            'invoiceCount'     => $invoiceCount,
-            'paidCount'        => $paidCount,
-            'monthlyData'      => $monthlyData,
-            'topClients'       => $topClients,
-            'winesByType'      => $winesByType,
-            'wineStats'        => $wineStats,
-            'containerStats'   => $containerStats,
+            'maintenanceCost' => $maintenanceCost,
+            'grossMargin' => $grossMargin,
+            'grossMarginPct' => $grossMarginPct,
+            'invoiceCount' => $invoiceCount,
+            'paidCount' => $paidCount,
+            'monthlyData' => $monthlyData,
+            'topClients' => $topClients,
+            'winesByType' => $winesByType,
+            'wineStats' => $wineStats,
+            'containerStats' => $containerStats,
         ])->layout('layouts.app');
     }
 }

@@ -20,33 +20,19 @@ class TranslationCoverageTest extends TestCase
     // ── Baselines (updated 2026-05-28) ─────────────────────────────────────────
     // Raise these only when intentionally accepting new untranslated keys.
     private const BASELINE_EN = 0;
+
     private const BASELINE_CA = 7468;
+
     private const BASELINE_EU = 7272;
+
     private const BASELINE_GL = 8342;
-
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function loadJson(string $locale): array
-    {
-        $path = dirname(__DIR__, 3) . "/resources/lang/{$locale}.json";
-
-        return json_decode(file_get_contents($path), true);
-    }
-
-    private function missingKeys(string $locale): array
-    {
-        $esKeys   = array_keys($this->loadJson('es'));
-        $locKeys  = array_keys($this->loadJson($locale));
-
-        return array_values(array_diff($esKeys, $locKeys));
-    }
 
     // ── Tests ─────────────────────────────────────────────────────────────────
 
     public function test_en_coverage_has_not_regressed(): void
     {
         $missing = $this->missingKeys('en');
-        $count   = count($missing);
+        $count = count($missing);
 
         $this->assertLessThanOrEqual(
             self::BASELINE_EN,
@@ -57,7 +43,7 @@ class TranslationCoverageTest extends TestCase
                 $count,
                 $count - self::BASELINE_EN,
                 implode("\n", array_map(fn ($k) => "  - \"{$k}\"", array_slice($missing, 0, 20)))
-                . ($count - self::BASELINE_EN > 20 ? "\n  ... and more" : '')
+                .($count - self::BASELINE_EN > 20 ? "\n  ... and more" : '')
             )
         );
     }
@@ -65,7 +51,7 @@ class TranslationCoverageTest extends TestCase
     public function test_ca_coverage_has_not_regressed(): void
     {
         $missing = $this->missingKeys('ca');
-        $count   = count($missing);
+        $count = count($missing);
 
         $this->assertLessThanOrEqual(
             self::BASELINE_CA,
@@ -76,7 +62,7 @@ class TranslationCoverageTest extends TestCase
                 $count,
                 $count - self::BASELINE_CA,
                 implode("\n", array_map(fn ($k) => "  - \"{$k}\"", array_slice($missing, 0, 20)))
-                . ($count - self::BASELINE_CA > 20 ? "\n  ... and more" : '')
+                .($count - self::BASELINE_CA > 20 ? "\n  ... and more" : '')
             )
         );
     }
@@ -84,7 +70,7 @@ class TranslationCoverageTest extends TestCase
     public function test_eu_coverage_has_not_regressed(): void
     {
         $missing = $this->missingKeys('eu');
-        $count   = count($missing);
+        $count = count($missing);
 
         $this->assertLessThanOrEqual(
             self::BASELINE_EU,
@@ -95,7 +81,7 @@ class TranslationCoverageTest extends TestCase
                 $count,
                 $count - self::BASELINE_EU,
                 implode("\n", array_map(fn ($k) => "  - \"{$k}\"", array_slice($missing, 0, 20)))
-                . ($count - self::BASELINE_EU > 20 ? "\n  ... and more" : '')
+                .($count - self::BASELINE_EU > 20 ? "\n  ... and more" : '')
             )
         );
     }
@@ -103,7 +89,7 @@ class TranslationCoverageTest extends TestCase
     public function test_gl_coverage_has_not_regressed(): void
     {
         $missing = $this->missingKeys('gl');
-        $count   = count($missing);
+        $count = count($missing);
 
         $this->assertLessThanOrEqual(
             self::BASELINE_GL,
@@ -114,8 +100,25 @@ class TranslationCoverageTest extends TestCase
                 $count,
                 $count - self::BASELINE_GL,
                 implode("\n", array_map(fn ($k) => "  - \"{$k}\"", array_slice($missing, 0, 20)))
-                . ($count - self::BASELINE_GL > 20 ? "\n  ... and more" : '')
+                .($count - self::BASELINE_GL > 20 ? "\n  ... and more" : '')
             )
         );
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function loadJson(string $locale): array
+    {
+        $path = dirname(__DIR__, 3)."/resources/lang/{$locale}.json";
+
+        return json_decode(file_get_contents($path), true);
+    }
+
+    private function missingKeys(string $locale): array
+    {
+        $esKeys = array_keys($this->loadJson('es'));
+        $locKeys = array_keys($this->loadJson($locale));
+
+        return array_values(array_diff($esKeys, $locKeys));
     }
 }

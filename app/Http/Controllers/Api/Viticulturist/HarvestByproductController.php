@@ -19,10 +19,10 @@ class HarvestByproductController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'campaign_id'    => 'nullable|integer',
+            'campaign_id' => 'nullable|integer',
             'byproduct_type' => 'nullable|string',
-            'search'         => 'nullable|string|max:100',
-            'per_page'       => 'nullable|integer|min:1|max:100',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = HarvestByproduct::where('viticulturist_id', $user->id)
@@ -41,7 +41,7 @@ class HarvestByproductController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('destination_name', 'like', "%{$term}%")
-                  ->orWhere('document_reference', 'like', "%{$term}%");
+                    ->orWhere('document_reference', 'like', "%{$term}%");
             });
         }
 
@@ -50,10 +50,10 @@ class HarvestByproductController extends Controller
         return response()->json([
             'data' => HarvestByproductResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -66,14 +66,14 @@ class HarvestByproductController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'        => 'nullable|integer|exists:campaigns,id',
-            'date'               => 'required|date',
-            'byproduct_type'     => 'required|string|in:pomace,stem,lees,other',
-            'quantity_kg'        => 'required|numeric|min:0.001',
-            'destination_type'   => 'required|string|in:cooperative,winery,distillery,composting,authorized_landfill,other',
-            'destination_name'   => 'required|string|max:255',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'date' => 'required|date',
+            'byproduct_type' => 'required|string|in:pomace,stem,lees,other',
+            'quantity_kg' => 'required|numeric|min:0.001',
+            'destination_type' => 'required|string|in:cooperative,winery,distillery,composting,authorized_landfill,other',
+            'destination_name' => 'required|string|max:255',
             'document_reference' => 'nullable|string|max:100',
-            'notes'              => 'nullable|string|max:2000',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (empty($validated['campaign_id'])) {
@@ -86,7 +86,7 @@ class HarvestByproductController extends Controller
         $record->load(['campaign']);
 
         return response()->json([
-            'data'    => new HarvestByproductResource($record),
+            'data' => new HarvestByproductResource($record),
             'message' => __('Subproducto registrado correctamente.'),
         ], 201);
     }

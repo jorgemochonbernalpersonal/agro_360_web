@@ -3,10 +3,10 @@
 namespace Tests\Unit\Models;
 
 use App\Models\AgriculturalActivity;
+use App\Models\GrapeVariety;
 use App\Models\Machinery;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Models\GrapeVariety;
 use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
 use Database\Seeders\MunicipalitySeeder;
@@ -89,7 +89,7 @@ class MachineryTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
-        
+
         $grapeVariety = GrapeVariety::firstOrCreate(
             ['code' => 'TEMP'],
             ['name' => 'Tempranillo', 'color' => 'red']
@@ -131,5 +131,3 @@ class MachineryTest extends TestCase
         $this->assertEquals(2, $machinery->activities_count);
     }
 }
-
-

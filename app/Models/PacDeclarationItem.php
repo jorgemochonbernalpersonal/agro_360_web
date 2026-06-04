@@ -19,7 +19,7 @@ class PacDeclarationItem extends Model
     protected $casts = [
         'declared_area' => 'decimal:3',
         'eligible_area' => 'decimal:3',
-        'eco_schemes'   => 'array',
+        'eco_schemes' => 'array',
     ];
 
     public function declaration(): BelongsTo
@@ -34,9 +34,12 @@ class PacDeclarationItem extends Model
 
     public function ecoSchemeLabels(): array
     {
-        if (empty($this->eco_schemes)) return [];
+        if (empty($this->eco_schemes)) {
+            return [];
+        }
+
         return array_map(
-            fn($key) => PacDeclaration::ECO_SCHEMES[$key] ?? $key,
+            fn ($key) => PacDeclaration::ECO_SCHEMES[$key] ?? $key,
             $this->eco_schemes
         );
     }

@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Validador de plazo de seguridad para cosechas
- * 
+ *
  * Verifica que se respete el plazo de seguridad de productos fitosanitarios
  * antes de permitir la cosecha (Real Decreto 1311/2012)
  */
@@ -16,8 +16,7 @@ class WithdrawalPeriodValidator
 {
     /**
      * Validar plazo de seguridad para una cosecha
-     * 
-     * @param Harvest $harvest
+     *
      * @return array ['is_valid' => bool, 'errors' => array, 'warnings' => array, 'last_treatment' => array|null]
      */
     public function validateHarvest(Harvest $harvest): array
@@ -27,8 +26,9 @@ class WithdrawalPeriodValidator
         $lastTreatmentInfo = null;
 
         $activity = $harvest->activity;
-        if (!$activity || !$activity->plot) {
+        if (! $activity || ! $activity->plot) {
             $errors[] = 'Cosecha sin parcela asociada';
+
             return [
                 'is_valid' => false,
                 'errors' => $errors,
@@ -48,7 +48,7 @@ class WithdrawalPeriodValidator
             ->with(['phytosanitaryTreatment.product'])
             ->first();
 
-        if (!$lastTreatment) {
+        if (! $lastTreatment) {
             // No hay tratamientos previos, OK
             return [
                 'is_valid' => true,
@@ -59,8 +59,9 @@ class WithdrawalPeriodValidator
         }
 
         $treatment = $lastTreatment->phytosanitaryTreatment;
-        if (!$treatment || !$treatment->product) {
+        if (! $treatment || ! $treatment->product) {
             $warnings[] = 'Último tratamiento sin producto definido';
+
             return [
                 'is_valid' => true,
                 'errors' => [],
@@ -85,7 +86,7 @@ class WithdrawalPeriodValidator
         if ($daysSinceTreatment < $withdrawalPeriod) {
             $daysRemaining = $withdrawalPeriod - $daysSinceTreatment;
             $errors[] = sprintf(
-                'No se puede cosechar: faltan %d día(s) para cumplir el plazo de seguridad. ' .
+                'No se puede cosechar: faltan %d día(s) para cumplir el plazo de seguridad. '.
                 'Último tratamiento: %s (%s) el %s. Plazo de seguridad: %d días.',
                 $daysRemaining,
                 $product->name,
@@ -113,9 +114,6 @@ class WithdrawalPeriodValidator
 
     /**
      * Validar múltiples cosechas
-     * 
-     * @param Collection $harvests
-     * @return array
      */
     public function validateHarvests(Collection $harvests): array
     {
@@ -125,12 +123,12 @@ class WithdrawalPeriodValidator
 
         foreach ($harvests as $harvest) {
             $validation = $this->validateHarvest($harvest);
-            
-            if (!$validation['is_valid']) {
+
+            if (! $validation['is_valid']) {
                 $totalErrors++;
             }
-            
-            if (!empty($validation['warnings'])) {
+
+            if (! empty($validation['warnings'])) {
                 $totalWarnings++;
             }
 
@@ -151,8 +149,7 @@ class WithdrawalPeriodValidator
 
     /**
      * Calcular fecha mínima de cosecha para una parcela
-     * 
-     * @param int $plotId
+     *
      * @return array ['min_harvest_date' => Carbon|null, 'last_treatment' => array|null]
      */
     public function getMinimumHarvestDate(int $plotId): array
@@ -163,7 +160,7 @@ class WithdrawalPeriodValidator
             ->with(['phytosanitaryTreatment.product'])
             ->first();
 
-        if (!$lastTreatment || !$lastTreatment->phytosanitaryTreatment || !$lastTreatment->phytosanitaryTreatment->product) {
+        if (! $lastTreatment || ! $lastTreatment->phytosanitaryTreatment || ! $lastTreatment->phytosanitaryTreatment->product) {
             return [
                 'min_harvest_date' => null,
                 'last_treatment' => null,

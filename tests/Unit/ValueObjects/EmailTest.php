@@ -17,7 +17,7 @@ class EmailTest extends TestCase
     public function test_throws_exception_for_invalid_email(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         new Email('invalid-email');
     }
 

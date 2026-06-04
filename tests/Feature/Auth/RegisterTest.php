@@ -3,8 +3,6 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use App\Models\SupervisorWinery;
-use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -295,4 +293,3 @@ class RegisterTest extends TestCase
         ]);
     }
 }
-

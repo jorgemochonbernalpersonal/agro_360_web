@@ -12,7 +12,7 @@ class PlotsDashboard extends Component
     public function render()
     {
         $user = Auth::user();
-        
+
         // ✅ OPTIMIZACIÓN: Cargar solo campos necesarios para el dashboard
         $plots = Plot::forUser($user)
             ->select([
@@ -32,24 +32,24 @@ class PlotsDashboard extends Component
         $eligibleSurface = $plots->sum('pac_eligible_area') ?: $totalSurface;
         $nonEligibleSurface = $plots->sum('non_eligible_area');
         $eligibilityPercentage = $totalSurface > 0 ? ($eligibleSurface / $totalSurface) * 100 : 0;
-        
+
         // ✅ OPTIMIZACIÓN: Validar en batch para reducir overhead
         $alerts = [];
-        $validator = new PacEligibilityValidator();
-        
+        $validator = new PacEligibilityValidator;
+
         foreach ($plots as $plot) {
             // Alertas de superficie
-            if (!$plot->pac_eligible_area) {
+            if (! $plot->pac_eligible_area) {
                 $alerts[] = [
                     'type' => 'warning',
                     'plot' => $plot->name,
                     'message' => __('Falta definir superficie admisible PAC'),
                 ];
             }
-            
+
             // Validar coherencia (no hace queries, solo cálculos)
             $validation = $validator->validate($plot);
-            if (!$validation['valid']) {
+            if (! $validation['valid']) {
                 foreach ($validation['errors'] as $error) {
                     $alerts[] = [
                         'type' => 'error',
@@ -58,8 +58,8 @@ class PlotsDashboard extends Component
                     ];
                 }
             }
-            
-            if (!empty($validation['warnings'])) {
+
+            if (! empty($validation['warnings'])) {
                 foreach ($validation['warnings'] as $warning) {
                     $alerts[] = [
                         'type' => 'warning',
@@ -68,9 +68,9 @@ class PlotsDashboard extends Component
                     ];
                 }
             }
-            
+
         }
-        
+
         return view('livewire.viticulturist.plots-dashboard', [
             'totalPlots' => $plots->count(),
             'activePlots' => $plots->where('active', true)->count(),

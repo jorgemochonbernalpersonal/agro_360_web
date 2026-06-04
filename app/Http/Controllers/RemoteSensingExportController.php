@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\RemoteSensingExport;
 use App\Models\Plot;
 use App\Services\RemoteSensing\ExportService;
-use App\Exports\RemoteSensingExport;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RemoteSensingExportController extends Controller
 {
     use AuthorizesRequests;
+
     protected ExportService $exportService;
 
     public function __construct(ExportService $exportService)
@@ -32,7 +33,7 @@ class RemoteSensingExportController extends Controller
 
         $pdf = $this->exportService->exportToPdf($plot, $startDate, $endDate);
 
-        $filename = 'teledeteccion_' . str_replace(' ', '_', $plot->name) . '_' . now()->format('Y-m-d') . '.pdf';
+        $filename = 'teledeteccion_'.str_replace(' ', '_', $plot->name).'_'.now()->format('Y-m-d').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -47,7 +48,7 @@ class RemoteSensingExportController extends Controller
         $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : null;
         $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date')) : null;
 
-        $filename = 'teledeteccion_' . str_replace(' ', '_', $plot->name) . '_' . now()->format('Y-m-d') . '.xlsx';
+        $filename = 'teledeteccion_'.str_replace(' ', '_', $plot->name).'_'.now()->format('Y-m-d').'.xlsx';
 
         return Excel::download(new RemoteSensingExport($plot, $startDate, $endDate), $filename);
     }

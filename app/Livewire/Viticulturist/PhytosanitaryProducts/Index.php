@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Viticulturist\PhytosanitaryProducts;
 
-use App\Models\PhytosanitaryProduct;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\PhytosanitaryProduct;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -13,12 +13,14 @@ class Index extends Component
     use WithPagination, WithToastNotifications;
 
     public $currentTab = 'active'; // 'active', 'inactive'
-    public $search     = '';
+
+    public $search = '';
+
     public $typeFilter = '';
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'typeFilter' => ['except' => ''],
     ];
 
@@ -35,12 +37,19 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function updatingSearch(): void     { $this->resetPage(); }
-    public function updatingTypeFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->search     = '';
+        $this->search = '';
         $this->typeFilter = '';
         $this->resetPage();
     }
@@ -76,12 +85,12 @@ class Index extends Component
         }
 
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(active_ingredient) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(registration_number) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(manufacturer) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(active_ingredient) LIKE ?', [$search])
+                    ->orWhereRaw('LOWER(registration_number) LIKE ?', [$search])
+                    ->orWhereRaw('LOWER(manufacturer) LIKE ?', [$search]);
             });
         }
 
@@ -98,18 +107,18 @@ class Index extends Component
             ->orderBy('type')
             ->pluck('type');
 
-        $base  = PhytosanitaryProduct::forUser(Auth::id());
+        $base = PhytosanitaryProduct::forUser(Auth::id());
         $stats = [
-            'active'   => (clone $base)->where('active', true)->count(),
+            'active' => (clone $base)->where('active', true)->count(),
             'inactive' => (clone $base)->where('active', false)->count(),
         ];
 
         return view('livewire.viticulturist.phytosanitary-products.index', [
             'products' => $products,
-            'types'    => $types,
-            'stats'    => $stats,
+            'types' => $types,
+            'stats' => $stats,
         ])->layout('layouts.app', [
-            'title'       => __('Productos Fitosanitarios - Agro365'),
+            'title' => __('Productos Fitosanitarios - Agro365'),
             'description' => __('Catálogo completo de productos fitosanitarios.'),
         ]);
     }

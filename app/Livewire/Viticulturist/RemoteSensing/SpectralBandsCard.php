@@ -8,19 +8,25 @@ use Livewire\Component;
 class SpectralBandsCard extends Component
 {
     public Plot $plot;
+
     public ?int $sigpacId = null;
+
     public ?array $spectralData = null;
+
     public ?array $indices = null;
+
     public bool $loading = false;
+
     public ?string $error = null;
 
     // Historical date selector
     public ?string $selectedDate = null;
+
     public array $availableDates = [];
 
     public function mount(Plot $plot, ?int $sigpacId = null)
     {
-        $this->plot     = $plot;
+        $this->plot = $plot;
         $this->sigpacId = $sigpacId;
         $this->loadAvailableDates();
         $this->loadData();
@@ -33,10 +39,10 @@ class SpectralBandsCard extends Component
             $query->where('multipart_plot_sigpac_id', $this->sigpacId);
         }
         $dates = $query->orderBy('image_date', 'desc')->limit(30)
-            ->pluck('image_date')->map(fn($d) => $d->format('Y-m-d'))->toArray();
+            ->pluck('image_date')->map(fn ($d) => $d->format('Y-m-d'))->toArray();
 
         $this->availableDates = $dates;
-        if (empty($this->selectedDate) && !empty($dates)) {
+        if (empty($this->selectedDate) && ! empty($dates)) {
             $this->selectedDate = $dates[0];
         }
     }
@@ -61,46 +67,47 @@ class SpectralBandsCard extends Component
             }
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
-            if (!$remoteSensing) {
+            if (! $remoteSensing) {
                 $this->error = __('Sin datos para este recinto. Haz clic en "Actualizar Sentinel-2" para cargarlos.');
+
                 return;
             }
 
             $metadata = $remoteSensing->metadata ?? [];
             $this->spectralData = [
-                'date'              => $remoteSensing->image_date->format('d/m/Y'),
-                'satellite'         => $remoteSensing->satellite ?? 'Sentinel-2',
+                'date' => $remoteSensing->image_date->format('d/m/Y'),
+                'satellite' => $remoteSensing->satellite ?? 'Sentinel-2',
                 'valid_pixel_ratio' => $metadata['valid_pixel_ratio'] ?? null,
-                'red_band'          => $remoteSensing->red_band,
-                'nir_band'          => $remoteSensing->nir_band,
-                'green_band'        => $remoteSensing->green_band,
+                'red_band' => $remoteSensing->red_band,
+                'nir_band' => $remoteSensing->nir_band,
+                'green_band' => $remoteSensing->green_band,
             ];
 
             // Índices derivados de bandas espectrales Sentinel-2
             $this->indices = [
                 'ndvi' => [
-                    'value'       => $remoteSensing->ndvi_mean,
-                    'label'       => __('NDVI'),
+                    'value' => $remoteSensing->ndvi_mean,
+                    'label' => __('NDVI'),
                     'description' => __('Vigor vegetativo general'),
-                    'color'       => 'green',
+                    'color' => 'green',
                 ],
                 'gndvi' => [
-                    'value'       => $remoteSensing->gndvi,
-                    'label'       => __('GNDVI'),
+                    'value' => $remoteSensing->gndvi,
+                    'label' => __('GNDVI'),
                     'description' => __('Contenido de nitrógeno/clorofila'),
-                    'color'       => 'emerald',
+                    'color' => 'emerald',
                 ],
                 'ndwi' => [
-                    'value'       => $remoteSensing->ndwi_mean,
-                    'label'       => __('NDWI'),
+                    'value' => $remoteSensing->ndwi_mean,
+                    'label' => __('NDWI'),
                     'description' => __('Contenido de agua en vegetación'),
-                    'color'       => 'blue',
+                    'color' => 'blue',
                 ],
                 'ndre' => [
-                    'value'       => $remoteSensing->ndre,
-                    'label'       => __('NDRE'),
+                    'value' => $remoteSensing->ndre,
+                    'label' => __('NDRE'),
                     'description' => __('Clorofila sin saturación (Red-Edge)'),
-                    'color'       => 'lime',
+                    'color' => 'lime',
                 ],
             ];
 
@@ -118,7 +125,7 @@ class SpectralBandsCard extends Component
     public function reloadData()
     {
         $this->loadData();
-        
+
         $this->dispatch('notify', [
             'type' => 'success',
             'message' => __('Datos espectrales actualizados'),

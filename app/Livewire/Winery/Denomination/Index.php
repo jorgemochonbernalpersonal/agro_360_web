@@ -2,11 +2,7 @@
 
 namespace App\Livewire\Winery\Denomination;
 
-use App\Models\Ability;
-use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
-use App\Models\User;
-use App\Models\UserAbility;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,8 +63,8 @@ class Index extends Component
             $doViticulturists = $relations->map(function ($rel) use ($plotStats, $lastActivity) {
                 return (object) [
                     'viticulturist' => $rel->viticulturist,
-                    'plot_count'    => $plotStats[$rel->viticulturist_id]?->plot_count ?? 0,
-                    'total_area'    => $plotStats[$rel->viticulturist_id]?->total_area ?? 0,
+                    'plot_count' => $plotStats[$rel->viticulturist_id]?->plot_count ?? 0,
+                    'total_area' => $plotStats[$rel->viticulturist_id]?->total_area ?? 0,
                     'last_activity' => $lastActivity[$rel->viticulturist_id] ?? null,
                 ];
             });
@@ -78,7 +74,7 @@ class Index extends Component
         $grantedAbilities = Auth::user()->abilities()->orderBy('module')->orderBy('name')->get();
 
         return view('livewire.winery.denomination.index', [
-            'supervisor'       => $supervisor,
+            'supervisor' => $supervisor,
             'supervisorJoined' => $supervisorRelation?->created_at,
             'doViticulturists' => $doViticulturists,
             'grantedAbilities' => $grantedAbilities,

@@ -52,12 +52,12 @@ class SettingsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('invoicing_settings', [
-            'user_id'        => $this->winery->id,
+            'user_id' => $this->winery->id,
             'invoice_prefix' => 'FAC-{YEAR}-',
         ]);
     }
 
-    public function test_saveInvoicing_validates_required_fields(): void
+    public function test_save_invoicing_validates_required_fields(): void
     {
         InvoicingSetting::createDefaultForUser($this->winery->id);
 
@@ -68,7 +68,7 @@ class SettingsTest extends WineryTestCase
             ->assertHasErrors(['invoice_prefix', 'delivery_note_prefix']);
     }
 
-    public function test_saveInvoicing_validates_padding_range(): void
+    public function test_save_invoicing_validates_padding_range(): void
     {
         InvoicingSetting::createDefaultForUser($this->winery->id);
 
@@ -93,7 +93,7 @@ class SettingsTest extends WineryTestCase
             ->assertHasNoErrors();
     }
 
-    public function test_savePlots_rejects_negative_value(): void
+    public function test_save_plots_rejects_negative_value(): void
     {
         Livewire::test(Settings::class)
             ->set('default_limit_kg_per_ha', '-100')
@@ -118,7 +118,7 @@ class SettingsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('users', [
-            'id'  => $this->winery->id,
+            'id' => $this->winery->id,
             'dni' => '12345678A',
         ]);
     }
@@ -134,7 +134,7 @@ class SettingsTest extends WineryTestCase
 
         $this->assertDatabaseHas('user_taxes', [
             'user_id' => $this->winery->id,
-            'tax_id'  => $tax->id,
+            'tax_id' => $tax->id,
         ]);
     }
 

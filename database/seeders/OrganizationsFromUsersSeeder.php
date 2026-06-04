@@ -21,7 +21,7 @@ class OrganizationsFromUsersSeeder extends Seeder
     public function run(): void
     {
         $roleToType = [
-            'winery'     => Organization::TYPE_WINERY,
+            'winery' => Organization::TYPE_WINERY,
             'supervisor' => Organization::TYPE_DENOMINATION, // DO uses 'supervisor' as DB value
         ];
 
@@ -35,15 +35,16 @@ class OrganizationsFromUsersSeeder extends Seeder
 
             if ($alreadyExists) {
                 $skipped++;
+
                 continue;
             }
 
             $org = Organization::create([
-                'name'          => $user->name,
-                'type'          => $roleToType[$user->role],
-                'slug'          => Str::slug($user->name) . '-' . $user->id,
-                'email'         => !str_contains($user->email, '@noemail.agro365.es') ? $user->email : null,
-                'active'        => true,
+                'name' => $user->name,
+                'type' => $roleToType[$user->role],
+                'slug' => Str::slug($user->name).'-'.$user->id,
+                'email' => ! str_contains($user->email, '@noemail.agro365.es') ? $user->email : null,
+                'active' => true,
                 'owner_user_id' => $user->id,
             ]);
 

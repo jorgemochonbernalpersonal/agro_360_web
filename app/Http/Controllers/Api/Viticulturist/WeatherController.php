@@ -27,17 +27,17 @@ class WeatherController extends Controller
 
         $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($request->plot_id);
 
-        $current  = $this->weatherService->getCurrentWeather($plot);
+        $current = $this->weatherService->getCurrentWeather($plot);
         $forecast = $this->weatherService->getForecast($plot, 7);
-        $soil     = $this->weatherService->getSoilData($plot);
+        $soil = $this->weatherService->getSoilData($plot);
 
         return response()->json([
             'data' => [
-                'plot_id'   => $plot->id,
+                'plot_id' => $plot->id,
                 'plot_name' => $plot->plot_name ?? $plot->name,
-                'current'   => $current,
-                'forecast'  => $forecast,
-                'soil'      => $soil,
+                'current' => $current,
+                'forecast' => $forecast,
+                'soil' => $soil,
             ],
         ]);
     }

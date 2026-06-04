@@ -44,34 +44,34 @@ class WinerySuppliersSeeder extends Seeder
     {
         $this->cleanup();
 
-        $now  = now();
+        $now = now();
         $rows = [];
 
         // 15 prefijos × 30 sufijos = 450 combinaciones únicas
         for ($i = 0; $i < 450; $i++) {
-            $prefixIdx = (int)floor($i / count(self::SUFFIXES));   // 0-14
+            $prefixIdx = (int) floor($i / count(self::SUFFIXES));   // 0-14
             $suffixIdx = $i % count(self::SUFFIXES);               // 0-29
-            $catIdx    = $prefixIdx % count(self::CATEGORIES);
+            $catIdx = $prefixIdx % count(self::CATEGORIES);
 
-            $prefix   = self::PREFIXES[$prefixIdx];
-            $suffix   = self::SUFFIXES[$suffixIdx];
+            $prefix = self::PREFIXES[$prefixIdx];
+            $suffix = self::SUFFIXES[$suffixIdx];
             $category = self::CATEGORIES[$catIdx];
-            $contact  = self::CONTACT_NAMES[$i % count(self::CONTACT_NAMES)];
-            $vatNum   = 'B' . str_pad(20000001 + $i, 8, '0', STR_PAD_LEFT);
+            $contact = self::CONTACT_NAMES[$i % count(self::CONTACT_NAMES)];
+            $vatNum = 'B'.str_pad(20000001 + $i, 8, '0', STR_PAD_LEFT);
 
             $rows[] = [
-                'user_id'        => self::WINERY_USER_ID,
-                'name'           => "$prefix $suffix S.L.",
+                'user_id' => self::WINERY_USER_ID,
+                'name' => "$prefix $suffix S.L.",
                 'contact_person' => $contact,
-                'email'          => 'ventas.' . ($i + 1) . '@proveedor.agro365.demo',
-                'phone'          => '+34 9' . str_pad(20000000 + ($i * 19 % 79000000), 8, '0', STR_PAD_LEFT),
-                'address'        => $suffix . ', Gran Canaria',
-                'vat_number'     => $vatNum,
-                'category'       => $category,
-                'active'         => $i % 10 !== 9,   // ~90% activos
-                'notes'          => 'Proveedor de ' . $category . ' para bodega.',
-                'created_at'     => $now,
-                'updated_at'     => $now,
+                'email' => 'ventas.'.($i + 1).'@proveedor.agro365.demo',
+                'phone' => '+34 9'.str_pad(20000000 + ($i * 19 % 79000000), 8, '0', STR_PAD_LEFT),
+                'address' => $suffix.', Gran Canaria',
+                'vat_number' => $vatNum,
+                'category' => $category,
+                'active' => $i % 10 !== 9,   // ~90% activos
+                'notes' => 'Proveedor de '.$category.' para bodega.',
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -79,7 +79,7 @@ class WinerySuppliersSeeder extends Seeder
             DB::table('suppliers')->insert($chunk);
         }
 
-        $this->command->info('✅ Proveedores: ' . count($rows) . ' registros');
+        $this->command->info('✅ Proveedores: '.count($rows).' registros');
     }
 
     private function cleanup(): void

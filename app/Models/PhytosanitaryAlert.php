@@ -7,6 +7,45 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PhytosanitaryAlert extends Model
 {
+    public const SOURCES = [
+        'mapa' => 'MAPA',
+        'consejeria' => 'Consejería Agricultura',
+        'denominacion' => 'Denominación de Origen',
+        'cooperativa' => 'Cooperativa',
+        'asesoria' => 'Asesoría Técnica',
+        'otro' => 'Otro',
+    ];
+
+    public const ALERT_TYPES = [
+        'plaga' => 'Plaga',
+        'enfermedad' => 'Enfermedad',
+        'climatologica' => 'Climatológica',
+        'normativa' => 'Normativa',
+        'otro' => 'Otro',
+    ];
+
+    public const SEVERITIES = [
+        'baja' => 'Baja',
+        'media' => 'Media',
+        'alta' => 'Alta',
+        'critica' => 'Crítica',
+    ];
+
+    public const SEVERITY_COLORS = [
+        'baja' => 'zinc',
+        'media' => 'blue',
+        'alta' => 'amber',
+        'critica' => 'red',
+    ];
+
+    public const ALERT_TYPE_ICONS = [
+        'plaga' => 'bug-ant',
+        'enfermedad' => 'shield-exclamation',
+        'climatologica' => 'cloud',
+        'normativa' => 'document-text',
+        'otro' => 'bell-alert',
+    ];
+
     protected $fillable = [
         'viticulturist_id', 'title', 'source', 'alert_type', 'severity',
         'affected_area', 'description', 'recommendations', 'alert_date',
@@ -14,18 +53,9 @@ class PhytosanitaryAlert extends Model
     ];
 
     protected $casts = [
-        'alert_date'  => 'date',
+        'alert_date' => 'date',
         'expiry_date' => 'date',
-        'active'      => 'boolean',
-    ];
-
-    public const SOURCES = [
-        'mapa'          => 'MAPA',
-        'consejeria'    => 'Consejería Agricultura',
-        'denominacion'  => 'Denominación de Origen',
-        'cooperativa'   => 'Cooperativa',
-        'asesoria'      => 'Asesoría Técnica',
-        'otro'          => 'Otro',
+        'active' => 'boolean',
     ];
 
     public static function sourceOptions(): array
@@ -33,45 +63,15 @@ class PhytosanitaryAlert extends Model
         return array_map(fn ($v) => __($v), static::SOURCES);
     }
 
-    public const ALERT_TYPES = [
-        'plaga'         => 'Plaga',
-        'enfermedad'    => 'Enfermedad',
-        'climatologica' => 'Climatológica',
-        'normativa'     => 'Normativa',
-        'otro'          => 'Otro',
-    ];
-
     public static function alertTypeOptions(): array
     {
         return array_map(fn ($v) => __($v), static::ALERT_TYPES);
     }
 
-    public const SEVERITIES = [
-        'baja'    => 'Baja',
-        'media'   => 'Media',
-        'alta'    => 'Alta',
-        'critica' => 'Crítica',
-    ];
-
     public static function severityOptions(): array
     {
         return array_map(fn ($v) => __($v), static::SEVERITIES);
     }
-
-    public const SEVERITY_COLORS = [
-        'baja'    => 'zinc',
-        'media'   => 'blue',
-        'alta'    => 'amber',
-        'critica' => 'red',
-    ];
-
-    public const ALERT_TYPE_ICONS = [
-        'plaga'         => 'bug-ant',
-        'enfermedad'    => 'shield-exclamation',
-        'climatologica' => 'cloud',
-        'normativa'     => 'document-text',
-        'otro'          => 'bell-alert',
-    ];
 
     // ── Relaciones ───────────────────────────────────────────────────────────
 

@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Model;
 
 class Harvest extends Model
 {
@@ -164,33 +164,9 @@ class Harvest extends Model
     }
 
     /**
-     * Calcular rendimiento por hectárea y valor total automáticamente
-     */
-    protected static function booted()
-    {
-        static::saving(function ($harvest) {
-            // Auto-set vintage from harvest_start_date if not provided
-            if (!$harvest->vintage && $harvest->harvest_start_date) {
-                $harvest->vintage = \Carbon\Carbon::parse($harvest->harvest_start_date)->year;
-            }
-
-            // Calcular rendimiento por hectárea
-            if ($harvest->total_weight && $harvest->plotPlanting) {
-                $planting = $harvest->plotPlanting;
-                if ($planting->area_planted > 0) {
-                    $harvest->yield_per_hectare = round($harvest->total_weight / $planting->area_planted, 3);
-                }
-            }
-
-            // Calcular valor total
-            if ($harvest->total_weight && $harvest->price_per_kg) {
-                $harvest->total_value = round($harvest->total_weight * $harvest->price_per_kg, 3);
-            }
-        });
-    }
-
-    /**
      * Scope para filtrar cosechas activas
+     *
+     * @param mixed $query
      */
     public function scopeActive($query)
     {
@@ -199,6 +175,8 @@ class Harvest extends Model
 
     /**
      * Scope para filtrar por plantación
+     *
+     * @param mixed $query
      */
     public function scopeForPlanting($query, int $plantingId)
     {
@@ -207,6 +185,8 @@ class Harvest extends Model
 
     /**
      * Scope para filtrar por campaña (a través de activity)
+     *
+     * @param mixed $query
      */
     public function scopeForCampaign($query, int $campaignId)
     {
@@ -220,7 +200,7 @@ class Harvest extends Model
      */
     public function wasEdited(): bool
     {
-        return !is_null($this->edited_at);
+        return ! is_null($this->edited_at);
     }
 
     /**
@@ -244,7 +224,7 @@ class Harvest extends Model
      */
     public function hasContainer(): bool
     {
-        return !is_null($this->container_id) && $this->container !== null;
+        return ! is_null($this->container_id) && $this->container !== null;
     }
 
     /**
@@ -285,8 +265,8 @@ class Harvest extends Model
     public function getCurrentStock(): array
     {
         $latest = $this->stockMovements()->latest()->first();
-        
-        if (!$latest) {
+
+        if (! $latest) {
             return [
                 'total' => 0,
                 'available' => 0,
@@ -296,7 +276,7 @@ class Harvest extends Model
                 'lost' => 0,
             ];
         }
-        
+
         return [
             'total' => $latest->quantity_after,
             'available' => $latest->available_qty,
@@ -310,14 +290,14 @@ class Harvest extends Model
     /**
      * Verificar si hay stock disponible
      */
-    public function hasAvailableStock(float $quantity = null): bool
+    public function hasAvailableStock(?float $quantity = null): bool
     {
         $stock = $this->getCurrentStock();
-        
+
         if ($quantity === null) {
             return $stock['available'] > 0;
         }
-        
+
         return $stock['available'] >= $quantity;
     }
 
@@ -327,6 +307,7 @@ class Harvest extends Model
     public function getAvailableQuantity(): float
     {
         $stock = $this->getCurrentStock();
+
         return $stock['available'];
     }
 
@@ -336,6 +317,7 @@ class Harvest extends Model
     public function getReservedQuantity(): float
     {
         $stock = $this->getCurrentStock();
+
         return $stock['reserved'];
     }
 
@@ -345,6 +327,7 @@ class Harvest extends Model
     public function getSoldQuantity(): float
     {
         $stock = $this->getCurrentStock();
+
         return $stock['sold'];
     }
 
@@ -354,6 +337,7 @@ class Harvest extends Model
     public function isFullySold(): bool
     {
         $stock = $this->getCurrentStock();
+
         return $stock['available'] <= 0 && $stock['reserved'] <= 0;
     }
 
@@ -363,11 +347,37 @@ class Harvest extends Model
     public function getSoldPercentage(): float
     {
         $stock = $this->getCurrentStock();
-        
+
         if ($stock['total'] <= 0) {
             return 0;
         }
 
         return round(($stock['sold'] / $stock['total']) * 100, 2);
+    }
+
+    /**
+     * Calcular rendimiento por hectárea y valor total automáticamente
+     */
+    protected static function booted()
+    {
+        static::saving(function ($harvest) {
+            // Auto-set vintage from harvest_start_date if not provided
+            if (! $harvest->vintage && $harvest->harvest_start_date) {
+                $harvest->vintage = \Carbon\Carbon::parse($harvest->harvest_start_date)->year;
+            }
+
+            // Calcular rendimiento por hectárea
+            if ($harvest->total_weight && $harvest->plotPlanting) {
+                $planting = $harvest->plotPlanting;
+                if ($planting->area_planted > 0) {
+                    $harvest->yield_per_hectare = round($harvest->total_weight / $planting->area_planted, 3);
+                }
+            }
+
+            // Calcular valor total
+            if ($harvest->total_weight && $harvest->price_per_kg) {
+                $harvest->total_value = round($harvest->total_weight * $harvest->price_per_kg, 3);
+            }
+        });
     }
 }

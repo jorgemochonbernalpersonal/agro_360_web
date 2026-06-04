@@ -8,16 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineTransfer extends Model
 {
     const TRANSFER_TYPES = [
-        'racking'  => 'Trasiego',
+        'racking' => 'Trasiego',
         'blending' => 'Mezcla / Coupage',
-        'top_up'   => 'Relleno',
-        'other'    => 'Otro',
+        'top_up' => 'Relleno',
+        'other' => 'Otro',
     ];
-
-    public static function transferTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::TRANSFER_TYPES);
-    }
 
     protected $fillable = [
         'wine_id',
@@ -34,9 +29,14 @@ class WineTransfer extends Model
     ];
 
     protected $casts = [
-        'quantity'      => 'decimal:3',
+        'quantity' => 'decimal:3',
         'transfer_date' => 'date',
     ];
+
+    public static function transferTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TRANSFER_TYPES);
+    }
 
     public function wine(): BelongsTo
     {

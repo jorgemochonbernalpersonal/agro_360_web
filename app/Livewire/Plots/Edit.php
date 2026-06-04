@@ -2,67 +2,94 @@
 
 namespace App\Livewire\Plots;
 
-use App\Models\MultipartPlotSigpac;
-use App\Models\Plot;
-use App\Models\AutonomousCommunity;
-use App\Models\Orientation;
-use App\Models\SoilType;
-use Illuminate\Support\Facades\DB;
-use App\Models\IrrigationType;
-use App\Models\Topography;
-use App\Models\PropertyType;
-use App\Models\Valley;
-use App\Models\Site;
-use App\Models\Province;
-use App\Models\Municipality;
 use App\Livewire\Concerns\WithRoleBasedFields;
-use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithUserFilters;
+use App\Models\AutonomousCommunity;
+use App\Models\IrrigationType;
+use App\Models\MultipartPlotSigpac;
+use App\Models\Municipality;
+use App\Models\Orientation;
+use App\Models\Plot;
+use App\Models\PropertyType;
+use App\Models\Province;
+use App\Models\Site;
+use App\Models\SoilType;
+use App\Models\Topography;
+use App\Models\Valley;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Renderless;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 #[Layout('layouts.app')]
 class Edit extends Component
 {
-    use WithRoleBasedFields, WithUserFilters, WithToastNotifications;
+    use WithRoleBasedFields, WithToastNotifications, WithUserFilters;
 
     public Plot $plot;
+
     public $name = '';
+
     public $description = '';
+
     public $viticulturist_id = '';
+
     public $area = '';
+
     public $active = true;
+
     public $autonomous_community_id = '';
+
     public $province_id = '';
+
     public $municipality_id = '';
+
     public $code_parcel = '';
+
     public $orientation_id = '';
+
     public $degree_day_base = '';
+
     public $cadastral_area = '';
+
     public $is_organic = false;
+
     // Lookup FKs
     public $soil_type_id = '';
+
     public $irrigation_type_id = '';
+
     public $topography_id = '';
+
     public $property_type_id = '';
+
     public $valley_id = '';
+
     public $site_id = '';
+
     public $owner_id = '';
+
     // Nuevos campos simples
     public $enclosure = '';
+
     public $planting_pattern = '';
+
     public $slope = '';
+
     // PAC
     public $pac_eligible_area = '';
+
     public $non_eligible_area = '';
 
     // SIGPAC municipality change warning
     public bool $showSigpacWarning = false;
+
     public int $originalMunicipalityId = 0;
+
     public bool $hasSigpac = false;
 
     // Note: provinces/municipalities are NOT stored as public properties.
@@ -70,7 +97,7 @@ class Edit extends Component
 
     public function mount(Plot $plot)
     {
-        if (!Auth::user()->can('update', $plot)) {
+        if (! Auth::user()->can('update', $plot)) {
             abort(403);
         }
 
@@ -110,6 +137,63 @@ class Edit extends Component
         $this->hasSigpac = MultipartPlotSigpac::where('plot_id', $plot->id)->exists();
 
         // provinces/municipalities are computed in render() — no need to pre-populate here.
+    }
+
+    #[Renderless]
+    public function getMunicipalities(string $provinceId): array
+    {
+        if (! $provinceId) {
+            return [];
+        }
+
+        return Municipality::where('province_id', $provinceId)
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->toArray();
+    }
+
+    public function update()
+    {
+        $this->validate();
+
+        // Si cambia el municipio y hay SIGPAC vinculado → pedir confirmación
+        if ($this->hasSigpac
+            && $this->canSelectLocation()
+            && (int) $this->municipality_id !== $this->originalMunicipalityId
+        ) {
+            $this->showSigpacWarning = true;
+
+            return;
+        }
+
+        $this->doUpdate();
+    }
+
+    public function confirmUpdate(): void
+    {
+        // El usuario confirmó — borrar vínculos SIGPAC y guardar
+        MultipartPlotSigpac::where('plot_id', $this->plot->id)->delete();
+        $this->hasSigpac = false;
+        $this->showSigpacWarning = false;
+        $this->doUpdate();
+    }
+
+    public function render()
+    {
+        return view('livewire.plots.edit', [
+            'orientations' => Orientation::where('active', true)->get(),
+            'soilTypes' => $this->catalogScope(SoilType::where('active', true), 'soil_types')->orderBy('name')->get(),
+            'irrigationTypes' => $this->catalogScope(IrrigationType::where('active', true), 'irrigation_types')->orderBy('name')->get(),
+            'topographies' => $this->catalogScope(Topography::where('active', true), 'topographies')->orderBy('name')->get(),
+            'propertyTypes' => $this->catalogScope(PropertyType::where('active', true), 'property_types')->orderBy('name')->get(),
+            'valleys' => $this->catalogScope(Valley::where('active', true), 'valleys')->orderBy('name')->get(),
+            'sites' => $this->catalogScope(Site::where('is_archived', false), 'sites')->orderBy('name')->get(),
+            'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])->orderBy('name')->get(),
+            'allProvinces' => Province::orderBy('name')->get(['id', 'name', 'autonomous_community_id'])->toArray(),
+            'initMunicipalities' => $this->province_id
+                ? Municipality::where('province_id', $this->province_id)->orderBy('name')->get(['id', 'name'])->toArray()
+                : [],
+        ]);
     }
 
     protected function rules(): array
@@ -160,41 +244,6 @@ class Edit extends Component
         ];
     }
 
-    #[Renderless]
-    public function getMunicipalities(string $provinceId): array
-    {
-        if (!$provinceId) return [];
-        return Municipality::where('province_id', $provinceId)
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->toArray();
-    }
-
-    public function update()
-    {
-        $this->validate();
-
-        // Si cambia el municipio y hay SIGPAC vinculado → pedir confirmación
-        if ($this->hasSigpac
-            && $this->canSelectLocation()
-            && (int) $this->municipality_id !== $this->originalMunicipalityId
-        ) {
-            $this->showSigpacWarning = true;
-            return;
-        }
-
-        $this->doUpdate();
-    }
-
-    public function confirmUpdate(): void
-    {
-        // El usuario confirmó — borrar vínculos SIGPAC y guardar
-        MultipartPlotSigpac::where('plot_id', $this->plot->id)->delete();
-        $this->hasSigpac = false;
-        $this->showSigpacWarning = false;
-        $this->doUpdate();
-    }
-
     private function doUpdate()
     {
 
@@ -226,7 +275,7 @@ class Edit extends Component
                 $canAssign = true; // Admin y supervisor
             }
 
-            if (!$canAssign) {
+            if (! $canAssign) {
                 throw ValidationException::withMessages([
                     'viticulturist_id' => __('Solo puedes asignar parcelas a viticultores que has creado.'),
                 ]);
@@ -278,16 +327,17 @@ class Edit extends Component
 
             $this->toastSuccess(__('Parcela actualizada correctamente.'));
             $indexRoute = $user->isProducer() ? 'producer.plots.index' : 'plots.index';
+
             return $this->redirect(route($indexRoute), navigate: true);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al actualizar parcela: ' . $e->getMessage(), [
+            Log::error('Error al actualizar parcela: '.$e->getMessage(), [
                 'user_id' => Auth::id(),
                 'plot_id' => $this->plot->id,
                 'data' => $data ?? [],
-                'exception' => $e
+                'exception' => $e,
             ]);
-            
+
             throw ValidationException::withMessages([
                 'general' => __('Error al actualizar la parcela. Por favor, intenta de nuevo.'),
             ]);
@@ -306,24 +356,7 @@ class Edit extends Component
     private function catalogScope($query, string $catalogType)
     {
         $hidden = $this->hiddenIds($catalogType);
-        return $query->where(fn($q) => $q->whereNull('user_id')->whereNotIn('id', $hidden)->orWhere('user_id', Auth::id()));
-    }
 
-    public function render()
-    {
-        return view('livewire.plots.edit', [
-            'orientations'   => Orientation::where('active', true)->get(),
-            'soilTypes'      => $this->catalogScope(SoilType::where('active', true), 'soil_types')->orderBy('name')->get(),
-            'irrigationTypes'=> $this->catalogScope(IrrigationType::where('active', true), 'irrigation_types')->orderBy('name')->get(),
-            'topographies'   => $this->catalogScope(Topography::where('active', true), 'topographies')->orderBy('name')->get(),
-            'propertyTypes'  => $this->catalogScope(PropertyType::where('active', true), 'property_types')->orderBy('name')->get(),
-            'valleys'        => $this->catalogScope(Valley::where('active', true), 'valleys')->orderBy('name')->get(),
-            'sites'          => $this->catalogScope(Site::where('is_archived', false), 'sites')->orderBy('name')->get(),
-            'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])->orderBy('name')->get(),
-            'allProvinces'   => Province::orderBy('name')->get(['id', 'name', 'autonomous_community_id'])->toArray(),
-            'initMunicipalities' => $this->province_id
-                ? Municipality::where('province_id', $this->province_id)->orderBy('name')->get(['id', 'name'])->toArray()
-                : [],
-        ]);
+        return $query->where(fn ($q) => $q->whereNull('user_id')->whereNotIn('id', $hidden)->orWhere('user_id', Auth::id()));
     }
 }

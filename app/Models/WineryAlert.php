@@ -9,31 +9,21 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class WineryAlert extends Model
 {
     const ALERT_TYPES = [
-        'maintenance'   => 'Mantenimiento',
-        'expiry'        => 'Caducidad',
-        'stock'         => 'Stock',
-        'fermentation'  => 'Fermentación',
-        'dispute'       => 'Disputa',
-        'label'         => 'Etiquetado',
+        'maintenance' => 'Mantenimiento',
+        'expiry' => 'Caducidad',
+        'stock' => 'Stock',
+        'fermentation' => 'Fermentación',
+        'dispute' => 'Disputa',
+        'label' => 'Etiquetado',
         'certification' => 'Certificación',
-        'custom'        => 'Personalizada',
+        'custom' => 'Personalizada',
     ];
-
-    public static function alertTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::ALERT_TYPES);
-    }
 
     const SEVERITIES = [
-        'info'     => 'Informativa',
-        'warning'  => 'Aviso',
+        'info' => 'Informativa',
+        'warning' => 'Aviso',
         'critical' => 'Crítica',
     ];
-
-    public static function severityOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::SEVERITIES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -51,12 +41,22 @@ class WineryAlert extends Model
     ];
 
     protected $casts = [
-        'is_read'        => 'boolean',
+        'is_read' => 'boolean',
         'auto_generated' => 'boolean',
-        'read_at'        => 'datetime',
-        'triggered_at'   => 'datetime',
-        'expires_at'     => 'datetime',
+        'read_at' => 'datetime',
+        'triggered_at' => 'datetime',
+        'expires_at' => 'datetime',
     ];
+
+    public static function alertTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ALERT_TYPES);
+    }
+
+    public static function severityOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SEVERITIES);
+    }
 
     // ── Relations ──────────────────────────────────────────────────────────────
 

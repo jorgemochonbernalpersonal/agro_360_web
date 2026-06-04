@@ -20,11 +20,11 @@ class ViticulturistSetting extends Model
     ];
 
     protected $casts = [
-        'default_limit_kg_per_ha'  => 'decimal:3',
-        'degree_day_base'          => 'decimal:1',
-        'notify_harvest_alerts'    => 'boolean',
-        'notify_activity_alerts'   => 'boolean',
-        'default_irpf_rate'        => 'decimal:2',
+        'default_limit_kg_per_ha' => 'decimal:3',
+        'degree_day_base' => 'decimal:1',
+        'notify_harvest_alerts' => 'boolean',
+        'notify_activity_alerts' => 'boolean',
+        'default_irpf_rate' => 'decimal:2',
     ];
 
     public function viticulturist(): BelongsTo
@@ -44,12 +44,12 @@ class ViticulturistSetting extends Model
     public static function createDefaultForUser(int $userId): self
     {
         return static::create([
-            'viticulturist_id'         => $userId,
-            'degree_day_base'          => 10.0,
+            'viticulturist_id' => $userId,
+            'degree_day_base' => 10.0,
             'document_prefix_activity' => 'ACT',
-            'document_prefix_harvest'  => 'VND',
-            'notify_harvest_alerts'    => true,
-            'notify_activity_alerts'   => true,
+            'document_prefix_harvest' => 'VND',
+            'notify_harvest_alerts' => true,
+            'notify_activity_alerts' => true,
         ]);
     }
 }

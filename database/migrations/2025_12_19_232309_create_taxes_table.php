@@ -20,9 +20,9 @@ return new class extends Migration
             $table->boolean('is_default')->default(false);
             $table->boolean('active')->default(true);
             $table->text('description')->nullable();
-            
+
             $table->timestamps();
-            
+
             $table->index('code');
             $table->index('active');
             $table->unique(['code', 'rate', 'region'], 'tax_code_rate_region_unique');

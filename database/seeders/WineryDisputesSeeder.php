@@ -49,6 +49,7 @@ class WineryDisputesSeeder extends Seeder
 
         if (empty($wineryHarvests)) {
             $this->command->warn('  ⚠️  Sin recepciones de uva. Saltando deliveries/disputas.');
+
             return;
         }
 
@@ -59,63 +60,64 @@ class WineryDisputesSeeder extends Seeder
 
         if (empty($viticulturistIds)) {
             $this->command->warn('  ⚠️  Sin viticultores vinculados. Saltando disputas.');
+
             return;
         }
 
-        $now  = now();
+        $now = now();
         $rows = [];
 
         // harvest_deliveries.status enum: solo 'disputed' | 'resolved'
         $statusPool = ['disputed', 'disputed', 'disputed', 'resolved', 'resolved'];
 
         for ($i = 0; $i < 450; $i++) {
-            $harvest   = $wineryHarvests[$i % count($wineryHarvests)];
-            $vitId     = $viticulturistIds[$i % count($viticulturistIds)];
-            $status    = $statusPool[$i % count($statusPool)];
-            $vintage   = (int)($harvest->harvest_start_date ? substr($harvest->harvest_start_date, 0, 4) : 2025);
+            $harvest = $wineryHarvests[$i % count($wineryHarvests)];
+            $vitId = $viticulturistIds[$i % count($viticulturistIds)];
+            $status = $statusPool[$i % count($statusPool)];
+            $vintage = (int) ($harvest->harvest_start_date ? substr($harvest->harvest_start_date, 0, 4) : 2025);
 
-            $baseKg       = $harvest->total_weight > 0 ? $harvest->total_weight : 1000.0;
-            $discPct      = 5.0 + ($i % 8);   // 5%–12% de discrepancia
-            $deliveredKg  = round($baseKg * (1 + $discPct / 100), 2);
-            $discrepancyKg= round($deliveredKg - $baseKg, 2);
-            $pricePerKg   = $harvest->price_per_kg > 0 ? $harvest->price_per_kg : 0.90;
+            $baseKg = $harvest->total_weight > 0 ? $harvest->total_weight : 1000.0;
+            $discPct = 5.0 + ($i % 8);   // 5%–12% de discrepancia
+            $deliveredKg = round($baseKg * (1 + $discPct / 100), 2);
+            $discrepancyKg = round($deliveredKg - $baseKg, 2);
+            $pricePerKg = $harvest->price_per_kg > 0 ? $harvest->price_per_kg : 0.90;
 
-            $daysAgo       = 365 - (int)round($i * 360 / 449);
-            $deliveryDate  = $harvest->harvest_start_date ?? now()->subDays($daysAgo)->toDateString();
+            $daysAgo = 365 - (int) round($i * 360 / 449);
+            $deliveryDate = $harvest->harvest_start_date ?? now()->subDays($daysAgo)->toDateString();
 
-            $disputeNote    = null;
-            $disputeAt      = null;
+            $disputeNote = null;
+            $disputeAt = null;
             $resolutionNote = null;
-            $resolvedAt     = null;
+            $resolvedAt = null;
 
             if ($status === 'disputed') {
                 $disputeNote = self::DISPUTE_NOTES[$i % count(self::DISPUTE_NOTES)];
-                $disputeAt   = now()->subDays(max(1, $daysAgo - 5))->toDateTimeString();
+                $disputeAt = now()->subDays(max(1, $daysAgo - 5))->toDateTimeString();
             } elseif ($status === 'resolved') {
-                $disputeNote    = self::DISPUTE_NOTES[$i % count(self::DISPUTE_NOTES)];
-                $disputeAt      = now()->subDays(max(10, $daysAgo - 5))->toDateTimeString();
+                $disputeNote = self::DISPUTE_NOTES[$i % count(self::DISPUTE_NOTES)];
+                $disputeAt = now()->subDays(max(10, $daysAgo - 5))->toDateTimeString();
                 $resolutionNote = self::RESOLUTION_NOTES[$i % count(self::RESOLUTION_NOTES)];
-                $resolvedAt     = now()->subDays(max(1, $daysAgo - 10))->toDateTimeString();
+                $resolvedAt = now()->subDays(max(1, $daysAgo - 10))->toDateTimeString();
             }
 
             $rows[] = [
-                'viticulturist_id'        => $vitId,
-                'harvest_id'              => $harvest->id,
-                'vintage_year'            => $vintage,
-                'buyer_name'              => 'Bodega Agaete Demo',
-                'delivered_kg'            => $deliveredKg,
-                'price_per_kg'            => $pricePerKg,
-                'total_price'             => round($deliveredKg * $pricePerKg, 2),
-                'delivery_date'           => $deliveryDate,
-                'ticket_number'           => 'TKT-' . $vintage . '-' . str_pad($i + 1, 5, '0', STR_PAD_LEFT),
-                'status'                  => $status,
-                'discrepancy_kg'          => $discrepancyKg,
-                'dispute_note'            => $disputeNote,
-                'dispute_submitted_at'    => $disputeAt,
+                'viticulturist_id' => $vitId,
+                'harvest_id' => $harvest->id,
+                'vintage_year' => $vintage,
+                'buyer_name' => 'Bodega Agaete Demo',
+                'delivered_kg' => $deliveredKg,
+                'price_per_kg' => $pricePerKg,
+                'total_price' => round($deliveredKg * $pricePerKg, 2),
+                'delivery_date' => $deliveryDate,
+                'ticket_number' => 'TKT-'.$vintage.'-'.str_pad($i + 1, 5, '0', STR_PAD_LEFT),
+                'status' => $status,
+                'discrepancy_kg' => $discrepancyKg,
+                'dispute_note' => $disputeNote,
+                'dispute_submitted_at' => $disputeAt,
                 'dispute_resolution_note' => $resolutionNote,
-                'dispute_resolved_at'     => $resolvedAt,
-                'created_at'              => $now,
-                'updated_at'              => $now,
+                'dispute_resolved_at' => $resolvedAt,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -123,9 +125,9 @@ class WineryDisputesSeeder extends Seeder
             DB::table('harvest_deliveries')->insert($chunk);
         }
 
-        $disputed  = count(array_filter($rows, fn($r) => $r['status'] === 'disputed'));
-        $resolved  = count(array_filter($rows, fn($r) => $r['status'] === 'resolved'));
-        $this->command->info("✅ Disputas: " . count($rows) . " registros ({$disputed} en disputa, {$resolved} resueltas)");
+        $disputed = count(array_filter($rows, fn ($r) => $r['status'] === 'disputed'));
+        $resolved = count(array_filter($rows, fn ($r) => $r['status'] === 'resolved'));
+        $this->command->info('✅ Disputas: '.count($rows)." registros ({$disputed} en disputa, {$resolved} resueltas)");
     }
 
     private function cleanup(): void

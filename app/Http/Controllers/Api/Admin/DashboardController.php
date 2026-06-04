@@ -54,19 +54,19 @@ class DashboardController extends Controller
         return response()->json([
             'data' => [
                 'users' => [
-                    'total'            => $totalUsers,
-                    'pending_approvals'=> $pendingApprovals,
-                    'new_this_month'   => $newThisMonth,
-                    'by_role'          => [
-                        'admin'         => (int) ($usersByRole[User::ROLE_ADMIN]         ?? 0),
-                        'supervisor'    => (int) ($usersByRole[User::ROLE_SUPERVISOR]    ?? 0),
-                        'winery'        => (int) ($usersByRole[User::ROLE_WINERY]        ?? 0),
+                    'total' => $totalUsers,
+                    'pending_approvals' => $pendingApprovals,
+                    'new_this_month' => $newThisMonth,
+                    'by_role' => [
+                        'admin' => (int) ($usersByRole[User::ROLE_ADMIN] ?? 0),
+                        'supervisor' => (int) ($usersByRole[User::ROLE_SUPERVISOR] ?? 0),
+                        'winery' => (int) ($usersByRole[User::ROLE_WINERY] ?? 0),
                         'viticulturist' => (int) ($usersByRole[User::ROLE_VITICULTURIST] ?? 0),
-                        'producer'      => (int) ($usersByRole[User::ROLE_PRODUCER]      ?? 0),
+                        'producer' => (int) ($usersByRole[User::ROLE_PRODUCER] ?? 0),
                     ],
                 ],
                 'plots' => [
-                    'total'      => (int) ($plotStats->total ?? 0),
+                    'total' => (int) ($plotStats->total ?? 0),
                     'total_area' => round((float) ($plotStats->total_area ?? 0), 2),
                 ],
                 'subscriptions' => [
@@ -77,13 +77,13 @@ class DashboardController extends Controller
                     // cast, una colección vacía se serializa como [] y el cliente móvil
                     // (que espera un Map) falla al deserializar el dashboard.
                     'last_7_days' => (object) $securitySummary->map(fn ($v) => (int) $v)->toArray(),
-                    'recent'      => $recentEvents->map(fn ($e) => [
-                        'id'         => $e->id,
-                        'level'      => $e->level,
-                        'event'      => $e->event,
-                        'message'    => $e->message,
-                        'ip'         => $e->ip,
-                        'email'      => $e->email,
+                    'recent' => $recentEvents->map(fn ($e) => [
+                        'id' => $e->id,
+                        'level' => $e->level,
+                        'event' => $e->event,
+                        'message' => $e->message,
+                        'ip' => $e->ip,
+                        'email' => $e->email,
                         'created_at' => $e->created_at?->toIso8601String(),
                     ])->values(),
                 ],

@@ -8,24 +8,13 @@ use Illuminate\Support\Facades\Cache;
 
 class NotebookAccessRequest extends Model
 {
-    protected $table = 'notebook_access_requests';
+    public const STATUS_PENDING = 'pending';
 
-    protected static function booted(): void
-    {
-        $flush = fn (self $r) => Cache::forget("nav_badge_notebook_access_{$r->viticulturist_id}");
-
-        static::saved(function (NotebookAccessRequest $request) use ($flush) {
-            if ($request->wasRecentlyCreated || $request->wasChanged('status')) {
-                $flush($request);
-            }
-        });
-
-        static::deleted($flush);
-    }
-
-    public const STATUS_PENDING  = 'pending';
     public const STATUS_APPROVED = 'approved';
+
     public const STATUS_REJECTED = 'rejected';
+
+    protected $table = 'notebook_access_requests';
 
     protected $fillable = [
         'winery_id',
@@ -91,5 +80,18 @@ class NotebookAccessRequest extends Model
     public function isRejected(): bool
     {
         return $this->status === self::STATUS_REJECTED;
+    }
+
+    protected static function booted(): void
+    {
+        $flush = fn (self $r) => Cache::forget("nav_badge_notebook_access_{$r->viticulturist_id}");
+
+        static::saved(function (NotebookAccessRequest $request) use ($flush) {
+            if ($request->wasRecentlyCreated || $request->wasChanged('status')) {
+                $flush($request);
+            }
+        });
+
+        static::deleted($flush);
     }
 }

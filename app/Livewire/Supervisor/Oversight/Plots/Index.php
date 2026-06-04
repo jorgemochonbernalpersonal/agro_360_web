@@ -14,31 +14,46 @@ class Index extends Component
 {
     use WithPagination;
 
-    public string $search         = '';
-    public string $filterVit      = '';
-    public string $filterMunicip  = '';
-    public string $filterOrganic  = '';
-    public string $filterLocked   = '';
+    public string $search = '';
+
+    public string $filterVit = '';
+
+    public string $filterMunicip = '';
+
+    public string $filterOrganic = '';
+
+    public string $filterLocked = '';
 
     protected $queryString = [
-        'search'        => ['except' => ''],
-        'filterVit'     => ['except' => ''],
+        'search' => ['except' => ''],
+        'filterVit' => ['except' => ''],
         'filterMunicip' => ['except' => ''],
         'filterOrganic' => ['except' => ''],
-        'filterLocked'  => ['except' => ''],
+        'filterLocked' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void   { $this->resetPage(); }
-    public function updatingFilterVit(): void { $this->resetPage(); }
-    public function updatingFilterMunicip(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterVit(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterMunicip(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->search        = '';
-        $this->filterVit     = '';
+        $this->search = '';
+        $this->filterVit = '';
         $this->filterMunicip = '';
         $this->filterOrganic = '';
-        $this->filterLocked  = '';
+        $this->filterLocked = '';
         $this->resetPage();
     }
 
@@ -55,13 +70,13 @@ class Index extends Component
             ->with([
                 'viticulturist:id,name',
                 'municipality:id,name',
-                'plantings' => fn($q) => $q->where('status', 'active')->with('grapeVariety:id,name'),
+                'plantings' => fn ($q) => $q->where('status', 'active')->with('grapeVariety:id,name'),
                 'lastAgriculturalActivity',
             ]);
 
         if ($this->search) {
-            $s = '%' . strtolower($this->search) . '%';
-            $query->where(fn($q) => $q
+            $s = '%'.strtolower($this->search).'%';
+            $query->where(fn ($q) => $q
                 ->whereRaw('LOWER(plots.name) LIKE ?', [$s])
                 ->orWhereRaw('LOWER(plots.code_parcel) LIKE ?', [$s])
             );
@@ -105,9 +120,9 @@ class Index extends Component
             ->get(['id', 'name']);
 
         return view('livewire.supervisor.oversight.plots.index', [
-            'plots'           => $plots,
-            'globalStats'     => $globalStats,
-            'viticulturists'  => $viticulturists,
+            'plots' => $plots,
+            'globalStats' => $globalStats,
+            'viticulturists' => $viticulturists,
         ]);
     }
 }

@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::table('marketed_harvests', function (Blueprint $table) {
             $table->foreignId('invoice_id')
-                  ->nullable()
-                  ->after('active')
-                  ->constrained('invoices')
-                  ->onDelete('set null');
+                ->nullable()
+                ->after('active')
+                ->constrained('invoices')
+                ->onDelete('set null');
 
             $table->index('invoice_id');
         });

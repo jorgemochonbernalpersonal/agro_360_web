@@ -15,33 +15,51 @@ class Index extends Component
     use WithPagination;
 
     public string $viticulturistFilter = '';
-    public string $activityTypeFilter  = '';
-    public string $campaignFilter      = '';
-    public string $plotFilter          = '';
+
+    public string $activityTypeFilter = '';
+
+    public string $campaignFilter = '';
+
+    public string $plotFilter = '';
 
     protected $queryString = [
         'viticulturistFilter' => ['except' => ''],
-        'activityTypeFilter'  => ['except' => ''],
-        'campaignFilter'      => ['except' => ''],
-        'plotFilter'          => ['except' => ''],
+        'activityTypeFilter' => ['except' => ''],
+        'campaignFilter' => ['except' => ''],
+        'plotFilter' => ['except' => ''],
     ];
 
-    public function updatingViticulturistFilter(): void { $this->resetPage(); }
-    public function updatingActivityTypeFilter(): void  { $this->resetPage(); }
-    public function updatingCampaignFilter(): void      { $this->resetPage(); }
-    public function updatingPlotFilter(): void          { $this->resetPage(); }
+    public function updatingViticulturistFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingActivityTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingCampaignFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPlotFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
-        $user   = Auth::user();
+        $user = Auth::user();
         $userId = Auth::id();
-        $isViticulturistOnly = !$user->hasWineryAccess();
+        $isViticulturistOnly = ! $user->hasWineryAccess();
 
         if ($isViticulturistOnly) {
             // Pure viticulturist: show their own activities only
-            $viticulturistIds      = collect([$userId]);
+            $viticulturistIds = collect([$userId]);
             $withoutCuadernoAccess = collect();
-            $linkedViticulturists  = collect();
+            $linkedViticulturists = collect();
         } else {
             // Winery or Producer: show linked viticulturists with cuaderno access
             $viticulturistIds = WineryViticulturist::where('winery_id', $userId)
@@ -55,7 +73,7 @@ class Index extends Component
             // Viticulturists linked but without cuaderno consent, for the warning banner
             $withoutCuadernoAccess = WineryViticulturist::where('winery_id', $userId)
                 ->where('notebook_access', false)
-                ->whereHas('viticulturist', fn($q) => $q->where('can_login', true))
+                ->whereHas('viticulturist', fn ($q) => $q->where('can_login', true))
                 ->with('viticulturist:id,name')
                 ->get()
                 ->pluck('viticulturist')
@@ -102,22 +120,22 @@ class Index extends Component
         }
 
         $stats = [
-            'total'    => (clone $query)->count(),
-            'harvest'  => (clone $query)->where('activity_type', 'harvest')->count(),
-            'phyto'    => (clone $query)->where('activity_type', 'phytosanitary')->count(),
+            'total' => (clone $query)->count(),
+            'harvest' => (clone $query)->where('activity_type', 'harvest')->count(),
+            'phyto' => (clone $query)->where('activity_type', 'phytosanitary')->count(),
         ];
 
         $activities = (clone $query)->orderByDesc('activity_date')->paginate(12);
 
         return view('livewire.winery.field-activities.index', [
-            'activities'            => $activities,
-            'linkedViticulturists'  => $linkedViticulturists,
-            'campaigns'             => $campaigns,
-            'plots'                 => $plots,
-            'stats'                 => $stats,
-            'activityTypes'         => AgriculturalActivity::activityTypes(),
+            'activities' => $activities,
+            'linkedViticulturists' => $linkedViticulturists,
+            'campaigns' => $campaigns,
+            'plots' => $plots,
+            'stats' => $stats,
+            'activityTypes' => AgriculturalActivity::activityTypes(),
             'withoutCuadernoAccess' => $withoutCuadernoAccess,
-            'isViticulturistOnly'   => $isViticulturistOnly,
+            'isViticulturistOnly' => $isViticulturistOnly,
         ])->layout('layouts.app');
     }
 }

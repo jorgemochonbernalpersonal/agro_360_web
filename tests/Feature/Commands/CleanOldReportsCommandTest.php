@@ -34,7 +34,7 @@ class CleanOldReportsCommandTest extends TestCase
 
         // Verificar que el antiguo fue eliminado
         $this->assertDatabaseMissing('official_reports', ['id' => $oldReport->id]);
-        
+
         // Verificar que el reciente permanece
         $this->assertDatabaseHas('official_reports', ['id' => $recentReport->id]);
     }

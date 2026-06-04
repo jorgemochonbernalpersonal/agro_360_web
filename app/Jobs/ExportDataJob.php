@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\User;
 use App\Notifications\ExportReadyNotification;
-use App\Services\Reports\ReportExporter;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -119,7 +118,7 @@ class ExportDataJob implements ShouldQueue
     protected function exportToCsv(array $data, string $filename): string
     {
         $csv = [];
-        
+
         if (count($data) > 0) {
             $csv[] = array_keys($data[0]);
             foreach ($data as $row) {
@@ -132,7 +131,7 @@ class ExportDataJob implements ShouldQueue
         }, $csv));
 
         Storage::put($filename, $content);
-        
+
         return $filename;
     }
 
@@ -142,7 +141,7 @@ class ExportDataJob implements ShouldQueue
     protected function exportToXml(array $data, string $filename): string
     {
         $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><data></data>');
-        
+
         foreach ($data as $item) {
             $record = $xml->addChild('record');
             foreach ($item as $key => $value) {
@@ -151,7 +150,7 @@ class ExportDataJob implements ShouldQueue
         }
 
         Storage::put($filename, $xml->asXML());
-        
+
         return $filename;
     }
 
@@ -161,7 +160,7 @@ class ExportDataJob implements ShouldQueue
     protected function exportToJson(array $data, string $filename): string
     {
         Storage::put($filename, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        
+
         return $filename;
     }
 }

@@ -18,7 +18,7 @@ class ContainerStockEntryController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $user    = $request->user();
+        $user = $request->user();
         $perPage = $this->resolvePerPage($request, 20, 50);
 
         $entries = WineContainerStockEntry::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
@@ -29,9 +29,9 @@ class ContainerStockEntryController extends Controller
         return response()->json([
             'data' => StockEntryResource::collection($entries),
             'meta' => [
-                'total'        => $entries->total(),
+                'total' => $entries->total(),
                 'current_page' => $entries->currentPage(),
-                'last_page'    => $entries->lastPage(),
+                'last_page' => $entries->lastPage(),
             ],
         ]);
     }
@@ -44,12 +44,12 @@ class ContainerStockEntryController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'         => 'required|integer|exists:wines,id',
-            'container_id'    => 'required|integer|exists:containers,id',
+            'wine_id' => 'required|integer|exists:wines,id',
+            'container_id' => 'required|integer|exists:containers,id',
             'quantity_liters' => 'required|numeric|min:0.001',
-            'entry_date'      => 'required|date',
-            'source'          => 'nullable|string|in:initial_stock,adjustment,correction',
-            'notes'           => 'nullable|string|max:1000',
+            'entry_date' => 'required|date',
+            'source' => 'nullable|string|in:initial_stock,adjustment,correction',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
@@ -58,17 +58,18 @@ class ContainerStockEntryController extends Controller
         $entry = DB::transaction(function () use ($validated, $user) {
             $entry = WineContainerStockEntry::create([
                 ...$validated,
-                'source'     => $validated['source'] ?? 'initial_stock',
+                'source' => $validated['source'] ?? 'initial_stock',
                 'created_by' => $user->id,
             ]);
             app(WineContainerStockService::class)->recordStockEntry($entry);
+
             return $entry;
         });
 
         $entry->load(['wine', 'container']);
 
         return response()->json([
-            'data'    => new StockEntryResource($entry),
+            'data' => new StockEntryResource($entry),
             'message' => __('Entrada de stock registrada correctamente.'),
         ], 201);
     }

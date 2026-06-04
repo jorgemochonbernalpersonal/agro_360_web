@@ -4,7 +4,6 @@ namespace Tests\Feature\Viticulturist\ResidueAnalyses;
 
 use App\Livewire\Viticulturist\ResidueAnalyses\Create;
 use App\Models\Campaign;
-use App\Models\ResidueAnalysis;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -25,8 +24,8 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('residue_analyses', [
             'viticulturist_id' => $viticulturist->id,
-            'laboratory_name'  => 'Laboratorio Central Test',
-            'active'           => true,
+            'laboratory_name' => 'Laboratorio Central Test',
+            'active' => true,
         ]);
     }
 
@@ -55,8 +54,8 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('residue_analyses', [
-            'viticulturist_id'  => $viticulturist->id,
-            'laboratory_name'   => 'Lab Default Test',
+            'viticulturist_id' => $viticulturist->id,
+            'laboratory_name' => 'Lab Default Test',
             'overall_compliant' => true,
         ]);
     }
@@ -74,8 +73,8 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('residue_analyses', [
-            'viticulturist_id'  => $viticulturist->id,
-            'laboratory_name'   => 'Lab Non Compliant',
+            'viticulturist_id' => $viticulturist->id,
+            'laboratory_name' => 'Lab Non Compliant',
             'overall_compliant' => false,
         ]);
     }

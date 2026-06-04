@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\ProductStockMovement;
-use App\Models\ProductStock;
 use App\Models\PhytosanitaryProduct;
+use App\Models\ProductStock;
+use App\Models\ProductStockMovement;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -132,4 +132,3 @@ class ProductStockMovementTest extends TestCase
         $this->assertEquals('Consumo por tratamiento', $consumption->getMovementDescription());
     }
 }
-

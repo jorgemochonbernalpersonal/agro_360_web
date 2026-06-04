@@ -20,7 +20,7 @@ class SupervisorViticulturist extends Model
     ];
 
     protected $casts = [
-        'notebook_access'     => 'boolean',
+        'notebook_access' => 'boolean',
         'notebook_granted_at' => 'datetime',
         'notebook_revoked_at' => 'datetime',
     ];
@@ -54,7 +54,7 @@ class SupervisorViticulturist extends Model
     public function grantNotebookAccess(): void
     {
         $this->update([
-            'notebook_access'     => true,
+            'notebook_access' => true,
             'notebook_granted_at' => now(),
             'notebook_revoked_at' => null,
         ]);
@@ -63,7 +63,7 @@ class SupervisorViticulturist extends Model
     public function revokeNotebookAccess(): void
     {
         $this->update([
-            'notebook_access'     => false,
+            'notebook_access' => false,
             'notebook_revoked_at' => now(),
         ]);
     }

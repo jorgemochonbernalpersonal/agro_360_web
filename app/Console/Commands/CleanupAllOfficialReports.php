@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\OfficialReport;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CleanupAllOfficialReports extends Command
 {
@@ -37,7 +37,7 @@ class CleanupAllOfficialReports extends Command
 
         // Obtener informes a eliminar
         $query = OfficialReport::query();
-        
+
         if ($userId) {
             $query->where('user_id', $userId);
             $this->info("🔍 Filtrando informes del usuario ID: {$userId}");
@@ -48,6 +48,7 @@ class CleanupAllOfficialReports extends Command
 
         if ($totalReports === 0) {
             $this->info('✅ No hay informes para eliminar.');
+
             return Command::SUCCESS;
         }
 
@@ -57,7 +58,7 @@ class CleanupAllOfficialReports extends Command
         $this->info('📊 RESUMEN DE INFORMES A ELIMINAR');
         $this->info('═══════════════════════════════════════');
         $this->info("📄 Total de informes: {$totalReports}");
-        
+
         // Agrupar por tipo
         $byType = $reports->groupBy('report_type');
         foreach ($byType as $type => $typeReports) {
@@ -65,21 +66,22 @@ class CleanupAllOfficialReports extends Command
         }
 
         // Contar PDFs
-        $pdfsCount = $reports->filter(fn($r) => $r->pdf_path)->count();
+        $pdfsCount = $reports->filter(fn ($r) => $r->pdf_path)->count();
         $this->info("📎 PDFs asociados: {$pdfsCount}");
         $this->info('═══════════════════════════════════════');
         $this->info('');
 
         // Confirmación
-        if (!$force) {
-            if (!$this->confirm('¿Estás seguro de que deseas eliminar todos estos informes?', false)) {
+        if (! $force) {
+            if (! $this->confirm('¿Estás seguro de que deseas eliminar todos estos informes?', false)) {
                 $this->warn('❌ Operación cancelada.');
+
                 return Command::SUCCESS;
             }
         }
 
         // Eliminar PDFs si no se especifica mantenerlos
-        if (!$keepPdfs) {
+        if (! $keepPdfs) {
             $this->info('🗑️  Eliminando archivos PDF...');
             $deletedPdfs = 0;
             $failedPdfs = 0;
@@ -88,7 +90,7 @@ class CleanupAllOfficialReports extends Command
                 if ($report->pdf_path) {
                     try {
                         // Intentar eliminar usando Storage
-                        if (!str_starts_with($report->pdf_path, storage_path())) {
+                        if (! str_starts_with($report->pdf_path, storage_path())) {
                             if (Storage::disk('local')->exists($report->pdf_path)) {
                                 Storage::disk('local')->delete($report->pdf_path);
                                 $deletedPdfs++;
@@ -118,7 +120,7 @@ class CleanupAllOfficialReports extends Command
         // Eliminar registros de base de datos
         $this->info('');
         $this->info('🗑️  Eliminando registros de base de datos...');
-        
+
         try {
             $deleted = DB::transaction(function () use ($query) {
                 return $query->delete();
@@ -127,6 +129,7 @@ class CleanupAllOfficialReports extends Command
             $this->info("   ✅ Registros eliminados: {$deleted}");
         } catch (\Exception $e) {
             $this->error("❌ Error al eliminar registros: {$e->getMessage()}");
+
             return Command::FAILURE;
         }
 
@@ -136,7 +139,7 @@ class CleanupAllOfficialReports extends Command
         $this->info('✅ LIMPIEZA COMPLETADA');
         $this->info('═══════════════════════════════════════');
         $this->info("📄 Informes eliminados: {$totalReports}");
-        if (!$keepPdfs) {
+        if (! $keepPdfs) {
             $this->info("📎 PDFs eliminados: {$pdfsCount}");
         }
         $this->info('═══════════════════════════════════════');
@@ -145,4 +148,3 @@ class CleanupAllOfficialReports extends Command
         return Command::SUCCESS;
     }
 }
-

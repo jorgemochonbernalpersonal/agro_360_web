@@ -4,11 +4,30 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\GrapeReceptionBatch;
-use App\Models\PlotPlanting;
 
 class EstimatedYield extends Model
 {
+    /**
+     * Etiquetas de ronda de estimación
+     */
+    public const ROUNDS = [
+        1 => 'Pre-envero',
+        2 => 'Envero',
+        3 => 'Pre-vendimia',
+        4 => 'Revisión final',
+    ];
+
+    public const HEALTH_STATUSES = [
+        'excellent' => 'Excelente',
+        'good' => 'Bueno',
+        'botrytis_light' => 'Botrytis leve',
+        'botrytis_moderate' => 'Botrytis moderada',
+        'oidium_light' => 'Oidio leve',
+        'oidium_moderate' => 'Oidio moderado',
+        'mixed' => 'Afección mixta',
+        'poor' => 'Deficiente',
+    ];
+
     protected $fillable = [
         'plot_planting_id',
         'campaign_id',
@@ -53,8 +72,8 @@ class EstimatedYield extends Model
         'total_plants_sampled' => 'integer',
         'sampling_area_pct' => 'decimal:2',
         'health_percentage' => 'decimal:2',
-        'health_status'     => 'string',
-        'other_wineries'    => 'boolean',
+        'health_status' => 'string',
+        'other_wineries' => 'boolean',
         'potential_alcohol' => 'decimal:2',
         'auto_calculated_yield' => 'decimal:2',
         'estimation_round' => 'integer',
@@ -84,65 +103,14 @@ class EstimatedYield extends Model
         return $this->belongsTo(User::class, 'estimated_by');
     }
 
-    /**
-     * Etiquetas de ronda de estimación
-     */
-    public const ROUNDS = [
-        1 => 'Pre-envero',
-        2 => 'Envero',
-        3 => 'Pre-vendimia',
-        4 => 'Revisión final',
-    ];
-
     public static function roundOptions(): array
     {
         return array_map(fn ($v) => __($v), static::ROUNDS);
     }
 
-    public const HEALTH_STATUSES = [
-        'excellent'         => 'Excelente',
-        'good'              => 'Bueno',
-        'botrytis_light'    => 'Botrytis leve',
-        'botrytis_moderate' => 'Botrytis moderada',
-        'oidium_light'      => 'Oidio leve',
-        'oidium_moderate'   => 'Oidio moderado',
-        'mixed'             => 'Afección mixta',
-        'poor'              => 'Deficiente',
-    ];
-
     public static function healthStatusOptions(): array
     {
         return array_map(fn ($v) => __($v), static::HEALTH_STATUSES);
-    }
-
-    /**
-     * Calcular diferencia porcentual y rendimiento automático desde muestreo
-     */
-    protected static function booted()
-    {
-        static::saving(function ($yield) {
-            // Auto-calcular desde datos de muestreo
-            if ($yield->bunches_per_plant && $yield->bunch_weight_grams) {
-                $planting = $yield->plotPlanting ?? PlotPlanting::find($yield->plot_planting_id);
-                if ($planting && $planting->vine_count > 0) {
-                    $factor = $yield->health_percentage ? ($yield->health_percentage / 100) : 1;
-                    $yield->auto_calculated_yield = round(
-                        ($yield->bunches_per_plant * $yield->bunch_weight_grams / 1000)
-                        * $planting->vine_count
-                        * $factor,
-                        2
-                    );
-                }
-            }
-
-            // Calcular varianza estimado vs real
-            if ($yield->estimated_total_yield && $yield->actual_total_yield) {
-                if ($yield->estimated_total_yield > 0) {
-                    $variance = (($yield->actual_total_yield - $yield->estimated_total_yield) / $yield->estimated_total_yield) * 100;
-                    $yield->variance_percentage = round($variance, 2);
-                }
-            }
-        });
     }
 
     /**
@@ -177,7 +145,9 @@ class EstimatedYield extends Model
         }
 
         $planting = $this->plotPlanting;
-        if (!$planting) return;
+        if (! $planting) {
+            return;
+        }
 
         $this->actual_total_yield = round($totalWeight, 3);
         $this->actual_yield_per_hectare = $planting->area_planted > 0
@@ -188,6 +158,8 @@ class EstimatedYield extends Model
 
     /**
      * Scope para filtrar por plantación
+     *
+     * @param mixed $query
      */
     public function scopeForPlanting($query, int $plantingId)
     {
@@ -196,6 +168,8 @@ class EstimatedYield extends Model
 
     /**
      * Scope para filtrar por campaña
+     *
+     * @param mixed $query
      */
     public function scopeForCampaign($query, int $campaignId)
     {
@@ -204,6 +178,8 @@ class EstimatedYield extends Model
 
     /**
      * Scope para estimaciones confirmadas
+     *
+     * @param mixed $query
      */
     public function scopeConfirmed($query)
     {
@@ -212,6 +188,8 @@ class EstimatedYield extends Model
 
     /**
      * Scope para estimaciones en borrador
+     *
+     * @param mixed $query
      */
     public function scopeDraft($query)
     {
@@ -231,7 +209,7 @@ class EstimatedYield extends Model
      */
     public function hasActualYield(): bool
     {
-        return !is_null($this->actual_total_yield);
+        return ! is_null($this->actual_total_yield);
     }
 
     /**
@@ -239,10 +217,40 @@ class EstimatedYield extends Model
      */
     public function getAbsoluteVariance(): ?float
     {
-        if (!$this->hasActualYield() || !$this->estimated_total_yield) {
+        if (! $this->hasActualYield() || ! $this->estimated_total_yield) {
             return null;
         }
 
         return abs($this->actual_total_yield - $this->estimated_total_yield);
+    }
+
+    /**
+     * Calcular diferencia porcentual y rendimiento automático desde muestreo
+     */
+    protected static function booted()
+    {
+        static::saving(function ($yield) {
+            // Auto-calcular desde datos de muestreo
+            if ($yield->bunches_per_plant && $yield->bunch_weight_grams) {
+                $planting = $yield->plotPlanting ?? PlotPlanting::find($yield->plot_planting_id);
+                if ($planting && $planting->vine_count > 0) {
+                    $factor = $yield->health_percentage ? ($yield->health_percentage / 100) : 1;
+                    $yield->auto_calculated_yield = round(
+                        ($yield->bunches_per_plant * $yield->bunch_weight_grams / 1000)
+                        * $planting->vine_count
+                        * $factor,
+                        2
+                    );
+                }
+            }
+
+            // Calcular varianza estimado vs real
+            if ($yield->estimated_total_yield && $yield->actual_total_yield) {
+                if ($yield->estimated_total_yield > 0) {
+                    $variance = (($yield->actual_total_yield - $yield->estimated_total_yield) / $yield->estimated_total_yield) * 100;
+                    $yield->variance_percentage = round($variance, 2);
+                }
+            }
+        });
     }
 }

@@ -70,8 +70,8 @@ class AuditService
             auditable_type,
             COUNT(*) as count
         ')
-        ->groupBy('event', 'auditable_type')
-        ->get();
+            ->groupBy('event', 'auditable_type')
+            ->get();
 
         return [
             'total' => $stats->sum('count'),
@@ -114,7 +114,7 @@ class AuditService
             'total_actions' => $logs->count(),
             'by_model' => $logs->groupBy('auditable_type')->map->count(),
             'by_event' => $logs->groupBy('event')->map->count(),
-            'logs' => $logs->map(fn($log) => [
+            'logs' => $logs->map(fn ($log) => [
                 'date' => $log->created_at->format('Y-m-d H:i:s'),
                 'action' => $log->event,
                 'model' => class_basename($log->auditable_type),
@@ -160,8 +160,8 @@ class AuditService
         }
 
         return implode("\n", array_map(
-            fn($row) => implode(';', array_map(
-                fn($field) => '"' . str_replace('"', '""', (string) $field) . '"',
+            fn ($row) => implode(';', array_map(
+                fn ($field) => '"'.str_replace('"', '""', (string) $field).'"',
                 $row
             )),
             $csv

@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ContainerRoom extends Model
 {
-    use HasFactory;
     use Auditable;
+    use HasFactory;
 
     protected $auditExclude = ['created_at', 'updated_at'];
 

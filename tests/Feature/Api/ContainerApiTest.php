@@ -91,7 +91,7 @@ class ContainerApiTest extends TestCase
             ->assertJsonPath('data.name', 'Depósito Principal');
 
         $this->assertDatabaseHas('containers', [
-            'id'   => $container->id,
+            'id' => $container->id,
             'name' => 'Depósito Principal',
         ]);
     }

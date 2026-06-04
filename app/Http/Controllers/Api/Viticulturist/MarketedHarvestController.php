@@ -26,11 +26,11 @@ class MarketedHarvestController extends Controller
 
         return response()->json([
             'data' => $harvests->map(fn ($h) => [
-                'id'                 => $h->id,
+                'id' => $h->id,
                 'harvest_start_date' => $h->harvest_start_date?->toDateString(),
-                'plot_name'          => $h->activity?->plot?->name,
-                'variety'            => $h->plotPlanting?->grapeVariety?->name,
-                'total_weight'       => $h->total_weight ? (float) $h->total_weight : null,
+                'plot_name' => $h->activity?->plot?->name,
+                'variety' => $h->plotPlanting?->grapeVariety?->name,
+                'total_weight' => $h->total_weight ? (float) $h->total_weight : null,
             ]),
         ]);
     }
@@ -43,10 +43,10 @@ class MarketedHarvestController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'campaign_id'      => 'nullable|integer',
+            'campaign_id' => 'nullable|integer',
             'destination_type' => 'nullable|string',
-            'search'           => 'nullable|string|max:100',
-            'per_page'         => 'nullable|integer|min:1|max:100',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = MarketedHarvest::where('viticulturist_id', $user->id)
@@ -65,7 +65,7 @@ class MarketedHarvestController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('buyer_name', 'like', "%{$term}%")
-                  ->orWhere('transport_document', 'like', "%{$term}%");
+                    ->orWhere('transport_document', 'like', "%{$term}%");
             });
         }
 
@@ -74,10 +74,10 @@ class MarketedHarvestController extends Controller
         return response()->json([
             'data' => MarketedHarvestResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -90,18 +90,18 @@ class MarketedHarvestController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'harvest_id'         => 'nullable|integer|exists:harvests,id',
-            'campaign_id'        => 'nullable|integer|exists:campaigns,id',
-            'delivery_date'      => 'required|date',
-            'quantity_kg'        => 'required|numeric|min:0.001',
-            'destination_type'   => 'required|string|in:own_winery,cooperative,third_party,other',
-            'buyer_name'         => 'nullable|string|max:255',
-            'buyer_rega_code'    => 'nullable|string|max:30',
+            'harvest_id' => 'nullable|integer|exists:harvests,id',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'delivery_date' => 'required|date',
+            'quantity_kg' => 'required|numeric|min:0.001',
+            'destination_type' => 'required|string|in:own_winery,cooperative,third_party,other',
+            'buyer_name' => 'nullable|string|max:255',
+            'buyer_rega_code' => 'nullable|string|max:30',
             'transport_document' => 'nullable|string|max:50',
-            'vehicle_plate'      => 'nullable|string|max:15',
-            'price_per_kg'       => 'nullable|numeric|min:0',
-            'total_value'        => 'nullable|numeric|min:0',
-            'notes'              => 'nullable|string|max:2000',
+            'vehicle_plate' => 'nullable|string|max:15',
+            'price_per_kg' => 'nullable|numeric|min:0',
+            'total_value' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (empty($validated['campaign_id'])) {
@@ -114,7 +114,7 @@ class MarketedHarvestController extends Controller
         $record->load(['campaign']);
 
         return response()->json([
-            'data'    => new MarketedHarvestResource($record),
+            'data' => new MarketedHarvestResource($record),
             'message' => __('Cosecha comercializada registrada correctamente.'),
         ], 201);
     }

@@ -42,6 +42,7 @@ class CalculateAdvancedMetricsCommand extends Command
 
         if ($plots->isEmpty()) {
             $this->error('No se encontraron parcelas para analizar.');
+
             return self::FAILURE;
         }
 
@@ -58,9 +59,10 @@ class CalculateAdvancedMetricsCommand extends Command
         foreach ($plots as $plot) {
             try {
                 // Check if plot has remote sensing data
-                if (!$plot->remoteSensingData()->exists()) {
+                if (! $plot->remoteSensingData()->exists()) {
                     $skipped++;
                     $progressBar->advance();
+
                     continue;
                 }
 
@@ -91,7 +93,7 @@ class CalculateAdvancedMetricsCommand extends Command
         // Summary
         $this->info('✅ Análisis completado');
         $this->newLine();
-        
+
         $this->table(
             ['Estado', 'Cantidad'],
             [
@@ -106,7 +108,7 @@ class CalculateAdvancedMetricsCommand extends Command
         if ($success > 0) {
             $this->newLine();
             $this->info('🔍 Buscando anomalías críticas...');
-            
+
             $criticalAnomalies = \App\Models\PlotRemoteSensing::where('anomaly_detected', true)
                 ->whereIn('anomaly_severity', ['critical', 'high'])
                 ->with('plot')
@@ -119,7 +121,7 @@ class CalculateAdvancedMetricsCommand extends Command
                 $this->warn("🚨 Se detectaron {$criticalAnomalies->count()} parcelas con anomalías críticas/altas:");
                 $this->newLine();
 
-                $anomalyData = $criticalAnomalies->map(fn($rs) => [
+                $anomalyData = $criticalAnomalies->map(fn ($rs) => [
                     $rs->plot->id,
                     $rs->plot->name,
                     strtoupper($rs->anomaly_severity),

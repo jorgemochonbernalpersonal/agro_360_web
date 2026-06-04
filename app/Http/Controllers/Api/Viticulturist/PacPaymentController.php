@@ -22,8 +22,8 @@ class PacPaymentController extends Controller
             'data' => $items->map(fn ($p) => $this->format($p)),
             'meta' => [
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -31,15 +31,15 @@ class PacPaymentController extends Controller
     private function format(PacPayment $p): array
     {
         return [
-            'id'                => $p->id,
-            'year'              => $p->year,
-            'payment_type'      => $p->payment_type,
-            'payment_type_label'=> $p->payment_type_label ?? ucfirst(str_replace('_', ' ', $p->payment_type ?? '')),
-            'amount'            => $p->amount,
-            'payment_date'      => $p->payment_date,
-            'reference'         => $p->reference,
-            'declaration_id'    => $p->declaration_id,
-            'created_at'        => $p->created_at->toIso8601String(),
+            'id' => $p->id,
+            'year' => $p->year,
+            'payment_type' => $p->payment_type,
+            'payment_type_label' => $p->payment_type_label ?? ucfirst(str_replace('_', ' ', $p->payment_type ?? '')),
+            'amount' => $p->amount,
+            'payment_date' => $p->payment_date,
+            'reference' => $p->reference,
+            'declaration_id' => $p->declaration_id,
+            'created_at' => $p->created_at->toIso8601String(),
         ];
     }
 }

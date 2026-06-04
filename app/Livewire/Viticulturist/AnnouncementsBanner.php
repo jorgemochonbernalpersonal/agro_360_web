@@ -14,7 +14,7 @@ class AnnouncementsBanner extends Component
         $user = Auth::user();
 
         // Sin bodega vinculada → no mostrar nada
-        if (!WineryViticulturist::where('viticulturist_id', $user->id)->exists()) {
+        if (! WineryViticulturist::where('viticulturist_id', $user->id)->exists()) {
             return view('livewire.viticulturist.announcements-banner', [
                 'announcements' => collect(),
             ]);

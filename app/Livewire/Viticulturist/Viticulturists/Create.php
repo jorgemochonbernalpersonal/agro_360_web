@@ -3,22 +3,25 @@
 namespace App\Livewire\Viticulturist\Viticulturists;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\User;
 use App\Models\WineryViticulturist;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-use App\Livewire\Concerns\WithToastNotifications;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
+
     public $name = '';
+
     public $email = '';
+
     public $winery_id = '';
 
     public function mount()
@@ -30,42 +33,6 @@ class Create extends Component
         }
     }
 
-    protected function rules(): array
-    {
-        $user = Auth::user();
-        return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'winery_id' => [
-                'nullable',
-                'exists:users,id',
-                function ($attribute, $value, $fail) use ($user) {
-                    if ($value) {
-                        $exists = WineryViticulturist::where('viticulturist_id', $user->id)
-                            ->where('winery_id', $value)
-                            ->exists();
-                        if (!$exists) {
-                            $fail(__('No estás asignado a esta bodega.'));
-                        }
-                    }
-                },
-            ],
-        ];
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'name.required' => __('El campo nombre es obligatorio.'),
-            'name.max' => __('El nombre no puede tener más de 255 caracteres.'),
-            'email.required' => __('El campo email es obligatorio.'),
-            'email.email' => __('El email debe ser una dirección de correo válida.'),
-            'email.max' => __('El email no puede tener más de 255 caracteres.'),
-            'email.unique' => __('Este email ya está registrado. Por favor, usa otro email.'),
-            'winery_id.exists' => __('La bodega seleccionada no es válida.'),
-        ];
-    }
-
     public function save()
     {
         $this->validate();
@@ -73,8 +40,9 @@ class Create extends Component
         $creator = Auth::user();
         $wineries = $creator->wineries;
 
-        if ($this->winery_id && !$wineries->contains('id', $this->winery_id)) {
+        if ($this->winery_id && ! $wineries->contains('id', $this->winery_id)) {
             $this->addError('winery_id', __('No estás asignado a esta bodega.'));
+
             return;
         }
 
@@ -103,6 +71,7 @@ class Create extends Component
             });
 
             $this->toastSuccess(__('Viticultor creado correctamente. Puedes enviar la invitación desde la tabla de acciones.'));
+
             return $this->viticulturistRoleRedirect('personal.index', ['viewMode' => 'personal']);
         } catch (\Exception $e) {
             Log::error('Error al crear viticultor', [
@@ -123,5 +92,42 @@ class Create extends Component
         return view('livewire.viticulturist.viticulturists.create', [
             'wineries' => $wineries,
         ]);
+    }
+
+    protected function rules(): array
+    {
+        $user = Auth::user();
+
+        return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'winery_id' => [
+                'nullable',
+                'exists:users,id',
+                function ($attribute, $value, $fail) use ($user) {
+                    if ($value) {
+                        $exists = WineryViticulturist::where('viticulturist_id', $user->id)
+                            ->where('winery_id', $value)
+                            ->exists();
+                        if (! $exists) {
+                            $fail(__('No estás asignado a esta bodega.'));
+                        }
+                    }
+                },
+            ],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'name.required' => __('El campo nombre es obligatorio.'),
+            'name.max' => __('El nombre no puede tener más de 255 caracteres.'),
+            'email.required' => __('El campo email es obligatorio.'),
+            'email.email' => __('El email debe ser una dirección de correo válida.'),
+            'email.max' => __('El email no puede tener más de 255 caracteres.'),
+            'email.unique' => __('Este email ya está registrado. Por favor, usa otro email.'),
+            'winery_id.exists' => __('La bodega seleccionada no es válida.'),
+        ];
     }
 }

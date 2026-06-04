@@ -25,17 +25,17 @@ class EcoCertificationController extends Controller
         }
 
         $perPage = $this->resolvePerPage($request, 20, 100);
-        $items   = $query->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
             'data' => $items->map(fn ($c) => $this->format($c)),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'types'        => EcoCertification::certificationTypeOptions(),
-                'statuses'     => EcoCertification::statusOptions(),
+                'last_page' => $items->lastPage(),
+                'types' => EcoCertification::certificationTypeOptions(),
+                'statuses' => EcoCertification::statusOptions(),
             ],
         ]);
     }
@@ -56,23 +56,23 @@ class EcoCertificationController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'name'               => 'required|string|max:255',
-            'certification_type' => 'required|string|in:' . implode(',', array_keys(EcoCertification::CERTIFICATION_TYPES)),
-            'certifying_body'    => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'certification_type' => 'required|string|in:'.implode(',', array_keys(EcoCertification::CERTIFICATION_TYPES)),
+            'certifying_body' => 'nullable|string|max:255',
             'certificate_number' => 'nullable|string|max:100',
-            'valid_from'         => 'required|date',
-            'valid_until'        => 'nullable|date|after:valid_from',
-            'status'             => 'nullable|string|in:' . implode(',', array_keys(EcoCertification::STATUSES)),
-            'notes'              => 'nullable|string|max:1000',
+            'valid_from' => 'required|date',
+            'valid_until' => 'nullable|date|after:valid_from',
+            'status' => 'nullable|string|in:'.implode(',', array_keys(EcoCertification::STATUSES)),
+            'notes' => 'nullable|string|max:1000',
         ]);
 
-        $validated['status']  ??= 'active';
-        $validated['user_id']   = $user->id;
+        $validated['status'] ??= 'active';
+        $validated['user_id'] = $user->id;
 
         $certification = EcoCertification::create($validated);
 
         return response()->json([
-            'data'    => $this->format($certification),
+            'data' => $this->format($certification),
             'message' => __('Certificación ecológica creada correctamente.'),
         ], 201);
     }
@@ -85,14 +85,14 @@ class EcoCertificationController extends Controller
         $certification = EcoCertification::forUser($user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'name'               => 'sometimes|string|max:255',
-            'certification_type' => 'sometimes|string|in:' . implode(',', array_keys(EcoCertification::CERTIFICATION_TYPES)),
-            'certifying_body'    => 'sometimes|nullable|string|max:255',
+            'name' => 'sometimes|string|max:255',
+            'certification_type' => 'sometimes|string|in:'.implode(',', array_keys(EcoCertification::CERTIFICATION_TYPES)),
+            'certifying_body' => 'sometimes|nullable|string|max:255',
             'certificate_number' => 'sometimes|nullable|string|max:100',
-            'valid_from'         => 'sometimes|date',
-            'valid_until'        => 'sometimes|nullable|date',
-            'status'             => 'sometimes|string|in:' . implode(',', array_keys(EcoCertification::STATUSES)),
-            'notes'              => 'sometimes|nullable|string|max:1000',
+            'valid_from' => 'sometimes|date',
+            'valid_until' => 'sometimes|nullable|date',
+            'status' => 'sometimes|string|in:'.implode(',', array_keys(EcoCertification::STATUSES)),
+            'notes' => 'sometimes|nullable|string|max:1000',
         ]);
 
         $certification->update($validated);
@@ -114,19 +114,19 @@ class EcoCertificationController extends Controller
     private function format(EcoCertification $c): array
     {
         return [
-            'id'                 => $c->id,
-            'name'               => $c->name,
+            'id' => $c->id,
+            'name' => $c->name,
             'certification_type' => $c->certification_type,
-            'type_label'         => $c->type_label,
-            'certifying_body'    => $c->certifying_body,
+            'type_label' => $c->type_label,
+            'certifying_body' => $c->certifying_body,
             'certificate_number' => $c->certificate_number,
-            'valid_from'         => $c->valid_from?->toDateString(),
-            'valid_until'        => $c->valid_until?->toDateString(),
-            'status'             => $c->status,
-            'status_label'       => $c->status_label,
-            'expiring_soon'      => $c->isExpiringSoon(),
-            'notes'              => $c->notes,
-            'created_at'         => $c->created_at->toIso8601String(),
+            'valid_from' => $c->valid_from?->toDateString(),
+            'valid_until' => $c->valid_until?->toDateString(),
+            'status' => $c->status,
+            'status_label' => $c->status_label,
+            'expiring_soon' => $c->isExpiringSoon(),
+            'notes' => $c->notes,
+            'created_at' => $c->created_at->toIso8601String(),
         ];
     }
 }

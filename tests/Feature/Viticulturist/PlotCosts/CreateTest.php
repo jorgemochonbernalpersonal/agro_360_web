@@ -5,8 +5,6 @@ namespace Tests\Feature\Viticulturist\PlotCosts;
 use App\Livewire\Viticulturist\PlotCosts\Create;
 use App\Models\Campaign;
 use App\Models\Plot;
-use App\Models\PlotCost;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -27,8 +25,8 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('plot_costs', [
             'viticulturist_id' => $viticulturist->id,
-            'description'      => 'Vendimia manual',
-            'category'         => 'labor',
+            'description' => 'Vendimia manual',
+            'category' => 'labor',
         ]);
     }
 
@@ -91,7 +89,7 @@ class CreateTest extends ViticulturistTestCase
     public function test_can_associate_with_plot_and_campaign(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $plot     = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
+        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
         $campaign = Campaign::factory()->forViticulturist($viticulturist)->active()->create();
 
         $this->actingAs($viticulturist);
@@ -107,8 +105,8 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('plot_costs', [
             'viticulturist_id' => $viticulturist->id,
-            'plot_id'          => $plot->id,
-            'campaign_id'      => $campaign->id,
+            'plot_id' => $plot->id,
+            'campaign_id' => $campaign->id,
         ]);
     }
 

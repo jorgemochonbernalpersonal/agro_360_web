@@ -38,7 +38,7 @@ class SubproductsTest extends WineryTestCase
 
     public function test_create_saves_subproduct(): void
     {
-        $firstType        = array_key_first(WineSubproduct::TYPES);        // 'orujo'
+        $firstType = array_key_first(WineSubproduct::TYPES);        // 'orujo'
         $firstDestination = array_key_first(WineSubproduct::DESTINATIONS); // 'distillery'
 
         Livewire::test(Create::class)
@@ -51,22 +51,22 @@ class SubproductsTest extends WineryTestCase
 
         $this->assertDatabaseHas('wine_subproducts', [
             'user_id' => $this->winery->id,
-            'type'    => $firstType,
+            'type' => $firstType,
         ]);
     }
 
     public function test_edit_saves_changes(): void
     {
-        $firstType        = array_key_first(WineSubproduct::TYPES);
+        $firstType = array_key_first(WineSubproduct::TYPES);
         $firstDestination = array_key_first(WineSubproduct::DESTINATIONS);
 
         $subproduct = WineSubproduct::create([
-            'user_id'         => $this->winery->id,
-            'type'            => $firstType,
+            'user_id' => $this->winery->id,
+            'type' => $firstType,
             'subproduct_date' => today(),
-            'quantity'        => 100,
-            'destination'     => $firstDestination,
-            'created_by'      => $this->winery->id,
+            'quantity' => 100,
+            'destination' => $firstDestination,
+            'created_by' => $this->winery->id,
         ]);
 
         Livewire::test(Edit::class, ['subproduct' => $subproduct])
@@ -75,23 +75,23 @@ class SubproductsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_subproducts', [
-            'id'       => $subproduct->id,
+            'id' => $subproduct->id,
             'quantity' => 200,
         ]);
     }
 
     public function test_other_winery_cannot_edit(): void
     {
-        $firstType        = array_key_first(WineSubproduct::TYPES);
+        $firstType = array_key_first(WineSubproduct::TYPES);
         $firstDestination = array_key_first(WineSubproduct::DESTINATIONS);
 
         $subproduct = WineSubproduct::create([
-            'user_id'         => $this->winery->id,
-            'type'            => $firstType,
+            'user_id' => $this->winery->id,
+            'type' => $firstType,
             'subproduct_date' => today(),
-            'quantity'        => 100,
-            'destination'     => $firstDestination,
-            'created_by'      => $this->winery->id,
+            'quantity' => 100,
+            'destination' => $firstDestination,
+            'created_by' => $this->winery->id,
         ]);
 
         $otherWinery = $this->makeOtherWinery();

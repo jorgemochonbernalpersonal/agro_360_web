@@ -16,7 +16,7 @@ class FieldEquipmentController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'search'         => 'nullable|string|max:255',
+            'search' => 'nullable|string|max:255',
             'equipment_type' => 'nullable|string|max:100',
         ]);
 
@@ -25,10 +25,10 @@ class FieldEquipmentController extends Controller
             ->orderBy('name');
 
         if ($request->filled('search')) {
-            $search = '%' . $request->search . '%';
+            $search = '%'.$request->search.'%';
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', $search)
-                  ->orWhere('registration_number', 'LIKE', $search);
+                    ->orWhere('registration_number', 'LIKE', $search);
             });
         }
 
@@ -41,10 +41,10 @@ class FieldEquipmentController extends Controller
         return response()->json([
             'data' => FieldEquipmentResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -55,19 +55,19 @@ class FieldEquipmentController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'name'                 => 'required|string|max:255',
-            'equipment_type'       => 'required|in:sprayer,spreader,irrigation,tractor,harvester,pruner,mower,other',
-            'registration_number'  => 'nullable|string|max:100',
-            'purchase_date'        => 'nullable|date',
+            'name' => 'required|string|max:255',
+            'equipment_type' => 'required|in:sprayer,spreader,irrigation,tractor,harvester,pruner,mower,other',
+            'registration_number' => 'nullable|string|max:100',
+            'purchase_date' => 'nullable|date',
             'next_inspection_date' => 'nullable|date',
-            'inspection_entity'    => 'nullable|string|max:255',
-            'notes'                => 'nullable|string|max:2000',
+            'inspection_entity' => 'nullable|string|max:255',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         $record = \App\Models\FieldEquipment::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\FieldEquipmentResource($record),
+            'data' => new \App\Http\Resources\Api\FieldEquipmentResource($record),
             'message' => __('Equipo de campo registrado correctamente.'),
         ], 201);
     }

@@ -7,34 +7,44 @@ use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\Oenologist;
-use App\Services\WineContainerStockService;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
 use App\Models\WineBottling;
 use App\Models\WineProcessDetail;
 use App\Models\WinerySupply;
+use App\Services\WineContainerStockService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Create extends Component
 {
-    use WithOwnershipRules, WithToastNotifications, WithRoleAwareRedirect;
+    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
 
     // ── Datos principales ─────────────────────────────────────────────────────
-    public string $wine_id                   = '';
-    public string $container_id              = '';
-    public string $bottling_date             = '';
-    public string $bottle_format             = '750';
-    public string $quantity_bottles          = '';
-    public string $quantity_liters           = '';
-    public string $lot_number               = '';
-    public string $oenologist_id             = '';
-    public string $wine_process_detail_id    = '';
-    public string $product_lot_id            = '';
-    public string $notes                     = '';
+    public string $wine_id = '';
+
+    public string $container_id = '';
+
+    public string $bottling_date = '';
+
+    public string $bottle_format = '750';
+
+    public string $quantity_bottles = '';
+
+    public string $quantity_liters = '';
+
+    public string $lot_number = '';
+
+    public string $oenologist_id = '';
+
+    public string $wine_process_detail_id = '';
+
+    public string $product_lot_id = '';
+
+    public string $notes = '';
 
     // ── Insumos utilizados ────────────────────────────────────────────────────
     public array $supplies = [];
@@ -99,14 +109,14 @@ class Create extends Component
 
         // Contenedores que tienen este vino en su estado actual
         $fromState = Container::where('user_id', Auth::id())
-            ->whereHas('currentStates', fn($q) => $q->where('wine_id', $this->wine_id))
+            ->whereHas('currentStates', fn ($q) => $q->where('wine_id', $this->wine_id))
             ->where('archived', false)
             ->get();
 
         // Contenedores enlazados al proceso seleccionado (si lo hay)
         if ($this->wine_process_detail_id) {
             $fromProcess = Container::whereHas('wineProcessDetails',
-                fn($q) => $q->where('wine_process_details.id', $this->wine_process_detail_id)
+                fn ($q) => $q->where('wine_process_details.id', $this->wine_process_detail_id)
             )->get();
 
             return $fromState->merge($fromProcess)->unique('id')->values();
@@ -118,7 +128,7 @@ class Create extends Component
     public function updatedWineId(): void
     {
         $this->wine_process_detail_id = '';
-        $this->container_id           = '';
+        $this->container_id = '';
         unset($this->bottlingProcessDetails);
         unset($this->containers);
     }
@@ -132,11 +142,11 @@ class Create extends Component
     public function addSupply(): void
     {
         $this->supplies[] = [
-            'winery_supply_id'       => '',
-            'supply_name'            => '',
-            'quantity'               => '',
+            'winery_supply_id' => '',
+            'supply_name' => '',
+            'quantity' => '',
             'unit_of_measurement_id' => '',
-            'notes'                  => '',
+            'notes' => '',
         ];
     }
 
@@ -158,44 +168,10 @@ class Create extends Component
         if (! empty($value)) {
             $supply = WinerySupply::find($value);
             if ($supply) {
-                $this->supplies[$index]['supply_name']            = $supply->name;
+                $this->supplies[$index]['supply_name'] = $supply->name;
                 $this->supplies[$index]['unit_of_measurement_id'] = (string) ($supply->unit_of_measurement_id ?? '');
             }
         }
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'wine_id'                => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
-            'container_id'           => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
-            'bottling_date'          => ['required', 'date'],
-            'bottle_format'          => ['required', 'string', 'max:20'],
-            'quantity_bottles'       => ['required', 'integer', 'min:1'],
-            'quantity_liters'        => ['required', 'numeric', 'min:0.001'],
-            'lot_number'             => ['nullable', 'string', 'max:100'],
-            'oenologist_id'          => ['nullable', Rule::exists('oenologists', 'id')->where('user_id', Auth::id())],
-            'wine_process_detail_id' => $this->ownedWineProcessDetailRule(false),
-            'product_lot_id'         => ['nullable', Rule::exists('wine_lots', 'id')->where('user_id', Auth::id())],
-            'notes'                  => ['nullable', 'string'],
-            'supplies'               => ['array'],
-            'supplies.*.winery_supply_id'       => ['nullable', Rule::exists('winery_supplies', 'id')->where('user_id', Auth::id())],
-            'supplies.*.supply_name'            => ['required_unless:supplies,', 'nullable', 'string', 'max:255'],
-            'supplies.*.quantity'               => ['required_unless:supplies,', 'nullable', 'numeric', 'min:0'],
-            'supplies.*.unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
-            'supplies.*.notes'                  => ['nullable', 'string'],
-        ];
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'wine_id.required'             => __('Debes seleccionar un vino.'),
-            'quantity_bottles.required'    => __('Indica la cantidad de botellas.'),
-            'quantity_bottles.min'         => __('La cantidad mínima es 1 botella.'),
-            'quantity_liters.required'     => __('Indica los litros embotellados.'),
-            'quantity_liters.min'          => __('La cantidad de litros debe ser mayor que cero.'),
-        ];
     }
 
     public function save(): void
@@ -210,25 +186,26 @@ class Create extends Component
             $container = Container::where('user_id', Auth::id())->find($data['container_id']);
             if ($container && $container->wine_volume_liters < (float) $data['quantity_liters']) {
                 $this->addError('quantity_liters', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format($container->wine_volume_liters, 1)]));
+
                 return;
             }
         }
 
         DB::transaction(function () use ($data, $wine) {
             $bottling = WineBottling::create([
-                'user_id'                => Auth::id(),
-                'wine_id'                => $wine->id,
-                'container_id'           => $data['container_id'] ?: null,
+                'user_id' => Auth::id(),
+                'wine_id' => $wine->id,
+                'container_id' => $data['container_id'] ?: null,
                 'wine_process_detail_id' => $data['wine_process_detail_id'] ?: null,
-                'product_lot_id'         => $data['product_lot_id'] ?: null,
-                'oenologist_id'          => $data['oenologist_id'] ?: null,
-                'bottling_date'          => $data['bottling_date'],
-                'bottle_format'          => $data['bottle_format'],
-                'quantity_bottles'       => $data['quantity_bottles'],
-                'quantity_liters'        => $data['quantity_liters'],
-                'lot_number'             => $data['lot_number'] ?: null,
-                'notes'                  => $data['notes'] ?: null,
-                'created_by'             => Auth::id(),
+                'product_lot_id' => $data['product_lot_id'] ?: null,
+                'oenologist_id' => $data['oenologist_id'] ?: null,
+                'bottling_date' => $data['bottling_date'],
+                'bottle_format' => $data['bottle_format'],
+                'quantity_bottles' => $data['quantity_bottles'],
+                'quantity_liters' => $data['quantity_liters'],
+                'lot_number' => $data['lot_number'] ?: null,
+                'notes' => $data['notes'] ?: null,
+                'created_by' => Auth::id(),
             ]);
 
             // Decrementar wine_volume_liters en el contenedor origen
@@ -240,11 +217,11 @@ class Create extends Component
                 }
 
                 $bottling->supplies()->create([
-                    'winery_supply_id'       => $row['winery_supply_id'] ?: null,
-                    'supply_name'            => $row['supply_name'] ?: '',
-                    'quantity'               => $row['quantity'] ?: 0,
+                    'winery_supply_id' => $row['winery_supply_id'] ?: null,
+                    'supply_name' => $row['supply_name'] ?: '',
+                    'quantity' => $row['quantity'] ?: 0,
                     'unit_of_measurement_id' => $row['unit_of_measurement_id'] ?: null,
-                    'notes'                  => $row['notes'] ?: null,
+                    'notes' => $row['notes'] ?: null,
                 ]);
             }
         });
@@ -256,13 +233,47 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.bottling.create', [
-            'bottleFormats'          => WineBottling::bottleFormatOptions(),
-            'wines'                  => $this->wines,
-            'containers'             => $this->containers,
-            'oenologists'            => $this->oenologists,
-            'winerySupplies'         => $this->winerySupplies,
-            'units'                  => $this->units,
+            'bottleFormats' => WineBottling::bottleFormatOptions(),
+            'wines' => $this->wines,
+            'containers' => $this->containers,
+            'oenologists' => $this->oenologists,
+            'winerySupplies' => $this->winerySupplies,
+            'units' => $this->units,
             'bottlingProcessDetails' => $this->bottlingProcessDetails,
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'container_id' => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
+            'bottling_date' => ['required', 'date'],
+            'bottle_format' => ['required', 'string', 'max:20'],
+            'quantity_bottles' => ['required', 'integer', 'min:1'],
+            'quantity_liters' => ['required', 'numeric', 'min:0.001'],
+            'lot_number' => ['nullable', 'string', 'max:100'],
+            'oenologist_id' => ['nullable', Rule::exists('oenologists', 'id')->where('user_id', Auth::id())],
+            'wine_process_detail_id' => $this->ownedWineProcessDetailRule(false),
+            'product_lot_id' => ['nullable', Rule::exists('wine_lots', 'id')->where('user_id', Auth::id())],
+            'notes' => ['nullable', 'string'],
+            'supplies' => ['array'],
+            'supplies.*.winery_supply_id' => ['nullable', Rule::exists('winery_supplies', 'id')->where('user_id', Auth::id())],
+            'supplies.*.supply_name' => ['required_unless:supplies,', 'nullable', 'string', 'max:255'],
+            'supplies.*.quantity' => ['required_unless:supplies,', 'nullable', 'numeric', 'min:0'],
+            'supplies.*.unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
+            'supplies.*.notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'wine_id.required' => __('Debes seleccionar un vino.'),
+            'quantity_bottles.required' => __('Indica la cantidad de botellas.'),
+            'quantity_bottles.min' => __('La cantidad mínima es 1 botella.'),
+            'quantity_liters.required' => __('Indica los litros embotellados.'),
+            'quantity_liters.min' => __('La cantidad de litros debe ser mayor que cero.'),
+        ];
     }
 }

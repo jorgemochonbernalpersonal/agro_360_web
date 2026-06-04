@@ -12,7 +12,7 @@ class InfoviController extends Controller
     public function exportPdf()
     {
         $wineryId = Auth::id();
-        $user     = Auth::user();
+        $user = Auth::user();
 
         $campaign = request('campaign',
             now()->month >= 8 ? now()->year : now()->year - 1
@@ -20,26 +20,26 @@ class InfoviController extends Controller
         $campaign = (int) $campaign;
 
         $campaignStart = "{$campaign}-08-01";
-        $campaignEnd   = ($campaign + 1) . "-07-31";
+        $campaignEnd = ($campaign + 1).'-07-31';
 
-        $org       = $user->organization;
+        $org = $user->organization;
         $threshold = $this->buildThreshold($wineryId);
 
         $existencias = $this->buildCuadroExistencias($wineryId, $campaign);
-        $produccion  = $this->buildCuadroProduccion($wineryId, $campaign);
-        $ventas      = $this->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd);
-        $entradas    = $this->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd);
-        $mosto       = $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd);
+        $produccion = $this->buildCuadroProduccion($wineryId, $campaign);
+        $ventas = $this->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd);
+        $entradas = $this->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd);
+        $mosto = $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd);
 
         $wineLabels = [
-            'red'        => __('Vino tinto tranquilo'),
-            'white'      => __('Vino blanco tranquilo'),
-            'rose'       => __('Vino rosado tranquilo'),
-            'sparkling'  => __('Vino espumoso'),
-            'fortified'  => __('Vino licoroso / generoso'),
-            'sweet'      => __('Vino dulce natural'),
+            'red' => __('Vino tinto tranquilo'),
+            'white' => __('Vino blanco tranquilo'),
+            'rose' => __('Vino rosado tranquilo'),
+            'sparkling' => __('Vino espumoso'),
+            'fortified' => __('Vino licoroso / generoso'),
+            'sweet' => __('Vino dulce natural'),
             'semi_sweet' => __('Vino semidulce'),
-            'other'      => __('Otros vinos'),
+            'other' => __('Otros vinos'),
         ];
 
         $pdf = Pdf::loadView('reports.infovi', compact(
@@ -47,12 +47,12 @@ class InfoviController extends Controller
             'campaign', 'campaignStart', 'campaignEnd',
             'org', 'threshold', 'wineLabels', 'user'
         ))
-        ->setPaper('A4', 'portrait')
-        ->setOption('defaultFont', 'DejaVu Sans')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isRemoteEnabled', false);
+            ->setPaper('A4', 'portrait')
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', false);
 
-        $filename = 'INFOVI_' . $campaign . '_' . ($campaign + 1) . '_' . now()->format('Ymd') . '.pdf';
+        $filename = 'INFOVI_'.$campaign.'_'.($campaign + 1).'_'.now()->format('Ymd').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -74,12 +74,12 @@ class InfoviController extends Controller
             ->groupBy('vintage')
             ->pluck('hl');
 
-        $avgHl    = $vintageHl->avg() ?? 0;
-        $isLarge  = $avgHl >= 1000;
+        $avgHl = $vintageHl->avg() ?? 0;
+        $isLarge = $avgHl >= 1000;
 
         return [
-            'is_large'  => $isLarge,
-            'avg_hl'    => round((float) $avgHl, 1),
+            'is_large' => $isLarge,
+            'avg_hl' => round((float) $avgHl, 1),
             'campaigns' => $vintageHl->count(),
         ];
     }
@@ -88,10 +88,10 @@ class InfoviController extends Controller
     {
         $snapshotDate = DB::table('wine_stock_snapshots')
             ->where('user_id', $wineryId)
-            ->where('snapshot_date', '<=', ($campaign + 1) . '-07-31')
+            ->where('snapshot_date', '<=', ($campaign + 1).'-07-31')
             ->max('snapshot_date');
 
-        if (!$snapshotDate) {
+        if (! $snapshotDate) {
             return [];
         }
 
@@ -146,10 +146,10 @@ class InfoviController extends Controller
             $ml = $bottleMl[$row->bottle_size] ?? 750;
             $hl = ($row->bottles * $ml) / 100000;
             $type = $row->wine_type;
-            if (!isset($result[$type])) {
+            if (! isset($result[$type])) {
                 $result[$type] = (object) ['wine_type' => $type, 'hl' => 0, 'bottles' => 0];
             }
-            $result[$type]->hl      += $hl;
+            $result[$type]->hl += $hl;
             $result[$type]->bottles += $row->bottles;
         }
 
@@ -175,7 +175,7 @@ class InfoviController extends Controller
     {
         $snapshotDate = DB::table('wine_stock_snapshots')
             ->where('user_id', $wineryId)
-            ->where('snapshot_date', '<=', ($campaign + 1) . '-07-31')
+            ->where('snapshot_date', '<=', ($campaign + 1).'-07-31')
             ->max('snapshot_date');
 
         $existencias = $snapshotDate
@@ -194,9 +194,9 @@ class InfoviController extends Controller
             ->sum(DB::raw('COALESCE(volume_liters,0) / 100.0'));
 
         return [
-            'has_data'    => $existencias > 0 || $producido > 0,
+            'has_data' => $existencias > 0 || $producido > 0,
             'existencias' => round($existencias, 2),
-            'producido'   => round($producido, 2),
+            'producido' => round($producido, 2),
         ];
     }
 }

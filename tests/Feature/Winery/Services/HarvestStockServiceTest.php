@@ -23,6 +23,7 @@ class HarvestStockServiceTest extends WineryTestCase
     use CreatesDeliveryScenario;
 
     private Harvest $harvest;
+
     private Invoice $invoice;
 
     protected function setUp(): void
@@ -33,32 +34,32 @@ class HarvestStockServiceTest extends WineryTestCase
 
         // Cosecha con 1000 kg disponibles (sin contenedor: el servicio no lo requiere)
         $this->harvest = Harvest::create([
-            'winery_id'          => $this->winery->id,
-            'plot_planting_id'   => $this->planting->id,
-            'total_weight'       => 1000,
+            'winery_id' => $this->winery->id,
+            'plot_planting_id' => $this->planting->id,
+            'total_weight' => 1000,
             'harvest_start_date' => '2024-09-15',
-            'status'             => 'active',
-            'vintage'            => 2024,
+            'status' => 'active',
+            'vintage' => 2024,
         ]);
 
         // Stock inicial en el ledger
         HarvestStock::create([
-            'harvest_id'      => $this->harvest->id,
-            'user_id'         => $this->winery->id,
-            'movement_type'   => 'initial',
+            'harvest_id' => $this->harvest->id,
+            'user_id' => $this->winery->id,
+            'movement_type' => 'initial',
             'quantity_change' => 1000,
-            'quantity_after'  => 1000,
-            'available_qty'   => 1000,
-            'reserved_qty'    => 0,
-            'sold_qty'        => 0,
-            'gifted_qty'      => 0,
-            'lost_qty'        => 0,
+            'quantity_after' => 1000,
+            'available_qty' => 1000,
+            'reserved_qty' => 0,
+            'sold_qty' => 0,
+            'gifted_qty' => 0,
+            'lost_qty' => 0,
         ]);
 
         $this->invoice = Invoice::factory()->create([
-            'user_id'          => $this->winery->id,
-            'invoice_number'   => 'FAC-TEST-001',
-            'delivery_status'  => 'pending',
+            'user_id' => $this->winery->id,
+            'invoice_number' => 'FAC-TEST-001',
+            'delivery_status' => 'pending',
         ]);
     }
 
@@ -75,7 +76,7 @@ class HarvestStockServiceTest extends WineryTestCase
         $latest = $this->latestStock();
         $this->assertEquals(700.0, (float) $latest->available_qty);
         $this->assertEquals(300.0, (float) $latest->reserved_qty);
-        $this->assertEquals(0.0,   (float) $latest->sold_qty);
+        $this->assertEquals(0.0, (float) $latest->sold_qty);
     }
 
     public function test_reserve_creates_ledger_entry_with_movement_type_reserve(): void
@@ -87,9 +88,9 @@ class HarvestStockServiceTest extends WineryTestCase
         });
 
         $this->assertDatabaseHas('harvest_stocks', [
-            'harvest_id'    => $this->harvest->id,
+            'harvest_id' => $this->harvest->id,
             'movement_type' => 'reserve',
-            'reserved_qty'  => 200,
+            'reserved_qty' => 200,
             'available_qty' => 800,
         ]);
     }
@@ -122,7 +123,7 @@ class HarvestStockServiceTest extends WineryTestCase
 
         $latest = $this->latestStock();
         $this->assertEquals(600.0, (float) $latest->available_qty);
-        $this->assertEquals(0.0,   (float) $latest->reserved_qty);
+        $this->assertEquals(0.0, (float) $latest->reserved_qty);
         $this->assertEquals(400.0, (float) $latest->sold_qty);
     }
 
@@ -166,8 +167,8 @@ class HarvestStockServiceTest extends WineryTestCase
 
         $latest = $this->latestStock();
         $this->assertEquals(1000.0, (float) $latest->available_qty);
-        $this->assertEquals(0.0,    (float) $latest->reserved_qty);
-        $this->assertEquals(0.0,    (float) $latest->sold_qty);
+        $this->assertEquals(0.0, (float) $latest->reserved_qty);
+        $this->assertEquals(0.0, (float) $latest->sold_qty);
     }
 
     public function test_cancel_from_delivered_restores_available_from_sold(): void
@@ -191,8 +192,8 @@ class HarvestStockServiceTest extends WineryTestCase
 
         $latest = $this->latestStock();
         $this->assertEquals(1000.0, (float) $latest->available_qty);
-        $this->assertEquals(0.0,    (float) $latest->reserved_qty);
-        $this->assertEquals(0.0,    (float) $latest->sold_qty);
+        $this->assertEquals(0.0, (float) $latest->reserved_qty);
+        $this->assertEquals(0.0, (float) $latest->sold_qty);
     }
 
     // ── unreserveItems ────────────────────────────────────────────────────────
@@ -215,7 +216,7 @@ class HarvestStockServiceTest extends WineryTestCase
 
         $latest = $this->latestStock();
         $this->assertEquals(1000.0, (float) $latest->available_qty);
-        $this->assertEquals(0.0,    (float) $latest->reserved_qty);
+        $this->assertEquals(0.0, (float) $latest->reserved_qty);
     }
 
     public function test_unreserve_is_a_no_op_when_nothing_reserved(): void
@@ -261,7 +262,7 @@ class HarvestStockServiceTest extends WineryTestCase
 
         $latest = $this->latestStock();
         $this->assertEquals(750.0, (float) $latest->available_qty);
-        $this->assertEquals(0.0,   (float) $latest->reserved_qty);
+        $this->assertEquals(0.0, (float) $latest->reserved_qty);
         $this->assertEquals(250.0, (float) $latest->sold_qty);
 
         // Debe haber dos entradas: reserve + sale
@@ -279,19 +280,19 @@ class HarvestStockServiceTest extends WineryTestCase
         // ContainerStockService (legacy system) and would double-count with
         // HarvestStockService calls made explicitly in the tests.
         return InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
-            'invoice_id'   => $this->invoice->id,
-            'harvest_id'   => $this->harvest->id,
+            'invoice_id' => $this->invoice->id,
+            'harvest_id' => $this->harvest->id,
             'concept_type' => 'harvest',
-            'name'         => 'Uva Tempranillo',
-            'quantity'     => $qty,
-            'unit_price'   => 0.25,
-            'subtotal'     => $qty * 0.25,
-            'total'        => $qty * 0.25,
-            'tax_rate'     => 0,
-            'tax_amount'   => 0,
-            'tax_base'     => $qty * 0.25,
+            'name' => 'Uva Tempranillo',
+            'quantity' => $qty,
+            'unit_price' => 0.25,
+            'subtotal' => $qty * 0.25,
+            'total' => $qty * 0.25,
+            'tax_rate' => 0,
+            'tax_amount' => 0,
+            'tax_base' => $qty * 0.25,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
+            'discount_amount' => 0,
         ]));
     }
 

@@ -19,25 +19,25 @@ return new class extends Migration
                 ->comment('Land Surface Temperature Night (°C)');
             $table->decimal('lst_diff', 6, 2)->nullable()->after('lst_night')
                 ->comment('Day-Night Temperature Difference (DTR)');
-            
+
             // CWSI (Crop Water Stress Index) - improved with LST
             $table->decimal('cwsi', 5, 3)->nullable()->after('lst_diff')
                 ->comment('Crop Water Stress Index (0-1, higher = more stress)');
-            
+
             // Area statistics (when using area request instead of point)
             $table->json('area_statistics')->nullable()->after('cwsi')
                 ->comment('Statistics from area request: min, max, mean, stddev, percentiles');
-            
+
             // Data source tracking
             $table->string('data_source', 50)->default('point')->after('image_source')
                 ->comment('point, area, or timeseries');
             $table->string('satellite', 20)->default('MODIS')->after('data_source')
                 ->comment('MODIS, VIIRS, or other');
-            
+
             // Quality flags
             $table->integer('pixel_reliability')->nullable()->after('satellite')
                 ->comment('Pixel reliability flag (0=good, 1=marginal, 2-3=poor)');
-            
+
             // Indexes
             $table->index('lst_day', 'idx_lst_day');
             $table->index('cwsi', 'idx_cwsi');
@@ -54,7 +54,7 @@ return new class extends Migration
             $table->dropIndex('idx_lst_day');
             $table->dropIndex('idx_cwsi');
             $table->dropIndex('idx_data_source');
-            
+
             $table->dropColumn([
                 'lst_day',
                 'lst_night',

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
 class BlogController extends Controller
@@ -33,14 +32,14 @@ class BlogController extends Controller
     public function show(string $slug)
     {
         // Verificar si el slug existe en la configuración
-        if (!isset(self::BLOG_POSTS[$slug])) {
+        if (! isset(self::BLOG_POSTS[$slug])) {
             abort(404);
         }
 
         $view = self::BLOG_POSTS[$slug];
 
         // Verificar si la vista existe
-        if (!View::exists($view)) {
+        if (! View::exists($view)) {
             abort(404);
         }
 

@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FieldEquipment extends Model
 {
+    public const TYPES = [
+        'sprayer' => 'Pulverizador',
+        'spreader' => 'Abonadora/Esparcidora',
+        'irrigation' => 'Equipo de riego',
+        'tractor' => 'Tractor',
+        'harvester' => 'Vendimidora',
+        'pruner' => 'Podadora',
+        'mower' => 'Segadora/Trituradora',
+        'other' => 'Otro',
+    ];
+
     protected $fillable = [
         'viticulturist_id',
         'name',
@@ -21,21 +32,10 @@ class FieldEquipment extends Model
     ];
 
     protected $casts = [
-        'purchase_date'         => 'date',
-        'last_inspection_date'  => 'date',
-        'next_inspection_date'  => 'date',
-        'active'                => 'boolean',
-    ];
-
-    public const TYPES = [
-        'sprayer'    => 'Pulverizador',
-        'spreader'   => 'Abonadora/Esparcidora',
-        'irrigation' => 'Equipo de riego',
-        'tractor'    => 'Tractor',
-        'harvester'  => 'Vendimidora',
-        'pruner'     => 'Podadora',
-        'mower'      => 'Segadora/Trituradora',
-        'other'      => 'Otro',
+        'purchase_date' => 'date',
+        'last_inspection_date' => 'date',
+        'next_inspection_date' => 'date',
+        'active' => 'boolean',
     ];
 
     public static function typeOptions(): array

@@ -5,18 +5,22 @@ namespace App\Livewire\Viticulturist\DigitalNotebook;
 use App\Models\AgriculturalActivity;
 use App\Models\AgriculturalActivityAuditLog;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class ActivityAuditHistory extends Component
 {
     use WithPagination;
 
     public AgriculturalActivity $activity;
+
     public $filterUser = '';
+
     public $filterAction = '';
+
     public $filterDateFrom = '';
+
     public $filterDateTo = '';
 
     protected $queryString = [
@@ -26,14 +30,14 @@ class ActivityAuditHistory extends Component
         'filterDateTo' => ['except' => ''],
     ];
 
-    public function mount(AgriculturalActivity $activity = null)
+    public function mount(?AgriculturalActivity $activity = null)
     {
-        if (!$activity) {
+        if (! $activity) {
             abort(404, __('Actividad no encontrada.'));
         }
-        
+
         // Verificar autorización
-        if (!Auth::user()->can('view', $activity)) {
+        if (! Auth::user()->can('view', $activity)) {
             abort(403, __('No tienes permiso para ver el historial de esta actividad.'));
         }
 
@@ -66,7 +70,7 @@ class ActivityAuditHistory extends Component
         $logs = $query->paginate(10);
 
         // Obtener usuarios únicos que han modificado esta actividad
-        $users = User::whereIn('id', 
+        $users = User::whereIn('id',
             AgriculturalActivityAuditLog::where('activity_id', $this->activity->id)
                 ->distinct()
                 ->pluck('user_id')
@@ -105,7 +109,7 @@ class ActivityAuditHistory extends Component
         if (isset($changes['old']) && isset($changes['new'])) {
             foreach ($changes['new'] as $field => $newValue) {
                 $oldValue = $changes['old'][$field] ?? null;
-                
+
                 if ($oldValue != $newValue) {
                     $diff[] = [
                         'field' => $this->getFieldLabel($field),

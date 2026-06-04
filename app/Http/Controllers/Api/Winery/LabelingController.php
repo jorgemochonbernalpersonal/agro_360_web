@@ -26,16 +26,16 @@ class LabelingController extends Controller
             $query->where('wine_id', $request->integer('wine_id'));
         }
 
-        $perPage   = $this->resolvePerPage($request, 20, 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $labelings = $query->paginate($perPage);
 
         return response()->json([
             'data' => $labelings->map(fn ($l) => $this->format($l)),
             'meta' => [
-                'total'        => $labelings->total(),
-                'per_page'     => $labelings->perPage(),
+                'total' => $labelings->total(),
+                'per_page' => $labelings->perPage(),
                 'current_page' => $labelings->currentPage(),
-                'last_page'    => $labelings->lastPage(),
+                'last_page' => $labelings->lastPage(),
             ],
         ]);
     }
@@ -56,14 +56,14 @@ class LabelingController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'          => 'required|integer|exists:wines,id',
+            'wine_id' => 'required|integer|exists:wines,id',
             'wine_bottling_id' => 'nullable|integer|exists:wine_bottlings,id',
-            'label_batch_id'   => 'nullable|integer|exists:label_batches,id',
-            'labeling_date'    => 'required|date',
+            'label_batch_id' => 'nullable|integer|exists:label_batches,id',
+            'labeling_date' => 'required|date',
             'quantity_labeled' => 'required|integer|min:1',
-            'from_number'      => 'nullable|integer|min:1',
-            'to_number'        => 'nullable|integer|min:1',
-            'notes'            => 'nullable|string|max:1000',
+            'from_number' => 'nullable|integer|min:1',
+            'to_number' => 'nullable|integer|min:1',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
@@ -85,7 +85,7 @@ class LabelingController extends Controller
         $labeling = DB::transaction(function () use ($validated, $batch, $user) {
             $labeling = WineLabeling::create([
                 ...$validated,
-                'user_id'    => $user->id,
+                'user_id' => $user->id,
                 'created_by' => $user->id,
             ]);
 
@@ -99,24 +99,24 @@ class LabelingController extends Controller
         $labeling->load(['wine', 'bottling', 'labelBatch']);
 
         return response()->json([
-            'data'    => $this->format($labeling),
+            'data' => $this->format($labeling),
             'message' => __('Etiquetado registrado correctamente.'),
         ], 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
-        $user     = $request->user();
+        $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
         $labeling = WineLabeling::forUser($user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'labeling_date'    => 'sometimes|date',
+            'labeling_date' => 'sometimes|date',
             'quantity_labeled' => 'sometimes|integer|min:1',
-            'from_number'      => 'sometimes|nullable|integer|min:1',
-            'to_number'        => 'sometimes|nullable|integer|min:1',
-            'notes'            => 'sometimes|nullable|string|max:1000',
+            'from_number' => 'sometimes|nullable|integer|min:1',
+            'to_number' => 'sometimes|nullable|integer|min:1',
+            'notes' => 'sometimes|nullable|string|max:1000',
         ]);
 
         DB::transaction(function () use ($labeling, $validated) {
@@ -145,7 +145,7 @@ class LabelingController extends Controller
 
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $user     = $request->user();
+        $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
         $labeling = WineLabeling::forUser($user->id)->findOrFail($id);
@@ -165,22 +165,22 @@ class LabelingController extends Controller
     private function format(WineLabeling $l): array
     {
         return [
-            'id'               => $l->id,
-            'wine_id'          => $l->wine_id,
-            'wine_name'        => $l->wine?->name,
-            'bottling_id'      => $l->wine_bottling_id,
-            'label_batch'      => $l->labelBatch ? [
-                'id'                 => $l->labelBatch->id,
-                'name'               => $l->labelBatch->name,
+            'id' => $l->id,
+            'wine_id' => $l->wine_id,
+            'wine_name' => $l->wine?->name,
+            'bottling_id' => $l->wine_bottling_id,
+            'label_batch' => $l->labelBatch ? [
+                'id' => $l->labelBatch->id,
+                'name' => $l->labelBatch->name,
                 'available_quantity' => $l->labelBatch->available_quantity,
             ] : null,
-            'labeling_date'    => $l->labeling_date?->toDateString(),
+            'labeling_date' => $l->labeling_date?->toDateString(),
             'quantity_labeled' => $l->quantity_labeled,
-            'label_range'      => $l->label_range,
-            'from_number'      => $l->from_number,
-            'to_number'        => $l->to_number,
-            'notes'            => $l->notes,
-            'created_at'       => $l->created_at->toIso8601String(),
+            'label_range' => $l->label_range,
+            'from_number' => $l->from_number,
+            'to_number' => $l->to_number,
+            'notes' => $l->notes,
+            'created_at' => $l->created_at->toIso8601String(),
         ];
     }
 }

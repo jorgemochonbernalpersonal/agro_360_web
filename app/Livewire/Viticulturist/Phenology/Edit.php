@@ -18,13 +18,21 @@ class Edit extends Component
     public PhenologyObservation $observation;
 
     public $plot_planting_id = '';
+
     public $campaign_id = '';
+
     public $event = '';
+
     public $obs_date = '';
+
     public $source = 'manual';
+
     public $confidence = 100;
+
     public $degree_days_accumulated = '';
+
     public $bbch_code = '';
+
     public $notes = '';
 
     public function mount(PhenologyObservation $observation): void
@@ -35,16 +43,16 @@ class Edit extends Component
             abort(403);
         }
 
-        $this->observation             = $observation;
-        $this->plot_planting_id        = $observation->plot_planting_id;
-        $this->campaign_id             = $observation->campaign_id;
-        $this->event                   = $observation->event;
-        $this->obs_date                = $observation->obs_date->format('Y-m-d');
-        $this->source                  = $observation->source;
-        $this->confidence              = $observation->confidence;
+        $this->observation = $observation;
+        $this->plot_planting_id = $observation->plot_planting_id;
+        $this->campaign_id = $observation->campaign_id;
+        $this->event = $observation->event;
+        $this->obs_date = $observation->obs_date->format('Y-m-d');
+        $this->source = $observation->source;
+        $this->confidence = $observation->confidence;
         $this->degree_days_accumulated = $observation->degree_days_accumulated ?? '';
-        $this->bbch_code               = $observation->bbch_code ?? '';
-        $this->notes                   = $observation->notes ?? '';
+        $this->bbch_code = $observation->bbch_code ?? '';
+        $this->notes = $observation->notes ?? '';
     }
 
     public function updatedEvent($value): void
@@ -52,35 +60,20 @@ class Edit extends Component
         $this->bbch_code = PhenologyObservation::BBCH_CODES[$value] ?? '';
     }
 
-    protected function rules(): array
-    {
-        return [
-            'plot_planting_id'        => $this->plotPlantingOwnershipRule(true),
-            'campaign_id'             => $this->campaignOwnershipRule(),
-            'event'                   => 'required|in:' . implode(',', array_keys(PhenologyObservation::EVENTS)),
-            'obs_date'                => 'required|date',
-            'source'                  => 'required|in:manual,sensor,model,auto',
-            'confidence'              => 'required|integer|min:0|max:100',
-            'degree_days_accumulated' => 'nullable|numeric|min:0',
-            'bbch_code'               => 'nullable|integer|min:0|max:99',
-            'notes'                   => 'nullable|string',
-        ];
-    }
-
     public function update()
     {
         $this->validate();
 
         $this->observation->update([
-            'plot_planting_id'        => $this->plot_planting_id,
-            'campaign_id'             => $this->campaign_id,
-            'event'                   => $this->event,
-            'obs_date'                => $this->obs_date,
-            'source'                  => $this->source,
-            'confidence'              => $this->confidence,
+            'plot_planting_id' => $this->plot_planting_id,
+            'campaign_id' => $this->campaign_id,
+            'event' => $this->event,
+            'obs_date' => $this->obs_date,
+            'source' => $this->source,
+            'confidence' => $this->confidence,
             'degree_days_accumulated' => $this->degree_days_accumulated ?: null,
-            'bbch_code'               => $this->bbch_code ?: null,
-            'notes'                   => $this->notes ?: null,
+            'bbch_code' => $this->bbch_code ?: null,
+            'notes' => $this->notes ?: null,
         ]);
 
         $this->toastSuccess(__('Observación fenológica actualizada correctamente.'));
@@ -95,7 +88,7 @@ class Edit extends Component
         $campaigns = Campaign::where('viticulturist_id', $user->id)
             ->orderBy('year', 'desc')->get();
 
-        $plantings = PlotPlanting::whereHas('plot', fn($q) => $q->where('viticulturist_id', $user->id))
+        $plantings = PlotPlanting::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $user->id))
             ->where('status', 'active')
             ->with(['plot', 'grapeVariety'])
             ->orderBy('plot_id')
@@ -104,8 +97,23 @@ class Edit extends Component
         return view('livewire.viticulturist.phenology.edit', [
             'campaigns' => $campaigns,
             'plantings' => $plantings,
-            'events'    => PhenologyObservation::eventOptions(),
-            'sources'   => PhenologyObservation::sourceOptions(),
+            'events' => PhenologyObservation::eventOptions(),
+            'sources' => PhenologyObservation::sourceOptions(),
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'plot_planting_id' => $this->plotPlantingOwnershipRule(true),
+            'campaign_id' => $this->campaignOwnershipRule(),
+            'event' => 'required|in:'.implode(',', array_keys(PhenologyObservation::EVENTS)),
+            'obs_date' => 'required|date',
+            'source' => 'required|in:manual,sensor,model,auto',
+            'confidence' => 'required|integer|min:0|max:100',
+            'degree_days_accumulated' => 'nullable|numeric|min:0',
+            'bbch_code' => 'nullable|integer|min:0|max:99',
+            'notes' => 'nullable|string',
+        ];
     }
 }

@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignId('tax_id')->constrained('taxes')->onDelete('cascade');
             $table->boolean('is_default')->default(false);
             $table->integer('order')->default(0);
-            
+
             $table->timestamps();
-            
+
             $table->unique(['user_id', 'tax_id']);
             $table->index('user_id');
         });

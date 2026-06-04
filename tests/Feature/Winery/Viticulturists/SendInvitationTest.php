@@ -20,7 +20,9 @@ use Tests\Feature\WineryTestCase;
 class SendInvitationTest extends WineryTestCase
 {
     protected User $winery;
+
     protected User $viticulturist;
+
     protected WineryViticulturist $relation;
 
     protected function setUp(): void
@@ -30,16 +32,16 @@ class SendInvitationTest extends WineryTestCase
         $this->winery = $this->makeWinery();
 
         $this->viticulturist = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => false,
-            'email'     => 'viticultores.' . uniqid() . '@placeholder.agro365.es',
+            'email' => 'viticultores.'.uniqid().'@placeholder.agro365.es',
         ]);
 
         $this->relation = WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         $this->actingAs($this->winery);
@@ -59,7 +61,7 @@ class SendInvitationTest extends WineryTestCase
 
         // El email NO debe haberse actualizado porque se bloqueó por rate limit
         $this->assertDatabaseMissing('users', [
-            'id'    => $this->viticulturist->id,
+            'id' => $this->viticulturist->id,
             'email' => 'nuevo@example.com',
         ]);
     }
@@ -98,16 +100,16 @@ class SendInvitationTest extends WineryTestCase
 
         // El email ya pertenece al mismo viticulturist → debe permitirse
         $vitic = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
-            'email'     => 'propio@example.com',
+            'email' => 'propio@example.com',
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $vitic->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $vitic])
@@ -131,7 +133,7 @@ class SendInvitationTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('users', [
-            'id'    => $this->viticulturist->id,
+            'id' => $this->viticulturist->id,
             'email' => 'real@example.com',
         ]);
     }
@@ -142,16 +144,16 @@ class SendInvitationTest extends WineryTestCase
 
         // Viticulturist con email real registrado → email no debe cambiar
         $vitic = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
-            'email'     => 'original@example.com',
+            'email' => 'original@example.com',
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $vitic->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $vitic])
@@ -161,7 +163,7 @@ class SendInvitationTest extends WineryTestCase
 
         // Email must remain unchanged
         $this->assertDatabaseHas('users', [
-            'id'    => $vitic->id,
+            'id' => $vitic->id,
             'email' => 'original@example.com',
         ]);
     }
@@ -204,8 +206,8 @@ class SendInvitationTest extends WineryTestCase
     public function test_revoke_invitation_clears_token_fields(): void
     {
         $this->viticulturist->update([
-            'invitation_token'      => 'some-token-abc123',
-            'invitation_sent_at'    => now()->subHour(),
+            'invitation_token' => 'some-token-abc123',
+            'invitation_sent_at' => now()->subHour(),
             'invitation_expires_at' => now()->addDays(6),
         ]);
 
@@ -214,9 +216,9 @@ class SendInvitationTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('users', [
-            'id'                    => $this->viticulturist->id,
-            'invitation_token'      => null,
-            'invitation_sent_at'    => null,
+            'id' => $this->viticulturist->id,
+            'invitation_token' => null,
+            'invitation_sent_at' => null,
             'invitation_expires_at' => null,
         ]);
     }
@@ -226,8 +228,8 @@ class SendInvitationTest extends WineryTestCase
         $originalEmail = $this->viticulturist->email;
 
         $this->viticulturist->update([
-            'invitation_token'      => 'token123',
-            'invitation_sent_at'    => now()->subHour(),
+            'invitation_token' => 'token123',
+            'invitation_sent_at' => now()->subHour(),
             'invitation_expires_at' => now()->addDays(6),
         ]);
 
@@ -235,7 +237,7 @@ class SendInvitationTest extends WineryTestCase
             ->call('revokeInvitation');
 
         $this->assertDatabaseHas('users', [
-            'id'    => $this->viticulturist->id,
+            'id' => $this->viticulturist->id,
             'email' => $originalEmail,
         ]);
     }

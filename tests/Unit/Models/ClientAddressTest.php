@@ -2,18 +2,18 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\ClientAddress;
-use App\Models\Client;
-use App\Models\Invoice;
 use App\Models\AutonomousCommunity;
-use App\Models\Province;
+use App\Models\Client;
+use App\Models\ClientAddress;
+use App\Models\Invoice;
 use App\Models\Municipality;
+use App\Models\Province;
 use App\Models\User;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
 
 class ClientAddressTest extends TestCase
 {
@@ -272,4 +272,3 @@ class ClientAddressTest extends TestCase
         $this->assertEquals('Dirección de facturación', $address->description);
     }
 }
-

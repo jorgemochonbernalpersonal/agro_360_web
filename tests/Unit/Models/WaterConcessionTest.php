@@ -23,10 +23,10 @@ class WaterConcessionTest extends TestCase
     public function test_concession_type_label_returns_label_for_every_type(): void
     {
         $expected = [
-            'superficial'        => 'Aguas superficiales',
-            'subterranea'        => 'Aguas subterráneas',
+            'superficial' => 'Aguas superficiales',
+            'subterranea' => 'Aguas subterráneas',
             'comunidad_regantes' => 'Comunidad de regantes',
-            'otro'               => 'Otro',
+            'otro' => 'Otro',
         ];
 
         foreach ($expected as $key => $label) {
@@ -100,15 +100,15 @@ class WaterConcessionTest extends TestCase
         $user = User::factory()->create(['role' => 'viticulturist']);
 
         $concession = WaterConcession::create([
-            'viticulturist_id'  => $user->id,
-            'concession_type'   => 'superficial',
+            'viticulturist_id' => $user->id,
+            'concession_type' => 'superficial',
             'concession_number' => 'CON-001',
-            'water_body'        => 'Río Test',
-            'authority'         => 'CHE',
-            'concession_date'   => now()->subYear(),
-            'expiry_date'       => now()->addYears(5),
-            'max_volume_m3'     => 5000,
-            'active'            => true,
+            'water_body' => 'Río Test',
+            'authority' => 'CHE',
+            'concession_date' => now()->subYear(),
+            'expiry_date' => now()->addYears(5),
+            'max_volume_m3' => 5000,
+            'active' => true,
         ]);
 
         $this->assertEquals($user->id, $concession->viticulturist->id);
@@ -120,16 +120,16 @@ class WaterConcessionTest extends TestCase
         $campaign = Campaign::factory()->create(['viticulturist_id' => $user->id]);
 
         $concession = WaterConcession::create([
-            'viticulturist_id'  => $user->id,
-            'campaign_id'       => $campaign->id,
-            'concession_type'   => 'subterranea',
+            'viticulturist_id' => $user->id,
+            'campaign_id' => $campaign->id,
+            'concession_type' => 'subterranea',
             'concession_number' => 'CON-002',
-            'water_body'        => 'Acuífero Test',
-            'authority'         => 'CHJ',
-            'concession_date'   => now()->subYear(),
-            'expiry_date'       => now()->addYears(3),
-            'max_volume_m3'     => 3000,
-            'active'            => true,
+            'water_body' => 'Acuífero Test',
+            'authority' => 'CHJ',
+            'concession_date' => now()->subYear(),
+            'expiry_date' => now()->addYears(3),
+            'max_volume_m3' => 3000,
+            'active' => true,
         ]);
 
         $this->assertEquals($campaign->id, $concession->campaign->id);

@@ -17,7 +17,7 @@ class WinerySubproductsSeeder extends Seeder
     {
         $this->cleanup();
 
-        $now    = now();
+        $now = now();
         $unitId = $this->getKgUnitId();
 
         $wines = DB::table('wines')
@@ -28,6 +28,7 @@ class WinerySubproductsSeeder extends Seeder
 
         if (empty($wines)) {
             $this->command->warn('No hay vinos. Ejecuta WineryWinesSeeder primero.');
+
             return;
         }
 
@@ -46,32 +47,32 @@ class WinerySubproductsSeeder extends Seeder
         ];
 
         $rows = [];
-        $idx  = 0;
+        $idx = 0;
 
         foreach ($wines as $wine) {
-            $stData   = $subproductTypes[$idx % count($subproductTypes)];
-            $qty      = round(($wine->initial_quantity_kg ?? 5000) * $stData[3], 3);
-            $daysAgo  = mt_rand(10, 150);
+            $stData = $subproductTypes[$idx % count($subproductTypes)];
+            $qty = round(($wine->initial_quantity_kg ?? 5000) * $stData[3], 3);
+            $daysAgo = mt_rand(10, 150);
 
             $rows[] = [
-                'user_id'               => self::WINERY_USER_ID,
-                'wine_id'               => $wine->id,
-                'type'                  => $stData[0],
-                'subproduct_date'       => now()->subDays($daysAgo)->format('Y-m-d'),
-                'quantity'              => max($qty, 50),
-                'unit_of_measurement_id'=> $unitId,
-                'destination'           => $stData[1],
-                'destination_name'      => $stData[2] !== null ? $destinatarios[$stData[2]] : null,
-                'lot_number'            => 'SUB-' . $wine->internal_code . '-' . $wine->vintage . '-' . str_pad($idx + 1, 3, '0', STR_PAD_LEFT),
-                'notes'                 => match ($stData[0]) {
-                    'pomace'  => 'Orujo escurrido separado tras primer prensado. Entregado con albarán.',
-                    'lias'   => 'Lías gruesas post-trasiego. Gestionadas como subproducto autorizado.',
+                'user_id' => self::WINERY_USER_ID,
+                'wine_id' => $wine->id,
+                'type' => $stData[0],
+                'subproduct_date' => now()->subDays($daysAgo)->format('Y-m-d'),
+                'quantity' => max($qty, 50),
+                'unit_of_measurement_id' => $unitId,
+                'destination' => $stData[1],
+                'destination_name' => $stData[2] !== null ? $destinatarios[$stData[2]] : null,
+                'lot_number' => 'SUB-'.$wine->internal_code.'-'.$wine->vintage.'-'.str_pad($idx + 1, 3, '0', STR_PAD_LEFT),
+                'notes' => match ($stData[0]) {
+                    'pomace' => 'Orujo escurrido separado tras primer prensado. Entregado con albarán.',
+                    'lias' => 'Lías gruesas post-trasiego. Gestionadas como subproducto autorizado.',
                     'vinasse' => 'Aguas de lavado de depósitos. Tratamiento externo en planta autorizada.',
-                    default  => null,
+                    default => null,
                 },
-                'created_by'            => self::WINERY_USER_ID,
-                'created_at'            => $now,
-                'updated_at'            => $now,
+                'created_by' => self::WINERY_USER_ID,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
 
             $idx++;
@@ -79,7 +80,7 @@ class WinerySubproductsSeeder extends Seeder
 
         DB::table('wine_subproducts')->insert($rows);
 
-        $this->command->info('✅ Subproductos: ' . count($rows) . ' registros');
+        $this->command->info('✅ Subproductos: '.count($rows).' registros');
     }
 
     private function getKgUnitId(): ?int

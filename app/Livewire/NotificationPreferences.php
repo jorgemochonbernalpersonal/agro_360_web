@@ -2,16 +2,18 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Services\NotificationPreferencesService;
 use Livewire\Component;
-use App\Livewire\Concerns\WithToastNotifications;
 
 class NotificationPreferences extends Component
 {
     use WithToastNotifications;
 
     public array $channels = [];
+
     public string $delivery = 'instant';
+
     public array $categories = [];
 
     public function mount(): void

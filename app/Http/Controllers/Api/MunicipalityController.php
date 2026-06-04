@@ -20,7 +20,7 @@ class MunicipalityController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $provinceId = $request->get('province_id');
-        $search     = $request->get('search', '');
+        $search = $request->get('search', '');
 
         if ($provinceId) {
             $municipalities = Municipality::where('province_id', $provinceId)
@@ -34,17 +34,17 @@ class MunicipalityController extends Controller
             return response()->json(['data' => []]);
         }
 
-        $municipalities = Municipality::where('name', 'like', '%' . $search . '%')
+        $municipalities = Municipality::where('name', 'like', '%'.$search.'%')
             ->with('province:id,name')
             ->orderBy('name')
             ->limit(30)
             ->get(['id', 'name', 'province_id']);
 
-        $data = $municipalities->map(fn($m) => [
-            'id'          => $m->id,
-            'name'        => $m->name,
+        $data = $municipalities->map(fn ($m) => [
+            'id' => $m->id,
+            'name' => $m->name,
             'province_id' => $m->province_id,
-            'province'    => $m->province ? ['id' => $m->province->id, 'name' => $m->province->name] : null,
+            'province' => $m->province ? ['id' => $m->province->id, 'name' => $m->province->name] : null,
         ]);
 
         return response()->json(['data' => $data]);

@@ -17,6 +17,8 @@ class ReportExporter
 
     /**
      * Generar exportaciones CSV y XML para un informe
+     *
+     * @param mixed $data
      */
     public function exportReport(
         OfficialReport $report,

@@ -26,7 +26,7 @@ class InvoiceItemResource extends JsonResource
                 'amount' => (float) $this->tax_amount,
             ],
             'total' => (float) $this->total,
-            'harvest' => $this->whenLoaded('harvest', fn() => [
+            'harvest' => $this->whenLoaded('harvest', fn () => [
                 'id' => $this->harvest->id,
                 'quantity_kg' => $this->harvest->quantity_kg,
             ]),

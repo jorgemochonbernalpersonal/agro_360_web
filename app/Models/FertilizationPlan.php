@@ -7,6 +7,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FertilizationPlan extends Model
 {
+    const STATUSES = [
+        'draft' => 'Borrador',
+        'active' => 'Activo',
+        'archived' => 'Archivado',
+    ];
+
+    const STATUS_COLORS = [
+        'draft' => 'zinc',
+        'active' => 'green',
+        'archived' => 'amber',
+    ];
+
     protected $fillable = [
         'viticulturist_id', 'campaign_id', 'plan_year', 'nitrate_zone',
         'prepared_by', 'approval_date',
@@ -15,32 +27,20 @@ class FertilizationPlan extends Model
     ];
 
     protected $casts = [
-        'approval_date'    => 'date',
-        'nitrate_zone'     => 'boolean',
-        'active'           => 'boolean',
-        'plan_lines'       => 'array',
+        'approval_date' => 'date',
+        'nitrate_zone' => 'boolean',
+        'active' => 'boolean',
+        'plan_lines' => 'array',
         'total_surface_ha' => 'decimal:4',
-        'total_n_kg_ha'    => 'decimal:3',
-        'total_p_kg_ha'    => 'decimal:3',
-        'total_k_kg_ha'    => 'decimal:3',
-    ];
-
-    const STATUSES = [
-        'draft'    => 'Borrador',
-        'active'   => 'Activo',
-        'archived' => 'Archivado',
+        'total_n_kg_ha' => 'decimal:3',
+        'total_p_kg_ha' => 'decimal:3',
+        'total_k_kg_ha' => 'decimal:3',
     ];
 
     public static function statusOptions(): array
     {
         return array_map(fn ($v) => __($v), static::STATUSES);
     }
-
-    const STATUS_COLORS = [
-        'draft'    => 'zinc',
-        'active'   => 'green',
-        'archived' => 'amber',
-    ];
 
     public function viticulturist(): BelongsTo
     {

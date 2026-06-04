@@ -16,8 +16,8 @@ class FieldApplicatorController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'search'        => 'nullable|string|max:255',
-            'campaign_id'   => 'nullable|integer|exists:campaigns,id',
+            'search' => 'nullable|string|max:255',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
             'ropo_category' => 'nullable|string|max:100',
         ]);
 
@@ -26,10 +26,10 @@ class FieldApplicatorController extends Controller
             ->orderBy('name');
 
         if ($request->filled('search')) {
-            $search = '%' . $request->search . '%';
+            $search = '%'.$request->search.'%';
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', $search)
-                  ->orWhere('ropo_number', 'LIKE', $search);
+                    ->orWhere('ropo_number', 'LIKE', $search);
             });
         }
 
@@ -46,10 +46,10 @@ class FieldApplicatorController extends Controller
         return response()->json([
             'data' => FieldApplicatorResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -60,20 +60,20 @@ class FieldApplicatorController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'       => 'nullable|integer|exists:campaigns,id',
-            'name'              => 'required|string|max:255',
-            'ropo_number'       => 'required|string|max:30',
-            'ropo_category'     => 'nullable|in:basic,qualified,fumigator,pilot',
-            'ropo_expiry_date'  => 'nullable|date',
-            'is_advisor'        => 'nullable|boolean',
-            'phone'             => 'nullable|string|max:50',
-            'email'             => 'nullable|email|max:255',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'name' => 'required|string|max:255',
+            'ropo_number' => 'required|string|max:30',
+            'ropo_category' => 'nullable|in:basic,qualified,fumigator,pilot',
+            'ropo_expiry_date' => 'nullable|date',
+            'is_advisor' => 'nullable|boolean',
+            'phone' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
         ]);
 
         $record = \App\Models\FieldApplicator::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\FieldApplicatorResource($record),
+            'data' => new \App\Http\Resources\Api\FieldApplicatorResource($record),
             'message' => __('Aplicador ROPO registrado correctamente.'),
         ], 201);
     }

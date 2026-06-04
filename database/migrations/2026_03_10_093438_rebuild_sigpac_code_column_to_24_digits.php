@@ -19,13 +19,13 @@ return new class extends Migration
         DB::table('sigpac_code')->orderBy('id')->each(function (object $record) {
             $newCode = implode('', [
                 str_pad($record->code_autonomous_community ?? '', 2, '0', STR_PAD_LEFT),
-                str_pad($record->code_province             ?? '', 2, '0', STR_PAD_LEFT),
-                str_pad($record->code_municipality         ?? '', 3, '0', STR_PAD_LEFT),
-                str_pad($record->code_aggregate            ?? '0', 3, '0', STR_PAD_LEFT),
-                str_pad($record->code_zone                 ?? '0', 3, '0', STR_PAD_LEFT),
-                str_pad($record->code_polygon              ?? '', 3, '0', STR_PAD_LEFT),
-                str_pad($record->code_plot                 ?? '', 5, '0', STR_PAD_LEFT),
-                str_pad($record->code_enclosure            ?? '', 3, '0', STR_PAD_LEFT),
+                str_pad($record->code_province ?? '', 2, '0', STR_PAD_LEFT),
+                str_pad($record->code_municipality ?? '', 3, '0', STR_PAD_LEFT),
+                str_pad($record->code_aggregate ?? '0', 3, '0', STR_PAD_LEFT),
+                str_pad($record->code_zone ?? '0', 3, '0', STR_PAD_LEFT),
+                str_pad($record->code_polygon ?? '', 3, '0', STR_PAD_LEFT),
+                str_pad($record->code_plot ?? '', 5, '0', STR_PAD_LEFT),
+                str_pad($record->code_enclosure ?? '', 3, '0', STR_PAD_LEFT),
             ]);
 
             DB::table('sigpac_code')
@@ -40,13 +40,13 @@ return new class extends Migration
         DB::table('sigpac_code')->orderBy('id')->each(function (object $record) {
             $oldCode = implode('', [
                 str_pad($record->code_autonomous_community ?? '', 2, '0', STR_PAD_LEFT),
-                str_pad($record->code_province             ?? '', 2, '0', STR_PAD_LEFT),
-                str_pad($record->code_municipality         ?? '', 3, '0', STR_PAD_LEFT),
-                str_pad($record->code_aggregate            ?? '0', 1, '0', STR_PAD_LEFT),
-                str_pad($record->code_zone                 ?? '0', 1, '0', STR_PAD_LEFT),
-                str_pad($record->code_polygon              ?? '', 2, '0', STR_PAD_LEFT),
-                str_pad($record->code_plot                 ?? '', 5, '0', STR_PAD_LEFT),
-                str_pad($record->code_enclosure            ?? '', 3, '0', STR_PAD_LEFT),
+                str_pad($record->code_province ?? '', 2, '0', STR_PAD_LEFT),
+                str_pad($record->code_municipality ?? '', 3, '0', STR_PAD_LEFT),
+                str_pad($record->code_aggregate ?? '0', 1, '0', STR_PAD_LEFT),
+                str_pad($record->code_zone ?? '0', 1, '0', STR_PAD_LEFT),
+                str_pad($record->code_polygon ?? '', 2, '0', STR_PAD_LEFT),
+                str_pad($record->code_plot ?? '', 5, '0', STR_PAD_LEFT),
+                str_pad($record->code_enclosure ?? '', 3, '0', STR_PAD_LEFT),
             ]);
 
             DB::table('sigpac_code')

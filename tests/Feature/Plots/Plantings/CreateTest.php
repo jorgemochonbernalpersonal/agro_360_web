@@ -4,7 +4,6 @@ namespace Tests\Feature\Plots\Plantings;
 
 use App\Models\GrapeVariety;
 use App\Models\Plot;
-use App\Models\PlotPlanting;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Database\Seeders\AutonomousCommunitySeeder;
@@ -29,31 +28,6 @@ class CreateTest extends TestCase
         ]);
     }
 
-    /**
-     * Crea viticultor con winery asignada y una parcela propia.
-     */
-    private function makeViticulturistWithPlot(): array
-    {
-        $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ]);
-
-        $winery = User::factory()->create(['role' => 'winery']);
-        WineryViticulturist::create([
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
-        ]);
-
-        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
-
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
-
-        return [$viticulturist, $plot, $variety];
-    }
-
     public function test_viticulturist_can_create_planting_on_own_plot(): void
     {
         [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
@@ -70,9 +44,9 @@ class CreateTest extends TestCase
             ->assertRedirect(route('plots.plantings.index'));
 
         $this->assertDatabaseHas('plot_plantings', [
-            'plot_id'          => $plot->id,
+            'plot_id' => $plot->id,
             'grape_variety_id' => $variety->id,
-            'planting_year'    => 2015,
+            'planting_year' => 2015,
         ]);
     }
 
@@ -121,7 +95,7 @@ class CreateTest extends TestCase
             ->assertRedirect(route('plots.plantings.index'));
 
         $this->assertDatabaseHas('plot_plantings', [
-            'plot_id'   => $plot->id,
+            'plot_id' => $plot->id,
             'vine_count' => 3000,
         ]);
     }
@@ -163,10 +137,10 @@ class CreateTest extends TestCase
             ->call('save');
 
         $this->assertDatabaseHas('plot_plantings', [
-            'plot_id'                 => $plot->id,
-            'planting_authorization'  => 'AUTH-2024-001',
-            'right_type'              => 'nueva',
-            'designation_of_origin'   => 'Rioja DOCa',
+            'plot_id' => $plot->id,
+            'planting_authorization' => 'AUTH-2024-001',
+            'right_type' => 'nueva',
+            'designation_of_origin' => 'Rioja DOCa',
         ]);
     }
 
@@ -189,7 +163,7 @@ class CreateTest extends TestCase
         [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
 
         $other = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
@@ -197,29 +171,6 @@ class CreateTest extends TestCase
 
         $response = $this->get(route('plots.plantings.create', $plot));
         $response->assertStatus(403);
-    }
-
-    // ── Helpers adicionales ───────────────────────────────────────────────────
-
-    private function makeWineryWithOwnViticulturistAndPlot(): array
-    {
-        $winery = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        WineryViticulturist::create([
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
-        ]);
-        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        return [$winery, $plot];
-    }
-
-    private function makeProducerWithPlot(): array
-    {
-        $producer = User::factory()->create(['role' => 'producer', 'email_verified_at' => now()]);
-        $plot = Plot::factory()->create(['viticulturist_id' => $producer->id]);
-        return [$producer, $plot];
     }
 
     // ── Filtrado de variedades por crop_type según rol ────────────────────────
@@ -235,7 +186,7 @@ class CreateTest extends TestCase
 
         Livewire::test(\App\Livewire\Plots\Plantings\Create::class, ['plot' => $plot])
             ->assertViewHas('wineryOnly', true)
-            ->assertViewHas('grapeVarieties', fn ($v) => !$v->contains('id', $olive->id));
+            ->assertViewHas('grapeVarieties', fn ($v) => ! $v->contains('id', $olive->id));
     }
 
     public function test_viticulturist_variety_dropdown_contains_all_crop_types(): void
@@ -278,5 +229,55 @@ class CreateTest extends TestCase
             ->set('density', '')
             ->call('save')
             ->assertHasNoErrors(['vine_count']);
+    }
+
+    /**
+     * Crea viticultor con winery asignada y una parcela propia.
+     */
+    private function makeViticulturistWithPlot(): array
+    {
+        $viticulturist = User::factory()->create([
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
+        ]);
+
+        $winery = User::factory()->create(['role' => 'winery']);
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
+        ]);
+
+        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
+
+        return [$viticulturist, $plot, $variety];
+    }
+
+    // ── Helpers adicionales ───────────────────────────────────────────────────
+
+    private function makeWineryWithOwnViticulturistAndPlot(): array
+    {
+        $winery = User::factory()->create(['role' => 'winery', 'email_verified_at' => now()]);
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
+        ]);
+        $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        return [$winery, $plot];
+    }
+
+    private function makeProducerWithPlot(): array
+    {
+        $producer = User::factory()->create(['role' => 'producer', 'email_verified_at' => now()]);
+        $plot = Plot::factory()->create(['viticulturist_id' => $producer->id]);
+
+        return [$producer, $plot];
     }
 }

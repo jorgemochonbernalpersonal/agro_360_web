@@ -21,13 +21,13 @@ class Timeline extends Component
     {
         $wines = Wine::forUser(Auth::id())
             ->with([
-                'processDetails' => fn($q) => $q->orderBy('start_date'),
+                'processDetails' => fn ($q) => $q->orderBy('start_date'),
                 'oenologist',
                 'bottlings',
             ])
             ->whereIn('status', ['in_progress', 'aged', 'bottled'])
-            ->when($this->vintageFilter, fn($q) => $q->where('vintage', $this->vintageFilter))
-            ->when($this->typeFilter, fn($q) => $q->where('wine_type', $this->typeFilter))
+            ->when($this->vintageFilter, fn ($q) => $q->where('vintage', $this->vintageFilter))
+            ->when($this->typeFilter, fn ($q) => $q->where('wine_type', $this->typeFilter))
             ->orderBy('vintage', 'desc')
             ->orderBy('created_at', 'desc')
             ->get()
@@ -35,9 +35,9 @@ class Timeline extends Component
                 $latestProcess = $wine->processDetails->last();
 
                 $wine->current_phase_label = $latestProcess?->process_type_label ?? 'Sin proceso registrado';
-                $wine->current_phase_type  = $latestProcess?->process_type ?? 'pending';
-                $wine->days_total          = (int) now()->diffInDays($wine->created_at);
-                $wine->days_in_phase       = $latestProcess?->start_date
+                $wine->current_phase_type = $latestProcess?->process_type ?? 'pending';
+                $wine->days_total = (int) now()->diffInDays($wine->created_at);
+                $wine->days_in_phase = $latestProcess?->start_date
                     ? (int) now()->diffInDays($latestProcess->start_date)
                     : $wine->days_total;
 
@@ -54,20 +54,20 @@ class Timeline extends Component
 
         $statusLabels = [
             'in_progress' => __('En Proceso'),
-            'aged'        => __('En Crianza'),
-            'bottled'     => __('Embotellado'),
+            'aged' => __('En Crianza'),
+            'bottled' => __('Embotellado'),
         ];
 
         $statusColors = [
             'in_progress' => 'blue',
-            'aged'        => 'amber',
-            'bottled'     => 'agro',
+            'aged' => 'amber',
+            'bottled' => 'agro',
         ];
 
         return view('livewire.winery.wines.timeline', [
-            'grouped'      => $grouped,
-            'vintages'     => $vintages,
-            'types'        => Wine::wineTypeOptions(),
+            'grouped' => $grouped,
+            'vintages' => $vintages,
+            'types' => Wine::wineTypeOptions(),
             'statusLabels' => $statusLabels,
             'statusColors' => $statusColors,
         ]);

@@ -16,21 +16,6 @@ class IndexTest extends ViticulturistTestCase
         $this->seed(\Database\Seeders\UnitSeeder::class);
     }
 
-    private function makeManagement(int $viticulturistId, string $practiceType = 'incorporation', string $notes = ''): ResidueManagement
-    {
-        $campaign = Campaign::getOrCreateActiveForYear($viticulturistId);
-
-        return ResidueManagement::create([
-            'viticulturist_id' => $viticulturistId,
-            'campaign_id'      => $campaign->id,
-            'date'             => '2024-03-15',
-            'practice_type'    => $practiceType,
-            'material_type'    => 'pruning_wood',
-            'notes'            => $notes ?: null,
-            'active'           => true,
-        ]);
-    }
-
     public function test_index_shows_active_managements(): void
     {
         $viticulturist = $this->makeViticulturist();
@@ -46,7 +31,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_deactivate_archives_management(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $management    = $this->makeManagement($viticulturist->id);
+        $management = $this->makeManagement($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -54,7 +39,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('deactivate', $management->id);
 
         $this->assertDatabaseHas('residue_managements', [
-            'id'     => $management->id,
+            'id' => $management->id,
             'active' => false,
         ]);
     }
@@ -62,25 +47,25 @@ class IndexTest extends ViticulturistTestCase
     public function test_filter_by_practice_type(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = Campaign::getOrCreateActiveForYear($viticulturist->id);
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturist->id);
 
         // Use different material_types so we can distinguish rows by their label
         // (practiceTypes are in the filter dropdown, materialTypes are NOT → safe for assertSee/assertDontSee)
         ResidueManagement::create([
             'viticulturist_id' => $viticulturist->id,
-            'campaign_id'      => $campaign->id,
-            'date'             => '2024-03-15',
-            'practice_type'    => 'composting',
-            'material_type'    => 'grape_marc',   // "Orujo"
-            'active'           => true,
+            'campaign_id' => $campaign->id,
+            'date' => '2024-03-15',
+            'practice_type' => 'composting',
+            'material_type' => 'grape_marc',   // "Orujo"
+            'active' => true,
         ]);
         ResidueManagement::create([
             'viticulturist_id' => $viticulturist->id,
-            'campaign_id'      => $campaign->id,
-            'date'             => '2024-03-15',
-            'practice_type'    => 'removal',
-            'material_type'    => 'vine_leaves',  // "Hojas de vid"
-            'active'           => true,
+            'campaign_id' => $campaign->id,
+            'date' => '2024-03-15',
+            'practice_type' => 'removal',
+            'material_type' => 'vine_leaves',  // "Hojas de vid"
+            'active' => true,
         ]);
 
         $this->actingAs($viticulturist);
@@ -94,8 +79,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_cannot_deactivate_other_viticulturists_management(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $management    = $this->makeManagement($viticulturist->id);
+        $other = $this->makeOtherViticulturist();
+        $management = $this->makeManagement($viticulturist->id);
 
         $this->actingAs($other);
 
@@ -103,5 +88,20 @@ class IndexTest extends ViticulturistTestCase
 
         Livewire::test(Index::class)
             ->call('deactivate', $management->id);
+    }
+
+    private function makeManagement(int $viticulturistId, string $practiceType = 'incorporation', string $notes = ''): ResidueManagement
+    {
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturistId);
+
+        return ResidueManagement::create([
+            'viticulturist_id' => $viticulturistId,
+            'campaign_id' => $campaign->id,
+            'date' => '2024-03-15',
+            'practice_type' => $practiceType,
+            'material_type' => 'pruning_wood',
+            'notes' => $notes ?: null,
+            'active' => true,
+        ]);
     }
 }

@@ -17,15 +17,15 @@ class CampaignComparisonController extends Controller
         $request->validate([
             'campaign_a' => 'required|integer',
             'campaign_b' => 'required|integer',
-            'plot_id'    => 'nullable|integer',
+            'plot_id' => 'nullable|integer',
         ]);
 
-        $user   = $request->user();
+        $user = $request->user();
         $userId = $user->id;
 
         $campaignA = Campaign::forViticulturist($userId)->findOrFail($request->input('campaign_a'));
         $campaignB = Campaign::forViticulturist($userId)->findOrFail($request->input('campaign_b'));
-        $plotId    = $request->input('plot_id');
+        $plotId = $request->input('plot_id');
 
         $plotIds = $plotId
             ? collect([$plotId])
@@ -69,12 +69,13 @@ class CampaignComparisonController extends Controller
             ->groupBy(fn ($h) => $h->plotPlanting?->plot_id)
             ->map(function ($group, $plotId) {
                 $first = $group->first();
+
                 return [
-                    'plot_id'   => $plotId,
+                    'plot_id' => $plotId,
                     'plot_name' => $first->plotPlanting?->plot?->name ?? '—',
-                    'total_kg'  => round((float) $group->sum('total_weight'), 2),
+                    'total_kg' => round((float) $group->sum('total_weight'), 2),
                     'avg_baume' => $group->avg('baume_degree') !== null ? round($group->avg('baume_degree'), 2) : null,
-                    'entries'   => $group->count(),
+                    'entries' => $group->count(),
                 ];
             })
             ->values();
@@ -82,15 +83,15 @@ class CampaignComparisonController extends Controller
         return [
             'campaign' => ['id' => $campaign->id, 'name' => $campaign->name, 'year' => $year],
             'harvest' => [
-                'entries'   => (int) ($harvestStats->entries ?? 0),
-                'total_kg'  => (float) ($harvestStats->total_kg ?? 0),
+                'entries' => (int) ($harvestStats->entries ?? 0),
+                'total_kg' => (float) ($harvestStats->total_kg ?? 0),
                 'avg_baume' => $harvestStats->avg_baume ? round((float) $harvestStats->avg_baume, 2) : null,
-                'avg_brix'  => $harvestStats->avg_brix ? round((float) $harvestStats->avg_brix, 2) : null,
-                'avg_ph'    => $harvestStats->avg_ph ? round((float) $harvestStats->avg_ph, 2) : null,
+                'avg_brix' => $harvestStats->avg_brix ? round((float) $harvestStats->avg_brix, 2) : null,
+                'avg_ph' => $harvestStats->avg_ph ? round((float) $harvestStats->avg_ph, 2) : null,
                 'avg_price' => $harvestStats->avg_price ? round((float) $harvestStats->avg_price, 4) : null,
             ],
             'activity_counts' => $activityCounts,
-            'by_plot'         => $byPlot,
+            'by_plot' => $byPlot,
         ];
     }
 }

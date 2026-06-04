@@ -73,41 +73,41 @@ class ProductLot extends Model
     ];
 
     protected $casts = [
-        'vintage'            => 'integer',
-        'agingtime'          => 'integer',
-        'alcohol'            => 'decimal:2',
-        'quantity'           => 'decimal:3',
-        'initial_quantity'   => 'decimal:3',
+        'vintage' => 'integer',
+        'agingtime' => 'integer',
+        'alcohol' => 'decimal:2',
+        'quantity' => 'decimal:3',
+        'initial_quantity' => 'decimal:3',
         'available_quantity' => 'decimal:3',
-        'reserved_quantity'  => 'decimal:3',
-        'sold_quantity'      => 'decimal:3',
-        'price_per_unit'     => 'decimal:4',
-        'cost_price'         => 'decimal:4',
-        'archived'           => 'boolean',
+        'reserved_quantity' => 'decimal:3',
+        'sold_quantity' => 'decimal:3',
+        'price_per_unit' => 'decimal:4',
+        'cost_price' => 'decimal:4',
+        'archived' => 'boolean',
         // Analíticos
-        'residual_sugar'     => 'decimal:2',
-        'total_acidity'      => 'decimal:2',
-        'volatile_acidity'   => 'decimal:2',
-        'ph'                 => 'decimal:2',
+        'residual_sugar' => 'decimal:2',
+        'total_acidity' => 'decimal:2',
+        'volatile_acidity' => 'decimal:2',
+        'ph' => 'decimal:2',
         // Formato
-        'units_per_case'     => 'integer',
+        'units_per_case' => 'integer',
         // Winemaking
-        'oak_months'         => 'integer',
+        'oak_months' => 'integer',
         // Viñedo
-        'vine_age'           => 'integer',
-        'altitude'           => 'integer',
+        'vine_age' => 'integer',
+        'altitude' => 'integer',
         // Certificaciones
-        'is_vegan'           => 'boolean',
-        'is_biodynamic'      => 'boolean',
+        'is_vegan' => 'boolean',
+        'is_biodynamic' => 'boolean',
         // Marketing
-        'production_quantity'=> 'integer',
-        'bottling_date'      => 'date',
-        'release_date'       => 'date',
+        'production_quantity' => 'integer',
+        'bottling_date' => 'date',
+        'release_date' => 'date',
         // Descripción comercial
         'recommended_temperature_min' => 'decimal:1',
         'recommended_temperature_max' => 'decimal:1',
         // Certificaciones adicionales
-        'sulfites'   => 'boolean',
+        'sulfites' => 'boolean',
         'ecological' => 'boolean',
     ];
 
@@ -146,7 +146,10 @@ class ProductLot extends Model
 
     public function getFillPercentAttribute(): float
     {
-        if ($this->quantity <= 0) return 0;
+        if ($this->quantity <= 0) {
+            return 0;
+        }
+
         return round((float) $this->sold_quantity / (float) $this->quantity * 100, 1);
     }
 

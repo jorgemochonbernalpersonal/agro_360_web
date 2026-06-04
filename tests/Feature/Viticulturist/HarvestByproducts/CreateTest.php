@@ -26,9 +26,9 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('harvest_byproducts', [
             'viticulturist_id' => $v->id,
-            'byproduct_type'   => 'raspon',
+            'byproduct_type' => 'raspon',
             'destination_name' => 'Destilería García S.L.',
-            'active'           => true,
+            'active' => true,
         ]);
     }
 
@@ -95,7 +95,7 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvest_byproducts', [
-            'viticulturist_id'   => $v->id,
+            'viticulturist_id' => $v->id,
             'document_reference' => null,
         ]);
     }

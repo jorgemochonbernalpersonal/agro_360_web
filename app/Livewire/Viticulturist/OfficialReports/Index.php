@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Viticulturist\OfficialReports;
 
-use Livewire\Component;
-use App\Models\OfficialReport;
-use Livewire\WithPagination;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\OfficialReport;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
@@ -13,26 +13,33 @@ class Index extends Component
 
     // Modales
     public $showInvalidateModal = false;
+
     public $showShareModal = false;
+
     public $showPreviewModal = false;
-    
+
     // Para invalidar
     public $reportToInvalidate = null;
+
     public $invalidatePassword = '';
+
     public $invalidateReason = '';
-    
+
     // Para compartir
     public $reportToShare = null;
+
     public $shareEmail = '';
+
     public $shareMessage = '';
-    
+
     // Para vista previa
     public $reportToPreview = null;
-    
+
     // Filtros y búsqueda
     public $search = '';
+
     public $statusFilter = 'all'; // all, valid, invalid
-    
+
     // Auto-polling para informes en proceso
     public $hasPendingReports = false;
 
@@ -53,31 +60,36 @@ class Index extends Component
 
     /**
      * Abrir modal para invalidar informe
+     *
+     * @param mixed $reportId
      */
     public function openInvalidateModal($reportId)
     {
         $this->reportToInvalidate = OfficialReport::findOrFail($reportId);
-        
+
         // Verificar permisos
         if ($this->reportToInvalidate->user_id !== auth()->id()) {
             $this->addError('invalidate', __('No tienes permiso para invalidar este informe.'));
+
             return;
         }
-        
+
         // Verificar si ya está invalidado
-        if (!$this->reportToInvalidate->isValid()) {
+        if (! $this->reportToInvalidate->isValid()) {
             $this->addError('invalidate', __('Este informe ya está invalidado.'));
+
             return;
         }
-        
+
         // Verificar si se puede invalidar (límite de tiempo)
-        if (!$this->reportToInvalidate->canBeInvalidated()) {
+        if (! $this->reportToInvalidate->canBeInvalidated()) {
             $maxDays = config('reports.max_days_to_invalidate', 30);
             $daysSinceSigned = $this->reportToInvalidate->signed_at->diffInDays(now());
             $this->addError('invalidate', __('Este informe no puede ser invalidado. Han pasado :days días desde su firma. Solo se pueden invalidar informes con menos de :max días.', ['days' => $daysSinceSigned, 'max' => $maxDays]));
+
             return;
         }
-        
+
         $this->showInvalidateModal = true;
     }
 
@@ -97,8 +109,9 @@ class Index extends Component
 
         try {
             // Verificar contraseña
-            if (!\Hash::check($this->invalidatePassword, auth()->user()->password)) {
+            if (! \Hash::check($this->invalidatePassword, auth()->user()->password)) {
                 $this->addError('invalidatePassword', __('Contraseña incorrecta.'));
+
                 return;
             }
 
@@ -107,7 +120,7 @@ class Index extends Component
 
             $this->closeInvalidateModal();
             $this->toastSuccess(__('Informe invalidado correctamente.'));
-            
+
         } catch (\Exception $e) {
             $this->addError('invalidate', __('Error al invalidar: :message', ['message' => $e->getMessage()]));
         }
@@ -127,17 +140,20 @@ class Index extends Component
 
     /**
      * Abrir modal para compartir informe
+     *
+     * @param mixed $reportId
      */
     public function openShareModal($reportId)
     {
         $this->reportToShare = OfficialReport::findOrFail($reportId);
-        
+
         // Verificar permisos
         if ($this->reportToShare->user_id !== auth()->id()) {
             $this->addError('share', __('No tienes permiso para compartir este informe.'));
+
             return;
         }
-        
+
         $this->showShareModal = true;
     }
 
@@ -167,7 +183,7 @@ class Index extends Component
 
             $this->closeShareModal();
             $this->toastSuccess(__('Informe compartido exitosamente a :email.', ['email' => $this->shareEmail]));
-            
+
         } catch (\Exception $e) {
             $this->addError('share', __('Error al enviar email: :message', ['message' => $e->getMessage()]));
         }
@@ -187,17 +203,20 @@ class Index extends Component
 
     /**
      * Abrir modal de vista previa
+     *
+     * @param mixed $reportId
      */
     public function openPreviewModal($reportId)
     {
         $this->reportToPreview = OfficialReport::findOrFail($reportId);
-        
+
         // Verificar permisos
         if ($this->reportToPreview->user_id !== auth()->id()) {
             $this->addError('preview', __('No tienes permiso para ver este informe.'));
+
             return;
         }
-        
+
         $this->showPreviewModal = true;
     }
 
@@ -212,29 +231,35 @@ class Index extends Component
 
     /**
      * Descargar informe en formato especificado
+     *
+     * @param mixed $reportId
+     * @param mixed $format
      */
     public function downloadInFormat($reportId, $format)
     {
         try {
             $report = OfficialReport::findOrFail($reportId);
-            
+
             // Verificar permisos
             if ($report->user_id !== auth()->id()) {
                 $this->toastError(__('No tienes permiso para descargar este informe.'));
+
                 return;
             }
-            
+
             // Validar que el informe esté completo
             if ($report->processing_status !== 'completed') {
                 $this->toastWarning(__('Este informe aún está siendo procesado. Espera a que se complete.'));
+
                 return;
             }
-            
-            $service = new \App\Services\OfficialReportService();
+
+            $service = new \App\Services\OfficialReportService;
+
             return $service->downloadReportInFormat($report, $format);
-            
+
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al descargar el informe. Inténtalo de nuevo.'));
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : __('Error al descargar el informe. Inténtalo de nuevo.'));
         }
     }
 
@@ -258,22 +283,22 @@ class Index extends Component
     {
         $query = OfficialReport::forUser(auth()->id())
             ->with('user');
-        
+
         // Aplicar búsqueda
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('verification_code', 'like', '%' . $this->search . '%')
-                  ->orWhere('report_type', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->where('verification_code', 'like', '%'.$this->search.'%')
+                    ->orWhere('report_type', 'like', '%'.$this->search.'%');
             });
         }
-        
+
         // Aplicar filtro de estado
         if ($this->statusFilter === 'valid') {
             $query->where('is_valid', true);
         } elseif ($this->statusFilter === 'invalid') {
             $query->where('is_valid', false);
         }
-        
+
         $reports = $query->recent()->paginate(15);
 
         // Calcular estadísticas
@@ -284,7 +309,7 @@ class Index extends Component
         $pendingCount = (clone $baseQuery)->where('processing_status', 'pending')->count();
         $processingCount = (clone $baseQuery)->where('processing_status', 'processing')->count();
         $lastReport = $baseQuery->recent()->first();
-        
+
         // Actualizar estado de polling
         $this->hasPendingReports = ($pendingCount + $processingCount) > 0;
 

@@ -19,7 +19,7 @@ class NotificationLog extends Model
 
     protected $casts = [
         'audience_verified' => 'boolean',
-        'audience_active'   => 'boolean',
+        'audience_active' => 'boolean',
     ];
 
     public function admin(): BelongsTo
@@ -30,12 +30,12 @@ class NotificationLog extends Model
     public function audienceLabel(): string
     {
         $roleMap = [
-            'all'           => 'Todos',
+            'all' => 'Todos',
             'viticulturist' => 'Viticultores',
-            'winery'        => 'Bodegas',
-            'supervisor'    => 'Supervisores',
-            'producer'      => 'Productores',
-            'admin'         => 'Admins',
+            'winery' => 'Bodegas',
+            'supervisor' => 'Supervisores',
+            'producer' => 'Productores',
+            'admin' => 'Admins',
         ];
 
         return $roleMap[$this->audience_role] ?? $this->audience_role;

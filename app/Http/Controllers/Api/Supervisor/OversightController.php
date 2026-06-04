@@ -85,7 +85,7 @@ class OversightController extends Controller
         return response()->json([
             'data' => new UserResource($viticulturist),
             'plots' => [
-                'total'      => (int) ($plots->total ?? 0),
+                'total' => (int) ($plots->total ?? 0),
                 'total_area' => round((float) ($plots->total_area ?? 0), 2),
             ],
         ]);

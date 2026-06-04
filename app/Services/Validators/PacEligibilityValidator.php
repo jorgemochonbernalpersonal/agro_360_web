@@ -14,14 +14,14 @@ class PacEligibilityValidator
         $totalArea = $plot->area ?? 0;
         $eligibleArea = $plot->pac_eligible_area ?? $totalArea;
         $nonEligibleArea = $plot->non_eligible_area ?? 0;
-        
+
         $errors = [];
         $warnings = [];
-        
+
         // Validar coherencia de superficies
         $sumAreas = $eligibleArea + $nonEligibleArea;
         $tolerance = 0.05; // 5% de tolerancia
-        
+
         if ($sumAreas > $totalArea * (1 + $tolerance)) {
             $errors[] = sprintf(
                 'Superficie admisible (%.3f ha) + no admisible (%.3f ha) = %.3f ha excede superficie total (%.3f ha)',
@@ -31,7 +31,7 @@ class PacEligibilityValidator
                 $totalArea
             );
         }
-        
+
         // Validar que superficie admisible no sea mayor que total
         if ($eligibleArea > $totalArea) {
             $errors[] = sprintf(
@@ -40,10 +40,10 @@ class PacEligibilityValidator
                 $totalArea
             );
         }
-        
+
         // Calcular coeficiente
         $coefficient = $totalArea > 0 ? $eligibleArea / $totalArea : 0;
-        
+
         // Advertencia si coeficiente es bajo
         if ($coefficient < 0.85 && $coefficient > 0) {
             $warnings[] = sprintf(
@@ -51,7 +51,7 @@ class PacEligibilityValidator
                 $coefficient * 100
             );
         }
-        
+
         return [
             'valid' => empty($errors),
             'errors' => $errors,
@@ -61,7 +61,7 @@ class PacEligibilityValidator
             'non_eligible_area' => $nonEligibleArea,
         ];
     }
-    
+
     /**
      * Calculate and update eligibility coefficient
      */
@@ -69,7 +69,7 @@ class PacEligibilityValidator
     {
         $totalArea = $plot->area ?? 0;
         $eligibleArea = $plot->pac_eligible_area ?? $totalArea;
-        
+
         $coefficient = $totalArea > 0 ? $eligibleArea / $totalArea : 1.0;
         $plot->eligibility_coefficient = round($coefficient, 4);
     }

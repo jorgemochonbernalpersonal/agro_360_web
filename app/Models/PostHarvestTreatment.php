@@ -11,18 +11,13 @@ class PostHarvestTreatment extends Model
     use HasFactory;
 
     const APPLICATION_TYPES = [
-        'copper_treatment'  => 'Tratamiento con cobre',
-        'sulfur_treatment'  => 'Tratamiento con azufre',
-        'wound_sealing'     => 'Sellado de heridas de poda',
-        'foliar_application'=> 'Aplicación foliar',
-        'trunk_treatment'   => 'Tratamiento de troncos',
-        'other'             => 'Otro',
+        'copper_treatment' => 'Tratamiento con cobre',
+        'sulfur_treatment' => 'Tratamiento con azufre',
+        'wound_sealing' => 'Sellado de heridas de poda',
+        'foliar_application' => 'Aplicación foliar',
+        'trunk_treatment' => 'Tratamiento de troncos',
+        'other' => 'Otro',
     ];
-
-    public static function applicationTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::APPLICATION_TYPES);
-    }
 
     protected $fillable = [
         'activity_id',
@@ -37,11 +32,16 @@ class PostHarvestTreatment extends Model
     ];
 
     protected $casts = [
-        'treated_area_ha'        => 'decimal:4',
-        'dose_per_hectare'       => 'decimal:4',
-        'water_volume_liters'    => 'decimal:2',
+        'treated_area_ha' => 'decimal:4',
+        'dose_per_hectare' => 'decimal:4',
+        'water_volume_liters' => 'decimal:2',
         'reentry_interval_hours' => 'integer',
     ];
+
+    public static function applicationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::APPLICATION_TYPES);
+    }
 
     public function activity(): BelongsTo
     {

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Plot;
 use App\Models\MultipartPlotSigpac;
+use App\Models\Plot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -15,17 +15,17 @@ class PlotMapController extends Controller
 
         // ✅ Iniciar medición de performance
         $startTime = microtime(true);
-        
+
         // Verificar si se debe mostrar todo el municipio
         $municipalityId = $request->query('municipality');
         $showMunicipality = $municipalityId !== null;
 
         // Usar caché diferente según el contexto
-        $cacheKey = $showMunicipality 
-            ? "municipality_geometries_{$municipalityId}_user_" . auth()->id()
+        $cacheKey = $showMunicipality
+            ? "municipality_geometries_{$municipalityId}_user_".auth()->id()
             : "plot_geometries_{$plot->id}";
         $fromCache = \Illuminate\Support\Facades\Cache::has($cacheKey);
-        
+
         $plotGeometries = \Illuminate\Support\Facades\Cache::remember(
             $cacheKey,
             now()->addHours(24),
@@ -33,6 +33,7 @@ class PlotMapController extends Controller
                 if ($showMunicipality) {
                     return $this->loadMunicipalityGeometries($municipalityId);
                 }
+
                 return $this->loadPlotGeometries($plot);
             }
         );
@@ -89,7 +90,7 @@ class PlotMapController extends Controller
         $wktData = \Illuminate\Support\Facades\DB::select(
             'SELECT id, ST_AsText(coordinates) as wkt 
              FROM plot_geometry 
-             WHERE id IN (' . $geometryIds->implode(',') . ')'
+             WHERE id IN ('.$geometryIds->implode(',').')'
         );
 
         // Crear mapa id => wkt para acceso O(1)
@@ -100,27 +101,28 @@ class PlotMapController extends Controller
             ->map(function ($rel, $index) use ($wktMap, $codeParcel) {
                 $wkt = $wktMap[$rel->plot_geometry_id] ?? null;
 
-                if (!$wkt) {
+                if (! $wkt) {
                     Log::warning('No WKT for geometry', [
                         'multipart_plot_sigpac_id' => $rel->id,
                         'plot_geometry_id' => $rel->plot_geometry_id,
                     ]);
+
                     return null;
                 }
 
                 $isCatastro = $rel->source === 'catastro';
 
                 return [
-                    'id'              => $rel->id,
-                    'index'           => $index + 1,
-                    'source'          => $rel->source ?? 'sigpac',
-                    'sigpac_code'     => $rel->sigpacCode?->code ?? null,
-                    'sigpac_formatted'=> $rel->sigpacCode?->formatted_code ?? null,
-                    'polygon'         => $rel->sigpacCode?->code_polygon ?? null,
-                    'enclosure'       => $rel->sigpacCode?->code_enclosure ?? null,
-                    'code_parcel'     => $isCatastro ? $codeParcel : null,
-                    'wkt'             => $wkt,
-                    'color'           => $this->getColorForIndex($index),
+                    'id' => $rel->id,
+                    'index' => $index + 1,
+                    'source' => $rel->source ?? 'sigpac',
+                    'sigpac_code' => $rel->sigpacCode?->code ?? null,
+                    'sigpac_formatted' => $rel->sigpacCode?->formatted_code ?? null,
+                    'polygon' => $rel->sigpacCode?->code_polygon ?? null,
+                    'enclosure' => $rel->sigpacCode?->code_enclosure ?? null,
+                    'code_parcel' => $isCatastro ? $codeParcel : null,
+                    'wkt' => $wkt,
+                    'color' => $this->getColorForIndex($index),
                 ];
             })
             ->filter()
@@ -129,11 +131,13 @@ class PlotMapController extends Controller
 
     /**
      * Cargar geometrías de todo un municipio
+     *
+     * @param mixed $municipalityId
      */
     private function loadMunicipalityGeometries($municipalityId)
     {
         $user = auth()->user();
-        
+
         // Obtener IDs de parcelas que el usuario puede ver en este municipio
         $plotIds = Plot::forUser($user)
             ->where('municipality_id', $municipalityId)
@@ -164,7 +168,7 @@ class PlotMapController extends Controller
         $wktData = \Illuminate\Support\Facades\DB::select(
             'SELECT id, ST_AsText(coordinates) as wkt 
              FROM plot_geometry 
-             WHERE id IN (' . $geometryIds->implode(',') . ')'
+             WHERE id IN ('.$geometryIds->implode(',').')'
         );
 
         // Crear mapa id => wkt para acceso O(1)
@@ -175,13 +179,13 @@ class PlotMapController extends Controller
             ->map(function ($rel, $index) use ($wktMap) {
                 $wkt = $wktMap[$rel->plot_geometry_id] ?? null;
 
-                if (!$wkt) {
+                if (! $wkt) {
                     return null;
                 }
 
                 // Generar color único para cada recinto
                 $hue = ($index * 137.5) % 360;
-                
+
                 return [
                     'id' => $rel->id,
                     'index' => $index + 1,
@@ -210,7 +214,7 @@ class PlotMapController extends Controller
             ['line' => '#06b6d4', 'fill' => '#67e8f9'], // Cyan
             ['line' => '#ec4899', 'fill' => '#f9a8d4'], // Pink
         ];
-        
+
         return $colors[$index % count($colors)];
     }
 }

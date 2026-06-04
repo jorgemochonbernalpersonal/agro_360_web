@@ -50,9 +50,9 @@ class WineryMenu
                 ['icon' => 'chart-bar',               'label' => __('Cuadro de Mando'),       'route' => 'winery.harvest-summary.index',  'active' => request()->routeIs('winery.harvest-summary*')],
                 ['icon' => 'eye',                     'label' => __('Panel Visual'),          'route' => 'winery.visual',                 'active' => request()->routeIs('winery.visual')],
                 ['icon' => 'calculator',              'label' => __('Aforos viticultores'),   'route' => 'winery.vitic-estimates.index',  'active' => request()->routeIs('winery.vitic-estimates*')],
-                ['icon' => 'clipboard-document-list', 'label' => __('Previsiones'),           'route' => 'winery.harvest-forecasts.index','active' => request()->routeIs('winery.harvest-forecasts*')],
+                ['icon' => 'clipboard-document-list', 'label' => __('Previsiones'),           'route' => 'winery.harvest-forecasts.index', 'active' => request()->routeIs('winery.harvest-forecasts*')],
                 ['icon' => 'archive-box-arrow-down',  'label' => __('Recepciones'),           'route' => 'winery.grape-reception.index',  'active' => request()->routeIs('winery.grape-reception*')],
-                ['icon' => 'exclamation-triangle',    'label' => __('Disputas'),              'route' => 'winery.grape-reception.disputes','active' => request()->routeIs('winery.grape-reception.disputes')],
+                ['icon' => 'exclamation-triangle',    'label' => __('Disputas'),              'route' => 'winery.grape-reception.disputes', 'active' => request()->routeIs('winery.grape-reception.disputes')],
                 ['icon' => 'beaker',                  'label' => __('Análisis de Calidad'),   'route' => 'winery.harvest-quality.index',  'active' => request()->routeIs('winery.harvest-quality*')],
             ];
         } else {
@@ -81,7 +81,7 @@ class WineryMenu
             ['icon' => 'beaker',              'label' => __('Vinos'),                 'route' => 'winery.wines.index',                'active' => request()->routeIs('winery.wines.index') || request()->routeIs('winery.wines.create') || request()->routeIs('winery.wines.edit') || request()->routeIs('winery.wines.show')],
             ['icon' => 'queue-list',          'label' => __('Timeline'),              'route' => 'winery.wines.timeline',             'active' => request()->routeIs('winery.wines.timeline')],
             ['divider' => true, 'label' => __('Operaciones')],
-            ['icon' => 'fire',                'label' => __('Controles Fermentación'),'route' => 'winery.fermentation-controls.index','active' => request()->routeIs('winery.fermentation-controls*')],
+            ['icon' => 'fire',                'label' => __('Controles Fermentación'), 'route' => 'winery.fermentation-controls.index', 'active' => request()->routeIs('winery.fermentation-controls*')],
             ['icon' => 'arrow-path',          'label' => __('Traslados'),             'route' => 'winery.wine-transfers.index',       'active' => request()->routeIs('winery.wine-transfers*')],
             ['icon' => 'funnel',              'label' => __('Coupage'),               'route' => 'winery.coupage.index',              'active' => request()->routeIs('winery.coupage*')],
             ['icon' => 'exclamation-circle',  'label' => __('Mermas'),                'route' => 'winery.wine-losses.index',          'active' => request()->routeIs('winery.wine-losses*')],
@@ -97,11 +97,11 @@ class WineryMenu
 
         // ── Parcelas y Análisis ──────────────────────────────────────────
         $menu['territory'] = [
-            ['icon' => 'map',                   'label' => __('Parcelas'),            'route' => 'winery.plots.index',             'active' => request()->routeIs('winery.plots*') && !request()->routeIs('plots.plantings.*')],
+            ['icon' => 'map',                   'label' => __('Parcelas'),            'route' => 'winery.plots.index',             'active' => request()->routeIs('winery.plots*') && ! request()->routeIs('plots.plantings.*')],
             ['icon' => 'book-open',             'label' => __('Plantaciones'),        'route' => 'plots.plantings.index',          'active' => request()->routeIs('plots.plantings.*')],
             ['icon' => 'map-pin',               'label' => __('SIGPAC'),              'route' => 'sigpac.codes',                   'active' => request()->routeIs('sigpac.*')],
             ['icon' => 'globe-europe-africa',   'label' => __('Gestión Territorial'), 'route' => 'plots.territory',                'active' => request()->routeIs('plots.territory')],
-            ['icon' => 'pencil-square',         'label' => __('Actividades de Campo'),'route' => 'winery.field-activities.index',  'active' => request()->routeIs('winery.field-activities*')],
+            ['icon' => 'pencil-square',         'label' => __('Actividades de Campo'), 'route' => 'winery.field-activities.index',  'active' => request()->routeIs('winery.field-activities*')],
         ];
 
         $menu['analytics'] = [
@@ -116,7 +116,7 @@ class WineryMenu
         // ── Negocio ──────────────────────────────────────────────────────
         $menu['billing'] = [
             ['icon' => 'chart-bar-square',        'label' => __('Resumen Económico'),       'route' => 'winery.financial-summary.index',      'active' => request()->routeIs('winery.financial-summary*')],
-            ['icon' => 'presentation-chart-bar',  'label' => __('Estadísticas Financieras'),'route' => 'winery.financial-stats.index',         'active' => request()->routeIs('winery.financial-stats*')],
+            ['icon' => 'presentation-chart-bar',  'label' => __('Estadísticas Financieras'), 'route' => 'winery.financial-stats.index',         'active' => request()->routeIs('winery.financial-stats*')],
             ['divider' => true],
             ['icon' => 'arrow-down-tray',         'label' => __('Compra de Uva'),           'route' => 'winery.invoices.grape-purchase.index', 'active' => request()->routeIs('winery.invoices.grape-purchase*')],
             ['icon' => 'arrow-up-tray',           'label' => __('Venta de Productos'),      'route' => 'winery.invoices.products.index',       'active' => request()->routeIs('winery.invoices.products*')],
@@ -148,8 +148,8 @@ class WineryMenu
     // ── Secciones compartidas (usadas también por ProducerMenu) ───────────────
 
     /**
-     * @param bool $operacionesAfterSalas  true = Operaciones de Bodega aparece justo después
-     *                                     de Salas (orden Producer); false = al final (orden Winery)
+     * @param bool $operacionesAfterSalas true = Operaciones de Bodega aparece justo después
+     *                                    de Salas (orden Producer); false = al final (orden Winery)
      */
     public static function cellarElaboration(string $prefix, bool $operacionesAfterSalas = false): array
     {
@@ -160,7 +160,7 @@ class WineryMenu
             ['icon' => 'map',               'label' => __('Mapa de Bodega'),    'route' => "{$prefix}.containers.map",                'active' => request()->routeIs("{$prefix}.containers.map")],
             ['icon' => 'chart-bar-square',  'label' => __('Analítica'),         'route' => "{$prefix}.containers.analytics",          'active' => request()->routeIs("{$prefix}.containers.analytics")],
             ['icon' => 'home-modern',       'label' => __('Salas de Bodega'),   'route' => "{$prefix}.container-rooms.index",          'active' => request()->routeIs("{$prefix}.container-rooms*")],
-            ['icon' => 'wrench-screwdriver','label' => __('Mantenimientos'),    'route' => "{$prefix}.container-maintenances.index",   'active' => request()->routeIs("{$prefix}.container-maintenances*")],
+            ['icon' => 'wrench-screwdriver', 'label' => __('Mantenimientos'),    'route' => "{$prefix}.container-maintenances.index",   'active' => request()->routeIs("{$prefix}.container-maintenances*")],
         ];
 
         if ($operacionesAfterSalas) {
@@ -172,7 +172,7 @@ class WineryMenu
             ['icon' => 'beaker',              'label' => __('Vinos'),                 'route' => "{$prefix}.wines.index",                   'active' => request()->routeIs("{$prefix}.wines.index") || request()->routeIs("{$prefix}.wines.create") || request()->routeIs("{$prefix}.wines.edit") || request()->routeIs("{$prefix}.wines.show")],
             ['icon' => 'queue-list',          'label' => __('Timeline de Vinos'),     'route' => "{$prefix}.wines.timeline",                'active' => request()->routeIs("{$prefix}.wines.timeline")],
             ['divider' => true, 'label' => __('Operaciones')],
-            ['icon' => 'fire',                'label' => __('Controles Fermentación'),'route' => "{$prefix}.fermentation-controls.index",   'active' => request()->routeIs("{$prefix}.fermentation-controls*")],
+            ['icon' => 'fire',                'label' => __('Controles Fermentación'), 'route' => "{$prefix}.fermentation-controls.index",   'active' => request()->routeIs("{$prefix}.fermentation-controls*")],
             ['icon' => 'arrow-path',          'label' => __('Traslados'),             'route' => "{$prefix}.wine-transfers.index",          'active' => request()->routeIs("{$prefix}.wine-transfers*")],
             ['icon' => 'funnel',              'label' => __('Coupage'),               'route' => "{$prefix}.coupage.index",                 'active' => request()->routeIs("{$prefix}.coupage*")],
             ['icon' => 'exclamation-circle',  'label' => __('Mermas'),                'route' => "{$prefix}.wine-losses.index",             'active' => request()->routeIs("{$prefix}.wine-losses*")],
@@ -183,7 +183,7 @@ class WineryMenu
             ['icon' => 'archive-box',         'label' => __('Uva / Mosto externo'),  'route' => "{$prefix}.external-grape.index",          'active' => request()->routeIs("{$prefix}.external-grape*")],
         ];
 
-        if (!$operacionesAfterSalas) {
+        if (! $operacionesAfterSalas) {
             $bottom[] = $operaciones;
         }
 
@@ -191,7 +191,7 @@ class WineryMenu
     }
 
     /**
-     * @param array $extraItems  Items adicionales a añadir al final (con divider incluido si se necesita)
+     * @param array $extraItems Items adicionales a añadir al final (con divider incluido si se necesita)
      */
     public static function cellarOutput(string $prefix, array $extraItems = []): array
     {
@@ -201,7 +201,7 @@ class WineryMenu
             ['icon' => 'shield-check',            'label' => __('Auditoría de Stock'),      'route' => "{$prefix}.product-lots.audit",    'active' => request()->routeIs("{$prefix}.product-lots.audit")],
             ['icon' => 'magnifying-glass-circle', 'label' => __('Trazabilidad'),            'route' => "{$prefix}.traceability.index",    'active' => request()->routeIs("{$prefix}.traceability*")],
             ['divider' => true],
-            ['icon' => 'archive-box-arrow-down',  'label' => __('Embotellado y Etiquetado'),'route' => "{$prefix}.bottling.index",        'active' => request()->routeIs("{$prefix}.bottling*") || request()->routeIs("{$prefix}.label-batches*") || request()->routeIs("{$prefix}.labeling*")],
+            ['icon' => 'archive-box-arrow-down',  'label' => __('Embotellado y Etiquetado'), 'route' => "{$prefix}.bottling.index",        'active' => request()->routeIs("{$prefix}.bottling*") || request()->routeIs("{$prefix}.label-batches*") || request()->routeIs("{$prefix}.labeling*")],
             ['icon' => 'document-text',           'label' => __('Fichas Técnicas y Catas'), 'route' => "{$prefix}.product-sheets.index", 'active' => request()->routeIs("{$prefix}.product-sheets*") || request()->routeIs("{$prefix}.tasting-notes*")],
             ['icon' => 'archive-box-x-mark',      'label' => __('Subproductos'),            'route' => "{$prefix}.subproducts.index",    'active' => request()->routeIs("{$prefix}.subproducts*")],
         ];
@@ -210,7 +210,7 @@ class WineryMenu
     }
 
     /**
-     * @param bool $silicieWip       true = SILICIE e INFOVI marcados como wip (Producer aún no los tiene activos)
+     * @param bool $silicieWip        true = SILICIE e INFOVI marcados como wip (Producer aún no los tiene activos)
      * @param bool $includeDocumentos true = añade "Documentos Bodega" al final (Producer lo tiene en esta sección)
      */
     public static function wineryCompliance(string $prefix, bool $silicieWip = false, bool $includeDocumentos = false): array

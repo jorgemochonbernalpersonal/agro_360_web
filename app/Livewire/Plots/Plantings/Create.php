@@ -18,30 +18,47 @@ class Create extends Component
     public Plot $plot;
 
     public $name = '';
+
     public $grape_variety_id = '';
+
     public $area_planted = '';
+
     public $harvest_limit_kg = '';
+
     public $planting_year = '';
+
     public $vine_count = '';
+
     public $density = '';
+
     public $row_spacing = '';
+
     public $vine_spacing = '';
+
     public $rootstock = '';
+
     public $training_system_id = '';
+
     public $irrigated = false;
+
     public $status = 'active';
+
     public $notes = '';
 
     // Campos PAC
     public $planting_authorization = '';
+
     public $authorization_date = '';
+
     public $right_type = '';
+
     public $uprooting_date = '';
+
     public $designation_of_origin = '';
 
     public function mount(Plot $plot): void
     {
-        if (!Auth::user()->can('update', $plot)) {
+        if (! Auth::user()->can('update', $plot)) {
             abort(403);
         }
 
@@ -50,7 +67,7 @@ class Create extends Component
 
     public function updatedAreaPlanted(): void
     {
-        if (!$this->area_planted) {
+        if (! $this->area_planted) {
             return;
         }
 
@@ -60,40 +77,13 @@ class Create extends Component
         }
     }
 
-    protected function rules(): array
-    {
-        $isWinery = Auth::user()->hasWineryAccess();
-
-        return [
-            'name'               => 'nullable|string|max:255',
-            'grape_variety_id'   => 'required|exists:grape_varieties,id',
-            'area_planted'       => $isWinery ? 'nullable|numeric|min:0.001' : 'required|numeric|min:0.001',
-            'harvest_limit_kg'   => 'nullable|numeric|min:0',
-            'planting_year'      => 'nullable|integer|min:1900|max:' . now()->year,
-            'vine_count'         => 'nullable|integer|min:0',
-            'density'            => 'nullable|integer|min:0',
-            'row_spacing'        => 'nullable|numeric|min:0',
-            'vine_spacing'       => 'nullable|numeric|min:0',
-            'rootstock'          => 'nullable|string|max:255',
-            'training_system_id' => 'nullable|exists:training_systems,id',
-            'irrigated'          => 'boolean',
-            'status'             => 'required|in:active,removed,experimental,replanting',
-            'notes'              => 'nullable|string',
-            // Campos PAC
-            'planting_authorization' => 'nullable|string|max:255',
-            'authorization_date'     => 'nullable|date',
-            'right_type'             => 'nullable|in:nueva,replantacion,conversion,transferencia',
-            'uprooting_date'         => 'nullable|date',
-            'designation_of_origin'  => 'nullable|string|max:255',
-        ];
-    }
-
     public function save()
     {
         $this->validate();
 
-        if (!Auth::user()->hasWineryAccess() && empty($this->vine_count) && empty($this->density)) {
+        if (! Auth::user()->hasWineryAccess() && empty($this->vine_count) && empty($this->density)) {
             $this->addError('vine_count', __('Debe indicar el número de cepas o la densidad de plantación.'));
+
             return;
         }
 
@@ -134,7 +124,7 @@ class Create extends Component
     public function render()
     {
         $user = Auth::user();
-        $wineryOnly = $user->hasWineryAccess() && !$user->hasViticulturistAccess();
+        $wineryOnly = $user->hasWineryAccess() && ! $user->hasViticulturistAccess();
 
         $varietyQuery = GrapeVariety::active()->orderBy('name');
         if ($wineryOnly) {
@@ -142,9 +132,37 @@ class Create extends Component
         }
 
         return view('livewire.plots.plantings.create', [
-            'grapeVarieties'  => $varietyQuery->get(),
+            'grapeVarieties' => $varietyQuery->get(),
             'trainingSystems' => TrainingSystem::where('active', true)->orderBy('name')->get(),
-            'wineryOnly'      => $wineryOnly,
+            'wineryOnly' => $wineryOnly,
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        $isWinery = Auth::user()->hasWineryAccess();
+
+        return [
+            'name' => 'nullable|string|max:255',
+            'grape_variety_id' => 'required|exists:grape_varieties,id',
+            'area_planted' => $isWinery ? 'nullable|numeric|min:0.001' : 'required|numeric|min:0.001',
+            'harvest_limit_kg' => 'nullable|numeric|min:0',
+            'planting_year' => 'nullable|integer|min:1900|max:'.now()->year,
+            'vine_count' => 'nullable|integer|min:0',
+            'density' => 'nullable|integer|min:0',
+            'row_spacing' => 'nullable|numeric|min:0',
+            'vine_spacing' => 'nullable|numeric|min:0',
+            'rootstock' => 'nullable|string|max:255',
+            'training_system_id' => 'nullable|exists:training_systems,id',
+            'irrigated' => 'boolean',
+            'status' => 'required|in:active,removed,experimental,replanting',
+            'notes' => 'nullable|string',
+            // Campos PAC
+            'planting_authorization' => 'nullable|string|max:255',
+            'authorization_date' => 'nullable|date',
+            'right_type' => 'nullable|in:nueva,replantacion,conversion,transferencia',
+            'uprooting_date' => 'nullable|date',
+            'designation_of_origin' => 'nullable|string|max:255',
+        ];
     }
 }

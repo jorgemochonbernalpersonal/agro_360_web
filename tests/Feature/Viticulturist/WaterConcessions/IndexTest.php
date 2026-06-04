@@ -9,18 +9,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeConcession(int $viticulturistId, bool $active = true, array $overrides = []): WaterConcession
-    {
-        return WaterConcession::create(array_merge([
-            'viticulturist_id' => $viticulturistId,
-            'concession_type'  => 'superficial',
-            'water_body'       => 'Río Duero',
-            'authority'        => 'CHD',
-            'max_volume_m3'    => 10000.000,
-            'active'           => $active,
-        ], $overrides));
-    }
-
     public function test_index_shows_active_concessions(): void
     {
         $v = $this->makeViticulturist();
@@ -32,7 +20,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_archive_sets_active_false(): void
     {
-        $v          = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $concession = $this->makeConcession($v->id);
         $this->actingAs($v);
 
@@ -43,7 +31,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_unarchive_restores_record(): void
     {
-        $v          = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $concession = $this->makeConcession($v->id, false);
         $this->actingAs($v);
 
@@ -67,7 +55,7 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_delete_removes_archived_record(): void
     {
-        $v          = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $concession = $this->makeConcession($v->id, false);
         $this->actingAs($v);
 
@@ -80,8 +68,8 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_cannot_archive_other_viticulturists_concession(): void
     {
-        $v          = $this->makeViticulturist();
-        $other      = $this->makeOtherViticulturist();
+        $v = $this->makeViticulturist();
+        $other = $this->makeOtherViticulturist();
         $concession = $this->makeConcession($v->id);
         $this->actingAs($other);
 
@@ -99,5 +87,17 @@ class IndexTest extends ViticulturistTestCase
 
         // Stats are returned via viewData — check the component renders without error
         Livewire::test(Index::class)->assertOk();
+    }
+
+    private function makeConcession(int $viticulturistId, bool $active = true, array $overrides = []): WaterConcession
+    {
+        return WaterConcession::create(array_merge([
+            'viticulturist_id' => $viticulturistId,
+            'concession_type' => 'superficial',
+            'water_body' => 'Río Duero',
+            'authority' => 'CHD',
+            'max_volume_m3' => 10000.000,
+            'active' => $active,
+        ], $overrides));
     }
 }

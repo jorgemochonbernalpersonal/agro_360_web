@@ -19,10 +19,10 @@ Route::middleware(['role:admin'])
 
         // Usuarios
         Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/',             \App\Livewire\Admin\Users\Index::class)->name('index');
-            Route::get('/duplicates',   \App\Livewire\Admin\Users\Duplicates::class)->name('duplicates');
-            Route::get('/approvals',    \App\Livewire\Admin\Users\Approvals::class)->name('approvals');
-            Route::get('/{user}',       \App\Livewire\Admin\Users\Show::class)->name('show');
+            Route::get('/', \App\Livewire\Admin\Users\Index::class)->name('index');
+            Route::get('/duplicates', \App\Livewire\Admin\Users\Duplicates::class)->name('duplicates');
+            Route::get('/approvals', \App\Livewire\Admin\Users\Approvals::class)->name('approvals');
+            Route::get('/{user}', \App\Livewire\Admin\Users\Show::class)->name('show');
         });
 
         // Soporte

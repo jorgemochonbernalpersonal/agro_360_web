@@ -33,6 +33,8 @@ class ReportFailedNotification extends Notification implements ShouldQueue
 
     /**
      * Get the array representation of the notification.
+     *
+     * @param mixed $notifiable
      */
     public function toArray($notifiable): array
     {

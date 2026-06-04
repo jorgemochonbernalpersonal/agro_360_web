@@ -2,9 +2,7 @@
 
 namespace Tests\Feature\Supervisor\Census;
 
-use App\Models\SupervisorWinery;
 use App\Models\User;
-use App\Models\WineryViticulturist;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -33,7 +31,7 @@ class IndexTest extends SupervisorTestCase
     public function test_viticulturist_cannot_access_census(): void
     {
         $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
@@ -57,7 +55,7 @@ class IndexTest extends SupervisorTestCase
     public function test_census_does_not_show_unassigned_wineries(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $winery->update(['name' => 'Bodega Ajena']);
 
         $this->actingAs($supervisor)

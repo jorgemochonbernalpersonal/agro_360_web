@@ -32,6 +32,7 @@ class WineryYieldForecastsSeeder extends Seeder
 
         if (empty($viticulturistIds)) {
             $this->command->warn('  ⚠️  Sin viticultores vinculados. Saltando previsiones de rendimiento.');
+
             return;
         }
 
@@ -43,6 +44,7 @@ class WineryYieldForecastsSeeder extends Seeder
 
         if (empty($wineryCampaigns)) {
             $this->command->warn('  ⚠️  Sin campañas de bodega. Ejecuta WineryGrapeReceptionsSeeder primero.');
+
             return;
         }
 
@@ -61,6 +63,7 @@ class WineryYieldForecastsSeeder extends Seeder
 
         if ($plotPlantings->isEmpty()) {
             $this->command->warn('  ⚠️  Sin plantaciones de viticultores vinculados.');
+
             return;
         }
 
@@ -74,21 +77,23 @@ class WineryYieldForecastsSeeder extends Seeder
         $batches = DB::table('grape_reception_batches')
             ->where('winery_id', self::WINERY_USER_ID)
             ->get()
-            ->keyBy(fn($b) => $b->plot_planting_id . '_' . $b->vintage_year);
+            ->keyBy(fn ($b) => $b->plot_planting_id.'_'.$b->vintage_year);
 
-        $forecastRows    = [];
-        $estimatedRows   = [];
-        $totalForecasts  = 0;
-        $totalEstimates  = 0;
+        $forecastRows = [];
+        $estimatedRows = [];
+        $totalForecasts = 0;
+        $totalEstimates = 0;
         $idx = 0;
 
         foreach ($plotPlantings as $planting) {
             foreach ([2023, 2024, 2025] as $vintage) {
                 $wineryCampaignId = $wineryCampaigns[$vintage] ?? null;
-                if (!$wineryCampaignId) continue;
+                if (! $wineryCampaignId) {
+                    continue;
+                }
 
-                $batchKey = $planting->id . '_' . $vintage;
-                $batch    = $batches->get($batchKey);
+                $batchKey = $planting->id.'_'.$vintage;
+                $batch = $batches->get($batchKey);
                 $receivedKg = $batch ? (float) $batch->total_weight_kg : 0;
 
                 // ── Previsión de bodega (winery_yield_forecast) ──────────
@@ -107,7 +112,7 @@ class WineryYieldForecastsSeeder extends Seeder
                 // Past vintages: confirmed; 2025: mix of confirmed and draft
                 $forecastStatus = match ($vintage) {
                     2023, 2024 => 'confirmed',
-                    2025       => $idx % 4 === 0 ? 'draft' : 'confirmed',
+                    2025 => $idx % 4 === 0 ? 'draft' : 'confirmed',
                 };
 
                 $daysAgo = match ($vintage) {
@@ -119,17 +124,17 @@ class WineryYieldForecastsSeeder extends Seeder
                 $forecastNotes = $this->forecastNote($vintage, $forecastStatus, $variationPct);
 
                 $forecastRows[] = [
-                    'winery_id'        => self::WINERY_USER_ID,
+                    'winery_id' => self::WINERY_USER_ID,
                     'viticulturist_id' => $planting->viticulturist_id,
                     'plot_planting_id' => $planting->id,
-                    'campaign_id'      => $wineryCampaignId,
-                    'vintage_year'     => $vintage,
-                    'estimated_kg'     => max(100, $estimatedKg),
-                    'estimation_date'  => now()->subDays($daysAgo)->toDateString(),
-                    'status'           => $forecastStatus,
-                    'notes'            => $forecastNotes,
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
+                    'campaign_id' => $wineryCampaignId,
+                    'vintage_year' => $vintage,
+                    'estimated_kg' => max(100, $estimatedKg),
+                    'estimation_date' => now()->subDays($daysAgo)->toDateString(),
+                    'status' => $forecastStatus,
+                    'notes' => $forecastNotes,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
                 $totalForecasts++;
 
@@ -141,7 +146,7 @@ class WineryYieldForecastsSeeder extends Seeder
                 if ($vitCampaignForYear) {
                     // Viticulturist estimate: close to actual but from field sampling perspective
                     $viticVariation = mt_rand(-10, 15) / 100;
-                    $viticEstimate  = $receivedKg > 0
+                    $viticEstimate = $receivedKg > 0
                         ? round($receivedKg * (1 + $viticVariation), 2)
                         : round(($planting->area_planted ?? 1) * mt_rand(3500, 6500), 2);
 
@@ -149,31 +154,31 @@ class WineryYieldForecastsSeeder extends Seeder
                     $yieldPerHa = $area > 0 ? round($viticEstimate / $area, 2) : null;
 
                     // Field sampling data (realistic for Canarian viticulture)
-                    $bunchesPerPlant   = mt_rand(8, 18);
-                    $bunchWeightGrams  = mt_rand(120, 280);
+                    $bunchesPerPlant = mt_rand(8, 18);
+                    $bunchWeightGrams = mt_rand(120, 280);
                     $totalPlantsSampled = mt_rand(15, 40);
 
                     $estimatedRows[] = [
-                        'plot_planting_id'          => $planting->id,
-                        'campaign_id'               => $vitCampaignForYear->id,
-                        'estimated_by'              => $planting->viticulturist_id,
-                        'vintage'                   => $vintage,
+                        'plot_planting_id' => $planting->id,
+                        'campaign_id' => $vitCampaignForYear->id,
+                        'estimated_by' => $planting->viticulturist_id,
+                        'vintage' => $vintage,
                         'estimated_yield_per_hectare' => $yieldPerHa,
-                        'estimated_total_yield'     => max(50, $viticEstimate),
-                        'estimation_date'           => now()->subDays($daysAgo + mt_rand(5, 30))->toDateString(),
-                        'estimation_method'         => ['visual', 'sampling', 'historical', 'satellite', 'other'][mt_rand(0, 4)],
-                        'estimation_round'          => $vintage < 2025 ? 4 : mt_rand(2, 3),
-                        'status'                    => $vintage < 2025 ? 'confirmed' : ($idx % 5 === 0 ? 'draft' : 'confirmed'),
-                        'active'                    => true,
-                        'bunches_per_plant'         => $bunchesPerPlant,
-                        'bunch_weight_grams'        => $bunchWeightGrams,
-                        'total_plants_sampled'      => $totalPlantsSampled,
-                        'health_percentage'         => round(mt_rand(85, 100), 1),
-                        'health_status'             => $idx % 8 === 0 ? 'good' : 'excellent',
-                        'potential_alcohol'         => round(mt_rand(115, 145) / 10, 1),
-                        'notes'                     => $this->estimateNote($vintage),
-                        'created_at'                => $now,
-                        'updated_at'                => $now,
+                        'estimated_total_yield' => max(50, $viticEstimate),
+                        'estimation_date' => now()->subDays($daysAgo + mt_rand(5, 30))->toDateString(),
+                        'estimation_method' => ['visual', 'sampling', 'historical', 'satellite', 'other'][mt_rand(0, 4)],
+                        'estimation_round' => $vintage < 2025 ? 4 : mt_rand(2, 3),
+                        'status' => $vintage < 2025 ? 'confirmed' : ($idx % 5 === 0 ? 'draft' : 'confirmed'),
+                        'active' => true,
+                        'bunches_per_plant' => $bunchesPerPlant,
+                        'bunch_weight_grams' => $bunchWeightGrams,
+                        'total_plants_sampled' => $totalPlantsSampled,
+                        'health_percentage' => round(mt_rand(85, 100), 1),
+                        'health_status' => $idx % 8 === 0 ? 'good' : 'excellent',
+                        'potential_alcohol' => round(mt_rand(115, 145) / 10, 1),
+                        'notes' => $this->estimateNote($vintage),
+                        'created_at' => $now,
+                        'updated_at' => $now,
                     ];
                     $totalEstimates++;
                 }
@@ -183,13 +188,13 @@ class WineryYieldForecastsSeeder extends Seeder
         }
 
         // ── Insertar por lotes ───────────────────────────────────────────────
-        if (!empty($forecastRows)) {
+        if (! empty($forecastRows)) {
             foreach (array_chunk($forecastRows, 50) as $chunk) {
                 DB::table('winery_yield_forecasts')->insert($chunk);
             }
         }
 
-        if (!empty($estimatedRows)) {
+        if (! empty($estimatedRows)) {
             foreach (array_chunk($estimatedRows, 50) as $chunk) {
                 DB::table('estimated_yields')->insert($chunk);
             }
@@ -236,7 +241,7 @@ class WineryYieldForecastsSeeder extends Seeder
             ->pluck('viticulturist_id')
             ->toArray();
 
-        if (!empty($viticulturistIds)) {
+        if (! empty($viticulturistIds)) {
             DB::table('estimated_yields')
                 ->whereIn('estimated_by', $viticulturistIds)
                 ->delete();

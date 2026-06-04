@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -15,7 +13,7 @@ return new class extends Migration
         $connection = Schema::getConnection();
 
         // Helper para crear índices de forma idempotente usando SQL crudo
-        $createIndexIfNotExists = function($table, $columns, $indexName) use ($connection) {
+        $createIndexIfNotExists = function ($table, $columns, $indexName) use ($connection) {
             $columnsList = is_array($columns) ? implode(', ', $columns) : $columns;
             $connection->statement("CREATE INDEX IF NOT EXISTS {$indexName} ON {$table} ({$columnsList})");
         };

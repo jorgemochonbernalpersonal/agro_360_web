@@ -22,8 +22,8 @@ class PacDeclarationController extends Controller
             'data' => $items->map(fn ($d) => $this->format($d)),
             'meta' => [
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -31,15 +31,15 @@ class PacDeclarationController extends Controller
     private function format(PacDeclaration $d): array
     {
         return [
-            'id'                  => $d->id,
-            'year'                => $d->year,
-            'reference_number'    => $d->reference_number,
-            'status'              => $d->status,
-            'submitted_at'        => $d->submitted_at?->toIso8601String(),
+            'id' => $d->id,
+            'year' => $d->year,
+            'reference_number' => $d->reference_number,
+            'status' => $d->status,
+            'submitted_at' => $d->submitted_at?->toIso8601String(),
             'total_declared_area' => $d->total_declared_area,
             'total_eligible_area' => $d->total_eligible_area,
-            'notes'               => $d->notes,
-            'created_at'          => $d->created_at->toIso8601String(),
+            'notes' => $d->notes,
+            'created_at' => $d->created_at->toIso8601String(),
         ];
     }
 }

@@ -7,7 +7,7 @@ use App\Models\PlotRemoteSensing;
 
 /**
  * Leaf Area Index (LAI) Calculator
- * 
+ *
  * LAI represents the total one-sided leaf area per unit ground area
  * Used for: Yield prediction, canopy management, treatment optimization
  */
@@ -15,8 +15,11 @@ class LAICalculator
 {
     // Calibration constants for vineyards
     private const K_EXTINCTION = 0.5;        // Light extinction coefficient for vineyards
+
     private const NDVI_MIN = 0.2;            // Bare soil NDVI
+
     private const NDVI_MAX = 0.9;            // Dense vegetation NDVI
+
     private const MAX_LAI_VINEYARD = 5.0;    // Maximum LAI for vineyards
 
     /**
@@ -24,6 +27,7 @@ class LAICalculator
      * Uses empirical relationship: LAI = -ln(1 - fCover) / k
      *
      * @param float $ndvi NDVI value (-1 to 1)
+     *
      * @return float LAI value (0 to ~5 for vineyards)
      */
     public function calculateFromNDVI(float $ndvi): float
@@ -53,6 +57,7 @@ class LAICalculator
      * Get LAI classification for vineyards
      *
      * @param float $lai LAI value
+     *
      * @return array Classification with status, color, and description
      */
     public function classifyLAI(float $lai): array
@@ -100,9 +105,10 @@ class LAICalculator
      * Estimate yield based on LAI
      * Empirical relationship for vineyards
      *
-     * @param float $lai LAI value
-     * @param float $areaHa Plot area in hectares
+     * @param float       $lai         LAI value
+     * @param float       $areaHa      Plot area in hectares
      * @param string|null $varietyType Vine variety type (red/white)
+     *
      * @return array Yield estimation
      */
     public function estimateYield(float $lai, float $areaHa, ?string $varietyType = 'red'): array
@@ -114,11 +120,11 @@ class LAICalculator
 
         // Calculate estimated yield
         $yieldPerHa = $lai * $baseYieldPerLAI;
-        
+
         // Apply realistic caps based on variety
         $maxYield = $varietyType === 'white' ? 15000 : 12000;
         $minYield = 1000;
-        
+
         $yieldPerHa = max($minYield, min($maxYield, $yieldPerHa));
         $totalYield = $yieldPerHa * $areaHa;
 
@@ -133,26 +139,11 @@ class LAICalculator
     }
 
     /**
-     * Get confidence level for prediction
-     *
-     * @param float $lai LAI value
-     * @return string Confidence level
-     */
-    private function getConfidence(float $lai): string
-    {
-        return match (true) {
-            $lai < 0.5 => 'very_low',    // Too little vegetation
-            $lai < 1.0 => 'low',
-            $lai < 4.0 => 'high',        // Sweet spot for vineyards
-            default => 'medium',         // Very dense, might have issues
-        };
-    }
-
-    /**
      * Calculate LAI for a plot with historical context
      *
-     * @param PlotRemoteSensing $current Current data
+     * @param PlotRemoteSensing      $current  Current data
      * @param PlotRemoteSensing|null $lastYear Data from same period last year
+     *
      * @return array Complete LAI analysis
      */
     public function getCompleteAnalysis(
@@ -172,7 +163,7 @@ class LAICalculator
         if ($lastYear) {
             $lastYearLAI = $this->calculateFromNDVI($lastYear->ndvi_mean);
             $change = $currentLAI - $lastYearLAI;
-            $changePercent = $lastYearLAI > 0 
+            $changePercent = $lastYearLAI > 0
                 ? (($change / $lastYearLAI) * 100)
                 : 0;
 
@@ -194,8 +185,9 @@ class LAICalculator
     /**
      * Get LAI-based recommendations for vineyard management
      *
-     * @param float $lai Current LAI
-     * @param int $month Current month
+     * @param float $lai   Current LAI
+     * @param int   $month Current month
+     *
      * @return array Recommendations
      */
     public function getManagementRecommendations(float $lai, int $month): array
@@ -262,21 +254,39 @@ class LAICalculator
      * Calculate optimal treatment dose based on LAI
      * Higher LAI = more leaf area = more product needed
      *
-     * @param float $lai Current LAI
+     * @param float $lai               Current LAI
      * @param float $baseDoLitersPerHa Base dose (L/ha)
+     *
      * @return float Adjusted dose
      */
     public function adjustTreatmentDose(float $lai, float $baseDoseLitersPerHa): float
     {
         // Reference LAI for standard dose
         $referenceLAI = 2.5;
-        
+
         // Adjustment factor
         $factor = $lai / $referenceLAI;
-        
+
         // Apply limits (don't go below 50% or above 150% of base)
         $factor = max(0.5, min(1.5, $factor));
-        
+
         return round($baseDoseLitersPerHa * $factor, 1);
+    }
+
+    /**
+     * Get confidence level for prediction
+     *
+     * @param float $lai LAI value
+     *
+     * @return string Confidence level
+     */
+    private function getConfidence(float $lai): string
+    {
+        return match (true) {
+            $lai < 0.5 => 'very_low',    // Too little vegetation
+            $lai < 1.0 => 'low',
+            $lai < 4.0 => 'high',        // Sweet spot for vineyards
+            default => 'medium',         // Very dense, might have issues
+        };
     }
 }

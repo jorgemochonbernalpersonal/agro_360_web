@@ -12,12 +12,17 @@ class CreatePruning extends AbstractActivityForm
 {
     // ─── Type-specific properties ─────────────────────────────────────────────
 
-    public $pruning_type                = '';
+    public $pruning_type = '';
+
     public $productive_buds_per_hectare = '';
-    public $residue_management          = '';
-    public $hours_worked                = '';
-    public $workers_count               = '';
-    public $description                 = '';
+
+    public $residue_management = '';
+
+    public $hours_worked = '';
+
+    public $workers_count = '';
+
+    public $description = '';
 
     // ─── Mount ────────────────────────────────────────────────────────────────
 
@@ -25,20 +30,6 @@ class CreatePruning extends AbstractActivityForm
     {
         $this->mountCreate();
         $this->phenological_stage = 'Reposo invernal';
-    }
-
-    // ─── Validation ───────────────────────────────────────────────────────────
-
-    protected function rules(): array
-    {
-        return array_merge($this->commonRules(), [
-            'pruning_type'                => 'required|in:guyot,doble_guyot,vaso,cordon,otro',
-            'productive_buds_per_hectare' => 'nullable|integer|min:0',
-            'residue_management'          => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
-            'hours_worked'                => 'nullable|numeric|min:0',
-            'workers_count'               => 'nullable|integer|min:1',
-            'description'                 => 'required|string|min:10',
-        ]);
     }
 
     // ─── Save ─────────────────────────────────────────────────────────────────
@@ -67,18 +58,19 @@ class CreatePruning extends AbstractActivityForm
                 );
 
                 CulturalWork::create([
-                    'activity_id'                 => $activity->id,
-                    'work_type'                   => 'poda',
-                    'pruning_type'                => $this->pruning_type,
+                    'activity_id' => $activity->id,
+                    'work_type' => 'poda',
+                    'pruning_type' => $this->pruning_type,
                     'productive_buds_per_hectare' => $this->productive_buds_per_hectare ?: null,
-                    'residue_management'          => $this->residue_management ?: null,
-                    'hours_worked'                => $this->hours_worked ?: null,
-                    'workers_count'               => $this->workers_count ?: null,
-                    'description'                 => $this->description,
+                    'residue_management' => $this->residue_management ?: null,
+                    'hours_worked' => $this->hours_worked ?: null,
+                    'workers_count' => $this->workers_count ?: null,
+                    'description' => $this->description,
                 ]);
             });
 
             $this->toastSuccess(__('Poda registrada correctamente.'));
+
             return $this->viticulturistRoleRedirect('digital-notebook.pruning.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar poda', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
@@ -94,5 +86,19 @@ class CreatePruning extends AbstractActivityForm
     {
         return view('livewire.viticulturist.digital-notebook.create-pruning', $this->renderData())
             ->layout('layouts.app', ['title' => __('Registrar Poda - Agro365')]);
+    }
+
+    // ─── Validation ───────────────────────────────────────────────────────────
+
+    protected function rules(): array
+    {
+        return array_merge($this->commonRules(), [
+            'pruning_type' => 'required|in:guyot,doble_guyot,vaso,cordon,otro',
+            'productive_buds_per_hectare' => 'nullable|integer|min:0',
+            'residue_management' => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
+            'hours_worked' => 'nullable|numeric|min:0',
+            'workers_count' => 'nullable|integer|min:1',
+            'description' => 'required|string|min:10',
+        ]);
     }
 }

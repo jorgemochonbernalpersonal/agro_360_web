@@ -4,26 +4,28 @@ namespace App\Livewire\Viticulturist\Inventory;
 
 use App\Models\ProductStock;
 use App\Models\ProductStockMovement;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class Movements extends Component
 {
     use WithPagination;
 
     public $stockId;
+
     public $dateFrom = '';
+
     public $dateTo = '';
 
     public function mount($stock)
     {
-        if (!Auth::user()->hasViticulturistAccess()) {
+        if (! Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
 
         $stockModel = ProductStock::findOrFail($stock);
-        
+
         // Verificar que el stock pertenece al usuario
         if ($stockModel->user_id !== Auth::id()) {
             abort(403);

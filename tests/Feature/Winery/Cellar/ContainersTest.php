@@ -15,6 +15,7 @@ use Tests\Feature\WineryTestCase;
 class ContainersTest extends WineryTestCase
 {
     private User $winery;
+
     private ContainerType $type;
 
     protected function setUp(): void
@@ -23,21 +24,6 @@ class ContainersTest extends WineryTestCase
         $this->winery = $this->makeWinery();
         $this->actingAs($this->winery);
         $this->type = ContainerType::firstOrCreate(['name' => 'Depósito Inox']);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makeContainer(array $attrs = []): Container
-    {
-        return Container::create(array_merge([
-            'user_id'       => $this->winery->id,
-            'name'          => 'Cuba Base',
-            'type_id'       => $this->type->id,
-            'capacity'      => 1000,
-            'unit'          => 'kg',
-            'used_capacity' => 0,
-            'archived'      => false,
-        ], $attrs));
     }
 
     // ── INDEX ─────────────────────────────────────────────────────────────────
@@ -193,13 +179,13 @@ class ContainersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'user_id'       => $this->winery->id,
-            'name'          => 'Cuba Mínima',
-            'type_id'       => $this->type->id,
-            'capacity'      => 1000,
-            'unit'          => 'kg',
+            'user_id' => $this->winery->id,
+            'name' => 'Cuba Mínima',
+            'type_id' => $this->type->id,
+            'capacity' => 1000,
+            'unit' => 'kg',
             'used_capacity' => 0,
-            'archived'      => false,
+            'archived' => false,
         ]);
     }
 
@@ -234,11 +220,11 @@ class ContainersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'user_id'       => $this->winery->id,
-            'name'          => 'Cuba Completa',
-            'type_id'       => $this->type->id,
-            'capacity'      => 5000,
-            'unit'          => 'kg',
+            'user_id' => $this->winery->id,
+            'name' => 'Cuba Completa',
+            'type_id' => $this->type->id,
+            'capacity' => 5000,
+            'unit' => 'kg',
             'serial_number' => 'SN-001',
             'supplier_name' => 'Inox Bodegas S.L.',
         ]);
@@ -272,7 +258,7 @@ class ContainersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'name'          => 'Cuba Nueva',
+            'name' => 'Cuba Nueva',
             'used_capacity' => 0,
         ]);
     }
@@ -284,12 +270,12 @@ class ContainersTest extends WineryTestCase
         $type2 = ContainerType::firstOrCreate(['name' => 'Barrica']);
 
         $container = $this->makeContainer([
-            'name'          => 'Barrica Original',
-            'type_id'       => $type2->id,
-            'capacity'      => 225,
-            'unit'          => 'litros',
+            'name' => 'Barrica Original',
+            'type_id' => $type2->id,
+            'capacity' => 225,
+            'unit' => 'litros',
             'serial_number' => 'BRC-042',
-            'description'   => 'Barrica de roble francés',
+            'description' => 'Barrica de roble francés',
             'supplier_name' => 'Tonnelerie Rousseau',
         ]);
         $container->purchase_date = '2022-03-10';
@@ -363,10 +349,10 @@ class ContainersTest extends WineryTestCase
     public function test_edit_rejects_capacity_below_wine_volume(): void
     {
         $container = $this->makeContainer([
-            'capacity'           => 1000,
-            'used_capacity'      => 0,
+            'capacity' => 1000,
+            'used_capacity' => 0,
             'wine_volume_liters' => 800,
-            'unit'               => 'litros',
+            'unit' => 'litros',
         ]);
 
         Livewire::test(Edit::class, ['container' => $container])
@@ -405,7 +391,7 @@ class ContainersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'id'   => $container->id,
+            'id' => $container->id,
             'unit' => 'litros',
         ]);
     }
@@ -422,7 +408,7 @@ class ContainersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'id'   => $container->id,
+            'id' => $container->id,
             'name' => 'Cuba Renovada',
         ]);
     }
@@ -445,11 +431,11 @@ class ContainersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'id'            => $container->id,
-            'name'          => 'Tinaja Actualizada',
-            'type_id'       => $type2->id,
-            'capacity'      => 3000,
-            'unit'          => 'litros',
+            'id' => $container->id,
+            'name' => 'Tinaja Actualizada',
+            'type_id' => $type2->id,
+            'capacity' => 3000,
+            'unit' => 'litros',
             'serial_number' => 'TJ-999',
             'supplier_name' => 'Alfarería Manchega',
         ]);
@@ -479,7 +465,7 @@ class ContainersTest extends WineryTestCase
     {
         $room = ContainerRoom::create([
             'user_id' => $this->winery->id,
-            'name'    => 'Sala Fermentación',
+            'name' => 'Sala Fermentación',
         ]);
 
         Livewire::test(Create::class)
@@ -491,7 +477,7 @@ class ContainersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'name'              => 'Cuba en Sala',
+            'name' => 'Cuba en Sala',
             'container_room_id' => $room->id,
         ]);
     }
@@ -516,7 +502,7 @@ class ContainersTest extends WineryTestCase
 
         $foreignRoom = ContainerRoom::create([
             'user_id' => $otherWinery->id,
-            'name'    => 'Sala Ajena',
+            'name' => 'Sala Ajena',
         ]);
 
         Livewire::test(Create::class)
@@ -532,7 +518,7 @@ class ContainersTest extends WineryTestCase
     {
         $room = ContainerRoom::create([
             'user_id' => $this->winery->id,
-            'name'    => 'Sala Crianza',
+            'name' => 'Sala Crianza',
         ]);
 
         $container = $this->makeContainer(['container_room_id' => $room->id]);
@@ -543,7 +529,7 @@ class ContainersTest extends WineryTestCase
 
     public function test_edit_assigns_room(): void
     {
-        $room      = ContainerRoom::create(['user_id' => $this->winery->id, 'name' => 'Sala Nueva']);
+        $room = ContainerRoom::create(['user_id' => $this->winery->id, 'name' => 'Sala Nueva']);
         $container = $this->makeContainer(['container_room_id' => null]);
 
         Livewire::test(Edit::class, ['container' => $container])
@@ -552,14 +538,14 @@ class ContainersTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('containers', [
-            'id'                => $container->id,
+            'id' => $container->id,
             'container_room_id' => $room->id,
         ]);
     }
 
     public function test_edit_removes_room(): void
     {
-        $room      = ContainerRoom::create(['user_id' => $this->winery->id, 'name' => 'Sala a Quitar']);
+        $room = ContainerRoom::create(['user_id' => $this->winery->id, 'name' => 'Sala a Quitar']);
         $container = $this->makeContainer(['container_room_id' => $room->id]);
 
         Livewire::test(Edit::class, ['container' => $container])
@@ -575,7 +561,7 @@ class ContainersTest extends WineryTestCase
     {
         $otherWinery = $this->makeOtherWinery();
         $foreignRoom = ContainerRoom::create(['user_id' => $otherWinery->id, 'name' => 'Sala Ajena Edit']);
-        $container   = $this->makeContainer();
+        $container = $this->makeContainer();
 
         Livewire::test(Edit::class, ['container' => $container])
             ->set('container_room_id', (string) $foreignRoom->id)
@@ -656,7 +642,7 @@ class ContainersTest extends WineryTestCase
     public function test_other_winery_cannot_access_edit_page(): void
     {
         $otherWinery = $this->makeOtherWinery();
-        $container   = $this->makeContainer();
+        $container = $this->makeContainer();
 
         $this->actingAs($otherWinery)
             ->get(route('winery.containers.edit', $container))
@@ -666,11 +652,26 @@ class ContainersTest extends WineryTestCase
     public function test_other_winery_cannot_edit_via_livewire(): void
     {
         $otherWinery = $this->makeOtherWinery();
-        $container   = $this->makeContainer();
+        $container = $this->makeContainer();
 
         $this->actingAs($otherWinery);
 
         Livewire::test(Edit::class, ['container' => $container])
             ->assertStatus(403);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makeContainer(array $attrs = []): Container
+    {
+        return Container::create(array_merge([
+            'user_id' => $this->winery->id,
+            'name' => 'Cuba Base',
+            'type_id' => $this->type->id,
+            'capacity' => 1000,
+            'unit' => 'kg',
+            'used_capacity' => 0,
+            'archived' => false,
+        ], $attrs));
     }
 }

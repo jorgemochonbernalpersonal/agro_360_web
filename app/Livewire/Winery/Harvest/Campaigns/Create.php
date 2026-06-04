@@ -11,38 +11,22 @@ class Create extends Component
 {
     use WithToastNotifications;
 
-    public string $name        = '';
-    public string $year        = '';
-    public string $start_date  = '';
-    public string $end_date    = '';
+    public string $name = '';
+
+    public string $year = '';
+
+    public string $start_date = '';
+
+    public string $end_date = '';
+
     public string $description = '';
 
     public function mount(): void
     {
-        $this->year       = (string) now()->year;
-        $this->name       = "Vendimia {$this->year}";
+        $this->year = (string) now()->year;
+        $this->name = "Vendimia {$this->year}";
         $this->start_date = now()->setMonth(8)->startOfMonth()->format('Y-m-d');
-        $this->end_date   = now()->setMonth(11)->endOfMonth()->format('Y-m-d');
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'name'        => ['required', 'string', 'max:255'],
-            'year'        => ['required', 'integer', 'min:2000', 'max:2099'],
-            'start_date'  => ['required', 'date'],
-            'end_date'    => ['required', 'date', 'after_or_equal:start_date'],
-            'description' => ['nullable', 'string', 'max:1000'],
-        ];
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'name.required'        => __('El nombre es obligatorio.'),
-            'year.required'        => __('El año es obligatorio.'),
-            'end_date.after_or_equal' => __('La fecha de fin debe ser posterior a la de inicio.'),
-        ];
+        $this->end_date = now()->setMonth(11)->endOfMonth()->format('Y-m-d');
     }
 
     public function save(): void
@@ -57,17 +41,18 @@ class Create extends Component
 
         if ($exists) {
             $this->addError('year', __('Ya existe una campaña para el año :year.', ['year' => $this->year]));
+
             return;
         }
 
         $campaign = Campaign::create([
-            'name'           => $this->name,
-            'year'           => (int) $this->year,
+            'name' => $this->name,
+            'year' => (int) $this->year,
             'viticulturist_id' => $wineryId,
-            'start_date'     => $this->start_date,
-            'end_date'       => $this->end_date,
-            'description'    => $this->description ?: null,
-            'active'         => true,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'description' => $this->description ?: null,
+            'active' => true,
         ]);
 
         // Desactivar otras campañas de la bodega
@@ -84,5 +69,25 @@ class Create extends Component
     {
         return view('livewire.winery.harvest.campaigns.create')
             ->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'year' => ['required', 'integer', 'min:2000', 'max:2099'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'name.required' => __('El nombre es obligatorio.'),
+            'year.required' => __('El año es obligatorio.'),
+            'end_date.after_or_equal' => __('La fecha de fin debe ser posterior a la de inicio.'),
+        ];
     }
 }

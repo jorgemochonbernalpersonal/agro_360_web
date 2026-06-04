@@ -16,30 +16,6 @@ use Illuminate\Validation\Rule;
 
 class ViticulturistController extends Controller
 {
-    // ─── Helper ───────────────────────────────────────────────────────────────
-
-    private function format(User $vit, WineryViticulturist $rel): array
-    {
-        $rawEmail     = $vit->email ?? '';
-        $displayEmail = str_starts_with($rawEmail, 'viticultores.') ? null : $rawEmail;
-
-        $hasPending = $vit->invitation_token !== null
-            && ($vit->invitation_expires_at === null || $vit->invitation_expires_at->isFuture());
-
-        return [
-            'id'                     => $vit->id,
-            'name'                   => $vit->name,
-            'email'                  => $displayEmail,
-            'can_login'              => (bool) $vit->can_login,
-            'source'                 => $rel->source,
-            'notes'                  => $rel->notes,
-            'notebook_access'        => (bool) $rel->notebook_access,
-            'has_pending_invitation' => $hasPending,
-            'invitation_sent_at'     => $vit->invitation_sent_at?->toIso8601String(),
-            'invitation_expires_at'  => $vit->invitation_expires_at?->toIso8601String(),
-        ];
-    }
-
     // ─── GET /winery/viticulturists ──────────────────────────────────────────
 
     public function index(Request $request): JsonResponse
@@ -52,9 +28,8 @@ class ViticulturistController extends Controller
 
         // ?with_active_plantings=1 — only viticulturists that have active plots with active plantings
         if ($request->boolean('with_active_plantings')) {
-            $query->whereHas('viticulturist.plots', fn ($q) =>
-                $q->where('active', true)
-                  ->whereHas('plantings', fn ($p) => $p->where('status', 'active'))
+            $query->whereHas('viticulturist.plots', fn ($q) => $q->where('active', true)
+                ->whereHas('plantings', fn ($p) => $p->where('status', 'active'))
             );
         }
 
@@ -77,28 +52,28 @@ class ViticulturistController extends Controller
         abort_unless($winery->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'name'  => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ], [
             'name.required' => __('El nombre es obligatorio.'),
-            'email.unique'  => __('Ya existe un usuario con este email.'),
+            'email.unique' => __('Ya existe un usuario con este email.'),
         ]);
 
         $vit = User::create([
-            'name'      => $validated['name'],
-            'email'     => $validated['email'] ?? ('viticultores.' . Str::uuid() . '@noemail.agro365.es'),
-            'role'      => 'viticulturist',
+            'name' => $validated['name'],
+            'email' => $validated['email'] ?? ('viticultores.'.Str::uuid().'@noemail.agro365.es'),
+            'role' => 'viticulturist',
             'can_login' => false,
-            'password'  => Hash::make(Str::random(40)),
+            'password' => Hash::make(Str::random(40)),
         ]);
 
         $rel = WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
-            'notes'            => $validated['notes'] ?? null,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
+            'notes' => $validated['notes'] ?? null,
         ]);
 
         return response()->json(['data' => $this->format($vit, $rel)], 201);
@@ -116,14 +91,14 @@ class ViticulturistController extends Controller
         $alreadyLinked = WineryViticulturist::where('winery_id', $winery->id)
             ->pluck('viticulturist_id');
 
-        $term = '%' . mb_strtolower(trim($request->q)) . '%';
+        $term = '%'.mb_strtolower(trim($request->q)).'%';
 
         $results = User::where('role', 'viticulturist')
             ->where('can_login', true)
             ->whereNotIn('id', $alreadyLinked)
             ->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$term]);
             })
             ->limit(10)
             ->get(['id', 'name', 'email'])
@@ -158,16 +133,16 @@ class ViticulturistController extends Controller
         if ($selfRecord) {
             $rel = $selfRecord;
             $selfRecord->update([
-                'winery_id'   => $winery->id,
-                'source'      => WineryViticulturist::SOURCE_OWN,
+                'winery_id' => $winery->id,
+                'source' => WineryViticulturist::SOURCE_OWN,
                 'assigned_by' => $winery->id,
             ]);
         } else {
             $rel = WineryViticulturist::create([
-                'winery_id'        => $winery->id,
+                'winery_id' => $winery->id,
                 'viticulturist_id' => $vit->id,
-                'source'           => WineryViticulturist::SOURCE_OWN,
-                'assigned_by'      => $winery->id,
+                'source' => WineryViticulturist::SOURCE_OWN,
+                'assigned_by' => $winery->id,
             ]);
         }
 
@@ -175,7 +150,7 @@ class ViticulturistController extends Controller
 
         return response()->json([
             'message' => "{$vit->name} ha sido vinculado a tu bodega.",
-            'data'    => $this->format($vit, $rel),
+            'data' => $this->format($vit, $rel),
         ], 201);
     }
 
@@ -191,7 +166,7 @@ class ViticulturistController extends Controller
             ->with('viticulturist')
             ->firstOrFail();
 
-        $vit  = $rel->viticulturist;
+        $vit = $rel->viticulturist;
         $data = $this->format($vit, $rel);
 
         $batchIds = GrapeReceptionBatch::where('winery_id', $winery->id)
@@ -203,8 +178,8 @@ class ViticulturistController extends Controller
             ->first();
 
         $data['stats'] = [
-            'total_receptions'    => (int) ($stats->total_receptions ?? 0),
-            'total_kg'            => round((float) ($stats->total_kg ?? 0), 2),
+            'total_receptions' => (int) ($stats->total_receptions ?? 0),
+            'total_kg' => round((float) ($stats->total_kg ?? 0), 2),
             'last_reception_date' => $stats->last_reception_date,
         ];
 
@@ -226,12 +201,12 @@ class ViticulturistController extends Controller
         $vit = $rel->viticulturist;
 
         $validated = $request->validate([
-            'name'  => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($id)],
             'notes' => ['nullable', 'string', 'max:1000'],
         ], [
             'name.required' => __('El nombre es obligatorio.'),
-            'email.unique'  => __('Ya existe un usuario con este email.'),
+            'email.unique' => __('Ya existe un usuario con este email.'),
         ]);
 
         $rawEmail = $vit->email ?? '';
@@ -265,7 +240,7 @@ class ViticulturistController extends Controller
             'email' => ['required', 'email', 'max:255'],
         ], [
             'email.required' => __('Introduce el email del viticultor.'),
-            'email.email'    => __('El email no es válido.'),
+            'email.email' => __('El email no es válido.'),
         ]);
 
         if ($vit->invitation_sent_at && $vit->invitation_sent_at->isAfter(now()->subHour())) {
@@ -279,9 +254,9 @@ class ViticulturistController extends Controller
         }
 
         $plainToken = Str::random(64);
-        $updates    = [
-            'invitation_token'      => hash('sha256', $plainToken),
-            'invitation_sent_at'    => now(),
+        $updates = [
+            'invitation_token' => hash('sha256', $plainToken),
+            'invitation_sent_at' => now(),
             'invitation_expires_at' => now()->addDays(7),
         ];
 
@@ -296,7 +271,7 @@ class ViticulturistController extends Controller
 
         return response()->json([
             'message' => "Invitación enviada a {$validated['email']}.",
-            'data'    => $this->format($vit, $rel),
+            'data' => $this->format($vit, $rel),
         ]);
     }
 
@@ -315,15 +290,38 @@ class ViticulturistController extends Controller
         $vit = $rel->viticulturist;
 
         $vit->update([
-            'invitation_token'      => null,
+            'invitation_token' => null,
             'invitation_expires_at' => null,
-            'invitation_sent_at'    => null,
+            'invitation_sent_at' => null,
         ]);
         $vit->refresh();
 
         return response()->json([
             'message' => __('Invitación revocada.'),
-            'data'    => $this->format($vit, $rel),
+            'data' => $this->format($vit, $rel),
         ]);
+    }
+    // ─── Helper ───────────────────────────────────────────────────────────────
+
+    private function format(User $vit, WineryViticulturist $rel): array
+    {
+        $rawEmail = $vit->email ?? '';
+        $displayEmail = str_starts_with($rawEmail, 'viticultores.') ? null : $rawEmail;
+
+        $hasPending = $vit->invitation_token !== null
+            && ($vit->invitation_expires_at === null || $vit->invitation_expires_at->isFuture());
+
+        return [
+            'id' => $vit->id,
+            'name' => $vit->name,
+            'email' => $displayEmail,
+            'can_login' => (bool) $vit->can_login,
+            'source' => $rel->source,
+            'notes' => $rel->notes,
+            'notebook_access' => (bool) $rel->notebook_access,
+            'has_pending_invitation' => $hasPending,
+            'invitation_sent_at' => $vit->invitation_sent_at?->toIso8601String(),
+            'invitation_expires_at' => $vit->invitation_expires_at?->toIso8601String(),
+        ];
     }
 }

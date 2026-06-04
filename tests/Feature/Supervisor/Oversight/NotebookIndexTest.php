@@ -4,7 +4,6 @@ namespace Tests\Feature\Supervisor\Oversight;
 
 use App\Livewire\Supervisor\Oversight\Notebook\Index;
 use App\Models\AgriculturalActivity;
-use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Livewire\Livewire;
@@ -12,24 +11,6 @@ use Tests\Feature\SupervisorTestCase;
 
 class NotebookIndexTest extends SupervisorTestCase
 {
-    private function makeSetup(bool $cuadernoAccess = true): array
-    {
-        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
-
-        WineryViticulturist::create([
-            'winery_id'           => $winery->id,
-            'viticulturist_id'    => $viticulturist->id,
-            'source'              => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'       => $supervisor->id,
-            'assigned_by'         => $supervisor->id,
-            'notebook_access'     => $cuadernoAccess,
-            'notebook_granted_at' => $cuadernoAccess ? now() : null,
-        ]);
-
-        return [$supervisor, $viticulturist, $winery];
-    }
-
     // ── carga básica ──────────────────────────────────────────────────────
 
     public function test_index_loads_for_supervisor(): void
@@ -86,9 +67,9 @@ class NotebookIndexTest extends SupervisorTestCase
 
     public function test_activities_of_other_supervisors_viticulturists_not_shown(): void
     {
-        $supervisor  = $this->makeSupervisor();
-        $outsideVit  = User::factory()->create(['role' => 'viticulturist']);
-        $plot        = $this->makePlot($outsideVit);
+        $supervisor = $this->makeSupervisor();
+        $outsideVit = User::factory()->create(['role' => 'viticulturist']);
+        $plot = $this->makePlot($outsideVit);
 
         AgriculturalActivity::factory()
             ->forViticulturist($outsideVit)
@@ -131,12 +112,12 @@ class NotebookIndexTest extends SupervisorTestCase
 
         $vit2 = $this->makeViticulturistForSupervisor($supervisor);
         WineryViticulturist::create([
-            'winery_id'           => $winery->id,
-            'viticulturist_id'    => $vit2->id,
-            'source'              => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'       => $supervisor->id,
-            'assigned_by'         => $supervisor->id,
-            'notebook_access'     => true,
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $vit2->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
+            'notebook_access' => true,
             'notebook_granted_at' => now(),
         ]);
 
@@ -164,5 +145,23 @@ class NotebookIndexTest extends SupervisorTestCase
             ->call('clearFilters')
             ->assertSet('filterType', '')
             ->assertSet('filterFrom', '');
+    }
+
+    private function makeSetup(bool $cuadernoAccess = true): array
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
+
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
+            'notebook_access' => $cuadernoAccess,
+            'notebook_granted_at' => $cuadernoAccess ? now() : null,
+        ]);
+
+        return [$supervisor, $viticulturist, $winery];
     }
 }

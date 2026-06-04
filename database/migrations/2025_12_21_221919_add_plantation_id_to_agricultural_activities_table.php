@@ -15,11 +15,11 @@ return new class extends Migration
             // Añadir plot_planting_id NULLABLE después de plot_id
             // Usamos plot_planting_id para ser consistente con el modelo PlotPlanting
             $table->foreignId('plot_planting_id')
-                  ->nullable()
-                  ->after('plot_id')
-                  ->constrained('plot_plantings')
-                  ->onDelete('cascade');
-            
+                ->nullable()
+                ->after('plot_id')
+                ->constrained('plot_plantings')
+                ->onDelete('cascade');
+
             // Índice para optimizar queries
             $table->index('plot_planting_id');
         });

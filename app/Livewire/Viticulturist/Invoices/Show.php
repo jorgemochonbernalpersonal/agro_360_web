@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Viticulturist\Invoices;
 
-use App\Models\Invoice;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
+use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Show extends Component
 {
@@ -30,10 +30,11 @@ class Show extends Component
     {
         $invoiceNumber = $this->invoice->invoice_number ?? 'N/A';
         $clientName = $this->invoice->client->full_name ?? 'Cliente';
+
         return view('livewire.viticulturist.invoices.show')
             ->layout('layouts.app', [
-                'title' => __('Factura ') . $invoiceNumber . ' - ' . $clientName . ' - Agro365',
-                'description' => __('Detalles de la factura ') . $invoiceNumber . ' para ' . $clientName . '. Items, importes, estado de pago y observaciones.',
+                'title' => __('Factura ').$invoiceNumber.' - '.$clientName.' - Agro365',
+                'description' => __('Detalles de la factura ').$invoiceNumber.' para '.$clientName.'. Items, importes, estado de pago y observaciones.',
             ]);
     }
 }

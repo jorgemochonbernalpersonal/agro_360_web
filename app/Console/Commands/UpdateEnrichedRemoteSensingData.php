@@ -28,22 +28,23 @@ class UpdateEnrichedRemoteSensingData extends Command
     public function handle(): int
     {
         $ultra = $this->option('ultra');
-        
+
         if ($ultra) {
             $this->info('🌌 Updating ULTRA-ENRICHED Remote Sensing Data...');
             $this->warn('   Including: VIIRS + Spectral Bands + LAI + LST + SMAP + ET');
         } else {
             $this->info('🛰️ Updating Enriched Remote Sensing Data...');
         }
-        
+
         $this->newLine();
 
         // Get plots
         if ($plotId = $this->option('plot-id')) {
             $plots = Plot::where('id', $plotId)->get();
-            
+
             if ($plots->isEmpty()) {
                 $this->error("❌ Plot ID {$plotId} not found");
+
                 return Command::FAILURE;
             }
         } else {
@@ -53,6 +54,7 @@ class UpdateEnrichedRemoteSensingData extends Command
 
         if ($plots->isEmpty()) {
             $this->warn('⚠️ No plots with coordinates found');
+
             return Command::SUCCESS;
         }
 
@@ -60,7 +62,7 @@ class UpdateEnrichedRemoteSensingData extends Command
         $this->newLine();
 
         $includeArea = $this->option('include-area');
-        
+
         if ($includeArea) {
             $this->warn('⚠️ Area statistics enabled - requests are async and may take 5-10 minutes to process');
             $this->newLine();
@@ -75,21 +77,22 @@ class UpdateEnrichedRemoteSensingData extends Command
 
         foreach ($plots as $plot) {
             $progressBar->setMessage("Processing: {$plot->name}");
-            
+
             try {
                 // Check if recently updated (unless forced)
-                if (!$this->option('force')) {
+                if (! $this->option('force')) {
                     $latest = $plot->remoteSensingData()
                         ->latest('image_date')
                         ->first();
-                    
+
                     if ($latest && $latest->image_date->isToday()) {
                         // Check if ultra data exists if ultra mode
-                        if ($ultra && !$latest->fpar) {
+                        if ($ultra && ! $latest->fpar) {
                             // Continue to update with ultra data
                         } else {
                             $skipped++;
                             $progressBar->advance();
+
                             continue;
                         }
                     }
@@ -105,7 +108,7 @@ class UpdateEnrichedRemoteSensingData extends Command
 
                 if ($result) {
                     $success++;
-                    
+
                     if ($includeArea && isset($result->metadata['area_task_id'])) {
                         $this->newLine();
                         $this->info("  ✅ {$plot->name} - Area task created: {$result->metadata['area_task_id']}");
@@ -159,4 +162,3 @@ class UpdateEnrichedRemoteSensingData extends Command
         return $failed === 0 ? Command::SUCCESS : Command::FAILURE;
     }
 }
-

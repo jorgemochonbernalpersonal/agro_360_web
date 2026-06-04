@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Producer\Invoices;
 
-use App\Models\User;
 use Tests\Feature\ProducerTestCase;
 
 /**

@@ -2,24 +2,25 @@
 
 namespace App\Livewire\Viticulturist\Personal;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Crew;
 use App\Models\CrewMember;
-use App\Models\WineryViticulturist;
-use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Component;
 
 class Show extends Component
 {
     use WithToastNotifications;
+
     public Crew $crew;
+
     public $stats = [];
 
     public function mount(Crew $crew)
     {
-        if (!Auth::user()->can('view', $crew)) {
+        if (! Auth::user()->can('view', $crew)) {
             abort(403, __('No tienes permiso para ver esta cuadrilla.'));
         }
 
@@ -27,18 +28,11 @@ class Show extends Component
         $this->loadStats();
     }
 
-    private function loadStats()
-    {
-        $this->stats = [
-            'members_count' => $this->crew->members()->count(),
-            'activities_count' => $this->crew->activities()->count(),
-        ];
-    }
-
     public function removeMember(CrewMember $member)
     {
         if ($member->crew_id !== $this->crew->id) {
             $this->toastError(__('Miembro no válido.'));
+
             return;
         }
 
@@ -47,7 +41,7 @@ class Show extends Component
                 // Opción: Convertir a trabajador individual en lugar de eliminar
                 // O simplemente eliminar (comentado para futura implementación)
                 // $member->update(['crew_id' => null]);
-                
+
                 $member->delete();
             });
 
@@ -69,11 +63,18 @@ class Show extends Component
     public function render()
     {
         $this->crew->load(['members.viticulturist', 'activities']);
-        
+
         return view('livewire.viticulturist.personal.show')->layout('layouts.app', [
-            'title' => $this->crew->name . ' - Equipo - Agro365',
-            'description' => __('Detalles del equipo ') . $this->crew->name . '. Miembros, actividades realizadas y estadísticas de rendimiento.',
+            'title' => $this->crew->name.' - Equipo - Agro365',
+            'description' => __('Detalles del equipo ').$this->crew->name.'. Miembros, actividades realizadas y estadísticas de rendimiento.',
         ]);
     }
-}
 
+    private function loadStats()
+    {
+        $this->stats = [
+            'members_count' => $this->crew->members()->count(),
+            'activities_count' => $this->crew->activities()->count(),
+        ];
+    }
+}

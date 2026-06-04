@@ -4,16 +4,12 @@ namespace App\Enums;
 
 enum PlantingRightType: string
 {
-    case NEW_PLANTING = 'nueva';
-    case REPLANTING = 'replantacion';
-    case CONVERSION = 'conversion';
-
     /**
      * Get the label for the planting right type
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::NEW_PLANTING => __('Nueva Plantación'),
             self::REPLANTING => __('Replantación'),
             self::CONVERSION => __('Conversión'),
@@ -26,8 +22,11 @@ enum PlantingRightType: string
     public static function options(): array
     {
         return array_map(
-            fn($case) => ['value' => $case->value, 'label' => $case->label()],
+            fn ($case) => ['value' => $case->value, 'label' => $case->label()],
             self::cases()
         );
     }
+    case NEW_PLANTING = 'nueva';
+    case REPLANTING = 'replantacion';
+    case CONVERSION = 'conversion';
 }

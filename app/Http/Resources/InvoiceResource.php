@@ -21,7 +21,7 @@ class InvoiceResource extends JsonResource
             'invoice_date' => $this->invoice_date->toDateString(),
             'delivery_note_date' => $this->delivery_note_date?->toDateString(),
             'status' => $this->status,
-            'client' => $this->whenLoaded('client', fn() => [
+            'client' => $this->whenLoaded('client', fn () => [
                 'id' => $this->client->id,
                 'name' => $this->client->name,
                 'nif_cif' => $this->client->nif_cif,

@@ -2,14 +2,14 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\InvoiceItem;
-use App\Models\Invoice;
 use App\Models\Harvest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Tax;
 use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
 use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -142,10 +142,10 @@ class InvoiceItemTest extends TestCase
         $this->assertEquals(75.0, $item->discount_amount);
         $this->assertEquals(425.0, $item->subtotal);
         $this->assertEquals(425.0, $item->tax_base);
-        
+
         // Tax amount: 425 * 0.21 = 89.25
         $this->assertEquals(89.25, $item->tax_amount);
-        
+
         // Total: 425 + 89.25 = 514.25
         $this->assertEquals(514.25, $item->total);
     }

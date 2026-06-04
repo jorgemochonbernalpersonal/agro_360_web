@@ -11,19 +11,14 @@ class CampaignDocument extends Model
     use HasFactory;
 
     const DOCUMENT_TYPES = [
-        'invoice'       => 'Factura de insumos',
-        'certificate'   => 'Certificado (orgánico, DO, etc.)',
-        'lab_report'    => 'Informe de laboratorio',
+        'invoice' => 'Factura de insumos',
+        'certificate' => 'Certificado (orgánico, DO, etc.)',
+        'lab_report' => 'Informe de laboratorio',
         'authorization' => 'Autorización',
-        'map'           => 'Mapa / croquis',
-        'analysis'      => 'Análisis (suelo, agua...)',
-        'other'         => 'Otro',
+        'map' => 'Mapa / croquis',
+        'analysis' => 'Análisis (suelo, agua...)',
+        'other' => 'Otro',
     ];
-
-    public static function documentTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::DOCUMENT_TYPES);
-    }
 
     protected $fillable = [
         'campaign_id',
@@ -40,6 +35,11 @@ class CampaignDocument extends Model
     protected $casts = [
         'file_size_kb' => 'integer',
     ];
+
+    public static function documentTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::DOCUMENT_TYPES);
+    }
 
     public function campaign(): BelongsTo
     {
@@ -58,11 +58,14 @@ class CampaignDocument extends Model
 
     public function getFileSizeFormattedAttribute(): string
     {
-        if (!$this->file_size_kb) return '-';
-        if ($this->file_size_kb >= 1024) {
-            return round($this->file_size_kb / 1024, 1) . ' MB';
+        if (! $this->file_size_kb) {
+            return '-';
         }
-        return $this->file_size_kb . ' KB';
+        if ($this->file_size_kb >= 1024) {
+            return round($this->file_size_kb / 1024, 1).' MB';
+        }
+
+        return $this->file_size_kb.' KB';
     }
 
     public function scopeForViticulturist($query, int $viticulturistId)

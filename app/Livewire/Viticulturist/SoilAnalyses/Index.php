@@ -10,37 +10,55 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search          = '';
-    public string $filterPlot      = '';
-    public string $filterCampaign  = '';
-    public string $filterTexture   = '';
+    public string $search = '';
+
+    public string $filterPlot = '';
+
+    public string $filterCampaign = '';
+
+    public string $filterTexture = '';
 
     protected $queryString = [
-        'search'         => ['as' => 'q',        'except' => ''],
-        'filterPlot'     => ['as' => 'plot',     'except' => ''],
+        'search' => ['as' => 'q',        'except' => ''],
+        'filterPlot' => ['as' => 'plot',     'except' => ''],
         'filterCampaign' => ['as' => 'campaign', 'except' => ''],
-        'filterTexture'  => ['as' => 'texture',  'except' => ''],
+        'filterTexture' => ['as' => 'texture',  'except' => ''],
     ];
 
-    public function updatingSearch(): void         { $this->resetPage(); }
-    public function updatingFilterPlot(): void     { $this->resetPage(); }
-    public function updatingFilterCampaign(): void { $this->resetPage(); }
-    public function updatingFilterTexture(): void  { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return [
-            'search'         => '',
-            'filterPlot'     => '',
-            'filterCampaign' => '',
-            'filterTexture'  => '',
-        ];
+        $this->resetPage();
+    }
+
+    public function updatingFilterPlot(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterCampaign(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterTexture(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
     {
         $this->findOwned(SoilAnalysis::class, $id)->delete();
         $this->toastSuccess(__('Análisis de suelo eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return [
+            'search' => '',
+            'filterPlot' => '',
+            'filterCampaign' => '',
+            'filterTexture' => '',
+        ];
     }
 
     protected function baseQuery(): Builder
@@ -53,8 +71,8 @@ class Index extends AbstractIndex
     {
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('laboratory', 'like', '%' . $this->search . '%')
-                  ->orWhere('notes', 'like', '%' . $this->search . '%');
+                $q->where('laboratory', 'like', '%'.$this->search.'%')
+                    ->orWhere('notes', 'like', '%'.$this->search.'%');
             });
         }
         if ($this->filterPlot) {
@@ -68,18 +86,25 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['analysis_date', 'desc']; }
-    protected function perPage(): int          { return 15; }
+    protected function defaultOrderBy(): array
+    {
+        return ['analysis_date', 'desc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
-        $userId    = $this->viticulturistId();
+        $userId = $this->viticulturistId();
         $baseQuery = SoilAnalysis::where('viticulturist_id', $userId);
 
         $stats = [
-            'total'              => (clone $baseQuery)->count(),
-            'plots_analyzed'     => (clone $baseQuery)->distinct('plot_id')->count('plot_id'),
-            'avg_ph'             => round((float) (clone $baseQuery)->whereNotNull('ph')->avg('ph'), 2),
+            'total' => (clone $baseQuery)->count(),
+            'plots_analyzed' => (clone $baseQuery)->distinct('plot_id')->count('plot_id'),
+            'avg_ph' => round((float) (clone $baseQuery)->whereNotNull('ph')->avg('ph'), 2),
             'avg_organic_matter' => round((float) (clone $baseQuery)->whereNotNull('organic_matter')->avg('organic_matter'), 2),
         ];
 
@@ -97,11 +122,11 @@ class Index extends AbstractIndex
         $stats['avg_ph_color'] = $avgPhRange['color'] ?? 'zinc';
 
         return [
-            'entries'        => $entries,
-            'stats'          => $stats,
+            'entries' => $entries,
+            'stats' => $stats,
             'textureClasses' => SoilAnalysis::textureClassOptions(),
-            'plots'          => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(),
-            'campaigns'      => Campaign::forViticulturist($userId)->orderBy('year', 'desc')->get(),
+            'plots' => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(),
+            'campaigns' => Campaign::forViticulturist($userId)->orderBy('year', 'desc')->get(),
         ];
     }
 }

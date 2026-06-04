@@ -2,19 +2,85 @@
 
 namespace App\Livewire\Auth;
 
-use Livewire\Attributes\Layout;
-use Livewire\Component;
+use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 class ChangePasswordRequired extends Component
 {
     use WithToastNotifications;
+
     public $current_password = '';
+
     public $password = '';
+
     public $password_confirmation = '';
+
+    public function mount()
+    {
+        $user = Auth::user();
+
+        // Si no necesita cambiar contraseña, redirigir al dashboard
+        if (! $user->needsPasswordChange()) {
+            return $this->redirect(route($this->getDashboardRoute()), navigate: true);
+        }
+    }
+
+    public function changePassword()
+    {
+        $this->validate();
+
+        $user = Auth::user();
+
+        // Verificar que la contraseña actual es correcta
+        if (! Hash::check($this->current_password, $user->password)) {
+            $this->addError('current_password', __('La contraseña actual no es correcta.'));
+
+            return;
+        }
+
+        // Verificar que la nueva contraseña es diferente a la actual
+        if (Hash::check($this->password, $user->password)) {
+            $this->addError('password', __('La nueva contraseña debe ser diferente a la actual.'));
+
+            return;
+        }
+
+        // Actualizar contraseña
+        $user->password = Hash::make($this->password);
+
+        // Limpiar flag de cambio obligatorio si existe
+        if ($user->password_must_reset) {
+            $user->password_must_reset = false;
+        }
+
+        // Verificar email automáticamente cuando cambia la contraseña
+        if (! $user->hasVerifiedEmail()) {
+            $user->email_verified_at = now();
+        }
+
+        $user->save();
+
+        // Limpiar cache de sesión para que el middleware recalcule
+        session()->forget("user_{$user->id}_needs_password_change");
+
+        // Limpiar cache en memoria del modelo
+        unset($user->_needs_password_change_cache);
+        unset($user->_was_created_by_another_cache);
+
+        $this->toastSuccess(__('Contraseña cambiada correctamente. Tu email ha sido verificado.'));
+
+        return $this->redirect(route($this->getDashboardRoute()), navigate: true);
+    }
+
+    #[Layout('layouts.guest')]
+    public function render()
+    {
+        return view('livewire.auth.change-password-required');
+    }
 
     protected function rules(): array
     {
@@ -34,79 +100,17 @@ class ChangePasswordRequired extends Component
         ];
     }
 
-    public function mount()
-    {
-        $user = Auth::user();
-        
-        // Si no necesita cambiar contraseña, redirigir al dashboard
-        if (!$user->needsPasswordChange()) {
-            return $this->redirect(route($this->getDashboardRoute()), navigate: true);
-        }
-    }
-
-    public function changePassword()
-    {
-        $this->validate();
-
-        $user = Auth::user();
-
-        // Verificar que la contraseña actual es correcta
-        if (!Hash::check($this->current_password, $user->password)) {
-            $this->addError('current_password', __('La contraseña actual no es correcta.'));
-            return;
-        }
-
-        // Verificar que la nueva contraseña es diferente a la actual
-        if (Hash::check($this->password, $user->password)) {
-            $this->addError('password', __('La nueva contraseña debe ser diferente a la actual.'));
-            return;
-        }
-
-        // Actualizar contraseña
-        $user->password = Hash::make($this->password);
-        
-        // Limpiar flag de cambio obligatorio si existe
-        if ($user->password_must_reset) {
-            $user->password_must_reset = false;
-        }
-        
-        // Verificar email automáticamente cuando cambia la contraseña
-        if (!$user->hasVerifiedEmail()) {
-            $user->email_verified_at = now();
-        }
-        
-        $user->save();
-        
-        // Limpiar cache de sesión para que el middleware recalcule
-        session()->forget("user_{$user->id}_needs_password_change");
-        
-        // Limpiar cache en memoria del modelo
-        unset($user->_needs_password_change_cache);
-        unset($user->_was_created_by_another_cache);
-
-        $this->toastSuccess(__('Contraseña cambiada correctamente. Tu email ha sido verificado.'));
-        
-        return $this->redirect(route($this->getDashboardRoute()), navigate: true);
-    }
-
     protected function getDashboardRoute(): string
     {
         $user = Auth::user();
-        
-        return match($user->role) {
+
+        return match ($user->role) {
             'admin' => 'admin.dashboard',
             'supervisor' => 'supervisor.dashboard',
             'winery' => 'winery.dashboard',
             'viticulturist' => 'viticulturist.dashboard',
-            'producer'      => 'producer.dashboard',
+            'producer' => 'producer.dashboard',
             default => 'home',
         };
     }
-
-    #[Layout('layouts.guest')]
-    public function render()
-    {
-        return view('livewire.auth.change-password-required');
-    }
 }
-

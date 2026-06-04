@@ -13,9 +13,10 @@ class RecommendationGenerator
      * Generate recommendations for a plot
      *
      * @param PlotRemoteSensing|null $ndviData NDVI data
-     * @param array $weather Weather data
-     * @param array $soil Soil data
-     * @param array $forecast Weather forecast
+     * @param array                  $weather  Weather data
+     * @param array                  $soil     Soil data
+     * @param array                  $forecast Weather forecast
+     *
      * @return array Array of recommendations
      */
     public function generate(
@@ -63,6 +64,54 @@ class RecommendationGenerator
         }
 
         return $recommendations;
+    }
+
+    /**
+     * Get water stress status
+     *
+     * @param array $soil  Soil data
+     * @param array $solar Solar data
+     *
+     * @return array Status with emoji, text, color, and bg
+     */
+    public function getWaterStressStatus(array $soil, array $solar): array
+    {
+        $moisture = $soil['soil_moisture'] ?? 50;
+        $et0 = $solar['et0'] ?? 3;
+
+        // Water stress index: higher = more stress
+        $stressIndex = ($et0 * 10) - $moisture;
+
+        return match (true) {
+            $stressIndex <= 0 => [
+                'status' => 'optimal',
+                'emoji' => '💧',
+                'text' => __('Óptimo'),
+                'color' => 'text-green-600',
+                'bg' => 'bg-green-100',
+            ],
+            $stressIndex <= 20 => [
+                'status' => 'mild',
+                'emoji' => '💦',
+                'text' => __('Leve'),
+                'color' => 'text-yellow-600',
+                'bg' => 'bg-yellow-100',
+            ],
+            $stressIndex <= 40 => [
+                'status' => 'moderate',
+                'emoji' => '🏜️',
+                'text' => __('Moderado'),
+                'color' => 'text-orange-600',
+                'bg' => 'bg-orange-100',
+            ],
+            default => [
+                'status' => 'severe',
+                'emoji' => '⚠️',
+                'text' => __('Severo'),
+                'color' => 'text-red-600',
+                'bg' => 'bg-red-100',
+            ],
+        };
     }
 
     /**
@@ -220,14 +269,14 @@ class RecommendationGenerator
     private function generateRainRecommendations(array $forecast): array
     {
         $recommendations = [];
-        
+
         // Count rainy days (>5mm)
         $rainDays = collect($forecast)->filter(
-            fn($day) => ($day['precipitation'] ?? 0) > 5
+            fn ($day) => ($day['precipitation'] ?? 0) > 5
         )->count();
 
         // Calculate total expected precipitation
-        $totalRain = collect($forecast)->sum(fn($day) => $day['precipitation'] ?? 0);
+        $totalRain = collect($forecast)->sum(fn ($day) => $day['precipitation'] ?? 0);
 
         if ($rainDays >= 3) {
             $recommendations[] = [
@@ -260,52 +309,5 @@ class RecommendationGenerator
         }
 
         return $recommendations;
-    }
-
-    /**
-     * Get water stress status
-     *
-     * @param array $soil Soil data
-     * @param array $solar Solar data
-     * @return array Status with emoji, text, color, and bg
-     */
-    public function getWaterStressStatus(array $soil, array $solar): array
-    {
-        $moisture = $soil['soil_moisture'] ?? 50;
-        $et0 = $solar['et0'] ?? 3;
-        
-        // Water stress index: higher = more stress
-        $stressIndex = ($et0 * 10) - $moisture;
-        
-        return match (true) {
-            $stressIndex <= 0 => [
-                'status' => 'optimal',
-                'emoji' => '💧',
-                'text' => __('Óptimo'),
-                'color' => 'text-green-600',
-                'bg' => 'bg-green-100',
-            ],
-            $stressIndex <= 20 => [
-                'status' => 'mild',
-                'emoji' => '💦',
-                'text' => __('Leve'),
-                'color' => 'text-yellow-600',
-                'bg' => 'bg-yellow-100',
-            ],
-            $stressIndex <= 40 => [
-                'status' => 'moderate',
-                'emoji' => '🏜️',
-                'text' => __('Moderado'),
-                'color' => 'text-orange-600',
-                'bg' => 'bg-orange-100',
-            ],
-            default => [
-                'status' => 'severe',
-                'emoji' => '⚠️',
-                'text' => __('Severo'),
-                'color' => 'text-red-600',
-                'bg' => 'bg-red-100',
-            ],
-        };
     }
 }

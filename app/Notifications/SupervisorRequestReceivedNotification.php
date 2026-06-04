@@ -5,8 +5,8 @@ namespace App\Notifications;
 use App\Models\SupervisorRequest;
 use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -33,10 +33,10 @@ class SupervisorRequestReceivedNotification extends Notification implements Shou
 
     public function toMail(object $notifiable): MailMessage
     {
-        $req       = $this->supervisorRequest;
-        $winery    = $req->winery;
+        $req = $this->supervisorRequest;
+        $winery = $req->winery;
         $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
-        $url       = AppLink::url(route('supervisor.requests.index'), 'agro365://home');
+        $url = AppLink::url(route('supervisor.requests.index'), 'agro365://home');
 
         if (app()->environment('production')) {
             $url = str_replace('http://', 'https://', $url);
@@ -46,9 +46,9 @@ class SupervisorRequestReceivedNotification extends Notification implements Shou
             ->subject(__('Nueva solicitud de :winery — :type', ['winery' => $winery->name, 'type' => $typeLabel]))
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line(__('La bodega **:winery** ha enviado una solicitud a tu denominación de origen.', ['winery' => $winery->name]))
-            ->line('**Tipo:** ' . $typeLabel)
-            ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
-            ->when($req->notes, fn ($m) => $m->line('**Descripción:** ' . $req->notes))
+            ->line('**Tipo:** '.$typeLabel)
+            ->when($req->title, fn ($m) => $m->line('**Asunto:** '.$req->title))
+            ->when($req->notes, fn ($m) => $m->line('**Descripción:** '.$req->notes))
             ->action(__('Ver solicitudes'), $url)
             ->line(__('Revisa la solicitud y responde desde tu panel de control.'))
             ->salutation(__('Saludos,\nAgro365'));
@@ -56,19 +56,19 @@ class SupervisorRequestReceivedNotification extends Notification implements Shou
 
     public function toArray(object $notifiable): array
     {
-        $req       = $this->supervisorRequest;
+        $req = $this->supervisorRequest;
         $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
 
         return [
-            'request_id'   => $req->id,
+            'request_id' => $req->id,
             'request_type' => $req->type,
-            'request_title'=> $req->title,
-            'winery_id'    => $req->winery_id,
-            'winery_name'  => $req->winery?->name,
-            'icon'         => '📩',
-            'message'      => ($req->winery?->name ?? 'Bodega') . ' — ' . $typeLabel,
-            'action_url'   => route('supervisor.requests.index'),
-            'action_text'  => __('Ver solicitudes'),
+            'request_title' => $req->title,
+            'winery_id' => $req->winery_id,
+            'winery_name' => $req->winery?->name,
+            'icon' => '📩',
+            'message' => ($req->winery?->name ?? 'Bodega').' — '.$typeLabel,
+            'action_url' => route('supervisor.requests.index'),
+            'action_text' => __('Ver solicitudes'),
         ];
     }
 }

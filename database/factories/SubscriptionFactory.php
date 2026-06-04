@@ -15,19 +15,19 @@ class SubscriptionFactory extends Factory
         $startsAt = now()->subDays(fake()->numberBetween(1, 30));
 
         return [
-            'user_id'    => User::factory(),
-            'plan_type'  => fake()->randomElement(['monthly', 'yearly']),
-            'amount'     => fake()->randomElement([9.99, 19.99, 99.99]),
-            'status'     => 'active',
-            'starts_at'  => $startsAt,
-            'ends_at'    => $startsAt->copy()->addDays(30),
+            'user_id' => User::factory(),
+            'plan_type' => fake()->randomElement(['monthly', 'yearly']),
+            'amount' => fake()->randomElement([9.99, 19.99, 99.99]),
+            'status' => 'active',
+            'starts_at' => $startsAt,
+            'ends_at' => $startsAt->copy()->addDays(30),
         ];
     }
 
     public function active(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status'  => 'active',
+            'status' => 'active',
             'ends_at' => now()->addDays(30),
         ]);
     }
@@ -35,7 +35,7 @@ class SubscriptionFactory extends Factory
     public function expired(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status'  => 'expired',
+            'status' => 'expired',
             'ends_at' => now()->subDay(),
         ]);
     }
@@ -43,7 +43,7 @@ class SubscriptionFactory extends Factory
     public function cancelled(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status'       => 'cancelled',
+            'status' => 'cancelled',
             'cancelled_at' => now(),
         ]);
     }

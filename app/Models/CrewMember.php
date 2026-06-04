@@ -39,15 +39,21 @@ class CrewMember extends Model
 
     /**
      * Scope para trabajadores individuales de un viticultor
+     *
+     * @param mixed $query
+     * @param mixed $viticulturistId
      */
     public function scopeIndividual($query, $viticulturistId)
     {
         return $query->where('viticulturist_id', $viticulturistId)
-                     ->whereNull('crew_id');
+            ->whereNull('crew_id');
     }
 
     /**
      * Scope para trabajadores de un viticultor (individuales y en cuadrillas)
+     *
+     * @param mixed $query
+     * @param mixed $viticulturistId
      */
     public function scopeForViticulturist($query, $viticulturistId)
     {
@@ -75,14 +81,14 @@ class CrewMember extends Model
      */
     public function hasValidPhytosanitaryLicense(): bool
     {
-        if (!$this->phytosanitary_license_number) {
+        if (! $this->phytosanitary_license_number) {
             return false;
         }
-        
-        if (!$this->license_expiry_date) {
+
+        if (! $this->license_expiry_date) {
             return true; // Si no hay fecha de expiración, asumimos vigente
         }
-        
+
         return \Carbon\Carbon::parse($this->license_expiry_date)->isFuture();
     }
 
@@ -91,24 +97,24 @@ class CrewMember extends Model
      */
     public function getLicenseStatusAttribute(): string
     {
-        if (!$this->phytosanitary_license_number) {
+        if (! $this->phytosanitary_license_number) {
             return 'No registrado';
         }
-        
-        if (!$this->license_expiry_date) {
+
+        if (! $this->license_expiry_date) {
             return 'Vigente';
         }
-        
+
         $expiryDate = \Carbon\Carbon::parse($this->license_expiry_date);
-        
+
         if ($expiryDate->isPast()) {
             return 'Caducado';
         }
-        
+
         if ($expiryDate->diffInDays(now()) <= 30) {
             return 'Próximo a caducar';
         }
-        
+
         return 'Vigente';
     }
 }

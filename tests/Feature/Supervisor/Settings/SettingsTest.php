@@ -56,7 +56,7 @@ class SettingsTest extends SupervisorTestCase
     public function test_update_profile_email_must_be_unique_across_users(): void
     {
         $supervisor = $this->makeSupervisor();
-        $other      = $this->makeSupervisor();
+        $other = $this->makeSupervisor();
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
@@ -93,9 +93,9 @@ class SettingsTest extends SupervisorTestCase
     public function test_update_password_changes_hash(): void
     {
         $supervisor = User::factory()->create([
-            'role'              => 'supervisor',
+            'role' => 'supervisor',
             'email_verified_at' => now(),
-            'password'          => Hash::make('OldPass123'),
+            'password' => Hash::make('OldPass123'),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -113,9 +113,9 @@ class SettingsTest extends SupervisorTestCase
     public function test_update_password_rejects_wrong_current_password(): void
     {
         $supervisor = User::factory()->create([
-            'role'              => 'supervisor',
+            'role' => 'supervisor',
             'email_verified_at' => now(),
-            'password'          => Hash::make('OldPass123'),
+            'password' => Hash::make('OldPass123'),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -130,9 +130,9 @@ class SettingsTest extends SupervisorTestCase
     public function test_update_password_requires_confirmation_match(): void
     {
         $supervisor = User::factory()->create([
-            'role'              => 'supervisor',
+            'role' => 'supervisor',
             'email_verified_at' => now(),
-            'password'          => Hash::make('OldPass123'),
+            'password' => Hash::make('OldPass123'),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -147,9 +147,9 @@ class SettingsTest extends SupervisorTestCase
     public function test_update_password_requires_minimum_eight_characters(): void
     {
         $supervisor = User::factory()->create([
-            'role'              => 'supervisor',
+            'role' => 'supervisor',
             'email_verified_at' => now(),
-            'password'          => Hash::make('OldPass123'),
+            'password' => Hash::make('OldPass123'),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -164,9 +164,9 @@ class SettingsTest extends SupervisorTestCase
     public function test_update_password_clears_fields_on_success(): void
     {
         $supervisor = User::factory()->create([
-            'role'              => 'supervisor',
+            'role' => 'supervisor',
             'email_verified_at' => now(),
-            'password'          => Hash::make('OldPass123'),
+            'password' => Hash::make('OldPass123'),
         ]);
 
         Livewire::actingAs($supervisor)

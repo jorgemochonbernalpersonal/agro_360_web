@@ -2,13 +2,12 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Client;
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * Tests para la numeración secuencial de facturas y albaranes.
@@ -29,14 +28,16 @@ class InvoiceNumberingTest extends TestCase
     use \Tests\Traits\CreatesTestHarvest;
 
     protected User $user;
+
     protected Client $client;
+
     protected InvoicingSetting $settings;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user   = User::factory()->create();
+        $this->user = User::factory()->create();
         $this->client = Client::factory()->create(['user_id' => $this->user->id]);
 
         $this->settings = InvoicingSetting::createDefaultForUser($this->user->id);
@@ -135,10 +136,10 @@ class InvoiceNumberingTest extends TestCase
 
     public function test_preview_matches_next_generated_code()
     {
-        $invoicePreview      = $this->settings->getInvoicePreview();
+        $invoicePreview = $this->settings->getInvoicePreview();
         $deliveryNotePreview = $this->settings->getDeliveryNotePreview();
 
-        $invoiceCode      = $this->settings->generateAndIncrementInvoiceCode();
+        $invoiceCode = $this->settings->generateAndIncrementInvoiceCode();
         $deliveryNoteCode = $this->settings->generateAndIncrementDeliveryNoteCode();
 
         $this->assertEquals($invoicePreview, $invoiceCode);
@@ -154,8 +155,8 @@ class InvoiceNumberingTest extends TestCase
         // Simular que los settings fueron creados en el año pasado
         $lastYear = now()->year - 1;
         $this->settings->update([
-            'invoice_year_reset'      => true,
-            'invoice_counter'         => 42,
+            'invoice_year_reset' => true,
+            'invoice_counter' => 42,
             'invoice_last_reset_year' => $lastYear,
         ]);
 
@@ -172,8 +173,8 @@ class InvoiceNumberingTest extends TestCase
     {
         $lastYear = now()->year - 1;
         $this->settings->update([
-            'delivery_note_year_reset'      => true,
-            'delivery_note_counter'         => 21,
+            'delivery_note_year_reset' => true,
+            'delivery_note_counter' => 21,
             'delivery_note_last_reset_year' => $lastYear,
         ]);
 
@@ -188,8 +189,8 @@ class InvoiceNumberingTest extends TestCase
     {
         $lastYear = now()->year - 1;
         $this->settings->update([
-            'invoice_year_reset'      => false,
-            'invoice_counter'         => 42,
+            'invoice_year_reset' => false,
+            'invoice_counter' => 42,
             'invoice_last_reset_year' => $lastYear,
         ]);
 
@@ -202,12 +203,12 @@ class InvoiceNumberingTest extends TestCase
         $lastYear = now()->year - 1;
         $this->settings->update([
             // Solo el contador de albaranes tiene reset pendiente
-            'invoice_year_reset'            => true,
-            'invoice_counter'               => 10,
-            'invoice_last_reset_year'       => now()->year, // ya reseteado este año
+            'invoice_year_reset' => true,
+            'invoice_counter' => 10,
+            'invoice_last_reset_year' => now()->year, // ya reseteado este año
 
-            'delivery_note_year_reset'      => true,
-            'delivery_note_counter'         => 21,
+            'delivery_note_year_reset' => true,
+            'delivery_note_counter' => 21,
             'delivery_note_last_reset_year' => $lastYear,  // pendiente de resetear
         ]);
 
@@ -243,7 +244,7 @@ class InvoiceNumberingTest extends TestCase
     {
         // El factory por defecto incluye invoice_number
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
@@ -254,14 +255,14 @@ class InvoiceNumberingTest extends TestCase
     public function test_two_invoices_get_sequential_numbers_when_settings_exist()
     {
         $invoice1 = Invoice::factory()->draft()->create([
-            'user_id'        => $this->user->id,
-            'client_id'      => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => $this->settings->generateAndIncrementInvoiceCode(),
         ]);
 
         $invoice2 = Invoice::factory()->draft()->create([
-            'user_id'        => $this->user->id,
-            'client_id'      => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => $this->settings->generateAndIncrementInvoiceCode(),
         ]);
 
@@ -282,8 +283,8 @@ class InvoiceNumberingTest extends TestCase
     {
         // Los borradores con número asignado SÍ pueden cancelarse
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'        => $this->user->id,
-            'client_id'      => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => 'FAC-2026-0001',
         ]);
 
@@ -297,8 +298,8 @@ class InvoiceNumberingTest extends TestCase
     {
         // Un borrador sin número también puede cancelarse
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'        => $this->user->id,
-            'client_id'      => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => null,
         ]);
 
@@ -311,8 +312,8 @@ class InvoiceNumberingTest extends TestCase
     {
         // Una factura ya enviada (formalmente emitida) NO puede cancelarse
         $invoice = Invoice::factory()->sent()->create([
-            'user_id'        => $this->user->id,
-            'client_id'      => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => 'FAC-2026-0001',
         ]);
 
@@ -326,8 +327,8 @@ class InvoiceNumberingTest extends TestCase
     {
         // Cancelar una factura ya cancelada no debe lanzar excepción
         $invoice = Invoice::factory()->cancelled()->create([
-            'user_id'        => $this->user->id,
-            'client_id'      => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => 'FAC-2026-0005',
         ]);
 
@@ -340,9 +341,9 @@ class InvoiceNumberingTest extends TestCase
     public function test_delivered_delivery_status_cannot_be_changed_to_cancelled()
     {
         $invoice = Invoice::factory()->sent()->create([
-            'user_id'          => $this->user->id,
-            'client_id'        => $this->client->id,
-            'delivery_status'  => 'delivered',
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
+            'delivery_status' => 'delivered',
         ]);
 
         $this->expectException(\Exception::class);
@@ -359,8 +360,8 @@ class InvoiceNumberingTest extends TestCase
     {
         // Simular factura antigua (creada antes del nuevo sistema) sin invoice_number
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'        => $this->user->id,
-            'client_id'      => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => null,
         ]);
 
@@ -380,8 +381,8 @@ class InvoiceNumberingTest extends TestCase
         $originalNumber = 'FAC-2026-0001';
 
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'        => $this->user->id,
-            'client_id'      => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'invoice_number' => $originalNumber,
         ]);
 

@@ -13,10 +13,14 @@ class Edit extends Component
 
     public Campaign $campaign;
 
-    public string $name        = '';
-    public string $year        = '';
-    public string $start_date  = '';
-    public string $end_date    = '';
+    public string $name = '';
+
+    public string $year = '';
+
+    public string $start_date = '';
+
+    public string $end_date = '';
+
     public string $description = '';
 
     public function mount(Campaign $campaign): void
@@ -24,32 +28,12 @@ class Edit extends Component
         abort_if($campaign->viticulturist_id !== Auth::id(), 403);
         abort_if($campaign->locked_at !== null, 403);
 
-        $this->campaign    = $campaign;
-        $this->name        = $campaign->name;
-        $this->year        = (string) $campaign->year;
-        $this->start_date  = $campaign->start_date?->format('Y-m-d') ?? '';
-        $this->end_date    = $campaign->end_date?->format('Y-m-d') ?? '';
+        $this->campaign = $campaign;
+        $this->name = $campaign->name;
+        $this->year = (string) $campaign->year;
+        $this->start_date = $campaign->start_date?->format('Y-m-d') ?? '';
+        $this->end_date = $campaign->end_date?->format('Y-m-d') ?? '';
         $this->description = $campaign->description ?? '';
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'name'        => ['required', 'string', 'max:255'],
-            'year'        => ['required', 'integer', 'min:2000', 'max:2099'],
-            'start_date'  => ['required', 'date'],
-            'end_date'    => ['required', 'date', 'after_or_equal:start_date'],
-            'description' => ['nullable', 'string', 'max:1000'],
-        ];
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'name.required'           => __('El nombre es obligatorio.'),
-            'year.required'           => __('El año es obligatorio.'),
-            'end_date.after_or_equal' => __('La fecha de fin debe ser posterior a la de inicio.'),
-        ];
     }
 
     public function save(): void
@@ -63,14 +47,15 @@ class Edit extends Component
 
         if ($duplicate) {
             $this->addError('year', __('Ya existe otra campaña para el año :year.', ['year' => $this->year]));
+
             return;
         }
 
         $this->campaign->update([
-            'name'        => $this->name,
-            'year'        => (int) $this->year,
-            'start_date'  => $this->start_date,
-            'end_date'    => $this->end_date,
+            'name' => $this->name,
+            'year' => (int) $this->year,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
             'description' => $this->description ?: null,
         ]);
 
@@ -82,5 +67,25 @@ class Edit extends Component
     {
         return view('livewire.winery.harvest.campaigns.edit')
             ->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'year' => ['required', 'integer', 'min:2000', 'max:2099'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'name.required' => __('El nombre es obligatorio.'),
+            'year.required' => __('El año es obligatorio.'),
+            'end_date.after_or_equal' => __('La fecha de fin debe ser posterior a la de inicio.'),
+        ];
     }
 }

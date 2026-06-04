@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\WineryYieldForecast;
 
 /**
  * Acumulador de recepciones de uva por bodega + plantación + campaña.
@@ -29,7 +28,7 @@ class GrapeReceptionBatch extends Model
     ];
 
     protected $casts = [
-        'vintage_year'    => 'integer',
+        'vintage_year' => 'integer',
         'total_weight_kg' => 'decimal:3',
     ];
 
@@ -143,7 +142,7 @@ class GrapeReceptionBatch extends Model
     public function usagePercentage(): ?float
     {
         $limit = $this->effectiveLimit();
-        if (!$limit || $limit <= 0) {
+        if (! $limit || $limit <= 0) {
             return null;
         }
 
@@ -156,6 +155,7 @@ class GrapeReceptionBatch extends Model
     public function exceedsLimit(): bool
     {
         $limit = $this->effectiveLimit();
+
         return $limit !== null && (float) $this->total_weight_kg > $limit;
     }
 

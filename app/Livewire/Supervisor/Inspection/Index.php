@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Supervisor\Inspection;
 
-use App\Models\DoInspection;
-use App\Models\SupervisorRequest;
-use App\Models\SupervisorWinery;
-use App\Models\SupervisorViticulturist;
 use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\DoInspection;
+use App\Models\SupervisorRequest;
+use App\Models\SupervisorViticulturist;
+use App\Models\SupervisorWinery;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
@@ -17,32 +17,45 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithOwnershipRules, WithToastNotifications;
+    use WithOwnershipRules, WithPagination, WithToastNotifications;
 
-    public string $currentTab  = 'all';
-    public string $search      = '';
-    public string $typeFilter  = '';
-    public bool   $showCreate  = false;
+    public string $currentTab = 'all';
+
+    public string $search = '';
+
+    public string $typeFilter = '';
+
+    public bool $showCreate = false;
 
     // New inspection form
-    public string $subject_type     = 'winery';
-    public string $subject_id       = '';
-    public string $inspection_date  = '';
-    public string $notes            = '';
+    public string $subject_type = 'winery';
+
+    public string $subject_id = '';
+
+    public string $inspection_date = '';
+
+    public string $notes = '';
+
     public string $reference_number = '';
 
     // Edit modal
-    public bool   $showEdit              = false;
-    public ?int   $editInspectionId      = null;
-    public string $editInspectionDate    = '';
-    public string $editNotes             = '';
-    public string $editFindings          = '';
-    public string $editResult            = '';
-    public string $editReferenceNumber   = '';
+    public bool $showEdit = false;
+
+    public ?int $editInspectionId = null;
+
+    public string $editInspectionDate = '';
+
+    public string $editNotes = '';
+
+    public string $editFindings = '';
+
+    public string $editResult = '';
+
+    public string $editReferenceNumber = '';
 
     protected $queryString = [
         'currentTab' => ['except' => 'all', 'as' => 'tab'],
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'typeFilter' => ['except' => ''],
     ];
 
@@ -57,39 +70,47 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function updatingSearch(): void { $this->resetPage(); }
-    public function updatingTypeFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function toggleCreate(): void
     {
-        $this->showCreate = !$this->showCreate;
+        $this->showCreate = ! $this->showCreate;
     }
 
     public function saveInspection(): void
     {
         Gate::authorize('create', DoInspection::class);
 
-        if (!RateLimiter::attempt('inspection-save:' . Auth::id(), 20, fn() => null, 60)) {
+        if (! RateLimiter::attempt('inspection-save:'.Auth::id(), 20, fn () => null, 60)) {
             $this->toastError(__('Demasiadas solicitudes. Espera un minuto antes de continuar.'));
+
             return;
         }
 
         $this->validate([
-            'subject_type'     => 'required|in:winery,viticulturist',
-            'subject_id'       => $this->supervisorLinkedSubjectRule($this->subject_type),
-            'inspection_date'  => 'required|date',
-            'notes'            => 'nullable|string',
+            'subject_type' => 'required|in:winery,viticulturist',
+            'subject_id' => $this->supervisorLinkedSubjectRule($this->subject_type),
+            'inspection_date' => 'required|date',
+            'notes' => 'nullable|string',
             'reference_number' => 'nullable|string|max:100',
         ]);
 
         $doId = Auth::id();
 
         DoInspection::create([
-            'supervisor_id'    => $doId,
-            'subject_type'     => $this->subject_type,
-            'subject_id'       => $this->subject_id,
-            'inspection_date'  => $this->inspection_date,
-            'notes'            => $this->notes ?: null,
+            'supervisor_id' => $doId,
+            'subject_type' => $this->subject_type,
+            'subject_id' => $this->subject_id,
+            'inspection_date' => $this->inspection_date,
+            'notes' => $this->notes ?: null,
             'reference_number' => $this->reference_number ?: null,
         ]);
 
@@ -103,20 +124,20 @@ class Index extends Component
         $inspection = DoInspection::forSupervisor(Auth::id())->findOrFail($inspectionId);
         Gate::authorize('update', $inspection);
 
-        $this->editInspectionId    = $inspectionId;
-        $this->editInspectionDate  = $inspection->inspection_date->format('Y-m-d');
-        $this->editNotes           = $inspection->notes           ?? '';
-        $this->editFindings        = $inspection->findings        ?? '';
-        $this->editResult          = $inspection->result          ?? '';
+        $this->editInspectionId = $inspectionId;
+        $this->editInspectionDate = $inspection->inspection_date->format('Y-m-d');
+        $this->editNotes = $inspection->notes ?? '';
+        $this->editFindings = $inspection->findings ?? '';
+        $this->editResult = $inspection->result ?? '';
         $this->editReferenceNumber = $inspection->reference_number ?? '';
-        $this->showEdit            = true;
+        $this->showEdit = true;
         $this->resetValidation();
     }
 
     public function closeEdit(): void
     {
-        $this->showEdit          = false;
-        $this->editInspectionId  = null;
+        $this->showEdit = false;
+        $this->editInspectionId = null;
         $this->resetValidation();
     }
 
@@ -126,19 +147,19 @@ class Index extends Component
         Gate::authorize('update', $inspection);
 
         $this->validate([
-            'editInspectionDate'  => 'required|date',
-            'editResult'          => 'nullable|in:compliant,non_compliant,pending',
-            'editFindings'        => 'nullable|string',
-            'editNotes'           => 'nullable|string',
+            'editInspectionDate' => 'required|date',
+            'editResult' => 'nullable|in:compliant,non_compliant,pending',
+            'editFindings' => 'nullable|string',
+            'editNotes' => 'nullable|string',
             'editReferenceNumber' => 'nullable|string|max:100',
         ]);
 
         $inspection->update([
-            'inspection_date'  => $this->editInspectionDate,
-            'result'           => $this->editResult           ?: null,
-            'findings'         => $this->editFindings         ?: null,
-            'notes'            => $this->editNotes            ?: null,
-            'reference_number' => $this->editReferenceNumber  ?: null,
+            'inspection_date' => $this->editInspectionDate,
+            'result' => $this->editResult ?: null,
+            'findings' => $this->editFindings ?: null,
+            'notes' => $this->editNotes ?: null,
+            'reference_number' => $this->editReferenceNumber ?: null,
         ]);
 
         $this->closeEdit();
@@ -171,11 +192,11 @@ class Index extends Component
 
         SupervisorRequest::create([
             'supervisor_id' => Auth::id(),
-            'winery_id'     => $inspection->subject_id,
-            'type'          => SupervisorRequest::TYPE_NONCONFORMITY,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
-            'title'         => __('No conformidad — ') . ($inspection->reference_number ?? $inspection->inspection_date->format('d/m/Y')),
-            'notes'         => $inspection->findings ?: null,
+            'winery_id' => $inspection->subject_id,
+            'type' => SupervisorRequest::TYPE_NONCONFORMITY,
+            'status' => SupervisorRequest::STATUS_DRAFT,
+            'title' => __('No conformidad — ').($inspection->reference_number ?? $inspection->inspection_date->format('d/m/Y')),
+            'notes' => $inspection->findings ?: null,
         ]);
 
         $this->redirect(route('supervisor.requests.index'));
@@ -197,7 +218,7 @@ class Index extends Component
         }
 
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->whereHas('subject', function ($q) use ($term) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$term]);
             });
@@ -211,30 +232,30 @@ class Index extends Component
             ->pluck('total', 'status');
 
         $counts = [
-            'all'         => $statusCounts->sum(),
-            'scheduled'   => $statusCounts->get('scheduled', 0),
+            'all' => $statusCounts->sum(),
+            'scheduled' => $statusCounts->get('scheduled', 0),
             'in_progress' => $statusCounts->get('in_progress', 0),
-            'completed'   => $statusCounts->get('completed', 0),
+            'completed' => $statusCounts->get('completed', 0),
         ];
 
         // Subjects for the create form
-        $wineries        = \App\Models\User::whereIn('id', SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id'))
+        $wineries = \App\Models\User::whereIn('id', SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id'))
             ->orderBy('name')->get(['id', 'name']);
-        $viticulturists  = \App\Models\User::whereIn('id',
-                SupervisorViticulturist::where('supervisor_id', $doId)->pluck('viticulturist_id')
-            )->orderBy('name')->get(['id', 'name']);
+        $viticulturists = \App\Models\User::whereIn('id',
+            SupervisorViticulturist::where('supervisor_id', $doId)->pluck('viticulturist_id')
+        )->orderBy('name')->get(['id', 'name']);
 
         $tabs = [
-            'all'         => ['label' => __('Todas'),       'count' => $counts['all']],
-            'scheduled'   => ['label' => __('Programadas'), 'count' => $counts['scheduled']],
+            'all' => ['label' => __('Todas'),       'count' => $counts['all']],
+            'scheduled' => ['label' => __('Programadas'), 'count' => $counts['scheduled']],
             'in_progress' => ['label' => __('En curso'),    'count' => $counts['in_progress']],
-            'completed'   => ['label' => __('Completadas'), 'count' => $counts['completed']],
+            'completed' => ['label' => __('Completadas'), 'count' => $counts['completed']],
         ];
 
         return view('livewire.supervisor.inspection.index', [
-            'inspections'    => $inspections,
-            'tabs'           => $tabs,
-            'wineries'       => $wineries,
+            'inspections' => $inspections,
+            'tabs' => $tabs,
+            'wineries' => $wineries,
             'viticulturists' => $viticulturists,
         ]);
     }

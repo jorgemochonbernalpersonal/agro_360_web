@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('viticulturist_hierarchy')) {
+        if (! Schema::hasTable('viticulturist_hierarchy')) {
             return;
         }
-        
+
         Schema::table('viticulturist_hierarchy', function (Blueprint $table) {
             $table->integer('winery_id')->nullable()->change();
         });
@@ -25,10 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (!Schema::hasTable('viticulturist_hierarchy')) {
+        if (! Schema::hasTable('viticulturist_hierarchy')) {
             return;
         }
-        
+
         Schema::table('viticulturist_hierarchy', function (Blueprint $table) {
             // Eliminar relaciones sin winery antes de hacer NOT NULL
             \DB::table('viticulturist_hierarchy')->whereNull('winery_id')->delete();
@@ -36,5 +36,3 @@ return new class extends Migration
         });
     }
 };
-
-

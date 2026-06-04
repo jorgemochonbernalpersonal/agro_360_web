@@ -6,11 +6,10 @@ use App\Models\Plot;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * NASA SMAP Soil Moisture Service
- * 
+ *
  * SMAP (Soil Moisture Active Passive)
  * - Resolution: 9km (regional coverage)
  * - Depth: 0-5cm
@@ -19,7 +18,9 @@ use App\Services\RemoteSensing\CoordinatesHelper;
 class NasaSMAPService
 {
     private string $baseUrl;
+
     private bool $useMockData;
+
     private RateLimitService $rateLimitService;
 
     public function __construct(RateLimitService $rateLimitService)
@@ -44,12 +45,12 @@ class NasaSMAPService
             // Open-Meteo soil moisture: free, no auth, no IP rate limit
             $response = Http::timeout(30)
                 ->get('https://api.open-meteo.com/v1/forecast', [
-                    'latitude'      => $coords['lat'],
-                    'longitude'     => $coords['lon'],
-                    'hourly'        => 'soil_moisture_0_to_1cm,soil_moisture_9_to_27cm',
-                    'past_days'     => 1,
+                    'latitude' => $coords['lat'],
+                    'longitude' => $coords['lon'],
+                    'hourly' => 'soil_moisture_0_to_1cm,soil_moisture_9_to_27cm',
+                    'past_days' => 1,
                     'forecast_days' => 0,
-                    'timezone'      => 'UTC',
+                    'timezone' => 'UTC',
                 ]);
 
             if ($response->successful()) {
@@ -60,13 +61,13 @@ class NasaSMAPService
             }
 
             Log::warning('Open-Meteo soil moisture failed — using estimated data', [
-                'status'  => $response->status(),
+                'status' => $response->status(),
                 'plot_id' => $plot->id,
             ]);
 
         } catch (\Exception $e) {
             Log::warning('Soil moisture error — using estimated data', [
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'plot_id' => $plot->id,
             ]);
         }
@@ -75,36 +76,12 @@ class NasaSMAPService
     }
 
     /**
-     * Parse Open-Meteo soil moisture response
-     */
-    private function parseSMAPResponse(array $response): ?array
-    {
-        $hourly = $response['hourly'] ?? [];
-
-        // Take last non-null value from the past_days window
-        $surface  = collect($hourly['soil_moisture_0_to_1cm']  ?? [])->filter(fn($v) => $v !== null)->last();
-        $rootzone = collect($hourly['soil_moisture_9_to_27cm'] ?? [])->filter(fn($v) => $v !== null)->last();
-
-        if ($surface === null) {
-            return null;
-        }
-
-        // Open-Meteo returns m³/m³ → convert to %
-        return [
-            'soil_moisture_surface'  => round($surface  * 100, 1),
-            'soil_moisture_rootzone' => $rootzone !== null ? round($rootzone * 100, 1) : null,
-            'soil_moisture_source'   => __('Open-Meteo Soil Model'),
-            'resolution'             => '1km',
-        ];
-    }
-
-    /**
      * Compare SMAP vs Open-Meteo
      */
     public function compareWithModel(float $smapValue, float $modelValue): array
     {
         $diff = abs($smapValue - $modelValue);
-        
+
         if ($diff < 5) {
             $status = 'consistent';
             $message = __('Satélite y modelo coinciden');
@@ -126,7 +103,7 @@ class NasaSMAPService
             'reliability' => $reliability,
             'smap_value' => $smapValue,
             'model_value' => $modelValue,
-            'recommendation' => $reliability === 'low' 
+            'recommendation' => $reliability === 'low'
                 ? 'Usar dato satelital (SMAP) - más fiable'
                 : 'Ambos datos fiables',
         ];
@@ -148,7 +125,7 @@ class NasaSMAPService
                 'stress_level' => 'critical',
             ];
         }
-        
+
         if ($soilMoisture < 20) {
             return [
                 'status' => 'dry',
@@ -160,7 +137,7 @@ class NasaSMAPService
                 'stress_level' => 'high',
             ];
         }
-        
+
         if ($soilMoisture < 35) {
             return [
                 'status' => 'optimal',
@@ -172,7 +149,7 @@ class NasaSMAPService
                 'stress_level' => 'none',
             ];
         }
-        
+
         if ($soilMoisture < 45) {
             return [
                 'status' => 'wet',
@@ -184,7 +161,7 @@ class NasaSMAPService
                 'stress_level' => 'low',
             ];
         }
-        
+
         return [
             'status' => 'saturated',
             'label' => __('Saturado'),
@@ -193,6 +170,30 @@ class NasaSMAPService
             'description' => __('Suelo saturado'),
             'recommendation' => __('Riesgo encharcamiento - mejorar drenaje'),
             'stress_level' => 'moderate',
+        ];
+    }
+
+    /**
+     * Parse Open-Meteo soil moisture response
+     */
+    private function parseSMAPResponse(array $response): ?array
+    {
+        $hourly = $response['hourly'] ?? [];
+
+        // Take last non-null value from the past_days window
+        $surface = collect($hourly['soil_moisture_0_to_1cm'] ?? [])->filter(fn ($v) => $v !== null)->last();
+        $rootzone = collect($hourly['soil_moisture_9_to_27cm'] ?? [])->filter(fn ($v) => $v !== null)->last();
+
+        if ($surface === null) {
+            return null;
+        }
+
+        // Open-Meteo returns m³/m³ → convert to %
+        return [
+            'soil_moisture_surface' => round($surface * 100, 1),
+            'soil_moisture_rootzone' => $rootzone !== null ? round($rootzone * 100, 1) : null,
+            'soil_moisture_source' => __('Open-Meteo Soil Model'),
+            'resolution' => '1km',
         ];
     }
 
@@ -240,5 +241,4 @@ class NasaSMAPService
             'resolution' => '9km',
         ];
     }
-
 }

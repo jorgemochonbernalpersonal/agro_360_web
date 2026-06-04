@@ -36,11 +36,11 @@ class PlantingCertification extends Model
      */
     public function isExpiringSoon(): bool
     {
-        if (!$this->expiry_date || $this->status !== 'active') {
+        if (! $this->expiry_date || $this->status !== 'active') {
             return false;
         }
-        
-        return $this->expiry_date->diffInDays(now()) <= 30 
+
+        return $this->expiry_date->diffInDays(now()) <= 30
             && $this->expiry_date->isFuture();
     }
 
@@ -49,15 +49,17 @@ class PlantingCertification extends Model
      */
     public function isExpired(): bool
     {
-        if (!$this->expiry_date) {
+        if (! $this->expiry_date) {
             return false;
         }
-        
+
         return $this->expiry_date->isPast();
     }
 
     /**
      * Scope: Certificaciones activas
+     *
+     * @param mixed $query
      */
     public function scopeActive($query)
     {
@@ -66,6 +68,8 @@ class PlantingCertification extends Model
 
     /**
      * Scope: Certificaciones próximas a vencer
+     *
+     * @param mixed $query
      */
     public function scopeExpiringSoon($query)
     {
@@ -77,6 +81,8 @@ class PlantingCertification extends Model
 
     /**
      * Scope: Por tipo
+     *
+     * @param mixed $query
      */
     public function scopeOfType($query, string $type)
     {

@@ -18,40 +18,47 @@ class Index extends Component
     use WithPagination;
 
     public string $statusFilter = '';
-    public string $typeFilter   = '';
-    public string $search       = '';
+
+    public string $typeFilter = '';
+
+    public string $search = '';
 
     // ── Selección para bulk actions ───────────────────────────────────────────
-    public array  $selected        = [];
+    public array $selected = [];
 
     // ── Formulario crear solicitud ────────────────────────────────────────────
-    public bool   $showCreateModal = false;
-    public string $formWineryId    = '';
-    public string $formType        = '';
-    public string $formTitle       = '';
-    public string $formNotes       = '';
-    public string $formDueDate     = '';
+    public bool $showCreateModal = false;
+
+    public string $formWineryId = '';
+
+    public string $formType = '';
+
+    public string $formTitle = '';
+
+    public string $formNotes = '';
+
+    public string $formDueDate = '';
 
     protected $queryString = [
         'statusFilter' => ['except' => ''],
-        'typeFilter'   => ['except' => ''],
-        'search'       => ['except' => ''],
+        'typeFilter' => ['except' => ''],
+        'search' => ['except' => ''],
     ];
 
-    protected function rules(): array
+    public function updatingSearch(): void
     {
-        return [
-            'formWineryId' => 'required|integer',
-            'formType'     => 'required|in:' . implode(',', array_keys(SupervisorRequest::TYPE_LABELS)),
-            'formTitle'    => 'nullable|string|max:255',
-            'formNotes'    => 'nullable|string',
-            'formDueDate'  => 'nullable|date|after:today',
-        ];
+        $this->resetPage();
     }
 
-    public function updatingSearch(): void     { $this->resetPage(); }
-    public function updatingStatusFilter(): void { $this->resetPage(); }
-    public function updatingTypeFilter(): void   { $this->resetPage(); }
+    public function updatingStatusFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function openCreateModal(): void
     {
@@ -75,12 +82,12 @@ class Index extends Component
 
         SupervisorRequest::create([
             'supervisor_id' => Auth::id(),
-            'winery_id'     => $this->formWineryId,
-            'type'          => $this->formType,
-            'title'         => $this->formTitle ?: null,
-            'notes'         => $this->formNotes ?: null,
-            'due_date'      => $this->formDueDate ?: null,
-            'status'        => SupervisorRequest::STATUS_DRAFT,
+            'winery_id' => $this->formWineryId,
+            'type' => $this->formType,
+            'title' => $this->formTitle ?: null,
+            'notes' => $this->formNotes ?: null,
+            'due_date' => $this->formDueDate ?: null,
+            'status' => SupervisorRequest::STATUS_DRAFT,
         ]);
 
         $this->showCreateModal = false;
@@ -178,14 +185,14 @@ class Index extends Component
             $query->where('type', $this->typeFilter);
         }
         if ($this->search) {
-            $s = '%' . strtolower($this->search) . '%';
+            $s = '%'.strtolower($this->search).'%';
             $query->whereHas('winery', fn ($q) => $q->whereRaw('LOWER(name) LIKE ?', [$s]));
         }
 
         $requests = $query->orderByDesc('created_at')->paginate(15);
 
-        $pendingCount   = SupervisorRequest::forSupervisor($supervisorId)->where('status', 'pending')->count();
-        $inReviewCount  = SupervisorRequest::forSupervisor($supervisorId)->where('status', 'in_review')->count();
+        $pendingCount = SupervisorRequest::forSupervisor($supervisorId)->where('status', 'pending')->count();
+        $inReviewCount = SupervisorRequest::forSupervisor($supervisorId)->where('status', 'in_review')->count();
 
         $wineries = User::whereIn(
             'id',
@@ -193,13 +200,24 @@ class Index extends Component
         )->orderBy('name')->get(['id', 'name']);
 
         return view('livewire.supervisor.requests.index', [
-            'requests'     => $requests,
+            'requests' => $requests,
             'pendingCount' => $pendingCount,
-            'inReviewCount'=> $inReviewCount,
-            'wineries'     => $wineries,
-            'typeLabels'   => SupervisorRequest::typeLabelOptions(),
+            'inReviewCount' => $inReviewCount,
+            'wineries' => $wineries,
+            'typeLabels' => SupervisorRequest::typeLabelOptions(),
             'statusLabels' => SupervisorRequest::statusLabelOptions(),
             'statusColors' => SupervisorRequest::STATUS_COLORS,
         ]);
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'formWineryId' => 'required|integer',
+            'formType' => 'required|in:'.implode(',', array_keys(SupervisorRequest::TYPE_LABELS)),
+            'formTitle' => 'nullable|string|max:255',
+            'formNotes' => 'nullable|string',
+            'formDueDate' => 'nullable|date|after:today',
+        ];
     }
 }

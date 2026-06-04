@@ -2,9 +2,7 @@
 
 namespace App\Livewire\Winery\Financial;
 
-use App\Models\Container;
 use App\Models\Invoice;
-use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -12,6 +10,7 @@ use Livewire\Component;
 class Stats extends Component
 {
     public int $year;
+
     public string $compareWith = 'previous'; // previous, none
 
     public function mount(): void
@@ -44,11 +43,11 @@ class Stats extends Component
             ->whereYear('invoice_date', $this->year)
             ->where('status', '!=', 'cancelled');
 
-        $totalRevenue   = (float) (clone $salesBase)->where('status', 'paid')->sum('total_amount');
+        $totalRevenue = (float) (clone $salesBase)->where('status', 'paid')->sum('total_amount');
         $pendingRevenue = (float) (clone $salesBase)->whereIn('status', ['sent', 'draft'])
             ->where('payment_status', '!=', 'paid')->sum('total_amount');
-        $invoiceCount   = (clone $salesBase)->count();
-        $paidCount      = (clone $salesBase)->where('status', 'paid')->count();
+        $invoiceCount = (clone $salesBase)->count();
+        $paidCount = (clone $salesBase)->where('status', 'paid')->count();
         $averageInvoice = $invoiceCount > 0 ? $totalRevenue / $invoiceCount : 0;
 
         // Gastos compra uva
@@ -66,8 +65,8 @@ class Stats extends Component
             ->whereYear('cm.performed_date', $this->year)
             ->sum('cm.cost');
 
-        $totalCosts     = $grapeCost + $maintenanceCost;
-        $grossMargin    = $totalRevenue - $totalCosts;
+        $totalCosts = $grapeCost + $maintenanceCost;
+        $grossMargin = $totalRevenue - $totalCosts;
         $grossMarginPct = $totalRevenue > 0 ? ($grossMargin / $totalRevenue) * 100 : 0;
 
         // Tasa de cobro
@@ -114,7 +113,7 @@ class Stats extends Component
             ->count();
 
         $revenueGrowth = $prevRevenue > 0 ? (($totalRevenue - $prevRevenue) / $prevRevenue) * 100 : null;
-        $costGrowth    = $prevGrapeCost > 0 ? (($grapeCost - $prevGrapeCost) / $prevGrapeCost) * 100 : null;
+        $costGrowth = $prevGrapeCost > 0 ? (($grapeCost - $prevGrapeCost) / $prevGrapeCost) * 100 : null;
 
         // ═══════════════════════════════════════════════════════════
         // EVOLUCIÓN MENSUAL (año actual vs anterior)
@@ -141,9 +140,9 @@ class Stats extends Component
             ->pluck('total', 'month');
 
         $monthlyData = collect(range(1, 12))->map(fn ($m) => [
-            'month'    => $m,
-            'label'    => now()->month($m)->format('M'),
-            'current'  => (float) ($monthlyRevenue->get($m) ?? 0),
+            'month' => $m,
+            'label' => now()->month($m)->format('M'),
+            'current' => (float) ($monthlyRevenue->get($m) ?? 0),
             'previous' => (float) ($prevMonthlyRevenue->get($m) ?? 0),
         ]);
 
@@ -244,40 +243,40 @@ class Stats extends Component
             ->get();
 
         return view('livewire.winery.financial.stats', [
-            'availableYears'    => $availableYears,
+            'availableYears' => $availableYears,
             // KPIs
-            'totalRevenue'      => $totalRevenue,
-            'pendingRevenue'    => $pendingRevenue,
-            'invoiceCount'      => $invoiceCount,
-            'paidCount'         => $paidCount,
-            'averageInvoice'    => $averageInvoice,
-            'grapeCost'         => $grapeCost,
-            'maintenanceCost'   => $maintenanceCost,
-            'totalCosts'        => $totalCosts,
-            'grossMargin'       => $grossMargin,
-            'grossMarginPct'    => $grossMarginPct,
-            'collectionRate'    => $collectionRate,
-            'overdueAmount'     => $overdueAmount,
-            'overdueCount'      => $overdueCount,
+            'totalRevenue' => $totalRevenue,
+            'pendingRevenue' => $pendingRevenue,
+            'invoiceCount' => $invoiceCount,
+            'paidCount' => $paidCount,
+            'averageInvoice' => $averageInvoice,
+            'grapeCost' => $grapeCost,
+            'maintenanceCost' => $maintenanceCost,
+            'totalCosts' => $totalCosts,
+            'grossMargin' => $grossMargin,
+            'grossMarginPct' => $grossMarginPct,
+            'collectionRate' => $collectionRate,
+            'overdueAmount' => $overdueAmount,
+            'overdueCount' => $overdueCount,
             // Comparativa
-            'prevRevenue'       => $prevRevenue,
-            'revenueGrowth'     => $revenueGrowth,
-            'costGrowth'        => $costGrowth,
-            'prevInvoiceCount'  => $prevInvoiceCount,
+            'prevRevenue' => $prevRevenue,
+            'revenueGrowth' => $revenueGrowth,
+            'costGrowth' => $costGrowth,
+            'prevInvoiceCount' => $prevInvoiceCount,
             // Mensual
-            'monthlyData'       => $monthlyData,
+            'monthlyData' => $monthlyData,
             // Rentabilidad
             'revenueByWineType' => $revenueByWineType,
-            'costByWineType'    => $costByWineType,
+            'costByWineType' => $costByWineType,
             // Rankings
-            'topClients'        => $topClients,
-            'topProducts'       => $topProducts,
+            'topClients' => $topClients,
+            'topProducts' => $topProducts,
             // Pendientes
-            'pendingInvoices'   => $pendingInvoices,
+            'pendingInvoices' => $pendingInvoices,
             // Stock
-            'productStock'      => $productStock,
+            'productStock' => $productStock,
         ])->layout('layouts.app', [
-            'title'       => __('Estadísticas Financieras de Bodega'),
+            'title' => __('Estadísticas Financieras de Bodega'),
             'description' => __('KPIs, tendencias y comparativas económicas de tu bodega'),
         ]);
     }

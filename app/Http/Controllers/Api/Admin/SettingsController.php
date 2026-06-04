@@ -46,14 +46,14 @@ class SettingsController extends Controller
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $validated = $request->validate([
-            'registration_open'      => 'sometimes|boolean',
-            'maintenance_mode'       => 'sometimes|boolean',
-            'support_email'          => 'sometimes|email|max:255',
-            'beta_end_date'          => 'sometimes|nullable|date|after:today',
-            'password_min_length'    => 'sometimes|integer|min:6|max:32',
-            'require_strong_password'=> 'sometimes|boolean',
-            'module_silicie'         => 'sometimes|boolean',
-            'module_pac'             => 'sometimes|boolean',
+            'registration_open' => 'sometimes|boolean',
+            'maintenance_mode' => 'sometimes|boolean',
+            'support_email' => 'sometimes|email|max:255',
+            'beta_end_date' => 'sometimes|nullable|date|after:today',
+            'password_min_length' => 'sometimes|integer|min:6|max:32',
+            'require_strong_password' => 'sometimes|boolean',
+            'module_silicie' => 'sometimes|boolean',
+            'module_pac' => 'sometimes|boolean',
         ]);
 
         foreach ($validated as $key => $value) {
@@ -62,7 +62,7 @@ class SettingsController extends Controller
 
         SecurityLogger::logSecurityEvent('admin_settings_updated', [
             'admin_id' => $admin->id,
-            'keys'     => array_keys($validated),
+            'keys' => array_keys($validated),
         ]);
 
         // Devolver estado actualizado

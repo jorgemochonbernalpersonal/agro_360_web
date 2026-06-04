@@ -4,8 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Config;
 
 class SecurityAudit extends Command
 {
@@ -45,7 +43,7 @@ class SecurityAudit extends Command
     protected function checkEnvironment()
     {
         $this->comment('Checking Environment Configuration:');
-        
+
         $debug = config('app.debug');
         if ($debug) {
             $this->warn('  ⚠️ APP_DEBUG is true. This should be false in production.');
@@ -56,7 +54,7 @@ class SecurityAudit extends Command
         $env = config('app.env');
         $this->info("  ℹ️ Current environment: {$env}");
 
-        if ($env === 'production' && !config('session.secure')) {
+        if ($env === 'production' && ! config('session.secure')) {
             $this->warn('  ⚠️ SESSION_SECURE_COOKIE is false in production.');
         }
     }
@@ -65,7 +63,7 @@ class SecurityAudit extends Command
     {
         $this->newLine();
         $this->comment('Checking Database Security:');
-        
+
         try {
             DB::connection()->getPdo();
             $this->info('  ✅ Database connection is working.');
@@ -78,7 +76,7 @@ class SecurityAudit extends Command
     {
         $this->newLine();
         $this->comment('Checking Security Middleware:');
-        
+
         $hasBotDefense = class_exists(\App\Http\Middleware\BotDefense::class);
         if ($hasBotDefense) {
             $this->info('  ✅ BotDefense middleware is present.');
@@ -96,14 +94,14 @@ class SecurityAudit extends Command
     {
         $this->newLine();
         $this->comment('Checking for sensitive files in root:');
-        
+
         $sensitiveFiles = [
             'fix-image-urls.php',
             'verify_fix.php',
             'fix-schema-escaping.php',
             'region-data.php',
             'env.production.example',
-            'env.local.example'
+            'env.local.example',
         ];
 
         foreach ($sensitiveFiles as $file) {

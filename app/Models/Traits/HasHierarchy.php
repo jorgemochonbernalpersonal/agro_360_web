@@ -3,11 +3,11 @@
 namespace App\Models\Traits;
 
 use App\Models\Crew;
+use App\Models\CrewMember;
 use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
-use App\Models\WineryViticulturist;
-use App\Models\CrewMember;
 use App\Models\User;
+use App\Models\WineryViticulturist;
 
 trait HasHierarchy
 {
@@ -15,11 +15,17 @@ trait HasHierarchy
      * Cache properties (not stored in database)
      */
     protected $_wineries_cache;
+
     protected $_supervisor_cache;
+
     protected $_has_winery_cache;
+
     protected $_has_supervisor_cache;
+
     protected $_has_winery_supervisor_cache;
+
     protected $_was_created_by_another_cache;
+
     protected $_needs_password_change_cache;
 
     // ======== RELACIONES COMO SUPERVISOR ========
@@ -87,11 +93,11 @@ trait HasHierarchy
      */
     public function getSupervisorAttribute(): ?User
     {
-        if (!$this->hasViticulturistAccess()) {
+        if (! $this->hasViticulturistAccess()) {
             return null;
         }
 
-        if (!isset($this->_supervisor_cache)) {
+        if (! isset($this->_supervisor_cache)) {
             $cacheKey = "user_{$this->id}_supervisor";
 
             $this->_supervisor_cache = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () {
@@ -112,11 +118,11 @@ trait HasHierarchy
      */
     public function hasSupervisor(): bool
     {
-        if (!$this->hasViticulturistAccess()) {
+        if (! $this->hasViticulturistAccess()) {
             return false;
         }
 
-        if (!isset($this->_has_supervisor_cache)) {
+        if (! isset($this->_has_supervisor_cache)) {
             $this->_has_supervisor_cache = \Illuminate\Support\Facades\Cache::remember(
                 "user_{$this->id}_has_supervisor",
                 300,
@@ -133,11 +139,11 @@ trait HasHierarchy
      */
     public function getWineriesAttribute()
     {
-        if (!$this->hasViticulturistAccess()) {
+        if (! $this->hasViticulturistAccess()) {
             return collect();
         }
 
-        if (!isset($this->_wineries_cache)) {
+        if (! isset($this->_wineries_cache)) {
             $cacheKey = "user_{$this->id}_wineries";
 
             $this->_wineries_cache = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () {
@@ -166,11 +172,11 @@ trait HasHierarchy
      */
     public function hasWinery(): bool
     {
-        if (!$this->hasViticulturistAccess()) {
+        if (! $this->hasViticulturistAccess()) {
             return false;
         }
 
-        if (!isset($this->_has_winery_cache)) {
+        if (! isset($this->_has_winery_cache)) {
             $this->_has_winery_cache = \Illuminate\Support\Facades\Cache::remember(
                 "user_{$this->id}_has_winery",
                 300,
@@ -189,11 +195,11 @@ trait HasHierarchy
      */
     public function hasWinerySupervisor(): bool
     {
-        if (!$this->hasWineryAccess()) {
+        if (! $this->hasWineryAccess()) {
             return false;
         }
 
-        if (!isset($this->_has_winery_supervisor_cache)) {
+        if (! isset($this->_has_winery_supervisor_cache)) {
             $this->_has_winery_supervisor_cache = \Illuminate\Support\Facades\Cache::remember(
                 "user_{$this->id}_has_winery_supervisor",
                 300,
@@ -206,10 +212,12 @@ trait HasHierarchy
 
     /**
      * Verificar si puede editar un viticultor
+     *
+     * @param mixed $viticulturistId
      */
     public function canEditViticulturist($viticulturistId): bool
     {
-        if (!$this->hasViticulturistAccess()) {
+        if (! $this->hasViticulturistAccess()) {
             return false;
         }
 
@@ -240,7 +248,7 @@ trait HasHierarchy
      */
     public function wasCreatedByViticulturist(): bool
     {
-        if (!$this->hasViticulturistAccess()) {
+        if (! $this->hasViticulturistAccess()) {
             return false;
         }
 
@@ -255,7 +263,7 @@ trait HasHierarchy
      */
     public function wasCreatedByAnotherUser(): bool
     {
-        if (!isset($this->_was_created_by_another_cache)) {
+        if (! isset($this->_was_created_by_another_cache)) {
             $result = false;
 
             if ($this->hasViticulturistAccess()) {
@@ -264,7 +272,7 @@ trait HasHierarchy
                     ->whereIn('source', [
                         WineryViticulturist::SOURCE_VITICULTURIST,
                         WineryViticulturist::SOURCE_OWN,
-                        WineryViticulturist::SOURCE_SUPERVISOR
+                        WineryViticulturist::SOURCE_SUPERVISOR,
                     ])
                     ->exists();
             } elseif ($this->isWinery()) {
@@ -284,8 +292,8 @@ trait HasHierarchy
      */
     public function needsPasswordChange(): bool
     {
-        if (!isset($this->_needs_password_change_cache)) {
-            $this->_needs_password_change_cache = $this->wasCreatedByAnotherUser() && !$this->hasVerifiedEmail();
+        if (! isset($this->_needs_password_change_cache)) {
+            $this->_needs_password_change_cache = $this->wasCreatedByAnotherUser() && ! $this->hasVerifiedEmail();
         }
 
         return $this->_needs_password_change_cache;

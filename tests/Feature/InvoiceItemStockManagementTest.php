@@ -2,16 +2,15 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Client;
-use App\Models\Invoice;
-use App\Models\InvoiceItem;
-use App\Models\Harvest;
-use App\Models\HarvestStock;
 use App\Models\Container;
 use App\Models\ContainerCurrentState;
+use App\Models\Harvest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class InvoiceItemStockManagementTest extends TestCase
 {
@@ -19,17 +18,19 @@ class InvoiceItemStockManagementTest extends TestCase
     use \Tests\Traits\CreatesTestHarvest;
 
     protected User $user;
+
     protected Client $client;
+
     protected Harvest $harvest;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->user = User::factory()->create();
         $this->client = Client::factory()->create(['user_id' => $this->user->id]);
         $this->harvest = $this->createHarvestWithStock($this->user);
-        
+
         $this->actingAs($this->user);
     }
 

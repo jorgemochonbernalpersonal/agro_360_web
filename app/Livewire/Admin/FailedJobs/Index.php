@@ -5,7 +5,6 @@ namespace App\Livewire\Admin\FailedJobs;
 use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Services\SecurityLogger;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -13,7 +12,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications, WithReadOnlyGuard;
+    use WithPagination, WithReadOnlyGuard, WithToastNotifications;
 
     public string $search = '';
 
@@ -21,7 +20,10 @@ class Index extends Component
         'search' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
 
     public function retryJob(int $id): void
     {
@@ -30,27 +32,28 @@ class Index extends Component
         }
 
         $job = DB::table('failed_jobs')->where('id', $id)->first();
-        if (!$job) {
+        if (! $job) {
             $this->toastError(__('Job no encontrado.'));
+
             return;
         }
 
         try {
             // Re-insert into jobs queue
             DB::table('jobs')->insert([
-                'queue'        => $job->queue,
-                'payload'      => $job->payload,
-                'attempts'     => 0,
-                'reserved_at'  => null,
+                'queue' => $job->queue,
+                'payload' => $job->payload,
+                'attempts' => 0,
+                'reserved_at' => null,
                 'available_at' => now()->timestamp,
-                'created_at'   => now()->timestamp,
+                'created_at' => now()->timestamp,
             ]);
             DB::table('failed_jobs')->where('id', $id)->delete();
 
             SecurityLogger::logSecurityEvent('failed_job_retried', [
                 'admin_id' => Auth::id(),
-                'job_id'   => $id,
-                'queue'    => $job->queue,
+                'job_id' => $id,
+                'queue' => $job->queue,
             ]);
 
             $this->toastSuccess(__('Job reencolado correctamente.'));
@@ -83,16 +86,17 @@ class Index extends Component
 
         if ($jobs->isEmpty()) {
             $this->toastError(__('No hay jobs fallidos que reintentar.'));
+
             return;
         }
 
         $inserts = $jobs->map(fn ($j) => [
-            'queue'        => $j->queue,
-            'payload'      => $j->payload,
-            'attempts'     => 0,
-            'reserved_at'  => null,
+            'queue' => $j->queue,
+            'payload' => $j->payload,
+            'attempts' => 0,
+            'reserved_at' => null,
             'available_at' => now()->timestamp,
-            'created_at'   => now()->timestamp,
+            'created_at' => now()->timestamp,
         ])->toArray();
 
         DB::table('jobs')->insert($inserts);
@@ -100,7 +104,7 @@ class Index extends Component
 
         SecurityLogger::logSecurityEvent('failed_jobs_retry_all', [
             'admin_id' => Auth::id(),
-            'count'    => $jobs->count(),
+            'count' => $jobs->count(),
         ]);
 
         $this->toastSuccess("{$jobs->count()} job(s) reencolados.");
@@ -116,6 +120,7 @@ class Index extends Component
 
         if ($count === 0) {
             $this->toastError(__('No hay jobs fallidos.'));
+
             return;
         }
 
@@ -123,7 +128,7 @@ class Index extends Component
 
         SecurityLogger::logSecurityEvent('failed_jobs_flush', [
             'admin_id' => Auth::id(),
-            'count'    => $count,
+            'count' => $count,
         ]);
 
         $this->toastSuccess("{$count} job(s) eliminados permanentemente.");
@@ -134,20 +139,20 @@ class Index extends Component
         $query = DB::table('failed_jobs')->orderByDesc('failed_at');
 
         if ($this->search) {
-            $s = '%' . $this->search . '%';
+            $s = '%'.$this->search.'%';
             $query->where(function ($q) use ($s) {
-                $q->where('queue',     'like', $s)
-                  ->orWhere('payload',   'like', $s)
-                  ->orWhere('exception', 'like', $s);
+                $q->where('queue', 'like', $s)
+                    ->orWhere('payload', 'like', $s)
+                    ->orWhere('exception', 'like', $s);
             });
         }
 
-        $jobs       = $query->paginate(20);
+        $jobs = $query->paginate(20);
         $totalCount = DB::table('failed_jobs')->count();
 
         return view('livewire.admin.failed-jobs.index', compact('jobs', 'totalCount'))
             ->layout('layouts.app', [
-                'title'       => __('Jobs Fallidos - Admin - Agro365'),
+                'title' => __('Jobs Fallidos - Admin - Agro365'),
                 'description' => __('Monitor y gestión de jobs fallidos de la cola de trabajos'),
             ]);
     }

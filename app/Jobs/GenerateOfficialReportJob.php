@@ -6,8 +6,8 @@ use App\Mail\ReportGeneratedMail;
 use App\Mail\ReportGenerationFailedMail;
 use App\Models\OfficialReport;
 use App\Models\User;
-use App\Services\Validators\PacComplianceValidator;
 use App\Services\OfficialReportService;
+use App\Services\Validators\PacComplianceValidator;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -22,7 +22,9 @@ class GenerateOfficialReportJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
+
     public $timeout = 600;  // 10 minutos (aumentado para informes grandes)
+
     public $backoff = [60, 120, 300];  // Reintentos: 1min, 2min, 5min
 
     public function __construct(
@@ -41,9 +43,9 @@ class GenerateOfficialReportJob implements ShouldQueue
 
         $report = OfficialReport::find($this->reportId);
 
-        if (!$report) {
+        if (! $report) {
             Log::error('Report not found for job', ['id' => $this->reportId]);
-            
+
             // Notificar al usuario del fallo
             $user = User::find($this->userId);
             if ($user) {
@@ -53,13 +55,13 @@ class GenerateOfficialReportJob implements ShouldQueue
                     'report_type' => $this->reportType,
                     'user_id' => $this->userId,
                 ]);
-                
+
                 $user->notify(new \App\Notifications\ReportFailedNotification(
                     $tempReport,
                     'El informe no fue encontrado en la base de datos. Puede haber sido eliminado antes de procesarse.'
                 ));
             }
-            
+
             return;
         }
 
@@ -81,7 +83,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                     ->forUser($this->userId)
                     ->whereBetween('activity_date', [
                         Carbon::parse($this->parameters['start_date']),
-                        Carbon::parse($this->parameters['end_date'])
+                        Carbon::parse($this->parameters['end_date']),
                     ])
                     ->with([
                         'phytosanitaryTreatment.product',
@@ -106,7 +108,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                         'crew_member_id',
                         'temperature',
                         'notes',
-                        'viticulturist_id'
+                        'viticulturist_id',
                     ])
                     ->orderBy('activity_date', 'asc')
                     ->get();
@@ -119,7 +121,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                 // OPTIMIZACIÓN: Calcular estadísticas de forma más eficiente
                 $stats = [
                     'total_treatments' => $treatments->count(),
-                    'total_area_treated' => $treatments->sum(fn($t) => $t->phytosanitaryTreatment?->area_treated ?? 0),
+                    'total_area_treated' => $treatments->sum(fn ($t) => $t->phytosanitaryTreatment?->area_treated ?? 0),
                     'products_used' => $treatments
                         ->pluck('phytosanitaryTreatment.product.name')
                         ->filter()
@@ -134,7 +136,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                 ];
 
                 // Validar cumplimiento PAC
-                $pacValidator = new PacComplianceValidator();
+                $pacValidator = new PacComplianceValidator;
                 $pacCompliance = $pacValidator->validateActivities($treatments);
 
                 // Actualizar metadata con estadísticas y validación PAC
@@ -196,7 +198,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                 if (isset($this->parameters['start_date']) && isset($this->parameters['end_date'])) {
                     $activitiesQuery->whereBetween('activity_date', [
                         Carbon::parse($this->parameters['start_date']),
-                        Carbon::parse($this->parameters['end_date'])
+                        Carbon::parse($this->parameters['end_date']),
                     ]);
                 }
 
@@ -260,7 +262,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                 ];
 
                 // Validar cumplimiento PAC
-                $pacValidator = new PacComplianceValidator();
+                $pacValidator = new PacComplianceValidator;
                 $pacCompliance = $pacValidator->validateActivities($activities);
 
                 // Actualizar metadata con estadísticas, campaña y validación PAC
@@ -273,7 +275,7 @@ class GenerateOfficialReportJob implements ShouldQueue
 
                 // Generar PDF
                 $user = \App\Models\User::find($this->userId);
-                $service = new OfficialReportService();
+                $service = new OfficialReportService;
                 $pdfPath = $service->generateFullNotebookPDF($report, $user, $campaign, $activities, $stats);
 
                 // OPTIMIZACIÓN: Calcular hash sin cargar todo en memoria
@@ -328,7 +330,7 @@ class GenerateOfficialReportJob implements ShouldQueue
             } catch (\Exception $notifError) {
                 Log::warning('Failed to send notification', [
                     'report_id' => $this->reportId,
-                    'error' => $notifError->getMessage()
+                    'error' => $notifError->getMessage(),
                 ]);
             }
 
@@ -339,7 +341,7 @@ class GenerateOfficialReportJob implements ShouldQueue
             } catch (\Exception $mailError) {
                 Log::warning('Failed to send success email', [
                     'report_id' => $this->reportId,
-                    'error' => $mailError->getMessage()
+                    'error' => $mailError->getMessage(),
                 ]);
             }
         } catch (\Exception $e) {
@@ -347,13 +349,13 @@ class GenerateOfficialReportJob implements ShouldQueue
                 'report_id' => $this->reportId,
                 'error' => $e->getMessage(),
                 'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'line' => $e->getLine(),
             ]);
 
             // Marcar como fallido
             $report->update([
                 'processing_status' => 'failed',
-                'processing_error' => $e->getMessage()
+                'processing_error' => $e->getMessage(),
             ]);
 
             // Enviar notificación en la app
@@ -362,7 +364,7 @@ class GenerateOfficialReportJob implements ShouldQueue
             } catch (\Exception $notifError) {
                 Log::warning('Failed to send failure notification', [
                     'report_id' => $this->reportId,
-                    'error' => $notifError->getMessage()
+                    'error' => $notifError->getMessage(),
                 ]);
             }
 
@@ -373,7 +375,7 @@ class GenerateOfficialReportJob implements ShouldQueue
             } catch (\Exception $mailError) {
                 Log::warning('Failed to send error email', [
                     'report_id' => $this->reportId,
-                    'error' => $mailError->getMessage()
+                    'error' => $mailError->getMessage(),
                 ]);
             }
 
@@ -392,7 +394,7 @@ class GenerateOfficialReportJob implements ShouldQueue
         if ($report) {
             $report->update([
                 'processing_status' => 'failed',
-                'processing_error' => __('Error permanente después de :tries intentos: :error', ['tries' => $this->tries, 'error' => $exception->getMessage()])
+                'processing_error' => __('Error permanente después de :tries intentos: :error', ['tries' => $this->tries, 'error' => $exception->getMessage()]),
             ]);
         }
 
@@ -414,10 +416,10 @@ class GenerateOfficialReportJob implements ShouldQueue
         // Usar Storage para obtener el path correcto (funciona con fake en tests)
         $fullPath = \Illuminate\Support\Facades\Storage::disk('local')->path($filePath);
 
-        if (!file_exists($fullPath)) {
+        if (! file_exists($fullPath)) {
             // Fallback: intentar con storage_path si el método anterior falla
-            $fullPath = storage_path('app/' . $filePath);
-            if (!file_exists($fullPath)) {
+            $fullPath = storage_path('app/'.$filePath);
+            if (! file_exists($fullPath)) {
                 throw new \Exception("Archivo no encontrado: {$filePath}");
             }
         }
@@ -425,12 +427,12 @@ class GenerateOfficialReportJob implements ShouldQueue
         $hash = hash_init('sha256');
         $stream = fopen($fullPath, 'rb');
 
-        if (!$stream) {
+        if (! $stream) {
             throw new \Exception(__('No se pudo abrir el archivo para calcular hash'));
         }
 
         // Leer en chunks de 8KB para no cargar todo en memoria
-        while (!feof($stream)) {
+        while (! feof($stream)) {
             $chunk = fread($stream, 8192);
             if ($chunk !== false) {
                 hash_update($hash, $chunk);
@@ -438,6 +440,7 @@ class GenerateOfficialReportJob implements ShouldQueue
         }
 
         fclose($stream);
+
         return hash_final($hash);
     }
 
@@ -456,7 +459,7 @@ class GenerateOfficialReportJob implements ShouldQueue
         if (isset($parameters['start_date']) && isset($parameters['end_date'])) {
             $query->whereBetween('activity_date', [
                 Carbon::parse($parameters['start_date']),
-                Carbon::parse($parameters['end_date'])
+                Carbon::parse($parameters['end_date']),
             ]);
         }
 

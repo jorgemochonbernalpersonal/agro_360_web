@@ -31,5 +31,3 @@ class TrainingSystem extends Model
         return $this->hasMany(PlotPlanting::class, 'training_system_id');
     }
 }
-
-

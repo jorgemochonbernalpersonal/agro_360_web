@@ -9,15 +9,18 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $currentTab              = 'active';
-    public string $search                  = '';
-    public string $filterCampaign          = '';
-    public string $filterCollectionSystem  = '';
+    public string $currentTab = 'active';
+
+    public string $search = '';
+
+    public string $filterCampaign = '';
+
+    public string $filterCollectionSystem = '';
 
     protected $queryString = [
-        'currentTab'             => ['as' => 'tab',    'except' => 'active'],
-        'search'                 => ['as' => 'q',      'except' => ''],
-        'filterCampaign'         => ['as' => 'campaign','except' => ''],
+        'currentTab' => ['as' => 'tab',    'except' => 'active'],
+        'search' => ['as' => 'q',      'except' => ''],
+        'filterCampaign' => ['as' => 'campaign', 'except' => ''],
         'filterCollectionSystem' => ['as' => 'system', 'except' => ''],
     ];
 
@@ -29,13 +32,19 @@ class Index extends AbstractIndex
         }
     }
 
-    public function updatingSearch(): void                  { $this->resetPage(); }
-    public function updatingFilterCampaign(): void          { $this->resetPage(); }
-    public function updatingFilterCollectionSystem(): void  { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'filterCampaign' => '', 'filterCollectionSystem' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingFilterCampaign(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterCollectionSystem(): void
+    {
+        $this->resetPage();
     }
 
     public function switchTab(string $tab): void
@@ -62,6 +71,11 @@ class Index extends AbstractIndex
         $this->toastSuccess(__('Registro eliminado.'));
     }
 
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'filterCampaign' => '', 'filterCollectionSystem' => ''];
+    }
+
     protected function baseQuery(): Builder
     {
         return PhytosanitaryContainerReturn::where('viticulturist_id', $this->viticulturistId())
@@ -72,9 +86,9 @@ class Index extends AbstractIndex
     {
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('product_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('collection_point', 'like', '%' . $this->search . '%')
-                  ->orWhere('registration_number', 'like', '%' . $this->search . '%');
+                $q->where('product_name', 'like', '%'.$this->search.'%')
+                    ->orWhere('collection_point', 'like', '%'.$this->search.'%')
+                    ->orWhere('registration_number', 'like', '%'.$this->search.'%');
             });
         }
         if ($this->filterCampaign) {
@@ -85,29 +99,35 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['date', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
-        $userId    = $this->viticulturistId();
+        $userId = $this->viticulturistId();
         $baseQuery = PhytosanitaryContainerReturn::where('viticulturist_id', $userId);
 
         $stats = [
-            'active'            => (clone $baseQuery)->where('active', true)->count(),
-            'archived'          => (clone $baseQuery)->where('active', false)->count(),
-            'total_containers'  => (clone $baseQuery)->where('active', true)
-                ->when($this->filterCampaign, fn($q) => $q->where('campaign_id', $this->filterCampaign))
+            'active' => (clone $baseQuery)->where('active', true)->count(),
+            'archived' => (clone $baseQuery)->where('active', false)->count(),
+            'total_containers' => (clone $baseQuery)->where('active', true)
+                ->when($this->filterCampaign, fn ($q) => $q->where('campaign_id', $this->filterCampaign))
                 ->sum('containers_quantity'),
         ];
 
         return [
-            'entries'           => $entries,
-            'campaigns'         => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
+            'entries' => $entries,
+            'campaigns' => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
             'collectionSystems' => PhytosanitaryContainerReturn::collectionSystemOptions(),
-            'containerTypes'    => PhytosanitaryContainerReturn::containerTypeOptions(),
-            'stats'             => $stats,
+            'containerTypes' => PhytosanitaryContainerReturn::containerTypeOptions(),
+            'stats' => $stats,
         ];
     }
 }

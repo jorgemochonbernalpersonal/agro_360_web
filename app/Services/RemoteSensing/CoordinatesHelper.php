@@ -14,14 +14,15 @@ class CoordinatesHelper
      * Coordenadas por defecto (Ribera del Duero, España)
      */
     private const DEFAULT_LAT = 41.6167;
+
     private const DEFAULT_LON = -3.7033;
 
     /**
      * Obtener coordenadas de una parcela desde su geometría
-     * 
-     * @param Plot $plot
-     * @param int|null $plotSigpacId ID de MultipartPlotSigpac (sigpac parcel) para usar su PlotGeometry
+     *
+     * @param int|null   $plotSigpacId   ID de MultipartPlotSigpac (sigpac parcel) para usar su PlotGeometry
      * @param array|null $overrideCoords ['lat' => float, 'lng'|'lon' => float] para forzar coordenadas
+     *
      * @return array ['lat' => float, 'lon' => float]
      */
     public static function getCoordinates(Plot $plot, ?int $plotSigpacId = null, ?array $overrideCoords = null): array
@@ -60,15 +61,14 @@ class CoordinatesHelper
     /**
      * Obtener coordenadas con fallback a geocoding por municipio
      * Usado principalmente por WeatherService
-     * 
-     * @param Plot $plot
+     *
      * @return array ['lat' => float, 'lon' => float]
      */
     public static function getCoordinatesWithGeocoding(Plot $plot): array
     {
         // Primero intentar desde geometría
         $coords = self::getCoordinates($plot);
-        
+
         // Si no son las coordenadas por defecto, retornar
         if ($coords['lat'] !== self::DEFAULT_LAT || $coords['lon'] !== self::DEFAULT_LON) {
             return $coords;
@@ -87,49 +87,10 @@ class CoordinatesHelper
     }
 
     /**
-     * Geocodificar ubicación por municipio usando Open-Meteo
-     * 
-     * @param Plot $plot
-     * @return array|null ['lat' => float, 'lon' => float] o null si falla
-     */
-    private static function geocodeByMunicipality(Plot $plot): ?array
-    {
-        $query = "{$plot->municipality->name}, {$plot->province->name}, Spain";
-        $cacheKey = "geo_loc_" . \Illuminate\Support\Str::slug($query);
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 86400 * 30, function () use ($query) {
-            try {
-                $response = \Illuminate\Support\Facades\Http::timeout(10)
-                    ->get('https://geocoding-api.open-meteo.com/v1/search', [
-                        'name' => $query,
-                        'count' => 1,
-                        'language' => 'es',
-                        'format' => 'json'
-                    ]);
-
-                if ($response->successful() && isset($response['results'][0])) {
-                    $result = $response['results'][0];
-                    return [
-                        'lat' => $result['latitude'],
-                        'lon' => $result['longitude']
-                    ];
-                }
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::warning("Geocoding failed for: $query", [
-                    'error' => $e->getMessage()
-                ]);
-            }
-            
-            return null;
-        });
-    }
-
-    /**
      * Validar que las coordenadas estén en rangos válidos
-     * 
+     *
      * @param float $lat Latitud (-90 a 90)
      * @param float $lon Longitud (-180 a 180)
-     * @return bool
      */
     public static function isValidCoordinate(float $lat, float $lon): bool
     {
@@ -138,18 +99,16 @@ class CoordinatesHelper
 
     /**
      * Formatear coordenadas para display
-     * 
-     * @param float $lat
-     * @param float $lon
+     *
      * @return string "41.6167°N, 3.7033°W"
      */
     public static function format(float $lat, float $lon): string
     {
         $latDir = $lat >= 0 ? 'N' : 'S';
         $lonDir = $lon >= 0 ? 'E' : 'W';
-        
+
         return sprintf(
-            "%.4f°%s, %.4f°%s",
+            '%.4f°%s, %.4f°%s',
             abs($lat),
             $latDir,
             abs($lon),
@@ -160,11 +119,7 @@ class CoordinatesHelper
     /**
      * Calcular distancia entre dos puntos (en km)
      * Fórmula de Haversine
-     * 
-     * @param float $lat1
-     * @param float $lon1
-     * @param float $lat2
-     * @param float $lon2
+     *
      * @return float Distancia en kilómetros
      */
     public static function distance(float $lat1, float $lon1, float $lat2, float $lon2): float
@@ -185,7 +140,7 @@ class CoordinatesHelper
 
     /**
      * Obtener coordenadas por defecto
-     * 
+     *
      * @return array ['lat' => float, 'lon' => float]
      */
     public static function getDefaultCoordinates(): array
@@ -194,5 +149,43 @@ class CoordinatesHelper
             'lat' => self::DEFAULT_LAT,
             'lon' => self::DEFAULT_LON,
         ];
+    }
+
+    /**
+     * Geocodificar ubicación por municipio usando Open-Meteo
+     *
+     * @return array|null ['lat' => float, 'lon' => float] o null si falla
+     */
+    private static function geocodeByMunicipality(Plot $plot): ?array
+    {
+        $query = "{$plot->municipality->name}, {$plot->province->name}, Spain";
+        $cacheKey = 'geo_loc_'.\Illuminate\Support\Str::slug($query);
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 86400 * 30, function () use ($query) {
+            try {
+                $response = \Illuminate\Support\Facades\Http::timeout(10)
+                    ->get('https://geocoding-api.open-meteo.com/v1/search', [
+                        'name' => $query,
+                        'count' => 1,
+                        'language' => 'es',
+                        'format' => 'json',
+                    ]);
+
+                if ($response->successful() && isset($response['results'][0])) {
+                    $result = $response['results'][0];
+
+                    return [
+                        'lat' => $result['latitude'],
+                        'lon' => $result['longitude'],
+                    ];
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning("Geocoding failed for: $query", [
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+            return null;
+        });
     }
 }

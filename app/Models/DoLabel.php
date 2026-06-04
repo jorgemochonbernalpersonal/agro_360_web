@@ -7,6 +7,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DoLabel extends Model
 {
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_APPROVED = 'approved';
+
+    public const STATUS_ISSUED = 'issued';
+
+    public const STATUS_CANCELLED = 'cancelled';
+
+    public const STATUS_LABELS = [
+        'pending' => 'Pendiente',
+        'approved' => 'Aprobada',
+        'issued' => 'Emitida',
+        'cancelled' => 'Cancelada',
+    ];
+
+    public const STATUS_COLORS = [
+        'pending' => 'yellow',
+        'approved' => 'blue',
+        'issued' => 'agro',
+        'cancelled' => 'red',
+    ];
+
     protected $table = 'do_labels';
 
     protected $fillable = [
@@ -27,33 +49,14 @@ class DoLabel extends Model
 
     protected $casts = [
         'requested_at' => 'datetime',
-        'issued_at'    => 'datetime',
-        'vintage'      => 'integer',
-    ];
-
-    public const STATUS_PENDING   = 'pending';
-    public const STATUS_APPROVED  = 'approved';
-    public const STATUS_ISSUED    = 'issued';
-    public const STATUS_CANCELLED = 'cancelled';
-
-    public const STATUS_LABELS = [
-        'pending'   => 'Pendiente',
-        'approved'  => 'Aprobada',
-        'issued'    => 'Emitida',
-        'cancelled' => 'Cancelada',
+        'issued_at' => 'datetime',
+        'vintage' => 'integer',
     ];
 
     public static function statusLabelOptions(): array
     {
         return array_map(fn ($v) => __($v), static::STATUS_LABELS);
     }
-
-    public const STATUS_COLORS = [
-        'pending'   => 'yellow',
-        'approved'  => 'blue',
-        'issued'    => 'agro',
-        'cancelled' => 'red',
-    ];
 
     public function supervisor(): BelongsTo
     {

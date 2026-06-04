@@ -15,10 +15,10 @@ class FullTraceabilityController extends Controller
 {
     public function __invoke(Request $request, int $campaignId): JsonResponse
     {
-        $user     = $request->user();
-        $userId   = $user->id;
+        $user = $request->user();
+        $userId = $user->id;
         $campaign = Campaign::forViticulturist($userId)->findOrFail($campaignId);
-        $year     = $campaign->year;
+        $year = $campaign->year;
 
         // ── Step 1: Campo ────────────────────────────────────────────────────
         $fieldStats = Harvest::whereHas('activity', fn ($q) => $q->where('viticulturist_id', $userId))
@@ -27,7 +27,7 @@ class FullTraceabilityController extends Controller
             ->selectRaw('COUNT(*) as entries, COALESCE(SUM(total_weight), 0) as total_kg')
             ->first();
 
-        $plotIds    = Plot::forUser($user)->pluck('id');
+        $plotIds = Plot::forUser($user)->pluck('id');
         $plotsCount = $plotIds->count();
 
         // ── Step 2: Recepción en bodega ──────────────────────────────────────
@@ -44,9 +44,9 @@ class FullTraceabilityController extends Controller
             ->get();
 
         $wineStats = [
-            'total_wines'  => $wines->count(),
+            'total_wines' => $wines->count(),
             'total_volume' => round((float) $wines->sum('volume_liters'), 2),
-            'by_type'      => $wines->groupBy('wine_type')->map->count(),
+            'by_type' => $wines->groupBy('wine_type')->map->count(),
         ];
 
         // ── Step 4: Productos ────────────────────────────────────────────────
@@ -69,12 +69,13 @@ class FullTraceabilityController extends Controller
             ->groupBy(fn ($h) => $h->plotPlanting?->plot_id)
             ->map(function ($group, $plotId) {
                 $first = $group->first();
+
                 return [
-                    'plot_id'    => $plotId,
-                    'plot_name'  => $first->plotPlanting?->plot?->name ?? '—',
-                    'variety'    => $first->plotPlanting?->grapeVariety?->name ?? '—',
-                    'total_kg'   => round((float) $group->sum('total_weight'), 2),
-                    'entries'    => $group->count(),
+                    'plot_id' => $plotId,
+                    'plot_name' => $first->plotPlanting?->plot?->name ?? '—',
+                    'variety' => $first->plotPlanting?->grapeVariety?->name ?? '—',
+                    'total_kg' => round((float) $group->sum('total_weight'), 2),
+                    'entries' => $group->count(),
                 ];
             })
             ->values();
@@ -82,33 +83,33 @@ class FullTraceabilityController extends Controller
         return response()->json([
             'campaign' => ['id' => $campaign->id, 'name' => $campaign->name, 'year' => $year],
             'field' => [
-                'entries'     => (int) ($fieldStats->entries ?? 0),
-                'total_kg'    => (float) ($fieldStats->total_kg ?? 0),
+                'entries' => (int) ($fieldStats->entries ?? 0),
+                'total_kg' => (float) ($fieldStats->total_kg ?? 0),
                 'plots_count' => $plotsCount,
             ],
             'reception' => [
-                'entries'       => (int) ($receptionStats->entries ?? 0),
-                'total_kg'      => (float) ($receptionStats->total_kg ?? 0),
+                'entries' => (int) ($receptionStats->entries ?? 0),
+                'total_kg' => (float) ($receptionStats->total_kg ?? 0),
                 'batches_count' => (int) ($receptionStats->batches_count ?? 0),
             ],
             'wines' => [
                 'stats' => $wineStats,
                 'items' => $wines->map(fn ($w) => [
-                    'id'               => $w->id,
-                    'name'             => $w->name,
-                    'wine_type'        => $w->wine_type,
-                    'volume_liters'    => (float) $w->volume_liters,
-                    'status'           => $w->status,
-                    'harvests_count'   => $w->harvests_count,
-                    'transfers_count'  => $w->transfers_count,
-                    'bottlings_count'  => $w->bottlings_count,
+                    'id' => $w->id,
+                    'name' => $w->name,
+                    'wine_type' => $w->wine_type,
+                    'volume_liters' => (float) $w->volume_liters,
+                    'status' => $w->status,
+                    'harvests_count' => $w->harvests_count,
+                    'transfers_count' => $w->transfers_count,
+                    'bottlings_count' => $w->bottlings_count,
                 ]),
             ],
             'products' => [
-                'total_lots'  => (int) ($productStats->total_lots ?? 0),
+                'total_lots' => (int) ($productStats->total_lots ?? 0),
                 'total_units' => (float) ($productStats->total_units ?? 0),
-                'sold_units'  => (float) ($productStats->sold_units ?? 0),
-                'revenue'     => (float) ($productStats->revenue ?? 0),
+                'sold_units' => (float) ($productStats->sold_units ?? 0),
+                'revenue' => (float) ($productStats->revenue ?? 0),
             ],
             'flow_by_plot' => $flowByPlot,
         ])->header('Cache-Control', 'private, max-age=300');

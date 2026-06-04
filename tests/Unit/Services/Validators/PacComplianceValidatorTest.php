@@ -7,32 +7,33 @@ use App\Models\Plot;
 use App\Models\SigpacCode;
 use App\Models\User;
 use App\Services\Validators\PacComplianceValidator;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
 use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class PacComplianceValidatorTest extends TestCase
 {
     use RefreshDatabase;
 
     protected PacComplianceValidator $validator;
+
     protected User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Seed de localización requerido por los factories de Plot
         $this->seed([
             AutonomousCommunitySeeder::class,
             ProvinceSeeder::class,
             MunicipalitySeeder::class,
         ]);
-        
-        $this->validator = new PacComplianceValidator();
+
+        $this->validator = new PacComplianceValidator;
         $this->user = User::factory()->create();
     }
 
@@ -113,7 +114,7 @@ class PacComplianceValidatorTest extends TestCase
         $result = $this->validator->validateActivities($activities);
 
         $this->assertTrue($result['has_warnings']);
-        $this->assertNotEmpty(array_filter($result['warnings'][0]['warnings'], function($warning) {
+        $this->assertNotEmpty(array_filter($result['warnings'][0]['warnings'], function ($warning) {
             return str_contains($warning, 'excede superficie');
         }));
     }
@@ -161,10 +162,10 @@ class PacComplianceValidatorTest extends TestCase
     public function it_generates_compliance_report()
     {
         $sigpacCode = SigpacCode::create(['code' => str_repeat('1', 19)]);
-        
+
         // Crear uso SIGPAC para evitar warnings
         $sigpacUse = \App\Models\SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
-        
+
         $plot = Plot::factory()->create(['viticulturist_id' => $this->user->id]);
         $plot->sigpacCodes()->attach($sigpacCode->id);
         $plot->sigpacUses()->attach($sigpacUse->id);
@@ -236,10 +237,10 @@ class PacComplianceValidatorTest extends TestCase
     {
         // 2 de 3 actividades con SIGPAC válido
         $sigpacCode = SigpacCode::create(['code' => str_repeat('1', 19)]);
-        
+
         // Crear uso SIGPAC para evitar warnings
         $sigpacUse = \App\Models\SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
-        
+
         $plotWithSigpac = Plot::factory()->create();
         $plotWithSigpac->sigpacCodes()->attach($sigpacCode->id);
         $plotWithSigpac->sigpacUses()->attach($sigpacUse->id);

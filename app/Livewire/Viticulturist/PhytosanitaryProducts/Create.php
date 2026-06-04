@@ -3,8 +3,8 @@
 namespace App\Livewire\Viticulturist\PhytosanitaryProducts;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Models\PhytosanitaryProduct;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\PhytosanitaryProduct;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -12,15 +12,25 @@ use Livewire\Component;
 class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
+
     public $name = '';
+
     public $active_ingredient = '';
+
     public $registration_number = '';
+
     public $registration_expiry_date = '';
+
     public $registration_status = 'active';
+
     public $manufacturer = '';
+
     public $type = '';
+
     public $toxicity_class = '';
+
     public $withdrawal_period_days = 0;
+
     public $description = '';
 
     public function mount(): void
@@ -28,22 +38,6 @@ class Create extends Component
         if (! Auth::user()->hasViticulturistAccess()) {
             abort(403, __('No tienes permiso para crear productos fitosanitarios.'));
         }
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'name' => 'required|string|max:255',
-            'active_ingredient' => 'nullable|string|max:255',
-            'registration_number' => ['required', 'string', 'regex:/^ES-\d{8}$/'],
-            'registration_expiry_date' => 'nullable|date|after:today',
-            'registration_status' => 'required|string|in:active,expired,revoked',
-            'manufacturer' => 'nullable|string|max:255',
-            'type' => 'nullable|string|in:herbicida,fungicida,insecticida,acaricida,nematicida,otro',
-            'toxicity_class' => 'nullable|string|in:I,II,III,IV',
-            'withdrawal_period_days' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-        ];
     }
 
     public function save()
@@ -78,6 +72,7 @@ class Create extends Component
             ]);
 
             $this->toastError(__('Error al crear el producto fitosanitario. Por favor, intenta de nuevo.'));
+
             return;
         }
     }
@@ -87,6 +82,20 @@ class Create extends Component
         return view('livewire.viticulturist.phytosanitary-products.create')
             ->layout('layouts.app');
     }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'active_ingredient' => 'nullable|string|max:255',
+            'registration_number' => ['required', 'string', 'regex:/^ES-\d{8}$/'],
+            'registration_expiry_date' => 'nullable|date|after:today',
+            'registration_status' => 'required|string|in:active,expired,revoked',
+            'manufacturer' => 'nullable|string|max:255',
+            'type' => 'nullable|string|in:herbicida,fungicida,insecticida,acaricida,nematicida,otro',
+            'toxicity_class' => 'nullable|string|in:I,II,III,IV',
+            'withdrawal_period_days' => 'required|integer|min:0',
+            'description' => 'nullable|string',
+        ];
+    }
 }
-
-

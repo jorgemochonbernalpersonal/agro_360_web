@@ -6,7 +6,6 @@ use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Container;
 use App\Models\Harvest;
-use App\Models\Plot;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +27,7 @@ class Index extends Component
 
     public function render()
     {
-        $userId    = Auth::id();
+        $userId = Auth::id();
         $campaigns = Campaign::where('viticulturist_id', $userId)
             ->orderByDesc('year')
             ->get(['id', 'name', 'year', 'active']);
@@ -43,10 +42,10 @@ class Index extends Component
 
         return view('livewire.producer.integrated-campaign.index', [
             'campaigns' => $campaigns,
-            'campaign'  => $campaign,
-            'data'      => $data,
+            'campaign' => $campaign,
+            'data' => $data,
         ])->layout('layouts.app', [
-            'title'       => __('Dashboard Integrado de Campaña'),
+            'title' => __('Dashboard Integrado de Campaña'),
             'description' => __('Visión completa viñedo + bodega por campaña'),
         ]);
     }
@@ -54,7 +53,7 @@ class Index extends Component
     private function buildDashboard(int $userId, int $campaignId): array
     {
         $campaign = Campaign::find($campaignId);
-        $year     = $campaign?->year;
+        $year = $campaign?->year;
 
         // ═══════════════════════════════════════════════════════════
         // VIÑEDO
@@ -127,8 +126,8 @@ class Index extends Component
         // Contenedores
         $containerBase = Container::where('user_id', $userId)->where('archived', false);
         $containerCapacity = (clone $containerBase)->sum('capacity');
-        $containerUsed     = (clone $containerBase)->selectRaw('SUM(used_capacity + wine_volume_liters) as used')->value('used') ?? 0;
-        $containerPct      = $containerCapacity > 0 ? round($containerUsed / $containerCapacity * 100, 1) : 0;
+        $containerUsed = (clone $containerBase)->selectRaw('SUM(used_capacity + wine_volume_liters) as used')->value('used') ?? 0;
+        $containerPct = $containerCapacity > 0 ? round($containerUsed / $containerCapacity * 100, 1) : 0;
 
         // Productos / lotes (tabla product_lots no implementada aún)
         $productStats = (object) ['lots' => 0, 'units' => 0, 'sold' => 0, 'revenue' => 0];
@@ -137,34 +136,34 @@ class Index extends Component
         // CRUCE VIÑEDO ↔ BODEGA
         // ═══════════════════════════════════════════════════════════
 
-        $fieldKg     = $fieldHarvest->total_kg ?? 0;
+        $fieldKg = $fieldHarvest->total_kg ?? 0;
         $receptionKg = $receptionStats->total_kg ?? 0;
-        $yieldLoss   = $fieldKg > 0 ? round(($fieldKg - $receptionKg) / $fieldKg * 100, 1) : 0;
+        $yieldLoss = $fieldKg > 0 ? round(($fieldKg - $receptionKg) / $fieldKg * 100, 1) : 0;
 
-        $fieldValue   = $fieldHarvest->field_value ?? 0;
+        $fieldValue = $fieldHarvest->field_value ?? 0;
         $wineryRevenue = $productStats->revenue ?? 0;
         $valueMultiplier = $fieldValue > 0 ? round($wineryRevenue / $fieldValue, 2) : 0;
 
         return [
             // Viñedo
-            'activityCounts'   => $activityCounts,
-            'totalActivities'  => $totalActivities,
-            'fieldHarvest'     => $fieldHarvest,
-            'perPlot'          => $perPlot,
-            'plotCosts'        => $plotCosts,
+            'activityCounts' => $activityCounts,
+            'totalActivities' => $totalActivities,
+            'fieldHarvest' => $fieldHarvest,
+            'perPlot' => $perPlot,
+            'plotCosts' => $plotCosts,
             // Bodega
-            'receptionStats'   => $receptionStats,
-            'wines'            => $wines,
-            'wineVolume'       => $wineVolume,
-            'winesByType'      => $winesByType,
-            'winesByStatus'    => $winesByStatus,
+            'receptionStats' => $receptionStats,
+            'wines' => $wines,
+            'wineVolume' => $wineVolume,
+            'winesByType' => $winesByType,
+            'winesByStatus' => $winesByStatus,
             'containerCapacity' => $containerCapacity,
-            'containerUsed'    => $containerUsed,
-            'containerPct'     => $containerPct,
-            'productStats'     => $productStats,
+            'containerUsed' => $containerUsed,
+            'containerPct' => $containerPct,
+            'productStats' => $productStats,
             // Cruce
-            'yieldLoss'        => $yieldLoss,
-            'valueMultiplier'  => $valueMultiplier,
+            'yieldLoss' => $yieldLoss,
+            'valueMultiplier' => $valueMultiplier,
         ];
     }
 }

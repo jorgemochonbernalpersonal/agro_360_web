@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Ability;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
@@ -35,8 +34,8 @@ return new class extends Migration
                 continue; // Already configured by supervisor — leave as-is
             }
 
-            $rows = $allAbilityIds->map(fn($abilityId) => [
-                'user_id'    => $userId,
+            $rows = $allAbilityIds->map(fn ($abilityId) => [
+                'user_id' => $userId,
                 'ability_id' => $abilityId,
                 'granted_by' => $userId,
                 'granted_at' => now(),

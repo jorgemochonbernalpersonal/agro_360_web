@@ -13,29 +13,52 @@ class Index extends Component
 {
     use WithPagination;
 
-    public string $search              = '';
+    public string $search = '';
+
     public string $viticulturistFilter = '';
-    public string $vintageFilter       = '';
-    public string $statusFilter        = '';
-    public string $roundFilter         = '';
+
+    public string $vintageFilter = '';
+
+    public string $statusFilter = '';
+
+    public string $roundFilter = '';
 
     protected $queryString = [
-        'search'              => ['except' => ''],
+        'search' => ['except' => ''],
         'viticulturistFilter' => ['except' => ''],
-        'vintageFilter'       => ['except' => ''],
-        'statusFilter'        => ['except' => ''],
-        'roundFilter'         => ['except' => ''],
+        'vintageFilter' => ['except' => ''],
+        'statusFilter' => ['except' => ''],
+        'roundFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void              { $this->resetPage(); }
-    public function updatingViticulturistFilter(): void { $this->resetPage(); }
-    public function updatingVintageFilter(): void       { $this->resetPage(); }
-    public function updatingStatusFilter(): void        { $this->resetPage(); }
-    public function updatingRoundFilter(): void         { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingViticulturistFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingVintageFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingRoundFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function mount(): void
     {
-        if (!$this->vintageFilter) {
+        if (! $this->vintageFilter) {
             $campaign = Campaign::forViticulturist(Auth::id())->where('active', true)->first();
             if ($campaign) {
                 $this->vintageFilter = (string) $campaign->year;
@@ -55,31 +78,25 @@ class Index extends Component
         }
 
         $query = EstimatedYield::with([
-                'plotPlanting.grapeVariety',
-                'plotPlanting.plot',
-                'plotPlanting.plot.viticulturist:id,name',
-                'campaign',
-            ])
-            ->whereHas('plotPlanting.plot', fn($q) =>
-                $q->whereIn('viticulturist_id', $viticulturistIds)
+            'plotPlanting.grapeVariety',
+            'plotPlanting.plot',
+            'plotPlanting.plot.viticulturist:id,name',
+            'campaign',
+        ])
+            ->whereHas('plotPlanting.plot', fn ($q) => $q->whereIn('viticulturist_id', $viticulturistIds)
             )
-            ->when($this->viticulturistFilter, fn($q) =>
-                $q->whereHas('plotPlanting.plot', fn($q2) =>
-                    $q2->where('viticulturist_id', $this->viticulturistFilter)
-                )
+            ->when($this->viticulturistFilter, fn ($q) => $q->whereHas('plotPlanting.plot', fn ($q2) => $q2->where('viticulturist_id', $this->viticulturistFilter)
             )
-            ->when($this->vintageFilter, fn($q) =>
-                $q->where(fn($q2) =>
-                    $q2->where('vintage', $this->vintageFilter)
-                       ->orWhereHas('campaign', fn($q3) => $q3->where('year', $this->vintageFilter))
-                )
             )
-            ->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))
-            ->when($this->roundFilter,  fn($q) => $q->where('estimation_round', $this->roundFilter))
-            ->when($this->search, fn($q) => $q->where(fn($q2) =>
-                $q2->whereHas('plotPlanting.grapeVariety', fn($q3) => $q3->where('name', 'like', '%' . $this->search . '%'))
-                   ->orWhereHas('plotPlanting.plot', fn($q3) => $q3->where('name', 'like', '%' . $this->search . '%'))
-                   ->orWhereHas('plotPlanting.plot.viticulturist', fn($q3) => $q3->where('name', 'like', '%' . $this->search . '%'))
+            ->when($this->vintageFilter, fn ($q) => $q->where(fn ($q2) => $q2->where('vintage', $this->vintageFilter)
+                ->orWhereHas('campaign', fn ($q3) => $q3->where('year', $this->vintageFilter))
+            )
+            )
+            ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
+            ->when($this->roundFilter, fn ($q) => $q->where('estimation_round', $this->roundFilter))
+            ->when($this->search, fn ($q) => $q->where(fn ($q2) => $q2->whereHas('plotPlanting.grapeVariety', fn ($q3) => $q3->where('name', 'like', '%'.$this->search.'%'))
+                ->orWhereHas('plotPlanting.plot', fn ($q3) => $q3->where('name', 'like', '%'.$this->search.'%'))
+                ->orWhereHas('plotPlanting.plot.viticulturist', fn ($q3) => $q3->where('name', 'like', '%'.$this->search.'%'))
             ));
 
         $estimates = (clone $query)
@@ -88,9 +105,9 @@ class Index extends Component
             ->paginate(25);
 
         $stats = [
-            'total'     => (clone $query)->count(),
+            'total' => (clone $query)->count(),
             'confirmed' => (clone $query)->where('status', 'confirmed')->count(),
-            'total_kg'  => (clone $query)->where('status', 'confirmed')->sum('estimated_total_yield'),
+            'total_kg' => (clone $query)->where('status', 'confirmed')->sum('estimated_total_yield'),
         ];
 
         $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
@@ -111,11 +128,11 @@ class Index extends Component
             ->values();
 
         return view('livewire.winery.harvest.viticulturist-estimates.index', [
-            'estimates'            => $estimates,
+            'estimates' => $estimates,
             'linkedViticulturists' => $linkedViticulturists,
-            'vintages'             => $vintages,
-            'stats'                => $stats,
-            'rounds'               => EstimatedYield::ROUNDS,
+            'vintages' => $vintages,
+            'stats' => $stats,
+            'rounds' => EstimatedYield::ROUNDS,
         ])->layout('layouts.app');
     }
 }

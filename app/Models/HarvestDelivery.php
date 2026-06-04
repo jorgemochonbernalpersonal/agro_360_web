@@ -39,20 +39,20 @@ class HarvestDelivery extends Model
     ];
 
     protected $casts = [
-        'delivery_date'     => 'date',
-        'delivered_kg'      => 'decimal:2',
-        'price_per_kg'      => 'decimal:3',
-        'total_price'       => 'decimal:3',
-        'discrepancy_kg'    => 'decimal:2',
-        'vintage_year'      => 'integer',
-        'disqualified'           => 'boolean',
-        'dispute_submitted_at'   => 'datetime',
-        'dispute_resolved_at'    => 'datetime',
-        'baume_degree'      => 'decimal:2',
-        'brix_degree'       => 'decimal:2',
-        'potential_alcohol'  => 'decimal:2',
-        'acidity_level'     => 'decimal:2',
-        'ph_level'          => 'decimal:2',
+        'delivery_date' => 'date',
+        'delivered_kg' => 'decimal:2',
+        'price_per_kg' => 'decimal:3',
+        'total_price' => 'decimal:3',
+        'discrepancy_kg' => 'decimal:2',
+        'vintage_year' => 'integer',
+        'disqualified' => 'boolean',
+        'dispute_submitted_at' => 'datetime',
+        'dispute_resolved_at' => 'datetime',
+        'baume_degree' => 'decimal:2',
+        'brix_degree' => 'decimal:2',
+        'potential_alcohol' => 'decimal:2',
+        'acidity_level' => 'decimal:2',
+        'ph_level' => 'decimal:2',
     ];
 
     // ── Relations ────────────────────────────────────────────────────────────
@@ -99,7 +99,7 @@ class HarvestDelivery extends Model
 
     public function hasDisputeNote(): bool
     {
-        return !is_null($this->dispute_submitted_at);
+        return ! is_null($this->dispute_submitted_at);
     }
 
     /**
@@ -107,7 +107,7 @@ class HarvestDelivery extends Model
      */
     public function discrepancyPercentage(): ?float
     {
-        if (!$this->discrepancy_kg || !$this->delivered_kg || (float) $this->delivered_kg === 0.0) {
+        if (! $this->discrepancy_kg || ! $this->delivered_kg || (float) $this->delivered_kg === 0.0) {
             return null;
         }
 

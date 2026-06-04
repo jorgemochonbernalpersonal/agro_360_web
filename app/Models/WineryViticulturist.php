@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Cache;
 
 class WineryViticulturist extends Model
 {
+    public const SOURCE_OWN = 'own';
+
+    public const SOURCE_SUPERVISOR = 'supervisor';
+
+    public const SOURCE_VITICULTURIST = 'viticulturist';
+
+    public const SOURCE_SELF = 'self'; // Viticultor que se registró públicamente
+
     protected $table = 'winery_viticulturist';
 
     protected $fillable = [
@@ -24,27 +32,10 @@ class WineryViticulturist extends Model
     ];
 
     protected $casts = [
-        'notebook_access'    => 'boolean',
+        'notebook_access' => 'boolean',
         'notebook_granted_at' => 'datetime',
         'notebook_revoked_at' => 'datetime',
     ];
-
-    /**
-     * Fuentes posibles
-     */
-    protected static function booted(): void
-    {
-        $flush = fn (self $wv) => Cache::forget("user_{$wv->viticulturist_id}_has_winery");
-
-        static::created($flush);
-        static::updated($flush);
-        static::deleted($flush);
-    }
-
-    public const SOURCE_OWN = 'own';
-    public const SOURCE_SUPERVISOR = 'supervisor';
-    public const SOURCE_VITICULTURIST = 'viticulturist';
-    public const SOURCE_SELF = 'self'; // Viticultor que se registró públicamente
 
     /**
      * Bodega que tiene este viticultor
@@ -92,7 +83,7 @@ class WineryViticulturist extends Model
     public function grantNotebookAccess(): void
     {
         $this->update([
-            'notebook_access'     => true,
+            'notebook_access' => true,
             'notebook_granted_at' => now(),
             'notebook_revoked_at' => null,
         ]);
@@ -104,7 +95,7 @@ class WineryViticulturist extends Model
     public function revokeNotebookAccess(): void
     {
         $this->update([
-            'notebook_access'     => false,
+            'notebook_access' => false,
             'notebook_revoked_at' => now(),
         ]);
     }
@@ -136,72 +127,77 @@ class WineryViticulturist extends Model
     /**
      * Scope para obtener viticultores visibles para un viticultor
      * Usa las relaciones existentes para optimizar queries
+     *
+     * @param mixed      $query
+     * @param null|mixed $wineryId
      */
     public function scopeVisibleTo($query, User $viticulturist, $wineryId = null)
     {
-        if (!$viticulturist->hasViticulturistAccess()) {
+        if (! $viticulturist->hasViticulturistAccess()) {
             return $query->whereRaw('1 = 0');
         }
-        
+
         // Usar atributo cacheado del supervisor (optimizado)
         $supervisor = $viticulturist->supervisor;
         $supervisorId = $supervisor?->id;
-        
+
         // Usar atributo cacheado de wineries (optimizado)
         $wineries = $viticulturist->wineries;
         $wineryIds = $wineries->pluck('id');
-        
+
         // SIEMPRE puede ver los viticultores que creó, incluso sin winery ni supervisor
         return $query->where(function ($q) use ($viticulturist, $supervisorId, $wineryIds, $wineryId) {
             // 1. Viticultores creados por este viticultor (SIEMPRE visibles)
             $q->where(function ($subQ) use ($viticulturist) {
                 $subQ->where('parent_viticulturist_id', $viticulturist->id)
-                     ->where('source', self::SOURCE_VITICULTURIST);
+                    ->where('source', self::SOURCE_VITICULTURIST);
             });
-            
+
             // 2. Si tiene supervisor: viticultores del pool del supervisor
             if ($supervisorId) {
                 $q->orWhere(function ($subQ) use ($supervisorId, $wineryId) {
                     $subQ->where('source', self::SOURCE_SUPERVISOR)
-                         ->where('supervisor_id', $supervisorId);
-                    
+                        ->where('supervisor_id', $supervisorId);
+
                     if ($wineryId) {
                         $subQ->where('winery_id', $wineryId);
                     }
                 });
             }
-            
+
             // 3. Si tiene winery: viticultores de sus wineries
             if ($wineryIds->isNotEmpty()) {
                 $q->orWhere(function ($subQ) use ($wineryIds, $wineryId) {
                     $subQ->whereIn('winery_id', $wineryIds)
-                         ->where(function ($wineryQ) {
-                             $wineryQ->where('source', self::SOURCE_OWN)
-                                     ->orWhere('source', self::SOURCE_VITICULTURIST);
-                         });
-                    
+                        ->where(function ($wineryQ) {
+                            $wineryQ->where('source', self::SOURCE_OWN)
+                                ->orWhere('source', self::SOURCE_VITICULTURIST);
+                        });
+
                     if ($wineryId) {
                         $subQ->where('winery_id', $wineryId);
                     }
                 });
             }
         })
-        ->where('viticulturist_id', '!=', $viticulturist->id)
-        ->when($wineryId, fn($q) => $q->where('winery_id', $wineryId))
-        ->with(['viticulturist', 'winery', 'parentViticulturist']); // Eager loading para evitar N+1
+            ->where('viticulturist_id', '!=', $viticulturist->id)
+            ->when($wineryId, fn ($q) => $q->where('winery_id', $wineryId))
+            ->with(['viticulturist', 'winery', 'parentViticulturist']); // Eager loading para evitar N+1
     }
 
     /**
      * Scope para obtener viticultores que puede editar (solo los que creó)
+     *
+     * @param mixed $query
      */
     public function scopeEditableBy($query, User $viticulturist)
     {
-        if (!$viticulturist->hasViticulturistAccess()) {
+        if (! $viticulturist->hasViticulturistAccess()) {
             return $query->whereRaw('1 = 0');
         }
-        
+
         return $query->where('parent_viticulturist_id', $viticulturist->id)
-                     ->where('source', self::SOURCE_VITICULTURIST);
+            ->where('source', self::SOURCE_VITICULTURIST);
     }
 
     /**
@@ -209,37 +205,49 @@ class WineryViticulturist extends Model
      */
     public function isVisibleTo(User $viticulturist): bool
     {
-        if (!$viticulturist->hasViticulturistAccess()) {
+        if (! $viticulturist->hasViticulturistAccess()) {
             return false;
         }
-        
+
         // Si es el mismo usuario, no es visible
         if ($this->viticulturist_id === $viticulturist->id) {
             return false;
         }
-        
+
         // Si fue creado por este viticultor, siempre es visible
-        if ($this->parent_viticulturist_id === $viticulturist->id && 
+        if ($this->parent_viticulturist_id === $viticulturist->id &&
             $this->source === self::SOURCE_VITICULTURIST) {
             return true;
         }
-        
+
         // Verificar si tiene supervisor y este viticultor viene de su pool
         $supervisor = $viticulturist->supervisor;
-        if ($supervisor && 
-            $this->source === self::SOURCE_SUPERVISOR && 
+        if ($supervisor &&
+            $this->source === self::SOURCE_SUPERVISOR &&
             $this->supervisor_id === $supervisor->id) {
             return true;
         }
-        
+
         // Verificar si tiene winery y este viticultor está en su winery
         $wineries = $viticulturist->wineries;
-        if ($wineries->isNotEmpty() && 
+        if ($wineries->isNotEmpty() &&
             $wineries->contains('id', $this->winery_id) &&
             ($this->source === self::SOURCE_OWN || $this->source === self::SOURCE_VITICULTURIST)) {
             return true;
         }
-        
+
         return false;
+    }
+
+    /**
+     * Fuentes posibles
+     */
+    protected static function booted(): void
+    {
+        $flush = fn (self $wv) => Cache::forget("user_{$wv->viticulturist_id}_has_winery");
+
+        static::created($flush);
+        static::updated($flush);
+        static::deleted($flush);
     }
 }

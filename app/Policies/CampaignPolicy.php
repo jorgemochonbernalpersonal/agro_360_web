@@ -40,7 +40,7 @@ class CampaignPolicy
      */
     public function update(User $user, Campaign $campaign): bool
     {
-        return $campaign->viticulturist_id === $user->id && !$campaign->locked_at;
+        return $campaign->viticulturist_id === $user->id && ! $campaign->locked_at;
     }
 
     /**
@@ -49,7 +49,7 @@ class CampaignPolicy
      */
     public function delete(User $user, Campaign $campaign): bool
     {
-        return $campaign->viticulturist_id === $user->id && !$campaign->locked_at;
+        return $campaign->viticulturist_id === $user->id && ! $campaign->locked_at;
     }
 
     /**

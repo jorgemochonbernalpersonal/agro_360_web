@@ -13,13 +13,13 @@ class ViticulturistMenu
         $menu = [];
 
         // ── Determinar acceso al plan ─────────────────────────────────────────
-        $isLocked   = !$user->hasActiveAccess();
-        $hasWinery  = $user->hasWinery();
+        $isLocked = ! $user->hasActiveAccess();
+        $hasWinery = $user->hasWinery();
 
         // ── Main ─────────────────────────────────────────────────────────────
         $menu['main'] = [
             ['icon' => 'home',         'label' => __('Dashboard'),      'route' => 'viticulturist.dashboard',           'active' => request()->routeIs('viticulturist.dashboard')],
-            ['icon' => 'calendar-days','label' => __('Calendario'),     'route' => 'viticulturist.calendar',            'active' => request()->routeIs('viticulturist.calendar')],
+            ['icon' => 'calendar-days', 'label' => __('Calendario'),     'route' => 'viticulturist.calendar',            'active' => request()->routeIs('viticulturist.calendar')],
             ['icon' => 'bolt',         'label' => __('Entrada Rápida'), 'route' => 'viticulturist.quick-entry',         'active' => request()->routeIs('viticulturist.quick-entry')],
         ];
 
@@ -30,7 +30,7 @@ class ViticulturistMenu
             ['icon' => 'check-badge',             'label' => __('Firma y Cierre'),        'route' => 'viticulturist.campaign-sign.index',       'active' => request()->routeIs('viticulturist.campaign-sign.*'),       'locked' => $isLocked],
             ['divider' => true],
             ['icon' => 'queue-list',              'label' => __('Plan de Trabajos'),        'route' => 'viticulturist.planned-works.index',       'active' => request()->routeIs('viticulturist.planned-works.*'),       'locked' => $isLocked],
-            ['icon' => 'chart-bar-square',        'label' => __('Comparativa de Campañas'),'route' => 'viticulturist.campaign-comparison',        'active' => request()->routeIs('viticulturist.campaign-comparison'),   'locked' => $isLocked],
+            ['icon' => 'chart-bar-square',        'label' => __('Comparativa de Campañas'), 'route' => 'viticulturist.campaign-comparison',        'active' => request()->routeIs('viticulturist.campaign-comparison'),   'locked' => $isLocked],
         ];
 
         // ── Relación con Bodega (solo si tiene bodegas vinculadas) ───────────
@@ -39,9 +39,8 @@ class ViticulturistMenu
                 ['icon' => 'megaphone',              'label' => __('Avisos de Bodegas'),          'route' => 'viticulturist.announcements',         'active' => request()->routeIs('viticulturist.announcements')],
                 ['icon' => 'chat-bubble-left-right', 'label' => __('Comunicación con Bodega'),    'route' => 'viticulturist.winery-messages.index', 'active' => request()->routeIs('viticulturist.winery-messages*'), 'locked' => $isLocked],
                 ['icon' => 'lock-closed',            'label' => __('Acceso Bodegas al Cuaderno'), 'route' => 'viticulturist.winery-access.index',  'active' => request()->routeIs('viticulturist.winery-access*'),
-                 'badge' => Cache::remember("nav_badge_notebook_access_{$user->id}", 120, fn() =>
-                    NotebookAccessRequest::where('viticulturist_id', $user->id)->where('status', NotebookAccessRequest::STATUS_PENDING)->count()
-                 )],
+                    'badge' => Cache::remember("nav_badge_notebook_access_{$user->id}", 120, fn () => NotebookAccessRequest::where('viticulturist_id', $user->id)->where('status', NotebookAccessRequest::STATUS_PENDING)->count()
+                    )],
             ];
         }
 
@@ -63,21 +62,20 @@ class ViticulturistMenu
 
         // ── Declaraciones y Certificaciones ───────────────────────────────────
         $declarations = self::officialDeclarations('viticulturist', $isLocked);
-        if (!$hasWinery) {
-            $declarations = array_values(array_filter($declarations, fn($item) =>
-                !isset($item['label']) || $item['label'] !== 'Trazabilidad de Uva'
+        if (! $hasWinery) {
+            $declarations = array_values(array_filter($declarations, fn ($item) => ! isset($item['label']) || $item['label'] !== 'Trazabilidad de Uva'
             ));
         }
         $menu['declarations'] = $declarations;
 
         // ── Finca (geografía + actividades) ───────────────────────────────────
         $menu['estate'] = [
-            ['icon' => 'map',                 'label' => __('Parcelas'),            'route' => 'plots.index',                          'active' => request()->routeIs('plots.*') && !request()->routeIs('plots.plantings.*')],
+            ['icon' => 'map',                 'label' => __('Parcelas'),            'route' => 'plots.index',                          'active' => request()->routeIs('plots.*') && ! request()->routeIs('plots.plantings.*')],
             ['icon' => 'book-open',           'label' => __('Plantaciones'),        'route' => 'plots.plantings.index',                'active' => request()->routeIs('plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => __('SIGPAC'),              'route' => 'sigpac.codes',                         'active' => request()->routeIs('sigpac.*')],
             ['icon' => 'globe-europe-africa', 'label' => __('Gestión Territorial'), 'route' => 'plots.territory',                      'active' => request()->routeIs('plots.territory')],
             ['divider' => true],
-            ['icon' => 'pencil-square',       'label' => __('Actividades de Campo'),'route' => 'viticulturist.field-activities.index', 'active' => request()->routeIs('viticulturist.field-activities*'), 'locked' => $isLocked],
+            ['icon' => 'pencil-square',       'label' => __('Actividades de Campo'), 'route' => 'viticulturist.field-activities.index', 'active' => request()->routeIs('viticulturist.field-activities*'), 'locked' => $isLocked],
         ];
 
         // ── Análisis de Finca ─────────────────────────────────────────────────
@@ -125,81 +123,18 @@ class ViticulturistMenu
 
         // ── Onboarding (solo mientras no esté completo) ───────────────────────
         $onboardingItems = self::onboardingSection($user);
-        if (!empty($onboardingItems)) {
+        if (! empty($onboardingItems)) {
             $menu['onboarding'] = $onboardingItems;
         }
 
         // ── Rail bottom ───────────────────────────────────────────────────────
         $menu['rail_bottom'] = [
             ['icon' => 'cog-6-tooth',         'label' => __('Configuración'), 'route' => 'viticulturist.settings',      'active' => request()->routeIs('viticulturist.settings')],
-            ['icon' => 'question-mark-circle','label' => __('Soporte'),       'route' => 'viticulturist.support.index', 'active' => request()->routeIs('viticulturist.support.*'),
-             'badge' => Cache::remember("nav_badge_support_{$user->id}", 120, fn() => $user->supportTickets()->open()->count())],
+            ['icon' => 'question-mark-circle', 'label' => __('Soporte'),       'route' => 'viticulturist.support.index', 'active' => request()->routeIs('viticulturist.support.*'),
+                'badge' => Cache::remember("nav_badge_support_{$user->id}", 120, fn () => $user->supportTickets()->open()->count())],
         ];
 
         return $menu;
-    }
-
-    // ── Sección onboarding ────────────────────────────────────────────────────
-
-    /**
-     * Devuelve los ítems de onboarding pendientes.
-     * Retorna [] cuando el onboarding está completo → el capítulo desaparece solo.
-     */
-    private static function onboardingSection($user): array
-    {
-        // Cache de 60 s: se invalida cuando OnboardingChecklist llama a loadProgress()
-        // (el componente hace forget del cache al completar pasos)
-        $pendingSteps = Cache::remember(
-            "nav_onboarding_pending_{$user->id}",
-            60,
-            function () use ($user) {
-                if (OnboardingProgress::isOnboardingComplete($user->id)) {
-                    return null; // null = onboarding completo
-                }
-
-                // Una sola query para obtener todos los registros existentes
-                $progresses = OnboardingProgress::where('user_id', $user->id)
-                    ->whereIn('step', OnboardingProgress::ALL_STEPS)
-                    ->get()
-                    ->keyBy('step');
-
-                $pending = [];
-                foreach (OnboardingProgress::ALL_STEPS as $step) {
-                    $record = $progresses->get($step);
-                    if (!$record || !$record->isCompleted()) {
-                        $pending[] = $step;
-                    }
-                }
-
-                return $pending;
-            }
-        );
-
-        if ($pendingSteps === null || empty($pendingSteps)) {
-            return [];
-        }
-
-        $prefix = 'viticulturist';
-        $stepMap = [
-            OnboardingProgress::STEP_REVIEW_CAMPAIGN   => ['icon' => 'calendar-days', 'label' => __('Revisa tu campaña'),        'route' => "{$prefix}.campaign.index"],
-            OnboardingProgress::STEP_CREATE_PLOT       => ['icon' => 'map',           'label' => __('Añade tus parcelas'),       'route' => 'plots.create'],
-            OnboardingProgress::STEP_REGISTER_ACTIVITY => ['icon' => 'bolt',          'label' => __('Registra una actividad'),   'route' => "{$prefix}.quick-entry"],
-            OnboardingProgress::STEP_ADD_PRODUCTS      => ['icon' => 'beaker',        'label' => __('Añade productos fitosan.'), 'route' => "{$prefix}.phytosanitary-products.index"],
-        ];
-
-        $items = [];
-        foreach ($pendingSteps as $step) {
-            $cfg = $stepMap[$step] ?? null;
-            if (!$cfg) continue;
-            $items[] = [
-                'icon'   => $cfg['icon'],
-                'label'  => $cfg['label'],
-                'route'  => $cfg['route'],
-                'active' => request()->routeIs($cfg['route']),
-            ];
-        }
-
-        return $items;
     }
 
     // ── Secciones compartidas (usadas también por ProducerMenu) ───────────────
@@ -207,7 +142,7 @@ class ViticulturistMenu
     public static function notebookInputs(string $prefix, string $harvestLabel = 'Vendimia', bool $locked = false): array
     {
         return [
-            ['icon' => 'book-open',          'label' => __('Cuaderno Digital'),       'route' => "{$prefix}.digital-notebook",                          'active' => request()->routeIs("{$prefix}.digital-notebook") && !request()->routeIs("{$prefix}.digital-notebook.*")],
+            ['icon' => 'book-open',          'label' => __('Cuaderno Digital'),       'route' => "{$prefix}.digital-notebook",                          'active' => request()->routeIs("{$prefix}.digital-notebook") && ! request()->routeIs("{$prefix}.digital-notebook.*")],
             ['divider' => true, 'label' => __('Día a día')],
             ['icon' => 'shield-exclamation', 'label' => __('Tratamientos'),           'route' => "{$prefix}.digital-notebook.treatment.index",          'active' => request()->routeIs("{$prefix}.digital-notebook.treatment.*")],
             ['icon' => 'funnel',             'label' => __('Fertilizaciones'),        'route' => "{$prefix}.digital-notebook.fertilization.index",      'active' => request()->routeIs("{$prefix}.digital-notebook.fertilization.*")],
@@ -329,9 +264,76 @@ class ViticulturistMenu
         return [
             ['icon' => 'chart-pie',    'label' => __('Resumen PAC'),           'route' => "{$prefix}.pac.dashboard",          'active' => request()->routeIs("{$prefix}.pac.dashboard"),          'locked' => $locked],
             ['icon' => 'check-circle', 'label' => __('Superficies Elegibles'), 'route' => "{$prefix}.pac.surfaces.index",     'active' => request()->routeIs("{$prefix}.pac.surfaces.*"),          'locked' => $locked],
-            ['icon' => 'document-text','label' => __('Declaraciones'),         'route' => "{$prefix}.pac.declarations.index", 'active' => request()->routeIs("{$prefix}.pac.declarations.*"),      'locked' => $locked],
+            ['icon' => 'document-text', 'label' => __('Declaraciones'),         'route' => "{$prefix}.pac.declarations.index", 'active' => request()->routeIs("{$prefix}.pac.declarations.*"),      'locked' => $locked],
             ['icon' => 'sparkles',     'label' => __('Eco-regímenes'),         'route' => "{$prefix}.pac.eco-schemes.index",  'active' => request()->routeIs("{$prefix}.pac.eco-schemes.*"),       'locked' => $locked],
             ['icon' => 'banknotes',    'label' => __('Historial de Ayudas'),   'route' => "{$prefix}.pac.payments.index",     'active' => request()->routeIs("{$prefix}.pac.payments.*"),          'locked' => $locked],
         ];
+    }
+
+    // ── Sección onboarding ────────────────────────────────────────────────────
+
+    /**
+     * Devuelve los ítems de onboarding pendientes.
+     * Retorna [] cuando el onboarding está completo → el capítulo desaparece solo.
+     *
+     * @param mixed $user
+     */
+    private static function onboardingSection($user): array
+    {
+        // Cache de 60 s: se invalida cuando OnboardingChecklist llama a loadProgress()
+        // (el componente hace forget del cache al completar pasos)
+        $pendingSteps = Cache::remember(
+            "nav_onboarding_pending_{$user->id}",
+            60,
+            function () use ($user) {
+                if (OnboardingProgress::isOnboardingComplete($user->id)) {
+                    return null; // null = onboarding completo
+                }
+
+                // Una sola query para obtener todos los registros existentes
+                $progresses = OnboardingProgress::where('user_id', $user->id)
+                    ->whereIn('step', OnboardingProgress::ALL_STEPS)
+                    ->get()
+                    ->keyBy('step');
+
+                $pending = [];
+                foreach (OnboardingProgress::ALL_STEPS as $step) {
+                    $record = $progresses->get($step);
+                    if (! $record || ! $record->isCompleted()) {
+                        $pending[] = $step;
+                    }
+                }
+
+                return $pending;
+            }
+        );
+
+        if ($pendingSteps === null || empty($pendingSteps)) {
+            return [];
+        }
+
+        $prefix = 'viticulturist';
+        $stepMap = [
+            OnboardingProgress::STEP_REVIEW_CAMPAIGN => ['icon' => 'calendar-days', 'label' => __('Revisa tu campaña'),        'route' => "{$prefix}.campaign.index"],
+            OnboardingProgress::STEP_CREATE_PLOT => ['icon' => 'map',           'label' => __('Añade tus parcelas'),       'route' => 'plots.create'],
+            OnboardingProgress::STEP_REGISTER_ACTIVITY => ['icon' => 'bolt',          'label' => __('Registra una actividad'),   'route' => "{$prefix}.quick-entry"],
+            OnboardingProgress::STEP_ADD_PRODUCTS => ['icon' => 'beaker',        'label' => __('Añade productos fitosan.'), 'route' => "{$prefix}.phytosanitary-products.index"],
+        ];
+
+        $items = [];
+        foreach ($pendingSteps as $step) {
+            $cfg = $stepMap[$step] ?? null;
+            if (! $cfg) {
+                continue;
+            }
+            $items[] = [
+                'icon' => $cfg['icon'],
+                'label' => $cfg['label'],
+                'route' => $cfg['route'],
+                'active' => request()->routeIs($cfg['route']),
+            ];
+        }
+
+        return $items;
     }
 }

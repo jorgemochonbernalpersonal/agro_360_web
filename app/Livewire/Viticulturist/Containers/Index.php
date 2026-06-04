@@ -2,40 +2,49 @@
 
 namespace App\Livewire\Viticulturist\Containers;
 
-use App\Models\Container;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\Container;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public $currentTab    = 'active'; // 'active', 'archived'
-    public $search        = '';
-    public $filterStatus  = ''; // '', 'empty', 'available', 'full'
+    public $currentTab = 'active'; // 'active', 'archived'
+
+    public $search = '';
+
+    public $filterStatus = ''; // '', 'empty', 'available', 'full'
 
     protected $queryString = [
-        'currentTab'   => ['as' => 'tab', 'except' => 'active'],
-        'search'       => ['except' => ''],
+        'currentTab' => ['as' => 'tab', 'except' => 'active'],
+        'search' => ['except' => ''],
         'filterStatus' => ['except' => ''],
     ];
 
-    public function updatingSearch()       { $this->resetPage(); }
-    public function updatingFilterStatus() { $this->resetPage(); }
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus()
+    {
+        $this->resetPage();
+    }
 
     public function switchTab($tab)
     {
-        $this->currentTab  = $tab;
+        $this->currentTab = $tab;
         $this->filterStatus = '';
         $this->resetPage();
     }
 
     public function clearFilters()
     {
-        $this->search        = '';
-        $this->filterStatus  = '';
+        $this->search = '';
+        $this->filterStatus = '';
         $this->resetPage();
     }
 
@@ -43,8 +52,9 @@ class Index extends Component
     {
         $container = Container::where('user_id', Auth::id())->findOrFail($containerId);
 
-        if (!$container->isEmpty()) {
+        if (! $container->isEmpty()) {
             $this->toastError(__('No puedes archivar un contenedor que tiene contenido.'));
+
             return;
         }
 
@@ -71,13 +81,15 @@ class Index extends Component
     {
         $container = Container::where('user_id', Auth::id())->findOrFail($containerId);
 
-        if (!$container->isEmpty()) {
+        if (! $container->isEmpty()) {
             $this->toastError(__('No puedes eliminar un contenedor que tiene contenido.'));
+
             return;
         }
 
         if ($container->harvests()->count() > 0) {
             $this->toastError(__('No puedes eliminar un contenedor con historial de vendimias. Archívalo en su lugar.'));
+
             return;
         }
 
@@ -91,8 +103,8 @@ class Index extends Component
 
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('serial_number', 'like', '%' . $this->search . '%');
+                $q->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('serial_number', 'like', '%'.$this->search.'%');
             });
         }
 
@@ -116,7 +128,7 @@ class Index extends Component
 
         $baseQuery = Container::where('user_id', Auth::id());
         $stats = [
-            'active'   => (clone $baseQuery)->where('archived', false)->count(),
+            'active' => (clone $baseQuery)->where('archived', false)->count(),
             'archived' => (clone $baseQuery)->where('archived', true)->count(),
         ];
 

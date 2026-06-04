@@ -14,11 +14,11 @@ class IntegratedEstateController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
-        $user   = $request->user();
+        $user = $request->user();
         $userId = $user->id;
 
         $campaignId = $request->input('campaign_id');
-        $campaign   = $campaignId
+        $campaign = $campaignId
             ? Campaign::forViticulturist($userId)->findOrFail($campaignId)
             : Campaign::forViticulturist($userId)->where('active', true)->first();
 
@@ -47,8 +47,8 @@ class IntegratedEstateController extends Controller
         $yieldByPlot = [];
         if ($campaign) {
             $harvests = Harvest::whereIn('container_id', function ($q) use ($userId) {
-                    $q->select('id')->from('containers')->where('user_id', $userId);
-                })
+                $q->select('id')->from('containers')->where('user_id', $userId);
+            })
                 ->where('status', 'active')
                 ->whereYear('harvest_start_date', $campaign->year)
                 ->with('plotPlanting:id,plot_id')
@@ -56,12 +56,14 @@ class IntegratedEstateController extends Controller
 
             foreach ($harvests->groupBy(fn ($h) => $h->plotPlanting?->plot_id) as $plotId => $group) {
                 $plot = $plots->firstWhere('id', $plotId);
-                if (! $plot) continue;
+                if (! $plot) {
+                    continue;
+                }
                 $yieldByPlot[] = [
-                    'plot_id'   => $plotId,
+                    'plot_id' => $plotId,
                     'plot_name' => $plot->name,
-                    'total_kg'  => round((float) $group->sum('total_weight'), 2),
-                    'entries'   => $group->count(),
+                    'total_kg' => round((float) $group->sum('total_weight'), 2),
+                    'entries' => $group->count(),
                 ];
             }
         }
@@ -76,24 +78,24 @@ class IntegratedEstateController extends Controller
         }
 
         return response()->json([
-            'campaign'        => $campaign ? ['id' => $campaign->id, 'name' => $campaign->name, 'year' => $campaign->year] : null,
-            'total_plots'     => $plots->count(),
-            'total_area'      => round((float) $plots->sum('area'), 2),
+            'campaign' => $campaign ? ['id' => $campaign->id, 'name' => $campaign->name, 'year' => $campaign->year] : null,
+            'total_plots' => $plots->count(),
+            'total_area' => round((float) $plots->sum('area'), 2),
             'total_plantings' => $plots->sum(fn ($p) => $p->plantings->count()),
             'activity_counts' => $activityCounts,
-            'variety_counts'  => $varietyCounts,
-            'yield_by_plot'   => $yieldByPlot,
-            'plots'           => $plots->map(fn ($p) => [
-                'id'        => $p->id,
-                'name'      => $p->name,
-                'area'      => (float) $p->area,
-                'active'    => $p->active,
+            'variety_counts' => $varietyCounts,
+            'yield_by_plot' => $yieldByPlot,
+            'plots' => $plots->map(fn ($p) => [
+                'id' => $p->id,
+                'name' => $p->name,
+                'area' => (float) $p->area,
+                'active' => $p->active,
                 'plantings' => $p->plantings->map(fn ($pl) => [
-                    'id'             => $pl->id,
-                    'variety'        => $pl->grapeVariety?->name,
-                    'area'           => (float) $pl->area,
-                    'planting_year'  => $pl->planting_year,
-                    'plant_count'    => $pl->plant_count,
+                    'id' => $pl->id,
+                    'variety' => $pl->grapeVariety?->name,
+                    'area' => (float) $pl->area,
+                    'planting_year' => $pl->planting_year,
+                    'plant_count' => $pl->plant_count,
                 ]),
             ]),
         ])->header('Cache-Control', 'private, max-age=300');

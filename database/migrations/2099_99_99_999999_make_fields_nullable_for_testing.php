@@ -16,7 +16,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!app()->environment('testing')) {
+        if (! app()->environment('testing')) {
             return;
         }
 

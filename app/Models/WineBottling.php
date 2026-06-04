@@ -9,21 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class WineBottling extends Model
 {
     const BOTTLE_FORMATS = [
-        '187'  => '187 ml (Split)',
-        '375'  => '375 ml (Media botella)',
-        '500'  => '500 ml',
-        '750'  => '750 ml (Estándar)',
+        '187' => '187 ml (Split)',
+        '375' => '375 ml (Media botella)',
+        '500' => '500 ml',
+        '750' => '750 ml (Estándar)',
         '1000' => '1000 ml (Litro)',
         '1500' => '1500 ml (Magnum)',
         '3000' => '3000 ml (Doble Magnum)',
         '5000' => '5000 ml (Jeroboam)',
         'otro' => 'Otro formato',
     ];
-
-    public static function bottleFormatOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::BOTTLE_FORMATS);
-    }
 
     protected $fillable = [
         'user_id',
@@ -42,10 +37,15 @@ class WineBottling extends Model
     ];
 
     protected $casts = [
-        'bottling_date'    => 'date',
-        'quantity_liters'  => 'decimal:3',
+        'bottling_date' => 'date',
+        'quantity_liters' => 'decimal:3',
         'quantity_bottles' => 'integer',
     ];
+
+    public static function bottleFormatOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::BOTTLE_FORMATS);
+    }
 
     public function user(): BelongsTo
     {

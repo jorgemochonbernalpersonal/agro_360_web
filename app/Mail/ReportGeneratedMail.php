@@ -18,7 +18,7 @@ class ReportGeneratedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '✅ Informe Oficial Generado - ' . $this->report->report_type_name,
+            subject: '✅ Informe Oficial Generado - '.$this->report->report_type_name,
         );
     }
 

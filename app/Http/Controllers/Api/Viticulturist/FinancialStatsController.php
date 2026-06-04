@@ -23,11 +23,11 @@ class FinancialStatsController extends Controller
         $invoicesBase = Invoice::forUser($user->id)
             ->whereYear('invoice_date', $year);
 
-        $totalInvoiced  = (clone $invoicesBase)->sum('total_amount');
-        $paidAmount     = (clone $invoicesBase)->where('payment_status', 'paid')->sum('total_amount');
-        $pendingAmount  = (clone $invoicesBase)->where('payment_status', 'unpaid')->sum('total_amount');
-        $overdueAmount  = (clone $invoicesBase)->where('payment_status', 'overdue')->sum('total_amount');
-        $invoiceCount   = (clone $invoicesBase)->count();
+        $totalInvoiced = (clone $invoicesBase)->sum('total_amount');
+        $paidAmount = (clone $invoicesBase)->where('payment_status', 'paid')->sum('total_amount');
+        $pendingAmount = (clone $invoicesBase)->where('payment_status', 'unpaid')->sum('total_amount');
+        $overdueAmount = (clone $invoicesBase)->where('payment_status', 'overdue')->sum('total_amount');
+        $invoiceCount = (clone $invoicesBase)->count();
         $collectionRate = $totalInvoiced > 0 ? round(($paidAmount / $totalInvoiced) * 100, 1) : 0;
         $averageInvoice = $invoiceCount > 0 ? round($totalInvoiced / $invoiceCount, 2) : 0;
 
@@ -57,16 +57,16 @@ class FinancialStatsController extends Controller
 
         return response()->json([
             'data' => [
-                'year'              => $year,
-                'total_invoiced'    => round((float) $totalInvoiced, 2),
-                'paid_amount'       => round((float) $paidAmount, 2),
-                'pending_amount'    => round((float) $pendingAmount, 2),
-                'overdue_amount'    => round((float) $overdueAmount, 2),
-                'collection_rate'   => $collectionRate,
-                'average_invoice'   => $averageInvoice,
-                'invoice_count'     => $invoiceCount,
-                'active_clients'    => $activeClients,
-                'monthly_income'    => $monthly,
+                'year' => $year,
+                'total_invoiced' => round((float) $totalInvoiced, 2),
+                'paid_amount' => round((float) $paidAmount, 2),
+                'pending_amount' => round((float) $pendingAmount, 2),
+                'overdue_amount' => round((float) $overdueAmount, 2),
+                'collection_rate' => $collectionRate,
+                'average_invoice' => $averageInvoice,
+                'invoice_count' => $invoiceCount,
+                'active_clients' => $activeClients,
+                'monthly_income' => $monthly,
                 'growth_percentage' => $growthPercentage,
             ],
         ]);

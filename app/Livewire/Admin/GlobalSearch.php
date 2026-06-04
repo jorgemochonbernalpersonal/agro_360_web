@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Client;
 use App\Models\Plot;
 use App\Models\SupportTicket;
 use App\Models\User;
@@ -10,15 +9,17 @@ use Livewire\Component;
 
 class GlobalSearch extends Component
 {
-    public string $query  = '';
-    public bool   $open   = false;
-    public array  $results = [];
+    public string $query = '';
+
+    public bool $open = false;
+
+    public array $results = [];
 
     protected $listeners = ['openGlobalSearch' => 'openModal'];
 
     public function openModal(): void
     {
-        $this->open  = true;
+        $this->open = true;
         $this->query = '';
         $this->results = [];
     }
@@ -32,10 +33,11 @@ class GlobalSearch extends Component
     {
         if (strlen(trim($this->query)) < 2) {
             $this->results = [];
+
             return;
         }
 
-        $term = '%' . mb_strtolower(trim($this->query)) . '%';
+        $term = '%'.mb_strtolower(trim($this->query)).'%';
         $results = [];
 
         // Users
@@ -46,12 +48,12 @@ class GlobalSearch extends Component
 
         foreach ($users as $u) {
             $results[] = [
-                'type'     => 'usuario',
-                'icon'     => 'user',
-                'color'    => 'purple',
-                'title'    => $u->name,
-                'subtitle' => $u->email . ' · ' . $u->role,
-                'url'      => route('admin.users.show', $u->id),
+                'type' => 'usuario',
+                'icon' => 'user',
+                'color' => 'purple',
+                'title' => $u->name,
+                'subtitle' => $u->email.' · '.$u->role,
+                'url' => route('admin.users.show', $u->id),
             ];
         }
 
@@ -63,12 +65,12 @@ class GlobalSearch extends Component
 
         foreach ($tickets as $t) {
             $results[] = [
-                'type'     => 'ticket',
-                'icon'     => 'chat-bubble-left-ellipsis',
-                'color'    => 'red',
-                'title'    => $t->subject,
-                'subtitle' => __('Ticket #') . $t->id . ' · ' . $t->status,
-                'url'      => route('admin.support.index'),
+                'type' => 'ticket',
+                'icon' => 'chat-bubble-left-ellipsis',
+                'color' => 'red',
+                'title' => $t->subject,
+                'subtitle' => __('Ticket #').$t->id.' · '.$t->status,
+                'url' => route('admin.support.index'),
             ];
         }
 
@@ -80,12 +82,12 @@ class GlobalSearch extends Component
 
         foreach ($plots as $p) {
             $results[] = [
-                'type'     => 'parcela',
-                'icon'     => 'map',
-                'color'    => 'agro',
-                'title'    => $p->name,
-                'subtitle' => trim(($p->municipality ?? '') . ', ' . ($p->province ?? ''), ', '),
-                'url'      => route('admin.plots.index'),
+                'type' => 'parcela',
+                'icon' => 'map',
+                'color' => 'agro',
+                'title' => $p->name,
+                'subtitle' => trim(($p->municipality ?? '').', '.($p->province ?? ''), ', '),
+                'url' => route('admin.plots.index'),
             ];
         }
 

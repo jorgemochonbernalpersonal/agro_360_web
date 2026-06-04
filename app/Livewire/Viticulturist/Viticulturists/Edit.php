@@ -17,7 +17,8 @@ class Edit extends Component
 
     public User $viticulturist;
 
-    public string $name  = '';
+    public string $name = '';
+
     public string $email = '';
 
     public function mount(User $viticulturist): void
@@ -30,28 +31,8 @@ class Edit extends Component
         abort_unless($owned, 403);
 
         $this->viticulturist = $viticulturist;
-        $this->name          = $viticulturist->name;
-        $this->email         = $viticulturist->email ?? '';
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'name'  => 'required|string|max:255',
-            'email' => ['required', 'email', 'max:255',
-                Rule::unique('users', 'email')->ignore($this->viticulturist->id),
-            ],
-        ];
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'name.required'  => __('El nombre es obligatorio.'),
-            'email.required' => __('El email es obligatorio.'),
-            'email.email'    => __('El email debe ser una dirección válida.'),
-            'email.unique'   => __('Este email ya está en uso por otra cuenta.'),
-        ];
+        $this->name = $viticulturist->name;
+        $this->email = $viticulturist->email ?? '';
     }
 
     public function save(): void
@@ -59,7 +40,7 @@ class Edit extends Component
         $this->validate();
 
         $this->viticulturist->update([
-            'name'  => $this->name,
+            'name' => $this->name,
             'email' => $this->email,
         ]);
 
@@ -71,5 +52,25 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.viticulturist.viticulturists.edit');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => ['required', 'email', 'max:255',
+                Rule::unique('users', 'email')->ignore($this->viticulturist->id),
+            ],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'name.required' => __('El nombre es obligatorio.'),
+            'email.required' => __('El email es obligatorio.'),
+            'email.email' => __('El email debe ser una dirección válida.'),
+            'email.unique' => __('Este email ya está en uso por otra cuenta.'),
+        ];
     }
 }

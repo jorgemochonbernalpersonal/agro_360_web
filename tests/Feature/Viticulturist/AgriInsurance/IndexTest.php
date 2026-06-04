@@ -4,7 +4,6 @@ namespace Tests\Feature\Viticulturist\AgriInsurance;
 
 use App\Livewire\Viticulturist\AgriInsurance\Index;
 use App\Models\AgriInsurance;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -24,12 +23,12 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
 
         AgriInsurance::factory()->create([
-            'viticulturist_id'  => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'insurance_company' => 'AGROSEGURO SA',
-            'coverage_type'     => 'hail',
-            'start_date'        => now()->toDateString(),
-            'end_date'          => now()->addYear()->toDateString(),
-            'status'            => 'active',
+            'coverage_type' => 'hail',
+            'start_date' => now()->toDateString(),
+            'end_date' => now()->addYear()->toDateString(),
+            'status' => 'active',
         ]);
 
         $this->actingAs($viticulturist);
@@ -44,12 +43,12 @@ class IndexTest extends ViticulturistTestCase
         $other = $this->makeOtherViticulturist();
 
         AgriInsurance::factory()->create([
-            'viticulturist_id'  => $other->id,
+            'viticulturist_id' => $other->id,
             'insurance_company' => 'Aseguradora Ajena',
-            'coverage_type'     => 'frost',
-            'start_date'        => now()->toDateString(),
-            'end_date'          => now()->addYear()->toDateString(),
-            'status'            => 'active',
+            'coverage_type' => 'frost',
+            'start_date' => now()->toDateString(),
+            'end_date' => now()->addYear()->toDateString(),
+            'status' => 'active',
         ]);
 
         $this->actingAs($viticulturist);
@@ -63,12 +62,12 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
 
         $insurance = AgriInsurance::factory()->create([
-            'viticulturist_id'  => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'insurance_company' => 'A Borrar',
-            'coverage_type'     => 'comprehensive',
-            'start_date'        => now()->toDateString(),
-            'end_date'          => now()->addYear()->toDateString(),
-            'status'            => 'active',
+            'coverage_type' => 'comprehensive',
+            'start_date' => now()->toDateString(),
+            'end_date' => now()->addYear()->toDateString(),
+            'status' => 'active',
         ]);
 
         $this->actingAs($viticulturist);
@@ -84,20 +83,20 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
 
         AgriInsurance::factory()->create([
-            'viticulturist_id'  => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'insurance_company' => 'Activa SA',
-            'coverage_type'     => 'hail',
-            'start_date'        => now()->toDateString(),
-            'end_date'          => now()->addYear()->toDateString(),
-            'status'            => 'active',
+            'coverage_type' => 'hail',
+            'start_date' => now()->toDateString(),
+            'end_date' => now()->addYear()->toDateString(),
+            'status' => 'active',
         ]);
         AgriInsurance::factory()->create([
-            'viticulturist_id'  => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'insurance_company' => 'Vencida SL',
-            'coverage_type'     => 'frost',
-            'start_date'        => now()->subYear()->toDateString(),
-            'end_date'          => now()->subDay()->toDateString(),
-            'status'            => 'expired',
+            'coverage_type' => 'frost',
+            'start_date' => now()->subYear()->toDateString(),
+            'end_date' => now()->subDay()->toDateString(),
+            'status' => 'expired',
         ]);
 
         $this->actingAs($viticulturist);

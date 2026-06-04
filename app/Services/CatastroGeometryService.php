@@ -39,12 +39,12 @@ class CatastroGeometryService
             }
 
             $response = $client->get(self::WFS_URL, [
-                'service'         => 'wfs',
-                'version'         => '2.0.0',
-                'request'         => 'getfeature',
+                'service' => 'wfs',
+                'version' => '2.0.0',
+                'request' => 'getfeature',
                 'STOREDQUERIE_ID' => 'GetParcel',
-                'srsname'         => 'EPSG:4326',
-                'REFCAT'          => $refcat,
+                'srsname' => 'EPSG:4326',
+                'REFCAT' => $refcat,
             ]);
 
             if ($response->status() !== 200) {
@@ -55,8 +55,9 @@ class CatastroGeometryService
         } catch (\Exception $e) {
             Log::warning('Error fetching Catastro geometry', [
                 'reference' => $refcat,
-                'error'     => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -92,9 +93,9 @@ class CatastroGeometryService
         }
 
         MultipartPlotSigpac::create([
-            'plot_id'          => $plotId,
-            'sigpac_code_id'   => null,
-            'source'           => $source,
+            'plot_id' => $plotId,
+            'sigpac_code_id' => null,
+            'source' => $source,
             'plot_geometry_id' => $geometryId,
         ]);
 
@@ -108,7 +109,7 @@ class CatastroGeometryService
      */
     private function normalizeReference(?string $reference): ?string
     {
-        if (!$reference) {
+        if (! $reference) {
             return null;
         }
 
@@ -132,8 +133,8 @@ class CatastroGeometryService
      */
     private function gmlToWkt(string $gml): ?string
     {
-        $dom = new \DOMDocument();
-        if (!@$dom->loadXML($gml)) {
+        $dom = new \DOMDocument;
+        if (! @$dom->loadXML($gml)) {
             return null;
         }
 
@@ -157,15 +158,15 @@ class CatastroGeometryService
                 continue;
             }
 
-            $rings = ['(' . $extRing . ')'];
+            $rings = ['('.$extRing.')'];
             foreach ($xpath->query(".//*[local-name()='interior']//*[local-name()='posList']", $unit) as $interior) {
                 $intRing = $this->posListToWktRing($interior->textContent);
                 if ($intRing !== null) {
-                    $rings[] = '(' . $intRing . ')';
+                    $rings[] = '('.$intRing.')';
                 }
             }
 
-            $polygons[] = '(' . implode(',', $rings) . ')';
+            $polygons[] = '('.implode(',', $rings).')';
         }
 
         if (empty($polygons)) {
@@ -173,8 +174,8 @@ class CatastroGeometryService
         }
 
         return count($polygons) === 1
-            ? 'POLYGON' . $polygons[0]
-            : 'MULTIPOLYGON(' . implode(',', $polygons) . ')';
+            ? 'POLYGON'.$polygons[0]
+            : 'MULTIPOLYGON('.implode(',', $polygons).')';
     }
 
     /**
@@ -196,7 +197,7 @@ class CatastroGeometryService
             if ($lat < -90 || $lat > 90 || $lng < -180 || $lng > 180) {
                 return null;
             }
-            $points[] = $lng . ' ' . $lat; // WKT = lon lat (swap)
+            $points[] = $lng.' '.$lat; // WKT = lon lat (swap)
         }
 
         return count($points) >= 4 ? implode(', ', $points) : null;

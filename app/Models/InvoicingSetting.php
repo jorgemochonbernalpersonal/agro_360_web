@@ -24,15 +24,15 @@ class InvoicingSetting extends Model
     ];
 
     protected $casts = [
-        'invoice_padding'               => 'integer',
-        'invoice_counter'               => 'integer',
-        'invoice_year_reset'            => 'boolean',
-        'invoice_last_reset_year'       => 'integer',
-        'delivery_note_padding'         => 'integer',
-        'delivery_note_counter'         => 'integer',
-        'delivery_note_year_reset'      => 'boolean',
+        'invoice_padding' => 'integer',
+        'invoice_counter' => 'integer',
+        'invoice_year_reset' => 'boolean',
+        'invoice_last_reset_year' => 'integer',
+        'delivery_note_padding' => 'integer',
+        'delivery_note_counter' => 'integer',
+        'delivery_note_year_reset' => 'boolean',
         'delivery_note_last_reset_year' => 'integer',
-        'last_reset_year'               => 'integer',
+        'last_reset_year' => 'integer',
     ];
 
     /**
@@ -45,6 +45,8 @@ class InvoicingSetting extends Model
 
     /**
      * Scope para obtener configuración de un usuario
+     *
+     * @param mixed $query
      */
     public function scopeForUser($query, int $userId)
     {
@@ -57,10 +59,10 @@ class InvoicingSetting extends Model
     public function generateInvoiceCode(): string
     {
         $this->checkYearReset('invoice');
-        
-        $code = $this->replaceVariables($this->invoice_prefix) . 
+
+        $code = $this->replaceVariables($this->invoice_prefix).
                 str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
-        
+
         return $code;
     }
 
@@ -70,10 +72,10 @@ class InvoicingSetting extends Model
     public function generateDeliveryNoteCode(): string
     {
         $this->checkYearReset('delivery_note');
-        
-        $code = $this->replaceVariables($this->delivery_note_prefix) . 
+
+        $code = $this->replaceVariables($this->delivery_note_prefix).
                 str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
-        
+
         return $code;
     }
 
@@ -99,9 +101,9 @@ class InvoicingSetting extends Model
     public function resetInvoiceCounter(): void
     {
         $this->update([
-            'invoice_counter'         => 1,
+            'invoice_counter' => 1,
             'invoice_last_reset_year' => now()->year,
-            'last_reset_year'         => now()->year,
+            'last_reset_year' => now()->year,
         ]);
     }
 
@@ -111,12 +113,12 @@ class InvoicingSetting extends Model
     public function resetDeliveryNoteCounter(): void
     {
         $this->update([
-            'delivery_note_counter'         => 1,
+            'delivery_note_counter' => 1,
             'delivery_note_last_reset_year' => now()->year,
-            'last_reset_year'               => now()->year,
+            'last_reset_year' => now()->year,
         ]);
     }
-    
+
     /**
      * Generar código de factura e incrementar contador ATÓMICAMENTE
      * Previene race conditions usando lockForUpdate()
@@ -129,14 +131,14 @@ class InvoicingSetting extends Model
             if ($locked) {
                 $this->setRawAttributes($locked->getAttributes());
             }
-            
+
             $code = $this->generateInvoiceCode();
             $this->incrementInvoiceCounter();
-            
+
             return $code;
         });
     }
-    
+
     /**
      * Generar código de albarán e incrementar contador ATÓMICAMENTE
      * Previene race conditions usando lockForUpdate()
@@ -149,12 +151,65 @@ class InvoicingSetting extends Model
             if ($locked) {
                 $this->setRawAttributes($locked->getAttributes());
             }
-            
+
             $code = $this->generateDeliveryNoteCode();
             $this->incrementDeliveryNoteCounter();
-            
+
             return $code;
         });
+    }
+
+    /**
+     * Obtener vista previa del código de factura
+     */
+    public function getInvoicePreview(): string
+    {
+        return $this->replaceVariables($this->invoice_prefix).
+               str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Obtener vista previa del código de albarán
+     */
+    public function getDeliveryNotePreview(): string
+    {
+        return $this->replaceVariables($this->delivery_note_prefix).
+               str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Crear configuración por defecto para un usuario
+     */
+    public static function createDefaultForUser(int $userId): self
+    {
+        return self::create([
+            'user_id' => $userId,
+            'invoice_prefix' => 'FAC-{YEAR}-',
+            'invoice_padding' => 4,
+            'invoice_counter' => 1,
+            'invoice_year_reset' => true,
+            'invoice_last_reset_year' => (int) date('Y'),
+            'delivery_note_prefix' => 'ALB-{YEAR}-',
+            'delivery_note_padding' => 4,
+            'delivery_note_counter' => 1,
+            'delivery_note_year_reset' => true,
+            'delivery_note_last_reset_year' => (int) date('Y'),
+            'last_reset_year' => (int) date('Y'),
+        ]);
+    }
+
+    /**
+     * Obtener o crear configuración para un usuario
+     */
+    public static function getOrCreateForUser(int $userId): self
+    {
+        $settings = self::forUser($userId)->first();
+
+        if (! $settings) {
+            $settings = self::createDefaultForUser($userId);
+        }
+
+        return $settings;
     }
 
     /**
@@ -167,13 +222,13 @@ class InvoicingSetting extends Model
         $currentYear = now()->year;
 
         if ($type === 'invoice') {
-            $shouldReset  = $this->invoice_year_reset;
+            $shouldReset = $this->invoice_year_reset;
             $lastResetYear = $this->invoice_last_reset_year ?? $this->last_reset_year;
             if ($shouldReset && $lastResetYear != $currentYear) {
                 $this->resetInvoiceCounter();
             }
         } else {
-            $shouldReset  = $this->delivery_note_year_reset;
+            $shouldReset = $this->delivery_note_year_reset;
             $lastResetYear = $this->delivery_note_last_reset_year ?? $this->last_reset_year;
             if ($shouldReset && $lastResetYear != $currentYear) {
                 $this->resetDeliveryNoteCounter();
@@ -194,58 +249,5 @@ class InvoicingSetting extends Model
             [$now->format('Y'), $now->format('y'), $now->format('m'), $now->format('d')],
             $prefix
         );
-    }
-
-    /**
-     * Obtener vista previa del código de factura
-     */
-    public function getInvoicePreview(): string
-    {
-        return $this->replaceVariables($this->invoice_prefix) . 
-               str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
-    }
-
-    /**
-     * Obtener vista previa del código de albarán
-     */
-    public function getDeliveryNotePreview(): string
-    {
-        return $this->replaceVariables($this->delivery_note_prefix) . 
-               str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
-    }
-
-    /**
-     * Crear configuración por defecto para un usuario
-     */
-    public static function createDefaultForUser(int $userId): self
-    {
-        return self::create([
-            'user_id'                       => $userId,
-            'invoice_prefix'                => 'FAC-{YEAR}-',
-            'invoice_padding'               => 4,
-            'invoice_counter'               => 1,
-            'invoice_year_reset'            => true,
-            'invoice_last_reset_year'       => (int) date('Y'),
-            'delivery_note_prefix'          => 'ALB-{YEAR}-',
-            'delivery_note_padding'         => 4,
-            'delivery_note_counter'         => 1,
-            'delivery_note_year_reset'      => true,
-            'delivery_note_last_reset_year' => (int) date('Y'),
-            'last_reset_year'               => (int) date('Y'),
-        ]);
-    }
-
-    /**
-     * Obtener o crear configuración para un usuario
-     */
-    public static function getOrCreateForUser(int $userId): self
-    {
-        $settings = self::forUser($userId)->first();
-        
-        if (!$settings) {
-            $settings = self::createDefaultForUser($userId);
-        }
-        
-        return $settings;
     }
 }

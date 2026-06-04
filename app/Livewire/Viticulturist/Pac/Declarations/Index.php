@@ -15,15 +15,18 @@ class Index extends Component
     {
         $declaration = PacDeclaration::forViticulturist(Auth::id())->findOrFail($id);
 
-        if (!$declaration->isDraft()) return;
+        if (! $declaration->isDraft()) {
+            return;
+        }
 
         if ($declaration->items()->count() === 0) {
             $this->toastError(__('La declaración no tiene parcelas. Añade al menos una antes de presentarla.'));
+
             return;
         }
 
         $declaration->update([
-            'status'       => PacDeclaration::STATUS_SUBMITTED,
+            'status' => PacDeclaration::STATUS_SUBMITTED,
             'submitted_at' => now(),
         ]);
 
@@ -34,8 +37,9 @@ class Index extends Component
     {
         $declaration = PacDeclaration::forViticulturist(Auth::id())->findOrFail($id);
 
-        if (!$declaration->isDraft()) {
+        if (! $declaration->isDraft()) {
             $this->toastError(__('Solo se pueden eliminar declaraciones en borrador.'));
+
             return;
         }
 
@@ -51,16 +55,16 @@ class Index extends Component
             ->get();
 
         $stats = [
-            'total'     => $declarations->count(),
-            'draft'     => $declarations->where('status', 'draft')->count(),
+            'total' => $declarations->count(),
+            'draft' => $declarations->where('status', 'draft')->count(),
             'submitted' => $declarations->where('status', 'submitted')->count(),
-            'approved'  => $declarations->where('status', 'approved')->count(),
+            'approved' => $declarations->where('status', 'approved')->count(),
         ];
 
         return view('livewire.viticulturist.pac.declarations.index', [
             'declarations' => $declarations,
-            'stats'        => $stats,
-            'currentYear'  => now()->year,
+            'stats' => $stats,
+            'currentYear' => now()->year,
         ])->layout('layouts.app');
     }
 }

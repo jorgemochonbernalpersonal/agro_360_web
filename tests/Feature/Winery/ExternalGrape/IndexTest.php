@@ -9,22 +9,6 @@ use Tests\Feature\WineryTestCase;
 
 class IndexTest extends WineryTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeGrape(int $wineryId, array $attrs = []): ExternalGrape
-    {
-        return ExternalGrape::create(array_merge([
-            'user_id'          => $wineryId,
-            'supplier_name'    => 'Proveedor Test',
-            'grape_type'       => 'grapes',
-            'color'            => 'red',
-            'total_weight_kg'  => 1000,
-            'used_weight_kg'   => 0,
-            'entry_date'       => now()->format('Y-m-d'),
-            'status'           => 'available',
-        ], $attrs));
-    }
-
     // ── access ────────────────────────────────────────────────────────────────
 
     public function test_winery_can_access_external_grape_index(): void
@@ -73,7 +57,7 @@ class IndexTest extends WineryTestCase
     public function test_winery_can_archive_own_grape(): void
     {
         $winery = $this->makeWinery();
-        $grape  = $this->makeGrape($winery->id);
+        $grape = $this->makeGrape($winery->id);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
@@ -81,7 +65,7 @@ class IndexTest extends WineryTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('external_grapes', [
-            'id'     => $grape->id,
+            'id' => $grape->id,
             'status' => 'archived',
         ]);
     }
@@ -90,7 +74,7 @@ class IndexTest extends WineryTestCase
     {
         $winery1 = $this->makeWinery();
         $winery2 = $this->makeOtherWinery();
-        $grape   = $this->makeGrape($winery2->id);
+        $grape = $this->makeGrape($winery2->id);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
@@ -174,14 +158,28 @@ class IndexTest extends WineryTestCase
     {
         $winery = $this->makeWinery();
         $this->makeGrape($winery->id, ['total_weight_kg' => 500, 'used_weight_kg' => 100, 'status' => 'available']);
-        $this->makeGrape($winery->id, ['total_weight_kg' => 300, 'used_weight_kg' =>   0, 'status' => 'available']);
-        $this->makeGrape($winery->id, ['total_weight_kg' => 200, 'used_weight_kg' =>   0, 'status' => 'used']);
+        $this->makeGrape($winery->id, ['total_weight_kg' => 300, 'used_weight_kg' => 0, 'status' => 'available']);
+        $this->makeGrape($winery->id, ['total_weight_kg' => 200, 'used_weight_kg' => 0, 'status' => 'used']);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
-            ->assertViewHas('stats', fn($s) =>
-                $s['partidas'] === 2   // only available
+            ->assertViewHas('stats', fn ($s) => $s['partidas'] === 2   // only available
                 && $s['total_kg'] == 800.0
             );
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeGrape(int $wineryId, array $attrs = []): ExternalGrape
+    {
+        return ExternalGrape::create(array_merge([
+            'user_id' => $wineryId,
+            'supplier_name' => 'Proveedor Test',
+            'grape_type' => 'grapes',
+            'color' => 'red',
+            'total_weight_kg' => 1000,
+            'used_weight_kg' => 0,
+            'entry_date' => now()->format('Y-m-d'),
+            'status' => 'available',
+        ], $attrs));
     }
 }

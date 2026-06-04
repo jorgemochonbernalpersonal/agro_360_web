@@ -6,26 +6,29 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\SupervisorWinery;
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
     public string $search = '';
+
     public string $vintageFilter = '';
 
     // ── Link winery modal ─────────────────────────────────────────────────────
-    public bool   $showLinkModal  = false;
-    public string $linkSearch     = '';
-    public ?int   $linkWineryId   = null;
+    public bool $showLinkModal = false;
+
+    public string $linkSearch = '';
+
+    public ?int $linkWineryId = null;
 
     protected $queryString = [
-        'search'        => ['except' => ''],
+        'search' => ['except' => ''],
         'vintageFilter' => ['except' => ''],
     ];
 
@@ -41,7 +44,7 @@ class Index extends Component
 
     public function clearFilters(): void
     {
-        $this->search        = '';
+        $this->search = '';
         $this->vintageFilter = '';
         $this->resetPage();
     }
@@ -82,7 +85,7 @@ class Index extends Component
             'linkWineryId.required' => __('Selecciona una bodega.'),
         ]);
 
-        $doId   = Auth::id();
+        $doId = Auth::id();
         $winery = User::findOrFail($this->linkWineryId);
 
         $alreadyLinked = SupervisorWinery::where('supervisor_id', $doId)
@@ -91,13 +94,14 @@ class Index extends Component
 
         if ($alreadyLinked) {
             $this->toastError("{$winery->name} ya está adscrita a esta denominación.");
+
             return;
         }
 
         SupervisorWinery::create([
             'supervisor_id' => $doId,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $doId,
+            'winery_id' => $winery->id,
+            'assigned_by' => $doId,
         ]);
 
         $this->showLinkModal = false;
@@ -154,10 +158,10 @@ class Index extends Component
         $query = User::whereIn('id', $wineryIds);
 
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
             });
         }
 
@@ -166,12 +170,12 @@ class Index extends Component
         // Candidates for linking: winery/producer users not already under this DO
         $linkCandidates = collect();
         if ($this->showLinkModal && strlen($this->linkSearch) >= 2) {
-            $term = '%' . mb_strtolower($this->linkSearch) . '%';
+            $term = '%'.mb_strtolower($this->linkSearch).'%';
             $linkCandidates = User::whereIn('role', [User::ROLE_WINERY, User::ROLE_PRODUCER])
                 ->whereNotIn('id', $wineryIds)
                 ->where(function ($q) use ($term) {
                     $q->whereRaw('LOWER(name) LIKE ?', [$term])
-                      ->orWhereRaw('LOWER(email) LIKE ?', [$term]);
+                        ->orWhereRaw('LOWER(email) LIKE ?', [$term]);
                 })
                 ->orderBy('name')
                 ->limit(10)
@@ -179,13 +183,13 @@ class Index extends Component
         }
 
         return view('livewire.supervisor.oversight.wineries.index', [
-            'wineries'          => $wineries,
-            'harvestStats'      => $harvestStats,
-            'vitCountByWinery'  => $vitCountByWinery,
+            'wineries' => $wineries,
+            'harvestStats' => $harvestStats,
+            'vitCountByWinery' => $vitCountByWinery,
             'availableVintages' => $availableVintages,
-            'vintage'           => $vintage,
-            'totalWineries'     => $wineryIds->count(),
-            'linkCandidates'    => $linkCandidates,
+            'vintage' => $vintage,
+            'totalWineries' => $wineryIds->count(),
+            'linkCandidates' => $linkCandidates,
         ]);
     }
 }

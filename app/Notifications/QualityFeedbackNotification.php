@@ -3,8 +3,8 @@
 namespace App\Notifications;
 
 use App\Models\Harvest;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -30,11 +30,11 @@ class QualityFeedbackNotification extends Notification implements ShouldQueue
 
         $mail = (new MailMessage)
             ->subject("Informe de calidad — {$variety} ({$this->wineryName})")
-            ->greeting("Datos de calidad de tu entrega")
+            ->greeting('Datos de calidad de tu entrega')
             ->line("**Bodega:** {$this->wineryName}")
-            ->line("**Variedad:** {$variety}" . ($plot ? " · Parcela: {$plot}" : ''))
-            ->line("**Peso recibido:** " . number_format($h->total_weight, 0) . ' kg')
-            ->line("**Fecha:** " . $h->harvest_start_date?->format('d/m/Y'));
+            ->line("**Variedad:** {$variety}".($plot ? " · Parcela: {$plot}" : ''))
+            ->line('**Peso recibido:** '.number_format($h->total_weight, 0).' kg')
+            ->line('**Fecha:** '.$h->harvest_start_date?->format('d/m/Y'));
 
         if ($h->baume_degree !== null) {
             $mail->line("**Grado Baumé:** {$h->baume_degree}°");
@@ -62,14 +62,14 @@ class QualityFeedbackNotification extends Notification implements ShouldQueue
         $h = $this->harvest;
 
         return [
-            'harvest_id'  => $h->id,
+            'harvest_id' => $h->id,
             'winery_name' => $this->wineryName,
-            'variety'     => $h->plotPlanting?->grapeVariety?->name,
-            'weight_kg'   => $h->total_weight,
-            'baume'       => $h->baume_degree,
-            'alcohol'     => $h->probable_alcohol,
-            'acidity'     => $h->total_acidity,
-            'ph'          => $h->ph,
+            'variety' => $h->plotPlanting?->grapeVariety?->name,
+            'weight_kg' => $h->total_weight,
+            'baume' => $h->baume_degree,
+            'alcohol' => $h->probable_alcohol,
+            'acidity' => $h->total_acidity,
+            'ph' => $h->ph,
         ];
     }
 }

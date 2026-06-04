@@ -4,7 +4,6 @@ namespace Tests\Feature\Viticulturist\PlotCosts;
 
 use App\Livewire\Viticulturist\PlotCosts\Edit;
 use App\Models\PlotCost;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -15,10 +14,10 @@ class EditTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
         $cost = PlotCost::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'description'      => 'Original',
-            'amount'           => 100.00,
-            'cost_date'        => now()->toDateString(),
-            'category'         => 'labor',
+            'description' => 'Original',
+            'amount' => 100.00,
+            'cost_date' => now()->toDateString(),
+            'category' => 'labor',
         ]);
 
         $this->actingAs($viticulturist);
@@ -30,7 +29,7 @@ class EditTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.plot-costs.index'));
 
         $this->assertDatabaseHas('plot_costs', [
-            'id'          => $cost->id,
+            'id' => $cost->id,
             'description' => 'Actualizado',
         ]);
     }
@@ -42,10 +41,10 @@ class EditTest extends ViticulturistTestCase
 
         $cost = PlotCost::factory()->create([
             'viticulturist_id' => $other->id,
-            'description'      => 'Ajeno',
-            'amount'           => 100.00,
-            'cost_date'        => now()->toDateString(),
-            'category'         => 'labor',
+            'description' => 'Ajeno',
+            'amount' => 100.00,
+            'cost_date' => now()->toDateString(),
+            'category' => 'labor',
         ]);
 
         $this->actingAs($viticulturist);
@@ -59,10 +58,10 @@ class EditTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
         $cost = PlotCost::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'description'      => 'Abono foliar',
-            'amount'           => 75.50,
-            'cost_date'        => '2026-03-01',
-            'category'         => 'fertilizer',
+            'description' => 'Abono foliar',
+            'amount' => 75.50,
+            'cost_date' => '2026-03-01',
+            'category' => 'fertilizer',
         ]);
 
         $this->actingAs($viticulturist);

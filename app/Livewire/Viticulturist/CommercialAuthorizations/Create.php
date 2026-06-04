@@ -5,19 +5,26 @@ namespace App\Livewire\Viticulturist\CommercialAuthorizations;
 use App\Livewire\Viticulturist\AbstractCreate;
 use App\Models\CommercialAuthorization;
 use App\Models\Exploitation;
-use Illuminate\Validation\Rule;
 
 class Create extends AbstractCreate
 {
-    public string $exploitation_id    = '';
+    public string $exploitation_id = '';
+
     public string $authorization_type = 'do_registration';
+
     public string $authorization_code = '';
-    public string $description        = '';
-    public string $issuing_body       = '';
-    public string $issue_date         = '';
-    public string $expiry_date        = '';
-    public string $document_file      = '';
-    public string $notes              = '';
+
+    public string $description = '';
+
+    public string $issuing_body = '';
+
+    public string $issue_date = '';
+
+    public string $expiry_date = '';
+
+    public string $document_file = '';
+
+    public string $notes = '';
 
     public function mount(): void
     {
@@ -27,15 +34,15 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'authorization_type' => 'required|in:' . implode(',', array_keys(CommercialAuthorization::AUTHORIZATION_TYPES)),
-            'issue_date'         => 'required|date',
-            'expiry_date'        => 'nullable|date|after_or_equal:issue_date',
-            'exploitation_id'    => 'nullable|exists:exploitations,id',
+            'authorization_type' => 'required|in:'.implode(',', array_keys(CommercialAuthorization::AUTHORIZATION_TYPES)),
+            'issue_date' => 'required|date',
+            'expiry_date' => 'nullable|date|after_or_equal:issue_date',
+            'exploitation_id' => 'nullable|exists:exploitations,id',
             'authorization_code' => 'nullable|string|max:100',
-            'description'        => 'nullable|string|max:255',
-            'issuing_body'       => 'nullable|string|max:255',
-            'document_file'      => 'nullable|string|max:500',
-            'notes'              => 'nullable|string',
+            'description' => 'nullable|string|max:255',
+            'issuing_body' => 'nullable|string|max:255',
+            'document_file' => 'nullable|string|max:500',
+            'notes' => 'nullable|string',
         ];
     }
 
@@ -47,17 +54,17 @@ class Create extends AbstractCreate
         }
 
         CommercialAuthorization::create([
-            'viticulturist_id'   => $this->viticulturistId(),
-            'exploitation_id'    => $this->exploitation_id ?: null,
+            'viticulturist_id' => $this->viticulturistId(),
+            'exploitation_id' => $this->exploitation_id ?: null,
             'authorization_type' => $this->authorization_type,
             'authorization_code' => $this->authorization_code ?: null,
-            'description'        => $this->description ?: null,
-            'issuing_body'       => $this->issuing_body ?: null,
-            'issue_date'         => $this->issue_date,
-            'expiry_date'        => $this->expiry_date ?: null,
-            'document_file'      => $this->document_file ?: null,
-            'notes'              => $this->notes ?: null,
-            'active'             => true,
+            'description' => $this->description ?: null,
+            'issuing_body' => $this->issuing_body ?: null,
+            'issue_date' => $this->issue_date,
+            'expiry_date' => $this->expiry_date ?: null,
+            'document_file' => $this->document_file ?: null,
+            'notes' => $this->notes ?: null,
+            'active' => true,
         ]);
     }
 
@@ -75,7 +82,7 @@ class Create extends AbstractCreate
     {
         return [
             'exploitations' => Exploitation::forViticulturist($this->viticulturistId())->active()->get(),
-            'authTypes'     => CommercialAuthorization::authorizationTypeOptions(),
+            'authTypes' => CommercialAuthorization::authorizationTypeOptions(),
         ];
     }
 }

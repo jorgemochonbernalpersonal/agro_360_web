@@ -11,7 +11,7 @@ class WineTraceController extends Controller
         $wine = Wine::where('trace_token', $token)
             ->with([
                 'wineHarvests.harvest.plotPlanting.plotVariety.grapeVariety',
-                'analyses' => fn($q) => $q->latest('analysis_date')->take(1),
+                'analyses' => fn ($q) => $q->latest('analysis_date')->take(1),
             ])
             ->firstOrFail();
 

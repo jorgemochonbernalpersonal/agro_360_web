@@ -95,7 +95,7 @@ class LoginTest extends TestCase
                 ->assertRedirect(route($dashboardRoute));
 
             $this->assertAuthenticatedAs($user);
-            
+
             auth()->logout();
         }
     }
@@ -155,7 +155,7 @@ class LoginTest extends TestCase
     public function test_user_created_by_another_user_is_redirected_to_change_password(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'email' => 'created@example.com',
             'password' => Hash::make('temporary-password'),
@@ -182,7 +182,7 @@ class LoginTest extends TestCase
     public function test_user_with_password_change_required_cannot_access_dashboard(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'email' => 'created@example.com',
             'password' => Hash::make('temporary-password'),
@@ -202,4 +202,3 @@ class LoginTest extends TestCase
             ->assertRedirect(route('auth.change-password-required'));
     }
 }
-

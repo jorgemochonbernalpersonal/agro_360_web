@@ -40,18 +40,18 @@ class ContainerStockService
     {
         DB::transaction(function () use ($harvest) {
             HarvestStock::create([
-                'harvest_id'      => $harvest->id,
-                'container_id'    => $harvest->container_id,
-                'user_id'         => $harvest->activity?->user_id ?? Auth::id(),
-                'movement_type'   => 'initial',
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => $harvest->activity?->user_id ?? Auth::id(),
+                'movement_type' => 'initial',
                 'quantity_change' => $harvest->total_weight,
-                'quantity_after'  => $harvest->total_weight,
-                'available_qty'   => $harvest->total_weight,
-                'reserved_qty'    => 0,
-                'sold_qty'        => 0,
-                'gifted_qty'      => 0,
-                'lost_qty'        => 0,
-                'notes'           => __('Registro inicial de cosecha'),
+                'quantity_after' => $harvest->total_weight,
+                'available_qty' => $harvest->total_weight,
+                'reserved_qty' => 0,
+                'sold_qty' => 0,
+                'gifted_qty' => 0,
+                'lost_qty' => 0,
+                'notes' => __('Registro inicial de cosecha'),
             ]);
 
             if ($harvest->container_id) {
@@ -59,8 +59,8 @@ class ContainerStockService
                 if ($container) {
                     if (! $container->hasAvailableCapacity($harvest->total_weight)) {
                         throw new \Exception(
-                            "El contenedor '{$container->name}' no tiene capacidad suficiente. " .
-                            "Disponible: {$container->getAvailableCapacity()} kg, " .
+                            "El contenedor '{$container->name}' no tiene capacidad suficiente. ".
+                            "Disponible: {$container->getAvailableCapacity()} kg, ".
                             "Requerido: {$harvest->total_weight} kg"
                         );
                     }
@@ -71,10 +71,10 @@ class ContainerStockService
                         ['container_id' => $container->id, 'harvest_id' => $harvest->id],
                         [
                             'current_quantity' => $harvest->total_weight,
-                            'available_qty'    => $harvest->total_weight,
-                            'reserved_qty'     => 0,
-                            'sold_qty'         => 0,
-                            'has_subproducts'  => false,
+                            'available_qty' => $harvest->total_weight,
+                            'reserved_qty' => 0,
+                            'sold_qty' => 0,
+                            'has_subproducts' => false,
                         ]
                     );
 
@@ -83,7 +83,7 @@ class ContainerStockService
             }
 
             Log::info('[ContainerStockService] Stock inicial registrado', [
-                'harvest_id'   => $harvest->id,
+                'harvest_id' => $harvest->id,
                 'total_weight' => $harvest->total_weight,
                 'container_id' => $harvest->container_id,
             ]);
@@ -100,31 +100,32 @@ class ContainerStockService
     {
         DB::transaction(function () use ($harvest, $oldWeight, $newWeight) {
             $difference = $newWeight - $oldWeight;
-            $lastStock  = $this->getLatestStock($harvest);
+            $lastStock = $this->getLatestStock($harvest);
 
             if (! $lastStock) {
                 Log::warning('[ContainerStockService] No hay stock previo para ajuste', [
                     'harvest_id' => $harvest->id,
                 ]);
+
                 return;
             }
 
             $newAvailable = max(0, $lastStock->available_qty + $difference);
-            $newTotal     = $lastStock->quantity_after + $difference;
+            $newTotal = $lastStock->quantity_after + $difference;
 
             HarvestStock::create([
-                'harvest_id'      => $harvest->id,
-                'container_id'    => $harvest->container_id,
-                'user_id'         => Auth::id(),
-                'movement_type'   => 'adjustment',
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id(),
+                'movement_type' => 'adjustment',
                 'quantity_change' => $difference,
-                'quantity_after'  => $newTotal,
-                'available_qty'   => $newAvailable,
-                'reserved_qty'    => $lastStock->reserved_qty,
-                'sold_qty'        => $lastStock->sold_qty,
-                'gifted_qty'      => $lastStock->gifted_qty,
-                'lost_qty'        => $lastStock->lost_qty,
-                'notes'           => sprintf(
+                'quantity_after' => $newTotal,
+                'available_qty' => $newAvailable,
+                'reserved_qty' => $lastStock->reserved_qty,
+                'sold_qty' => $lastStock->sold_qty,
+                'gifted_qty' => $lastStock->gifted_qty,
+                'lost_qty' => $lastStock->lost_qty,
+                'notes' => sprintf(
                     'Ajuste de peso: %s kg → %s kg (%+.3f kg)',
                     $oldWeight,
                     $newWeight,
@@ -138,8 +139,8 @@ class ContainerStockService
                     if ($difference > 0) {
                         if (! $container->hasAvailableCapacity($difference)) {
                             throw new \Exception(
-                                "No hay capacidad suficiente en el contenedor. " .
-                                "Disponible: {$container->getAvailableCapacity()} kg, " .
+                                'No hay capacidad suficiente en el contenedor. '.
+                                "Disponible: {$container->getAvailableCapacity()} kg, ".
                                 "Requerido: {$difference} kg"
                             );
                         }
@@ -155,7 +156,7 @@ class ContainerStockService
                     if ($state) {
                         $state->update([
                             'current_quantity' => $newTotal,
-                            'available_qty'    => $newAvailable,
+                            'available_qty' => $newAvailable,
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),
                         ]);
@@ -197,7 +198,7 @@ class ContainerStockService
                         } else {
                             $oldState->update([
                                 'current_quantity' => 0,
-                                'available_qty'    => 0,
+                                'available_qty' => 0,
                                 'last_movement_at' => now(),
                                 'last_movement_by' => Auth::id(),
                             ]);
@@ -214,8 +215,8 @@ class ContainerStockService
                 if ($newContainer) {
                     if (! $newContainer->hasAvailableCapacity($harvest->total_weight)) {
                         throw new \Exception(
-                            "El contenedor '{$newContainer->name}' no tiene capacidad suficiente. " .
-                            "Disponible: {$newContainer->getAvailableCapacity()} kg, " .
+                            "El contenedor '{$newContainer->name}' no tiene capacidad suficiente. ".
+                            "Disponible: {$newContainer->getAvailableCapacity()} kg, ".
                             "Requerido: {$harvest->total_weight} kg"
                         );
                     }
@@ -225,17 +226,17 @@ class ContainerStockService
                     // Obtener valores de stock actuales para propagar al nuevo estado
                     $lastStock = $harvest->stockMovements()->latest()->first();
                     $available = $lastStock ? $lastStock->available_qty : $harvest->total_weight;
-                    $reserved  = $lastStock ? $lastStock->reserved_qty : 0;
-                    $sold      = $lastStock ? $lastStock->sold_qty : 0;
+                    $reserved = $lastStock ? $lastStock->reserved_qty : 0;
+                    $sold = $lastStock ? $lastStock->sold_qty : 0;
 
                     ContainerCurrentState::updateOrCreate(
                         ['container_id' => $newContainer->id, 'harvest_id' => $harvest->id],
                         [
                             'current_quantity' => $harvest->total_weight,
-                            'available_qty'    => $available,
-                            'reserved_qty'     => $reserved,
-                            'sold_qty'         => $sold,
-                            'has_subproducts'  => false,
+                            'available_qty' => $available,
+                            'reserved_qty' => $reserved,
+                            'sold_qty' => $sold,
+                            'has_subproducts' => false,
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),
                         ]
@@ -246,7 +247,7 @@ class ContainerStockService
             }
 
             Log::info('[ContainerStockService] Contenedor transferido', [
-                'harvest_id'       => $harvest->id,
+                'harvest_id' => $harvest->id,
                 'old_container_id' => $oldContainerId,
                 'new_container_id' => $newContainerId,
             ]);
@@ -263,25 +264,25 @@ class ContainerStockService
     {
         DB::transaction(function () use ($harvest, $oldWeight, $newWeight, $oldContainerId, $newContainerId) {
             $difference = $newWeight - $oldWeight;
-            $lastStock  = $this->getLatestStock($harvest);
+            $lastStock = $this->getLatestStock($harvest);
 
             if ($lastStock) {
                 $newAvailable = max(0, $lastStock->available_qty + $difference);
-                $newTotal     = $lastStock->quantity_after + $difference;
+                $newTotal = $lastStock->quantity_after + $difference;
 
                 HarvestStock::create([
-                    'harvest_id'      => $harvest->id,
-                    'container_id'    => $newContainerId,
-                    'user_id'         => Auth::id(),
-                    'movement_type'   => 'adjustment',
+                    'harvest_id' => $harvest->id,
+                    'container_id' => $newContainerId,
+                    'user_id' => Auth::id(),
+                    'movement_type' => 'adjustment',
                     'quantity_change' => $difference,
-                    'quantity_after'  => $newTotal,
-                    'available_qty'   => $newAvailable,
-                    'reserved_qty'    => $lastStock->reserved_qty,
-                    'sold_qty'        => $lastStock->sold_qty,
-                    'gifted_qty'      => $lastStock->gifted_qty,
-                    'lost_qty'        => $lastStock->lost_qty,
-                    'notes'           => sprintf(
+                    'quantity_after' => $newTotal,
+                    'available_qty' => $newAvailable,
+                    'reserved_qty' => $lastStock->reserved_qty,
+                    'sold_qty' => $lastStock->sold_qty,
+                    'gifted_qty' => $lastStock->gifted_qty,
+                    'lost_qty' => $lastStock->lost_qty,
+                    'notes' => sprintf(
                         'Ajuste de peso y cambio de contenedor: %s → %s kg',
                         $oldWeight,
                         $newWeight
@@ -304,7 +305,7 @@ class ContainerStockService
                         } else {
                             $oldState->update([
                                 'current_quantity' => 0,
-                                'available_qty'    => 0,
+                                'available_qty' => 0,
                                 'last_movement_at' => now(),
                                 'last_movement_by' => Auth::id(),
                             ]);
@@ -321,8 +322,8 @@ class ContainerStockService
                 if ($newContainer) {
                     if (! $newContainer->hasAvailableCapacity($newWeight)) {
                         throw new \Exception(
-                            "El contenedor '{$newContainer->name}' no tiene capacidad suficiente. " .
-                            "Disponible: {$newContainer->getAvailableCapacity()} kg, " .
+                            "El contenedor '{$newContainer->name}' no tiene capacidad suficiente. ".
+                            "Disponible: {$newContainer->getAvailableCapacity()} kg, ".
                             "Requerido: {$newWeight} kg"
                         );
                     }
@@ -334,10 +335,10 @@ class ContainerStockService
                         ['container_id' => $newContainer->id, 'harvest_id' => $harvest->id],
                         [
                             'current_quantity' => $newWeight,
-                            'available_qty'    => $available,
-                            'reserved_qty'     => $lastStock?->reserved_qty ?? 0,
-                            'sold_qty'         => $lastStock?->sold_qty ?? 0,
-                            'has_subproducts'  => false,
+                            'available_qty' => $available,
+                            'reserved_qty' => $lastStock?->reserved_qty ?? 0,
+                            'sold_qty' => $lastStock?->sold_qty ?? 0,
+                            'has_subproducts' => false,
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),
                         ]
@@ -348,9 +349,9 @@ class ContainerStockService
             }
 
             Log::info('[ContainerStockService] Peso ajustado y contenedor transferido', [
-                'harvest_id'       => $harvest->id,
-                'old_weight'       => $oldWeight,
-                'new_weight'       => $newWeight,
+                'harvest_id' => $harvest->id,
+                'old_weight' => $oldWeight,
+                'new_weight' => $newWeight,
                 'old_container_id' => $oldContainerId,
                 'new_container_id' => $newContainerId,
             ]);
@@ -383,7 +384,7 @@ class ContainerStockService
                 } else {
                     $state->update([
                         'current_quantity' => 0,
-                        'available_qty'    => 0,
+                        'available_qty' => 0,
                         'last_movement_at' => now(),
                         'last_movement_by' => Auth::id(),
                     ]);
@@ -393,7 +394,7 @@ class ContainerStockService
             $this->recordHistory($container, $harvest, 'empty', -$harvest->total_weight);
 
             Log::info('[ContainerStockService] Stock de cosecha liberado al eliminar', [
-                'harvest_id'   => $harvest->id,
+                'harvest_id' => $harvest->id,
                 'container_id' => $harvest->container_id,
             ]);
         });
@@ -416,28 +417,28 @@ class ContainerStockService
 
             if ($lastStock->available_qty < $item->quantity) {
                 throw new \RuntimeException(
-                    "Stock insuficiente para cosecha #{$harvest->id}: " .
+                    "Stock insuficiente para cosecha #{$harvest->id}: ".
                     "disponible {$lastStock->available_qty} kg, solicitado {$item->quantity} kg."
                 );
             }
 
             $newAvailable = $lastStock->available_qty - $item->quantity;
-            $newReserved  = $lastStock->reserved_qty + $item->quantity;
+            $newReserved = $lastStock->reserved_qty + $item->quantity;
 
             HarvestStock::create([
-                'harvest_id'      => $harvest->id,
-                'container_id'    => $harvest->container_id,
-                'user_id'         => Auth::id() ?? $item->invoice->user_id,
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id() ?? $item->invoice->user_id,
                 'invoice_item_id' => $item->id,
-                'movement_type'   => 'reserve',
+                'movement_type' => 'reserve',
                 'quantity_change' => 0,
-                'quantity_after'  => $lastStock->quantity_after,
-                'available_qty'   => $newAvailable,
-                'reserved_qty'    => $newReserved,
-                'sold_qty'        => $lastStock->sold_qty,
-                'gifted_qty'      => $lastStock->gifted_qty,
-                'lost_qty'        => $lastStock->lost_qty,
-                'notes'           => sprintf(
+                'quantity_after' => $lastStock->quantity_after,
+                'available_qty' => $newAvailable,
+                'reserved_qty' => $newReserved,
+                'sold_qty' => $lastStock->sold_qty,
+                'gifted_qty' => $lastStock->gifted_qty,
+                'lost_qty' => $lastStock->lost_qty,
+                'notes' => sprintf(
                     'Stock reservado - Item #%d en Factura %s',
                     $item->id,
                     $item->invoice->delivery_note_code ?? $item->invoice_id
@@ -451,8 +452,8 @@ class ContainerStockService
                 if ($container) {
                     $state = $this->getOrCreateContainerState($container, $harvest);
                     $state->update([
-                        'available_qty'    => max(0, ($state->available_qty ?? 0) - $item->quantity),
-                        'reserved_qty'     => ($state->reserved_qty ?? 0) + $item->quantity,
+                        'available_qty' => max(0, ($state->available_qty ?? 0) - $item->quantity),
+                        'reserved_qty' => ($state->reserved_qty ?? 0) + $item->quantity,
                         'last_movement_at' => now(),
                         'last_movement_by' => Auth::id() ?? $item->invoice->user_id,
                     ]);
@@ -460,11 +461,11 @@ class ContainerStockService
             }
 
             Log::info('[ContainerStockService] Stock reservado', [
-                'harvest_id'      => $harvest->id,
-                'item_id'         => $item->id,
-                'quantity'        => $item->quantity,
-                'new_available'   => $newAvailable,
-                'new_reserved'    => $newReserved,
+                'harvest_id' => $harvest->id,
+                'item_id' => $item->id,
+                'quantity' => $item->quantity,
+                'new_available' => $newAvailable,
+                'new_reserved' => $newReserved,
             ]);
         });
     }
@@ -482,22 +483,22 @@ class ContainerStockService
             }
 
             $newAvailable = $lastStock->available_qty + $item->quantity;
-            $newReserved  = max(0, $lastStock->reserved_qty - $item->quantity);
+            $newReserved = max(0, $lastStock->reserved_qty - $item->quantity);
 
             HarvestStock::create([
-                'harvest_id'      => $harvest->id,
-                'container_id'    => $harvest->container_id,
-                'user_id'         => Auth::id() ?? $item->invoice->user_id,
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id() ?? $item->invoice->user_id,
                 'invoice_item_id' => $item->id,
-                'movement_type'   => 'unreserve',
+                'movement_type' => 'unreserve',
                 'quantity_change' => 0,
-                'quantity_after'  => $lastStock->quantity_after,
-                'available_qty'   => $newAvailable,
-                'reserved_qty'    => $newReserved,
-                'sold_qty'        => $lastStock->sold_qty,
-                'gifted_qty'      => $lastStock->gifted_qty,
-                'lost_qty'        => $lastStock->lost_qty,
-                'notes'           => sprintf(
+                'quantity_after' => $lastStock->quantity_after,
+                'available_qty' => $newAvailable,
+                'reserved_qty' => $newReserved,
+                'sold_qty' => $lastStock->sold_qty,
+                'gifted_qty' => $lastStock->gifted_qty,
+                'lost_qty' => $lastStock->lost_qty,
+                'notes' => sprintf(
                     'Reserva liberada - Item #%d eliminado de Factura %s',
                     $item->id,
                     $item->invoice->delivery_note_code ?? $item->invoice_id
@@ -514,8 +515,8 @@ class ContainerStockService
                         ->first();
                     if ($state) {
                         $state->update([
-                            'available_qty'    => ($state->available_qty ?? 0) + $item->quantity,
-                            'reserved_qty'     => max(0, ($state->reserved_qty ?? 0) - $item->quantity),
+                            'available_qty' => ($state->available_qty ?? 0) + $item->quantity,
+                            'reserved_qty' => max(0, ($state->reserved_qty ?? 0) - $item->quantity),
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),
                         ]);
@@ -525,8 +526,8 @@ class ContainerStockService
 
             Log::info('[ContainerStockService] Reserva liberada', [
                 'harvest_id' => $harvest->id,
-                'item_id'    => $item->id,
-                'quantity'   => $item->quantity,
+                'item_id' => $item->id,
+                'quantity' => $item->quantity,
             ]);
         });
     }
@@ -547,30 +548,31 @@ class ContainerStockService
             if ($lastStock->reserved_qty < $item->quantity) {
                 Log::warning('[ContainerStockService] No hay suficiente stock reservado para confirmar venta', [
                     'harvest_id' => $harvest->id,
-                    'item_id'    => $item->id,
-                    'reserved'   => $lastStock->reserved_qty,
-                    'required'   => $item->quantity,
+                    'item_id' => $item->id,
+                    'reserved' => $lastStock->reserved_qty,
+                    'required' => $item->quantity,
                 ]);
+
                 return;
             }
 
             $newReserved = $lastStock->reserved_qty - $item->quantity;
-            $newSold     = $lastStock->sold_qty + $item->quantity;
+            $newSold = $lastStock->sold_qty + $item->quantity;
 
             HarvestStock::create([
-                'harvest_id'      => $harvest->id,
-                'container_id'    => $harvest->container_id,
-                'user_id'         => Auth::id(),
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id(),
                 'invoice_item_id' => $item->id,
-                'movement_type'   => 'sale',
+                'movement_type' => 'sale',
                 'quantity_change' => 0,
-                'quantity_after'  => $lastStock->quantity_after,
-                'available_qty'   => $lastStock->available_qty,
-                'reserved_qty'    => $newReserved,
-                'sold_qty'        => $newSold,
-                'gifted_qty'      => $lastStock->gifted_qty,
-                'lost_qty'        => $lastStock->lost_qty,
-                'notes'           => "Venta confirmada - Factura #{$invoiceRef} aprobada",
+                'quantity_after' => $lastStock->quantity_after,
+                'available_qty' => $lastStock->available_qty,
+                'reserved_qty' => $newReserved,
+                'sold_qty' => $newSold,
+                'gifted_qty' => $lastStock->gifted_qty,
+                'lost_qty' => $lastStock->lost_qty,
+                'notes' => "Venta confirmada - Factura #{$invoiceRef} aprobada",
                 'reference_number' => $invoiceRef,
             ]);
 
@@ -586,8 +588,8 @@ class ContainerStockService
                     if ($state) {
                         $state->update([
                             'current_quantity' => max(0, $state->current_quantity - $item->quantity),
-                            'reserved_qty'     => max(0, ($state->reserved_qty ?? 0) - $item->quantity),
-                            'sold_qty'         => ($state->sold_qty ?? 0) + $item->quantity,
+                            'reserved_qty' => max(0, ($state->reserved_qty ?? 0) - $item->quantity),
+                            'sold_qty' => ($state->sold_qty ?? 0) + $item->quantity,
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),
                         ]);
@@ -598,9 +600,9 @@ class ContainerStockService
             }
 
             Log::info('[ContainerStockService] Venta confirmada', [
-                'harvest_id'  => $harvest->id,
-                'item_id'     => $item->id,
-                'quantity'    => $item->quantity,
+                'harvest_id' => $harvest->id,
+                'item_id' => $item->id,
+                'quantity' => $item->quantity,
                 'invoice_ref' => $invoiceRef,
             ]);
         });
@@ -619,22 +621,22 @@ class ContainerStockService
             }
 
             $newReserved = $lastStock->reserved_qty + $item->quantity;
-            $newSold     = max(0, $lastStock->sold_qty - $item->quantity);
+            $newSold = max(0, $lastStock->sold_qty - $item->quantity);
 
             HarvestStock::create([
-                'harvest_id'      => $harvest->id,
-                'container_id'    => $harvest->container_id,
-                'user_id'         => Auth::id(),
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id(),
                 'invoice_item_id' => $item->id,
-                'movement_type'   => 'reserve',
+                'movement_type' => 'reserve',
                 'quantity_change' => 0,
-                'quantity_after'  => $lastStock->quantity_after,
-                'available_qty'   => $lastStock->available_qty,
-                'reserved_qty'    => $newReserved,
-                'sold_qty'        => $newSold,
-                'gifted_qty'      => $lastStock->gifted_qty,
-                'lost_qty'        => $lastStock->lost_qty,
-                'notes'           => __('Venta revertida a reserva - Factura vuelta a borrador'),
+                'quantity_after' => $lastStock->quantity_after,
+                'available_qty' => $lastStock->available_qty,
+                'reserved_qty' => $newReserved,
+                'sold_qty' => $newSold,
+                'gifted_qty' => $lastStock->gifted_qty,
+                'lost_qty' => $lastStock->lost_qty,
+                'notes' => __('Venta revertida a reserva - Factura vuelta a borrador'),
             ]);
 
             // Vuelta física: sube used_capacity y current_quantity
@@ -649,8 +651,8 @@ class ContainerStockService
                     if ($state) {
                         $state->update([
                             'current_quantity' => $state->current_quantity + $item->quantity,
-                            'reserved_qty'     => ($state->reserved_qty ?? 0) + $item->quantity,
-                            'sold_qty'         => max(0, ($state->sold_qty ?? 0) - $item->quantity),
+                            'reserved_qty' => ($state->reserved_qty ?? 0) + $item->quantity,
+                            'sold_qty' => max(0, ($state->sold_qty ?? 0) - $item->quantity),
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),
                         ]);
@@ -662,8 +664,8 @@ class ContainerStockService
 
             Log::info('[ContainerStockService] Venta revertida a reserva', [
                 'harvest_id' => $harvest->id,
-                'item_id'    => $item->id,
-                'quantity'   => $item->quantity,
+                'item_id' => $item->id,
+                'quantity' => $item->quantity,
             ]);
         });
     }
@@ -683,27 +685,27 @@ class ContainerStockService
                 return;
             }
 
-            $wasDraft    = ($fromStatus === 'draft');
+            $wasDraft = ($fromStatus === 'draft');
             $movementType = $wasDraft ? 'unreserve' : 'return';
 
             $newAvailable = $lastStock->available_qty + $item->quantity;
-            $newReserved  = $wasDraft ? max(0, $lastStock->reserved_qty - $item->quantity) : $lastStock->reserved_qty;
-            $newSold      = $wasDraft ? $lastStock->sold_qty : max(0, $lastStock->sold_qty - $item->quantity);
+            $newReserved = $wasDraft ? max(0, $lastStock->reserved_qty - $item->quantity) : $lastStock->reserved_qty;
+            $newSold = $wasDraft ? $lastStock->sold_qty : max(0, $lastStock->sold_qty - $item->quantity);
 
             HarvestStock::create([
-                'harvest_id'      => $harvest->id,
-                'container_id'    => $harvest->container_id,
-                'user_id'         => Auth::id(),
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id(),
                 'invoice_item_id' => $item->id,
-                'movement_type'   => $movementType,
+                'movement_type' => $movementType,
                 'quantity_change' => 0,
-                'quantity_after'  => $lastStock->quantity_after,
-                'available_qty'   => $newAvailable,
-                'reserved_qty'    => $newReserved,
-                'sold_qty'        => $newSold,
-                'gifted_qty'      => $lastStock->gifted_qty,
-                'lost_qty'        => $lastStock->lost_qty,
-                'notes'           => sprintf(
+                'quantity_after' => $lastStock->quantity_after,
+                'available_qty' => $newAvailable,
+                'reserved_qty' => $newReserved,
+                'sold_qty' => $newSold,
+                'gifted_qty' => $lastStock->gifted_qty,
+                'lost_qty' => $lastStock->lost_qty,
+                'notes' => sprintf(
                     'Stock liberado - Factura cancelada (estado previo: %s)',
                     $fromStatus
                 ),
@@ -720,8 +722,8 @@ class ContainerStockService
                         // Las uvas nunca salieron → solo restaurar sub-campos
                         if ($state) {
                             $state->update([
-                                'available_qty'    => ($state->available_qty ?? 0) + $item->quantity,
-                                'reserved_qty'     => max(0, ($state->reserved_qty ?? 0) - $item->quantity),
+                                'available_qty' => ($state->available_qty ?? 0) + $item->quantity,
+                                'reserved_qty' => max(0, ($state->reserved_qty ?? 0) - $item->quantity),
                                 'last_movement_at' => now(),
                                 'last_movement_by' => Auth::id(),
                             ]);
@@ -732,8 +734,8 @@ class ContainerStockService
                         if ($state) {
                             $state->update([
                                 'current_quantity' => $state->current_quantity + $item->quantity,
-                                'available_qty'    => ($state->available_qty ?? 0) + $item->quantity,
-                                'sold_qty'         => max(0, ($state->sold_qty ?? 0) - $item->quantity),
+                                'available_qty' => ($state->available_qty ?? 0) + $item->quantity,
+                                'sold_qty' => max(0, ($state->sold_qty ?? 0) - $item->quantity),
                                 'last_movement_at' => now(),
                                 'last_movement_by' => Auth::id(),
                             ]);
@@ -744,11 +746,11 @@ class ContainerStockService
             }
 
             Log::info('[ContainerStockService] Stock liberado por cancelación', [
-                'harvest_id'  => $harvest->id,
-                'item_id'     => $item->id,
-                'quantity'    => $item->quantity,
+                'harvest_id' => $harvest->id,
+                'item_id' => $item->id,
+                'quantity' => $item->quantity,
                 'from_status' => $fromStatus,
-                'was_draft'   => $wasDraft,
+                'was_draft' => $wasDraft,
             ]);
         });
     }
@@ -764,28 +766,28 @@ class ContainerStockService
 
             if ($lastStock->available_qty < $item->quantity) {
                 throw new \RuntimeException(
-                    "Stock insuficiente para venta directa de cosecha #{$harvest->id}: " .
+                    "Stock insuficiente para venta directa de cosecha #{$harvest->id}: ".
                     "disponible {$lastStock->available_qty} kg, solicitado {$item->quantity} kg."
                 );
             }
 
             $newAvailable = $lastStock->available_qty - $item->quantity;
-            $newSold      = $lastStock->sold_qty + $item->quantity;
+            $newSold = $lastStock->sold_qty + $item->quantity;
 
             HarvestStock::create([
-                'harvest_id'      => $harvest->id,
-                'container_id'    => $harvest->container_id,
-                'user_id'         => Auth::id() ?? $item->invoice->user_id,
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id() ?? $item->invoice->user_id,
                 'invoice_item_id' => $item->id,
-                'movement_type'   => 'sale',
+                'movement_type' => 'sale',
                 'quantity_change' => 0,
-                'quantity_after'  => $lastStock->quantity_after,
-                'available_qty'   => $newAvailable,
-                'reserved_qty'    => $lastStock->reserved_qty,
-                'sold_qty'        => $newSold,
-                'gifted_qty'      => $lastStock->gifted_qty,
-                'lost_qty'        => $lastStock->lost_qty,
-                'notes'           => sprintf(
+                'quantity_after' => $lastStock->quantity_after,
+                'available_qty' => $newAvailable,
+                'reserved_qty' => $lastStock->reserved_qty,
+                'sold_qty' => $newSold,
+                'gifted_qty' => $lastStock->gifted_qty,
+                'lost_qty' => $lastStock->lost_qty,
+                'notes' => sprintf(
                     'Venta directa - Item #%d añadido a Factura %s',
                     $item->id,
                     $invoiceRef
@@ -804,8 +806,8 @@ class ContainerStockService
                     if ($state) {
                         $state->update([
                             'current_quantity' => max(0, $state->current_quantity - $item->quantity),
-                            'available_qty'    => ($state->available_qty ?? 0) - $item->quantity,
-                            'sold_qty'         => ($state->sold_qty ?? 0) + $item->quantity,
+                            'available_qty' => ($state->available_qty ?? 0) - $item->quantity,
+                            'sold_qty' => ($state->sold_qty ?? 0) + $item->quantity,
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),
                         ]);
@@ -816,9 +818,9 @@ class ContainerStockService
             }
 
             Log::info('[ContainerStockService] Venta directa registrada', [
-                'harvest_id'  => $harvest->id,
-                'item_id'     => $item->id,
-                'quantity'    => $item->quantity,
+                'harvest_id' => $harvest->id,
+                'item_id' => $item->id,
+                'quantity' => $item->quantity,
                 'invoice_ref' => $invoiceRef,
             ]);
         });
@@ -846,27 +848,27 @@ class ContainerStockService
                 // Ajuste de reserva
                 if ($diff > 0 && $lastStock->available_qty < $diff) {
                     throw new \RuntimeException(
-                        "Stock insuficiente para ajustar reserva de cosecha #{$harvest->id}: " .
+                        "Stock insuficiente para ajustar reserva de cosecha #{$harvest->id}: ".
                         "disponible {$lastStock->available_qty} kg, incremento {$diff} kg."
                     );
                 }
-                $newReserved  = $lastStock->reserved_qty + $diff;
+                $newReserved = $lastStock->reserved_qty + $diff;
                 $newAvailable = $lastStock->available_qty - $diff;
 
                 HarvestStock::create([
-                    'harvest_id'      => $harvest->id,
-                    'container_id'    => $harvest->container_id,
-                    'user_id'         => Auth::id(),
+                    'harvest_id' => $harvest->id,
+                    'container_id' => $harvest->container_id,
+                    'user_id' => Auth::id(),
                     'invoice_item_id' => $item->id,
-                    'movement_type'   => 'reserve',
+                    'movement_type' => 'reserve',
                     'quantity_change' => 0,
-                    'quantity_after'  => $lastStock->quantity_after,
-                    'available_qty'   => $newAvailable,
-                    'reserved_qty'    => max(0, $newReserved),
-                    'sold_qty'        => $lastStock->sold_qty,
-                    'gifted_qty'      => $lastStock->gifted_qty,
-                    'lost_qty'        => $lastStock->lost_qty,
-                    'notes'           => sprintf('Ajuste de reserva: %.3f → %.3f kg', $oldQty, $newQty),
+                    'quantity_after' => $lastStock->quantity_after,
+                    'available_qty' => $newAvailable,
+                    'reserved_qty' => max(0, $newReserved),
+                    'sold_qty' => $lastStock->sold_qty,
+                    'gifted_qty' => $lastStock->gifted_qty,
+                    'lost_qty' => $lastStock->lost_qty,
+                    'notes' => sprintf('Ajuste de reserva: %.3f → %.3f kg', $oldQty, $newQty),
                 ]);
 
                 // La reserva no cambia used_capacity
@@ -874,12 +876,12 @@ class ContainerStockService
                     $container = Container::lockForUpdate()->find($harvest->container_id);
                     if ($container) {
                         $state = ContainerCurrentState::where('container_id', $container->id)
-                        ->where('harvest_id', $harvest->id)
-                        ->first();
+                            ->where('harvest_id', $harvest->id)
+                            ->first();
                         if ($state) {
                             $state->update([
-                                'available_qty'    => ($state->available_qty ?? 0) - $diff,
-                                'reserved_qty'     => max(0, ($state->reserved_qty ?? 0) + $diff),
+                                'available_qty' => ($state->available_qty ?? 0) - $diff,
+                                'reserved_qty' => max(0, ($state->reserved_qty ?? 0) + $diff),
                                 'last_movement_at' => now(),
                                 'last_movement_by' => Auth::id(),
                             ]);
@@ -888,23 +890,23 @@ class ContainerStockService
                 }
             } else {
                 // Ajuste de venta (sent, approved, etc.)
-                $newSold      = $lastStock->sold_qty + $diff;
+                $newSold = $lastStock->sold_qty + $diff;
                 $newAvailable = $lastStock->available_qty - $diff;
 
                 HarvestStock::create([
-                    'harvest_id'      => $harvest->id,
-                    'container_id'    => $harvest->container_id,
-                    'user_id'         => Auth::id(),
+                    'harvest_id' => $harvest->id,
+                    'container_id' => $harvest->container_id,
+                    'user_id' => Auth::id(),
                     'invoice_item_id' => $item->id,
-                    'movement_type'   => $diff > 0 ? 'sale' : 'return',
+                    'movement_type' => $diff > 0 ? 'sale' : 'return',
                     'quantity_change' => 0,
-                    'quantity_after'  => $lastStock->quantity_after,
-                    'available_qty'   => $newAvailable,
-                    'reserved_qty'    => $lastStock->reserved_qty,
-                    'sold_qty'        => max(0, $newSold),
-                    'gifted_qty'      => $lastStock->gifted_qty,
-                    'lost_qty'        => $lastStock->lost_qty,
-                    'notes'           => sprintf('Ajuste de venta: %.3f → %.3f kg', $oldQty, $newQty),
+                    'quantity_after' => $lastStock->quantity_after,
+                    'available_qty' => $newAvailable,
+                    'reserved_qty' => $lastStock->reserved_qty,
+                    'sold_qty' => max(0, $newSold),
+                    'gifted_qty' => $lastStock->gifted_qty,
+                    'lost_qty' => $lastStock->lost_qty,
+                    'notes' => sprintf('Ajuste de venta: %.3f → %.3f kg', $oldQty, $newQty),
                 ]);
 
                 // Ajuste físico en el contenedor
@@ -918,13 +920,13 @@ class ContainerStockService
                         }
 
                         $state = ContainerCurrentState::where('container_id', $container->id)
-                        ->where('harvest_id', $harvest->id)
-                        ->first();
+                            ->where('harvest_id', $harvest->id)
+                            ->first();
                         if ($state) {
                             $state->update([
                                 'current_quantity' => max(0, $state->current_quantity - $diff),
-                                'available_qty'    => ($state->available_qty ?? 0) - $diff,
-                                'sold_qty'         => max(0, ($state->sold_qty ?? 0) + $diff),
+                                'available_qty' => ($state->available_qty ?? 0) - $diff,
+                                'sold_qty' => max(0, ($state->sold_qty ?? 0) + $diff),
                                 'last_movement_at' => now(),
                                 'last_movement_by' => Auth::id(),
                             ]);
@@ -934,10 +936,10 @@ class ContainerStockService
             }
 
             Log::info('[ContainerStockService] Cantidad de item ajustada', [
-                'harvest_id'     => $harvest->id,
-                'item_id'        => $item->id,
-                'old_qty'        => $oldQty,
-                'new_qty'        => $newQty,
+                'harvest_id' => $harvest->id,
+                'item_id' => $item->id,
+                'old_qty' => $oldQty,
+                'new_qty' => $newQty,
                 'invoice_status' => $invoiceStatus,
             ]);
         });
@@ -969,22 +971,22 @@ class ContainerStockService
 
         if (! $lastStock) {
             $lastStock = HarvestStock::create([
-                'harvest_id'      => $harvest->id,
-                'container_id'    => $harvest->container_id,
-                'user_id'         => Auth::id() ?? $userId,
-                'movement_type'   => 'initial',
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id() ?? $userId,
+                'movement_type' => 'initial',
                 'quantity_change' => $harvest->total_weight,
-                'quantity_after'  => $harvest->total_weight,
-                'available_qty'   => $harvest->total_weight,
-                'reserved_qty'    => 0,
-                'sold_qty'        => 0,
-                'gifted_qty'      => 0,
-                'lost_qty'        => 0,
-                'notes'           => __('Stock inicial de cosecha (auto-creado)'),
+                'quantity_after' => $harvest->total_weight,
+                'available_qty' => $harvest->total_weight,
+                'reserved_qty' => 0,
+                'sold_qty' => 0,
+                'gifted_qty' => 0,
+                'lost_qty' => 0,
+                'notes' => __('Stock inicial de cosecha (auto-creado)'),
             ]);
 
             Log::info('[ContainerStockService] Stock inicial auto-creado', [
-                'harvest_id'   => $harvest->id,
+                'harvest_id' => $harvest->id,
                 'total_weight' => $harvest->total_weight,
             ]);
         }
@@ -1001,10 +1003,10 @@ class ContainerStockService
             ['container_id' => $container->id, 'harvest_id' => $harvest->id],
             [
                 'current_quantity' => $container->used_capacity,
-                'available_qty'    => $container->used_capacity,
-                'reserved_qty'     => 0,
-                'sold_qty'         => 0,
-                'has_subproducts'  => false,
+                'available_qty' => $container->used_capacity,
+                'reserved_qty' => 0,
+                'sold_qty' => 0,
+                'has_subproducts' => false,
             ]
         );
     }
@@ -1016,13 +1018,13 @@ class ContainerStockService
     private function recordHistory(Container $container, Harvest $harvest, string $operationType, float $quantity): void
     {
         ContainerHistory::create([
-            'container_id'     => $container->id,
-            'harvest_id'       => $harvest->id,
+            'container_id' => $container->id,
+            'harvest_id' => $harvest->id,
             'field_activity_id' => $harvest->activity_id,
-            'operation_type'   => $operationType,
-            'created_by'       => Auth::id(),
-            'quantity'         => $quantity,
-            'start_date'       => now(),
+            'operation_type' => $operationType,
+            'created_by' => Auth::id(),
+            'quantity' => $quantity,
+            'start_date' => now(),
         ]);
     }
 }

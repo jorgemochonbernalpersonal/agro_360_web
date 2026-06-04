@@ -19,12 +19,12 @@ return new class extends Migration
         } catch (\Exception $e) {
             // El índice no existe, continuar
         }
-        
+
         Schema::table('invoices', function (Blueprint $table) {
             // Hacer la columna nullable
             $table->string('invoice_number')->nullable()->change();
         });
-        
+
         Schema::table('invoices', function (Blueprint $table) {
             // Volver a crear el índice único (permitirá múltiples NULLs)
             $table->unique('invoice_number');
@@ -40,12 +40,12 @@ return new class extends Migration
             // Quitar el índice único
             $table->dropUnique(['invoice_number']);
         });
-        
+
         Schema::table('invoices', function (Blueprint $table) {
             // Volver a hacer NOT NULL
             $table->string('invoice_number')->nullable(false)->change();
         });
-        
+
         Schema::table('invoices', function (Blueprint $table) {
             // Volver a crear el índice único
             $table->unique('invoice_number');

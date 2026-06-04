@@ -24,15 +24,18 @@ class Show extends Component
 
     public function submit(): void
     {
-        if (!$this->declaration->isDraft()) return;
+        if (! $this->declaration->isDraft()) {
+            return;
+        }
 
         if ($this->declaration->items()->count() === 0) {
             $this->toastError(__('No hay parcelas en la declaración.'));
+
             return;
         }
 
         $this->declaration->update([
-            'status'       => PacDeclaration::STATUS_SUBMITTED,
+            'status' => PacDeclaration::STATUS_SUBMITTED,
             'submitted_at' => now(),
         ]);
 

@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FieldApplicator extends Model
 {
+    public const CATEGORIES = [
+        'basic' => 'Básico',
+        'qualified' => 'Cualificado',
+        'fumigator' => 'Fumigador',
+        'pilot' => 'Piloto',
+    ];
+
     protected $fillable = [
         'viticulturist_id',
         'campaign_id',
@@ -23,15 +30,8 @@ class FieldApplicator extends Model
 
     protected $casts = [
         'ropo_expiry_date' => 'date',
-        'is_advisor'       => 'boolean',
-        'active'           => 'boolean',
-    ];
-
-    public const CATEGORIES = [
-        'basic'     => 'Básico',
-        'qualified' => 'Cualificado',
-        'fumigator' => 'Fumigador',
-        'pilot'     => 'Piloto',
+        'is_advisor' => 'boolean',
+        'active' => 'boolean',
     ];
 
     public static function categoryOptions(): array
@@ -57,7 +57,7 @@ class FieldApplicator extends Model
     public function isRopoExpiringSoon(int $days = 30): bool
     {
         return $this->ropo_expiry_date
-            && !$this->ropo_expiry_date->isPast()
+            && ! $this->ropo_expiry_date->isPast()
             && $this->ropo_expiry_date->diffInDays(now()) <= $days;
     }
 

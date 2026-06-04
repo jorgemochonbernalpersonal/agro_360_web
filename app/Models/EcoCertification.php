@@ -8,30 +8,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class EcoCertification extends Model
 {
     const CERTIFICATION_TYPES = [
-        'organic'     => 'Producción Ecológica',
-        'biodynamic'  => 'Biodinámica',
+        'organic' => 'Producción Ecológica',
+        'biodynamic' => 'Biodinámica',
         'sustainable' => 'Viticultura Sostenible',
-        'vegan'       => 'Apto Vegano',
-        'fair_trade'  => 'Comercio Justo',
-        'other'       => 'Otro',
+        'vegan' => 'Apto Vegano',
+        'fair_trade' => 'Comercio Justo',
+        'other' => 'Otro',
     ];
 
     const STATUSES = [
-        'active'    => 'Activo',
-        'expired'   => 'Caducado',
-        'pending'   => 'Pendiente',
+        'active' => 'Activo',
+        'expired' => 'Caducado',
+        'pending' => 'Pendiente',
         'suspended' => 'Suspendido',
     ];
-
-    public static function certificationTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::CERTIFICATION_TYPES);
-    }
-
-    public static function statusOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::STATUSES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -46,9 +36,19 @@ class EcoCertification extends Model
     ];
 
     protected $casts = [
-        'valid_from'  => 'date',
+        'valid_from' => 'date',
         'valid_until' => 'date',
     ];
+
+    public static function certificationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CERTIFICATION_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
 
     public function user(): BelongsTo
     {

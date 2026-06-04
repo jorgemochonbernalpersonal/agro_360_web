@@ -11,10 +11,14 @@ class Edit extends AbstractEdit
 {
     public int $viticulturistId;
 
-    public string $name  = '';
-    public string $dni   = '';
+    public string $name = '';
+
+    public string $dni = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $notes = '';
 
     public function mount(User $viticulturist): void
@@ -29,19 +33,19 @@ class Edit extends AbstractEdit
         $user = $viticulturist;
 
         $this->viticulturistId = $user->id;
-        $this->name            = $user->name;
-        $this->dni             = $user->dni ?? '';
-        $rawEmail              = $user->email ?? '';
-        $this->email           = str_starts_with($rawEmail, 'viticultores.') ? '' : $rawEmail;
-        $this->phone           = $user->profile?->phone ?? '';
-        $this->notes           = $relation->notes ?? '';
+        $this->name = $user->name;
+        $this->dni = $user->dni ?? '';
+        $rawEmail = $user->email ?? '';
+        $this->email = str_starts_with($rawEmail, 'viticultores.') ? '' : $rawEmail;
+        $this->phone = $user->profile?->phone ?? '';
+        $this->notes = $relation->notes ?? '';
     }
 
     protected function rules(): array
     {
         return [
-            'name'  => ['required', 'string', 'max:255'],
-            'dni'   => ['nullable', 'string', 'max:20', "unique:users,dni,{$this->viticulturistId}"],
+            'name' => ['required', 'string', 'max:255'],
+            'dni' => ['nullable', 'string', 'max:20', "unique:users,dni,{$this->viticulturistId}"],
             'email' => ['nullable', 'email', 'max:255', "unique:users,email,{$this->viticulturistId}"],
             'phone' => ['nullable', 'string', 'max:20'],
         ];
@@ -51,15 +55,15 @@ class Edit extends AbstractEdit
     {
         return [
             'name.required' => __('El nombre es obligatorio.'),
-            'dni.unique'    => __('Ya existe un usuario con este DNI.'),
-            'email.unique'  => __('Ya existe un usuario con este email.'),
+            'dni.unique' => __('Ya existe un usuario con este DNI.'),
+            'email.unique' => __('Ya existe un usuario con este email.'),
         ];
     }
 
     protected function performUpdate(): void
     {
         $wineryId = Auth::id();
-        $user     = User::findOrFail($this->viticulturistId);
+        $user = User::findOrFail($this->viticulturistId);
 
         $emailValue = $this->email ?: null;
 
@@ -67,19 +71,19 @@ class Edit extends AbstractEdit
         if ($emailValue === null && str_starts_with($user->email ?? '', 'viticultores.')) {
             $emailValue = $user->email;
         } elseif ($emailValue === null) {
-            $emailValue = 'viticultores.' . \Illuminate\Support\Str::uuid() . '@noemail.agro365.es';
+            $emailValue = 'viticultores.'.\Illuminate\Support\Str::uuid().'@noemail.agro365.es';
         }
 
         $user->update([
-            'name'  => $this->name,
-            'dni'   => $this->dni  ?: null,
+            'name' => $this->name,
+            'dni' => $this->dni ?: null,
             'email' => $emailValue,
         ]);
 
         if ($this->phone) {
             $user->profile()->updateOrCreate(
                 ['user_id' => $user->id],
-                ['phone'   => $this->phone]
+                ['phone' => $this->phone]
             );
         } elseif ($user->profile) {
             $user->profile()->update(['phone' => null]);

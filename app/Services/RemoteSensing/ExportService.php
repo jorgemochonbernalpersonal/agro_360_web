@@ -5,8 +5,8 @@ namespace App\Services\RemoteSensing;
 use App\Models\Plot;
 use App\Models\PlotRemoteSensing;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class ExportService
 {
@@ -94,7 +94,7 @@ class ExportService
         }
 
         $healthDistribution = $records->groupBy('health_status')
-            ->map(fn($group) => $group->count())
+            ->map(fn ($group) => $group->count())
             ->toArray();
 
         return [

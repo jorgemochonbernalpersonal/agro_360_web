@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedBigInteger('autonomous_community_id');
             $table->timestamps();
-            
+
             $table->foreign('autonomous_community_id')->references('id')->on('autonomous_communities')->onDelete('cascade');
             $table->index('code');
             $table->index('autonomous_community_id');
@@ -32,4 +32,3 @@ return new class extends Migration
         Schema::dropIfExists('provinces');
     }
 };
-

@@ -45,21 +45,21 @@ class BottlingTest extends WineryTestCase
         $otherWinery = $this->makeOtherWinery();
 
         $wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Test Wine',
+            'user_id' => $this->winery->id,
+            'name' => 'Test Wine',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         $bottling = WineBottling::create([
-            'user_id'          => $this->winery->id,
-            'wine_id'          => $wine->id,
-            'bottling_date'    => today(),
-            'bottle_format'    => '750',
+            'user_id' => $this->winery->id,
+            'wine_id' => $wine->id,
+            'bottling_date' => today(),
+            'bottle_format' => '750',
             'quantity_bottles' => 100,
-            'quantity_liters'  => 75,
-            'lot_number'       => 'LOT-001',
-            'created_by'       => $this->winery->id,
+            'quantity_liters' => 75,
+            'lot_number' => 'LOT-001',
+            'created_by' => $this->winery->id,
         ]);
 
         $this->actingAs($otherWinery)
@@ -72,39 +72,39 @@ class BottlingTest extends WineryTestCase
         $otherWinery = $this->makeOtherWinery();
 
         $ownWine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Own Wine',
+            'user_id' => $this->winery->id,
+            'name' => 'Own Wine',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         WineBottling::create([
-            'user_id'          => $this->winery->id,
-            'wine_id'          => $ownWine->id,
-            'bottling_date'    => today(),
-            'bottle_format'    => '750',
+            'user_id' => $this->winery->id,
+            'wine_id' => $ownWine->id,
+            'bottling_date' => today(),
+            'bottle_format' => '750',
             'quantity_bottles' => 100,
-            'quantity_liters'  => 75,
-            'lot_number'       => 'MY-LOT-001',
-            'created_by'       => $this->winery->id,
+            'quantity_liters' => 75,
+            'lot_number' => 'MY-LOT-001',
+            'created_by' => $this->winery->id,
         ]);
 
         $otherWine = Wine::create([
-            'user_id'   => $otherWinery->id,
-            'name'      => 'Other Wine',
+            'user_id' => $otherWinery->id,
+            'name' => 'Other Wine',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         WineBottling::create([
-            'user_id'          => $otherWinery->id,
-            'wine_id'          => $otherWine->id,
-            'bottling_date'    => today(),
-            'bottle_format'    => '750',
+            'user_id' => $otherWinery->id,
+            'wine_id' => $otherWine->id,
+            'bottling_date' => today(),
+            'bottle_format' => '750',
             'quantity_bottles' => 50,
-            'quantity_liters'  => 37.5,
-            'lot_number'       => 'OTHER-LOT-001',
-            'created_by'       => $otherWinery->id,
+            'quantity_liters' => 37.5,
+            'lot_number' => 'OTHER-LOT-001',
+            'created_by' => $otherWinery->id,
         ]);
 
         Livewire::test(Index::class)
@@ -117,20 +117,20 @@ class BottlingTest extends WineryTestCase
     public function test_bottling_decrements_container_wine_volume_liters(): void
     {
         $wine = Wine::create([
-            'user_id'      => $this->winery->id,
-            'name'         => 'Vino Embotellado',
-            'wine_type'    => 'red',
-            'status'       => 'in_progress',
+            'user_id' => $this->winery->id,
+            'name' => 'Vino Embotellado',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
             'volume_liters' => 1000.0,
         ]);
 
         $container = Container::create([
-            'user_id'            => $this->winery->id,
-            'name'               => 'Dep. Embotellado',
-            'capacity'           => 5000,
-            'used_capacity'      => 0,
+            'user_id' => $this->winery->id,
+            'name' => 'Dep. Embotellado',
+            'capacity' => 5000,
+            'used_capacity' => 0,
             'wine_volume_liters' => 1000.0,
-            'archived'           => false,
+            'archived' => false,
         ]);
 
         $uom = UnitOfMeasurement::firstOrCreate(
@@ -161,10 +161,10 @@ class BottlingTest extends WineryTestCase
     public function test_bottling_without_container_does_not_affect_any_container(): void
     {
         $wine = Wine::create([
-            'user_id'      => $this->winery->id,
-            'name'         => 'Vino Sin Dep',
-            'wine_type'    => 'red',
-            'status'       => 'in_progress',
+            'user_id' => $this->winery->id,
+            'name' => 'Vino Sin Dep',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
             'volume_liters' => 500.0,
         ]);
 
@@ -186,20 +186,20 @@ class BottlingTest extends WineryTestCase
     public function test_bottling_blocks_quantity_exceeding_container_wine(): void
     {
         $wine = Wine::create([
-            'user_id'      => $this->winery->id,
-            'name'         => 'Vino Poco',
-            'wine_type'    => 'red',
-            'status'       => 'in_progress',
+            'user_id' => $this->winery->id,
+            'name' => 'Vino Poco',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
             'volume_liters' => 100.0,
         ]);
 
         $container = Container::create([
-            'user_id'            => $this->winery->id,
-            'name'               => 'Dep. Pequeño',
-            'capacity'           => 5000,
-            'used_capacity'      => 0,
+            'user_id' => $this->winery->id,
+            'name' => 'Dep. Pequeño',
+            'capacity' => 5000,
+            'used_capacity' => 0,
             'wine_volume_liters' => 50.0,   // solo 50L
-            'archived'           => false,
+            'archived' => false,
         ]);
 
         Livewire::test(Create::class)

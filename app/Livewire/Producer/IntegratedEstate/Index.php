@@ -16,7 +16,8 @@ use Livewire\Component;
 class Index extends Component
 {
     public string $filterCampaign = '';
-    public string $filterPlot     = '';
+
+    public string $filterPlot = '';
 
     public function mount(): void
     {
@@ -52,10 +53,10 @@ class Index extends Component
 
         return view('livewire.producer.integrated-estate.index', [
             'campaigns' => $this->campaigns,
-            'plots'     => $this->plots,
-            'data'      => $data,
+            'plots' => $this->plots,
+            'data' => $data,
         ])->layout('layouts.app', [
-            'title'       => __('Panel de Finca Integral'),
+            'title' => __('Panel de Finca Integral'),
             'description' => __('Vista unificada de parcelas, plantaciones, fenología y actividades'),
         ]);
     }
@@ -82,7 +83,7 @@ class Index extends Component
         $plantingIds = $plantings->pluck('id');
 
         // ── Stats generales ───────────────────────────────────────────────
-        $totalArea      = $plots->sum('area');
+        $totalArea = $plots->sum('area');
         $totalPlantings = $plantings->count();
 
         $varietyCounts = $plantings
@@ -119,19 +120,22 @@ class Index extends Component
         $yieldPerPlot = $this->buildYieldSummary($plantings, $plotIds, $campaignId);
 
         return [
-            'plots'            => $plots,
-            'totalArea'        => $totalArea,
-            'totalPlantings'   => $totalPlantings,
-            'varietyCounts'    => $varietyCounts,
-            'lifeCycleStages'  => $lifeCycleStages,
-            'activityCounts'   => $activityCounts,
+            'plots' => $plots,
+            'totalArea' => $totalArea,
+            'totalPlantings' => $totalPlantings,
+            'varietyCounts' => $varietyCounts,
+            'lifeCycleStages' => $lifeCycleStages,
+            'activityCounts' => $activityCounts,
             'recentActivities' => $recentActivities,
-            'yieldPerPlot'     => $yieldPerPlot,
+            'yieldPerPlot' => $yieldPerPlot,
         ];
     }
 
     /**
      * Calcula rendimiento estimado vs real con 2 queries totales (no N+1).
+     *
+     * @param mixed $plantings
+     * @param mixed $plotIds
      */
     private function buildYieldSummary($plantings, $plotIds, int $campaignId): array
     {
@@ -165,16 +169,16 @@ class Index extends Component
 
         $perPlot = [];
         foreach ($estimated as $plantingId => $est) {
-            $plotId   = $plantingPlotMap[$plantingId] ?? null;
+            $plotId = $plantingPlotMap[$plantingId] ?? null;
             $plotName = $plotNames[$plotId] ?? 'Desconocida';
-            $act      = (float) ($actual[$plantingId] ?? 0);
-            $estVal   = (float) $est;
+            $act = (float) ($actual[$plantingId] ?? 0);
+            $estVal = (float) $est;
 
-            if (!isset($perPlot[$plotId])) {
+            if (! isset($perPlot[$plotId])) {
                 $perPlot[$plotId] = ['plot_name' => $plotName, 'estimated' => 0, 'actual' => 0];
             }
             $perPlot[$plotId]['estimated'] += $estVal;
-            $perPlot[$plotId]['actual']    += $act;
+            $perPlot[$plotId]['actual'] += $act;
         }
 
         $result = [];

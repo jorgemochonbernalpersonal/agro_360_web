@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Winery\Cellar\Containers\Maintenance;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerMaintenance;
-use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,12 +14,14 @@ class Index extends Component
     use WithPagination, WithToastNotifications;
 
     public Container $container;
+
     public string $statusFilter = '';
-    public string $typeFilter   = '';
+
+    public string $typeFilter = '';
 
     protected $queryString = [
         'statusFilter' => ['except' => ''],
-        'typeFilter'   => ['except' => ''],
+        'typeFilter' => ['except' => ''],
     ];
 
     public function mount(Container $container): void
@@ -76,23 +78,23 @@ class Index extends Component
     public function render()
     {
         $query = ContainerMaintenance::where('container_id', $this->container->id)
-            ->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))
-            ->when($this->typeFilter,   fn($q) => $q->where('maintenance_type', $this->typeFilter));
+            ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
+            ->when($this->typeFilter, fn ($q) => $q->where('maintenance_type', $this->typeFilter));
 
         $maintenances = (clone $query)->orderByDesc('scheduled_date')->paginate(20);
 
         $allMaintenance = ContainerMaintenance::where('container_id', $this->container->id)->get(['status', 'cost']);
         $stats = [
-            'scheduled'  => $allMaintenance->where('status', 'scheduled')->count(),
-            'completed'  => $allMaintenance->where('status', 'completed')->count(),
+            'scheduled' => $allMaintenance->where('status', 'scheduled')->count(),
+            'completed' => $allMaintenance->where('status', 'completed')->count(),
             'total_cost' => $allMaintenance->where('status', 'completed')->sum('cost'),
         ];
 
         return view('livewire.winery.cellar.containers.maintenance.index', [
             'maintenances' => $maintenances,
-            'stats'        => $stats,
-            'types'        => ContainerMaintenance::typeOptions(),
-            'statuses'     => ContainerMaintenance::statusOptions(),
+            'stats' => $stats,
+            'types' => ContainerMaintenance::typeOptions(),
+            'statuses' => ContainerMaintenance::statusOptions(),
         ])->layout('layouts.app');
     }
 }

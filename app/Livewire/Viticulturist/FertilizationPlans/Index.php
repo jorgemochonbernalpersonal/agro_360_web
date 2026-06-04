@@ -9,14 +9,16 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search         = '';
+    public string $search = '';
+
     public string $filterCampaign = '';
-    public string $filterStatus   = '';
+
+    public string $filterStatus = '';
 
     protected $queryString = [
-        'search'         => ['as' => 'q',       'except' => ''],
+        'search' => ['as' => 'q',       'except' => ''],
         'filterCampaign' => ['as' => 'campaign', 'except' => ''],
-        'filterStatus'   => ['as' => 'status',  'except' => ''],
+        'filterStatus' => ['as' => 'status',  'except' => ''],
     ];
 
     public function mount(): void
@@ -27,13 +29,19 @@ class Index extends AbstractIndex
         }
     }
 
-    public function updatingSearch(): void         { $this->resetPage(); }
-    public function updatingFilterCampaign(): void { $this->resetPage(); }
-    public function updatingFilterStatus(): void   { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'filterCampaign' => '', 'filterStatus' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingFilterCampaign(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus(): void
+    {
+        $this->resetPage();
     }
 
     public function activate(int $id): void
@@ -51,12 +59,18 @@ class Index extends AbstractIndex
     public function delete(int $id): void
     {
         $record = $this->findOwned(FertilizationPlan::class, $id);
-        if (!$record->isDraft()) {
+        if (! $record->isDraft()) {
             $this->toastError(__('Solo se pueden eliminar planes en borrador.'));
+
             return;
         }
         $record->delete();
         $this->toastSuccess(__('Plan eliminado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'filterCampaign' => '', 'filterStatus' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -69,8 +83,8 @@ class Index extends AbstractIndex
     {
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('prepared_by', 'like', '%' . $this->search . '%')
-                  ->orWhere('plan_year', 'like', '%' . $this->search . '%');
+                $q->where('prepared_by', 'like', '%'.$this->search.'%')
+                    ->orWhere('plan_year', 'like', '%'.$this->search.'%');
             });
         }
         if ($this->filterCampaign) {
@@ -81,26 +95,33 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['plan_year', 'desc']; }
-    protected function perPage(): int          { return 15; }
+    protected function defaultOrderBy(): array
+    {
+        return ['plan_year', 'desc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
-        $userId    = $this->viticulturistId();
+        $userId = $this->viticulturistId();
         $baseQuery = FertilizationPlan::where('viticulturist_id', $userId)->where('active', true);
 
         $stats = [
-            'draft'        => (clone $baseQuery)->where('status', 'draft')->count(),
-            'active'       => (clone $baseQuery)->where('status', 'active')->count(),
-            'archived'     => (clone $baseQuery)->where('status', 'archived')->count(),
+            'draft' => (clone $baseQuery)->where('status', 'draft')->count(),
+            'active' => (clone $baseQuery)->where('status', 'active')->count(),
+            'archived' => (clone $baseQuery)->where('status', 'archived')->count(),
             'nitrate_zone' => (clone $baseQuery)->where('nitrate_zone', true)->count(),
         ];
 
         return [
-            'entries'   => $entries,
+            'entries' => $entries,
             'campaigns' => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
-            'statuses'  => FertilizationPlan::statusOptions(),
-            'stats'     => $stats,
+            'statuses' => FertilizationPlan::statusOptions(),
+            'stats' => $stats,
         ];
     }
 }

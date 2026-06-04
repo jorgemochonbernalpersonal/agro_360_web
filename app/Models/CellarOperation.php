@@ -8,31 +8,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CellarOperation extends Model
 {
     const OPERATION_TYPES = [
-        'racking'       => 'Trasiego',
+        'racking' => 'Trasiego',
         'clarification' => 'Clarificación / Colaje',
-        'filtration'    => 'Filtración',
+        'filtration' => 'Filtración',
         'stabilization' => 'Estabilización',
-        'sulfiting'     => 'Sulfitado',
-        'blending'      => 'Cupaje / Mezcla',
-        'other'         => 'Otra operación',
+        'sulfiting' => 'Sulfitado',
+        'blending' => 'Cupaje / Mezcla',
+        'other' => 'Otra operación',
     ];
 
     const STATUSES = [
-        'planned'     => 'Planificada',
+        'planned' => 'Planificada',
         'in_progress' => 'En curso',
-        'completed'   => 'Completada',
-        'cancelled'   => 'Cancelada',
+        'completed' => 'Completada',
+        'cancelled' => 'Cancelada',
     ];
-
-    public static function operationTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::OPERATION_TYPES);
-    }
-
-    public static function statusOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::STATUSES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -48,8 +38,18 @@ class CellarOperation extends Model
 
     protected $casts = [
         'operation_date' => 'date',
-        'volume_liters'  => 'decimal:2',
+        'volume_liters' => 'decimal:2',
     ];
+
+    public static function operationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::OPERATION_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
 
     // ── Relations ──────────────────────────────────────────────────────────
 

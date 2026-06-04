@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\ProductStock;
 use App\Models\ProductStockMovement;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class InventoryAnalyticsService
 {
@@ -27,8 +27,8 @@ class InventoryAnalyticsService
             ->get();
 
         return [
-            'labels' => $data->pluck('month')->map(function($month) {
-                return Carbon::parse($month . '-01')->format('M Y');
+            'labels' => $data->pluck('month')->map(function ($month) {
+                return Carbon::parse($month.'-01')->format('M Y');
             })->toArray(),
             'consumed' => $data->pluck('total_consumed')->toArray(),
             'count' => $data->pluck('movements_count')->toArray(),
@@ -102,19 +102,9 @@ class InventoryAnalyticsService
         }
 
         // Ordenar por días hasta agotamiento (más urgente primero)
-        usort($projections, fn($a, $b) => $a['days_until_empty'] <=> $b['days_until_empty']);
+        usort($projections, fn ($a, $b) => $a['days_until_empty'] <=> $b['days_until_empty']);
 
         return $projections;
-    }
-
-    /**
-     * Estado de la proyección
-     */
-    private function getProjectionStatus(float $days): string
-    {
-        if ($days < 7) return 'critical';
-        if ($days < 30) return 'warning';
-        return 'ok';
     }
 
     /**
@@ -139,7 +129,7 @@ class InventoryAnalyticsService
 
         $lowStockCount = ProductStock::where('user_id', $userId)
             ->where('active', true)
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->whereColumn('quantity', '<', DB::raw('COALESCE(minimum_stock, 5)'));
             })
             ->count();
@@ -177,7 +167,7 @@ class InventoryAnalyticsService
             ->orderByDesc('last_movement_days')
             ->limit($limit)
             ->get()
-            ->map(function($stock) {
+            ->map(function ($stock) {
                 return [
                     'product' => $stock->product->name,
                     'quantity' => (float) $stock->quantity,
@@ -187,5 +177,20 @@ class InventoryAnalyticsService
                 ];
             })
             ->toArray();
+    }
+
+    /**
+     * Estado de la proyección
+     */
+    private function getProjectionStatus(float $days): string
+    {
+        if ($days < 7) {
+            return 'critical';
+        }
+        if ($days < 30) {
+            return 'warning';
+        }
+
+        return 'ok';
     }
 }

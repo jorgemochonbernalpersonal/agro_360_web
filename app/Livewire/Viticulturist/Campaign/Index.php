@@ -2,32 +2,34 @@
 
 namespace App\Livewire\Viticulturist\Campaign;
 
-use App\Models\Campaign;
-use App\Models\EstimatedYield;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\Campaign;
+use App\Models\EstimatedYield;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications, WithRoleAwareRedirect;
+    use WithPagination, WithRoleAwareRedirect, WithToastNotifications;
 
     public $currentTab = 'active'; // 'active', 'inactive'
+
     public $search = '';
+
     public $yearFilter = '';
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
         'yearFilter' => ['except' => ''],
     ];
 
     public function mount()
     {
-        if (!Auth::user()->can('viewAny', Campaign::class)) {
+        if (! Auth::user()->can('viewAny', Campaign::class)) {
             abort(403, __('No tienes permiso para ver campañas.'));
         }
     }
@@ -50,7 +52,7 @@ class Index extends Component
 
     public function clearFilters(): void
     {
-        $this->search     = '';
+        $this->search = '';
         $this->yearFilter = '';
         $this->resetPage();
     }
@@ -59,8 +61,9 @@ class Index extends Component
     {
         $campaign = Campaign::forViticulturist(Auth::id())->findOrFail($campaignId);
 
-        if (!Auth::user()->can('update', $campaign)) {
+        if (! Auth::user()->can('update', $campaign)) {
             $this->toastError(__('No tienes permiso para modificar esta campaña.'));
+
             return;
         }
 
@@ -70,6 +73,7 @@ class Index extends Component
         } else {
             $campaign->activate();
             session()->flash('campaign_activated', __('Campaña :year activada. Ya puedes registrar actividades.', ['year' => $campaign->year]));
+
             return $this->viticulturistRoleRedirect('digital-notebook');
         }
     }
@@ -78,19 +82,22 @@ class Index extends Component
     {
         $campaign = Campaign::forViticulturist(Auth::id())->withCount('activities')->findOrFail($campaignId);
 
-        if (!Auth::user()->can('delete', $campaign)) {
+        if (! Auth::user()->can('delete', $campaign)) {
             $this->toastError(__('No tienes permiso para eliminar esta campaña.'));
+
             return;
         }
 
         if ($campaign->activities_count > 0) {
             $this->toastError(__('No se puede eliminar una campaña que tiene actividades registradas.'));
+
             return;
         }
 
         $hasEstimatedYields = EstimatedYield::where('campaign_id', $campaign->id)->exists();
         if ($hasEstimatedYields) {
             $this->toastError(__('No se puede eliminar una campaña que tiene rendimientos estimados registrados.'));
+
             return;
         }
 
@@ -99,16 +106,16 @@ class Index extends Component
             $this->toastSuccess(__('Campaña eliminada correctamente.'));
         } catch (\Exception $e) {
             \Log::error('Error al eliminar campaña', [
-                'error'       => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'campaign_id' => $campaignId,
-                'user_id'     => Auth::id(),
+                'user_id' => Auth::id(),
             ]);
             $this->toastError(__('Error al eliminar la campaña. Por favor, intenta de nuevo.'));
         }
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Campañas Agrícolas - Agro365',
+        'title' => 'Campañas Agrícolas - Agro365',
         'description' => 'Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.',
     ])]
     public function render()
@@ -126,10 +133,10 @@ class Index extends Component
         }
 
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
             });
         }
 
@@ -140,8 +147,8 @@ class Index extends Component
         $campaigns = $query->paginate(12);
 
         $stats = [
-            'total'    => Campaign::forViticulturist($user->id)->count(),
-            'active'   => Campaign::forViticulturist($user->id)->where('active', true)->count(),
+            'total' => Campaign::forViticulturist($user->id)->count(),
+            'active' => Campaign::forViticulturist($user->id)->where('active', true)->count(),
             'inactive' => Campaign::forViticulturist($user->id)->where('active', false)->count(),
         ];
         $years = Campaign::forViticulturist($user->id)
@@ -151,8 +158,8 @@ class Index extends Component
 
         return view('livewire.viticulturist.campaign.index', [
             'campaigns' => $campaigns,
-            'stats'     => $stats,
-            'years'     => $years,
+            'stats' => $stats,
+            'years' => $years,
         ]);
     }
 }

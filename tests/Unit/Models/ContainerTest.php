@@ -5,11 +5,11 @@ namespace Tests\Unit\Models;
 use App\Models\Container;
 use App\Models\Harvest;
 use App\Models\User;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
 
 class ContainerTest extends TestCase
 {
@@ -42,7 +42,7 @@ class ContainerTest extends TestCase
     public function test_container_has_many_harvests(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        
+
         // Crear contenedor con capacidad suficiente para dos cosechas
         $container = Container::factory()->create([
             'user_id' => $user->id,
@@ -55,10 +55,10 @@ class ContainerTest extends TestCase
             'container_id' => $container->id,
             'total_weight' => 2000.0, // Peso que quepa en el contenedor
         ]);
-        
+
         // Actualizar capacidad usada después de la primera cosecha
         $container->refresh();
-        
+
         $harvest2 = Harvest::factory()->create([
             'container_id' => $container->id,
             'total_weight' => 1500.0, // Peso que quepa en el contenedor restante
@@ -403,8 +403,8 @@ class ContainerTest extends TestCase
         // Capacidad explícita: el factory genera valores aleatorios y la cosecha
         // de 500 kg podía exceder la capacidad libre, haciendo el test flaky.
         $container = Container::factory()->create([
-            'user_id'       => $user->id,
-            'capacity'      => 1000.0,
+            'user_id' => $user->id,
+            'capacity' => 1000.0,
             'used_capacity' => 0.0,
         ]);
 
@@ -415,10 +415,10 @@ class ContainerTest extends TestCase
 
         // El HarvestObserver debería crear el ContainerCurrentState
         $container->refresh();
-        
+
         // Puede retornar null si no hay currentState, o la harvest si existe
         $currentHarvest = $container->getCurrentHarvest();
-        
+
         // Si hay harvest asociada, debería encontrarla
         if ($currentHarvest) {
             $this->assertEquals($harvest->id, $currentHarvest->id);
@@ -479,4 +479,3 @@ class ContainerTest extends TestCase
         $this->assertTrue($container->archived);
     }
 }
-

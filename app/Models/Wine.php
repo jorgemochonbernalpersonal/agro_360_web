@@ -11,47 +11,40 @@ use Illuminate\Support\Str;
 class Wine extends Model
 {
     const WINE_TYPES = [
-        'red'        => 'Tinto',
-        'white'      => 'Blanco',
-        'rose'       => 'Rosado',
-        'sparkling'  => 'Espumoso',
-        'fortified'  => 'Generoso / Fortificado',
-        'sweet'      => 'Dulce',
+        'red' => 'Tinto',
+        'white' => 'Blanco',
+        'rose' => 'Rosado',
+        'sparkling' => 'Espumoso',
+        'fortified' => 'Generoso / Fortificado',
+        'sweet' => 'Dulce',
         'semi_sweet' => 'Semidulce',
-        'other'      => 'Otro',
+        'other' => 'Otro',
     ];
 
     const STATUSES = [
         'in_progress' => 'En elaboración',
-        'aged'        => 'En crianza',
-        'bottled'     => 'Embotellado',
-        'sold'        => 'Vendido',
-        'cancelled'   => 'Cancelado',
+        'aged' => 'En crianza',
+        'bottled' => 'Embotellado',
+        'sold' => 'Vendido',
+        'cancelled' => 'Cancelado',
     ];
 
     const AGING_TYPES = [
-        'joven'       => 'Joven',
-        'roble'       => 'Roble',
-        'crianza'     => 'Crianza',
-        'reserva'     => 'Reserva',
-        'gran_reserva'=> 'Gran Reserva',
-        'other'       => 'Otro',
+        'joven' => 'Joven',
+        'roble' => 'Roble',
+        'crianza' => 'Crianza',
+        'reserva' => 'Reserva',
+        'gran_reserva' => 'Gran Reserva',
+        'other' => 'Otro',
     ];
 
     const CATEGORIES = [
-        'VdM'         => 'Vino de Mesa',
-        'IGP'         => 'IGP',
-        'DO'          => 'DO',
-        'DOCa'        => 'DOCa',
-        'vino_de_pago'=> 'Vino de Pago',
+        'VdM' => 'Vino de Mesa',
+        'IGP' => 'IGP',
+        'DO' => 'DO',
+        'DOCa' => 'DOCa',
+        'vino_de_pago' => 'Vino de Pago',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (Wine $wine) {
-            $wine->trace_token ??= (string) Str::uuid();
-        });
-    }
 
     protected $fillable = [
         'user_id',
@@ -73,11 +66,11 @@ class Wine extends Model
     ];
 
     protected $casts = [
-        'vintage'             => 'integer',
-        'volume_liters'       => 'decimal:3',
+        'vintage' => 'integer',
+        'volume_liters' => 'decimal:3',
         'initial_quantity_kg' => 'decimal:3',
-        'is_must'             => 'boolean',
-        'is_organic'          => 'boolean',
+        'is_must' => 'boolean',
+        'is_organic' => 'boolean',
     ];
 
     // ─── Relaciones ────────────────────────────────────────────────────────────
@@ -190,7 +183,10 @@ class Wine extends Model
     public function getCostPerLiterAttribute(): ?float
     {
         $volume = (float) $this->volume_liters;
-        if ($volume <= 0) return null;
+        if ($volume <= 0) {
+            return null;
+        }
+
         return $this->total_production_cost / $volume;
     }
 
@@ -307,5 +303,12 @@ class Wine extends Model
     public function scopeActive($query)
     {
         return $query->whereNotIn('status', ['cancelled']);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Wine $wine) {
+            $wine->trace_token ??= (string) Str::uuid();
+        });
     }
 }

@@ -11,27 +11,17 @@ class WineAnalysis extends Model
     // ─── Constants ─────────────────────────────────────────────────────────────
 
     const ANALYSIS_TYPES = [
-        'standard'   => 'Estándar',
-        'complete'   => 'Completo',
-        'organic'    => 'Ecológico',
-        'custom'     => 'Personalizado',
+        'standard' => 'Estándar',
+        'complete' => 'Completo',
+        'organic' => 'Ecológico',
+        'custom' => 'Personalizado',
     ];
 
     const RESULTS = [
         'pending' => 'Pendiente',
-        'passed'  => 'Conforme',
-        'failed'  => 'No conforme',
+        'passed' => 'Conforme',
+        'failed' => 'No conforme',
     ];
-
-    public static function analysisTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::ANALYSIS_TYPES);
-    }
-
-    public static function resultOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::RESULTS);
-    }
 
     // ─── Fillable ──────────────────────────────────────────────────────────────
 
@@ -65,22 +55,32 @@ class WineAnalysis extends Model
     ];
 
     protected $casts = [
-        'analysis_date'      => 'date',
+        'analysis_date' => 'date',
         'alcoholic_strength' => 'decimal:2',
-        'alcohol'            => 'decimal:2',
-        'residual_sugar'     => 'decimal:2',
-        'total_acidity'      => 'decimal:2',
-        'volatile_acidity'   => 'decimal:2',
-        'ph'                 => 'decimal:2',
-        'free_so2'           => 'decimal:1',
-        'total_so2'          => 'decimal:1',
-        'so2_free'           => 'decimal:2',
-        'so2_total'          => 'decimal:2',
-        'density'            => 'decimal:4',
-        'turbidity'          => 'decimal:2',
-        'color_intensity'    => 'decimal:3',
-        'malic_acid'         => 'decimal:2',
+        'alcohol' => 'decimal:2',
+        'residual_sugar' => 'decimal:2',
+        'total_acidity' => 'decimal:2',
+        'volatile_acidity' => 'decimal:2',
+        'ph' => 'decimal:2',
+        'free_so2' => 'decimal:1',
+        'total_so2' => 'decimal:1',
+        'so2_free' => 'decimal:2',
+        'so2_total' => 'decimal:2',
+        'density' => 'decimal:4',
+        'turbidity' => 'decimal:2',
+        'color_intensity' => 'decimal:3',
+        'malic_acid' => 'decimal:2',
     ];
+
+    public static function analysisTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::ANALYSIS_TYPES);
+    }
+
+    public static function resultOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::RESULTS);
+    }
 
     // ─── Relations ─────────────────────────────────────────────────────────────
 

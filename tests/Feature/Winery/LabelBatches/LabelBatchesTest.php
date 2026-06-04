@@ -6,7 +6,6 @@ use App\Livewire\Winery\LabelBatches\Create;
 use App\Livewire\Winery\LabelBatches\Edit;
 use App\Livewire\Winery\LabelBatches\Waste\Create as WasteCreate;
 use App\Models\LabelBatch;
-use App\Models\LabelWaste;
 use App\Models\User;
 use App\Models\Wine;
 use Livewire\Livewire;
@@ -43,10 +42,10 @@ class LabelBatchesTest extends WineryTestCase
     public function test_create_saves_label_batch(): void
     {
         $wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Test Wine',
+            'user_id' => $this->winery->id,
+            'name' => 'Test Wine',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         Livewire::test(Create::class)
@@ -59,8 +58,8 @@ class LabelBatchesTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('label_batches', [
-            'user_id'        => $this->winery->id,
-            'name'           => 'Lote Etiquetas A',
+            'user_id' => $this->winery->id,
+            'name' => 'Lote Etiquetas A',
             'total_quantity' => 1000,
         ]);
     }
@@ -68,21 +67,21 @@ class LabelBatchesTest extends WineryTestCase
     public function test_edit_saves_changes(): void
     {
         $wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Test Wine',
+            'user_id' => $this->winery->id,
+            'name' => 'Test Wine',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         $batch = LabelBatch::create([
-            'user_id'         => $this->winery->id,
-            'wine_id'         => $wine->id,
-            'name'            => 'Old Name',
-            'source'          => 'own',
-            'start_number'    => 1,
-            'end_number'      => 500,
-            'total_quantity'  => 500,
-            'used_quantity'   => 0,
+            'user_id' => $this->winery->id,
+            'wine_id' => $wine->id,
+            'name' => 'Old Name',
+            'source' => 'own',
+            'start_number' => 1,
+            'end_number' => 500,
+            'total_quantity' => 500,
+            'used_quantity' => 0,
             'wasted_quantity' => 0,
         ]);
 
@@ -92,7 +91,7 @@ class LabelBatchesTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('label_batches', [
-            'id'   => $batch->id,
+            'id' => $batch->id,
             'name' => 'New Name',
         ]);
     }
@@ -102,13 +101,13 @@ class LabelBatchesTest extends WineryTestCase
         $otherWinery = $this->makeOtherWinery();
 
         $batch = LabelBatch::create([
-            'user_id'         => $this->winery->id,
-            'name'            => 'My Batch',
-            'source'          => 'own',
-            'start_number'    => 1,
-            'end_number'      => 200,
-            'total_quantity'  => 200,
-            'used_quantity'   => 0,
+            'user_id' => $this->winery->id,
+            'name' => 'My Batch',
+            'source' => 'own',
+            'start_number' => 1,
+            'end_number' => 200,
+            'total_quantity' => 200,
+            'used_quantity' => 0,
             'wasted_quantity' => 0,
         ]);
 
@@ -120,13 +119,13 @@ class LabelBatchesTest extends WineryTestCase
     public function test_waste_index_renders(): void
     {
         $batch = LabelBatch::create([
-            'user_id'         => $this->winery->id,
-            'name'            => 'Waste Batch',
-            'source'          => 'own',
-            'start_number'    => 1,
-            'end_number'      => 500,
-            'total_quantity'  => 500,
-            'used_quantity'   => 0,
+            'user_id' => $this->winery->id,
+            'name' => 'Waste Batch',
+            'source' => 'own',
+            'start_number' => 1,
+            'end_number' => 500,
+            'total_quantity' => 500,
+            'used_quantity' => 0,
             'wasted_quantity' => 0,
         ]);
 
@@ -136,13 +135,13 @@ class LabelBatchesTest extends WineryTestCase
     public function test_waste_create_validates_required_fields(): void
     {
         $batch = LabelBatch::create([
-            'user_id'         => $this->winery->id,
-            'name'            => 'Waste Batch',
-            'source'          => 'own',
-            'start_number'    => 1,
-            'end_number'      => 500,
-            'total_quantity'  => 500,
-            'used_quantity'   => 0,
+            'user_id' => $this->winery->id,
+            'name' => 'Waste Batch',
+            'source' => 'own',
+            'start_number' => 1,
+            'end_number' => 500,
+            'total_quantity' => 500,
+            'used_quantity' => 0,
             'wasted_quantity' => 0,
         ]);
 
@@ -156,13 +155,13 @@ class LabelBatchesTest extends WineryTestCase
     public function test_waste_create_saves(): void
     {
         $batch = LabelBatch::create([
-            'user_id'         => $this->winery->id,
-            'name'            => 'Waste Batch',
-            'source'          => 'own',
-            'start_number'    => 1,
-            'end_number'      => 500,
-            'total_quantity'  => 500,
-            'used_quantity'   => 0,
+            'user_id' => $this->winery->id,
+            'name' => 'Waste Batch',
+            'source' => 'own',
+            'start_number' => 1,
+            'end_number' => 500,
+            'total_quantity' => 500,
+            'used_quantity' => 0,
             'wasted_quantity' => 0,
         ]);
 
@@ -174,7 +173,7 @@ class LabelBatchesTest extends WineryTestCase
 
         $this->assertDatabaseHas('label_wastes', [
             'label_batch_id' => $batch->id,
-            'quantity'       => 10,
+            'quantity' => 10,
         ]);
     }
 }

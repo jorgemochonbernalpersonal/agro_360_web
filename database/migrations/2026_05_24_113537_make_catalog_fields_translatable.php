@@ -29,12 +29,12 @@ return new class extends Migration
         DB::statement('ALTER TABLE container_types MODIFY COLUMN name LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL');
         DB::statement('ALTER TABLE container_types MODIFY COLUMN description LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL');
         foreach ($ctRows as $row) {
-            if ($row->name !== null && !$this->isJson($row->name)) {
+            if ($row->name !== null && ! $this->isJson($row->name)) {
                 DB::table('container_types')->where('id', $row->id)->update([
                     'name' => json_encode(['es' => $row->name], JSON_UNESCAPED_UNICODE),
                 ]);
             }
-            if ($row->description !== null && !$this->isJson($row->description)) {
+            if ($row->description !== null && ! $this->isJson($row->description)) {
                 DB::table('container_types')->where('id', $row->id)->update([
                     'description' => json_encode(['es' => $row->description], JSON_UNESCAPED_UNICODE),
                 ]);
@@ -46,7 +46,7 @@ return new class extends Migration
         $this->dropIndexIfExists('machinery_types', 'machinery_types_name_unique');
         DB::statement('ALTER TABLE machinery_types MODIFY COLUMN name LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL');
         foreach ($mtRows as $row) {
-            if ($row->name !== null && !$this->isJson($row->name)) {
+            if ($row->name !== null && ! $this->isJson($row->name)) {
                 DB::table('machinery_types')->where('id', $row->id)->update([
                     'name' => json_encode(['es' => $row->name], JSON_UNESCAPED_UNICODE),
                 ]);
@@ -104,7 +104,7 @@ return new class extends Migration
 
         foreach ($rows as $row) {
             $value = $row->{$column};
-            if ($value !== null && !$this->isJson($value)) {
+            if ($value !== null && ! $this->isJson($value)) {
                 DB::table($table)->where('id', $row->id)->update([
                     $column => json_encode(['es' => $value], JSON_UNESCAPED_UNICODE),
                 ]);
@@ -122,7 +122,7 @@ return new class extends Migration
 
         foreach ($rows as $row) {
             $value = $row->{$column};
-            if ($value !== null && !$this->isJson($value)) {
+            if ($value !== null && ! $this->isJson($value)) {
                 DB::table($table)->where('id', $row->id)->update([
                     $column => json_encode(['es' => $value], JSON_UNESCAPED_UNICODE),
                 ]);
@@ -171,8 +171,8 @@ return new class extends Migration
     private function dropIndexIfExists(string $table, string $index): void
     {
         $exists = DB::select(
-            "SELECT COUNT(*) as cnt FROM information_schema.statistics
-             WHERE table_schema = DATABASE() AND table_name = ? AND index_name = ?",
+            'SELECT COUNT(*) as cnt FROM information_schema.statistics
+             WHERE table_schema = DATABASE() AND table_name = ? AND index_name = ?',
             [$table, $index]
         );
         if ($exists[0]->cnt > 0) {
@@ -184,7 +184,7 @@ return new class extends Migration
     {
         DB::table($table)->select('id', $column)->get()->each(function ($row) use ($table, $column) {
             $value = $row->{$column};
-            if ($value !== null && !$this->isJson($value)) {
+            if ($value !== null && ! $this->isJson($value)) {
                 DB::table($table)->where('id', $row->id)->update([
                     $column => json_encode(['es' => $value], JSON_UNESCAPED_UNICODE),
                 ]);
@@ -194,10 +194,11 @@ return new class extends Migration
 
     private function isJson(string $value): bool
     {
-        if (!str_starts_with(trim($value), '{')) {
+        if (! str_starts_with(trim($value), '{')) {
             return false;
         }
         json_decode($value);
+
         return json_last_error() === JSON_ERROR_NONE;
     }
 };

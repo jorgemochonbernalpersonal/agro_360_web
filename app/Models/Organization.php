@@ -11,6 +11,15 @@ class Organization extends Model
 {
     use HasFactory;
 
+    public const TYPE_WINERY = 'winery';
+
+    public const TYPE_DENOMINATION = 'denomination_of_origin';
+
+    public const TYPES = [
+        self::TYPE_WINERY => 'Bodega',
+        self::TYPE_DENOMINATION => 'Denominación de Origen',
+    ];
+
     protected $fillable = [
         'name',
         'type',
@@ -32,14 +41,6 @@ class Organization extends Model
 
     protected $casts = [
         'active' => 'boolean',
-    ];
-
-    public const TYPE_WINERY              = 'winery';
-    public const TYPE_DENOMINATION        = 'denomination_of_origin';
-
-    public const TYPES = [
-        self::TYPE_WINERY       => 'Bodega',
-        self::TYPE_DENOMINATION => 'Denominación de Origen',
     ];
 
     public static function typeOptions(): array

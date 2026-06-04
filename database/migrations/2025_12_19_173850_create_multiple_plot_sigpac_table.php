@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Eliminar la tabla si existe  
+        // Eliminar la tabla si existe
         Schema::dropIfExists('multiple_plot_sigpac');
-        
+
         // Crear la tabla con tipos correctos (bigint para coincidir con plots, sigpac_code, plot_geometry)
-        DB::statement("
+        DB::statement('
             CREATE TABLE `multiple_plot_sigpac` (
                 `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `plot_id` bigint(20) UNSIGNED NOT NULL,
@@ -33,7 +32,7 @@ return new class extends Migration
                 CONSTRAINT `fk_multiple_plot_sigpac_sigpac` FOREIGN KEY (`sigpac_code_id`) REFERENCES `sigpac_code` (`id`) ON DELETE CASCADE,
                 CONSTRAINT `fk_multiple_plot_sigpac_geometry` FOREIGN KEY (`plot_geometry_id`) REFERENCES `plot_geometry` (`id`) ON DELETE SET NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-        ");
+        ');
     }
 
     /**

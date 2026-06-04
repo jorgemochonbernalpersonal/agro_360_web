@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Supervisor\Labels;
 
-use App\Models\DoLabel;
-use App\Models\SupervisorWinery;
 use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\DoLabel;
+use App\Models\SupervisorWinery;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
@@ -15,22 +15,29 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithOwnershipRules, WithToastNotifications;
+    use WithOwnershipRules, WithPagination, WithToastNotifications;
 
-    public string $currentTab    = 'all';
+    public string $currentTab = 'all';
+
     public string $vintageFilter = '';
-    public bool   $showCreate    = false;
+
+    public bool $showCreate = false;
 
     // Create form
-    public string $winery_id          = '';
-    public string $vintage            = '';
-    public string $batch_number       = '';
-    public int    $quantity_requested = 0;
-    public string $notes              = '';
-    public ?int   $fromRequestId      = null;   // vinculación con SupervisorRequest
+    public string $winery_id = '';
+
+    public string $vintage = '';
+
+    public string $batch_number = '';
+
+    public int $quantity_requested = 0;
+
+    public string $notes = '';
+
+    public ?int $fromRequestId = null;   // vinculación con SupervisorRequest
 
     protected $queryString = [
-        'currentTab'    => ['except' => 'all', 'as' => 'tab'],
+        'currentTab' => ['except' => 'all', 'as' => 'tab'],
         'vintageFilter' => ['except' => ''],
     ];
 
@@ -39,7 +46,7 @@ class Index extends Component
         $this->vintage = (string) now()->year;
 
         if (request()->filled('from_winery')) {
-            $this->winery_id  = (string) request()->integer('from_winery');
+            $this->winery_id = (string) request()->integer('from_winery');
             $this->showCreate = true;
         }
 
@@ -56,37 +63,38 @@ class Index extends Component
 
     public function toggleCreate(): void
     {
-        $this->showCreate = !$this->showCreate;
+        $this->showCreate = ! $this->showCreate;
     }
 
     public function saveLabel(): void
     {
         Gate::authorize('create', DoLabel::class);
 
-        if (!RateLimiter::attempt('label-save:' . Auth::id(), 20, fn() => null, 60)) {
+        if (! RateLimiter::attempt('label-save:'.Auth::id(), 20, fn () => null, 60)) {
             $this->toastError(__('Demasiadas solicitudes. Espera un minuto antes de continuar.'));
+
             return;
         }
 
         $this->validate([
-            'winery_id'          => $this->supervisorLinkedWineryRule(),
-            'vintage'            => 'required|integer|min:1990|max:2100',
-            'batch_number'       => 'nullable|string|max:100',
+            'winery_id' => $this->supervisorLinkedWineryRule(),
+            'vintage' => 'required|integer|min:1990|max:2100',
+            'batch_number' => 'nullable|string|max:100',
             'quantity_requested' => 'required|integer|min:1',
-            'notes'              => 'nullable|string',
+            'notes' => 'nullable|string',
         ]);
 
         $doId = Auth::id();
 
         DoLabel::create([
-            'supervisor_id'        => $doId,
-            'winery_id'            => $this->winery_id,
-            'supervisor_request_id'=> $this->fromRequestId,
-            'vintage'              => $this->vintage,
-            'batch_number'         => $this->batch_number ?: null,
-            'quantity_requested'   => $this->quantity_requested,
-            'notes'                => $this->notes ?: null,
-            'requested_at'         => now(),
+            'supervisor_id' => $doId,
+            'winery_id' => $this->winery_id,
+            'supervisor_request_id' => $this->fromRequestId,
+            'vintage' => $this->vintage,
+            'batch_number' => $this->batch_number ?: null,
+            'quantity_requested' => $this->quantity_requested,
+            'notes' => $this->notes ?: null,
+            'requested_at' => now(),
         ]);
 
         $this->reset(['batch_number', 'quantity_requested', 'notes', 'fromRequestId']);
@@ -96,25 +104,27 @@ class Index extends Component
 
     public function issue(int $labelId): void
     {
-        if (!RateLimiter::attempt('label-issue:' . Auth::id(), 10, fn() => null, 60)) {
+        if (! RateLimiter::attempt('label-issue:'.Auth::id(), 10, fn () => null, 60)) {
             $this->toastError(__('Demasiadas emisiones. Espera un minuto antes de continuar.'));
+
             return;
         }
 
         $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
         Gate::authorize('update', $label);
 
-        if (!in_array($label->status, [DoLabel::STATUS_PENDING, DoLabel::STATUS_APPROVED])) {
+        if (! in_array($label->status, [DoLabel::STATUS_PENDING, DoLabel::STATUS_APPROVED])) {
             $this->toastError(__('Solo se pueden emitir solicitudes pendientes o aprobadas.'));
+
             return;
         }
 
         $label->update([
-            'status'            => DoLabel::STATUS_ISSUED,
-            'quantity_issued'   => $label->quantity_requested,
-            'quantity_stock'    => $label->quantity_requested,
-            'issued_at'         => now(),
-            'issued_by'         => Auth::id(),
+            'status' => DoLabel::STATUS_ISSUED,
+            'quantity_issued' => $label->quantity_requested,
+            'quantity_stock' => $label->quantity_requested,
+            'issued_at' => now(),
+            'issued_by' => Auth::id(),
         ]);
 
         $this->toastSuccess(__('Contraetiquetas emitidas correctamente.'));
@@ -122,8 +132,9 @@ class Index extends Component
 
     public function approve(int $labelId): void
     {
-        if (!RateLimiter::attempt('label-approve:' . Auth::id(), 30, fn() => null, 60)) {
+        if (! RateLimiter::attempt('label-approve:'.Auth::id(), 30, fn () => null, 60)) {
             $this->toastError(__('Demasiadas solicitudes. Espera un minuto antes de continuar.'));
+
             return;
         }
 
@@ -135,8 +146,9 @@ class Index extends Component
 
     public function cancel(int $labelId): void
     {
-        if (!RateLimiter::attempt('label-cancel:' . Auth::id(), 30, fn() => null, 60)) {
+        if (! RateLimiter::attempt('label-cancel:'.Auth::id(), 30, fn () => null, 60)) {
             $this->toastError(__('Demasiadas solicitudes. Espera un minuto antes de continuar.'));
+
             return;
         }
 
@@ -169,10 +181,10 @@ class Index extends Component
             ->pluck('total', 'status');
 
         $counts = [
-            'all'      => $statusCounts->sum(),
-            'pending'  => $statusCounts->get('pending', 0),
+            'all' => $statusCounts->sum(),
+            'pending' => $statusCounts->get('pending', 0),
             'approved' => $statusCounts->get('approved', 0),
-            'issued'   => $statusCounts->get('issued', 0),
+            'issued' => $statusCounts->get('issued', 0),
         ];
 
         $availableVintages = DoLabel::forSupervisor($doId)
@@ -184,22 +196,22 @@ class Index extends Component
 
         $totalIssued = DoLabel::forSupervisor($doId)
             ->where('status', DoLabel::STATUS_ISSUED)
-            ->when($this->vintageFilter, fn($q) => $q->where('vintage', $this->vintageFilter))
+            ->when($this->vintageFilter, fn ($q) => $q->where('vintage', $this->vintageFilter))
             ->sum('quantity_issued');
 
         $tabs = [
-            'all'      => ['label' => __('Todas'),      'count' => $counts['all']],
-            'pending'  => ['label' => __('Pendientes'), 'count' => $counts['pending']],
+            'all' => ['label' => __('Todas'),      'count' => $counts['all']],
+            'pending' => ['label' => __('Pendientes'), 'count' => $counts['pending']],
             'approved' => ['label' => __('Aprobadas'),  'count' => $counts['approved']],
-            'issued'   => ['label' => __('Emitidas'),   'count' => $counts['issued']],
+            'issued' => ['label' => __('Emitidas'),   'count' => $counts['issued']],
         ];
 
         return view('livewire.supervisor.labels.index', [
-            'labels'            => $labels,
-            'tabs'              => $tabs,
-            'wineries'          => $wineries,
+            'labels' => $labels,
+            'tabs' => $tabs,
+            'wineries' => $wineries,
             'availableVintages' => $availableVintages,
-            'totalIssued'       => $totalIssued,
+            'totalIssued' => $totalIssued,
         ]);
     }
 }

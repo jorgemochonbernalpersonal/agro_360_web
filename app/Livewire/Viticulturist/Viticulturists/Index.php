@@ -2,36 +2,39 @@
 
 namespace App\Livewire\Viticulturist\Viticulturists;
 
-use Livewire\Attributes\Layout;
-use Livewire\Component;
-use Livewire\WithPagination;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Plot;
+use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithUserFilters;
 use App\Models\Campaign;
 use App\Models\Crew;
 use App\Models\CrewMember;
-use App\Models\Subscription;
 use App\Models\Payment;
+use App\Models\Plot;
+use App\Models\Subscription;
+use App\Models\User;
 use App\Models\WineryViticulturist;
-use App\Livewire\Concerns\WithUserFilters;
-use App\Livewire\Concerns\WithToastNotifications;
 use App\Notifications\ViticulturistInvitationNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithUserFilters, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithUserFilters;
 
-    protected $paginationTheme = 'tailwind';
+    public string $search = '';
 
-    public string $search          = '';
-    public string $assignToCrewId  = '';
+    public string $assignToCrewId = '';
 
     // ── Invitaciones ─────────────────────────────────────────────────────────
-    public bool   $showInviteModal = false;
-    public ?int   $inviteVitId     = null;
-    public string $inviteEmail     = '';
+    public bool $showInviteModal = false;
+
+    public ?int $inviteVitId = null;
+
+    public string $inviteEmail = '';
+
+    protected $paginationTheme = 'tailwind';
 
     protected $queryString = ['search'];
 
@@ -50,6 +53,7 @@ class Index extends Component
     {
         if (empty($viticulturistId) || empty($this->assignToCrewId)) {
             $this->toastError(__('Debes seleccionar una cuadrilla.'));
+
             return;
         }
 
@@ -62,6 +66,7 @@ class Index extends Component
 
         if (! $crew) {
             $this->toastError(__('No tienes permiso para gestionar esta cuadrilla.'));
+
             return;
         }
 
@@ -70,6 +75,7 @@ class Index extends Component
 
         if ($member && $member->crew_id === $crew->id) {
             $this->toastError(__('Este viticultor ya forma parte de esta cuadrilla.'));
+
             return;
         }
 
@@ -104,13 +110,6 @@ class Index extends Component
         }
     }
 
-    // ── Invitar sub-viticultor ────────────────────────────────────────────────
-
-    protected function hasRealEmail(User $vit): bool
-    {
-        return $vit->email && ! str_starts_with($vit->email, 'viticultores.');
-    }
-
     public function openInviteModal(int $vitId): void
     {
         $vit = WineryViticulturist::where('parent_viticulturist_id', Auth::id())
@@ -120,11 +119,12 @@ class Index extends Component
 
         if ($vit->can_login) {
             $this->toastError(__('Este viticultor ya tiene acceso activo.'));
+
             return;
         }
 
-        $this->inviteVitId   = $vitId;
-        $this->inviteEmail   = $this->hasRealEmail($vit) ? $vit->email : '';
+        $this->inviteVitId = $vitId;
+        $this->inviteEmail = $this->hasRealEmail($vit) ? $vit->email : '';
         $this->showInviteModal = true;
         $this->resetErrorBag('inviteEmail');
     }
@@ -132,8 +132,8 @@ class Index extends Component
     public function closeInviteModal(): void
     {
         $this->showInviteModal = false;
-        $this->inviteVitId    = null;
-        $this->inviteEmail    = '';
+        $this->inviteVitId = null;
+        $this->inviteEmail = '';
     }
 
     public function sendInvitation(): void
@@ -152,19 +152,21 @@ class Index extends Component
         // Rate limit: 1 por hora
         if ($vit->invitation_sent_at?->isAfter(now()->subHour())) {
             $this->toastError(__('Invitación enviada hace menos de 1 hora. Espera antes de reenviar.'));
+
             return;
         }
 
         if (User::where('email', $this->inviteEmail)->where('id', '!=', $vit->id)->exists()) {
             $this->addError('inviteEmail', __('Este email ya está registrado en el sistema.'));
+
             return;
         }
 
         $plainToken = Str::random(64);
 
         $updates = [
-            'invitation_token'      => hash('sha256', $plainToken),
-            'invitation_sent_at'    => now(),
+            'invitation_token' => hash('sha256', $plainToken),
+            'invitation_sent_at' => now(),
             'invitation_expires_at' => now()->addDays(7),
         ];
 
@@ -188,9 +190,9 @@ class Index extends Component
             ->firstOrFail();
 
         $vit->update([
-            'invitation_token'      => null,
+            'invitation_token' => null,
             'invitation_expires_at' => null,
-            'invitation_sent_at'    => null,
+            'invitation_sent_at' => null,
         ]);
 
         $this->toastSuccess(__('Invitación revocada.'));
@@ -211,10 +213,10 @@ class Index extends Component
             ->whereIn('id', $visibleIds);
 
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
             });
         }
 
@@ -238,9 +240,9 @@ class Index extends Component
 
         $allIds = $allVisibleViticulturists->pluck('id');
         $stats = [
-            'total'      => $allIds->count(),
-            'with_crew'  => CrewMember::whereIn('viticulturist_id', $allIds)->distinct('viticulturist_id')->count(),
-            'with_access'=> User::whereIn('id', $allIds)->where('can_login', true)->count(),
+            'total' => $allIds->count(),
+            'with_crew' => CrewMember::whereIn('viticulturist_id', $allIds)->distinct('viticulturist_id')->count(),
+            'with_access' => User::whereIn('id', $allIds)->where('can_login', true)->count(),
         ];
 
         // IDs de sub-viticultores creados por este viticultor (para mostrar botón invitar)
@@ -249,12 +251,12 @@ class Index extends Component
             ->toArray();
 
         return view('livewire.viticulturist.viticulturists.index', [
-            'viticulturists'          => $viticulturists,
-            'crews'                   => $crews,
-            'wineries'                => $wineries,
-            'membersByViticulturist'  => $membersByViticulturist,
-            'stats'                   => $stats,
-            'mySubVitIds'             => $mySubVitIds,
+            'viticulturists' => $viticulturists,
+            'crews' => $crews,
+            'wineries' => $wineries,
+            'membersByViticulturist' => $membersByViticulturist,
+            'stats' => $stats,
+            'mySubVitIds' => $mySubVitIds,
         ]);
     }
 
@@ -267,8 +269,9 @@ class Index extends Component
             ->where('parent_viticulturist_id', $user->id)
             ->first();
 
-        if (!$relation) {
+        if (! $relation) {
             $this->toastError(__('No tienes permiso para eliminar este viticultor.'));
+
             return;
         }
 
@@ -283,18 +286,20 @@ class Index extends Component
         $hasWineryRelations = WineryViticulturist::where('viticulturist_id', $viticulturistId)
             ->where(function ($q) use ($user) {
                 $q->where('source', '!=', WineryViticulturist::SOURCE_VITICULTURIST)
-                  ->orWhere('parent_viticulturist_id', '!=', $user->id);
+                    ->orWhere('parent_viticulturist_id', '!=', $user->id);
             })
             ->exists();
 
         if ($hasPlots || $hasCampaigns || $hasCrews || $hasSubs || $hasPayments || $hasWineryRelations) {
             $this->toastError(__('No se puede eliminar el viticultor porque tiene datos relacionados.'));
+
             return;
         }
 
         $vit = User::find($viticulturistId);
-        if (!$vit) {
+        if (! $vit) {
             $this->toastError(__('Viticultor no encontrado.'));
+
             return;
         }
 
@@ -309,5 +314,12 @@ class Index extends Component
             ]);
             $this->toastError(__('Error al eliminar el viticultor. Por favor, intenta de nuevo.'));
         }
+    }
+
+    // ── Invitar sub-viticultor ────────────────────────────────────────────────
+
+    protected function hasRealEmail(User $vit): bool
+    {
+        return $vit->email && ! str_starts_with($vit->email, 'viticultores.');
     }
 }

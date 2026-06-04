@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->timestamps();
-            
+
             $table->index('code');
         });
     }
@@ -28,4 +28,3 @@ return new class extends Migration
         Schema::dropIfExists('sigpac_code');
     }
 };
-

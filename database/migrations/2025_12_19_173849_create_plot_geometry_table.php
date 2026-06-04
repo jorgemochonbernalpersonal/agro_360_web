@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -19,14 +19,14 @@ return new class extends Migration
             $table->geometry('centroid')->nullable();
             $table->timestamps();
         });
-        
+
         // Crear índice espacial después (MySQL requiere sintaxis especial)
         // Solo si la columna no es null
         try {
             DB::statement('ALTER TABLE plot_geometry ADD SPATIAL INDEX idx_coordinates (coordinates)');
         } catch (\Exception $e) {
             // Si falla, continuar (puede que el índice ya exista o MySQL no soporte)
-            \Log::warning('Could not create spatial index: ' . $e->getMessage());
+            \Log::warning('Could not create spatial index: '.$e->getMessage());
         }
     }
 
@@ -38,4 +38,3 @@ return new class extends Migration
         Schema::dropIfExists('plot_geometry');
     }
 };
-

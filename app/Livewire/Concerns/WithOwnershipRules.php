@@ -37,6 +37,7 @@ trait WithOwnershipRules
     public function campaignOwnershipRule(bool $required = true): array
     {
         $userId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -50,6 +51,7 @@ trait WithOwnershipRules
     public function plotOwnershipRule(bool $required = true): array
     {
         $userId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -63,6 +65,7 @@ trait WithOwnershipRules
     public function plotPlantingOwnershipRule(bool $required = false): array
     {
         $userId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -77,6 +80,7 @@ trait WithOwnershipRules
     public function crewOwnershipRule(): array
     {
         $userId = Auth::id();
+
         return [
             'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -90,6 +94,7 @@ trait WithOwnershipRules
     public function machineryOwnershipRule(): array
     {
         $userId = Auth::id();
+
         return [
             'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -105,6 +110,7 @@ trait WithOwnershipRules
     public function ownedWineRule(bool $required = true): array
     {
         $userId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -118,6 +124,7 @@ trait WithOwnershipRules
     public function ownedContainerRule(bool $required = true): array
     {
         $userId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -131,6 +138,7 @@ trait WithOwnershipRules
     public function ownedOenologistRule(): array
     {
         $userId = Auth::id();
+
         return [
             'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -144,6 +152,7 @@ trait WithOwnershipRules
     public function ownedWinerySupplyRule(bool $required = false): array
     {
         $userId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -157,6 +166,7 @@ trait WithOwnershipRules
     public function ownedHarvestRule(bool $required = true): array
     {
         $userId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -170,6 +180,7 @@ trait WithOwnershipRules
     public function ownedWineProcessDetailRule(bool $required = true): array
     {
         $userId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($userId) {
@@ -191,6 +202,7 @@ trait WithOwnershipRules
     public function linkedViticulturistRule(): array
     {
         $wineryId = Auth::id();
+
         return [
             'required',
             function ($attribute, $value, $fail) use ($wineryId) {
@@ -209,10 +221,13 @@ trait WithOwnershipRules
     public function linkedPlotRule(bool $required = true): array
     {
         $wineryId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($wineryId) {
-                if (! $value) return;
+                if (! $value) {
+                    return;
+                }
                 $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
                     ->pluck('viticulturist_id');
                 if (! Plot::where('id', $value)->whereIn('viticulturist_id', $viticulturistIds)->exists()) {
@@ -228,10 +243,13 @@ trait WithOwnershipRules
     public function linkedPlotPlantingRule(bool $required = false): array
     {
         $wineryId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($wineryId) {
-                if (! $value) return;
+                if (! $value) {
+                    return;
+                }
                 $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
                     ->pluck('viticulturist_id');
                 if (! PlotPlanting::where('id', $value)
@@ -249,10 +267,13 @@ trait WithOwnershipRules
     public function linkedCampaignRule(bool $required = true): array
     {
         $wineryId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($wineryId) {
-                if (! $value) return;
+                if (! $value) {
+                    return;
+                }
                 $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
                     ->pluck('viticulturist_id');
                 if (! Campaign::where('id', $value)->whereIn('viticulturist_id', $viticulturistIds)->exists()) {
@@ -270,6 +291,7 @@ trait WithOwnershipRules
     public function supervisorLinkedWineryRule(bool $required = true): array
     {
         $supervisorId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($supervisorId) {
@@ -287,6 +309,7 @@ trait WithOwnershipRules
     public function supervisorLinkedViticulturistRule(bool $required = true): array
     {
         $supervisorId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($supervisorId) {
@@ -305,10 +328,13 @@ trait WithOwnershipRules
     public function supervisorLinkedSubjectRule(string $subjectType, bool $required = true): array
     {
         $supervisorId = Auth::id();
+
         return [
             $required ? 'required' : 'nullable',
             function ($attribute, $value, $fail) use ($supervisorId, $subjectType) {
-                if (! $value) return;
+                if (! $value) {
+                    return;
+                }
                 $exists = $subjectType === 'winery'
                     ? SupervisorWinery::where('supervisor_id', $supervisorId)->where('winery_id', $value)->exists()
                     : SupervisorViticulturist::where('supervisor_id', $supervisorId)->where('viticulturist_id', $value)->exists();

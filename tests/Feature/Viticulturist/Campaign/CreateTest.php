@@ -77,5 +77,3 @@ class CreateTest extends TestCase
         $this->assertEquals(1, Campaign::forViticulturist($viticulturist->id)->forYear(2028)->count());
     }
 }
-
-

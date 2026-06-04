@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Schema;
  * Cada par (contenedor, cosecha) tiene su propio estado independiente.
  * HarvestStock (audit log) siempre fue correcto; ahora el snapshot también lo es.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::table('container_current_states', function (Blueprint $table) {

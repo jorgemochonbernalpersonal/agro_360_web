@@ -13,11 +13,12 @@ class Index extends Component
     use WithPagination, WithToastNotifications;
 
     public string $currentTab = 'active';
-    public string $search     = '';
+
+    public string $search = '';
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
     ];
 
     public function switchTab(string $tab): void
@@ -26,7 +27,10 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function updatingSearch(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
@@ -37,15 +41,19 @@ class Index extends Component
     public function toggleActive(int $id): void
     {
         $oenologist = Oenologist::where('user_id', Auth::id())->findOrFail($id);
-        $newState   = ! $oenologist->active;
+        $newState = ! $oenologist->active;
         $oenologist->update(['active' => $newState]);
 
         if ($newState) {
             $this->toastSuccess(__('Enólogo activado correctamente.'));
-            if ($this->currentTab === 'inactive') $this->currentTab = 'active';
+            if ($this->currentTab === 'inactive') {
+                $this->currentTab = 'active';
+            }
         } else {
             $this->toastSuccess(__('Enólogo desactivado correctamente.'));
-            if ($this->currentTab === 'active') $this->currentTab = 'inactive';
+            if ($this->currentTab === 'active') {
+                $this->currentTab = 'inactive';
+            }
         }
     }
 
@@ -69,25 +77,25 @@ class Index extends Component
         }
 
         if ($this->search) {
-            $term = '%' . $this->search . '%';
+            $term = '%'.$this->search.'%';
             $query->where(function ($q) use ($term) {
                 $q->where('name', 'like', $term)
-                  ->orWhere('surname', 'like', $term)
-                  ->orWhere('email', 'like', $term)
-                  ->orWhere('license_number', 'like', $term);
+                    ->orWhere('surname', 'like', $term)
+                    ->orWhere('email', 'like', $term)
+                    ->orWhere('license_number', 'like', $term);
             });
         }
 
         $oenologists = $query->orderBy('name')->paginate(12);
 
         $stats = [
-            'active'   => Oenologist::where('user_id', $userId)->where('active', true)->count(),
+            'active' => Oenologist::where('user_id', $userId)->where('active', true)->count(),
             'inactive' => Oenologist::where('user_id', $userId)->where('active', false)->count(),
         ];
 
         return view('livewire.winery.oenologists.index', [
             'oenologists' => $oenologists,
-            'stats'       => $stats,
+            'stats' => $stats,
         ])->layout('layouts.app');
     }
 }

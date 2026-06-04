@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OfficialReport;
 use App\Models\AgriculturalActivity;
-use Illuminate\Http\Request;
+use App\Models\OfficialReport;
 use Illuminate\Support\Facades\Log;
 
 /**
  * Report Verification Controller
- * 
+ *
  * Handles public verification of official reports using verification codes.
- * 
+ *
  * IMPORTANT FIX (2025-12-23):
  * The PDF integrity verification was failing because the path was being
  * constructed incorrectly using storage_path('app/' . $path) which duplicated
  * the path. This has been fixed to use Storage::disk('local')->get() instead.
- * 
+ *
  * @see https://github.com/agro365/issues/verification-fix
  */
 class ReportVerificationController extends Controller
 {
     /**
      * Verificar autenticidad de un informe oficial
-     * 
+     *
      * @param string $code Código de verificación
+     *
      * @return \Illuminate\View\View
      */
     public function verify(string $code)
@@ -34,7 +34,7 @@ class ReportVerificationController extends Controller
             ->with(['user.profile.province'])
             ->first();
 
-        if (!$report) {
+        if (! $report) {
             return view('reports.verification-result', [
                 'found' => false,
                 'code' => $code,
@@ -47,17 +47,17 @@ class ReportVerificationController extends Controller
 
         // Verificar si el informe es válido
         $isValid = $report->isValid();
-        
+
         // Verificar integridad del hash
         $integrityValid = $this->verifyIntegrity($report);
-        
+
         $message = $isValid && $integrityValid
-            ? '✓ Este informe es válido y auténtico. La integridad del documento ha sido verificada.' 
+            ? '✓ Este informe es válido y auténtico. La integridad del documento ha sido verificada.'
             : '✗ Este informe ha sido invalidado o modificado.';
 
-        if (!$isValid && $report->invalidation_reason) {
-            $message .= ' Motivo: ' . $report->invalidation_reason;
-        } elseif (!$integrityValid) {
+        if (! $isValid && $report->invalidation_reason) {
+            $message .= ' Motivo: '.$report->invalidation_reason;
+        } elseif (! $integrityValid) {
             $message .= ' El contenido del documento ha sido modificado después de la firma.';
         }
 
@@ -73,55 +73,53 @@ class ReportVerificationController extends Controller
 
     /**
      * Verificar la integridad del hash del informe
-     * 
-     * @param OfficialReport $report
-     * @return bool
      */
     protected function verifyIntegrity(OfficialReport $report): bool
     {
         try {
             // MÉTODO 1 (PRIMARIO): Verificar hash del PDF real si existe
             // Esto es más confiable que reconstruir datos que pueden cambiar de orden
-            
+
             // Verificar si el PDF existe usando Storage
             if ($report->pdfExists()) {
                 $metadata = $report->signature_metadata ?? [];
                 $originalPdfHash = $metadata['pdf_hash'] ?? null;
-                
+
                 if ($originalPdfHash) {
                     // Obtener el hash del PDF actual usando Storage
                     $pdfContent = \Storage::disk('local')->get($report->pdf_path);
                     $currentPdfHash = hash('sha256', $pdfContent);
-                    
+
                     Log::info('Verificando PDF real', [
                         'report_id' => $report->id,
                         'pdf_path' => $report->pdf_path,
-                        'original_hash' => substr($originalPdfHash, 0, 16) . '...',
-                        'current_hash' => substr($currentPdfHash, 0, 16) . '...',
+                        'original_hash' => substr($originalPdfHash, 0, 16).'...',
+                        'current_hash' => substr($currentPdfHash, 0, 16).'...',
                         'match' => $originalPdfHash === $currentPdfHash,
                     ]);
-                    
+
                     // Si el PDF coincide, el informe es íntegro
                     if ($originalPdfHash === $currentPdfHash) {
                         return true;
                     }
-                    
+
                     // Si no coincide, el PDF fue modificado
                     Log::warning('PDF hash mismatch - archivo modificado', [
                         'report_id' => $report->id,
                         'expected' => $originalPdfHash,
                         'actual' => $currentPdfHash,
                     ]);
+
                     return false;
                 }
             }
-            
+
             // MÉTODO 2 (FALLBACK): Reconstruir signatureData y verificar
             // Solo si PDF no existe o no tiene hash guardado
             Log::info('PDF no disponible, verificando via signatureData', [
                 'report_id' => $report->id,
             ]);
-            
+
             // Reconstruir los datos de firma según el tipo de informe
             if ($report->report_type === 'phytosanitary_treatments') {
                 $treatments = AgriculturalActivity::ofType('phytosanitary')
@@ -147,12 +145,13 @@ class ReportVerificationController extends Controller
                 // Obtener hash del PDF original (almacenado en metadata)
                 $metadata = $report->signature_metadata ?? [];
                 $originalPdfHash = $metadata['pdf_hash'] ?? null;
-                
+
                 // Si no hay hash guardado, el informe no puede verificarse
-                if (!$originalPdfHash) {
+                if (! $originalPdfHash) {
                     \Log::warning('PDF hash no encontrado en signature_metadata', [
                         'report_id' => $report->id,
                     ]);
+
                     return false;
                 }
 
@@ -177,8 +176,8 @@ class ReportVerificationController extends Controller
 
             } elseif ($report->report_type === 'full_digital_notebook') {
                 $campaignId = $report->report_metadata['campaign_id'] ?? null;
-                
-                if (!$campaignId) {
+
+                if (! $campaignId) {
                     return false;
                 }
 
@@ -199,12 +198,13 @@ class ReportVerificationController extends Controller
                 // Obtener hash del PDF original (almacenado en metadata)
                 $metadata = $report->signature_metadata ?? [];
                 $originalPdfHash = $metadata['pdf_hash'] ?? null;
-                
+
                 // Si no hay hash guardado, el informe no puede verificarse
-                if (!$originalPdfHash) {
+                if (! $originalPdfHash) {
                     \Log::warning('PDF hash no encontrado en signature_metadata', [
                         'report_id' => $report->id,
                     ]);
+
                     return false;
                 }
 
@@ -241,7 +241,7 @@ class ReportVerificationController extends Controller
                 'report_id' => $report->id,
                 'error' => $e->getMessage(),
             ]);
-            
+
             // En caso de error, asumir que no es válido por seguridad
             return false;
         }

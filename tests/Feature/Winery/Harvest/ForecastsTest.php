@@ -24,11 +24,15 @@ use Tests\Feature\WineryTestCase;
  */
 class ForecastsTest extends WineryTestCase
 {
-    private User        $winery;
-    private User        $viticulturist;
-    private Plot        $plot;
+    private User $winery;
+
+    private User $viticulturist;
+
+    private Plot $plot;
+
     private PlotPlanting $planting;
-    private Campaign    $campaign;
+
+    private Campaign $campaign;
 
     protected function setUp(): void
     {
@@ -37,15 +41,15 @@ class ForecastsTest extends WineryTestCase
         $this->winery = $this->makeWinery();
 
         $this->viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         $grapeVariety = GrapeVariety::firstOrCreate(
@@ -55,46 +59,30 @@ class ForecastsTest extends WineryTestCase
 
         $this->plot = Plot::create([
             'viticulturist_id' => $this->viticulturist->id,
-            'name'             => 'Parcela Test',
-            'reference'        => 'FT-001',
-            'area'             => 1.5,
-            'active'           => true,
+            'name' => 'Parcela Test',
+            'reference' => 'FT-001',
+            'area' => 1.5,
+            'active' => true,
         ]);
 
         $this->planting = PlotPlanting::create([
-            'plot_id'          => $this->plot->id,
+            'plot_id' => $this->plot->id,
             'grape_variety_id' => $grapeVariety->id,
-            'area_planted'     => 1.5,
-            'planting_year'    => now()->year - 8,
-            'status'           => 'active',
+            'area_planted' => 1.5,
+            'planting_year' => now()->year - 8,
+            'status' => 'active',
         ]);
 
         $this->campaign = Campaign::create([
             'viticulturist_id' => $this->winery->id,
-            'name'             => 'Vendimia Test',
-            'year'             => now()->year,
-            'start_date'       => now()->setMonth(8)->startOfMonth()->format('Y-m-d'),
-            'end_date'         => now()->setMonth(11)->endOfMonth()->format('Y-m-d'),
-            'active'           => true,
+            'name' => 'Vendimia Test',
+            'year' => now()->year,
+            'start_date' => now()->setMonth(8)->startOfMonth()->format('Y-m-d'),
+            'end_date' => now()->setMonth(11)->endOfMonth()->format('Y-m-d'),
+            'active' => true,
         ]);
 
         $this->actingAs($this->winery);
-    }
-
-    // ── Helper ────────────────────────────────────────────────────────────────
-
-    private function makeForecast(array $attrs = []): WineryYieldForecast
-    {
-        return WineryYieldForecast::create(array_merge([
-            'winery_id'        => $this->winery->id,
-            'viticulturist_id' => $this->viticulturist->id,
-            'plot_planting_id' => $this->planting->id,
-            'campaign_id'      => $this->campaign->id,
-            'vintage_year'     => $this->campaign->year,
-            'estimated_kg'     => 500,
-            'estimation_date'  => now()->toDateString(),
-            'status'           => 'draft',
-        ], $attrs));
     }
 
     // ── Index ─────────────────────────────────────────────────────────────────
@@ -121,10 +109,10 @@ class ForecastsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('winery_yield_forecasts', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'plot_planting_id' => $this->planting->id,
-            'estimated_kg'     => 800,
-            'status'           => 'draft',
+            'estimated_kg' => 800,
+            'status' => 'draft',
         ]);
     }
 
@@ -185,9 +173,9 @@ class ForecastsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('winery_yield_forecasts', [
-            'id'           => $forecast->id,
+            'id' => $forecast->id,
             'estimated_kg' => 750,
-            'status'       => 'confirmed',
+            'status' => 'confirmed',
         ]);
     }
 
@@ -212,7 +200,7 @@ class ForecastsTest extends WineryTestCase
             ->call('confirm', $forecast->id);
 
         $this->assertDatabaseHas('winery_yield_forecasts', [
-            'id'     => $forecast->id,
+            'id' => $forecast->id,
             'status' => 'confirmed',
         ]);
     }
@@ -239,5 +227,21 @@ class ForecastsTest extends WineryTestCase
 
         Livewire::test(Index::class)
             ->call('delete', $forecast->id);
+    }
+
+    // ── Helper ────────────────────────────────────────────────────────────────
+
+    private function makeForecast(array $attrs = []): WineryYieldForecast
+    {
+        return WineryYieldForecast::create(array_merge([
+            'winery_id' => $this->winery->id,
+            'viticulturist_id' => $this->viticulturist->id,
+            'plot_planting_id' => $this->planting->id,
+            'campaign_id' => $this->campaign->id,
+            'vintage_year' => $this->campaign->year,
+            'estimated_kg' => 500,
+            'estimation_date' => now()->toDateString(),
+            'status' => 'draft',
+        ], $attrs));
     }
 }

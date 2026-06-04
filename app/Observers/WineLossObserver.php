@@ -43,8 +43,8 @@ class WineLossObserver
     {
         $oldWineId = (int) $loss->getOriginal('wine_id');
         $newWineId = (int) $loss->wine_id;
-        $oldQty    = (float) $loss->getOriginal('quantity');
-        $newQty    = (float) $loss->quantity;
+        $oldQty = (float) $loss->getOriginal('quantity');
+        $newQty = (float) $loss->quantity;
 
         // Nada relevante cambió
         if ($oldWineId === $newWineId && $oldQty === $newQty) {

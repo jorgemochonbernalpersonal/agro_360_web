@@ -6,8 +6,8 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AutonomousCommunity;
 use App\Models\IrrigationType;
 use App\Models\Municipality;
-use App\Models\Province;
 use App\Models\PropertyType;
+use App\Models\Province;
 use App\Models\Site;
 use App\Models\SoilType;
 use App\Models\Topography;
@@ -29,77 +29,50 @@ class TerritorialManagement extends Component
 
     // --- Parajes ---
     public string $selectedCommunityId = '';
+
     public string $selectedProvinceId = '';
+
     public string $selectedMunicipalityId = '';
+
     public string $newSiteName = '';
+
     public int $editingSiteId = 0;
+
     public string $editingSiteName = '';
 
     // --- Catálogos simples ---
     public string $newName = '';
+
     public string $newDescription = '';
+
     public string $newCode = '';
+
     public string $catalogSearch = '';
+
     public int $editingId = 0;
+
     public string $editingName = '';
+
     public string $editingDescription = '';
 
     // ── Cascada ubicación ────────────────────────────────────────────────────
 
     public function updatedSelectedCommunityId(): void
     {
-        $this->selectedProvinceId    = '';
+        $this->selectedProvinceId = '';
         $this->selectedMunicipalityId = '';
-        $this->editingSiteId          = 0;
+        $this->editingSiteId = 0;
     }
 
     public function updatedSelectedProvinceId(): void
     {
         $this->selectedMunicipalityId = '';
-        $this->editingSiteId          = 0;
+        $this->editingSiteId = 0;
     }
 
     public function updatedSelectedMunicipalityId(): void
     {
         $this->editingSiteId = 0;
-    }
-
-    // ── Helpers ──────────────────────────────────────────────────────────────
-
-    private function catalogModel(string $type): string
-    {
-        return match($type) {
-            'valleys'          => Valley::class,
-            'soil_types'       => SoilType::class,
-            'irrigation_types' => IrrigationType::class,
-            'topographies'     => Topography::class,
-            'property_types'   => PropertyType::class,
-            'training_systems' => TrainingSystem::class,
-            default            => abort(404),
-        };
-    }
-
-    private function catalogLabel(string $type): string
-    {
-        return match($type) {
-            'valleys'          => __('Valle'),
-            'soil_types'       => __('Tipo de suelo'),
-            'irrigation_types' => __('Tipo de riego'),
-            'topographies'     => __('Topografía'),
-            'property_types'   => __('Tipo de propiedad'),
-            'training_systems' => __('Sistema de conducción'),
-            default            => __('Elemento'),
-        };
-    }
-
-    /** IDs de items globales ocultados por este usuario para un tipo dado */
-    private function hiddenIds(string $catalogType): array
-    {
-        return DB::table('user_catalog_hidden')
-            ->where('user_id', Auth::id())
-            ->where('catalog_type', $catalogType)
-            ->pluck('item_id')
-            ->all();
     }
 
     // ── Parajes ───────────────────────────────────────────────────────────────
@@ -108,10 +81,10 @@ class TerritorialManagement extends Component
     {
         $this->validate([
             'selectedMunicipalityId' => 'required|exists:municipalities,id',
-            'newSiteName'            => 'required|string|min:2|max:255',
+            'newSiteName' => 'required|string|min:2|max:255',
         ], [
             'selectedMunicipalityId.required' => __('Selecciona un municipio primero.'),
-            'newSiteName.required'            => __('El nombre del paraje es obligatorio.'),
+            'newSiteName.required' => __('El nombre del paraje es obligatorio.'),
         ]);
 
         $exists = Site::where('municipality_id', $this->selectedMunicipalityId)
@@ -120,14 +93,15 @@ class TerritorialManagement extends Component
 
         if ($exists) {
             $this->addError('newSiteName', __('Este paraje ya existe en el municipio seleccionado.'));
+
             return;
         }
 
         Site::create([
-            'user_id'         => Auth::id(),
-            'name'            => trim($this->newSiteName),
+            'user_id' => Auth::id(),
+            'name' => trim($this->newSiteName),
             'municipality_id' => $this->selectedMunicipalityId,
-            'is_archived'     => false,
+            'is_archived' => false,
         ]);
 
         $this->newSiteName = '';
@@ -164,6 +138,7 @@ class TerritorialManagement extends Component
 
         if ($exists) {
             $this->addError('editingSiteName', __('Ya existe un paraje con ese nombre en este municipio.'));
+
             return;
         }
 
@@ -186,7 +161,7 @@ class TerritorialManagement extends Component
         $this->validate(['newName' => 'required|string|min:2|max:255']);
 
         $model = $this->catalogModel($type);
-        $data  = ['user_id' => Auth::id(), 'name' => trim($this->newName), 'active' => true];
+        $data = ['user_id' => Auth::id(), 'name' => trim($this->newName), 'active' => true];
 
         if ($this->newDescription) {
             $data['description'] = trim($this->newDescription);
@@ -197,9 +172,9 @@ class TerritorialManagement extends Component
 
         $model::create($data);
 
-        $this->newName        = '';
+        $this->newName = '';
         $this->newDescription = '';
-        $this->newCode        = '';
+        $this->newCode = '';
         $this->toastSuccess(__(':item añadido correctamente.', ['item' => $this->catalogLabel($type)]));
     }
 
@@ -218,8 +193,8 @@ class TerritorialManagement extends Component
 
     public function startEdit(int $id, string $name, string $description = ''): void
     {
-        $this->editingId          = $id;
-        $this->editingName        = $name;
+        $this->editingId = $id;
+        $this->editingName = $name;
         $this->editingDescription = $description;
     }
 
@@ -228,7 +203,7 @@ class TerritorialManagement extends Component
         $this->validate(['editingName' => 'required|string|min:2|max:255']);
 
         $model = $this->catalogModel($type);
-        $data  = ['name' => trim($this->editingName)];
+        $data = ['name' => trim($this->editingName)];
 
         if ($this->editingDescription !== '') {
             $data['description'] = trim($this->editingDescription);
@@ -236,55 +211,28 @@ class TerritorialManagement extends Component
 
         $model::where('id', $this->editingId)->where('user_id', Auth::id())->firstOrFail()->update($data);
 
-        $this->editingId          = 0;
-        $this->editingName        = '';
+        $this->editingId = 0;
+        $this->editingName = '';
         $this->editingDescription = '';
         $this->toastSuccess(__(':item actualizado correctamente.', ['item' => $this->catalogLabel($type)]));
     }
 
     public function cancelEdit(): void
     {
-        $this->editingId          = 0;
-        $this->editingName        = '';
+        $this->editingId = 0;
+        $this->editingName = '';
         $this->editingDescription = '';
-    }
-
-    // ── Shared toggle helper ──────────────────────────────────────────────────
-
-    private function toggleGlobalVisibility(string $catalogType, int $itemId): void
-    {
-        $exists = DB::table('user_catalog_hidden')
-            ->where('user_id', Auth::id())
-            ->where('catalog_type', $catalogType)
-            ->where('item_id', $itemId)
-            ->exists();
-
-        if ($exists) {
-            DB::table('user_catalog_hidden')
-                ->where('user_id', Auth::id())
-                ->where('catalog_type', $catalogType)
-                ->where('item_id', $itemId)
-                ->delete();
-            $this->toastSuccess(__('Elemento activado en tus selects.'));
-        } else {
-            DB::table('user_catalog_hidden')->insert([
-                'user_id'      => Auth::id(),
-                'catalog_type' => $catalogType,
-                'item_id'      => $itemId,
-            ]);
-            $this->toastSuccess(__('Elemento ocultado de tus selects.'));
-        }
     }
 
     // ── Render ────────────────────────────────────────────────────────────────
 
     public function render()
     {
-        $communities    = collect();
-        $provinces      = collect();
+        $communities = collect();
+        $provinces = collect();
         $municipalities = collect();
-        $sites          = collect();
-        $hiddenIds      = [];
+        $sites = collect();
+        $hiddenIds = [];
 
         if ($this->tab === 'sites') {
             $communities = AutonomousCommunity::select(['id', 'name'])->orderBy('name')->get();
@@ -306,38 +254,103 @@ class TerritorialManagement extends Component
             if ($this->selectedMunicipalityId) {
                 $hiddenIds = $this->hiddenIds('sites');
                 $sites = Site::where('municipality_id', $this->selectedMunicipalityId)
-                    ->where(fn($q) => $q->whereNull('user_id')->orWhere('user_id', Auth::id()))
+                    ->where(fn ($q) => $q->whereNull('user_id')->orWhere('user_id', Auth::id()))
                     ->orderBy('name')
                     ->get();
             }
         }
 
         $catalogItems = collect();
-        $catalogMap   = [
-            'valleys'          => Valley::class,
-            'soil_types'       => SoilType::class,
+        $catalogMap = [
+            'valleys' => Valley::class,
+            'soil_types' => SoilType::class,
             'irrigation_types' => IrrigationType::class,
-            'topographies'     => Topography::class,
-            'property_types'   => PropertyType::class,
+            'topographies' => Topography::class,
+            'property_types' => PropertyType::class,
             'training_systems' => TrainingSystem::class,
         ];
 
         if (isset($catalogMap[$this->tab])) {
-            $hiddenIds    = $this->hiddenIds($this->tab);
-            $model        = $catalogMap[$this->tab];
-            $catalogItems = $model::where(fn($q) => $q->whereNull('user_id')->orWhere('user_id', Auth::id()))
-                ->when($this->catalogSearch, fn($q) => $q->where('name', 'like', '%' . $this->catalogSearch . '%'))
+            $hiddenIds = $this->hiddenIds($this->tab);
+            $model = $catalogMap[$this->tab];
+            $catalogItems = $model::where(fn ($q) => $q->whereNull('user_id')->orWhere('user_id', Auth::id()))
+                ->when($this->catalogSearch, fn ($q) => $q->where('name', 'like', '%'.$this->catalogSearch.'%'))
                 ->orderBy('name')
                 ->get();
         }
 
         return view('livewire.settings.territorial-management', [
-            'communities'    => $communities,
-            'provinces'      => $provinces,
+            'communities' => $communities,
+            'provinces' => $provinces,
             'municipalities' => $municipalities,
-            'sites'          => $sites,
-            'catalogItems'   => $catalogItems,
-            'hiddenIds'      => $hiddenIds,
+            'sites' => $sites,
+            'catalogItems' => $catalogItems,
+            'hiddenIds' => $hiddenIds,
         ]);
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    private function catalogModel(string $type): string
+    {
+        return match ($type) {
+            'valleys' => Valley::class,
+            'soil_types' => SoilType::class,
+            'irrigation_types' => IrrigationType::class,
+            'topographies' => Topography::class,
+            'property_types' => PropertyType::class,
+            'training_systems' => TrainingSystem::class,
+            default => abort(404),
+        };
+    }
+
+    private function catalogLabel(string $type): string
+    {
+        return match ($type) {
+            'valleys' => __('Valle'),
+            'soil_types' => __('Tipo de suelo'),
+            'irrigation_types' => __('Tipo de riego'),
+            'topographies' => __('Topografía'),
+            'property_types' => __('Tipo de propiedad'),
+            'training_systems' => __('Sistema de conducción'),
+            default => __('Elemento'),
+        };
+    }
+
+    /** IDs de items globales ocultados por este usuario para un tipo dado */
+    private function hiddenIds(string $catalogType): array
+    {
+        return DB::table('user_catalog_hidden')
+            ->where('user_id', Auth::id())
+            ->where('catalog_type', $catalogType)
+            ->pluck('item_id')
+            ->all();
+    }
+
+    // ── Shared toggle helper ──────────────────────────────────────────────────
+
+    private function toggleGlobalVisibility(string $catalogType, int $itemId): void
+    {
+        $exists = DB::table('user_catalog_hidden')
+            ->where('user_id', Auth::id())
+            ->where('catalog_type', $catalogType)
+            ->where('item_id', $itemId)
+            ->exists();
+
+        if ($exists) {
+            DB::table('user_catalog_hidden')
+                ->where('user_id', Auth::id())
+                ->where('catalog_type', $catalogType)
+                ->where('item_id', $itemId)
+                ->delete();
+            $this->toastSuccess(__('Elemento activado en tus selects.'));
+        } else {
+            DB::table('user_catalog_hidden')->insert([
+                'user_id' => Auth::id(),
+                'catalog_type' => $catalogType,
+                'item_id' => $itemId,
+            ]);
+            $this->toastSuccess(__('Elemento ocultado de tus selects.'));
+        }
     }
 }

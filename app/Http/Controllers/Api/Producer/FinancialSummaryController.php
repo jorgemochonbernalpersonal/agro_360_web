@@ -14,9 +14,9 @@ class FinancialSummaryController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
-        $user   = $request->user();
+        $user = $request->user();
         $userId = $user->id;
-        $year   = $request->integer('year', now()->year);
+        $year = $request->integer('year', now()->year);
 
         // ── Ventas ───────────────────────────────────────────────────────────
         $salesTotal = Invoice::where('user_id', $userId)
@@ -49,10 +49,10 @@ class FinancialSummaryController extends Controller
             ->sum('cost');
 
         // ── Márgenes ─────────────────────────────────────────────────────────
-        $revenue      = (float) ($salesTotal->total ?? 0);
-        $totalCost    = (float) ($grapeCost->total ?? 0) + $maintenanceCost;
-        $grossMargin  = $revenue - $totalCost;
-        $marginPct    = $revenue > 0 ? round(($grossMargin / $revenue) * 100, 1) : 0.0;
+        $revenue = (float) ($salesTotal->total ?? 0);
+        $totalCost = (float) ($grapeCost->total ?? 0) + $maintenanceCost;
+        $grossMargin = $revenue - $totalCost;
+        $marginPct = $revenue > 0 ? round(($grossMargin / $revenue) * 100, 1) : 0.0;
 
         // ── Ventas por mes ───────────────────────────────────────────────────
         $salesByMonth = Invoice::where('user_id', $userId)
@@ -63,9 +63,9 @@ class FinancialSummaryController extends Controller
             ->orderBy('month')
             ->get()
             ->map(fn ($r) => [
-                'month'  => (int) $r->month,
+                'month' => (int) $r->month,
                 'amount' => (float) $r->amount,
-                'count'  => (int) $r->count,
+                'count' => (int) $r->count,
             ]);
 
         // ── Top clientes ─────────────────────────────────────────────────────
@@ -85,10 +85,10 @@ class FinancialSummaryController extends Controller
             ->limit(10)
             ->get()
             ->map(fn ($r) => [
-                'client_id'   => $r->id,
+                'client_id' => $r->id,
                 'client_name' => trim($r->client_name),
-                'amount'      => (float) $r->amount,
-                'count'       => (int) $r->count,
+                'amount' => (float) $r->amount,
+                'count' => (int) $r->count,
             ]);
 
         // ── Inventario vino ──────────────────────────────────────────────────
@@ -109,34 +109,34 @@ class FinancialSummaryController extends Controller
         return response()->json([
             'year' => $year,
             'revenue' => [
-                'total'   => $revenue,
-                'paid'    => (float) ($salesTotal->paid ?? 0),
+                'total' => $revenue,
+                'paid' => (float) ($salesTotal->paid ?? 0),
                 'pending' => (float) ($salesTotal->pending ?? 0),
-                'count'   => (int) ($salesTotal->count ?? 0),
+                'count' => (int) ($salesTotal->count ?? 0),
             ],
             'grape_cost' => [
-                'total'   => (float) ($grapeCost->total ?? 0),
-                'paid'    => (float) ($grapeCost->paid ?? 0),
+                'total' => (float) ($grapeCost->total ?? 0),
+                'paid' => (float) ($grapeCost->paid ?? 0),
                 'pending' => (float) ($grapeCost->pending ?? 0),
-                'count'   => (int) ($grapeCost->count ?? 0),
+                'count' => (int) ($grapeCost->count ?? 0),
             ],
             'maintenance_cost' => $maintenanceCost,
             'gross_margin' => [
-                'amount'     => $grossMargin,
+                'amount' => $grossMargin,
                 'percentage' => $marginPct,
             ],
             'sales_by_month' => $salesByMonth,
-            'top_clients'    => $topClients,
+            'top_clients' => $topClients,
             'wine_inventory' => [
-                'total'  => (int) ($wineStats->total ?? 0),
+                'total' => (int) ($wineStats->total ?? 0),
                 'active' => (int) ($wineStats->active ?? 0),
                 'volume' => (float) ($wineStats->volume ?? 0),
             ],
             'containers' => [
-                'total'    => (int) ($containerStats->total ?? 0),
+                'total' => (int) ($containerStats->total ?? 0),
                 'capacity' => (float) ($containerStats->capacity ?? 0),
-                'used'     => (float) ($containerStats->used ?? 0),
-                'pct'      => ((float) ($containerStats->capacity ?? 0)) > 0
+                'used' => (float) ($containerStats->used ?? 0),
+                'pct' => ((float) ($containerStats->capacity ?? 0)) > 0
                     ? round((float) ($containerStats->used ?? 0) / (float) $containerStats->capacity * 100, 1) : 0,
             ],
         ])->header('Cache-Control', 'private, max-age=600');

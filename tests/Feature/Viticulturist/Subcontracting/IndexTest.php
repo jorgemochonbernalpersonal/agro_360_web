@@ -4,7 +4,6 @@ namespace Tests\Feature\Viticulturist\Subcontracting;
 
 use App\Livewire\Viticulturist\Subcontracting\Index;
 use App\Models\Subcontracting;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -25,9 +24,9 @@ class IndexTest extends ViticulturistTestCase
 
         Subcontracting::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'company_name'     => 'Empresa Propia SA',
-            'service_date'     => now()->toDateString(),
-            'service_type'     => 'harvesting',
+            'company_name' => 'Empresa Propia SA',
+            'service_date' => now()->toDateString(),
+            'service_type' => 'harvesting',
         ]);
 
         $this->actingAs($viticulturist);
@@ -43,9 +42,9 @@ class IndexTest extends ViticulturistTestCase
 
         Subcontracting::factory()->create([
             'viticulturist_id' => $other->id,
-            'company_name'     => 'Empresa Ajena SL',
-            'service_date'     => now()->toDateString(),
-            'service_type'     => 'pruning',
+            'company_name' => 'Empresa Ajena SL',
+            'service_date' => now()->toDateString(),
+            'service_type' => 'pruning',
         ]);
 
         $this->actingAs($viticulturist);
@@ -60,9 +59,9 @@ class IndexTest extends ViticulturistTestCase
 
         $record = Subcontracting::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'company_name'     => 'A Borrar',
-            'service_date'     => now()->toDateString(),
-            'service_type'     => 'transport',
+            'company_name' => 'A Borrar',
+            'service_date' => now()->toDateString(),
+            'service_type' => 'transport',
         ]);
 
         $this->actingAs($viticulturist);
@@ -79,10 +78,10 @@ class IndexTest extends ViticulturistTestCase
 
         $record = Subcontracting::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'company_name'     => 'Empresa Toggle',
-            'service_date'     => now()->toDateString(),
-            'service_type'     => 'treatment',
-            'invoiced'         => false,
+            'company_name' => 'Empresa Toggle',
+            'service_date' => now()->toDateString(),
+            'service_type' => 'treatment',
+            'invoiced' => false,
         ]);
 
         $this->actingAs($viticulturist);
@@ -91,7 +90,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('toggleInvoiced', $record->id);
 
         $this->assertDatabaseHas('subcontractings', [
-            'id'       => $record->id,
+            'id' => $record->id,
             'invoiced' => true,
         ]);
     }
@@ -103,9 +102,9 @@ class IndexTest extends ViticulturistTestCase
 
         $record = Subcontracting::factory()->create([
             'viticulturist_id' => $other->id,
-            'company_name'     => 'Ajeno',
-            'service_date'     => now()->toDateString(),
-            'service_type'     => 'other',
+            'company_name' => 'Ajeno',
+            'service_date' => now()->toDateString(),
+            'service_type' => 'other',
         ]);
 
         $this->actingAs($viticulturist);

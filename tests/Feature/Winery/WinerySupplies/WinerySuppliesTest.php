@@ -47,17 +47,17 @@ class WinerySuppliesTest extends WineryTestCase
 
         $this->assertDatabaseHas('winery_supplies', [
             'user_id' => $this->winery->id,
-            'name'    => 'Sulfuroso',
+            'name' => 'Sulfuroso',
         ]);
     }
 
     public function test_edit_saves_changes(): void
     {
         $supply = WinerySupply::create([
-            'user_id'     => $this->winery->id,
-            'name'        => 'Test Supply',
+            'user_id' => $this->winery->id,
+            'name' => 'Test Supply',
             'supply_type' => array_key_first(WinerySupply::SUPPLY_TYPES),
-            'active'      => true,
+            'active' => true,
         ]);
 
         Livewire::test(Edit::class, ['winerySupply' => $supply])
@@ -66,7 +66,7 @@ class WinerySuppliesTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('winery_supplies', [
-            'id'   => $supply->id,
+            'id' => $supply->id,
             'name' => 'Updated',
         ]);
     }
@@ -74,10 +74,10 @@ class WinerySuppliesTest extends WineryTestCase
     public function test_other_winery_cannot_edit(): void
     {
         $supply = WinerySupply::create([
-            'user_id'     => $this->winery->id,
-            'name'        => 'Protected Supply',
+            'user_id' => $this->winery->id,
+            'name' => 'Protected Supply',
             'supply_type' => array_key_first(WinerySupply::SUPPLY_TYPES),
-            'active'      => true,
+            'active' => true,
         ]);
 
         $otherWinery = $this->makeOtherWinery();

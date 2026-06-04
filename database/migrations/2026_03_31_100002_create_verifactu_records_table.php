@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
             $table->enum('submission_status', ['pending', 'queued', 'submitted', 'accepted', 'rejected', 'cancelled'])
-                  ->default('pending');
+                ->default('pending');
             $table->timestamp('submitted_at')->nullable();
             $table->timestamp('accepted_at')->nullable();
             $table->timestamp('rejected_at')->nullable();

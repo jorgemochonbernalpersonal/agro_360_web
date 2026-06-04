@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class VerifactuRecord extends Model
 {
     const STATUSES = [
-        'pending'   => 'Pendiente',
-        'queued'    => 'En cola',
+        'pending' => 'Pendiente',
+        'queued' => 'En cola',
         'submitted' => 'Enviada',
-        'accepted'  => 'Aceptada',
-        'rejected'  => 'Rechazada',
+        'accepted' => 'Aceptada',
+        'rejected' => 'Rechazada',
         'cancelled' => 'Cancelada',
     ];
 
@@ -33,9 +33,9 @@ class VerifactuRecord extends Model
 
     protected $casts = [
         'submitted_at' => 'datetime',
-        'accepted_at'  => 'datetime',
-        'rejected_at'  => 'datetime',
-        'error_details'=> 'array',
+        'accepted_at' => 'datetime',
+        'rejected_at' => 'datetime',
+        'error_details' => 'array',
     ];
 
     // ── Relations ──────────────────────────────────────────────────────────────

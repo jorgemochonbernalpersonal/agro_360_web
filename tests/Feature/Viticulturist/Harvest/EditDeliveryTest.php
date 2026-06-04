@@ -3,7 +3,6 @@
 namespace Tests\Feature\Viticulturist\Harvest;
 
 use App\Livewire\Viticulturist\Harvests\EditDelivery;
-use App\Models\HarvestDelivery;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use Illuminate\Support\Facades\Notification;
@@ -36,16 +35,16 @@ class EditDeliveryTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.harvests.index'));
 
         $this->assertDatabaseHas('harvest_deliveries', [
-            'id'         => $delivery->id,
+            'id' => $delivery->id,
             'buyer_name' => 'Actualizada',
-            'notes'      => 'Nota nueva',
+            'notes' => 'Nota nueva',
         ]);
     }
 
     public function test_delivery_owner_check_enforced_in_mount(): void
     {
         $delivery = $this->makeDelivery();
-        $other    = $this->makeOtherViticulturist();
+        $other = $this->makeOtherViticulturist();
 
         // The viticulturist_id on the delivery does NOT match $other->id,
         // so abort_unless(403) fires. Verify the record belongs to original owner.
@@ -64,8 +63,8 @@ class EditDeliveryTest extends ViticulturistTestCase
         $this->actingAs($this->viticulturist);
 
         $delivery = $this->makeDelivery([
-            'harvest_id'     => $reception->id,
-            'status'         => 'matched',
+            'harvest_id' => $reception->id,
+            'status' => 'matched',
             'discrepancy_kg' => 0,
         ]);
 
@@ -89,7 +88,7 @@ class EditDeliveryTest extends ViticulturistTestCase
 
         $delivery = $this->makeDelivery([
             'harvest_id' => $reception->id,
-            'status'     => 'matched',
+            'status' => 'matched',
         ]);
 
         Livewire::test(EditDelivery::class, ['delivery' => $delivery])
@@ -112,16 +111,16 @@ class EditDeliveryTest extends ViticulturistTestCase
 
         // Second planting on the same plot
         $otherPlanting = PlotPlanting::create([
-            'plot_id'          => $this->plot->id,
+            'plot_id' => $this->plot->id,
             'grape_variety_id' => $this->grapeVariety->id,
-            'area_planted'     => 1.0,
-            'planting_year'    => 2018,
-            'status'           => 'active',
+            'area_planted' => 1.0,
+            'planting_year' => 2018,
+            'status' => 'active',
         ]);
 
         $delivery = $this->makeDelivery([
             'harvest_id' => $reception->id,
-            'status'     => 'matched',
+            'status' => 'matched',
         ]);
 
         Livewire::test(EditDelivery::class, ['delivery' => $delivery])
@@ -142,7 +141,7 @@ class EditDeliveryTest extends ViticulturistTestCase
 
         $delivery = $this->makeDelivery([
             'harvest_id' => $reception->id,
-            'status'     => 'matched',
+            'status' => 'matched',
         ]);
 
         Livewire::test(EditDelivery::class, ['delivery' => $delivery])
@@ -193,7 +192,7 @@ class EditDeliveryTest extends ViticulturistTestCase
 
         $delivery = $this->makeDelivery([
             'harvest_id' => $reception->id,
-            'status'     => 'matched',
+            'status' => 'matched',
         ]);
 
         Livewire::test(EditDelivery::class, ['delivery' => $delivery])

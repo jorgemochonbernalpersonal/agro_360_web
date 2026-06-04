@@ -14,7 +14,8 @@ class AssignReceptionTest extends WineryTestCase
     use CreatesDeliveryScenario;
 
     private Container $container;
-    private Harvest   $reception;
+
+    private Harvest $reception;
 
     protected function setUp(): void
     {
@@ -41,17 +42,17 @@ class AssignReceptionTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvests', [
-            'id'           => $this->reception->id,
+            'id' => $this->reception->id,
             'container_id' => $newContainer->id,
         ]);
 
         // HarvestObserver → ContainerStockService::transferContainer()
         $this->assertDatabaseHas('containers', [
-            'id'            => $this->container->id,
+            'id' => $this->container->id,
             'used_capacity' => 0,     // contenedor original liberado
         ]);
         $this->assertDatabaseHas('containers', [
-            'id'            => $newContainer->id,
+            'id' => $newContainer->id,
             'used_capacity' => 1000,  // nuevo contenedor incrementado
         ]);
     }
@@ -81,7 +82,7 @@ class AssignReceptionTest extends WineryTestCase
 
         // La recepción sigue apuntando al mismo contenedor
         $this->assertDatabaseHas('harvests', [
-            'id'           => $this->reception->id,
+            'id' => $this->reception->id,
             'container_id' => $this->container->id,
         ]);
     }
@@ -97,7 +98,7 @@ class AssignReceptionTest extends WineryTestCase
 
         // Contenedor original sin cambios
         $this->assertDatabaseHas('harvests', [
-            'id'           => $this->reception->id,
+            'id' => $this->reception->id,
             'container_id' => $this->container->id,
         ]);
     }
@@ -106,7 +107,7 @@ class AssignReceptionTest extends WineryTestCase
 
     public function test_container_from_other_winery_is_rejected(): void
     {
-        $otherWinery      = $this->makeOtherWinery();
+        $otherWinery = $this->makeOtherWinery();
         $foreignContainer = $this->makeContainer(['user_id' => $otherWinery->id, 'capacity' => 5000]);
 
         Livewire::test(Assign::class, ['harvest' => $this->reception])
@@ -115,7 +116,7 @@ class AssignReceptionTest extends WineryTestCase
             ->assertHasErrors(['container_id']);
 
         $this->assertDatabaseHas('harvests', [
-            'id'           => $this->reception->id,
+            'id' => $this->reception->id,
             'container_id' => $this->container->id,
         ]);
     }

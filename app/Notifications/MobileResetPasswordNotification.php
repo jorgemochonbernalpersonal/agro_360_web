@@ -8,6 +8,6 @@ class MobileResetPasswordNotification extends ResetPassword
 {
     protected function resetUrl($notifiable): string
     {
-        return route('password.reset', ['token' => $this->token]) . '?platform=mobile';
+        return route('password.reset', ['token' => $this->token]).'?platform=mobile';
     }
 }

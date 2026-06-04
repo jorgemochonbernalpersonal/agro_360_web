@@ -24,10 +24,10 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('advisory_memberships', [
             'viticulturist_id' => $viticulturist->id,
-            'advisor_name'     => 'Dr. Asesor Test',
-            'license_number'   => 'LIC-001',
-            'specialty'        => 'phytosanitary',
-            'active'           => true,
+            'advisor_name' => 'Dr. Asesor Test',
+            'license_number' => 'LIC-001',
+            'specialty' => 'phytosanitary',
+            'active' => true,
         ]);
     }
 
@@ -88,9 +88,9 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('advisory_memberships', [
             'viticulturist_id' => $viticulturist->id,
-            'company_name'     => 'Agronomía SA',
-            'phone'            => '600123456',
-            'email'            => 'asesor@test.com',
+            'company_name' => 'Agronomía SA',
+            'phone' => '600123456',
+            'email' => 'asesor@test.com',
         ]);
     }
 }

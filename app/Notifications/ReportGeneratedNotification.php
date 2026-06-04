@@ -7,7 +7,6 @@ use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ReportGeneratedNotification extends Notification implements ShouldQueue
@@ -33,6 +32,8 @@ class ReportGeneratedNotification extends Notification implements ShouldQueue
 
     /**
      * Get the array representation of the notification.
+     *
+     * @param mixed $notifiable
      */
     public function toArray($notifiable): array
     {
@@ -43,7 +44,7 @@ class ReportGeneratedNotification extends Notification implements ShouldQueue
             'report_icon' => $this->report->report_icon,
             'verification_code' => $this->report->verification_code,
             'pdf_exists' => $this->report->pdfExists(),
-            'period' => $this->report->period_start->format('d/m/Y') . ' - ' . $this->report->period_end->format('d/m/Y'),
+            'period' => $this->report->period_start->format('d/m/Y').' - '.$this->report->period_end->format('d/m/Y'),
             'message' => '✅ Tu informe ha sido generado exitosamente',
             'action_url' => AppLink::url(route('viticulturist.official-reports.index'), 'agro365://home'),
             'action_text' => __('Ver Informes'),

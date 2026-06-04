@@ -3,13 +3,13 @@
 namespace App\Livewire\Viticulturist\Inventory;
 
 use App\Services\InventoryAnalyticsService;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Analytics extends Component
 {
     public $period = '3months'; // 1month, 3months, 6months, 12months
-    
+
     protected $analyticsService;
 
     public function boot(InventoryAnalyticsService $service)
@@ -19,7 +19,7 @@ class Analytics extends Component
 
     public function mount()
     {
-        if (!Auth::user()->hasViticulturistAccess()) {
+        if (! Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
     }
@@ -32,8 +32,9 @@ class Analytics extends Component
     public function exportInventory()
     {
         $userId = Auth::id();
+
         return response()->download(
-            storage_path('app/exports/inventory_' . $userId . '_' . now()->format('Y-m-d') . '.xlsx')
+            storage_path('app/exports/inventory_'.$userId.'_'.now()->format('Y-m-d').'.xlsx')
         );
     }
 

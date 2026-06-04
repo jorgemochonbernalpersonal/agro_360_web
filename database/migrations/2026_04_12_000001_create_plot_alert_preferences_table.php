@@ -25,18 +25,18 @@ return new class extends Migration
             ->whereNotNull('viticulturist_id')
             ->where(function ($q) {
                 $q->whereRaw('ndvi_alert_threshold != 0.30')
-                  ->orWhere('alert_email_enabled', true);
+                    ->orWhere('alert_email_enabled', true);
             })
             ->select('id', 'viticulturist_id', 'ndvi_alert_threshold', 'alert_email_enabled')
             ->orderBy('id')
             ->chunk(500, function ($rows) {
                 $inserts = collect($rows)->map(fn ($p) => [
-                    'plot_id'        => $p->id,
-                    'user_id'        => $p->viticulturist_id,
+                    'plot_id' => $p->id,
+                    'user_id' => $p->viticulturist_id,
                     'ndvi_threshold' => $p->ndvi_alert_threshold ?? 0.30,
-                    'email_enabled'  => $p->alert_email_enabled ?? false,
-                    'created_at'     => now(),
-                    'updated_at'     => now(),
+                    'email_enabled' => $p->alert_email_enabled ?? false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ])->all();
 
                 DB::table('plot_alert_preferences')->insertOrIgnore($inserts);

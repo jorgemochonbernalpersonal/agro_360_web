@@ -21,9 +21,12 @@ use Illuminate\Support\Facades\Log;
  */
 class CopernicusSentinel2Service
 {
-    private const AUTH_URL  = 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token';
+    private const AUTH_URL = 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token';
+
     private const STATS_URL = 'https://sh.dataspace.copernicus.eu/api/v1/statistics';
+
     private const TOKEN_KEY = 'copernicus_access_token';
+
     private const TOKEN_TTL = 540; // 9 min — token expires in 10
 
     public function __construct(
@@ -43,29 +46,32 @@ class CopernicusSentinel2Service
     {
         try {
             // Check monthly Copernicus processing unit budget (improvement #12)
-            if (!$this->rateLimitService->canUseCopernicus()) {
+            if (! $this->rateLimitService->canUseCopernicus()) {
                 Log::warning('Sentinel-2: monthly processing unit limit reached', ['plot_id' => $plot->id]);
+
                 return $this->repository->getLatestForPlot($plot, $plotSigpacId);
             }
 
-            $token    = $this->authenticate();
+            $token = $this->authenticate();
             $geometry = $this->getPlotGeometry($plot, $plotSigpacId);
-            $areaHa   = (float) ($plot->area ?? 0.5);
+            $areaHa = (float) ($plot->area ?? 0.5);
 
-            $to   = Carbon::now();
+            $to = Carbon::now();
             $from = $to->copy()->subDays(60);
 
             $rawData = $this->fetchStatistics($token, $geometry, $from, $to);
 
-            if (!$rawData) {
+            if (! $rawData) {
                 Log::warning('Sentinel-2: no data returned from Statistical API', ['plot_id' => $plot->id, 'plot_sigpac_id' => $plotSigpacId]);
+
                 return $this->repository->getLatestForPlot($plot, $plotSigpacId);
             }
 
             $best = $this->findBestInterval($rawData['data'] ?? [], $areaHa);
 
-            if (!$best) {
+            if (! $best) {
                 Log::warning('Sentinel-2: no valid (cloud-free) interval found in last 60 days', ['plot_id' => $plot->id, 'plot_sigpac_id' => $plotSigpacId]);
+
                 return $this->repository->getLatestForPlot($plot, $plotSigpacId);
             }
 
@@ -77,18 +83,18 @@ class CopernicusSentinel2Service
             // Use the end of the interval as the image date
             // $best['interval'] is the full API interval object (has ['interval']['to'])
             $imageDate = Carbon::parse($best['interval']['interval']['to'])->subDay();
-            $data      = $this->mapToStorageData($best['interval'], $imageDate, $plot, $plotSigpacId, $best['validCount'], $best['sampleCount']);
+            $data = $this->mapToStorageData($best['interval'], $imageDate, $plot, $plotSigpacId, $best['validCount'], $best['sampleCount']);
 
             $result = $this->repository->createOrUpdate($plot, $imageDate, $data, $plotSigpacId);
 
             Log::info('Sentinel-2 data stored', [
-                'plot_id'           => $plot->id,
-                'plot_sigpac_id'    => $plotSigpacId,
-                'image_date'        => $imageDate->toDateString(),
-                'ndvi'              => $data['ndvi_mean'],
-                'gndvi'             => $data['gndvi'],
-                'cloud_pct'         => $data['cloud_coverage'],
-                'validCount'        => $best['validCount'],
+                'plot_id' => $plot->id,
+                'plot_sigpac_id' => $plotSigpacId,
+                'image_date' => $imageDate->toDateString(),
+                'ndvi' => $data['ndvi_mean'],
+                'gndvi' => $data['gndvi'],
+                'cloud_pct' => $data['cloud_coverage'],
+                'validCount' => $best['validCount'],
                 'valid_pixel_ratio' => $data['metadata']['valid_pixel_ratio'] ?? null,
             ]);
 
@@ -97,7 +103,7 @@ class CopernicusSentinel2Service
         } catch (\Exception $e) {
             Log::error('CopernicusSentinel2Service::fetchAndStore failed', [
                 'plot_id' => $plot->id,
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
 
             return null;
@@ -118,21 +124,21 @@ class CopernicusSentinel2Service
             $response = Http::asForm()
                 ->timeout(20)
                 ->post(self::AUTH_URL, [
-                    'client_id'  => 'cdse-public',
-                    'username'   => config('services.copernicus.username'),
-                    'password'   => config('services.copernicus.password'),
+                    'client_id' => 'cdse-public',
+                    'username' => config('services.copernicus.username'),
+                    'password' => config('services.copernicus.password'),
                     'grant_type' => 'password',
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 throw new \RuntimeException(
-                    "Copernicus auth failed [{$response->status()}]: " . substr($response->body(), 0, 300)
+                    "Copernicus auth failed [{$response->status()}]: ".substr($response->body(), 0, 300)
                 );
             }
 
             $token = $response->json('access_token');
 
-            if (!$token) {
+            if (! $token) {
                 throw new \RuntimeException(__('Copernicus auth: response missing access_token'));
             }
 
@@ -166,23 +172,23 @@ class CopernicusSentinel2Service
 
             if (count($points) >= 3) {
                 // GeoJSON: [lng, lat] order
-                $coords = array_map(fn($p) => [(float) $p['lng'], (float) $p['lat']], $points);
+                $coords = array_map(fn ($p) => [(float) $p['lng'], (float) $p['lat']], $points);
 
                 return [
-                    'type'        => __('Polygon'),
+                    'type' => __('Polygon'),
                     'coordinates' => [$coords],
                 ];
             }
         }
 
         // Fallback: 200 m × 200 m bounding box around the centroid (~0.001°)
-        $c   = CoordinatesHelper::getCoordinates($plot);
+        $c = CoordinatesHelper::getCoordinates($plot);
         $lat = $c['lat'];
         $lon = $c['lon'];
-        $d   = 0.001;
+        $d = 0.001;
 
         return [
-            'type'        => __('Polygon'),
+            'type' => __('Polygon'),
             'coordinates' => [[
                 [$lon - $d, $lat - $d],
                 [$lon + $d, $lat - $d],
@@ -209,7 +215,7 @@ class CopernicusSentinel2Service
             ->post(self::STATS_URL, [
                 'input' => [
                     'bounds' => [
-                        'geometry'   => $geometry,
+                        'geometry' => $geometry,
                         'properties' => [
                             'crs' => 'http://www.opengis.net/def/crs/EPSG/0/4326',
                         ],
@@ -218,7 +224,7 @@ class CopernicusSentinel2Service
                         'dataFilter' => [
                             'timeRange' => [
                                 'from' => $from->toIso8601ZuluString(),
-                                'to'   => $to->toIso8601ZuluString(),
+                                'to' => $to->toIso8601ZuluString(),
                             ],
                             'maxCloudCoverage' => 80,
                         ],
@@ -228,33 +234,33 @@ class CopernicusSentinel2Service
                 'aggregation' => [
                     'timeRange' => [
                         'from' => $from->toIso8601ZuluString(),
-                        'to'   => $to->toIso8601ZuluString(),
+                        'to' => $to->toIso8601ZuluString(),
                     ],
                     'aggregationInterval' => ['of' => 'P5D'],
-                    'evalscript'          => $evalscript,
-                    'resx'                => 10,
-                    'resy'                => 10,
+                    'evalscript' => $evalscript,
+                    'resx' => 10,
+                    'resy' => 10,
                 ],
                 'calculations' => [
-                    'ndvi'          => ['statistics' => new \stdClass()],
-                    'gndvi'         => ['statistics' => new \stdClass()],
-                    'ndwi'          => ['statistics' => new \stdClass()],
-                    'ndre'          => ['statistics' => new \stdClass()],
-                    'red'           => ['statistics' => new \stdClass()],
-                    'nir'           => ['statistics' => new \stdClass()],
-                    'green'         => ['statistics' => new \stdClass()],
-                    'zone_critical' => ['statistics' => new \stdClass()],
-                    'zone_low'      => ['statistics' => new \stdClass()],
-                    'zone_moderate' => ['statistics' => new \stdClass()],
-                    'zone_good'     => ['statistics' => new \stdClass()],
-                    'zone_excellent'=> ['statistics' => new \stdClass()],
+                    'ndvi' => ['statistics' => new \stdClass],
+                    'gndvi' => ['statistics' => new \stdClass],
+                    'ndwi' => ['statistics' => new \stdClass],
+                    'ndre' => ['statistics' => new \stdClass],
+                    'red' => ['statistics' => new \stdClass],
+                    'nir' => ['statistics' => new \stdClass],
+                    'green' => ['statistics' => new \stdClass],
+                    'zone_critical' => ['statistics' => new \stdClass],
+                    'zone_low' => ['statistics' => new \stdClass],
+                    'zone_moderate' => ['statistics' => new \stdClass],
+                    'zone_good' => ['statistics' => new \stdClass],
+                    'zone_excellent' => ['statistics' => new \stdClass],
                 ],
             ]);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             Log::warning('Sentinel-2 Statistical API error', [
                 'status' => $response->status(),
-                'body'   => substr($response->body(), 0, 500),
+                'body' => substr($response->body(), 0, 500),
             ]);
 
             return null;
@@ -263,7 +269,7 @@ class CopernicusSentinel2Service
         $json = $response->json();
 
         Log::info('Sentinel-2 Statistical API response', [
-            'status'         => $response->status(),
+            'status' => $response->status(),
             'interval_count' => count($json['data'] ?? []),
             'first_interval' => isset($json['data'][0]) ? json_encode($json['data'][0]) : null,
         ]);
@@ -341,51 +347,53 @@ function evaluatePixel(sample) {
     private function findBestInterval(array $intervals, ?float $areaHa = null): ?array
     {
         // Base minimum from estimated area at 10m resolution (5% of expected pixel count)
-        $estimatedPixels  = max(1, (int) round(($areaHa ?? 0.5) * 10000)); // ha → m², each pixel = 100m²
-        $minFromArea      = max(5, (int) round($estimatedPixels * 0.05));
+        $estimatedPixels = max(1, (int) round(($areaHa ?? 0.5) * 10000)); // ha → m², each pixel = 100m²
+        $minFromArea = max(5, (int) round($estimatedPixels * 0.05));
 
         // Most recent first
-        usort($intervals, fn($a, $b) => strcmp($b['interval']['to'], $a['interval']['to']));
+        usort($intervals, fn ($a, $b) => strcmp($b['interval']['to'], $a['interval']['to']));
 
         $debugIntervals = [];
 
         foreach ($intervals as $interval) {
             $stats = $interval['outputs']['ndvi']['bands']['B0']['stats'] ?? null;
 
-            if (!$stats) {
+            if (! $stats) {
                 $debugIntervals[] = ['interval' => $interval['interval'], 'reason' => 'no_stats'];
+
                 continue;
             }
 
             $sampleCount = (int) ($stats['sampleCount'] ?? 0);
             $noDataCount = (int) ($stats['noDataCount'] ?? $sampleCount);
-            $validCount  = $sampleCount - $noDataCount;
-            $mean        = $stats['mean'] ?? null;
+            $validCount = $sampleCount - $noDataCount;
+            $mean = $stats['mean'] ?? null;
 
             // Cap minPixels by 50% of actual coverage so tiny parcels (sampleCount=1,2...)
             // are never blocked by an unreachable threshold based on area estimate alone.
             $minFromSample = max(1, (int) floor($sampleCount * 0.5));
-            $minPixels     = min($minFromArea, $minFromSample);
+            $minPixels = min($minFromArea, $minFromSample);
 
             $debugIntervals[] = [
-                'interval'    => $interval['interval'],
+                'interval' => $interval['interval'],
                 'sampleCount' => $sampleCount,
                 'noDataCount' => $noDataCount,
-                'validCount'  => $validCount,
-                'minPixels'   => $minPixels,
-                'mean'        => $mean,
+                'validCount' => $validCount,
+                'minPixels' => $minPixels,
+                'mean' => $mean,
             ];
 
-            if ($validCount >= $minPixels && $mean !== null && !is_nan((float) $mean)) {
+            if ($validCount >= $minPixels && $mean !== null && ! is_nan((float) $mean)) {
                 Log::info('Sentinel-2: best interval selected', [
-                    'interval'   => $interval['interval'],
+                    'interval' => $interval['interval'],
                     'validCount' => $validCount,
-                    'minPixels'  => $minPixels,
-                    'mean'       => $mean,
+                    'minPixels' => $minPixels,
+                    'mean' => $mean,
                 ]);
+
                 return [
-                    'interval'    => $interval,
-                    'validCount'  => $validCount,
+                    'interval' => $interval,
+                    'validCount' => $validCount,
                     'sampleCount' => $sampleCount,
                 ];
             }
@@ -414,20 +422,20 @@ function evaluatePixel(sample) {
     ): array {
         $outputs = $interval['outputs'];
 
-        $ndvi   = $this->stat($outputs, 'ndvi', 'mean');
-        $gndvi  = $this->stat($outputs, 'gndvi', 'mean');
-        $ndwi   = $this->stat($outputs, 'ndwi', 'mean');
-        $ndre   = $this->stat($outputs, 'ndre', 'mean');
+        $ndvi = $this->stat($outputs, 'ndvi', 'mean');
+        $gndvi = $this->stat($outputs, 'gndvi', 'mean');
+        $ndwi = $this->stat($outputs, 'ndwi', 'mean');
+        $ndre = $this->stat($outputs, 'ndre', 'mean');
 
-        $ndviMin   = $this->stat($outputs, 'ndvi', 'min');
-        $ndviMax   = $this->stat($outputs, 'ndvi', 'max');
+        $ndviMin = $this->stat($outputs, 'ndvi', 'min');
+        $ndviMax = $this->stat($outputs, 'ndvi', 'max');
         $ndviStdev = $this->stat($outputs, 'ndvi', 'stDev');
 
         // Cloud coverage estimate: fraction of masked pixels
-        $ndviStats    = $outputs['ndvi']['bands']['B0']['stats'] ?? [];
-        $totalPixels  = max(1, (int) ($ndviStats['sampleCount'] ?? 1));
-        $noDataCount  = (int) ($ndviStats['noDataCount'] ?? 0);
-        $cloudPct     = (int) round(($noDataCount / $totalPixels) * 100);
+        $ndviStats = $outputs['ndvi']['bands']['B0']['stats'] ?? [];
+        $totalPixels = max(1, (int) ($ndviStats['sampleCount'] ?? 1));
+        $noDataCount = (int) ($ndviStats['noDataCount'] ?? 0);
+        $cloudPct = (int) round(($noDataCount / $totalPixels) * 100);
 
         $ndviFloat = is_numeric($ndvi) ? max(-1.0, min(1.0, (float) $ndvi)) : 0.0;
 
@@ -438,49 +446,49 @@ function evaluatePixel(sample) {
 
         // Improvement #5: vigor zone percentages from per-pixel zone outputs
         // zone_* outputs return 1/0 per pixel; mean = fraction of valid pixels in that zone
-        $zoneCritical  = $this->stat($outputs, 'zone_critical', 'mean');
-        $zoneLow       = $this->stat($outputs, 'zone_low', 'mean');
-        $zoneModerate  = $this->stat($outputs, 'zone_moderate', 'mean');
-        $zoneGood      = $this->stat($outputs, 'zone_good', 'mean');
+        $zoneCritical = $this->stat($outputs, 'zone_critical', 'mean');
+        $zoneLow = $this->stat($outputs, 'zone_low', 'mean');
+        $zoneModerate = $this->stat($outputs, 'zone_moderate', 'mean');
+        $zoneGood = $this->stat($outputs, 'zone_good', 'mean');
         $zoneExcellent = $this->stat($outputs, 'zone_excellent', 'mean');
 
         $ndviStdevFloat = is_numeric($ndviStdev) ? (float) $ndviStdev : 0.0;
         $cv = $ndviStdevFloat / max(0.001, abs($ndviFloat)); // coefficient of variation
 
         return [
-            'ndvi_mean'      => round($ndviFloat, 3),
-            'ndvi_min'       => is_numeric($ndviMin) ? round((float) $ndviMin, 3) : null,
-            'ndvi_max'       => is_numeric($ndviMax) ? round((float) $ndviMax, 3) : null,
-            'ndvi_stddev'    => is_numeric($ndviStdev) ? round((float) $ndviStdev, 4) : null,
-            'ndwi_mean'      => is_numeric($ndwi) ? round((float) $ndwi, 3) : null,
-            'gndvi'          => is_numeric($gndvi) ? round((float) $gndvi, 3) : null,
-            'ndre'           => is_numeric($ndre) ? round((float) $ndre, 3) : null,
+            'ndvi_mean' => round($ndviFloat, 3),
+            'ndvi_min' => is_numeric($ndviMin) ? round((float) $ndviMin, 3) : null,
+            'ndvi_max' => is_numeric($ndviMax) ? round((float) $ndviMax, 3) : null,
+            'ndvi_stddev' => is_numeric($ndviStdev) ? round((float) $ndviStdev, 4) : null,
+            'ndwi_mean' => is_numeric($ndwi) ? round((float) $ndwi, 3) : null,
+            'gndvi' => is_numeric($gndvi) ? round((float) $gndvi, 3) : null,
+            'ndre' => is_numeric($ndre) ? round((float) $ndre, 3) : null,
             'cloud_coverage' => $cloudPct,
-            'image_source'   => __('Copernicus Sentinel-2 L2A'),
-            'satellite'      => __('SENTINEL-2'),
-            'data_source'    => 'copernicus',
-            'health_status'  => $this->healthStatus($ndviFloat),
-            'trend'          => $this->trend($plot, $ndviFloat, $imageDate, $plotSigpacId),
+            'image_source' => __('Copernicus Sentinel-2 L2A'),
+            'satellite' => __('SENTINEL-2'),
+            'data_source' => 'copernicus',
+            'health_status' => $this->healthStatus($ndviFloat),
+            'trend' => $this->trend($plot, $ndviFloat, $imageDate, $plotSigpacId),
             // Improvement #4: raw band reflectances
-            'red_band'       => is_numeric($r = $this->stat($outputs, 'red', 'mean')) ? round((float) $r, 4) : null,
-            'nir_band'       => is_numeric($n = $this->stat($outputs, 'nir', 'mean')) ? round((float) $n, 4) : null,
-            'green_band'     => is_numeric($g = $this->stat($outputs, 'green', 'mean')) ? round((float) $g, 4) : null,
+            'red_band' => is_numeric($r = $this->stat($outputs, 'red', 'mean')) ? round((float) $r, 4) : null,
+            'nir_band' => is_numeric($n = $this->stat($outputs, 'nir', 'mean')) ? round((float) $n, 4) : null,
+            'green_band' => is_numeric($g = $this->stat($outputs, 'green', 'mean')) ? round((float) $g, 4) : null,
             // Improvement #3: metadata with coverage quality info
             'metadata' => [
-                'valid_pixel_count'  => $validCount,
-                'total_pixel_count'  => $sampleCount,
-                'valid_pixel_ratio'  => $validPixelRatio,
-                'interval_from'      => $interval['interval']['from'],
-                'interval_to'        => $interval['interval']['to'],
+                'valid_pixel_count' => $validCount,
+                'total_pixel_count' => $sampleCount,
+                'valid_pixel_ratio' => $validPixelRatio,
+                'interval_from' => $interval['interval']['from'],
+                'interval_to' => $interval['interval']['to'],
             ],
             // Improvement #5: vigor zone distribution
             'area_statistics' => [
-                'zone_critical_pct'  => is_numeric($zoneCritical)  ? round((float) $zoneCritical * 100, 1)  : null,
-                'zone_low_pct'       => is_numeric($zoneLow)       ? round((float) $zoneLow * 100, 1)       : null,
-                'zone_moderate_pct'  => is_numeric($zoneModerate)  ? round((float) $zoneModerate * 100, 1)  : null,
-                'zone_good_pct'      => is_numeric($zoneGood)      ? round((float) $zoneGood * 100, 1)      : null,
+                'zone_critical_pct' => is_numeric($zoneCritical) ? round((float) $zoneCritical * 100, 1) : null,
+                'zone_low_pct' => is_numeric($zoneLow) ? round((float) $zoneLow * 100, 1) : null,
+                'zone_moderate_pct' => is_numeric($zoneModerate) ? round((float) $zoneModerate * 100, 1) : null,
+                'zone_good_pct' => is_numeric($zoneGood) ? round((float) $zoneGood * 100, 1) : null,
                 'zone_excellent_pct' => is_numeric($zoneExcellent) ? round((float) $zoneExcellent * 100, 1) : null,
-                'cv'                 => round($cv, 4),
+                'cv' => round($cv, 4),
             ],
         ];
     }
@@ -500,11 +508,11 @@ function evaluatePixel(sample) {
     private function healthStatus(float $ndvi): string
     {
         return match (true) {
-            $ndvi >= 0.7  => 'excellent',
-            $ndvi >= 0.5  => 'good',
-            $ndvi >= 0.3  => 'moderate',
+            $ndvi >= 0.7 => 'excellent',
+            $ndvi >= 0.5 => 'good',
+            $ndvi >= 0.3 => 'moderate',
             $ndvi >= 0.15 => 'poor',
-            default       => 'critical',
+            default => 'critical',
         };
     }
 
@@ -512,16 +520,16 @@ function evaluatePixel(sample) {
     {
         $previous = $this->repository->getPreviousData($plot, $currentDate, $plotSigpacId);
 
-        if (!$previous) {
+        if (! $previous) {
             return 'stable';
         }
 
         $diff = $currentNdvi - $previous->ndvi_mean;
 
         return match (true) {
-            $diff > 0.05  => 'increasing',
+            $diff > 0.05 => 'increasing',
             $diff < -0.05 => 'decreasing',
-            default       => 'stable',
+            default => 'stable',
         };
     }
 }

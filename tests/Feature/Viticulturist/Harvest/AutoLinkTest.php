@@ -19,8 +19,8 @@ use Tests\Traits\CreatesDeliveryScenario;
  */
 class AutoLinkTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesDeliveryScenario;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -36,7 +36,7 @@ class AutoLinkTest extends TestCase
 
         $this->actingAs($this->winery);
         $this->makeWineryReception([
-            'total_weight'          => 1000,
+            'total_weight' => 1000,
             'harvest_ticket_number' => 'TICKET-001',
         ]);
 
@@ -103,7 +103,7 @@ class AutoLinkTest extends TestCase
 
         // No delivery created → observer should not crash and reception is active
         $this->assertDatabaseHas('harvests', [
-            'id'     => $reception->id,
+            'id' => $reception->id,
             'status' => 'active',
         ]);
     }
@@ -154,10 +154,10 @@ class AutoLinkTest extends TestCase
         $reception = $this->makeWineryReception(['total_weight' => 800]);
 
         $delivery->update([
-            'harvest_id'              => $reception->id,
-            'status'                  => 'resolved',
+            'harvest_id' => $reception->id,
+            'status' => 'resolved',
             'dispute_resolution_note' => 'Acordado entre partes',
-            'dispute_resolved_at'     => now(),
+            'dispute_resolved_at' => now(),
         ]);
 
         // Winery updates weight — observer must not touch resolved deliveries

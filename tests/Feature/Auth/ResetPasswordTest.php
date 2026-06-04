@@ -36,7 +36,7 @@ class ResetPasswordTest extends TestCase
 
     public function test_valid_token_and_email_marks_token_valid(): void
     {
-        $user  = User::factory()->create(['email' => 'juan@example.com']);
+        $user = User::factory()->create(['email' => 'juan@example.com']);
         $token = Password::createToken($user);
 
         Livewire::test(ResetPassword::class, [
@@ -68,7 +68,7 @@ class ResetPasswordTest extends TestCase
 
     public function test_can_reset_password_with_valid_token(): void
     {
-        $user  = User::factory()->create(['email' => 'juan@example.com']);
+        $user = User::factory()->create(['email' => 'juan@example.com']);
         $token = Password::createToken($user);
 
         Livewire::test(ResetPassword::class, [
@@ -85,7 +85,7 @@ class ResetPasswordTest extends TestCase
 
     public function test_redirects_to_login_after_reset(): void
     {
-        $user  = User::factory()->create(['email' => 'juan@example.com']);
+        $user = User::factory()->create(['email' => 'juan@example.com']);
         $token = Password::createToken($user);
 
         Livewire::test(ResetPassword::class, [
@@ -112,7 +112,7 @@ class ResetPasswordTest extends TestCase
 
     public function test_requires_password(): void
     {
-        $user  = User::factory()->create(['email' => 'juan@example.com']);
+        $user = User::factory()->create(['email' => 'juan@example.com']);
         $token = Password::createToken($user);
 
         Livewire::test(ResetPassword::class, [
@@ -127,7 +127,7 @@ class ResetPasswordTest extends TestCase
 
     public function test_rejects_password_mismatch(): void
     {
-        $user  = User::factory()->create(['email' => 'juan@example.com']);
+        $user = User::factory()->create(['email' => 'juan@example.com']);
         $token = Password::createToken($user);
 
         Livewire::test(ResetPassword::class, [

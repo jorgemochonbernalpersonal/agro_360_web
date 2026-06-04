@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Admin\Notifications;
 
+use App\Livewire\Concerns\WithReadOnlyGuard;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Mail\AdminBroadcastMail;
 use App\Models\NotificationLog;
 use App\Models\User;
-use App\Livewire\Concerns\WithToastNotifications;
-use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -14,13 +14,17 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithToastNotifications, WithReadOnlyGuard;
+    use WithReadOnlyGuard, WithToastNotifications;
 
-    public $subject          = '';
-    public $message          = '';
-    public $audienceRole     = 'all';
+    public $subject = '';
+
+    public $message = '';
+
+    public $audienceRole = 'all';
+
     public $audienceVerified = '1';
-    public $audienceActive   = '1';
+
+    public $audienceActive = '1';
 
     // Preview modal
     public bool $showPreviewModal = false;
@@ -60,9 +64,9 @@ class Index extends Component
             'message' => 'required|string|min:10',
         ], [
             'subject.required' => __('El asunto es obligatorio.'),
-            'subject.min'      => __('El asunto debe tener al menos 3 caracteres.'),
+            'subject.min' => __('El asunto debe tener al menos 3 caracteres.'),
             'message.required' => __('El mensaje es obligatorio.'),
-            'message.min'      => __('El mensaje debe tener al menos 10 caracteres.'),
+            'message.min' => __('El mensaje debe tener al menos 10 caracteres.'),
         ]);
 
         $this->showPreviewModal = true;
@@ -75,16 +79,18 @@ class Index extends Component
 
     public function send()
     {
-        if ($this->isReadOnly()) return;
+        if ($this->isReadOnly()) {
+            return;
+        }
 
         $this->validate([
             'subject' => 'required|string|min:3|max:200',
             'message' => 'required|string|min:10',
         ], [
             'subject.required' => __('El asunto es obligatorio.'),
-            'subject.min'      => __('El asunto debe tener al menos 3 caracteres.'),
+            'subject.min' => __('El asunto debe tener al menos 3 caracteres.'),
             'message.required' => __('El mensaje es obligatorio.'),
-            'message.min'      => __('El mensaje debe tener al menos 10 caracteres.'),
+            'message.min' => __('El mensaje debe tener al menos 10 caracteres.'),
         ]);
 
         $users = $this->recipients->get(['id', 'name', 'email']);
@@ -92,6 +98,7 @@ class Index extends Component
 
         if ($count === 0) {
             $this->toastError(__('No hay destinatarios con los filtros seleccionados.'));
+
             return;
         }
 
@@ -103,20 +110,20 @@ class Index extends Component
         }
 
         NotificationLog::create([
-            'admin_id'          => Auth::id(),
-            'subject'           => $subject,
-            'message'           => $message,
-            'audience_role'     => $this->audienceRole,
+            'admin_id' => Auth::id(),
+            'subject' => $subject,
+            'message' => $message,
+            'audience_role' => $this->audienceRole,
             'audience_verified' => $this->audienceVerified !== '' ? (bool) $this->audienceVerified : null,
-            'audience_active'   => $this->audienceActive !== '' ? (bool) $this->audienceActive : null,
-            'recipient_count'   => $count,
+            'audience_active' => $this->audienceActive !== '' ? (bool) $this->audienceActive : null,
+            'recipient_count' => $count,
         ]);
 
         SecurityLogger::logSecurityEvent('admin_broadcast_sent', [
-            'admin_id'        => Auth::id(),
+            'admin_id' => Auth::id(),
             'recipient_count' => $count,
-            'audience_role'   => $this->audienceRole,
-            'subject'         => $subject,
+            'audience_role' => $this->audienceRole,
+            'subject' => $subject,
         ]);
 
         $this->showPreviewModal = false;
@@ -127,17 +134,17 @@ class Index extends Component
     public function render()
     {
         $previewUsers = $this->recipients->limit(5)->get(['name', 'email']);
-        $history      = NotificationLog::with('admin:id,name')
+        $history = NotificationLog::with('admin:id,name')
             ->latest()
             ->limit(10)
             ->get();
 
         return view('livewire.admin.notifications.index', [
             'recipientCount' => $this->recipientCount,
-            'previewUsers'   => $previewUsers,
-            'history'        => $history,
+            'previewUsers' => $previewUsers,
+            'history' => $history,
         ])->layout('layouts.app', [
-            'title'       => __('Notificaciones - Admin - Agro365'),
+            'title' => __('Notificaciones - Admin - Agro365'),
             'description' => __('Envía comunicaciones a los usuarios del sistema'),
         ]);
     }

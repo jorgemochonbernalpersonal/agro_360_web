@@ -9,23 +9,23 @@ use Illuminate\Support\Facades\Log;
 
 class PurgeAbandonedGhosts extends Command
 {
+    /**
+     * Tablas con FK a users sin CASCADE que podrían causar orphans o FK errors.
+     */
+    private const BLOCKING_TABLES = [
+        'agricultural_activities' => 'viticulturist_id',
+        'campaigns' => 'viticulturist_id',
+    ];
+
     protected $signature = 'viticulturists:purge-abandoned-ghosts
                             {--dry-run : List abandoned ghosts without deleting}
                             {--days=90 : Days since creation to consider abandoned}';
 
     protected $description = 'Elimina viticultores ghost que nunca fueron invitados ni activados tras un periodo de inactividad';
 
-    /**
-     * Tablas con FK a users sin CASCADE que podrían causar orphans o FK errors.
-     */
-    private const BLOCKING_TABLES = [
-        'agricultural_activities' => 'viticulturist_id',
-        'campaigns'              => 'viticulturist_id',
-    ];
-
     public function handle(): int
     {
-        $days   = (int) $this->option('days');
+        $days = (int) $this->option('days');
         $dryRun = $this->option('dry-run');
         $cutoff = now()->subDays($days);
 
@@ -40,11 +40,12 @@ class PurgeAbandonedGhosts extends Command
 
         if ($abandoned->isEmpty()) {
             $this->info('No hay viticultores ghost abandonados.');
+
             return self::SUCCESS;
         }
 
         // Separar ghosts seguros de los que tienen datos asociados
-        $ids       = $abandoned->pluck('id');
+        $ids = $abandoned->pluck('id');
         $blockedIds = collect();
 
         foreach (self::BLOCKING_TABLES as $table => $column) {
@@ -53,7 +54,7 @@ class PurgeAbandonedGhosts extends Command
         }
 
         $blockedIds = $blockedIds->unique();
-        $safeIds    = $ids->diff($blockedIds);
+        $safeIds = $ids->diff($blockedIds);
         $safeGhosts = $abandoned->whereIn('id', $safeIds);
         $blockedGhosts = $abandoned->whereIn('id', $blockedIds);
 
@@ -89,24 +90,27 @@ class PurgeAbandonedGhosts extends Command
 
         if ($safeGhosts->isEmpty()) {
             $this->warn('Todos los ghosts tienen datos asociados. No se puede eliminar ninguno automáticamente.');
+
             return self::SUCCESS;
         }
 
         if ($dryRun) {
             $this->warn("Modo dry-run: {$safeGhosts->count()} eliminable(s), {$blockedGhosts->count()} con datos. Sin cambios.");
+
             return self::SUCCESS;
         }
 
-        if (!$this->confirm("¿Eliminar {$safeGhosts->count()} viticultor(es) ghost sin datos? (Se eliminan también sus relaciones winery_viticulturist via CASCADE)")) {
+        if (! $this->confirm("¿Eliminar {$safeGhosts->count()} viticultor(es) ghost sin datos? (Se eliminan también sus relaciones winery_viticulturist via CASCADE)")) {
             $this->info('Operación cancelada.');
+
             return self::SUCCESS;
         }
 
         User::whereIn('id', $safeIds)->delete();
 
         Log::info('PurgeAbandonedGhosts: usuarios eliminados', [
-            'count'      => $safeGhosts->count(),
-            'user_ids'   => $safeIds->values()->toArray(),
+            'count' => $safeGhosts->count(),
+            'user_ids' => $safeIds->values()->toArray(),
             'blocked_ids' => $blockedIds->values()->toArray(),
         ]);
 

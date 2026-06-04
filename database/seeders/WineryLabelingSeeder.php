@@ -33,48 +33,49 @@ class WineryLabelingSeeder extends Seeder
 
         if (empty($bottlings) || empty($labelBatches)) {
             $this->command->warn('Faltan embotellamientos o lotes de etiquetas.');
+
             return;
         }
 
         $rows = [];
 
         foreach ($bottlings as $bottling) {
-            if (!isset($labelBatches[$bottling->wine_id])) {
+            if (! isset($labelBatches[$bottling->wine_id])) {
                 continue;
             }
 
-            $batch    = $labelBatches[$bottling->wine_id];
-            $qty      = min($bottling->quantity_bottles, $batch->total_quantity - $batch->used_quantity);
+            $batch = $labelBatches[$bottling->wine_id];
+            $qty = min($bottling->quantity_bottles, $batch->total_quantity - $batch->used_quantity);
 
             if ($qty <= 0) {
                 continue;
             }
 
             $fromNum = $batch->start_number + $batch->used_quantity;
-            $toNum   = $fromNum + $qty - 1;
+            $toNum = $fromNum + $qty - 1;
             $daysAfterBottling = mt_rand(3, 14);
 
             $rows[] = [
-                'user_id'             => self::WINERY_USER_ID,
-                'wine_id'             => $bottling->wine_id,
-                'wine_bottling_id'    => $bottling->id,
-                'label_batch_id'      => $batch->id,
-                'labeling_date'       => now()->parse($bottling->bottling_date)->addDays($daysAfterBottling)->format('Y-m-d'),
-                'quantity_labeled'    => $qty,
-                'from_number'         => $fromNum,
-                'to_number'           => $toNum,
-                'notes'               => 'Etiquetado con máquina semiautomática KRONES. Control visual al 100%.',
-                'created_by'          => self::WINERY_USER_ID,
-                'created_at'          => $now,
-                'updated_at'          => $now,
+                'user_id' => self::WINERY_USER_ID,
+                'wine_id' => $bottling->wine_id,
+                'wine_bottling_id' => $bottling->id,
+                'label_batch_id' => $batch->id,
+                'labeling_date' => now()->parse($bottling->bottling_date)->addDays($daysAfterBottling)->format('Y-m-d'),
+                'quantity_labeled' => $qty,
+                'from_number' => $fromNum,
+                'to_number' => $toNum,
+                'notes' => 'Etiquetado con máquina semiautomática KRONES. Control visual al 100%.',
+                'created_by' => self::WINERY_USER_ID,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
-        if (!empty($rows)) {
+        if (! empty($rows)) {
             DB::table('wine_labelings')->insert($rows);
         }
 
-        $this->command->info('✅ Etiquetados: ' . count($rows) . ' registros');
+        $this->command->info('✅ Etiquetados: '.count($rows).' registros');
     }
 
     private function cleanup(): void

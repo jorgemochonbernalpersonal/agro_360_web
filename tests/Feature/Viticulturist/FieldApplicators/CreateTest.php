@@ -24,9 +24,9 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('field_applicators', [
             'viticulturist_id' => $viticulturist->id,
-            'name'             => 'Pedro Aplicador',
-            'ropo_number'      => 'ROPO-2024-001',
-            'ropo_category'    => 'qualified',
+            'name' => 'Pedro Aplicador',
+            'ropo_number' => 'ROPO-2024-001',
+            'ropo_category' => 'qualified',
         ]);
     }
 
@@ -116,8 +116,8 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('field_applicators', [
             'viticulturist_id' => $viticulturist->id,
-            'is_advisor'       => true,
-            'advisor_license'  => 'LIC-ASESOR-001',
+            'is_advisor' => true,
+            'advisor_license' => 'LIC-ASESOR-001',
         ]);
     }
 }

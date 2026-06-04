@@ -10,20 +10,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeEnergyUsage(int $viticulturistId, int $campaignId, bool $active = true, string $description = 'Uso test'): EnergyUsage
-    {
-        return EnergyUsage::create([
-            'viticulturist_id' => $viticulturistId,
-            'campaign_id'      => $campaignId,
-            'date'             => '2024-06-15',
-            'energy_type'      => 'diesel',
-            'unit'             => 'liters',
-            'quantity'         => 100,
-            'usage_description'=> $description,
-            'active'           => $active,
-        ]);
-    }
-
     public function test_index_shows_active_usages(): void
     {
         $viticulturist = $this->makeViticulturist();
@@ -40,8 +26,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_archive_sets_active_to_false(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = Campaign::getOrCreateActiveForYear($viticulturist->id);
-        $usage         = $this->makeEnergyUsage($viticulturist->id, $campaign->id);
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturist->id);
+        $usage = $this->makeEnergyUsage($viticulturist->id, $campaign->id);
 
         $this->actingAs($viticulturist);
 
@@ -49,7 +35,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('archive', $usage->id);
 
         $this->assertDatabaseHas('energy_usages', [
-            'id'     => $usage->id,
+            'id' => $usage->id,
             'active' => false,
         ]);
     }
@@ -57,8 +43,8 @@ class IndexTest extends ViticulturistTestCase
     public function test_unarchive_restores_record(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = Campaign::getOrCreateActiveForYear($viticulturist->id);
-        $usage         = $this->makeEnergyUsage($viticulturist->id, $campaign->id, false);
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturist->id);
+        $usage = $this->makeEnergyUsage($viticulturist->id, $campaign->id, false);
 
         $this->actingAs($viticulturist);
 
@@ -67,7 +53,7 @@ class IndexTest extends ViticulturistTestCase
             ->call('unarchive', $usage->id);
 
         $this->assertDatabaseHas('energy_usages', [
-            'id'     => $usage->id,
+            'id' => $usage->id,
             'active' => true,
         ]);
     }
@@ -75,7 +61,7 @@ class IndexTest extends ViticulturistTestCase
     public function test_archived_tab_shows_inactive(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign      = Campaign::getOrCreateActiveForYear($viticulturist->id);
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturist->id);
         $this->makeEnergyUsage($viticulturist->id, $campaign->id, false, 'Consumo-Archivado-001');
 
         $this->actingAs($viticulturist);
@@ -88,9 +74,9 @@ class IndexTest extends ViticulturistTestCase
     public function test_cannot_archive_other_viticulturists_usage(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $campaign      = Campaign::getOrCreateActiveForYear($viticulturist->id);
-        $usage         = $this->makeEnergyUsage($viticulturist->id, $campaign->id);
+        $other = $this->makeOtherViticulturist();
+        $campaign = Campaign::getOrCreateActiveForYear($viticulturist->id);
+        $usage = $this->makeEnergyUsage($viticulturist->id, $campaign->id);
 
         $this->actingAs($other);
 
@@ -98,5 +84,19 @@ class IndexTest extends ViticulturistTestCase
 
         Livewire::test(Index::class)
             ->call('archive', $usage->id);
+    }
+
+    private function makeEnergyUsage(int $viticulturistId, int $campaignId, bool $active = true, string $description = 'Uso test'): EnergyUsage
+    {
+        return EnergyUsage::create([
+            'viticulturist_id' => $viticulturistId,
+            'campaign_id' => $campaignId,
+            'date' => '2024-06-15',
+            'energy_type' => 'diesel',
+            'unit' => 'liters',
+            'quantity' => 100,
+            'usage_description' => $description,
+            'active' => $active,
+        ]);
     }
 }

@@ -15,15 +15,16 @@ class ImpersonationTimeout
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (!session()->has('impersonating')) {
+        if (! session()->has('impersonating')) {
             return $next($request);
         }
 
         $startedAt = session()->get('impersonation_started_at');
 
         // If no timestamp (legacy sessions), set it now
-        if (!$startedAt) {
+        if (! $startedAt) {
             session()->put('impersonation_started_at', now()->timestamp);
+
             return $next($request);
         }
 
@@ -34,9 +35,9 @@ class ImpersonationTimeout
             $targetUserId = Auth::id();
 
             SecurityLogger::logSecurityEvent('impersonation_timeout', [
-                'admin_id'       => $adminId,
+                'admin_id' => $adminId,
                 'target_user_id' => $targetUserId,
-                'duration_min'   => round($elapsed / 60),
+                'duration_min' => round($elapsed / 60),
             ]);
 
             // Restore admin session

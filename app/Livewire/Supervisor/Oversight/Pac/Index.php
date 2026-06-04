@@ -15,20 +15,28 @@ class Index extends Component
 {
     use WithPagination;
 
-    public string $filterVit    = '';
+    public string $filterVit = '';
+
     public string $filterStatus = ''; // 'ok', 'missing_pac', 'locked'
 
     protected $queryString = [
-        'filterVit'    => ['except' => ''],
+        'filterVit' => ['except' => ''],
         'filterStatus' => ['except' => ''],
     ];
 
-    public function updatingFilterVit(): void    { $this->resetPage(); }
-    public function updatingFilterStatus(): void { $this->resetPage(); }
+    public function updatingFilterVit(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->filterVit    = '';
+        $this->filterVit = '';
         $this->filterStatus = '';
         $this->resetPage();
     }
@@ -96,10 +104,10 @@ class Index extends Component
         $plots = $query->orderBy('plots.name')->paginate(20);
 
         return view('livewire.supervisor.oversight.pac.index', [
-            'stats'          => $stats,
-            'pacByVit'       => $pacByVit,
+            'stats' => $stats,
+            'pacByVit' => $pacByVit,
             'viticulturists' => $viticulturists,
-            'plots'          => $plots,
+            'plots' => $plots,
         ]);
     }
 }

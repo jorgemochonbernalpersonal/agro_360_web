@@ -20,13 +20,13 @@ return new class extends Migration
             $table->unsignedBigInteger('supervisor_id')->nullable();
             $table->unsignedBigInteger('parent_viticulturist_id')->nullable();
             $table->timestamps();
-            
+
             $table->foreign('winery_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('viticulturist_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('assigned_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('supervisor_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('parent_viticulturist_id')->references('id')->on('users')->onDelete('set null');
-            
+
             $table->index('winery_id');
             $table->index('viticulturist_id');
             $table->index('source');
@@ -41,4 +41,3 @@ return new class extends Migration
         Schema::dropIfExists('winery_viticulturist');
     }
 };
-

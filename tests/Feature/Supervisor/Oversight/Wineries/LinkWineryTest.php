@@ -15,7 +15,7 @@ class LinkWineryTest extends SupervisorTestCase
     public function test_supervisor_can_link_a_winery(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
@@ -25,18 +25,18 @@ class LinkWineryTest extends SupervisorTestCase
 
         $this->assertDatabaseHas('supervisor_winery', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $supervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $supervisor->id,
         ]);
     }
 
     public function test_supervisor_can_link_a_producer(): void
     {
         $supervisor = $this->makeSupervisor();
-        $producer   = User::factory()->create([
-            'role'              => User::ROLE_PRODUCER,
+        $producer = User::factory()->create([
+            'role' => User::ROLE_PRODUCER,
             'email_verified_at' => now(),
-            'can_login'         => true,
+            'can_login' => true,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -47,7 +47,7 @@ class LinkWineryTest extends SupervisorTestCase
 
         $this->assertDatabaseHas('supervisor_winery', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $producer->id,
+            'winery_id' => $producer->id,
         ]);
     }
 
@@ -89,7 +89,7 @@ class LinkWineryTest extends SupervisorTestCase
     public function test_link_closes_modal_on_success(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
@@ -140,20 +140,20 @@ class LinkWineryTest extends SupervisorTestCase
 
         $this->assertDatabaseMissing('supervisor_winery', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
+            'winery_id' => $winery->id,
         ]);
     }
 
     public function test_supervisor_cannot_unlink_winery_from_another_supervisor(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
-        $winery          = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         SupervisorWinery::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $otherSupervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $otherSupervisor->id,
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);

@@ -2,16 +2,16 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Observation;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\Observation;
 use App\Models\Plot;
 use App\Models\User;
-use App\Models\Campaign;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
 
 class ObservationTest extends TestCase
 {
@@ -157,9 +157,9 @@ class ObservationTest extends TestCase
         ]);
 
         $observation = Observation::create([
-            'activity_id'              => $activity->id,
-            'observation_type'         => 'plaga',
-            'description'              => 'Trips en flores',
+            'activity_id' => $activity->id,
+            'observation_type' => 'plaga',
+            'description' => 'Trips en flores',
             'affected_area_percentage' => 33.5,
         ]);
 
@@ -181,9 +181,9 @@ class ObservationTest extends TestCase
         ]);
 
         $observationTrue = Observation::create([
-            'activity_id'        => $activity->id,
-            'observation_type'   => 'plaga',
-            'description'        => 'Umbral superado',
+            'activity_id' => $activity->id,
+            'observation_type' => 'plaga',
+            'description' => 'Umbral superado',
             'threshold_exceeded' => true,
         ]);
 
@@ -208,10 +208,10 @@ class ObservationTest extends TestCase
         $followUpDate = now()->addDays(7)->format('Y-m-d');
 
         $observation = Observation::create([
-            'activity_id'      => $activity->id,
+            'activity_id' => $activity->id,
             'observation_type' => 'enfermedad',
-            'description'      => 'Mildiu incipiente',
-            'follow_up_date'   => $followUpDate,
+            'description' => 'Mildiu incipiente',
+            'follow_up_date' => $followUpDate,
         ]);
 
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $observation->follow_up_date);
@@ -233,11 +233,11 @@ class ObservationTest extends TestCase
         ]);
 
         $observation = Observation::create([
-            'activity_id'              => $activity->id,
-            'observation_type'         => 'general',
-            'description'              => 'Observación general sin datos IPM',
+            'activity_id' => $activity->id,
+            'observation_type' => 'general',
+            'description' => 'Observación general sin datos IPM',
             'affected_area_percentage' => null,
-            'follow_up_date'           => null,
+            'follow_up_date' => null,
         ]);
 
         $this->assertNull($observation->affected_area_percentage);
@@ -273,4 +273,3 @@ class ObservationTest extends TestCase
         $this->assertNull($observation->photos);
     }
 }
-

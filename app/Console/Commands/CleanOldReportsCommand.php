@@ -56,7 +56,7 @@ class CleanOldReportsCommand extends Command
 
         $this->newLine(2);
         $this->info("✅ Successfully deleted {$deletedCount} old reports.");
-        
+
         if ($failedCount > 0) {
             $this->warn("⚠️  Failed to delete {$failedCount} reports.");
         }

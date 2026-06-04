@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 class TestNasaCredentials extends Command
 {
     protected $signature = 'remote-sensing:test-credentials';
+
     protected $description = 'Test NASA Earthdata credentials and fetch real data';
 
     public function handle(): int
@@ -19,11 +20,11 @@ class TestNasaCredentials extends Command
         // Check configuration
         $mock = config('services.nasa_earthdata.mock');
         $username = config('services.nasa_earthdata.username');
-        
-        $this->info("Configuration:");
-        $this->line("  Mock mode: " . ($mock ? 'ENABLED' : 'DISABLED'));
-        $this->line("  Username: " . ($username ?: 'NOT SET'));
-        $this->line("  Environment: " . config('app.env'));
+
+        $this->info('Configuration:');
+        $this->line('  Mock mode: '.($mock ? 'ENABLED' : 'DISABLED'));
+        $this->line('  Username: '.($username ?: 'NOT SET'));
+        $this->line('  Environment: '.config('app.env'));
         $this->newLine();
 
         if ($mock) {
@@ -34,9 +35,10 @@ class TestNasaCredentials extends Command
 
         // Get first plot
         $plot = Plot::first();
-        
-        if (!$plot) {
+
+        if (! $plot) {
             $this->error('❌ No plots found in database. Create a plot first.');
+
             return self::FAILURE;
         }
 
@@ -46,14 +48,14 @@ class TestNasaCredentials extends Command
         // Test the service
         try {
             $service = app(NasaEarthdataService::class);
-            
+
             $this->info('📡 Fetching NDVI data...');
             $data = $service->getLatestData($plot, true);
 
             if ($data) {
                 $this->info('✅ Data retrieved successfully!');
                 $this->newLine();
-                
+
                 $this->table(
                     ['Field', 'Value'],
                     [
@@ -63,7 +65,7 @@ class TestNasaCredentials extends Command
                         ['Health Status', $data->health_status],
                         ['Image Date', $data->image_date->format('Y-m-d')],
                         ['Image Source', $data->image_source],
-                        ['Cloud Coverage', $data->cloud_coverage . '%'],
+                        ['Cloud Coverage', $data->cloud_coverage.'%'],
                     ]
                 );
 
@@ -77,14 +79,16 @@ class TestNasaCredentials extends Command
             } else {
                 $this->error('❌ No data retrieved. Check logs for errors.');
                 $this->info('Run: tail -f storage/logs/laravel.log | grep NASA');
+
                 return self::FAILURE;
             }
 
         } catch (\Exception $e) {
-            $this->error('❌ Error: ' . $e->getMessage());
+            $this->error('❌ Error: '.$e->getMessage());
             $this->newLine();
             $this->line('Stack trace:');
             $this->line($e->getTraceAsString());
+
             return self::FAILURE;
         }
     }

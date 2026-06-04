@@ -10,14 +10,14 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class ProductLotInsightsExport implements FromArray, WithStyles, WithTitle
 {
     public function __construct(
-        protected array  $pivot,
+        protected array $pivot,
         protected string $metric,
     ) {}
 
     public function array(): array
     {
-        $months  = $this->pivot['months'];
-        $lots    = $this->pivot['lots'];
+        $months = $this->pivot['months'];
+        $lots = $this->pivot['lots'];
         $colTots = $this->pivot['colTotals'];
 
         $monthLabels = array_map(fn ($m) => $this->formatMonth($m), $months);
@@ -56,7 +56,7 @@ class ProductLotInsightsExport implements FromArray, WithStyles, WithTitle
                 'font' => ['bold' => true],
                 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => 'ede9fe']],
             ],
-            'A1:A' . $lastRow => ['font' => ['bold' => true]],
+            'A1:A'.$lastRow => ['font' => ['bold' => true]],
         ];
     }
 
@@ -69,7 +69,8 @@ class ProductLotInsightsExport implements FromArray, WithStyles, WithTitle
     {
         [$year, $month] = explode('-', $ym);
         $names = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-        return ($names[(int) $month] ?? $month) . ' ' . $year;
+
+        return ($names[(int) $month] ?? $month).' '.$year;
     }
 
     private function fmt(float $val): string

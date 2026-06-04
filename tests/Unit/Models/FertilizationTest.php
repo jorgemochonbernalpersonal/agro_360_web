@@ -2,16 +2,16 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Fertilization;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\Fertilization;
 use App\Models\Plot;
 use App\Models\User;
-use App\Models\Campaign;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
 
 class FertilizationTest extends TestCase
 {
@@ -179,10 +179,10 @@ class FertilizationTest extends TestCase
         ]);
 
         $fertilization = Fertilization::create([
-            'activity_id'    => $activity->id,
-            'nitrogen_uf'    => 123.456,
-            'phosphorus_uf'  => 78.9,
-            'potassium_uf'   => 45.0,
+            'activity_id' => $activity->id,
+            'nitrogen_uf' => 123.456,
+            'phosphorus_uf' => 78.9,
+            'potassium_uf' => 45.0,
         ]);
 
         $this->assertEquals('123.456', $fertilization->nitrogen_uf);
@@ -205,10 +205,10 @@ class FertilizationTest extends TestCase
         ]);
 
         $fertilization = Fertilization::create([
-            'activity_id'   => $activity->id,
-            'nitrogen_uf'   => null,
+            'activity_id' => $activity->id,
+            'nitrogen_uf' => null,
             'phosphorus_uf' => null,
-            'potassium_uf'  => null,
+            'potassium_uf' => null,
         ]);
 
         $this->assertNull($fertilization->nitrogen_uf);
@@ -233,10 +233,10 @@ class FertilizationTest extends TestCase
         $burialDate = now()->subDays(3)->format('Y-m-d');
 
         $fertilization = Fertilization::create([
-            'activity_id'  => $activity->id,
+            'activity_id' => $activity->id,
             'fertilizer_type' => 'Fertilizante orgánico',
-            'manure_type'  => 'Estiércol vacuno',
-            'burial_date'  => $burialDate,
+            'manure_type' => 'Estiércol vacuno',
+            'burial_date' => $burialDate,
         ]);
 
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $fertilization->burial_date);
@@ -258,10 +258,10 @@ class FertilizationTest extends TestCase
         ]);
 
         $fertilization = Fertilization::create([
-            'activity_id'               => $activity->id,
-            'fertilizer_type'           => 'Fertilizante orgánico',
-            'manure_type'               => 'Estiércol vacuno',
-            'burial_date'               => now()->subDays(1)->format('Y-m-d'),
+            'activity_id' => $activity->id,
+            'fertilizer_type' => 'Fertilizante orgánico',
+            'manure_type' => 'Estiércol vacuno',
+            'burial_date' => now()->subDays(1)->format('Y-m-d'),
             'emission_reduction_method' => 'Enterrado en menos de 24h',
         ]);
 
@@ -270,4 +270,3 @@ class FertilizationTest extends TestCase
         $this->assertEquals('Enterrado en menos de 24h', $fertilization->emission_reduction_method);
     }
 }
-

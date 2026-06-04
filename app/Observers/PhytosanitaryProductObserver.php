@@ -9,7 +9,7 @@ class PhytosanitaryProductObserver
 {
     public function created(PhytosanitaryProduct $product): void
     {
-        if (!$product->user_id) {
+        if (! $product->user_id) {
             return;
         }
 
@@ -18,7 +18,7 @@ class PhytosanitaryProductObserver
             OnboardingProgress::STEP_ADD_PRODUCTS
         );
 
-        if (!$progress->isCompleted()) {
+        if (! $progress->isCompleted()) {
             $progress->markAsCompleted();
         }
     }

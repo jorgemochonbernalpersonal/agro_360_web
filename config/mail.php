@@ -117,6 +117,6 @@ return [
     ],
 
     'redirect_pattern' => env('MAIL_REDIRECT_PATTERN'),
-    'redirect_to'      => env('MAIL_REDIRECT_TO'),
+    'redirect_to' => env('MAIL_REDIRECT_TO'),
 
 ];

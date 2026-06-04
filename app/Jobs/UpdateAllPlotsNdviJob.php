@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Job que recorre todas las parcelas activas y programa la actualización de NDVI
- * 
+ *
  * Se ejecuta semanalmente via scheduler
  */
 class UpdateAllPlotsNdviJob implements ShouldQueue

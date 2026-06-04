@@ -12,7 +12,7 @@ class LAICalculatorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->calculator = new LAICalculator();
+        $this->calculator = new LAICalculator;
     }
 
     /** @test */
@@ -28,11 +28,11 @@ class LAICalculatorTest extends TestCase
 
         foreach ($testCases as $case) {
             $lai = $this->calculator->calculateFromNDVI($case['ndvi']);
-            
+
             $this->assertIsFloat($lai);
             $this->assertGreaterThanOrEqual(0, $lai);
             $this->assertLessThanOrEqual(5.0, $lai);
-            
+
             // LAI should increase with NDVI
             if (isset($previousLAI)) {
                 $this->assertGreaterThan($previousLAI, $lai);
@@ -54,7 +54,7 @@ class LAICalculatorTest extends TestCase
 
         foreach ($classifications as $lai => $expectedStatus) {
             $result = $this->calculator->classifyLAI($lai);
-            
+
             $this->assertEquals($expectedStatus, $result['status']);
             $this->assertArrayHasKey('label', $result);
             $this->assertArrayHasKey('color', $result);
@@ -76,11 +76,11 @@ class LAICalculatorTest extends TestCase
         $this->assertArrayHasKey('total_yield_kg', $result);
         $this->assertArrayHasKey('total_yield_tons', $result);
         $this->assertArrayHasKey('confidence', $result);
-        
+
         $this->assertEquals($lai, $result['lai']);
         $this->assertGreaterThan(0, $result['yield_per_ha']);
         $this->assertEquals($result['yield_per_ha'] * $areaHa, $result['total_yield_kg']);
-        
+
         // White varieties should have higher yield
         $whiteResult = $this->calculator->estimateYield($lai, $areaHa, 'white');
         $this->assertGreaterThan($result['yield_per_ha'], $whiteResult['yield_per_ha']);
@@ -90,10 +90,10 @@ class LAICalculatorTest extends TestCase
     public function it_provides_management_recommendations()
     {
         $recommendations = $this->calculator->getManagementRecommendations(4.5, 7); // July, high LAI
-        
+
         $this->assertIsArray($recommendations);
         $this->assertNotEmpty($recommendations);
-        
+
         foreach ($recommendations as $rec) {
             $this->assertArrayHasKey('type', $rec);
             $this->assertArrayHasKey('icon', $rec);
@@ -106,17 +106,17 @@ class LAICalculatorTest extends TestCase
     public function it_adjusts_treatment_dose_by_lai()
     {
         $baseDose = 100; // L/ha
-        
+
         // Low LAI = less product needed
         $lowLAI = 1.0;
         $adjustedLow = $this->calculator->adjustTreatmentDose($lowLAI, $baseDose);
         $this->assertLessThan($baseDose, $adjustedLow);
-        
+
         // High LAI = more product needed
         $highLAI = 4.0;
         $adjustedHigh = $this->calculator->adjustTreatmentDose($highLAI, $baseDose);
         $this->assertGreaterThan($baseDose, $adjustedHigh);
-        
+
         // Should respect limits (50-150% of base)
         $this->assertGreaterThanOrEqual($baseDose * 0.5, $adjustedLow);
         $this->assertLessThanOrEqual($baseDose * 1.5, $adjustedHigh);

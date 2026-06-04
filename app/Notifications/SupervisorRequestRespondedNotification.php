@@ -5,8 +5,8 @@ namespace App\Notifications;
 use App\Models\SupervisorRequest;
 use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -33,10 +33,10 @@ class SupervisorRequestRespondedNotification extends Notification implements Sho
 
     public function toMail(object $notifiable): MailMessage
     {
-        $req       = $this->supervisorRequest;
-        $winery    = $req->winery;
+        $req = $this->supervisorRequest;
+        $winery = $req->winery;
         $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
-        $url       = AppLink::url(route('supervisor.requests.index'), 'agro365://home');
+        $url = AppLink::url(route('supervisor.requests.index'), 'agro365://home');
 
         if (app()->environment('production')) {
             $url = str_replace('http://', 'https://', $url);
@@ -46,9 +46,9 @@ class SupervisorRequestRespondedNotification extends Notification implements Sho
             ->subject(__('Respuesta recibida de :winery — :type', ['winery' => $winery->name, 'type' => $typeLabel]))
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
             ->line(__('La bodega **:winery** ha respondido a tu solicitud.', ['winery' => $winery->name]))
-            ->line('**Tipo:** ' . $typeLabel)
-            ->when($req->title, fn ($m) => $m->line('**Asunto:** ' . $req->title))
-            ->when($req->response_notes, fn ($m) => $m->line('**Respuesta:** ' . $req->response_notes))
+            ->line('**Tipo:** '.$typeLabel)
+            ->when($req->title, fn ($m) => $m->line('**Asunto:** '.$req->title))
+            ->when($req->response_notes, fn ($m) => $m->line('**Respuesta:** '.$req->response_notes))
             ->action(__('Ver solicitudes'), $url)
             ->line(__('La solicitud queda en estado "En revisión". Puedes aprobarla o rechazarla desde tu panel.'))
             ->salutation(__('Saludos,\nAgro365'));
@@ -56,20 +56,20 @@ class SupervisorRequestRespondedNotification extends Notification implements Sho
 
     public function toArray(object $notifiable): array
     {
-        $req       = $this->supervisorRequest;
+        $req = $this->supervisorRequest;
         $typeLabel = __(SupervisorRequest::TYPE_LABELS[$req->type] ?? $req->type);
 
         return [
-            'request_id'   => $req->id,
+            'request_id' => $req->id,
             'request_type' => $req->type,
-            'request_title'=> $req->title,
-            'winery_id'    => $req->winery_id,
-            'winery_name'  => $req->winery?->name,
-            'response'     => $req->response_notes,
-            'icon'         => '💬',
-            'message'      => ($req->winery?->name ?? 'Bodega') . ' respondió — ' . $typeLabel,
-            'action_url'   => route('supervisor.requests.index'),
-            'action_text'  => __('Revisar respuesta'),
+            'request_title' => $req->title,
+            'winery_id' => $req->winery_id,
+            'winery_name' => $req->winery?->name,
+            'response' => $req->response_notes,
+            'icon' => '💬',
+            'message' => ($req->winery?->name ?? 'Bodega').' respondió — '.$typeLabel,
+            'action_url' => route('supervisor.requests.index'),
+            'action_text' => __('Revisar respuesta'),
         ];
     }
 }

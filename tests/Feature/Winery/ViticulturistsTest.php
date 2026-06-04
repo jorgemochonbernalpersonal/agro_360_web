@@ -50,7 +50,7 @@ class ViticulturistsTest extends WineryTestCase
         $viticulturist = User::where('name', 'José García')->first();
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $viticulturist->id,
         ]);
     }
@@ -62,10 +62,10 @@ class ViticulturistsTest extends WineryTestCase
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         Livewire::test(Edit::class, ['viticulturist' => $viticulturist])
@@ -74,7 +74,7 @@ class ViticulturistsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('users', [
-            'id'   => $viticulturist->id,
+            'id' => $viticulturist->id,
             'name' => 'Nuevo Nombre',
         ]);
     }
@@ -86,10 +86,10 @@ class ViticulturistsTest extends WineryTestCase
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         $otherWinery = $this->makeOtherWinery();

@@ -26,8 +26,8 @@ class PlotCacheService
             self::CACHE_TTL,
             function () use ($user, $with) {
                 $query = $user->plots()->active();
-                
-                if (!empty($with)) {
+
+                if (! empty($with)) {
                     $query->with($with);
                 }
 
@@ -44,7 +44,7 @@ class PlotCacheService
         return Cache::remember(
             "plot_{$plot->id}_details",
             self::CACHE_TTL,
-            fn() => $plot->load([
+            fn () => $plot->load([
                 'viticulturist',
                 'province',
                 'municipality',
@@ -62,7 +62,7 @@ class PlotCacheService
         return Cache::remember(
             "plot_{$plot->id}_stats",
             self::CACHE_TTL,
-            fn() => [
+            fn () => [
                 'total_activities' => $plot->agriculturalActivities()->count(),
                 'total_area' => $plot->area,
                 'plantings_count' => $plot->plantings()->count(),
@@ -123,6 +123,7 @@ class PlotCacheService
     protected function getUserPlotsKey(User $user, array $with): string
     {
         $withKey = empty($with) ? 'basic' : md5(implode(',', $with));
+
         return "user_{$user->id}_plots_{$withKey}";
     }
 }

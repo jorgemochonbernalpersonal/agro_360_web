@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,13 +11,13 @@ return new class extends Migration
      * Migrar datos de container_states a container_current_states
      * Nota: container_states apunta a harvest_containers (obsoleta)
      * container_current_states apunta a containers (nueva)
-     * 
+     *
      * Esta migración intenta mapear datos a través de harvests que tienen container_id
      */
     public function up(): void
     {
         // Solo migrar si existe la tabla container_states
-        if (!Schema::hasTable('container_states')) {
+        if (! Schema::hasTable('container_states')) {
             return;
         }
 

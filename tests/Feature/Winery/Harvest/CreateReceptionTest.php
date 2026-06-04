@@ -42,15 +42,15 @@ class CreateReceptionTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvests', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'plot_planting_id' => $this->planting->id,
-            'total_weight'     => 1000,
-            'status'           => 'active',
+            'total_weight' => 1000,
+            'status' => 'active',
         ]);
 
         // HarvestObserver → ContainerStockService::initializeStock() debe incrementar used_capacity
         $this->assertDatabaseHas('containers', [
-            'id'            => $this->container->id,
+            'id' => $this->container->id,
             'used_capacity' => 1000,
         ]);
     }
@@ -113,9 +113,9 @@ class CreateReceptionTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('grape_reception_batches', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'plot_planting_id' => $this->planting->id,
-            'total_weight_kg'  => 800,
+            'total_weight_kg' => 800,
         ]);
     }
 
@@ -148,9 +148,9 @@ class CreateReceptionTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('grape_reception_batches', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'plot_planting_id' => $this->planting->id,
-            'total_weight_kg'  => 1000,
+            'total_weight_kg' => 1000,
         ]);
     }
 
@@ -180,13 +180,13 @@ class CreateReceptionTest extends WineryTestCase
     {
         $campaign = Campaign::getOrCreateActiveForYear($this->winery->id, 2024);
         GrapeReceptionBatch::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'plot_planting_id' => $this->planting->id,
-            'campaign_id'      => $campaign->id,
+            'campaign_id' => $campaign->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'vintage_year'     => 2024,
-            'total_weight_kg'  => 0,
-            'status'           => 'closed',
+            'vintage_year' => 2024,
+            'total_weight_kg' => 0,
+            'status' => 'closed',
         ]);
 
         Livewire::test(Create::class)
@@ -220,8 +220,8 @@ class CreateReceptionTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvests', [
-            'winery_id'           => $this->winery->id,
-            'disqualified'        => 1,
+            'winery_id' => $this->winery->id,
+            'disqualified' => 1,
             'disqualified_reason' => 'Exceso de oidium',
         ]);
     }
@@ -230,7 +230,7 @@ class CreateReceptionTest extends WineryTestCase
 
     public function test_container_from_other_winery_is_rejected(): void
     {
-        $otherWinery     = $this->makeOtherWinery();
+        $otherWinery = $this->makeOtherWinery();
         $foreignContainer = $this->makeContainer(['user_id' => $otherWinery->id]);
 
         Livewire::test(Create::class)
@@ -315,7 +315,7 @@ class CreateReceptionTest extends WineryTestCase
     public function test_viticulturist_not_linked_ownership_check(): void
     {
         $unlinkedViticulturist = \App\Models\User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 

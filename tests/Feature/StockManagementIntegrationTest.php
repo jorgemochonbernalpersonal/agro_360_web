@@ -2,16 +2,15 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Client;
-use App\Models\Invoice;
-use App\Models\InvoiceItem;
-use App\Models\Harvest;
-use App\Models\HarvestStock;
 use App\Models\Container;
 use App\Models\ContainerCurrentState;
+use App\Models\Harvest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class StockManagementIntegrationTest extends TestCase
 {
@@ -19,7 +18,9 @@ class StockManagementIntegrationTest extends TestCase
     use \Tests\Traits\CreatesTestHarvest;
 
     protected User $user;
+
     protected Client $client;
+
     protected Harvest $harvest;
 
     protected function setUp(): void
@@ -38,29 +39,29 @@ class StockManagementIntegrationTest extends TestCase
         // Flujo: draft (reserve) → sent (confirm) → draft (revert) → cancel (release).
         // No se puede cancelar directamente desde sent (requiere rectificativa).
 
-        $initialStock     = $this->harvest->stockMovements()->latest()->first();
+        $initialStock = $this->harvest->stockMovements()->latest()->first();
         $initialAvailable = $initialStock->available_qty;
 
         // Step 1: Create draft invoice and add item
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
         $quantity = 200;
         InvoiceItem::create([
-            'invoice_id'          => $invoice->id,
-            'harvest_id'          => $this->harvest->id,
-            'name'                => 'Uva Tempranillo',
-            'quantity'            => $quantity,
-            'unit_price'          => 2.0,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva Tempranillo',
+            'quantity' => $quantity,
+            'unit_price' => 2.0,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
-            'tax_base'            => 400,
-            'tax_amount'          => 0,
-            'subtotal'            => 400,
-            'total'               => 400,
-            'concept_type'        => 'harvest',
+            'discount_amount' => 0,
+            'tax_base' => 400,
+            'tax_amount' => 0,
+            'subtotal' => 400,
+            'total' => 400,
+            'concept_type' => 'harvest',
         ]);
 
         // Verify: Stock reserved
@@ -228,7 +229,7 @@ class StockManagementIntegrationTest extends TestCase
         // Try to create invoice item with more than available
         // Note: In real app, this should be validated BEFORE creating
         // This test verifies that even if created, stock tracking works
-        
+
         $invoice = Invoice::factory()->draft()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
@@ -277,7 +278,7 @@ class StockManagementIntegrationTest extends TestCase
         ]);
 
         $stockWithOversell = $this->harvest->fresh()->stockMovements()->latest()->first();
-        
+
         // Available should be negative (oversold)
         $this->assertEquals(-50, $stockWithOversell->available_qty);
         $this->assertEquals($largeQuantity + 100, $stockWithOversell->reserved_qty);
@@ -295,23 +296,23 @@ class StockManagementIntegrationTest extends TestCase
         // Cancelar desde sent está prohibido; se debe revertir a draft primero.
 
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
         InvoiceItem::create([
-            'invoice_id'          => $invoice->id,
-            'harvest_id'          => $this->harvest->id,
-            'name'                => 'Uva',
-            'quantity'            => 100,
-            'unit_price'          => 1.0,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva',
+            'quantity' => 100,
+            'unit_price' => 1.0,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
-            'tax_base'            => 100,
-            'tax_amount'          => 0,
-            'subtotal'            => 100,
-            'total'               => 100,
-            'concept_type'        => 'harvest',
+            'discount_amount' => 0,
+            'tax_base' => 100,
+            'tax_amount' => 0,
+            'subtotal' => 100,
+            'total' => 100,
+            'concept_type' => 'harvest',
         ]);
 
         // Initial + Reserve
@@ -333,10 +334,10 @@ class StockManagementIntegrationTest extends TestCase
 
         // Verify all movements have proper types
         $movements = $this->harvest->stockMovements()->orderBy('id')->get();
-        $this->assertEquals('initial',  $movements[0]->movement_type);
-        $this->assertEquals('reserve',  $movements[1]->movement_type);
-        $this->assertEquals('sale',     $movements[2]->movement_type);
-        $this->assertEquals('reserve',  $movements[3]->movement_type); // revert
+        $this->assertEquals('initial', $movements[0]->movement_type);
+        $this->assertEquals('reserve', $movements[1]->movement_type);
+        $this->assertEquals('sale', $movements[2]->movement_type);
+        $this->assertEquals('reserve', $movements[3]->movement_type); // revert
         $this->assertEquals('unreserve', $movements[4]->movement_type);
 
         // Refresh invoice to get the generated invoice_number

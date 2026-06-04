@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
@@ -18,14 +16,14 @@ return new class extends Migration
         } catch (\Exception $e) {
             // Si no existe, continuar
         }
-        
+
         // Paso 2: Corregir códigos de 6 a 5 dígitos
-        DB::statement("
+        DB::statement('
             UPDATE municipalities 
             SET code = SUBSTRING(code, 1, 5) 
             WHERE LENGTH(code) = 6
-        ");
-        
+        ');
+
         // Paso 3: Identificar y reportar duplicados
         $duplicates = DB::select("
             SELECT code, COUNT(*) as count 
@@ -34,20 +32,20 @@ return new class extends Migration
             GROUP BY code 
             HAVING COUNT(*) > 1
         ");
-        
-        if (!empty($duplicates)) {
+
+        if (! empty($duplicates)) {
             echo "\n⚠️  ADVERTENCIA: Se encontraron códigos duplicados:\n";
             foreach ($duplicates as $dup) {
                 echo "  - Código {$dup->code}: {$dup->count} municipios\n";
-                
+
                 // Mostrar qué municipios tienen este código
-                $muns = DB::select("
+                $muns = DB::select('
                     SELECT id, name 
                     FROM municipalities 
                     WHERE code = ? 
                     LIMIT 5
-                ", [$dup->code]);
-                
+                ', [$dup->code]);
+
                 foreach ($muns as $mun) {
                     echo "    * ID {$mun->id}: {$mun->name}\n";
                 }
@@ -55,7 +53,7 @@ return new class extends Migration
             echo "\n💡 Estos duplicados deben ser corregidos manualmente.\n";
             echo "   Los códigos de municipios deben ser únicos según el INE.\n\n";
         }
-        
+
         // Paso 4: Intentar restaurar el constraint único (fallará si hay duplicados)
         try {
             DB::statement('ALTER TABLE municipalities ADD UNIQUE INDEX municipalities_code_unique (code)');
@@ -64,7 +62,7 @@ return new class extends Migration
             echo "⚠️  No se pudo restaurar el constraint único debido a duplicados.\n";
             echo "   Debes corregir los duplicados manualmente antes de añadir el constraint.\n";
         }
-        
+
         // Log final
         $total = DB::table('municipalities')->count();
         $with5 = DB::table('municipalities')->whereRaw('LENGTH(code) = 5')->count();

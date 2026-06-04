@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'email_verified_at' => $this->email_verified_at?->toIso8601String(),
-            'profile' => $this->whenLoaded('profile', fn() => [
+            'profile' => $this->whenLoaded('profile', fn () => [
                 'nif_cif' => $this->profile->nif_cif,
                 'phone' => $this->profile->phone,
                 'address' => $this->profile->address,
@@ -30,7 +30,7 @@ class UserResource extends JsonResource
             ]),
             'subscription' => $this->when(
                 $this->relationLoaded('activeSubscription') && $this->activeSubscription,
-                fn() => new SubscriptionResource($this->activeSubscription)
+                fn () => new SubscriptionResource($this->activeSubscription)
             ),
             'beta_access' => [
                 'is_beta_user' => $this->is_beta_user,

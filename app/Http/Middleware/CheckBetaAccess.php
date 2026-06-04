@@ -11,16 +11,16 @@ class CheckBetaAccess
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        
-        if (!$user) {
+
+        if (! $user) {
             return $next($request);
         }
-        
+
         // Si el usuario es beta y la beta expiró...
         if ($user->betaExpired()) {
             // Todos los viticultores (vinculados o independientes) y productores
@@ -29,9 +29,10 @@ class CheckBetaAccess
             if ($user->hasBasicFreeAccess()) {
                 return $next($request);
             }
+
             return redirect()->route('beta.expired');
         }
-        
+
         return $next($request);
     }
 }

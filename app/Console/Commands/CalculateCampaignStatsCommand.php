@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Campaign;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
@@ -32,9 +32,10 @@ class CalculateCampaignStatsCommand extends Command
 
         if ($campaignId) {
             $campaigns = Campaign::where('id', $campaignId)->get();
-            
+
             if ($campaigns->isEmpty()) {
                 $this->error("Campaign with ID {$campaignId} not found.");
+
                 return self::FAILURE;
             }
         } else {
@@ -94,8 +95,8 @@ class CalculateCampaignStatsCommand extends Command
             ->with('phytosanitaryTreatment.product')
             ->get();
 
-        $totalArea = $treatments->sum(fn($a) => $a->phytosanitaryTreatment?->area_treated ?? 0);
-        
+        $totalArea = $treatments->sum(fn ($a) => $a->phytosanitaryTreatment?->area_treated ?? 0);
+
         return [
             'total_treatments' => $treatments->count(),
             'total_area_treated' => round($totalArea, 2),
@@ -113,7 +114,7 @@ class CalculateCampaignStatsCommand extends Command
             ->with('harvest')
             ->get();
 
-        $totalKg = $harvests->sum(fn($a) => $a->harvest?->quantity_kg ?? 0);
+        $totalKg = $harvests->sum(fn ($a) => $a->harvest?->quantity_kg ?? 0);
 
         return [
             'total_harvests' => $harvests->count(),

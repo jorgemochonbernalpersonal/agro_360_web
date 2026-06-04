@@ -23,6 +23,7 @@ use Tests\Feature\WineryTestCase;
 class WineTransferStockTest extends WineryTestCase
 {
     private Wine $wine;
+
     private UnitOfMeasurement $uom;
 
     protected function setUp(): void
@@ -31,10 +32,10 @@ class WineTransferStockTest extends WineryTestCase
         $this->actingAs($this->makeWinery());
 
         $this->wine = Wine::create([
-            'user_id'   => auth()->id(),
-            'name'      => 'Vino Tempranillo',
+            'user_id' => auth()->id(),
+            'name' => 'Vino Tempranillo',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         $this->uom = UnitOfMeasurement::firstOrCreate(
@@ -48,7 +49,7 @@ class WineTransferStockTest extends WineryTestCase
     public function test_create_transfer_only_modifies_wine_volume_liters(): void
     {
         $source = $this->makeWineContainer(wine: 1000.0, grapes: 0.0);
-        $dest   = $this->makeWineContainer(wine: 0.0,    grapes: 0.0);
+        $dest = $this->makeWineContainer(wine: 0.0, grapes: 0.0);
 
         Livewire::test(Create::class)
             ->set('wine_id', (string) $this->wine->id)
@@ -77,7 +78,7 @@ class WineTransferStockTest extends WineryTestCase
     {
         // Contenedor con uva Y vino (contenedor mixto, raro pero posible)
         $source = $this->makeWineContainer(wine: 800.0, grapes: 500.0);
-        $dest   = $this->makeWineContainer(wine: 0.0,   grapes: 0.0);
+        $dest = $this->makeWineContainer(wine: 0.0, grapes: 0.0);
 
         Livewire::test(Create::class)
             ->set('wine_id', (string) $this->wine->id)
@@ -99,13 +100,13 @@ class WineTransferStockTest extends WineryTestCase
 
         // Stock de uva/cosecha NO debe tocarse
         $this->assertEquals(500.0, (float) $source->used_capacity, 'used_capacity del origen (cosechas) no debe modificarse');
-        $this->assertEquals(0.0,   (float) $dest->used_capacity,   'used_capacity del destino no debe modificarse');
+        $this->assertEquals(0.0, (float) $dest->used_capacity, 'used_capacity del destino no debe modificarse');
     }
 
     public function test_create_transfer_total_used_capacity_is_correct(): void
     {
         $source = $this->makeWineContainer(wine: 1000.0, grapes: 0.0);
-        $dest   = $this->makeWineContainer(wine: 0.0,    grapes: 0.0, capacity: 5000.0);
+        $dest = $this->makeWineContainer(wine: 0.0, grapes: 0.0, capacity: 5000.0);
 
         Livewire::test(Create::class)
             ->set('wine_id', (string) $this->wine->id)
@@ -143,13 +144,13 @@ class WineTransferStockTest extends WineryTestCase
 
         $dest->refresh();
         $this->assertEquals(300.0, (float) $dest->wine_volume_liters);
-        $this->assertEquals(0.0,   (float) $dest->used_capacity);
+        $this->assertEquals(0.0, (float) $dest->used_capacity);
     }
 
     public function test_capacity_validation_blocks_overfill(): void
     {
         $source = $this->makeWineContainer(wine: 1000.0, grapes: 0.0);
-        $dest   = $this->makeWineContainer(wine: 0.0,    grapes: 0.0, capacity: 200.0);
+        $dest = $this->makeWineContainer(wine: 0.0, grapes: 0.0, capacity: 200.0);
 
         Livewire::test(Create::class)
             ->set('wine_id', (string) $this->wine->id)
@@ -166,7 +167,7 @@ class WineTransferStockTest extends WineryTestCase
         $source->refresh();
         $dest->refresh();
         $this->assertEquals(1000.0, (float) $source->wine_volume_liters);
-        $this->assertEquals(0.0,    (float) $dest->wine_volume_liters);
+        $this->assertEquals(0.0, (float) $dest->wine_volume_liters);
     }
 
     // ── Editar trasvase ────────────────────────────────────────────────────────
@@ -174,7 +175,7 @@ class WineTransferStockTest extends WineryTestCase
     public function test_edit_transfer_recalculates_wine_volume_correctly(): void
     {
         $source = $this->makeWineContainer(wine: 1000.0, grapes: 0.0);
-        $dest   = $this->makeWineContainer(wine: 0.0,    grapes: 0.0);
+        $dest = $this->makeWineContainer(wine: 0.0, grapes: 0.0);
 
         // Crear trasvase inicial via Livewire (300L)
         Livewire::test(Create::class)
@@ -201,9 +202,9 @@ class WineTransferStockTest extends WineryTestCase
         $dest->refresh();
 
         $this->assertEquals(500.0, (float) $source->wine_volume_liters, 'origen debe tener 500L restantes');
-        $this->assertEquals(500.0, (float) $dest->wine_volume_liters,   'destino debe tener 500L');
-        $this->assertEquals(0.0,   (float) $source->used_capacity);
-        $this->assertEquals(0.0,   (float) $dest->used_capacity);
+        $this->assertEquals(500.0, (float) $dest->wine_volume_liters, 'destino debe tener 500L');
+        $this->assertEquals(0.0, (float) $source->used_capacity);
+        $this->assertEquals(0.0, (float) $dest->used_capacity);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -211,12 +212,12 @@ class WineTransferStockTest extends WineryTestCase
     private function makeWineContainer(float $wine, float $grapes, float $capacity = 5000.0): Container
     {
         return Container::create([
-            'user_id'            => auth()->id(),
-            'name'               => 'Dep. ' . uniqid(),
-            'capacity'           => $capacity,
-            'used_capacity'      => $grapes,
+            'user_id' => auth()->id(),
+            'name' => 'Dep. '.uniqid(),
+            'capacity' => $capacity,
+            'used_capacity' => $grapes,
             'wine_volume_liters' => $wine,
-            'archived'           => false,
+            'archived' => false,
         ]);
     }
 }

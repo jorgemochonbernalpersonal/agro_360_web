@@ -8,18 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineryDocument extends Model
 {
     const DOCUMENT_TYPES = [
-        'license'     => 'Licencia',
-        'permit'      => 'Permiso',
+        'license' => 'Licencia',
+        'permit' => 'Permiso',
         'certificate' => 'Certificado',
-        'insurance'   => 'Seguro',
-        'contract'    => 'Contrato',
-        'other'       => 'Otro',
+        'insurance' => 'Seguro',
+        'contract' => 'Contrato',
+        'other' => 'Otro',
     ];
-
-    public static function documentTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::DOCUMENT_TYPES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -34,10 +29,15 @@ class WineryDocument extends Model
     ];
 
     protected $casts = [
-        'issue_date'  => 'date',
+        'issue_date' => 'date',
         'expiry_date' => 'date',
-        'active'      => 'boolean',
+        'active' => 'boolean',
     ];
+
+    public static function documentTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::DOCUMENT_TYPES);
+    }
 
     public function user(): BelongsTo
     {

@@ -9,6 +9,7 @@ use Spatie\Sitemap\Tags\Url;
 class GenerateSitemap extends Command
 {
     protected $signature = 'sitemap:generate';
+
     protected $description = 'Generate the sitemap for Agro365';
 
     public function handle()
@@ -19,12 +20,12 @@ class GenerateSitemap extends Command
         $forceHttps = config('app.env') === 'production';
 
         $sitemap = Sitemap::create();
-        $service = new \App\Services\SitemapService();
+        $service = new \App\Services\SitemapService;
         $urls = $service->getUrls();
 
         foreach ($urls as $urlData) {
             $loc = $urlData['loc'];
-            
+
             if ($forceHttps) {
                 $loc = str_replace('http://', 'https://', $loc);
             }
@@ -40,7 +41,7 @@ class GenerateSitemap extends Command
                     if ($forceHttps) {
                         $imgLoc = str_replace('http://', 'https://', $imgLoc);
                     }
-                    
+
                     $sitemapUrl->addImage(
                         $imgLoc,
                         $image['caption'],
@@ -52,10 +53,10 @@ class GenerateSitemap extends Command
 
             $sitemap->add($sitemapUrl);
         }
-        
+
         $sitemap->writeToFile(public_path('sitemap.xml'));
 
         $this->info('Sitemap generated successfully at public/sitemap.xml');
-        $this->info('Total URLs: ' . count($urls));
+        $this->info('Total URLs: '.count($urls));
     }
 }

@@ -18,10 +18,15 @@ class EditGeometry extends Component
     use WithToastNotifications;
 
     public $sigpacId;
+
     public $plotId;
+
     public $geometryId = null;
+
     public $coordinates = [];
+
     public $showMap = false;
+
     public $viewOnly = false;
 
     public function mount($sigpacId, $plotId = null)
@@ -85,18 +90,21 @@ class EditGeometry extends Component
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->toastError(__('Error de validación: :error', ['error' => $e->validator->errors()->first()]));
+
             return;
         }
 
-        if (!$this->plotId) {
+        if (! $this->plotId) {
             $this->toastError(__('Debes seleccionar una parcela.'));
+
             return;
         }
 
         $plot = Plot::findOrFail($this->plotId);
 
-        if (!Auth::user()->can('update', $plot)) {
+        if (! Auth::user()->can('update', $plot)) {
             $this->toastError(__('No tienes permiso para modificar esta parcela.'));
+
             return;
         }
 
@@ -206,98 +214,6 @@ class EditGeometry extends Component
     }
 
     /**
-     * Obtener coordenadas desde la API de SIGPAC
-     */
-    private function fetchCoordinatesFromSigpacApi(SigpacCode $sigpacCode): ?string
-    {
-        Log::info('fetchCoordinatesFromSigpacApi: Iniciando', [
-            'sigpac_code_id' => $sigpacCode->id,
-            'code' => $sigpacCode->code,
-        ]);
-
-        try {
-            // Construir URL de la API SIGPAC
-            $url = sprintf(
-                'https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/%s/%s/%s/%s/%s/%s/%s.json',
-                $sigpacCode->code_province,
-                $sigpacCode->code_municipality,
-                $sigpacCode->code_aggregate ?? '0',
-                $sigpacCode->code_zone,
-                $sigpacCode->code_polygon,
-                $sigpacCode->code_plot,
-                $sigpacCode->code_enclosure
-            );
-
-            Log::info('fetchCoordinatesFromSigpacApi: URL construida', [
-                'url' => $url,
-                'province' => $sigpacCode->code_province,
-                'municipality' => $sigpacCode->code_municipality,
-                'aggregate' => $sigpacCode->code_aggregate ?? '0',
-                'zone' => $sigpacCode->code_zone,
-                'polygon' => $sigpacCode->code_polygon,
-                'plot' => $sigpacCode->code_plot,
-                'enclosure' => $sigpacCode->code_enclosure,
-            ]);
-
-            // Deshabilitar verificación SSL en desarrollo local (Windows suele tener problemas con certificados)
-            $httpClient = Http::timeout(10);
-            if (app()->environment('local')) {
-                $httpClient = $httpClient->withoutVerifying();
-            }
-
-            /** @var \Illuminate\Http\Client\Response $response */
-            $response = $httpClient->get($url);
-
-            $status = $response->status();
-            Log::info('fetchCoordinatesFromSigpacApi: Respuesta HTTP recibida', [
-                'status' => $status,
-                'url' => $url,
-            ]);
-
-            if ($status !== 200) {
-                Log::warning('fetchCoordinatesFromSigpacApi: Status HTTP no es 200', [
-                    'status' => $status,
-                    'body_preview' => substr($response->body(), 0, 200),
-                ]);
-                return null;
-            }
-
-            $data = $response->json();
-            Log::info('fetchCoordinatesFromSigpacApi: JSON parseado', [
-                'is_array' => is_array($data),
-                'is_empty' => empty($data),
-                'has_wkt' => isset($data[0]['wkt']),
-                'data_keys' => is_array($data) && !empty($data) ? array_keys($data[0] ?? []) : [],
-            ]);
-
-            if (!is_array($data) || empty($data) || !isset($data[0]['wkt'])) {
-                Log::warning('fetchCoordinatesFromSigpacApi: Datos inválidos o sin WKT', [
-                    'data_type' => gettype($data),
-                    'data_is_array' => is_array($data),
-                    'data_empty' => empty($data),
-                    'data_preview' => is_array($data) ? json_encode(array_slice($data, 0, 1)) : 'not array',
-                ]);
-                return null;
-            }
-
-            $wkt = $data[0]['wkt'];
-            Log::info('fetchCoordinatesFromSigpacApi: WKT obtenido', [
-                'wkt_length' => strlen($wkt),
-                'wkt_preview' => substr($wkt, 0, 100),
-            ]);
-
-            return $wkt;
-        } catch (\Exception $e) {
-            Log::error('fetchCoordinatesFromSigpacApi: Excepción capturada', [
-                'sigpac_code_id' => $sigpacCode->id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return null;
-        }
-    }
-
-    /**
      * Generar mapa automáticamente desde la API SIGPAC
      * Este método se llama cuando se pulsa "Generar Mapa" desde la vista de parcela
      */
@@ -309,9 +225,10 @@ class EditGeometry extends Component
             'user_id' => Auth::id(),
         ]);
 
-        if (!$this->plotId) {
+        if (! $this->plotId) {
             Log::warning('generateMapFromSigpac: No hay plotId');
             $this->toastError(__('Debes seleccionar una parcela.'));
+
             return;
         }
 
@@ -326,15 +243,17 @@ class EditGeometry extends Component
                 'error' => $e->getMessage(),
             ]);
             $this->toastError(__('Error al buscar la parcela.'));
+
             return;
         }
 
-        if (!Auth::user()->can('update', $plot)) {
+        if (! Auth::user()->can('update', $plot)) {
             Log::warning('generateMapFromSigpac: Usuario sin permisos', [
                 'user_id' => Auth::id(),
                 'plot_id' => $plot->id,
             ]);
             $this->toastError(__('No tienes permiso para modificar esta parcela.'));
+
             return;
         }
 
@@ -351,6 +270,7 @@ class EditGeometry extends Component
         if ($sigpacCodes->isEmpty()) {
             Log::warning('generateMapFromSigpac: No hay códigos SIGPAC');
             $this->toastError(__('Esta parcela no tiene códigos SIGPAC asociados.'));
+
             return;
         }
 
@@ -382,7 +302,7 @@ class EditGeometry extends Component
                         'wkt_length' => $wkt ? strlen($wkt) : 0,
                     ]);
 
-                    if (!$wkt) {
+                    if (! $wkt) {
                         $errorCount++;
                         $errorMsg = "No se pudieron obtener coordenadas para el código {$sigpacCode->code}";
                         $errors[] = $errorMsg;
@@ -390,11 +310,12 @@ class EditGeometry extends Component
                             'sigpac_code_id' => $sigpacCode->id,
                             'code' => $sigpacCode->code,
                         ]);
+
                         continue;
                     }
 
                     // Validar formato WKT
-                    if (!preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
+                    if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
                         $errorCount++;
                         $errorMsg = "Formato de coordenadas inválido para el código {$sigpacCode->code}";
                         $errors[] = $errorMsg;
@@ -402,6 +323,7 @@ class EditGeometry extends Component
                             'sigpac_code_id' => $sigpacCode->id,
                             'wkt_preview' => substr($wkt, 0, 100),
                         ]);
+
                         continue;
                     }
 
@@ -462,7 +384,7 @@ class EditGeometry extends Component
                     ]);
                 } catch (\Exception $e) {
                     $errorCount++;
-                    $errors[] = "Error procesando código {$sigpacCode->code}: " . $e->getMessage();
+                    $errors[] = "Error procesando código {$sigpacCode->code}: ".$e->getMessage();
                     Log::error('Error generating map for sigpac code', [
                         'sigpac_code_id' => $sigpacCode->id,
                         'plot_id' => $this->plotId,
@@ -488,7 +410,7 @@ class EditGeometry extends Component
             }
 
             if ($errorCount > 0) {
-                $errorMessage = "Error al generar {$errorCount} mapa(s). " . implode(' ', array_slice($errors, 0, 3));
+                $errorMessage = "Error al generar {$errorCount} mapa(s). ".implode(' ', array_slice($errors, 0, 3));
                 Log::warning('generateMapFromSigpac: Mostrando mensaje de error', ['message' => $errorMessage]);
                 $this->toastError($errorMessage);
             }
@@ -526,7 +448,7 @@ class EditGeometry extends Component
 
     public function delete()
     {
-        if (!$this->geometryId) {
+        if (! $this->geometryId) {
             return;
         }
 
@@ -576,5 +498,100 @@ class EditGeometry extends Component
             'plot' => $plot,
             'availablePlots' => $availablePlots,
         ]);
+    }
+
+    /**
+     * Obtener coordenadas desde la API de SIGPAC
+     */
+    private function fetchCoordinatesFromSigpacApi(SigpacCode $sigpacCode): ?string
+    {
+        Log::info('fetchCoordinatesFromSigpacApi: Iniciando', [
+            'sigpac_code_id' => $sigpacCode->id,
+            'code' => $sigpacCode->code,
+        ]);
+
+        try {
+            // Construir URL de la API SIGPAC
+            $url = sprintf(
+                'https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/%s/%s/%s/%s/%s/%s/%s.json',
+                $sigpacCode->code_province,
+                $sigpacCode->code_municipality,
+                $sigpacCode->code_aggregate ?? '0',
+                $sigpacCode->code_zone,
+                $sigpacCode->code_polygon,
+                $sigpacCode->code_plot,
+                $sigpacCode->code_enclosure
+            );
+
+            Log::info('fetchCoordinatesFromSigpacApi: URL construida', [
+                'url' => $url,
+                'province' => $sigpacCode->code_province,
+                'municipality' => $sigpacCode->code_municipality,
+                'aggregate' => $sigpacCode->code_aggregate ?? '0',
+                'zone' => $sigpacCode->code_zone,
+                'polygon' => $sigpacCode->code_polygon,
+                'plot' => $sigpacCode->code_plot,
+                'enclosure' => $sigpacCode->code_enclosure,
+            ]);
+
+            // Deshabilitar verificación SSL en desarrollo local (Windows suele tener problemas con certificados)
+            $httpClient = Http::timeout(10);
+            if (app()->environment('local')) {
+                $httpClient = $httpClient->withoutVerifying();
+            }
+
+            /** @var \Illuminate\Http\Client\Response $response */
+            $response = $httpClient->get($url);
+
+            $status = $response->status();
+            Log::info('fetchCoordinatesFromSigpacApi: Respuesta HTTP recibida', [
+                'status' => $status,
+                'url' => $url,
+            ]);
+
+            if ($status !== 200) {
+                Log::warning('fetchCoordinatesFromSigpacApi: Status HTTP no es 200', [
+                    'status' => $status,
+                    'body_preview' => substr($response->body(), 0, 200),
+                ]);
+
+                return null;
+            }
+
+            $data = $response->json();
+            Log::info('fetchCoordinatesFromSigpacApi: JSON parseado', [
+                'is_array' => is_array($data),
+                'is_empty' => empty($data),
+                'has_wkt' => isset($data[0]['wkt']),
+                'data_keys' => is_array($data) && ! empty($data) ? array_keys($data[0] ?? []) : [],
+            ]);
+
+            if (! is_array($data) || empty($data) || ! isset($data[0]['wkt'])) {
+                Log::warning('fetchCoordinatesFromSigpacApi: Datos inválidos o sin WKT', [
+                    'data_type' => gettype($data),
+                    'data_is_array' => is_array($data),
+                    'data_empty' => empty($data),
+                    'data_preview' => is_array($data) ? json_encode(array_slice($data, 0, 1)) : 'not array',
+                ]);
+
+                return null;
+            }
+
+            $wkt = $data[0]['wkt'];
+            Log::info('fetchCoordinatesFromSigpacApi: WKT obtenido', [
+                'wkt_length' => strlen($wkt),
+                'wkt_preview' => substr($wkt, 0, 100),
+            ]);
+
+            return $wkt;
+        } catch (\Exception $e) {
+            Log::error('fetchCoordinatesFromSigpacApi: Excepción capturada', [
+                'sigpac_code_id' => $sigpacCode->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return null;
+        }
     }
 }

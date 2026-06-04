@@ -8,7 +8,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ProcessSatelliteImageJob implements ShouldQueue
@@ -50,7 +49,7 @@ class ProcessSatelliteImageJob implements ShouldQueue
         try {
             // TODO: Implementar integración con servicio de teledetección
             // Por ejemplo: Sentinel Hub, Planet, etc.
-            
+
             // Simulación de llamada a API
             $indices = $this->calculateVegetationIndices();
 

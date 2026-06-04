@@ -10,20 +10,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class CreateTest extends ViticulturistTestCase
 {
-    private function makeExploitation(int $viticulturistId): Exploitation
-    {
-        return Exploitation::create([
-            'viticulturist_id'         => $viticulturistId,
-            'exploitation_name'        => 'Explotación Test',
-            'holder_name'              => 'Test Holder',
-            'holder_nif'               => '12345678A',
-            'is_ecological'            => false,
-            'is_integrated_production' => false,
-            'is_quality_scheme'        => false,
-            'active'                   => true,
-        ]);
-    }
-
     public function test_can_create_authorization(): void
     {
         $viticulturist = $this->makeViticulturist();
@@ -37,9 +23,9 @@ class CreateTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.commercial-authorizations.index'));
 
         $this->assertDatabaseHas('commercial_authorizations', [
-            'viticulturist_id'   => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'authorization_type' => 'do_registration',
-            'active'             => true,
+            'active' => true,
         ]);
     }
 
@@ -71,8 +57,8 @@ class CreateTest extends ViticulturistTestCase
     public function test_exploitation_scoped_to_viticulturist(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeOtherViticulturist();
-        $otherExp      = $this->makeExploitation($other->id);
+        $other = $this->makeOtherViticulturist();
+        $otherExp = $this->makeExploitation($other->id);
 
         $this->actingAs($viticulturist);
 
@@ -97,5 +83,19 @@ class CreateTest extends ViticulturistTestCase
                 ->call('save')
                 ->assertHasNoErrors(['authorization_type']);
         }
+    }
+
+    private function makeExploitation(int $viticulturistId): Exploitation
+    {
+        return Exploitation::create([
+            'viticulturist_id' => $viticulturistId,
+            'exploitation_name' => 'Explotación Test',
+            'holder_name' => 'Test Holder',
+            'holder_nif' => '12345678A',
+            'is_ecological' => false,
+            'is_integrated_production' => false,
+            'is_quality_scheme' => false,
+            'active' => true,
+        ]);
     }
 }

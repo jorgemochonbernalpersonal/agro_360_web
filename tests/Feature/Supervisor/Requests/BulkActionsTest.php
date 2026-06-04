@@ -9,18 +9,6 @@ use Tests\Feature\SupervisorTestCase;
 
 class BulkActionsTest extends SupervisorTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeRequest(int $supervisorId, int $wineryId, string $status): SupervisorRequest
-    {
-        return SupervisorRequest::create([
-            'supervisor_id' => $supervisorId,
-            'winery_id'     => $wineryId,
-            'type'          => SupervisorRequest::TYPE_NONCONFORMITY,
-            'status'        => $status,
-        ]);
-    }
-
     // ── bulkArchive ───────────────────────────────────────────────────────────
 
     public function test_bulk_archive_archives_approved_and_rejected_requests(): void
@@ -44,7 +32,7 @@ class BulkActionsTest extends SupervisorTestCase
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
-        $draft   = $this->makeRequest($supervisor->id, $winery->id, SupervisorRequest::STATUS_DRAFT);
+        $draft = $this->makeRequest($supervisor->id, $winery->id, SupervisorRequest::STATUS_DRAFT);
         $pending = $this->makeRequest($supervisor->id, $winery->id, SupervisorRequest::STATUS_PENDING);
 
         Livewire::actingAs($supervisor)
@@ -83,7 +71,7 @@ class BulkActionsTest extends SupervisorTestCase
 
     public function test_bulk_archive_ignores_requests_from_another_supervisor(): void
     {
-        [$supervisor, $winery]          = $this->makeSupervisorWithWinery();
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $foreign = $this->makeRequest($otherSupervisor->id, $otherWinery->id, SupervisorRequest::STATUS_APPROVED);
@@ -101,7 +89,7 @@ class BulkActionsTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $approved = $this->makeRequest($supervisor->id, $winery->id, SupervisorRequest::STATUS_APPROVED);
-        $draft    = $this->makeRequest($supervisor->id, $winery->id, SupervisorRequest::STATUS_DRAFT);
+        $draft = $this->makeRequest($supervisor->id, $winery->id, SupervisorRequest::STATUS_DRAFT);
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
@@ -110,7 +98,7 @@ class BulkActionsTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertEquals(SupervisorRequest::STATUS_ARCHIVED, $approved->fresh()->status);
-        $this->assertEquals(SupervisorRequest::STATUS_DRAFT,    $draft->fresh()->status);
+        $this->assertEquals(SupervisorRequest::STATUS_DRAFT, $draft->fresh()->status);
     }
 
     // ── deleteDraft ───────────────────────────────────────────────────────────
@@ -142,7 +130,7 @@ class BulkActionsTest extends SupervisorTestCase
 
     public function test_delete_draft_rejects_another_supervisors_request(): void
     {
-        [$supervisor]                    = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $draft = $this->makeRequest($otherSupervisor->id, $otherWinery->id, SupervisorRequest::STATUS_DRAFT);
@@ -164,5 +152,16 @@ class BulkActionsTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->call('deleteDraft', $approved->id);
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeRequest(int $supervisorId, int $wineryId, string $status): SupervisorRequest
+    {
+        return SupervisorRequest::create([
+            'supervisor_id' => $supervisorId,
+            'winery_id' => $wineryId,
+            'type' => SupervisorRequest::TYPE_NONCONFORMITY,
+            'status' => $status,
+        ]);
     }
 }

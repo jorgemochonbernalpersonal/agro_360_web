@@ -14,12 +14,18 @@ class CreatePostHarvest extends AbstractActivityForm
 {
     // ─── Type-specific properties ─────────────────────────────────────────────
 
-    public $product_id             = '';
-    public $application_type       = '';
-    public $treated_area_ha        = '';
-    public $dose_per_hectare       = '';
-    public $dose_unit              = 'kg/ha';
-    public $water_volume_liters    = '';
+    public $product_id = '';
+
+    public $application_type = '';
+
+    public $treated_area_ha = '';
+
+    public $dose_per_hectare = '';
+
+    public $dose_unit = 'kg/ha';
+
+    public $water_volume_liters = '';
+
     public $reentry_interval_hours = '';
 
     // ─── Computed ─────────────────────────────────────────────────────────────
@@ -36,21 +42,6 @@ class CreatePostHarvest extends AbstractActivityForm
     {
         $this->mountCreate();
         $this->phenological_stage = 'Caída de hoja';
-    }
-
-    // ─── Validation ───────────────────────────────────────────────────────────
-
-    protected function rules(): array
-    {
-        return array_merge($this->commonRules(), [
-            'product_id'             => 'nullable|exists:phytosanitary_products,id',
-            'application_type'       => 'required|string|in:' . implode(',', array_keys(PostHarvestTreatment::APPLICATION_TYPES)),
-            'treated_area_ha'        => 'required|numeric|min:0.001',
-            'dose_per_hectare'       => 'nullable|numeric|min:0',
-            'dose_unit'              => 'nullable|string|max:20',
-            'water_volume_liters'    => 'nullable|numeric|min:0',
-            'reentry_interval_hours' => 'nullable|integer|min:0|max:168',
-        ]);
     }
 
     // ─── Save ─────────────────────────────────────────────────────────────────
@@ -79,19 +70,20 @@ class CreatePostHarvest extends AbstractActivityForm
                 );
 
                 PostHarvestTreatment::create([
-                    'activity_id'            => $activity->id,
-                    'product_id'             => $this->product_id ?: null,
-                    'application_type'       => $this->application_type,
-                    'treated_area_ha'        => $this->treated_area_ha,
-                    'dose_per_hectare'       => $this->dose_per_hectare ?: null,
-                    'dose_unit'              => $this->dose_per_hectare ? ($this->dose_unit ?: 'kg/ha') : null,
-                    'water_volume_liters'    => $this->water_volume_liters ?: null,
+                    'activity_id' => $activity->id,
+                    'product_id' => $this->product_id ?: null,
+                    'application_type' => $this->application_type,
+                    'treated_area_ha' => $this->treated_area_ha,
+                    'dose_per_hectare' => $this->dose_per_hectare ?: null,
+                    'dose_unit' => $this->dose_per_hectare ? ($this->dose_unit ?: 'kg/ha') : null,
+                    'water_volume_liters' => $this->water_volume_liters ?: null,
                     'reentry_interval_hours' => $this->reentry_interval_hours !== '' ? (int) $this->reentry_interval_hours : null,
-                    'notes'                  => $this->notes,
+                    'notes' => $this->notes,
                 ]);
             });
 
             $this->toastSuccess(__('Tratamiento post-vendimia registrado correctamente.'));
+
             return $this->viticulturistRoleRedirect('digital-notebook.post-harvest.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar tratamiento post-vendimia', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
@@ -106,8 +98,23 @@ class CreatePostHarvest extends AbstractActivityForm
     public function render()
     {
         return view('livewire.viticulturist.digital-notebook.create-post-harvest', $this->renderData([
-            'products'         => $this->products,
+            'products' => $this->products,
             'applicationTypes' => PostHarvestTreatment::applicationTypeOptions(),
         ]))->layout('layouts.app', ['title' => __('Registrar Tratamiento Post-Vendimia - Agro365')]);
+    }
+
+    // ─── Validation ───────────────────────────────────────────────────────────
+
+    protected function rules(): array
+    {
+        return array_merge($this->commonRules(), [
+            'product_id' => 'nullable|exists:phytosanitary_products,id',
+            'application_type' => 'required|string|in:'.implode(',', array_keys(PostHarvestTreatment::APPLICATION_TYPES)),
+            'treated_area_ha' => 'required|numeric|min:0.001',
+            'dose_per_hectare' => 'nullable|numeric|min:0',
+            'dose_unit' => 'nullable|string|max:20',
+            'water_volume_liters' => 'nullable|numeric|min:0',
+            'reentry_interval_hours' => 'nullable|integer|min:0|max:168',
+        ]);
     }
 }

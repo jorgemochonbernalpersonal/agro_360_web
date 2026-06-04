@@ -147,7 +147,7 @@ class CascadeSelectsTest extends DuskTestCase
     #[Test]
     public function edit_plot_cascade_shows_preloaded_location(): void
     {
-        $user   = $this->createViticulturist();
+        $user = $this->createViticulturist();
         $plotId = $this->createTestPlot($user);
 
         $this->browse(function (Browser $browser) use ($user, $plotId) {
@@ -168,18 +168,18 @@ class CascadeSelectsTest extends DuskTestCase
 
     private function createTestPlot($user): int
     {
-        $communityId    = \DB::table('autonomous_communities')->value('id');
-        $provinceId     = \DB::table('provinces')->where('autonomous_community_id', $communityId)->value('id');
+        $communityId = \DB::table('autonomous_communities')->value('id');
+        $provinceId = \DB::table('provinces')->where('autonomous_community_id', $communityId)->value('id');
         $municipalityId = \DB::table('municipalities')->where('province_id', $provinceId)->value('id');
 
         return \DB::table('plots')->insertGetId([
-            'viticulturist_id'        => $user->id,
-            'name'                    => 'Parcela Dusk Edit Test',
+            'viticulturist_id' => $user->id,
+            'name' => 'Parcela Dusk Edit Test',
             'autonomous_community_id' => $communityId,
-            'province_id'             => $provinceId,
-            'municipality_id'         => $municipalityId,
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'province_id' => $provinceId,
+            'municipality_id' => $municipalityId,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }

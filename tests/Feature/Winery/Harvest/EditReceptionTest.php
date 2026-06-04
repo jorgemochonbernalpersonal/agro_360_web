@@ -15,6 +15,7 @@ class EditReceptionTest extends WineryTestCase
     use CreatesDeliveryScenario;
 
     private Container $container;
+
     private Harvest $reception;
 
     protected function setUp(): void
@@ -44,13 +45,13 @@ class EditReceptionTest extends WineryTestCase
             ->assertRedirect(route('winery.grape-reception.index'));
 
         $this->assertDatabaseHas('harvests', [
-            'id'           => $this->reception->id,
+            'id' => $this->reception->id,
             'total_weight' => 1200,
         ]);
 
         // HarvestObserver → ContainerStockService::adjustWeight() debe reflejar el nuevo peso
         $this->assertDatabaseHas('containers', [
-            'id'            => $this->container->id,
+            'id' => $this->container->id,
             'used_capacity' => 1200,
         ]);
     }
@@ -65,9 +66,9 @@ class EditReceptionTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvests', [
-            'id'                   => $this->reception->id,
-            'harvest_ticket_number'=> 'TICKET-999',
-            'notes'                => 'Uva en buen estado',
+            'id' => $this->reception->id,
+            'harvest_ticket_number' => 'TICKET-999',
+            'notes' => 'Uva en buen estado',
         ]);
     }
 
@@ -93,7 +94,7 @@ class EditReceptionTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvests', [
-            'id'          => $this->reception->id,
+            'id' => $this->reception->id,
             'total_value' => 300.0,
         ]);
     }
@@ -102,7 +103,7 @@ class EditReceptionTest extends WineryTestCase
 
     public function test_container_from_other_winery_is_rejected(): void
     {
-        $otherWinery      = $this->makeOtherWinery();
+        $otherWinery = $this->makeOtherWinery();
         $foreignContainer = $this->makeContainer(['user_id' => $otherWinery->id]);
 
         Livewire::test(Edit::class, ['harvest' => $this->reception])
@@ -111,7 +112,7 @@ class EditReceptionTest extends WineryTestCase
             ->assertHasErrors(['container_id']);
 
         $this->assertDatabaseHas('harvests', [
-            'id'           => $this->reception->id,
+            'id' => $this->reception->id,
             'container_id' => $this->container->id, // sin cambios
         ]);
     }
@@ -141,7 +142,7 @@ class EditReceptionTest extends WineryTestCase
 
         // HarvestObserver → adjustWeight(): used_capacity debe reflejar el peso nuevo
         $this->assertDatabaseHas('containers', [
-            'id'            => $this->container->id,
+            'id' => $this->container->id,
             'used_capacity' => 4500,
         ]);
     }
@@ -163,11 +164,11 @@ class EditReceptionTest extends WineryTestCase
 
         // HarvestObserver → ContainerStockService::transferContainer()
         $this->assertDatabaseHas('containers', [
-            'id'            => $this->container->id,
+            'id' => $this->container->id,
             'used_capacity' => 0,     // liberado
         ]);
         $this->assertDatabaseHas('containers', [
-            'id'            => $newContainer->id,
+            'id' => $newContainer->id,
             'used_capacity' => 800,   // incrementado
         ]);
     }
@@ -184,7 +185,7 @@ class EditReceptionTest extends WineryTestCase
 
         // Weight in DB should remain unchanged
         $this->assertDatabaseHas('harvests', [
-            'id'           => $this->reception->id,
+            'id' => $this->reception->id,
             'total_weight' => 1000,
         ]);
     }
@@ -201,7 +202,7 @@ class EditReceptionTest extends WineryTestCase
 
         // recalculateTotal() sums active receptions → should now be 1200
         $this->assertDatabaseHas('grape_reception_batches', [
-            'winery_id'       => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'total_weight_kg' => 1200,
         ]);
     }
@@ -214,8 +215,8 @@ class EditReceptionTest extends WineryTestCase
 
         $delivery = $this->makeDelivery(['delivered_kg' => 1000]);
         $delivery->update([
-            'harvest_id'     => $this->reception->id,
-            'status'         => 'matched',
+            'harvest_id' => $this->reception->id,
+            'status' => 'matched',
             'discrepancy_kg' => 0,
         ]);
 
@@ -236,8 +237,8 @@ class EditReceptionTest extends WineryTestCase
 
         $delivery = $this->makeDelivery(['delivered_kg' => 1000]);
         $delivery->update([
-            'harvest_id'     => $this->reception->id,
-            'status'         => 'disputed',
+            'harvest_id' => $this->reception->id,
+            'status' => 'disputed',
             'discrepancy_kg' => 200,
         ]);
 
@@ -256,11 +257,11 @@ class EditReceptionTest extends WineryTestCase
     {
         $delivery = $this->makeDelivery(['delivered_kg' => 1000]);
         $delivery->update([
-            'harvest_id'              => $this->reception->id,
-            'status'                  => 'resolved',
-            'discrepancy_kg'          => 200,
+            'harvest_id' => $this->reception->id,
+            'status' => 'resolved',
+            'discrepancy_kg' => 200,
             'dispute_resolution_note' => 'Acordado entre partes',
-            'dispute_resolved_at'     => now(),
+            'dispute_resolved_at' => now(),
         ]);
 
         Livewire::test(Edit::class, ['harvest' => $this->reception])

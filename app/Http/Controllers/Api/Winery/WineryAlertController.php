@@ -29,20 +29,20 @@ class WineryAlertController extends Controller
         }
 
         $perPage = $this->resolvePerPage($request, 30, 100);
-        $items   = $query->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         $unreadCount = WineryAlert::forUser($user->id)->active()->unread()->count();
 
         return response()->json([
             'data' => $items->map(fn ($a) => $this->format($a)),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
+                'last_page' => $items->lastPage(),
                 'unread_count' => $unreadCount,
-                'types'        => WineryAlert::ALERT_TYPES,
-                'severities'   => WineryAlert::SEVERITIES,
+                'types' => WineryAlert::ALERT_TYPES,
+                'severities' => WineryAlert::SEVERITIES,
             ],
         ]);
     }
@@ -53,23 +53,23 @@ class WineryAlertController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'alert_type'     => 'required|string|in:' . implode(',', array_keys(WineryAlert::ALERT_TYPES)),
-            'severity'       => 'required|string|in:' . implode(',', array_keys(WineryAlert::SEVERITIES)),
-            'title'          => 'required|string|max:255',
-            'message'        => 'nullable|string|max:2000',
+            'alert_type' => 'required|string|in:'.implode(',', array_keys(WineryAlert::ALERT_TYPES)),
+            'severity' => 'required|string|in:'.implode(',', array_keys(WineryAlert::SEVERITIES)),
+            'title' => 'required|string|max:255',
+            'message' => 'nullable|string|max:2000',
             'reference_type' => 'nullable|string|max:100',
-            'reference_id'   => 'nullable|integer',
-            'expires_at'     => 'nullable|date|after:now',
+            'reference_id' => 'nullable|integer',
+            'expires_at' => 'nullable|date|after:now',
         ]);
 
-        $validated['user_id']       = $user->id;
-        $validated['auto_generated']= false;
-        $validated['triggered_at']  = now();
+        $validated['user_id'] = $user->id;
+        $validated['auto_generated'] = false;
+        $validated['triggered_at'] = now();
 
         $alert = WineryAlert::create($validated);
 
         return response()->json([
-            'data'    => $this->format($alert),
+            'data' => $this->format($alert),
             'message' => __('Alerta creada correctamente.'),
         ], 201);
     }
@@ -115,22 +115,22 @@ class WineryAlertController extends Controller
     private function format(WineryAlert $a): array
     {
         return [
-            'id'             => $a->id,
-            'alert_type'     => $a->alert_type,
-            'type_label'     => $a->type_label,
-            'severity'       => $a->severity,
+            'id' => $a->id,
+            'alert_type' => $a->alert_type,
+            'type_label' => $a->type_label,
+            'severity' => $a->severity,
             'severity_label' => $a->severity_label,
-            'title'          => $a->title,
-            'message'        => $a->message,
+            'title' => $a->title,
+            'message' => $a->message,
             'reference_type' => $a->reference_type,
-            'reference_id'   => $a->reference_id,
-            'is_read'        => $a->is_read,
-            'read_at'        => $a->read_at?->toIso8601String(),
+            'reference_id' => $a->reference_id,
+            'is_read' => $a->is_read,
+            'read_at' => $a->read_at?->toIso8601String(),
             'auto_generated' => $a->auto_generated,
-            'triggered_at'   => $a->triggered_at?->toIso8601String(),
-            'expires_at'     => $a->expires_at?->toIso8601String(),
-            'is_expired'     => $a->isExpired(),
-            'created_at'     => $a->created_at?->toIso8601String(),
+            'triggered_at' => $a->triggered_at?->toIso8601String(),
+            'expires_at' => $a->expires_at?->toIso8601String(),
+            'is_expired' => $a->isExpired(),
+            'created_at' => $a->created_at?->toIso8601String(),
         ];
     }
 }

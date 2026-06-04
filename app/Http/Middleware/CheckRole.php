@@ -2,16 +2,16 @@
 
 namespace App\Http\Middleware;
 
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use Closure;
 
 class CheckRole
 {
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login');
         }
 
@@ -21,14 +21,14 @@ class CheckRole
             return $next($request);
         }
 
-        if (!in_array($user->role, $roles)) {
+        if (! in_array($user->role, $roles)) {
             // Loguear intento de acceso denegado
             \App\Services\SecurityLogger::logAccessDenied(
                 $user->id,
                 $request->fullUrl(),
-                'role_mismatch: required=' . implode(',', $roles) . ' actual=' . $user->role
+                'role_mismatch: required='.implode(',', $roles).' actual='.$user->role
             );
-            
+
             abort(403, __('No tienes permiso para acceder a esta página.'));
         }
 

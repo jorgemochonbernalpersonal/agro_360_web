@@ -19,13 +19,13 @@ class PlotController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $perPage = min((int) $request->query('per_page', 30), 100);
-        $search  = $request->query('search');
+        $search = $request->query('search');
 
         $base = Plot::where('viticulturist_id', $user->id)
             ->where('active', true);
 
         if ($search) {
-            $base->where('name', 'like', '%' . $search . '%');
+            $base->where('name', 'like', '%'.$search.'%');
         }
 
         // Area stats over full filtered set (single aggregation query)
@@ -44,18 +44,18 @@ class PlotController extends Controller
 
         $plots->each(function ($plot) use ($centroids) {
             $plot->centroid_data = $centroids[$plot->id] ?? null;
-            $plot->has_geometry  = isset($centroids[$plot->id]);
+            $plot->has_geometry = isset($centroids[$plot->id]);
         });
 
         return response()->json([
             'data' => PlotResource::collection($plots),
             'meta' => [
-                'total'        => $plots->total(),
-                'per_page'     => $plots->perPage(),
+                'total' => $plots->total(),
+                'per_page' => $plots->perPage(),
                 'current_page' => $plots->currentPage(),
-                'last_page'    => $plots->lastPage(),
-                'has_more'     => $plots->hasMorePages(),
-                'total_area'   => round((float) $areaStats->total_area, 2),
+                'last_page' => $plots->lastPage(),
+                'has_more' => $plots->hasMorePages(),
+                'total_area' => round((float) $areaStats->total_area, 2),
                 'organic_area' => round((float) $areaStats->organic_area, 2),
             ],
         ]);
@@ -77,16 +77,15 @@ class PlotController extends Controller
         $centroids = $this->batchCentroids($plots->pluck('id')->all());
 
         $result = $plots
-            ->filter(fn ($p) =>
-                isset($centroids[$p->id]) ||
+            ->filter(fn ($p) => isset($centroids[$p->id]) ||
                 ($p->municipality?->lat && $p->municipality?->lng)
             )
             ->map(fn ($p) => [
-                'plot_id'      => $p->id,
-                'plot_name'    => $p->name,
-                'area'         => (float) $p->area,
+                'plot_id' => $p->id,
+                'plot_name' => $p->name,
+                'area' => (float) $p->area,
                 'has_geometry' => isset($centroids[$p->id]),
-                'centroid'     => $centroids[$p->id] ?? [
+                'centroid' => $centroids[$p->id] ?? [
                     'lat' => (float) $p->municipality->lat,
                     'lng' => (float) $p->municipality->lng,
                 ],
@@ -113,7 +112,7 @@ class PlotController extends Controller
         }
 
         $placeholders = implode(',', array_fill(0, count($plotIds), '?'));
-        $params       = $plotIds;
+        $params = $plotIds;
 
         $sql = "SELECT mps.plot_id, sc.code,
                         ST_AsText(pg.coordinates) AS coordinates_wkt,
@@ -128,13 +127,13 @@ class PlotController extends Controller
             $parts = array_map('floatval', explode(',', $request->query('bbox')));
             if (count($parts) === 4) {
                 [$south, $west, $north, $east] = $parts;
-                $bboxWkt  = "POLYGON(($west $south,$east $south,$east $north,$west $north,$west $south))";
-                $sql     .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?, 4326))';
+                $bboxWkt = "POLYGON(($west $south,$east $south,$east $north,$west $north,$west $south))";
+                $sql .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?, 4326))';
                 $params[] = $bboxWkt;
             }
         }
 
-        $rows             = DB::select($sql, $params);
+        $rows = DB::select($sql, $params);
         $geometriesByPlot = collect($rows)->groupBy('plot_id');
 
         if ($geometriesByPlot->isEmpty()) {
@@ -144,7 +143,7 @@ class PlotController extends Controller
         // Cargar metadatos sólo para parcelas con geometría — evita traer datos de
         // parcelas sin geometría que el filtro PHP descartaría después
         $relevantIds = $geometriesByPlot->keys()->all();
-        $plotMeta    = Plot::whereIn('id', $relevantIds)
+        $plotMeta = Plot::whereIn('id', $relevantIds)
             ->orderBy('name')
             ->get(['id', 'name', 'area'])
             ->keyBy('id');
@@ -156,13 +155,13 @@ class PlotController extends Controller
             }
 
             return [
-                'plot_id'      => (int) $plotId,
-                'plot_name'    => $plot->name,
-                'area'         => (float) $plot->area,
+                'plot_id' => (int) $plotId,
+                'plot_name' => $plot->name,
+                'area' => (float) $plot->area,
                 'has_geometry' => true,
-                'geometries'   => $geos->map(fn ($row) => [
+                'geometries' => $geos->map(fn ($row) => [
                     'sigpac_code' => $row->code,
-                    'centroid'    => $this->parseCentroidWkt($row->centroid_wkt),
+                    'centroid' => $this->parseCentroidWkt($row->centroid_wkt),
                     'coordinates' => $this->parsePolygonWkt($row->coordinates_wkt),
                 ])->values(),
             ];
@@ -183,9 +182,9 @@ class PlotController extends Controller
             ->findOrFail($id);
 
         // Query directa para un único plot — evita el overhead de batchCentroids con GROUP BY
-        $centroid            = $this->singleCentroid($plot->id);
+        $centroid = $this->singleCentroid($plot->id);
         $plot->centroid_data = $centroid;
-        $plot->has_geometry  = $centroid !== null;
+        $plot->has_geometry = $centroid !== null;
 
         return response()->json(['data' => new PlotResource($plot)]);
     }
@@ -213,14 +212,14 @@ class PlotController extends Controller
 
         $geometries = collect($rows)->map(fn ($row) => [
             'sigpac_code' => $row->code,
-            'centroid'    => $this->parseCentroidWkt($row->centroid_wkt),
+            'centroid' => $this->parseCentroidWkt($row->centroid_wkt),
             'coordinates' => $this->parsePolygonWkt($row->coordinates_wkt),
         ]);
 
         return response()->json([
-            'plot_id'      => $id,
+            'plot_id' => $id,
             'has_geometry' => $geometries->isNotEmpty(),
-            'geometries'   => $geometries,
+            'geometries' => $geometries,
         ]);
     }
 
@@ -239,18 +238,18 @@ class PlotController extends Controller
             ->orderBy('planting_year', 'desc')
             ->get()
             ->map(fn ($p) => [
-                'id'              => $p->id,
-                'name'            => $p->name,
-                'grape_variety'   => $p->grapeVariety?->name,
-                'planted_area'    => (float) $p->planted_area,
-                'planting_year'   => $p->planting_year,
-                'vine_count'      => $p->vine_count,
-                'row_spacing'     => $p->row_spacing ? (float) $p->row_spacing : null,
-                'vine_spacing'    => $p->vine_spacing ? (float) $p->vine_spacing : null,
-                'rootstock'       => $p->rootstock,
+                'id' => $p->id,
+                'name' => $p->name,
+                'grape_variety' => $p->grapeVariety?->name,
+                'planted_area' => (float) $p->planted_area,
+                'planting_year' => $p->planting_year,
+                'vine_count' => $p->vine_count,
+                'row_spacing' => $p->row_spacing ? (float) $p->row_spacing : null,
+                'vine_spacing' => $p->vine_spacing ? (float) $p->vine_spacing : null,
+                'rootstock' => $p->rootstock,
                 'training_system' => $p->trainingSystem?->name,
-                'status'          => $p->status,
-                'irrigated'       => (bool) $p->irrigated,
+                'status' => $p->status,
+                'irrigated' => (bool) $p->irrigated,
             ]);
 
         return response()->json(['data' => $plantings]);
@@ -266,9 +265,9 @@ class PlotController extends Controller
         $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'name'             => 'sometimes|string|max:255',
-            'notes'            => 'nullable|string|max:2000',
-            'is_organic'       => 'sometimes|boolean',
+            'name' => 'sometimes|string|max:255',
+            'notes' => 'nullable|string|max:2000',
+            'is_organic' => 'sometimes|boolean',
             'cultivation_type' => 'sometimes|string|max:100',
         ]);
 
@@ -320,12 +319,12 @@ class PlotController extends Controller
     private function singleCentroid(int $plotId): ?array
     {
         $row = DB::selectOne(
-            "SELECT ST_AsText(pg.centroid) AS centroid_wkt
+            'SELECT ST_AsText(pg.centroid) AS centroid_wkt
              FROM   multipart_plot_sigpac mps
              JOIN   plot_geometry pg ON mps.plot_geometry_id = pg.id
              WHERE  mps.plot_id = ?
              AND    pg.centroid IS NOT NULL
-             LIMIT  1",
+             LIMIT  1',
             [$plotId]
         );
 
@@ -334,10 +333,15 @@ class PlotController extends Controller
 
     private function parseCentroidWkt(?string $wkt): ?array
     {
-        if (!$wkt) return null;
+        if (! $wkt) {
+            return null;
+        }
         preg_match('/POINT\(([^)]+)\)/', $wkt, $m);
-        if (!isset($m[1])) return null;
+        if (! isset($m[1])) {
+            return null;
+        }
         $parts = explode(' ', trim($m[1]));
+
         return count($parts) >= 2
             ? ['lat' => (float) $parts[1], 'lng' => (float) $parts[0]]
             : null;
@@ -345,9 +349,13 @@ class PlotController extends Controller
 
     private function parsePolygonWkt(?string $wkt): array
     {
-        if (!$wkt) return [];
+        if (! $wkt) {
+            return [];
+        }
         preg_match('/POLYGON\(\(([^)]+)\)\)/', $wkt, $m);
-        if (!isset($m[1])) return [];
+        if (! isset($m[1])) {
+            return [];
+        }
 
         $points = [];
         foreach (explode(',', $m[1]) as $coord) {
@@ -356,6 +364,7 @@ class PlotController extends Controller
                 $points[] = ['lat' => (float) $parts[1], 'lng' => (float) $parts[0]];
             }
         }
+
         return $points;
     }
 }

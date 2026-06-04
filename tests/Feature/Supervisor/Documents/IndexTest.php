@@ -4,7 +4,6 @@ namespace Tests\Feature\Supervisor\Documents;
 
 use App\Livewire\Supervisor\Documents\Index;
 use App\Models\DoDocument;
-use App\Models\User;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -49,10 +48,10 @@ class IndexTest extends SupervisorTestCase
 
         $this->assertDatabaseHas('do_documents', [
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Pliego de Condiciones 2026',
-            'version'       => 'v1.0',
-            'status'        => DoDocument::STATUS_DRAFT,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Pliego de Condiciones 2026',
+            'version' => 'v1.0',
+            'status' => DoDocument::STATUS_DRAFT,
         ]);
     }
 
@@ -75,9 +74,9 @@ class IndexTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
         $doc = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Original',
-            'status'        => DoDocument::STATUS_DRAFT,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Original',
+            'status' => DoDocument::STATUS_DRAFT,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -90,7 +89,7 @@ class IndexTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_documents', [
-            'id'    => $doc->id,
+            'id' => $doc->id,
             'title' => 'Título Actualizado',
         ]);
     }
@@ -100,9 +99,9 @@ class IndexTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
         $doc = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Documento Activo',
-            'status'        => DoDocument::STATUS_ACTIVE,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Documento Activo',
+            'status' => DoDocument::STATUS_ACTIVE,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -119,9 +118,9 @@ class IndexTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
         $doc = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Draft Pliego',
-            'status'        => DoDocument::STATUS_DRAFT,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Draft Pliego',
+            'status' => DoDocument::STATUS_DRAFT,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -130,7 +129,7 @@ class IndexTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_documents', [
-            'id'     => $doc->id,
+            'id' => $doc->id,
             'status' => DoDocument::STATUS_ACTIVE,
         ]);
     }
@@ -141,16 +140,16 @@ class IndexTest extends SupervisorTestCase
 
         $existing = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Pliego Anterior',
-            'status'        => DoDocument::STATUS_ACTIVE,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Pliego Anterior',
+            'status' => DoDocument::STATUS_ACTIVE,
         ]);
 
         $newDraft = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Pliego Nuevo',
-            'status'        => DoDocument::STATUS_DRAFT,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Pliego Nuevo',
+            'status' => DoDocument::STATUS_DRAFT,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -159,12 +158,12 @@ class IndexTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_documents', [
-            'id'     => $existing->id,
+            'id' => $existing->id,
             'status' => DoDocument::STATUS_ARCHIVED,
         ]);
 
         $this->assertDatabaseHas('do_documents', [
-            'id'     => $newDraft->id,
+            'id' => $newDraft->id,
             'status' => DoDocument::STATUS_ACTIVE,
         ]);
     }
@@ -175,16 +174,16 @@ class IndexTest extends SupervisorTestCase
 
         $activeReglamento = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_REGLAMENTO,
-            'title'         => 'Reglamento Vigente',
-            'status'        => DoDocument::STATUS_ACTIVE,
+            'type' => DoDocument::TYPE_REGLAMENTO,
+            'title' => 'Reglamento Vigente',
+            'status' => DoDocument::STATUS_ACTIVE,
         ]);
 
         $newPliego = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Pliego Nuevo',
-            'status'        => DoDocument::STATUS_DRAFT,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Pliego Nuevo',
+            'status' => DoDocument::STATUS_DRAFT,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -192,7 +191,7 @@ class IndexTest extends SupervisorTestCase
             ->call('publish', $newPliego->id);
 
         $this->assertDatabaseHas('do_documents', [
-            'id'     => $activeReglamento->id,
+            'id' => $activeReglamento->id,
             'status' => DoDocument::STATUS_ACTIVE,
         ]);
     }
@@ -202,9 +201,9 @@ class IndexTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
         $doc = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Ya Activo',
-            'status'        => DoDocument::STATUS_ACTIVE,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Ya Activo',
+            'status' => DoDocument::STATUS_ACTIVE,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -213,7 +212,7 @@ class IndexTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_documents', [
-            'id'     => $doc->id,
+            'id' => $doc->id,
             'status' => DoDocument::STATUS_ACTIVE,
         ]);
     }
@@ -225,9 +224,9 @@ class IndexTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
         $doc = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_REGLAMENTO,
-            'title'         => 'Reglamento 2024',
-            'status'        => DoDocument::STATUS_ACTIVE,
+            'type' => DoDocument::TYPE_REGLAMENTO,
+            'title' => 'Reglamento 2024',
+            'status' => DoDocument::STATUS_ACTIVE,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -236,7 +235,7 @@ class IndexTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_documents', [
-            'id'     => $doc->id,
+            'id' => $doc->id,
             'status' => DoDocument::STATUS_ARCHIVED,
         ]);
     }
@@ -246,9 +245,9 @@ class IndexTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
         $doc = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_REGLAMENTO,
-            'title'         => 'Solo Borrador',
-            'status'        => DoDocument::STATUS_DRAFT,
+            'type' => DoDocument::TYPE_REGLAMENTO,
+            'title' => 'Solo Borrador',
+            'status' => DoDocument::STATUS_DRAFT,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -257,7 +256,7 @@ class IndexTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_documents', [
-            'id'     => $doc->id,
+            'id' => $doc->id,
             'status' => DoDocument::STATUS_DRAFT,
         ]);
     }
@@ -269,9 +268,9 @@ class IndexTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
         $doc = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Borrador Eliminable',
-            'status'        => DoDocument::STATUS_DRAFT,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Borrador Eliminable',
+            'status' => DoDocument::STATUS_DRAFT,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -287,9 +286,9 @@ class IndexTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
         $doc = DoDocument::create([
             'supervisor_id' => $supervisor->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Activo No Borrable',
-            'status'        => DoDocument::STATUS_ACTIVE,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Activo No Borrable',
+            'status' => DoDocument::STATUS_ACTIVE,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -313,7 +312,7 @@ class IndexTest extends SupervisorTestCase
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->assertSet('activeTab', 'active')
-            ->assertViewHas('documents', fn($d) => $d->count() === 1 && $d->first()->title === 'Vigente');
+            ->assertViewHas('documents', fn ($d) => $d->count() === 1 && $d->first()->title === 'Vigente');
     }
 
     public function test_switching_to_draft_tab_shows_only_drafts(): void
@@ -327,7 +326,7 @@ class IndexTest extends SupervisorTestCase
             ->test(Index::class)
             ->call('setTab', 'draft')
             ->assertSet('activeTab', 'draft')
-            ->assertViewHas('documents', fn($d) => $d->count() === 1 && $d->first()->title === 'Borrador');
+            ->assertViewHas('documents', fn ($d) => $d->count() === 1 && $d->first()->title === 'Borrador');
     }
 
     // ── counts ────────────────────────────────────────────────────────────────
@@ -343,7 +342,7 @@ class IndexTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('counts', fn($c) => $c['active'] === 1 && $c['draft'] === 2 && $c['archived'] === 1);
+            ->assertViewHas('counts', fn ($c) => $c['active'] === 1 && $c['draft'] === 2 && $c['archived'] === 1);
     }
 
     // ── isolation ─────────────────────────────────────────────────────────────
@@ -351,31 +350,31 @@ class IndexTest extends SupervisorTestCase
     public function test_documents_isolated_from_other_supervisor(): void
     {
         $supervisor = $this->makeSupervisor();
-        $other      = $this->makeSupervisor();
+        $other = $this->makeSupervisor();
 
         DoDocument::create([
             'supervisor_id' => $other->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Documento Ajeno',
-            'status'        => DoDocument::STATUS_ACTIVE,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Documento Ajeno',
+            'status' => DoDocument::STATUS_ACTIVE,
         ]);
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('documents', fn($d) => $d->isEmpty())
-            ->assertViewHas('counts', fn($c) => $c['active'] === 0);
+            ->assertViewHas('documents', fn ($d) => $d->isEmpty())
+            ->assertViewHas('counts', fn ($c) => $c['active'] === 0);
     }
 
     public function test_supervisor_cannot_edit_another_supervisors_document(): void
     {
         $supervisor = $this->makeSupervisor();
-        $other      = $this->makeSupervisor();
+        $other = $this->makeSupervisor();
 
         $doc = DoDocument::create([
             'supervisor_id' => $other->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Ajeno',
-            'status'        => DoDocument::STATUS_DRAFT,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Ajeno',
+            'status' => DoDocument::STATUS_DRAFT,
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -388,13 +387,13 @@ class IndexTest extends SupervisorTestCase
     public function test_supervisor_cannot_delete_another_supervisors_document(): void
     {
         $supervisor = $this->makeSupervisor();
-        $other      = $this->makeSupervisor();
+        $other = $this->makeSupervisor();
 
         $doc = DoDocument::create([
             'supervisor_id' => $other->id,
-            'type'          => DoDocument::TYPE_PLIEGO,
-            'title'         => 'Ajeno',
-            'status'        => DoDocument::STATUS_DRAFT,
+            'type' => DoDocument::TYPE_PLIEGO,
+            'title' => 'Ajeno',
+            'status' => DoDocument::STATUS_DRAFT,
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);

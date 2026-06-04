@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Livewire\Sigpac\CodesIndex;
-use App\Livewire\Sigpac\UsesIndex;
 use App\Livewire\Sigpac\Create;
 use App\Livewire\Sigpac\Edit;
+use App\Livewire\Sigpac\UsesIndex;
+use Illuminate\Support\Facades\Route;
 
 // Lectura: todos los roles autenticados con beta
 Route::middleware(['auth', 'verified', 'check.beta'])

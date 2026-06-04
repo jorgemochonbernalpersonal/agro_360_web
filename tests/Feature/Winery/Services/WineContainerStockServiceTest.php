@@ -3,7 +3,6 @@
 namespace Tests\Feature\Winery\Services;
 
 use App\Models\Container;
-use App\Models\ContainerHistory;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
 use App\Models\WineBottling;
@@ -24,7 +23,9 @@ class WineContainerStockServiceTest extends WineryTestCase
     use CreatesDeliveryScenario;
 
     private WineContainerStockService $service;
+
     private Wine $wine;
+
     private UnitOfMeasurement $uom;
 
     protected function setUp(): void
@@ -34,10 +35,10 @@ class WineContainerStockServiceTest extends WineryTestCase
         $this->actingAs($this->winery);
         $this->service = app(WineContainerStockService::class);
         $this->wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Vino Test',
+            'user_id' => $this->winery->id,
+            'name' => 'Vino Test',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
         $this->uom = UnitOfMeasurement::firstOrCreate(
             ['symbol' => 'L'],
@@ -50,7 +51,7 @@ class WineContainerStockServiceTest extends WineryTestCase
     public function test_record_transfer_decrements_source_and_increments_destination(): void
     {
         $source = $this->makeWineContainer(1000.0);
-        $dest   = $this->makeWineContainer(0.0);
+        $dest = $this->makeWineContainer(0.0);
 
         $transfer = $this->makeTransfer($source, $dest, 300.0);
 
@@ -78,18 +79,18 @@ class WineContainerStockServiceTest extends WineryTestCase
     public function test_record_transfer_registers_history_entries(): void
     {
         $source = $this->makeWineContainer(1000.0);
-        $dest   = $this->makeWineContainer(0.0);
+        $dest = $this->makeWineContainer(0.0);
 
         $transfer = $this->makeTransfer($source, $dest, 200.0);
 
         $this->service->recordTransfer($transfer);
 
         $this->assertDatabaseHas('container_histories', [
-            'container_id'   => $source->id,
+            'container_id' => $source->id,
             'operation_type' => 'wine_transfer_out',
         ]);
         $this->assertDatabaseHas('container_histories', [
-            'container_id'   => $dest->id,
+            'container_id' => $dest->id,
             'operation_type' => 'wine_transfer_in',
         ]);
     }
@@ -99,7 +100,7 @@ class WineContainerStockServiceTest extends WineryTestCase
     public function test_revert_transfer_restores_original_volumes(): void
     {
         $source = $this->makeWineContainer(1000.0);
-        $dest   = $this->makeWineContainer(0.0);
+        $dest = $this->makeWineContainer(0.0);
 
         $transfer = $this->makeTransfer($source, $dest, 400.0);
         $this->service->recordTransfer($transfer);
@@ -116,10 +117,10 @@ class WineContainerStockServiceTest extends WineryTestCase
     public function test_record_then_revert_is_idempotent(): void
     {
         $source = $this->makeWineContainer(500.0);
-        $dest   = $this->makeWineContainer(100.0);
+        $dest = $this->makeWineContainer(100.0);
 
         $originalSource = 500.0;
-        $originalDest   = 100.0;
+        $originalDest = 100.0;
 
         $transfer = $this->makeTransfer($source, $dest, 150.0);
 
@@ -138,16 +139,16 @@ class WineContainerStockServiceTest extends WineryTestCase
     public function test_update_transfer_applies_new_quantity_atomically(): void
     {
         $source = $this->makeWineContainer(1000.0);
-        $dest   = $this->makeWineContainer(0.0);
+        $dest = $this->makeWineContainer(0.0);
 
         $transfer = $this->makeTransfer($source, $dest, 300.0);
         $this->service->recordTransfer($transfer);
 
         $oldData = [
-            'wine_id'          => $transfer->wine_id,
-            'from_container_id'=> $transfer->from_container_id,
-            'to_container_id'  => $transfer->to_container_id,
-            'quantity'         => 300.0,
+            'wine_id' => $transfer->wine_id,
+            'from_container_id' => $transfer->from_container_id,
+            'to_container_id' => $transfer->to_container_id,
+            'quantity' => 300.0,
         ];
 
         $transfer->quantity = 600.0;
@@ -197,7 +198,7 @@ class WineContainerStockServiceTest extends WineryTestCase
         $this->service->recordLoss($loss);
 
         $this->assertDatabaseHas('container_histories', [
-            'container_id'   => $container->id,
+            'container_id' => $container->id,
             'operation_type' => 'wine_loss',
         ]);
     }
@@ -227,9 +228,9 @@ class WineContainerStockServiceTest extends WineryTestCase
         $this->service->recordLoss($loss);
 
         $oldData = [
-            'wine_id'      => $loss->wine_id,
+            'wine_id' => $loss->wine_id,
             'container_id' => $loss->container_id,
-            'quantity'     => 50.0,
+            'quantity' => 50.0,
         ];
 
         $loss->quantity = 150.0;
@@ -265,7 +266,7 @@ class WineContainerStockServiceTest extends WineryTestCase
         $this->service->recordBottling($bottling);
 
         $this->assertDatabaseHas('container_histories', [
-            'container_id'   => $container->id,
+            'container_id' => $container->id,
             'operation_type' => 'bottling',
         ]);
     }
@@ -295,9 +296,9 @@ class WineContainerStockServiceTest extends WineryTestCase
         $this->service->recordBottling($bottling);
 
         $oldData = [
-            'wine_id'        => $bottling->wine_id,
-            'container_id'   => $bottling->container_id,
-            'quantity_liters'=> 400.0,
+            'wine_id' => $bottling->wine_id,
+            'container_id' => $bottling->container_id,
+            'quantity_liters' => 400.0,
         ];
 
         $bottling->quantity_liters = 800.0;
@@ -327,53 +328,53 @@ class WineContainerStockServiceTest extends WineryTestCase
     private function makeWineContainer(float $wineVolume): Container
     {
         return Container::create([
-            'user_id'              => $this->winery->id,
-            'name'                 => 'Dep. ' . uniqid(),
-            'capacity'             => 5000,
-            'used_capacity'        => 0,
-            'wine_volume_liters'   => $wineVolume,
-            'archived'             => false,
+            'user_id' => $this->winery->id,
+            'name' => 'Dep. '.uniqid(),
+            'capacity' => 5000,
+            'used_capacity' => 0,
+            'wine_volume_liters' => $wineVolume,
+            'archived' => false,
         ]);
     }
 
     private function makeTransfer(?Container $from, Container $to, float $qty): WineTransfer
     {
         return WineTransfer::create([
-            'wine_id'               => $this->wine->id,
-            'from_container_id'     => $from?->id,
-            'to_container_id'       => $to->id,
-            'quantity'              => $qty,
-            'unit_of_measurement_id'=> $this->uom->id,
-            'transfer_type'         => 'racking',
-            'transfer_date'         => now(),
-            'created_by'            => $this->winery->id,
+            'wine_id' => $this->wine->id,
+            'from_container_id' => $from?->id,
+            'to_container_id' => $to->id,
+            'quantity' => $qty,
+            'unit_of_measurement_id' => $this->uom->id,
+            'transfer_type' => 'racking',
+            'transfer_date' => now(),
+            'created_by' => $this->winery->id,
         ]);
     }
 
     private function makeLoss(Container $container, float $qty): WineLoss
     {
         return WineLoss::create([
-            'wine_id'               => $this->wine->id,
-            'container_id'          => $container->id,
-            'quantity'              => $qty,
-            'unit_of_measurement_id'=> $this->uom->id,
-            'loss_type'             => 'evaporation',
-            'loss_date'             => now(),
-            'created_by'            => $this->winery->id,
+            'wine_id' => $this->wine->id,
+            'container_id' => $container->id,
+            'quantity' => $qty,
+            'unit_of_measurement_id' => $this->uom->id,
+            'loss_type' => 'evaporation',
+            'loss_date' => now(),
+            'created_by' => $this->winery->id,
         ]);
     }
 
     private function makeBottling(Container $container, float $liters): WineBottling
     {
         return WineBottling::create([
-            'user_id'         => $this->winery->id,
-            'wine_id'         => $this->wine->id,
-            'container_id'    => $container->id,
+            'user_id' => $this->winery->id,
+            'wine_id' => $this->wine->id,
+            'container_id' => $container->id,
             'quantity_liters' => $liters,
-            'quantity_bottles'=> (int) ($liters / 0.75),
-            'bottle_format'   => '750',
-            'bottling_date'   => now(),
-            'created_by'      => $this->winery->id,
+            'quantity_bottles' => (int) ($liters / 0.75),
+            'bottle_format' => '750',
+            'bottling_date' => now(),
+            'created_by' => $this->winery->id,
         ]);
     }
 }

@@ -29,13 +29,14 @@ class Index extends Component
                 ->where('viticulturist_id', Auth::id())
                 ->first();
 
-            if (!$relation) {
+            if (! $relation) {
                 Log::error('NotebookAccess approve: SupervisorViticulturist relation not found', [
-                    'request_id'       => $requestId,
-                    'supervisor_id'    => $request->supervisor_id,
+                    'request_id' => $requestId,
+                    'supervisor_id' => $request->supervisor_id,
                     'viticulturist_id' => Auth::id(),
                 ]);
                 $this->toastError(__('No se encontró la relación con esta denominación de origen.'));
+
                 return;
             }
 
@@ -45,13 +46,14 @@ class Index extends Component
                 ->where('viticulturist_id', Auth::id())
                 ->first();
 
-            if (!$relation) {
+            if (! $relation) {
                 Log::error('NotebookAccess approve: WineryViticulturist relation not found', [
-                    'request_id'       => $requestId,
-                    'winery_id'        => $request->winery_id,
+                    'request_id' => $requestId,
+                    'winery_id' => $request->winery_id,
                     'viticulturist_id' => Auth::id(),
                 ]);
                 $this->toastError(__('No se encontró la relación con esta bodega.'));
+
                 return;
             }
 
@@ -59,11 +61,11 @@ class Index extends Component
         }
 
         $request->update([
-            'status'       => NotebookAccessRequest::STATUS_APPROVED,
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
             'responded_at' => now(),
         ]);
 
-        Cache::forget('nav_badge_notebook_access_' . Auth::id());
+        Cache::forget('nav_badge_notebook_access_'.Auth::id());
 
         $requester = $request->requester();
         $requester?->notify(new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_APPROVED));
@@ -79,11 +81,11 @@ class Index extends Component
             ->firstOrFail();
 
         $request->update([
-            'status'       => NotebookAccessRequest::STATUS_REJECTED,
+            'status' => NotebookAccessRequest::STATUS_REJECTED,
             'responded_at' => now(),
         ]);
 
-        Cache::forget('nav_badge_notebook_access_' . Auth::id());
+        Cache::forget('nav_badge_notebook_access_'.Auth::id());
 
         $requester = $request->requester();
         $requester?->notify(new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_REJECTED));
@@ -99,8 +101,9 @@ class Index extends Component
                 ->where('notebook_access', true)
                 ->first();
 
-            if (!$relation) {
+            if (! $relation) {
                 $this->toastError(__('No se encontró el acceso activo a esta denominación de origen.'));
+
                 return;
             }
 
@@ -119,8 +122,9 @@ class Index extends Component
                 ->where('notebook_access', true)
                 ->first();
 
-            if (!$relation) {
+            if (! $relation) {
                 $this->toastError(__('No se encontró el acceso activo a esta bodega.'));
+
                 return;
             }
 
@@ -139,7 +143,7 @@ class Index extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Notebook Access - Agro365',
+        'title' => 'Notebook Access - Agro365',
         'description' => 'Gestiona qué bodegas y denominaciones de origen pueden ver tu cuaderno de campo digital.',
     ])]
     public function render()
@@ -158,10 +162,10 @@ class Index extends Component
             ->where('notebook_access', true)
             ->orderBy('notebook_granted_at', 'desc')
             ->get()
-            ->map(fn($r) => (object) [
-                'id'         => $r->winery_id,
-                'type'       => 'winery',
-                'name'       => $r->winery?->name,
+            ->map(fn ($r) => (object) [
+                'id' => $r->winery_id,
+                'type' => 'winery',
+                'name' => $r->winery?->name,
                 'granted_at' => $r->notebook_granted_at,
             ])->toBase();
 
@@ -170,10 +174,10 @@ class Index extends Component
             ->where('notebook_access', true)
             ->orderBy('notebook_granted_at', 'desc')
             ->get()
-            ->map(fn($r) => (object) [
-                'id'         => $r->supervisor_id,
-                'type'       => 'supervisor',
-                'name'       => $r->supervisor?->name,
+            ->map(fn ($r) => (object) [
+                'id' => $r->supervisor_id,
+                'type' => 'supervisor',
+                'name' => $r->supervisor?->name,
                 'granted_at' => $r->notebook_granted_at,
             ])->toBase();
 
@@ -188,8 +192,8 @@ class Index extends Component
             ->get();
 
         return view('livewire.viticulturist.winery-access.index', [
-            'pending'  => $pending,
-            'granted'  => $granted,
+            'pending' => $pending,
+            'granted' => $granted,
             'rejected' => $rejected,
         ]);
     }

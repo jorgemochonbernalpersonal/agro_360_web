@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\InvoiceAuditLog;
-use App\Models\Invoice;
-use App\Models\User;
 use App\Models\Client;
+use App\Models\Invoice;
+use App\Models\InvoiceAuditLog;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -291,4 +291,3 @@ class InvoiceAuditLogTest extends TestCase
         $this->assertNull($log->changes);
     }
 }
-

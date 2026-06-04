@@ -27,11 +27,11 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
-            
+
             $table->foreign('product_id')->references('id')->on('phytosanitary_products')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('warehouse_id')->references('id')->on('warehouses')->onDelete('set null');
-            
+
             $table->index(['product_id', 'user_id', 'active']);
             $table->index('expiry_date');
         });

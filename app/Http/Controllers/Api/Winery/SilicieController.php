@@ -20,10 +20,10 @@ class SilicieController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:' . (now()->year + 1)]);
+        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
 
         $wineryId = $user->id;
-        $vintage  = $request->integer('vintage', now()->year);
+        $vintage = $request->integer('vintage', now()->year);
 
         $vintages = DB::table('harvests')
             ->where('winery_id', $wineryId)
@@ -37,9 +37,9 @@ class SilicieController extends Controller
 
         return response()->json([
             'data' => [
-                'stats'    => $this->buildStats($wineryId, $vintage),
+                'stats' => $this->buildStats($wineryId, $vintage),
                 'vintages' => $vintages->values(),
-                'vintage'  => $vintage,
+                'vintage' => $vintage,
             ],
         ]);
     }
@@ -51,10 +51,10 @@ class SilicieController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:' . (now()->year + 1)]);
+        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
 
         $wineryId = $user->id;
-        $vintage  = $request->integer('vintage', now()->year);
+        $vintage = $request->integer('vintage', now()->year);
 
         $recepciones = DB::table('harvests as h')
             ->where('h.winery_id', $wineryId)
@@ -96,12 +96,12 @@ class SilicieController extends Controller
         return response()->json([
             'data' => [
                 'recepciones' => $recepciones,
-                'externas'    => $externas,
-                'totals'      => [
-                    'recepciones'    => $recepciones->count(),
-                    'kg_total'       => (float) $recepciones->sum('total_weight'),
+                'externas' => $externas,
+                'totals' => [
+                    'recepciones' => $recepciones->count(),
+                    'kg_total' => (float) $recepciones->sum('total_weight'),
                     'externas_count' => $externas->count(),
-                    'externas_kg'    => (float) $externas->sum('total_weight_kg'),
+                    'externas_kg' => (float) $externas->sum('total_weight_kg'),
                 ],
             ],
         ]);
@@ -114,10 +114,10 @@ class SilicieController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:' . (now()->year + 1)]);
+        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
 
         $wineryId = $user->id;
-        $vintage  = $request->integer('vintage', now()->year);
+        $vintage = $request->integer('vintage', now()->year);
 
         $steps = DB::table('wine_process_details as wpd')
             ->join('wines as w', 'w.id', '=', 'wpd.wine_id')
@@ -168,7 +168,7 @@ class SilicieController extends Controller
 
     public function inventory(Request $request): JsonResponse
     {
-        $user     = $request->user();
+        $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
         $wineryId = $user->id;
@@ -214,11 +214,11 @@ class SilicieController extends Controller
             ->get();
 
         $byWine = $stock->groupBy('wine_id')->map(fn ($rows) => [
-            'wine_name'    => $rows->first()->wine_name,
-            'wine_type'    => $rows->first()->wine_type,
-            'vintage'      => $rows->first()->vintage,
+            'wine_name' => $rows->first()->wine_name,
+            'wine_type' => $rows->first()->wine_type,
+            'vintage' => $rows->first()->vintage,
             'total_liters' => (float) $rows->sum('current_quantity'),
-            'containers'   => $rows->count(),
+            'containers' => $rows->count(),
         ])->values();
 
         $lastSnapshot = WineStockSnapshot::where('user_id', $wineryId)
@@ -227,15 +227,15 @@ class SilicieController extends Controller
 
         return response()->json([
             'data' => [
-                'stock'         => $stock,
+                'stock' => $stock,
                 'stock_harvest' => $stockHarvest,
-                'by_wine'       => $byWine,
+                'by_wine' => $byWine,
                 'last_snapshot' => $lastSnapshot,
-                'totals'        => [
-                    'total_liters'    => (float) $stock->sum('current_quantity'),
-                    'harvest_kg'      => (float) $stockHarvest->sum('current_quantity'),
+                'totals' => [
+                    'total_liters' => (float) $stock->sum('current_quantity'),
+                    'harvest_kg' => (float) $stockHarvest->sum('current_quantity'),
                     'container_count' => $stock->count() + $stockHarvest->count(),
-                    'wine_count'      => $stock->pluck('wine_id')->filter()->unique()->count(),
+                    'wine_count' => $stock->pluck('wine_id')->filter()->unique()->count(),
                 ],
             ],
         ]);
@@ -248,10 +248,10 @@ class SilicieController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:' . (now()->year + 1)]);
+        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
 
         $wineryId = $user->id;
-        $vintage  = $request->integer('vintage', now()->year);
+        $vintage = $request->integer('vintage', now()->year);
 
         $ventas = DB::table('invoices as i')
             ->where('i.user_id', $wineryId)
@@ -307,13 +307,13 @@ class SilicieController extends Controller
 
         return response()->json([
             'data' => [
-                'ventas'       => $ventas,
-                'perdidas'     => $perdidas,
+                'ventas' => $ventas,
+                'perdidas' => $perdidas,
                 'subproductos' => $subproductos,
-                'totals'       => [
-                    'ventas_count'     => $ventas->count(),
-                    'ventas_amount'    => (float) $ventas->sum('total_amount'),
-                    'perdidas_qty'     => (float) $perdidas->sum('quantity'),
+                'totals' => [
+                    'ventas_count' => $ventas->count(),
+                    'ventas_amount' => (float) $ventas->sum('total_amount'),
+                    'perdidas_qty' => (float) $perdidas->sum('quantity'),
                     'subproductos_qty' => (float) $subproductos->sum('quantity'),
                 ],
             ],
@@ -327,9 +327,9 @@ class SilicieController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $request->validate(['fiscal_year' => 'nullable|integer|min:1990|max:' . (now()->year + 1)]);
+        $request->validate(['fiscal_year' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
 
-        $wineryId   = $user->id;
+        $wineryId = $user->id;
         $fiscalYear = $request->integer('fiscal_year', now()->year);
         $openingDate = "{$fiscalYear}-01-01";
 
@@ -339,13 +339,13 @@ class SilicieController extends Controller
             ->orderByDesc('snapshot_date')
             ->value('snapshot_date');
 
-        if (!$snapshotDate) {
+        if (! $snapshotDate) {
             return response()->json([
                 'data' => [
-                    'fiscal_year'   => $fiscalYear,
+                    'fiscal_year' => $fiscalYear,
                     'snapshot_date' => null,
-                    'rows'          => [],
-                    'total_hl'      => 0,
+                    'rows' => [],
+                    'total_hl' => 0,
                 ],
             ]);
         }
@@ -366,32 +366,32 @@ class SilicieController extends Controller
 
         $wineCategories = \App\Livewire\Winery\Silicie\Infovi::WINE_CATEGORIES;
         $result = [];
-        $total  = 0;
+        $total = 0;
 
         foreach ($rows as $row) {
-            $hl    = round((float) $row->hl, 3);
+            $hl = round((float) $row->hl, 3);
             $label = $row->is_must
-                ? 'Mosto (' . ($wineCategories[$row->wine_type] ?? $row->wine_type) . ')'
+                ? 'Mosto ('.($wineCategories[$row->wine_type] ?? $row->wine_type).')'
                 : ($wineCategories[$row->wine_type] ?? $row->wine_type);
 
             $result[] = [
-                'wine_type'  => $row->wine_type,
-                'is_must'    => (bool) $row->is_must,
-                'label'      => $label,
-                'hl'         => $hl,
+                'wine_type' => $row->wine_type,
+                'is_must' => (bool) $row->is_must,
+                'label' => $label,
+                'hl' => $hl,
                 'wine_count' => (int) $row->wine_count,
                 'silicie_movement' => 'A22',
-                'nc_code'    => $row->is_must ? '22043096' : '22042199',
+                'nc_code' => $row->is_must ? '22043096' : '22042199',
             ];
             $total += $hl;
         }
 
         return response()->json([
             'data' => [
-                'fiscal_year'   => $fiscalYear,
+                'fiscal_year' => $fiscalYear,
                 'snapshot_date' => $snapshotDate,
-                'rows'          => $result,
-                'total_hl'      => round($total, 3),
+                'rows' => $result,
+                'total_hl' => round($total, 3),
             ],
         ]);
     }
@@ -404,7 +404,7 @@ class SilicieController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $wineryId = $user->id;
-        $today    = now()->toDateString();
+        $today = now()->toDateString();
 
         $rows = DB::table('container_current_states as ccs')
             ->join('containers as c', 'c.id', '=', 'ccs.container_id')
@@ -426,26 +426,26 @@ class SilicieController extends Controller
         foreach ($rows as $row) {
             WineStockSnapshot::updateOrCreate(
                 [
-                    'user_id'       => $wineryId,
-                    'wine_id'       => $row->wine_id,
+                    'user_id' => $wineryId,
+                    'wine_id' => $row->wine_id,
                     'snapshot_date' => $today,
                 ],
                 [
                     'quantity_liters' => $row->total_liters,
                     'container_count' => $row->container_count,
-                    'vintage'         => $row->vintage,
-                    'wine_type'       => $row->wine_type,
-                    'is_must'         => (bool) $row->is_must,
-                    'created_by'      => $wineryId,
+                    'vintage' => $row->vintage,
+                    'wine_type' => $row->wine_type,
+                    'is_must' => (bool) $row->is_must,
+                    'created_by' => $wineryId,
                 ]
             );
             $saved++;
         }
 
         return response()->json([
-            'message'       => __('Instantánea de existencias registrada correctamente.'),
+            'message' => __('Instantánea de existencias registrada correctamente.'),
             'snapshot_date' => $today,
-            'wines_saved'   => $saved,
+            'wines_saved' => $saved,
         ]);
     }
 
@@ -456,15 +456,15 @@ class SilicieController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:' . (now()->year + 1)]);
+        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
 
         $wineryId = $user->id;
-        $vintage  = $request->integer('vintage', now()->year);
-        $csv      = (new SilicieCsvExporter())->export($wineryId, $vintage);
+        $vintage = $request->integer('vintage', now()->year);
+        $csv = (new SilicieCsvExporter)->export($wineryId, $vintage);
         $filename = "SILICIE_{$wineryId}_{$vintage}.csv";
 
         return response($csv, 200, [
-            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
     }
@@ -496,10 +496,10 @@ class SilicieController extends Controller
             ->count();
 
         return [
-            'kg_received'   => (float) $kgReceived,
+            'kg_received' => (float) $kgReceived,
             'winery_liters' => (float) $wineryLiters,
-            'active_wines'  => (int) $activeWines,
-            'outputs'       => (int) $outputs,
+            'active_wines' => (int) $activeWines,
+            'outputs' => (int) $outputs,
         ];
     }
 }

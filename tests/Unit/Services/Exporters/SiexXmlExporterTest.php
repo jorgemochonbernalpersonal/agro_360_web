@@ -8,36 +8,38 @@ use App\Models\Plot;
 use App\Models\SigpacCode;
 use App\Models\User;
 use App\Services\Exporters\SiexXmlExporter;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
-use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
-use Database\Seeders\MunicipalitySeeder;
+use Tests\TestCase;
 
 class SiexXmlExporterTest extends TestCase
 {
     use RefreshDatabase;
 
     protected SiexXmlExporter $exporter;
+
     protected User $user;
+
     protected OfficialReport $report;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Seed de localización requerido por los factories de Plot
         $this->seed([
             AutonomousCommunitySeeder::class,
             ProvinceSeeder::class,
             MunicipalitySeeder::class,
         ]);
-        
+
         Storage::fake('local');
-        $this->exporter = new SiexXmlExporter();
-        
+        $this->exporter = new SiexXmlExporter;
+
         $this->user = User::factory()->create();
         $this->report = OfficialReport::create([
             'user_id' => $this->user->id,
@@ -109,7 +111,7 @@ class SiexXmlExporterTest extends TestCase
     public function it_generates_valid_xml_structure()
     {
         $plot = Plot::factory()->create(['viticulturist_id' => $this->user->id]);
-        
+
         $activity = AgriculturalActivity::factory()->create([
             'plot_id' => $plot->id,
             'viticulturist_id' => $this->user->id,
@@ -214,7 +216,7 @@ class SiexXmlExporterTest extends TestCase
 
         // No debe tener nodo SIGPAC
         $this->assertStringNotContainsString('<DatosSIGPAC>', $xmlContent);
-        
+
         // Pero debe ser XML válido
         $xml = simplexml_load_string($xmlContent);
         $this->assertNotFalse($xml);

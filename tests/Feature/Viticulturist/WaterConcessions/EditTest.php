@@ -9,20 +9,9 @@ use Tests\Feature\ViticulturistTestCase;
 
 class EditTest extends ViticulturistTestCase
 {
-    private function makeConcession(int $viticulturistId): WaterConcession
-    {
-        return WaterConcession::create([
-            'viticulturist_id' => $viticulturistId,
-            'concession_type'  => 'superficial',
-            'water_body'       => 'Río Original',
-            'authority'        => 'CHD',
-            'max_volume_m3'    => 5000.000,
-        ]);
-    }
-
     public function test_can_edit_water_concession(): void
     {
-        $v          = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $concession = $this->makeConcession($v->id);
         $this->actingAs($v);
 
@@ -34,14 +23,14 @@ class EditTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.water-concessions.index'));
 
         $this->assertDatabaseHas('water_concessions', [
-            'id'           => $concession->id,
-            'water_body'   => 'Río Actualizado',
+            'id' => $concession->id,
+            'water_body' => 'Río Actualizado',
         ]);
     }
 
     public function test_mount_fills_properties_from_model(): void
     {
-        $v          = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $concession = $this->makeConcession($v->id);
         $this->actingAs($v);
 
@@ -52,8 +41,8 @@ class EditTest extends ViticulturistTestCase
 
     public function test_cannot_edit_other_viticulturists_concession(): void
     {
-        $v          = $this->makeViticulturist();
-        $other      = $this->makeOtherViticulturist();
+        $v = $this->makeViticulturist();
+        $other = $this->makeOtherViticulturist();
         $concession = $this->makeConcession($v->id);
         $this->actingAs($other);
 
@@ -63,7 +52,7 @@ class EditTest extends ViticulturistTestCase
 
     public function test_validates_max_volume_on_update(): void
     {
-        $v          = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $concession = $this->makeConcession($v->id);
         $this->actingAs($v);
 
@@ -71,5 +60,16 @@ class EditTest extends ViticulturistTestCase
             ->set('max_volume_m3', '-100')
             ->call('save')
             ->assertHasErrors(['max_volume_m3']);
+    }
+
+    private function makeConcession(int $viticulturistId): WaterConcession
+    {
+        return WaterConcession::create([
+            'viticulturist_id' => $viticulturistId,
+            'concession_type' => 'superficial',
+            'water_body' => 'Río Original',
+            'authority' => 'CHD',
+            'max_volume_m3' => 5000.000,
+        ]);
     }
 }

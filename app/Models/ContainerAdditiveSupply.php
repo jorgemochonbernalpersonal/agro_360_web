@@ -20,7 +20,7 @@ class ContainerAdditiveSupply extends Model
     ];
 
     protected $casts = [
-        'quantity'      => 'decimal:3',
+        'quantity' => 'decimal:3',
         'additive_date' => 'date',
     ];
 

@@ -25,18 +25,18 @@ class InspectionTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_inspections', [
-            'supervisor_id'    => $supervisor->id,
-            'subject_type'     => 'winery',
-            'subject_id'       => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'reference_number' => 'INSP-2026-001',
-            'status'           => DoInspection::STATUS_SCHEDULED,
+            'status' => DoInspection::STATUS_SCHEDULED,
         ]);
     }
 
     public function test_supervisor_cannot_schedule_inspection_for_unlinked_winery(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery(); // no SupervisorWinery link
+        $winery = $this->makeWinery(); // no SupervisorWinery link
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
@@ -47,7 +47,7 @@ class InspectionTest extends SupervisorTestCase
 
         $this->assertDatabaseMissing('do_inspections', [
             'supervisor_id' => $supervisor->id,
-            'subject_id'    => $winery->id,
+            'subject_id' => $winery->id,
         ]);
     }
 
@@ -58,11 +58,11 @@ class InspectionTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => now()->format('Y-m-d'),
-            'status'          => DoInspection::STATUS_SCHEDULED,
+            'status' => DoInspection::STATUS_SCHEDULED,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -71,7 +71,7 @@ class InspectionTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_inspections', [
-            'id'     => $inspection->id,
+            'id' => $inspection->id,
             'status' => DoInspection::STATUS_IN_PROGRESS,
         ]);
     }
@@ -81,11 +81,11 @@ class InspectionTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => now()->format('Y-m-d'),
-            'status'          => DoInspection::STATUS_IN_PROGRESS,
+            'status' => DoInspection::STATUS_IN_PROGRESS,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -94,7 +94,7 @@ class InspectionTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_inspections', [
-            'id'     => $inspection->id,
+            'id' => $inspection->id,
             'status' => DoInspection::STATUS_COMPLETED,
         ]);
     }
@@ -106,9 +106,9 @@ class InspectionTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => now()->format('Y-m-d'),
         ]);
 
@@ -125,12 +125,12 @@ class InspectionTest extends SupervisorTestCase
     public function test_another_supervisor_cannot_modify_inspection(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         $inspection = DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
             'inspection_date' => now()->format('Y-m-d'),
         ]);
 

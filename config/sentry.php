@@ -82,7 +82,7 @@ return [
 
     // @see: https://docs.sentry.io/platforms/php/configuration/options/#http-proxy
     'http_proxy' => env('APP_ENV') === 'local' ? null : null,
-    
+
     // @see: https://docs.sentry.io/platforms/php/configuration/options/#http-ssl-verify-peer
     'http_ssl_verify_peer' => env('APP_ENV') === 'production',
 

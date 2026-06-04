@@ -8,6 +8,7 @@ use Livewire\Component;
 class AlertsWidget extends Component
 {
     public array $alerts = [];
+
     public int $totalCount = 0;
 
     public function mount()
@@ -17,9 +18,9 @@ class AlertsWidget extends Component
 
     public function loadAlerts()
     {
-        $service = new AlertService();
+        $service = new AlertService;
         $user = auth()->user();
-        
+
         $alertsByPlot = $service->checkAlertsForUser($user);
         $this->alerts = $alertsByPlot;
         $this->totalCount = $service->getAlertCountForUser($user);

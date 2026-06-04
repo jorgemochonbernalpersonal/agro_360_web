@@ -80,67 +80,67 @@ class WineryAnnouncementsSeeder extends Seeder
             ->pluck('viticulturist_id')
             ->toArray();
 
-        $now  = now();
+        $now = now();
         $rows = [];
         $pivotRows = [];
 
         // 15 harvest_alerts
         foreach (self::HARVEST_ALERTS as $idx => [$title, $body]) {
-            $daysAgo     = 365 - (int)round($idx * 300 / 14);  // 365..65 días atrás
+            $daysAgo = 365 - (int) round($idx * 300 / 14);  // 365..65 días atrás
             $publishedAt = now()->subDays($daysAgo)->toDateTimeString();
-            $expiresAt   = now()->subDays(max(0, $daysAgo - 60))->toDateTimeString();
-            $isExpired   = $daysAgo > 60;
+            $expiresAt = now()->subDays(max(0, $daysAgo - 60))->toDateTimeString();
+            $isExpired = $daysAgo > 60;
 
             $rows[] = [
-                'winery_id'    => self::WINERY_USER_ID,
-                'title'        => $title,
-                'body'         => $body,
-                'type'         => 'harvest_alert',
-                'target'       => 'all',
+                'winery_id' => self::WINERY_USER_ID,
+                'title' => $title,
+                'body' => $body,
+                'type' => 'harvest_alert',
+                'target' => 'all',
                 'published_at' => $publishedAt,
-                'expires_at'   => $isExpired ? $expiresAt : now()->addDays(30)->toDateTimeString(),
-                'created_at'   => $now,
-                'updated_at'   => $now,
+                'expires_at' => $isExpired ? $expiresAt : now()->addDays(30)->toDateTimeString(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
         // 20 info
         foreach (self::INFO_MESSAGES as $idx => [$title, $body]) {
-            $daysAgo     = 400 - (int)round($idx * 380 / 19);
+            $daysAgo = 400 - (int) round($idx * 380 / 19);
             $publishedAt = now()->subDays($daysAgo)->toDateTimeString();
-            $isExpired   = $idx < 10;
+            $isExpired = $idx < 10;
 
             $rows[] = [
-                'winery_id'    => self::WINERY_USER_ID,
-                'title'        => $title,
-                'body'         => $body,
-                'type'         => 'info',
-                'target'       => 'all',
+                'winery_id' => self::WINERY_USER_ID,
+                'title' => $title,
+                'body' => $body,
+                'type' => 'info',
+                'target' => 'all',
                 'published_at' => $publishedAt,
-                'expires_at'   => $isExpired
+                'expires_at' => $isExpired
                     ? now()->subDays($daysAgo - 30)->toDateTimeString()
                     : now()->addDays(60)->toDateTimeString(),
-                'created_at'   => $now,
-                'updated_at'   => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
         // 10 action_required — target 'specific' para los primeros 5, 'all' para los últimos 5
         foreach (self::ACTION_MESSAGES as $idx => [$title, $body]) {
-            $daysAgo     = 180 - (int)round($idx * 160 / 9);
+            $daysAgo = 180 - (int) round($idx * 160 / 9);
             $publishedAt = now()->subDays($daysAgo)->toDateTimeString();
-            $target      = $idx < 5 ? 'specific' : 'all';
+            $target = $idx < 5 ? 'specific' : 'all';
 
             $rows[] = [
-                'winery_id'    => self::WINERY_USER_ID,
-                'title'        => $title,
-                'body'         => $body,
-                'type'         => 'action_required',
-                'target'       => $target,
+                'winery_id' => self::WINERY_USER_ID,
+                'title' => $title,
+                'body' => $body,
+                'type' => 'action_required',
+                'target' => $target,
                 'published_at' => $publishedAt,
-                'expires_at'   => now()->addDays(30)->toDateTimeString(),
-                'created_at'   => $now,
-                'updated_at'   => $now,
+                'expires_at' => now()->addDays(30)->toDateTimeString(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -151,18 +151,18 @@ class WineryAnnouncementsSeeder extends Seeder
         }
 
         // Pivot: para avisos 'specific' (los 5 action_required primeros), enlazar con 2–3 viticultores
-        if (!empty($viticulturistIds)) {
+        if (! empty($viticulturistIds)) {
             $specificOffset = 15 + 20; // harvest_alerts + info (indices 0-34 = 35 rows)
             // Los 5 'specific' son los primeros 5 de ACTION_MESSAGES → insertedIds[35..39]
             for ($i = 0; $i < 5; $i++) {
                 $announcementId = $insertedIds[$specificOffset + $i];
-                $vitCount       = 2 + ($i % 2); // 2 o 3 viticultores
+                $vitCount = 2 + ($i % 2); // 2 o 3 viticultores
                 for ($v = 0; $v < $vitCount && $v < count($viticulturistIds); $v++) {
                     $vitId = $viticulturistIds[($i + $v) % count($viticulturistIds)];
                     $pivotRows[] = [
-                        'announcement_id'  => $announcementId,
+                        'announcement_id' => $announcementId,
                         'viticulturist_id' => $vitId,
-                        'read_at'          => ($v === 0) ? now()->subDays(2)->toDateTimeString() : null,
+                        'read_at' => ($v === 0) ? now()->subDays(2)->toDateTimeString() : null,
                     ];
                 }
             }
@@ -170,25 +170,25 @@ class WineryAnnouncementsSeeder extends Seeder
             // Además, para los avisos 'all' más recientes (últimos 10), añadir algunos read_at
             $recentStart = count($insertedIds) - 10;
             foreach (array_slice($insertedIds, $recentStart) as $j => $annId) {
-                if (!empty($viticulturistIds) && $j % 2 === 0) {
+                if (! empty($viticulturistIds) && $j % 2 === 0) {
                     $vitId = $viticulturistIds[$j % count($viticulturistIds)];
                     // Verificar que no exista ya (por si cayó también en specific)
                     $pivotRows[] = [
-                        'announcement_id'  => $annId,
+                        'announcement_id' => $annId,
                         'viticulturist_id' => $vitId,
-                        'read_at'          => now()->subDays(1)->toDateTimeString(),
+                        'read_at' => now()->subDays(1)->toDateTimeString(),
                     ];
                 }
             }
 
-            if (!empty($pivotRows)) {
+            if (! empty($pivotRows)) {
                 // Deduplicate by announcement_id + viticulturist_id
-                $seen     = [];
+                $seen = [];
                 $uniquePivot = [];
                 foreach ($pivotRows as $pr) {
-                    $key = $pr['announcement_id'] . '_' . $pr['viticulturist_id'];
-                    if (!isset($seen[$key])) {
-                        $seen[$key]    = true;
+                    $key = $pr['announcement_id'].'_'.$pr['viticulturist_id'];
+                    if (! isset($seen[$key])) {
+                        $seen[$key] = true;
                         $uniquePivot[] = $pr;
                     }
                 }
@@ -198,10 +198,10 @@ class WineryAnnouncementsSeeder extends Seeder
             }
         }
 
-        $harvest  = count(self::HARVEST_ALERTS);
-        $info     = count(self::INFO_MESSAGES);
-        $action   = count(self::ACTION_MESSAGES);
-        $this->command->info("✅ Avisos bodega: " . count($rows) . " registros ({$harvest} campaña, {$info} informativos, {$action} acción requerida)");
+        $harvest = count(self::HARVEST_ALERTS);
+        $info = count(self::INFO_MESSAGES);
+        $action = count(self::ACTION_MESSAGES);
+        $this->command->info('✅ Avisos bodega: '.count($rows)." registros ({$harvest} campaña, {$info} informativos, {$action} acción requerida)");
     }
 
     private function cleanup(): void

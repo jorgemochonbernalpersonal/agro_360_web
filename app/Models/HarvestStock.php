@@ -68,6 +68,8 @@ class HarvestStock extends Model
 
     /**
      * Scope para filtrar por tipo de movimiento
+     *
+     * @param mixed $query
      */
     public function scopeOfType($query, string $type)
     {
@@ -76,6 +78,8 @@ class HarvestStock extends Model
 
     /**
      * Scope para movimientos iniciales
+     *
+     * @param mixed $query
      */
     public function scopeInitial($query)
     {
@@ -84,6 +88,8 @@ class HarvestStock extends Model
 
     /**
      * Scope para ventas
+     *
+     * @param mixed $query
      */
     public function scopeSales($query)
     {
@@ -92,6 +98,8 @@ class HarvestStock extends Model
 
     /**
      * Scope para reservas
+     *
+     * @param mixed $query
      */
     public function scopeReservations($query)
     {
@@ -100,6 +108,8 @@ class HarvestStock extends Model
 
     /**
      * Scope para ajustes
+     *
+     * @param mixed $query
      */
     public function scopeAdjustments($query)
     {
@@ -111,7 +121,7 @@ class HarvestStock extends Model
      */
     public function isInbound(): bool
     {
-        return in_array($this->movement_type, ['initial', 'return']) 
+        return in_array($this->movement_type, ['initial', 'return'])
             || ($this->movement_type === 'adjustment' && $this->quantity_change > 0);
     }
 
@@ -129,7 +139,7 @@ class HarvestStock extends Model
      */
     public function isStateChange(): bool
     {
-        return in_array($this->movement_type, ['reserve', 'unreserve']) 
+        return in_array($this->movement_type, ['reserve', 'unreserve'])
             && $this->quantity_change == 0;
     }
 
@@ -138,7 +148,7 @@ class HarvestStock extends Model
      */
     public function getMovementDescription(): string
     {
-        return match($this->movement_type) {
+        return match ($this->movement_type) {
             'initial' => 'Registro inicial de cosecha',
             'adjustment' => $this->quantity_change > 0 ? 'Ajuste positivo (+)' : 'Ajuste negativo (-)',
             'reserve' => 'Reservado para venta',

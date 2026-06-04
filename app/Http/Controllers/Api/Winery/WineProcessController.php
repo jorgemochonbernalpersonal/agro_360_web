@@ -21,7 +21,7 @@ class WineProcessController extends Controller
 
     public function indexTransfers(Request $request): JsonResponse
     {
-        $user    = $request->user();
+        $user = $request->user();
         $perPage = $this->resolvePerPage($request, 20, 50);
 
         $transfers = WineTransfer::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
@@ -32,9 +32,9 @@ class WineProcessController extends Controller
         return response()->json([
             'data' => TransferResource::collection($transfers),
             'meta' => [
-                'total'        => $transfers->total(),
+                'total' => $transfers->total(),
                 'current_page' => $transfers->currentPage(),
-                'last_page'    => $transfers->lastPage(),
+                'last_page' => $transfers->lastPage(),
             ],
         ]);
     }
@@ -43,7 +43,7 @@ class WineProcessController extends Controller
 
     public function indexLosses(Request $request): JsonResponse
     {
-        $user    = $request->user();
+        $user = $request->user();
         $perPage = $this->resolvePerPage($request, 20, 50);
 
         $losses = WineLoss::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
@@ -54,9 +54,9 @@ class WineProcessController extends Controller
         return response()->json([
             'data' => LossResource::collection($losses),
             'meta' => [
-                'total'        => $losses->total(),
+                'total' => $losses->total(),
                 'current_page' => $losses->currentPage(),
-                'last_page'    => $losses->lastPage(),
+                'last_page' => $losses->lastPage(),
             ],
         ]);
     }
@@ -69,14 +69,14 @@ class WineProcessController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'                => 'required|integer|exists:wines,id',
-            'from_container_id'      => 'required|integer|exists:containers,id',
-            'to_container_id'        => 'required|integer|exists:containers,id|different:from_container_id',
-            'quantity'               => 'required|numeric|min:0.001',
+            'wine_id' => 'required|integer|exists:wines,id',
+            'from_container_id' => 'required|integer|exists:containers,id',
+            'to_container_id' => 'required|integer|exists:containers,id|different:from_container_id',
+            'quantity' => 'required|numeric|min:0.001',
             'unit_of_measurement_id' => 'nullable|integer|exists:units_of_measurement,id',
-            'transfer_type'          => 'required|string|in:racking,blending,top_up,other',
-            'transfer_date'          => 'required|date',
-            'notes'                  => 'nullable|string|max:1000',
+            'transfer_type' => 'required|string|in:racking,blending,top_up,other',
+            'transfer_date' => 'required|date',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
@@ -91,16 +91,17 @@ class WineProcessController extends Controller
             $transfer = WineTransfer::create([
                 ...$validated,
                 'unit_of_measurement_id' => $unitId,
-                'created_by'             => $user->id,
+                'created_by' => $user->id,
             ]);
             app(WineContainerStockService::class)->recordTransfer($transfer);
+
             return $transfer;
         });
 
         $transfer->load(['wine', 'fromContainer', 'toContainer', 'unitOfMeasurement']);
 
         return response()->json([
-            'data'    => new TransferResource($transfer),
+            'data' => new TransferResource($transfer),
             'message' => __('Trasvase registrado correctamente.'),
         ], 201);
     }
@@ -113,15 +114,15 @@ class WineProcessController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'              => 'required|integer|exists:wines,id',
-            'container_id'         => 'required|integer|exists:containers,id',
-            'loss_type'            => 'required|string|in:evaporation,filtration,sampling,spillage,other',
-            'loss_authorization'      => 'required|string|in:authorized,processing,extraordinary,quality',
-            'unit_of_measurement_id'  => 'required|integer|exists:units_of_measurement,id',
-            'quantity'                => 'required|numeric|min:0.001',
-            'loss_date'               => 'required|date',
+            'wine_id' => 'required|integer|exists:wines,id',
+            'container_id' => 'required|integer|exists:containers,id',
+            'loss_type' => 'required|string|in:evaporation,filtration,sampling,spillage,other',
+            'loss_authorization' => 'required|string|in:authorized,processing,extraordinary,quality',
+            'unit_of_measurement_id' => 'required|integer|exists:units_of_measurement,id',
+            'quantity' => 'required|numeric|min:0.001',
+            'loss_date' => 'required|date',
             'regulatory_reference' => 'nullable|string|max:255',
-            'notes'                => 'nullable|string|max:1000',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
@@ -133,13 +134,14 @@ class WineProcessController extends Controller
                 'created_by' => $user->id,
             ]);
             app(WineContainerStockService::class)->recordLoss($loss);
+
             return $loss;
         });
 
         $loss->load(['wine', 'container', 'unitOfMeasurement']);
 
         return response()->json([
-            'data'    => new LossResource($loss),
+            'data' => new LossResource($loss),
             'message' => __('Merma registrada correctamente.'),
         ], 201);
     }
@@ -157,20 +159,20 @@ class WineProcessController extends Controller
 
         $validated = $request->validate([
             'from_container_id' => 'sometimes|integer|exists:containers,id',
-            'to_container_id'   => 'sometimes|integer|exists:containers,id|different:from_container_id',
-            'quantity'          => 'sometimes|numeric|min:0.001',
-            'transfer_type'     => 'sometimes|string|in:racking,blending,top_up,other',
-            'transfer_date'     => 'sometimes|date',
-            'oenologist_id'     => 'sometimes|nullable|integer|exists:oenologists,id',
-            'notes'             => 'sometimes|nullable|string|max:1000',
+            'to_container_id' => 'sometimes|integer|exists:containers,id|different:from_container_id',
+            'quantity' => 'sometimes|numeric|min:0.001',
+            'transfer_type' => 'sometimes|string|in:racking,blending,top_up,other',
+            'transfer_date' => 'sometimes|date',
+            'oenologist_id' => 'sometimes|nullable|integer|exists:oenologists,id',
+            'notes' => 'sometimes|nullable|string|max:1000',
         ]);
 
         $oldData = [
-            'wine_id'          => $transfer->wine_id,
-            'from_container_id'=> $transfer->from_container_id,
-            'to_container_id'  => $transfer->to_container_id,
-            'quantity'         => $transfer->quantity,
-            'source_wine_id'   => $transfer->source_wine_id,
+            'wine_id' => $transfer->wine_id,
+            'from_container_id' => $transfer->from_container_id,
+            'to_container_id' => $transfer->to_container_id,
+            'quantity' => $transfer->quantity,
+            'source_wine_id' => $transfer->source_wine_id,
         ];
 
         DB::transaction(function () use ($transfer, $validated, $oldData) {
@@ -195,19 +197,19 @@ class WineProcessController extends Controller
         )->findOrFail($id);
 
         $validated = $request->validate([
-            'container_id'         => 'sometimes|integer|exists:containers,id',
-            'loss_type'            => 'sometimes|string|in:evaporation,filtration,sampling,spillage,other',
-            'loss_authorization'   => 'sometimes|string|in:authorized,processing,extraordinary,quality',
-            'quantity'             => 'sometimes|numeric|min:0.001',
-            'loss_date'            => 'sometimes|date',
+            'container_id' => 'sometimes|integer|exists:containers,id',
+            'loss_type' => 'sometimes|string|in:evaporation,filtration,sampling,spillage,other',
+            'loss_authorization' => 'sometimes|string|in:authorized,processing,extraordinary,quality',
+            'quantity' => 'sometimes|numeric|min:0.001',
+            'loss_date' => 'sometimes|date',
             'regulatory_reference' => 'sometimes|nullable|string|max:255',
-            'notes'                => 'sometimes|nullable|string|max:1000',
+            'notes' => 'sometimes|nullable|string|max:1000',
         ]);
 
         $oldData = [
-            'wine_id'      => $loss->wine_id,
+            'wine_id' => $loss->wine_id,
             'container_id' => $loss->container_id,
-            'quantity'     => $loss->quantity,
+            'quantity' => $loss->quantity,
         ];
 
         DB::transaction(function () use ($loss, $validated, $oldData) {

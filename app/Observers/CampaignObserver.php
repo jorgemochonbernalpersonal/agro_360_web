@@ -18,8 +18,8 @@ class CampaignObserver
                 $campaign->viticulturist_id,
                 OnboardingProgress::STEP_REVIEW_CAMPAIGN
             );
-            
-            if (!$progress->isCompleted()) {
+
+            if (! $progress->isCompleted()) {
                 $progress->markAsCompleted();
             }
         }

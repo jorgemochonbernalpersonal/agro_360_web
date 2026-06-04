@@ -8,6 +8,30 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait Auditable
 {
     /**
+     * Get audit logs for this model
+     */
+    public function auditLogs(): MorphMany
+    {
+        return $this->morphMany(AuditLog::class, 'auditable')->latest();
+    }
+
+    /**
+     * Get latest audit log
+     */
+    public function latestAudit(): ?AuditLog
+    {
+        return $this->auditLogs()->first();
+    }
+
+    /**
+     * Get audit history
+     */
+    public function auditHistory(int $limit = 50): \Illuminate\Support\Collection
+    {
+        return $this->auditLogs()->limit($limit)->get();
+    }
+
+    /**
      * Boot the trait
      */
     protected static function bootAuditable(): void
@@ -32,19 +56,11 @@ trait Auditable
     }
 
     /**
-     * Get audit logs for this model
-     */
-    public function auditLogs(): MorphMany
-    {
-        return $this->morphMany(AuditLog::class, 'auditable')->latest();
-    }
-
-    /**
      * Audit creation
      */
     protected function auditCreation(): void
     {
-        if (!$this->shouldAudit('created')) {
+        if (! $this->shouldAudit('created')) {
             return;
         }
 
@@ -66,7 +82,7 @@ trait Auditable
      */
     protected function auditUpdate(): void
     {
-        if (!$this->shouldAudit('updated')) {
+        if (! $this->shouldAudit('updated')) {
             return;
         }
 
@@ -74,7 +90,7 @@ trait Auditable
         // ciertos campos (p. ej. stock transaccional ya auditado en otra tabla),
         // no deben generar ruido aquí. Si tras excluir no queda nada, no auditamos.
         $excluded = $this->auditExclude ?? [];
-        $changes  = array_diff_key($this->getDirty(), array_flip($excluded));
+        $changes = array_diff_key($this->getDirty(), array_flip($excluded));
 
         if (empty($changes)) {
             return;
@@ -99,7 +115,7 @@ trait Auditable
      */
     protected function auditDeletion(): void
     {
-        if (!$this->shouldAudit('deleted')) {
+        if (! $this->shouldAudit('deleted')) {
             return;
         }
 
@@ -121,7 +137,7 @@ trait Auditable
      */
     protected function auditRestoration(): void
     {
-        if (!$this->shouldAudit('restored')) {
+        if (! $this->shouldAudit('restored')) {
             return;
         }
 
@@ -183,21 +199,5 @@ trait Auditable
 
         // Por defecto, auditar todos los eventos
         return true;
-    }
-
-    /**
-     * Get latest audit log
-     */
-    public function latestAudit(): ?AuditLog
-    {
-        return $this->auditLogs()->first();
-    }
-
-    /**
-     * Get audit history
-     */
-    public function auditHistory(int $limit = 50): \Illuminate\Support\Collection
-    {
-        return $this->auditLogs()->limit($limit)->get();
     }
 }

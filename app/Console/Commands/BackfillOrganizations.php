@@ -9,7 +9,8 @@ use Illuminate\Support\Str;
 
 class BackfillOrganizations extends Command
 {
-    protected $signature   = 'organizations:backfill {--dry-run : List users that would be affected without making changes}';
+    protected $signature = 'organizations:backfill {--dry-run : List users that would be affected without making changes}';
+
     protected $description = 'Create Organization records for winery, supervisor and producer users that do not have one yet.';
 
     public function handle(): int
@@ -20,6 +21,7 @@ class BackfillOrganizations extends Command
 
         if ($users->isEmpty()) {
             $this->info('All eligible users already have an organization. Nothing to do.');
+
             return self::SUCCESS;
         }
 
@@ -31,6 +33,7 @@ class BackfillOrganizations extends Command
                 $users->map(fn ($u) => [$u->id, $u->name, $u->email, $u->role])->toArray()
             );
             $this->line('Dry-run mode: no changes applied.');
+
             return self::SUCCESS;
         }
 
@@ -42,29 +45,30 @@ class BackfillOrganizations extends Command
         foreach ($users as $user) {
             $type = match ($user->role) {
                 User::ROLE_WINERY,
-                User::ROLE_PRODUCER   => Organization::TYPE_WINERY,
+                User::ROLE_PRODUCER => Organization::TYPE_WINERY,
                 User::ROLE_SUPERVISOR => Organization::TYPE_DENOMINATION,
-                default               => null,
+                default => null,
             };
 
             if ($type === null) {
                 $bar->advance();
+
                 continue;
             }
 
             $baseSlug = Str::slug($user->name);
-            $slug     = $baseSlug;
-            $i        = 1;
+            $slug = $baseSlug;
+            $i = 1;
             while (Organization::where('slug', $slug)->exists()) {
-                $slug = $baseSlug . '-' . $i++;
+                $slug = $baseSlug.'-'.$i++;
             }
 
             $org = Organization::create([
-                'name'          => $user->name,
-                'type'          => $type,
-                'slug'          => $slug,
-                'email'         => str_contains($user->email, '@noemail.agro365.es') ? null : $user->email,
-                'active'        => true,
+                'name' => $user->name,
+                'type' => $type,
+                'slug' => $slug,
+                'email' => str_contains($user->email, '@noemail.agro365.es') ? null : $user->email,
+                'active' => true,
                 'owner_user_id' => $user->id,
             ]);
 

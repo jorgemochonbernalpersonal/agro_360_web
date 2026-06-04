@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Container extends Model
 {
-    use HasFactory;
     use Auditable;
+    use HasFactory;
 
     /**
      * Campos excluidos de la auditoría de configuración.
@@ -205,6 +205,7 @@ class Container extends Model
         if ($this->capacity <= 0) {
             return 0;
         }
+
         return round(($this->getTotalUsed() / (float) $this->capacity) * 100, 2);
     }
 
@@ -213,12 +214,13 @@ class Container extends Model
      */
     public function incrementUsedCapacity(float $quantity): bool
     {
-        if (!$this->hasAvailableCapacity($quantity)) {
+        if (! $this->hasAvailableCapacity($quantity)) {
             return false;
         }
 
         $this->increment('used_capacity', $quantity);
         $this->refresh();
+
         return true;
     }
 
@@ -228,7 +230,7 @@ class Container extends Model
     public function decrementUsedCapacity(float $quantity): bool
     {
         $available = (float) $this->used_capacity;
-        $actual    = min($quantity, $available);
+        $actual = min($quantity, $available);
 
         // El truncamiento evita valores negativos, pero también puede ocultar
         // un descuadre de stock (se pidió descontar más de lo que había).
@@ -236,9 +238,9 @@ class Container extends Model
         if ($quantity - $available > 0.001) {
             \Illuminate\Support\Facades\Log::warning('[Container] decrementUsedCapacity truncado: posible descuadre de stock', [
                 'container_id' => $this->id,
-                'requested'    => $quantity,
-                'available'    => $available,
-                'applied'      => $actual,
+                'requested' => $quantity,
+                'available' => $available,
+                'applied' => $actual,
             ]);
         }
 
@@ -268,6 +270,8 @@ class Container extends Model
 
     /**
      * Scope para contenedores disponibles (con capacidad libre)
+     *
+     * @param mixed $query
      */
     public function scopeAvailable($query)
     {
@@ -277,6 +281,8 @@ class Container extends Model
 
     /**
      * Scope para contenedores vacíos (sin uva ni vino)
+     *
+     * @param mixed $query
      */
     public function scopeEmpty($query)
     {
@@ -285,6 +291,8 @@ class Container extends Model
 
     /**
      * Scope para contenedores llenos
+     *
+     * @param mixed $query
      */
     public function scopeFull($query)
     {
@@ -293,10 +301,11 @@ class Container extends Model
 
     /**
      * Scope para contenedores no archivados
+     *
+     * @param mixed $query
      */
     public function scopeActive($query)
     {
         return $query->where('archived', false);
     }
 }
-

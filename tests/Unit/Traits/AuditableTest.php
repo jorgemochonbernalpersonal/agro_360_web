@@ -3,8 +3,8 @@
 namespace Tests\Unit\Traits;
 
 use App\Models\AuditLog;
-use App\Models\User;
 use App\Models\Plot;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\WithGeographyData;
@@ -40,7 +40,7 @@ class AuditableTest extends TestCase
         $this->actingAs($user);
 
         $plot = Plot::factory()->create(['viticulturist_id' => $user->id, 'name' => 'Original Name']);
-        
+
         // Limpiar el log de creación para el test
         AuditLog::where('event', 'created')->delete();
 
@@ -97,7 +97,7 @@ class AuditableTest extends TestCase
         $this->actingAs($user);
 
         $plot = Plot::factory()->create(['viticulturist_id' => $user->id, 'name' => 'Original']);
-        
+
         // Hacer varios cambios
         $plot->update(['name' => 'First Update']);
         $plot->update(['name' => 'Second Update']);
@@ -126,9 +126,9 @@ class AuditableTest extends TestCase
         $this->actingAs($user);
 
         $plot = Plot::factory()->create(['viticulturist_id' => $user->id, 'area' => 5.5]);
-        
+
         AuditLog::where('event', 'created')->delete();
-        
+
         $plot->update(['area' => 6.0]);
 
         $auditLog = AuditLog::where('event', 'updated')->first();

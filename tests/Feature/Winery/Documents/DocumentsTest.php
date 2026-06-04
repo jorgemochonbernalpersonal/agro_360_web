@@ -53,8 +53,8 @@ class DocumentsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('winery_documents', [
-            'user_id'       => $this->winery->id,
-            'title'         => 'Licencia de actividad',
+            'user_id' => $this->winery->id,
+            'title' => 'Licencia de actividad',
             'document_type' => $firstType,
         ]);
     }
@@ -64,10 +64,10 @@ class DocumentsTest extends WineryTestCase
         $firstType = array_key_first(WineryDocument::DOCUMENT_TYPES);
 
         $document = WineryDocument::create([
-            'user_id'       => $this->winery->id,
-            'title'         => 'Título Original',
+            'user_id' => $this->winery->id,
+            'title' => 'Título Original',
             'document_type' => $firstType,
-            'active'        => true,
+            'active' => true,
         ]);
 
         Livewire::test(Edit::class, ['wineryDocument' => $document])
@@ -76,7 +76,7 @@ class DocumentsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('winery_documents', [
-            'id'    => $document->id,
+            'id' => $document->id,
             'title' => 'Título Actualizado',
         ]);
     }
@@ -86,10 +86,10 @@ class DocumentsTest extends WineryTestCase
         $firstType = array_key_first(WineryDocument::DOCUMENT_TYPES);
 
         $document = WineryDocument::create([
-            'user_id'       => $this->winery->id,
-            'title'         => 'Documento Protegido',
+            'user_id' => $this->winery->id,
+            'title' => 'Documento Protegido',
             'document_type' => $firstType,
-            'active'        => true,
+            'active' => true,
         ]);
 
         $otherWinery = $this->makeOtherWinery();
@@ -104,10 +104,10 @@ class DocumentsTest extends WineryTestCase
         $firstType = array_key_first(WineryDocument::DOCUMENT_TYPES);
 
         $document = WineryDocument::create([
-            'user_id'       => $this->winery->id,
-            'title'         => 'Documento a Eliminar',
+            'user_id' => $this->winery->id,
+            'title' => 'Documento a Eliminar',
             'document_type' => $firstType,
-            'active'        => true,
+            'active' => true,
         ]);
 
         Livewire::test(Index::class)

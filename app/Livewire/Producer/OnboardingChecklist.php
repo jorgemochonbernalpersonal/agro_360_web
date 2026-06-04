@@ -16,7 +16,9 @@ class OnboardingChecklist extends Component
     use WithToastNotifications;
 
     public bool $show = true;
+
     public array $steps = [];
+
     public int $progressPercentage = 0;
 
     public function mount(): void
@@ -37,7 +39,7 @@ class OnboardingChecklist extends Component
 
         $this->show = $completedSteps < count(OnboardingProgress::PRODUCER_STEPS);
 
-        if (!$this->show) {
+        if (! $this->show) {
             return;
         }
 
@@ -45,13 +47,13 @@ class OnboardingChecklist extends Component
             $progress = OnboardingProgress::getOrCreate($userId, $step);
 
             return [
-                'key'         => $step,
-                'title'       => $this->getStepTitle($step),
+                'key' => $step,
+                'title' => $this->getStepTitle($step),
                 'description' => $this->getStepDescription($step),
-                'icon'        => $this->getStepIcon($step),
-                'route'       => $this->getStepRoute($step),
-                'completed'   => $progress->isCompleted(),
-                'skipped'     => $progress->skipped,
+                'icon' => $this->getStepIcon($step),
+                'route' => $this->getStepRoute($step),
+                'completed' => $progress->isCompleted(),
+                'skipped' => $progress->skipped,
             ];
         })->toArray();
 
@@ -66,7 +68,7 @@ class OnboardingChecklist extends Component
         $userId = auth()->id();
         foreach (OnboardingProgress::PRODUCER_STEPS as $step) {
             $progress = OnboardingProgress::getOrCreate($userId, $step);
-            if (!$progress->isCompleted()) {
+            if (! $progress->isCompleted()) {
                 $progress->markAsSkipped();
             }
         }
@@ -83,31 +85,31 @@ class OnboardingChecklist extends Component
         $this->toastSuccess(__('Tour reiniciado.'));
     }
 
+    public function render()
+    {
+        return view('livewire.producer.onboarding-checklist');
+    }
+
     private function autoCompleteExistingData(int $userId): void
     {
         $checks = [
-            OnboardingProgress::STEP_PRODUCER_FISCAL => fn () =>
-                InvoicingSetting::where('user_id', $userId)
-                    ->whereNotNull('issuer_legal_name')
-                    ->where('issuer_legal_name', '!=', '')
-                    ->exists(),
+            OnboardingProgress::STEP_PRODUCER_FISCAL => fn () => InvoicingSetting::where('user_id', $userId)
+                ->whereNotNull('issuer_legal_name')
+                ->where('issuer_legal_name', '!=', '')
+                ->exists(),
 
-            OnboardingProgress::STEP_PRODUCER_PLOT => fn () =>
-                Plot::where('viticulturist_id', $userId)->exists(),
+            OnboardingProgress::STEP_PRODUCER_PLOT => fn () => Plot::where('viticulturist_id', $userId)->exists(),
 
-            OnboardingProgress::STEP_PRODUCER_CONTAINER => fn () =>
-                Container::where('user_id', $userId)->exists(),
+            OnboardingProgress::STEP_PRODUCER_CONTAINER => fn () => Container::where('user_id', $userId)->exists(),
 
-            OnboardingProgress::STEP_PRODUCER_ACTIVITY => fn () =>
-                AgriculturalActivity::where('viticulturist_id', $userId)->exists(),
+            OnboardingProgress::STEP_PRODUCER_ACTIVITY => fn () => AgriculturalActivity::where('viticulturist_id', $userId)->exists(),
 
-            OnboardingProgress::STEP_PRODUCER_RECEPTION => fn () =>
-                Harvest::where('winery_id', $userId)->exists(),
+            OnboardingProgress::STEP_PRODUCER_RECEPTION => fn () => Harvest::where('winery_id', $userId)->exists(),
         ];
 
         foreach ($checks as $step => $hasData) {
             $progress = OnboardingProgress::getOrCreate($userId, $step);
-            if (!$progress->isCompleted() && $hasData()) {
+            if (! $progress->isCompleted() && $hasData()) {
                 $progress->markAsCompleted();
             }
         }
@@ -116,10 +118,10 @@ class OnboardingChecklist extends Component
     private function getStepTitle(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_PRODUCER_FISCAL    => __('Configura tus datos fiscales'),
-            OnboardingProgress::STEP_PRODUCER_PLOT      => __('Registra tu primera parcela'),
+            OnboardingProgress::STEP_PRODUCER_FISCAL => __('Configura tus datos fiscales'),
+            OnboardingProgress::STEP_PRODUCER_PLOT => __('Registra tu primera parcela'),
             OnboardingProgress::STEP_PRODUCER_CONTAINER => __('Añade tu primer contenedor'),
-            OnboardingProgress::STEP_PRODUCER_ACTIVITY  => __('Registra una actividad de campo'),
+            OnboardingProgress::STEP_PRODUCER_ACTIVITY => __('Registra una actividad de campo'),
             OnboardingProgress::STEP_PRODUCER_RECEPTION => __('Registra tu primera recepción'),
             default => __('Paso desconocido'),
         };
@@ -128,10 +130,10 @@ class OnboardingChecklist extends Component
     private function getStepDescription(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_PRODUCER_FISCAL    => __('NIF, razón social y dirección para facturas'),
-            OnboardingProgress::STEP_PRODUCER_PLOT      => __('Añade una parcela para empezar con el cuaderno de campo'),
+            OnboardingProgress::STEP_PRODUCER_FISCAL => __('NIF, razón social y dirección para facturas'),
+            OnboardingProgress::STEP_PRODUCER_PLOT => __('Añade una parcela para empezar con el cuaderno de campo'),
             OnboardingProgress::STEP_PRODUCER_CONTAINER => __('Depósitos o barricas para la gestión de bodega'),
-            OnboardingProgress::STEP_PRODUCER_ACTIVITY  => __('Tratamiento, riego, labor cultural... ¡tu cuaderno digital!'),
+            OnboardingProgress::STEP_PRODUCER_ACTIVITY => __('Tratamiento, riego, labor cultural... ¡tu cuaderno digital!'),
             OnboardingProgress::STEP_PRODUCER_RECEPTION => __('Registra la primera entrada de uva en bodega'),
             default => '',
         };
@@ -140,10 +142,10 @@ class OnboardingChecklist extends Component
     private function getStepIcon(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_PRODUCER_FISCAL    => '⚙️',
-            OnboardingProgress::STEP_PRODUCER_PLOT      => '🗺️',
+            OnboardingProgress::STEP_PRODUCER_FISCAL => '⚙️',
+            OnboardingProgress::STEP_PRODUCER_PLOT => '🗺️',
             OnboardingProgress::STEP_PRODUCER_CONTAINER => '🏺',
-            OnboardingProgress::STEP_PRODUCER_ACTIVITY  => '📝',
+            OnboardingProgress::STEP_PRODUCER_ACTIVITY => '📝',
             OnboardingProgress::STEP_PRODUCER_RECEPTION => '🍇',
             default => '✓',
         };
@@ -152,17 +154,12 @@ class OnboardingChecklist extends Component
     private function getStepRoute(string $step): string
     {
         return match ($step) {
-            OnboardingProgress::STEP_PRODUCER_FISCAL    => route('producer.settings', ['tab' => 'fiscal']),
-            OnboardingProgress::STEP_PRODUCER_PLOT      => route('producer.plots.create'),
+            OnboardingProgress::STEP_PRODUCER_FISCAL => route('producer.settings', ['tab' => 'fiscal']),
+            OnboardingProgress::STEP_PRODUCER_PLOT => route('producer.plots.create'),
             OnboardingProgress::STEP_PRODUCER_CONTAINER => route('producer.containers.create'),
-            OnboardingProgress::STEP_PRODUCER_ACTIVITY  => route('producer.digital-notebook'),
+            OnboardingProgress::STEP_PRODUCER_ACTIVITY => route('producer.digital-notebook'),
             OnboardingProgress::STEP_PRODUCER_RECEPTION => route('producer.grape-reception.create'),
             default => route('producer.dashboard'),
         };
-    }
-
-    public function render()
-    {
-        return view('livewire.producer.onboarding-checklist');
     }
 }

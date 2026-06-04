@@ -4,11 +4,11 @@ namespace App\Livewire\Supervisor\Oversight\Growers;
 
 use App\Models\SupervisorViticulturist;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class Index extends Component
 {
@@ -60,21 +60,21 @@ class Index extends Component
             ->withSum('plots', 'area');
 
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
             });
         }
 
-        $growers        = $query->orderBy('name')->paginate(15);
-        $totalGrowers   = $viticulturistIds->count();
+        $growers = $query->orderBy('name')->paginate(15);
+        $totalGrowers = $viticulturistIds->count();
 
         return view('livewire.supervisor.oversight.growers.index', [
-            'growers'            => $growers,
-            'lastActivityByVit'  => $lastActivityByVit,
+            'growers' => $growers,
+            'lastActivityByVit' => $lastActivityByVit,
             'plantingCountByVit' => $plantingCountByVit,
-            'totalGrowers'       => $totalGrowers,
+            'totalGrowers' => $totalGrowers,
         ]);
     }
 }

@@ -13,26 +13,30 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class Insights extends Component
 {
-    public string $dateFrom       = '';
-    public string $dateTo         = '';
+    public string $dateFrom = '';
+
+    public string $dateTo = '';
+
     public string $filterClientId = '';
-    public string $filterLotId    = '';
-    public string $metric         = 'qty'; // 'qty' | 'amount'
+
+    public string $filterLotId = '';
+
+    public string $metric = 'qty'; // 'qty' | 'amount'
 
     protected $queryString = [
-        'dateFrom'       => ['except' => ''],
-        'dateTo'         => ['except' => ''],
+        'dateFrom' => ['except' => ''],
+        'dateTo' => ['except' => ''],
         'filterClientId' => ['except' => ''],
-        'filterLotId'    => ['except' => ''],
-        'metric'         => ['except' => 'qty'],
+        'filterLotId' => ['except' => ''],
+        'metric' => ['except' => 'qty'],
     ];
 
     public function mount(): void
     {
-        if (!$this->dateFrom) {
+        if (! $this->dateFrom) {
             $this->dateFrom = now()->startOfYear()->toDateString();
         }
-        if (!$this->dateTo) {
+        if (! $this->dateTo) {
             $this->dateTo = now()->toDateString();
         }
     }
@@ -40,10 +44,47 @@ class Insights extends Component
     public function clearFilters(): void
     {
         $this->filterClientId = '';
-        $this->filterLotId    = '';
-        $this->dateFrom       = now()->startOfYear()->toDateString();
-        $this->dateTo         = now()->toDateString();
-        $this->metric         = 'qty';
+        $this->filterLotId = '';
+        $this->dateFrom = now()->startOfYear()->toDateString();
+        $this->dateTo = now()->toDateString();
+        $this->metric = 'qty';
+    }
+
+    // ── Export ────────────────────────────────────────────────────────────────
+
+    public function export()
+    {
+        $pivot = $this->buildPivot($this->fetchRows());
+        $filename = 'insights_clientes_'.$this->dateFrom.'_'.$this->dateTo.'.xlsx';
+
+        return Excel::download(
+            new ClientInsightsExport($pivot, $this->metric),
+            $filename
+        );
+    }
+
+    // ── Render ────────────────────────────────────────────────────────────────
+
+    public function render()
+    {
+        $userId = Auth::id();
+        $rows = $this->fetchRows();
+        $pivot = $this->buildPivot($rows);
+
+        $clients = Client::where('user_id', $userId)
+            ->where('active', true)
+            ->orderByRaw("COALESCE(NULLIF(company_name,''), CONCAT(first_name,' ',last_name))")
+            ->get(['id', 'first_name', 'last_name', 'company_name']);
+
+        $lots = ProductLot::where('user_id', $userId)
+            ->orderBy('name')
+            ->get(['id', 'name', 'vintage']);
+
+        return view('livewire.winery.clients.insights', [
+            'pivot' => $pivot,
+            'clients' => $clients,
+            'lots' => $lots,
+        ])->layout('layouts.app');
     }
 
     // ── Datos de la tabla pivot ───────────────────────────────────────────────
@@ -58,9 +99,9 @@ class Insights extends Component
             ->where('invoices.status', '!=', 'cancelled')
             ->whereNotNull('invoices.invoice_date')
             ->when($this->dateFrom, fn ($q) => $q->where('invoices.invoice_date', '>=', $this->dateFrom))
-            ->when($this->dateTo,   fn ($q) => $q->where('invoices.invoice_date', '<=', $this->dateTo))
+            ->when($this->dateTo, fn ($q) => $q->where('invoices.invoice_date', '<=', $this->dateTo))
             ->when($this->filterClientId, fn ($q) => $q->where('invoices.client_id', $this->filterClientId))
-            ->when($this->filterLotId,    fn ($q) => $q->where('invoice_items.wine_lot_id', $this->filterLotId))
+            ->when($this->filterLotId, fn ($q) => $q->where('invoice_items.wine_lot_id', $this->filterLotId))
             ->selectRaw("
                 clients.id            as client_id,
                 clients.first_name    as first_name,
@@ -78,16 +119,16 @@ class Insights extends Component
 
     private function buildPivot(Collection $rows): array
     {
-        $months  = $rows->pluck('month')->unique()->sort()->values()->toArray();
+        $months = $rows->pluck('month')->unique()->sort()->values()->toArray();
         $clients = [];
 
         foreach ($rows as $row) {
             $id = $row->client_id;
-            if (!isset($clients[$id])) {
+            if (! isset($clients[$id])) {
                 $clients[$id] = [
-                    'name'   => $row->company_name ?: trim($row->first_name . ' ' . $row->last_name),
+                    'name' => $row->company_name ?: trim($row->first_name.' '.$row->last_name),
                     'months' => [],
-                    'total'  => 0.0,
+                    'total' => 0.0,
                 ];
             }
 
@@ -111,47 +152,10 @@ class Insights extends Component
         }
 
         return [
-            'months'     => $months,
-            'clients'    => $clients,
-            'colTotals'  => $colTotals,
+            'months' => $months,
+            'clients' => $clients,
+            'colTotals' => $colTotals,
             'grandTotal' => array_sum(array_column($clients, 'total')),
         ];
-    }
-
-    // ── Export ────────────────────────────────────────────────────────────────
-
-    public function export()
-    {
-        $pivot    = $this->buildPivot($this->fetchRows());
-        $filename = 'insights_clientes_' . $this->dateFrom . '_' . $this->dateTo . '.xlsx';
-
-        return Excel::download(
-            new ClientInsightsExport($pivot, $this->metric),
-            $filename
-        );
-    }
-
-    // ── Render ────────────────────────────────────────────────────────────────
-
-    public function render()
-    {
-        $userId = Auth::id();
-        $rows   = $this->fetchRows();
-        $pivot  = $this->buildPivot($rows);
-
-        $clients = Client::where('user_id', $userId)
-            ->where('active', true)
-            ->orderByRaw("COALESCE(NULLIF(company_name,''), CONCAT(first_name,' ',last_name))")
-            ->get(['id', 'first_name', 'last_name', 'company_name']);
-
-        $lots = ProductLot::where('user_id', $userId)
-            ->orderBy('name')
-            ->get(['id', 'name', 'vintage']);
-
-        return view('livewire.winery.clients.insights', [
-            'pivot'   => $pivot,
-            'clients' => $clients,
-            'lots'    => $lots,
-        ])->layout('layouts.app');
     }
 }

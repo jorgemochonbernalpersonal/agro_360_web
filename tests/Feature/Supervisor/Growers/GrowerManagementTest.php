@@ -4,7 +4,6 @@ namespace Tests\Feature\Supervisor\Growers;
 
 use App\Livewire\Supervisor\Growers\Index;
 use App\Models\NotebookAccessRequest;
-use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Notification;
@@ -27,9 +26,9 @@ class GrowerManagementTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('users', [
-            'name'      => 'Juan Viña',
-            'email'     => 'juan@viña.es',
-            'role'      => 'viticulturist',
+            'name' => 'Juan Viña',
+            'email' => 'juan@viña.es',
+            'role' => 'viticulturist',
             'can_login' => false,
         ]);
     }
@@ -46,7 +45,7 @@ class GrowerManagementTest extends SupervisorTestCase
         $viticulturist = User::where('name', 'Ana Campo')->first();
 
         $this->assertDatabaseHas('supervisor_viticulturist', [
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
         ]);
     }
@@ -155,8 +154,8 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_open_invite_modal_sets_state_for_ghost_grower(): void
     {
-        $supervisor    = $this->makeSupervisor();
-        $ghost         = $this->makeViticulturistForSupervisor($supervisor);
+        $supervisor = $this->makeSupervisor();
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update(['can_login' => false, 'email' => 'real@grower.es']);
 
         Livewire::actingAs($supervisor)
@@ -170,7 +169,7 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_open_invite_modal_clears_email_for_placeholder_grower(): void
     {
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update(['can_login' => false, 'email' => 'viticultores.uuid@noemail.agro365.es']);
 
         Livewire::actingAs($supervisor)
@@ -181,7 +180,7 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_open_invite_modal_rejects_active_grower(): void
     {
-        $supervisor  = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $activeGrower = $this->makeViticulturistForSupervisor($supervisor);
         $activeGrower->update(['can_login' => true]);
 
@@ -195,7 +194,7 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_close_invite_modal_resets_state(): void
     {
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update(['can_login' => false]);
 
         Livewire::actingAs($supervisor)
@@ -214,7 +213,7 @@ class GrowerManagementTest extends SupervisorTestCase
         Notification::fake();
 
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update(['can_login' => false, 'invitation_sent_at' => null]);
 
         Livewire::actingAs($supervisor)
@@ -235,7 +234,7 @@ class GrowerManagementTest extends SupervisorTestCase
         Notification::fake();
 
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update(['can_login' => false, 'email' => 'viticultores.test@noemail.agro365.es']);
 
         Livewire::actingAs($supervisor)
@@ -252,7 +251,7 @@ class GrowerManagementTest extends SupervisorTestCase
         Notification::fake();
 
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update(['can_login' => false, 'email' => 'original@viña.es']);
 
         Livewire::actingAs($supervisor)
@@ -267,7 +266,7 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_send_invitation_requires_email(): void
     {
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update(['can_login' => false]);
 
         Livewire::actingAs($supervisor)
@@ -281,7 +280,7 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_send_invitation_rejects_email_taken_by_another_user(): void
     {
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update(['can_login' => false, 'email' => 'viticultores.x@noemail.agro365.es']);
 
         User::factory()->create(['email' => 'taken@other.es']);
@@ -297,9 +296,9 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_send_invitation_rate_limited_within_one_hour(): void
     {
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update([
-            'can_login'          => false,
+            'can_login' => false,
             'invitation_sent_at' => now()->subMinutes(30),
         ]);
 
@@ -319,9 +318,9 @@ class GrowerManagementTest extends SupervisorTestCase
         Notification::fake();
 
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update([
-            'can_login'          => false,
+            'can_login' => false,
             'invitation_sent_at' => now()->subMinutes(61),
         ]);
 
@@ -340,7 +339,7 @@ class GrowerManagementTest extends SupervisorTestCase
         Notification::fake();
 
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update(['can_login' => false]);
 
         Livewire::actingAs($supervisor)
@@ -356,11 +355,11 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_supervisor_can_revoke_invitation(): void
     {
         $supervisor = $this->makeSupervisor();
-        $ghost      = $this->makeViticulturistForSupervisor($supervisor);
+        $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update([
-            'can_login'             => false,
-            'invitation_token'      => 'some-hashed-token',
-            'invitation_sent_at'    => now()->subHours(2),
+            'can_login' => false,
+            'invitation_token' => 'some-hashed-token',
+            'invitation_sent_at' => now()->subHours(2),
             'invitation_expires_at' => now()->addDays(5),
         ]);
 
@@ -377,9 +376,9 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_revoke_invitation_guard_requires_own_grower(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
-        $ghost           = $this->makeViticulturistForSupervisor($otherSupervisor);
+        $ghost = $this->makeViticulturistForSupervisor($otherSupervisor);
         $ghost->update(['can_login' => false]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -391,7 +390,7 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_revoke_invitation_rejects_active_grower(): void
     {
-        $supervisor  = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $activeGrower = $this->makeViticulturistForSupervisor($supervisor);
         $activeGrower->update(['can_login' => true]);
 
@@ -406,7 +405,7 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_supervisor_can_remove_grower_from_pool(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         Livewire::actingAs($supervisor)
@@ -415,7 +414,7 @@ class GrowerManagementTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseMissing('supervisor_viticulturist', [
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
         ]);
     }
@@ -423,14 +422,14 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_remove_grower_also_cleans_winery_assignments_by_this_supervisor(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'supervisor_id'    => $supervisor->id,
-            'assigned_by'      => $supervisor->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id' => $supervisor->id,
+            'assigned_by' => $supervisor->id,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -440,21 +439,21 @@ class GrowerManagementTest extends SupervisorTestCase
 
         $this->assertDatabaseMissing('winery_viticulturist', [
             'viticulturist_id' => $viticulturist->id,
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
         ]);
     }
 
     public function test_remove_grower_cleans_pending_notebook_access_requests(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
         $viticulturist->update(['can_login' => true]);
 
         NotebookAccessRequest::create([
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::actingAs($supervisor)
@@ -466,7 +465,7 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_remove_grower_does_not_delete_viticulturist_account(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         Livewire::actingAs($supervisor)
@@ -479,14 +478,14 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_remove_grower_does_not_affect_winery_own_assignments(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $viticulturist         = $this->makeViticulturistForSupervisor($supervisor);
+        $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         // Own assignment (source=own, no supervisor_id) must survive
         WineryViticulturist::create([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
         ]);
 
         Livewire::actingAs($supervisor)
@@ -494,17 +493,17 @@ class GrowerManagementTest extends SupervisorTestCase
             ->call('removeGrower', $viticulturist->id);
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
+            'source' => WineryViticulturist::SOURCE_OWN,
         ]);
     }
 
     public function test_supervisor_cannot_remove_grower_from_another_supervisor(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
-        $viticulturist   = $this->makeViticulturistForSupervisor($otherSupervisor);
+        $viticulturist = $this->makeViticulturistForSupervisor($otherSupervisor);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
@@ -515,7 +514,7 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_removed_grower_disappears_from_list(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
         $viticulturist->update(['name' => 'Eliminado del Pool']);
 
@@ -563,7 +562,7 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_growers_from_another_supervisor_not_visible(): void
     {
-        $supervisor      = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherSupervisor = $this->makeSupervisor();
 
         $other = $this->makeViticulturistForSupervisor($otherSupervisor);
@@ -599,16 +598,16 @@ class GrowerManagementTest extends SupervisorTestCase
 
         $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update([
-            'name'             => 'Ghost Puro',
-            'can_login'        => false,
+            'name' => 'Ghost Puro',
+            'can_login' => false,
             'invitation_token' => null,
         ]);
 
         $invited = $this->makeViticulturistForSupervisor($supervisor);
         $invited->update([
-            'name'                  => 'Invitado Uno',
-            'can_login'             => false,
-            'invitation_token'      => 'some-token',
+            'name' => 'Invitado Uno',
+            'can_login' => false,
+            'invitation_token' => 'some-token',
             'invitation_expires_at' => now()->addDays(5),
         ]);
 
@@ -625,16 +624,16 @@ class GrowerManagementTest extends SupervisorTestCase
 
         $invited = $this->makeViticulturistForSupervisor($supervisor);
         $invited->update([
-            'name'                  => 'Invitado Activo',
-            'can_login'             => false,
-            'invitation_token'      => 'some-token',
+            'name' => 'Invitado Activo',
+            'can_login' => false,
+            'invitation_token' => 'some-token',
             'invitation_expires_at' => now()->addDays(3),
         ]);
 
         $ghost = $this->makeViticulturistForSupervisor($supervisor);
         $ghost->update([
-            'name'             => 'Ghost Sin Invitar',
-            'can_login'        => false,
+            'name' => 'Ghost Sin Invitar',
+            'can_login' => false,
             'invitation_token' => null,
         ]);
 
@@ -668,9 +667,9 @@ class GrowerManagementTest extends SupervisorTestCase
 
         $expiredInvite = $this->makeViticulturistForSupervisor($supervisor);
         $expiredInvite->update([
-            'name'                  => 'Invitacion Caducada',
-            'can_login'             => false,
-            'invitation_token'      => 'old-token',
+            'name' => 'Invitacion Caducada',
+            'can_login' => false,
+            'invitation_token' => 'old-token',
             'invitation_expires_at' => now()->subDays(1),
         ]);
 
@@ -694,11 +693,11 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_supervisor_can_link_existing_active_viticulturist(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
-            'name'      => 'Viticultor Externo',
+            'name' => 'Viticultor Externo',
         ]);
 
         Livewire::actingAs($supervisor)
@@ -709,7 +708,7 @@ class GrowerManagementTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('supervisor_viticulturist', [
-            'supervisor_id'    => $supervisor->id,
+            'supervisor_id' => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
         ]);
     }
@@ -727,7 +726,7 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_link_grower_rejects_already_in_pool(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
         $viticulturist->update(['can_login' => true]);
 
@@ -745,10 +744,10 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_link_grower_rejects_ghost_users(): void
     {
         $supervisor = $this->makeSupervisor();
-        $ghost      = User::factory()->create([
-            'role'      => 'viticulturist',
+        $ghost = User::factory()->create([
+            'role' => 'viticulturist',
             'can_login' => false,
-            'name'      => 'Ghost Externo',
+            'name' => 'Ghost Externo',
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -762,21 +761,21 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_search_link_candidates_excludes_pool_members(): void
     {
-        $supervisor    = $this->makeSupervisor();
-        $inPool        = $this->makeViticulturistForSupervisor($supervisor);
+        $supervisor = $this->makeSupervisor();
+        $inPool = $this->makeViticulturistForSupervisor($supervisor);
         $inPool->update(['name' => 'Ya En Pool', 'can_login' => true]);
 
         $outside = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
-            'name'      => 'Fuera Del Pool',
+            'name' => 'Fuera Del Pool',
         ]);
 
         $component = Livewire::actingAs($supervisor)->test(Index::class);
         $component->set('showLinkModal', true)->set('linkQuery', 'Pool');
 
         $candidates = $component->instance()->searchLinkCandidates();
-        $names      = collect($candidates)->pluck('name');
+        $names = collect($candidates)->pluck('name');
 
         $this->assertContains('Fuera Del Pool', $names->toArray());
         $this->assertNotContains('Ya En Pool', $names->toArray());
@@ -785,17 +784,17 @@ class GrowerManagementTest extends SupervisorTestCase
     public function test_search_link_candidates_excludes_ghosts(): void
     {
         $supervisor = $this->makeSupervisor();
-        $ghost      = User::factory()->create([
-            'role'      => 'viticulturist',
+        $ghost = User::factory()->create([
+            'role' => 'viticulturist',
             'can_login' => false,
-            'name'      => 'Ghost Oculto',
+            'name' => 'Ghost Oculto',
         ]);
 
         $component = Livewire::actingAs($supervisor)->test(Index::class);
         $component->set('showLinkModal', true)->set('linkQuery', 'Ghost');
 
         $candidates = $component->instance()->searchLinkCandidates();
-        $names      = collect($candidates)->pluck('name');
+        $names = collect($candidates)->pluck('name');
 
         $this->assertNotContains('Ghost Oculto', $names->toArray());
     }
@@ -827,11 +826,11 @@ class GrowerManagementTest extends SupervisorTestCase
 
     public function test_linked_viticulturist_appears_in_growers_list(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
-            'name'      => 'Recien Vinculado',
+            'name' => 'Recien Vinculado',
         ]);
 
         Livewire::actingAs($supervisor)

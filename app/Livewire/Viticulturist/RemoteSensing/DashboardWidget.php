@@ -12,7 +12,9 @@ use Livewire\Component;
 class DashboardWidget extends Component
 {
     public array $stats = [];
+
     public array $alerts = [];
+
     public bool $isLoading = true;
 
     public function mount()
@@ -23,7 +25,7 @@ class DashboardWidget extends Component
     public function loadData()
     {
         $this->isLoading = true;
-        
+
         $user = auth()->user();
         $plots = Plot::forUser($user)->whereHas('plotGeometries')->get();
         $service = app(NasaEarthdataService::class);
@@ -42,7 +44,7 @@ class DashboardWidget extends Component
             if ($data) {
                 $ndviCount++;
                 $totalNdvi += $data->ndvi_mean ?? 0;
-                
+
                 match ($data->health_status) {
                     'excellent' => $excellent++,
                     'good' => $good++,

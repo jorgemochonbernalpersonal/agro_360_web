@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\SupportTicketComment;
 use App\Models\SupportTicket;
+use App\Models\SupportTicketComment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -219,4 +219,3 @@ class SupportTicketCommentTest extends TestCase
         $this->assertFalse($comment->is_internal ?? false);
     }
 }
-

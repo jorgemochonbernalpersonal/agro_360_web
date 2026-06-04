@@ -2,16 +2,15 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Client;
-use App\Models\Invoice;
-use App\Models\InvoiceItem;
-use App\Models\Harvest;
-use App\Models\HarvestStock;
 use App\Models\Container;
 use App\Models\ContainerCurrentState;
+use App\Models\Harvest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * Tests para casos no cubiertos previamente:
@@ -29,16 +28,19 @@ class ContainerStockServiceTest extends TestCase
     use \Tests\Traits\CreatesTestHarvest;
 
     protected User $user;
+
     protected Client $client;
+
     protected Harvest $harvest;
+
     protected Container $container;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user    = User::factory()->create();
-        $this->client  = Client::factory()->create(['user_id' => $this->user->id]);
+        $this->user = User::factory()->create();
+        $this->client = Client::factory()->create(['user_id' => $this->user->id]);
         $this->harvest = $this->createHarvestWithStock($this->user, 5000);
         $this->container = Container::find($this->harvest->container_id);
 
@@ -52,8 +54,8 @@ class ContainerStockServiceTest extends TestCase
     public function test_increasing_harvest_weight_raises_available_stock()
     {
         $initialStock = $this->harvest->stockMovements()->latest()->first();
-        $oldWeight    = $this->harvest->total_weight; // 5000
-        $newWeight    = 6000;
+        $oldWeight = $this->harvest->total_weight; // 5000
+        $newWeight = 6000;
 
         $this->harvest->update(['total_weight' => $newWeight]);
 
@@ -68,7 +70,7 @@ class ContainerStockServiceTest extends TestCase
     public function test_decreasing_harvest_weight_reduces_available_stock()
     {
         $initialStock = $this->harvest->stockMovements()->latest()->first();
-        $newWeight    = 3000;
+        $newWeight = 3000;
 
         $this->harvest->update(['total_weight' => $newWeight]);
 
@@ -103,22 +105,22 @@ class ContainerStockServiceTest extends TestCase
     {
         // Reservar algo primero
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
         InvoiceItem::create([
-            'invoice_id'          => $invoice->id,
-            'harvest_id'          => $this->harvest->id,
-            'name'                => 'Uva',
-            'quantity'            => 500,
-            'unit_price'          => 1.0,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva',
+            'quantity' => 500,
+            'unit_price' => 1.0,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
-            'tax_base'            => 500,
-            'tax_amount'          => 0,
-            'subtotal'            => 500,
-            'total'               => 500,
-            'concept_type'        => 'harvest',
+            'discount_amount' => 0,
+            'tax_base' => 500,
+            'tax_amount' => 0,
+            'subtotal' => 500,
+            'total' => 500,
+            'concept_type' => 'harvest',
         ]);
 
         $stockBefore = $this->harvest->stockMovements()->latest()->first();
@@ -149,20 +151,20 @@ class ContainerStockServiceTest extends TestCase
     public function test_transferring_harvest_to_new_container_updates_used_capacity()
     {
         $newContainer = Container::create([
-            'user_id'                 => $this->user->id,
-            'name'                    => 'Cuba Destino',
-            'serial_number'           => '2',
-            'quantity'                => 1,
-            'capacity'                => 20000,
-            'used_capacity'           => 0,
-            'purchase_date'           => now(),
-            'unit_of_measurement_id'  => 1,
-            'type_id'                 => 1,
-            'material_id'             => 1,
+            'user_id' => $this->user->id,
+            'name' => 'Cuba Destino',
+            'serial_number' => '2',
+            'quantity' => 1,
+            'capacity' => 20000,
+            'used_capacity' => 0,
+            'purchase_date' => now(),
+            'unit_of_measurement_id' => 1,
+            'type_id' => 1,
+            'material_id' => 1,
         ]);
 
         $oldContainer = $this->container;
-        $oldUsed      = $oldContainer->used_capacity; // 5000
+        $oldUsed = $oldContainer->used_capacity; // 5000
 
         $this->harvest->update(['container_id' => $newContainer->id]);
 
@@ -176,16 +178,16 @@ class ContainerStockServiceTest extends TestCase
     public function test_transferring_harvest_creates_new_container_state()
     {
         $newContainer = Container::create([
-            'user_id'                 => $this->user->id,
-            'name'                    => 'Cuba Nueva',
-            'serial_number'           => '3',
-            'quantity'                => 1,
-            'capacity'                => 20000,
-            'used_capacity'           => 0,
-            'purchase_date'           => now(),
-            'unit_of_measurement_id'  => 1,
-            'type_id'                 => 1,
-            'material_id'             => 1,
+            'user_id' => $this->user->id,
+            'name' => 'Cuba Nueva',
+            'serial_number' => '3',
+            'quantity' => 1,
+            'capacity' => 20000,
+            'used_capacity' => 0,
+            'purchase_date' => now(),
+            'unit_of_measurement_id' => 1,
+            'type_id' => 1,
+            'material_id' => 1,
         ]);
 
         $this->harvest->update(['container_id' => $newContainer->id]);
@@ -198,16 +200,16 @@ class ContainerStockServiceTest extends TestCase
     public function test_transferring_to_container_without_capacity_throws_exception()
     {
         $fullContainer = Container::create([
-            'user_id'                 => $this->user->id,
-            'name'                    => 'Cuba Llena',
-            'serial_number'           => '4',
-            'quantity'                => 1,
-            'capacity'                => 100,   // solo 100 kg
-            'used_capacity'           => 90,    // ya casi llena
-            'purchase_date'           => now(),
-            'unit_of_measurement_id'  => 1,
-            'type_id'                 => 1,
-            'material_id'             => 1,
+            'user_id' => $this->user->id,
+            'name' => 'Cuba Llena',
+            'serial_number' => '4',
+            'quantity' => 1,
+            'capacity' => 100,   // solo 100 kg
+            'used_capacity' => 90,    // ya casi llena
+            'purchase_date' => now(),
+            'unit_of_measurement_id' => 1,
+            'type_id' => 1,
+            'material_id' => 1,
         ]);
 
         $this->expectException(\Exception::class);
@@ -270,25 +272,25 @@ class ContainerStockServiceTest extends TestCase
 
         // Usar el mismo contenedor para una nueva cosecha de 2000 kg (no caben)
         $campaign = \App\Models\Campaign::where('viticulturist_id', $this->user->id)->first();
-        $plot     = \App\Models\Plot::where('viticulturist_id', $this->user->id)->first();
+        $plot = \App\Models\Plot::where('viticulturist_id', $this->user->id)->first();
         $planting = \App\Models\PlotPlanting::where('plot_id', $plot->id)->first();
         $activity = \App\Models\AgriculturalActivity::create([
             'viticulturist_id' => $this->user->id,
-            'campaign_id'      => $campaign->id,
-            'plot_id'          => $plot->id,
+            'campaign_id' => $campaign->id,
+            'plot_id' => $plot->id,
             'plot_planting_id' => $planting->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => now(),
+            'activity_type' => 'harvest',
+            'activity_date' => now(),
         ]);
 
         Harvest::create([
-            'activity_id'        => $activity->id,
-            'plot_planting_id'   => $planting->id,
-            'container_id'       => $this->container->id,
+            'activity_id' => $activity->id,
+            'plot_planting_id' => $planting->id,
+            'container_id' => $this->container->id,
             'harvest_start_date' => now(),
-            'harvest_end_date'   => now()->addDay(),
-            'total_weight'       => 2000, // supera los 1000 libres
-            'unit'               => 'kg',
+            'harvest_end_date' => now()->addDay(),
+            'total_weight' => 2000, // supera los 1000 libres
+            'unit' => 'kg',
         ]);
     }
 
@@ -299,25 +301,25 @@ class ContainerStockServiceTest extends TestCase
     public function test_changing_delivery_status_to_in_transit_does_not_move_stock()
     {
         $invoice = Invoice::factory()->sent()->create([
-            'user_id'         => $this->user->id,
-            'client_id'       => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'delivery_status' => 'pending',
         ]);
 
         $quantity = 300;
         InvoiceItem::create([
-            'invoice_id'          => $invoice->id,
-            'harvest_id'          => $this->harvest->id,
-            'name'                => 'Uva',
-            'quantity'            => $quantity,
-            'unit_price'          => 1.0,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva',
+            'quantity' => $quantity,
+            'unit_price' => 1.0,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
-            'tax_base'            => 300,
-            'tax_amount'          => 0,
-            'subtotal'            => 300,
-            'total'               => 300,
-            'concept_type'        => 'harvest',
+            'discount_amount' => 0,
+            'tax_base' => 300,
+            'tax_amount' => 0,
+            'subtotal' => 300,
+            'total' => 300,
+            'concept_type' => 'harvest',
         ]);
 
         $stockBefore = $this->harvest->fresh()->stockMovements()->latest()->first();
@@ -326,8 +328,8 @@ class ContainerStockServiceTest extends TestCase
         // Cambiar delivery_status — NO debe crear movimientos de stock
         $invoice->update(['delivery_status' => 'in_transit']);
 
-        $stockAfter  = $this->harvest->fresh()->stockMovements()->latest()->first();
-        $countAfter  = $this->harvest->stockMovements()->count();
+        $stockAfter = $this->harvest->fresh()->stockMovements()->latest()->first();
+        $countAfter = $this->harvest->stockMovements()->count();
 
         $this->assertEquals($countBefore, $countAfter);
         $this->assertEquals($stockBefore->available_qty, $stockAfter->available_qty);
@@ -338,28 +340,28 @@ class ContainerStockServiceTest extends TestCase
     public function test_changing_delivery_status_to_delivered_does_not_move_stock()
     {
         $invoice = Invoice::factory()->sent()->create([
-            'user_id'         => $this->user->id,
-            'client_id'       => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'delivery_status' => 'in_transit',
         ]);
 
         InvoiceItem::create([
-            'invoice_id'          => $invoice->id,
-            'harvest_id'          => $this->harvest->id,
-            'name'                => 'Uva',
-            'quantity'            => 200,
-            'unit_price'          => 1.0,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva',
+            'quantity' => 200,
+            'unit_price' => 1.0,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
-            'tax_base'            => 200,
-            'tax_amount'          => 0,
-            'subtotal'            => 200,
-            'total'               => 200,
-            'concept_type'        => 'harvest',
+            'discount_amount' => 0,
+            'tax_base' => 200,
+            'tax_amount' => 0,
+            'subtotal' => 200,
+            'total' => 200,
+            'concept_type' => 'harvest',
         ]);
 
         $countBefore = $this->harvest->stockMovements()->count();
-        $soldBefore  = $this->harvest->stockMovements()->latest()->first()->sold_qty;
+        $soldBefore = $this->harvest->stockMovements()->latest()->first()->sold_qty;
 
         $invoice->update(['delivery_status' => 'delivered']);
 
@@ -370,24 +372,24 @@ class ContainerStockServiceTest extends TestCase
     public function test_changing_delivery_status_pending_to_in_transit_sets_no_stock_movements()
     {
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'         => $this->user->id,
-            'client_id'       => $this->client->id,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
             'delivery_status' => 'pending',
         ]);
 
         InvoiceItem::create([
-            'invoice_id'          => $invoice->id,
-            'harvest_id'          => $this->harvest->id,
-            'name'                => 'Uva',
-            'quantity'            => 100,
-            'unit_price'          => 1.0,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva',
+            'quantity' => 100,
+            'unit_price' => 1.0,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
-            'tax_base'            => 100,
-            'tax_amount'          => 0,
-            'subtotal'            => 100,
-            'total'               => 100,
-            'concept_type'        => 'harvest',
+            'discount_amount' => 0,
+            'tax_base' => 100,
+            'tax_amount' => 0,
+            'subtotal' => 100,
+            'total' => 100,
+            'concept_type' => 'harvest',
         ]);
 
         $reservedBefore = $this->harvest->stockMovements()->latest()->first()->reserved_qty;
@@ -406,24 +408,24 @@ class ContainerStockServiceTest extends TestCase
     public function test_restoring_soft_deleted_item_re_reserves_stock()
     {
         $invoice = Invoice::factory()->draft()->create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
         $quantity = 400;
         $item = InvoiceItem::create([
-            'invoice_id'          => $invoice->id,
-            'harvest_id'          => $this->harvest->id,
-            'name'                => 'Uva',
-            'quantity'            => $quantity,
-            'unit_price'          => 1.0,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva',
+            'quantity' => $quantity,
+            'unit_price' => 1.0,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
-            'tax_base'            => 400,
-            'tax_amount'          => 0,
-            'subtotal'            => 400,
-            'total'               => 400,
-            'concept_type'        => 'harvest',
+            'discount_amount' => 0,
+            'tax_base' => 400,
+            'tax_amount' => 0,
+            'subtotal' => 400,
+            'total' => 400,
+            'concept_type' => 'harvest',
         ]);
 
         $stockAfterCreate = $this->harvest->stockMovements()->latest()->first();
@@ -448,23 +450,23 @@ class ContainerStockServiceTest extends TestCase
     {
         // Si el item restaurado pertenece a una factura NO-draft, el observer no re-reserva
         $invoice = Invoice::factory()->sent()->create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
         $item = InvoiceItem::create([
-            'invoice_id'          => $invoice->id,
-            'harvest_id'          => $this->harvest->id,
-            'name'                => 'Uva',
-            'quantity'            => 200,
-            'unit_price'          => 1.0,
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva',
+            'quantity' => 200,
+            'unit_price' => 1.0,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
-            'tax_base'            => 200,
-            'tax_amount'          => 0,
-            'subtotal'            => 200,
-            'total'               => 200,
-            'concept_type'        => 'harvest',
+            'discount_amount' => 0,
+            'tax_base' => 200,
+            'tax_amount' => 0,
+            'subtotal' => 200,
+            'total' => 200,
+            'concept_type' => 'harvest',
         ]);
 
         $countBefore = $this->harvest->stockMovements()->count();

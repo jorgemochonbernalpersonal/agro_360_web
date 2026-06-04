@@ -2,33 +2,39 @@
 
 namespace App\Livewire\Viticulturist\CampaignDocuments;
 
-use App\Models\Campaign;
-use App\Models\CampaignDocument;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithViticulturistValidation;
+use App\Models\Campaign;
+use App\Models\CampaignDocument;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 use Livewire\WithFileUploads;
 
 #[Layout('layouts.app')]
 class Index extends Component
 {
-    use WithToastNotifications, WithFileUploads, WithViticulturistValidation;
+    use WithFileUploads, WithToastNotifications, WithViticulturistValidation;
 
     // Filters
     public $filterCampaign = '';
+
     public $filterType = '';
 
     // Form
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     public $campaign_id = '';
+
     public $name = '';
+
     public $document_type = 'other';
+
     public $notes = '';
+
     public $uploadedFile = null;
 
     public function mount()
@@ -63,11 +69,11 @@ class Index extends Component
         $user = Auth::user();
 
         $data = [
-            'campaign_id'      => $this->campaign_id,
+            'campaign_id' => $this->campaign_id,
             'viticulturist_id' => $user->id,
-            'name'             => $this->name,
-            'document_type'    => $this->document_type,
-            'notes'            => $this->notes ?: null,
+            'name' => $this->name,
+            'document_type' => $this->document_type,
+            'notes' => $this->notes ?: null,
         ];
 
         if ($this->uploadedFile) {
@@ -105,28 +111,6 @@ class Index extends Component
         $this->toastSuccess(__('Documento eliminado.'));
     }
 
-    protected function rules(): array
-    {
-        $fileRule = $this->editingId ? 'nullable' : 'required';
-        return [
-            'campaign_id'    => $this->campaignOwnershipRule(),
-            'name'           => 'required|string|max:255',
-            'document_type'  => 'required|in:' . implode(',', array_keys(CampaignDocument::DOCUMENT_TYPES)),
-            'notes'          => 'nullable|string',
-            'uploadedFile'   => "{$fileRule}|file|max:20480|mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx",
-        ];
-    }
-
-    protected function resetForm()
-    {
-        $this->editingId = null;
-        $this->name = '';
-        $this->document_type = 'other';
-        $this->notes = '';
-        $this->uploadedFile = null;
-        $this->resetValidation();
-    }
-
     public function render()
     {
         $user = Auth::user();
@@ -145,15 +129,38 @@ class Index extends Component
 
         $base = CampaignDocument::where('viticulturist_id', $user->id);
         $stats = [
-            'total'        => (clone $base)->count(),
-            'this_campaign'=> $this->filterCampaign ? (clone $base)->where('campaign_id', $this->filterCampaign)->count() : (clone $base)->count(),
+            'total' => (clone $base)->count(),
+            'this_campaign' => $this->filterCampaign ? (clone $base)->where('campaign_id', $this->filterCampaign)->count() : (clone $base)->count(),
         ];
 
         return view('livewire.viticulturist.campaign-documents.index', [
-            'entries'       => $entries,
-            'campaigns'     => $campaigns,
+            'entries' => $entries,
+            'campaigns' => $campaigns,
             'documentTypes' => CampaignDocument::documentTypeOptions(),
-            'stats'         => $stats,
+            'stats' => $stats,
         ]);
+    }
+
+    protected function rules(): array
+    {
+        $fileRule = $this->editingId ? 'nullable' : 'required';
+
+        return [
+            'campaign_id' => $this->campaignOwnershipRule(),
+            'name' => 'required|string|max:255',
+            'document_type' => 'required|in:'.implode(',', array_keys(CampaignDocument::DOCUMENT_TYPES)),
+            'notes' => 'nullable|string',
+            'uploadedFile' => "{$fileRule}|file|max:20480|mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx",
+        ];
+    }
+
+    protected function resetForm()
+    {
+        $this->editingId = null;
+        $this->name = '';
+        $this->document_type = 'other';
+        $this->notes = '';
+        $this->uploadedFile = null;
+        $this->resetValidation();
     }
 }

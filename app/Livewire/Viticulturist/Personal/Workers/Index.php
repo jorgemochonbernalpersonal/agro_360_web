@@ -2,24 +2,27 @@
 
 namespace App\Livewire\Viticulturist\Personal\Workers;
 
-use App\Models\CrewMember;
-use App\Models\Crew;
-use App\Models\WineryViticulturist;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
-use Livewire\WithPagination;
+use App\Models\Crew;
+use App\Models\CrewMember;
+use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
     public $wineryFilter = '';
+
     public $newWorkerId = '';
+
     public $selectedWineryId = '';
+
     public $assignToCrewId = '';
 
     protected $queryString = ['wineryFilter'];
@@ -27,7 +30,7 @@ class Index extends Component
     public function mount()
     {
         $user = Auth::user();
-        
+
         // Si solo tiene una bodega, auto-seleccionarla
         $wineries = $user->wineries;
 
@@ -71,11 +74,12 @@ class Index extends Component
                     $viticulturist = $relation->viticulturist;
                     // Agregar flag si puede editar (solo los que creó)
                     $viticulturist->can_edit = $user->canEditViticulturist($viticulturist->id);
+
                     return $viticulturist;
                 })
                 ->filter(function ($viticulturist) {
                     // Excluir los que ya son trabajadores individuales
-                    return !CrewMember::where('viticulturist_id', $viticulturist->id)
+                    return ! CrewMember::where('viticulturist_id', $viticulturist->id)
                         ->whereNull('crew_id')
                         ->exists();
                 })
@@ -89,10 +93,11 @@ class Index extends Component
                 ->map(function ($relation) use ($user) {
                     $viticulturist = $relation->viticulturist;
                     $viticulturist->can_edit = $user->canEditViticulturist($viticulturist->id);
+
                     return $viticulturist;
                 })
                 ->filter(function ($viticulturist) {
-                    return !CrewMember::where('viticulturist_id', $viticulturist->id)
+                    return ! CrewMember::where('viticulturist_id', $viticulturist->id)
                         ->whereNull('crew_id')
                         ->exists();
                 })
@@ -102,7 +107,7 @@ class Index extends Component
 
         // Obtener cuadrillas del viticultor para asignación
         $crews = Crew::forViticulturist($user->id)
-            ->when($this->wineryFilter, fn($q) => $q->forWinery($this->wineryFilter))
+            ->when($this->wineryFilter, fn ($q) => $q->forWinery($this->wineryFilter))
             ->orderBy('name')
             ->get();
 
@@ -118,6 +123,7 @@ class Index extends Component
     {
         if (empty($this->newWorkerId)) {
             $this->toastError(__('Debes seleccionar un viticultor.'));
+
             return;
         }
 
@@ -130,12 +136,14 @@ class Index extends Component
 
         if (! $visibleRelationExists) {
             $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
+
             return;
         }
 
         // Validar que no sea el mismo usuario
         if ($this->newWorkerId == $user->id) {
             $this->toastError(__('No puedes agregarte a ti mismo como trabajador individual.'));
+
             return;
         }
 
@@ -144,6 +152,7 @@ class Index extends Component
 
         if ($exists) {
             $this->toastError(__('Este viticultor ya está dado de alta como trabajador (individual o en una cuadrilla).'));
+
             return;
         }
 
@@ -173,11 +182,13 @@ class Index extends Component
     {
         if ($worker->crew_id !== null) {
             $this->toastError(__('Este trabajador pertenece a una cuadrilla. Remuévelo desde la cuadrilla.'));
+
             return;
         }
 
         if ($worker->viticulturist_id == Auth::id()) {
             $this->toastError(__('No puedes removerte a ti mismo.'));
+
             return;
         }
 
@@ -202,20 +213,23 @@ class Index extends Component
     {
         if (empty($workerId) || empty($this->assignToCrewId)) {
             $this->toastError(__('Debes seleccionar un trabajador y una cuadrilla.'));
+
             return;
         }
 
         $worker = CrewMember::find($workerId);
-        
-        if (!$worker || $worker->crew_id !== null) {
+
+        if (! $worker || $worker->crew_id !== null) {
             $this->toastError(__('Trabajador no válido o ya está en una cuadrilla.'));
+
             return;
         }
 
         $crew = Crew::find($this->assignToCrewId);
-        
-        if (!$crew || $crew->viticulturist_id !== Auth::id()) {
+
+        if (! $crew || $crew->viticulturist_id !== Auth::id()) {
             $this->toastError(__('Cuadrilla no válida.'));
+
             return;
         }
 
@@ -224,6 +238,7 @@ class Index extends Component
             ->where('viticulturist_id', $worker->viticulturist_id)
             ->exists()) {
             $this->toastError(__('Este trabajador ya está en esta cuadrilla.')); // Modified this line
+
             return;
         }
 
@@ -258,4 +273,3 @@ class Index extends Component
         $this->resetPage();
     }
 }
-

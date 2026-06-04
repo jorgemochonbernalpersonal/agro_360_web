@@ -30,8 +30,9 @@ class GoogleAuthController extends Controller
         } catch (\Exception $e) {
             SecurityLogger::logSecurityEvent('google_oauth_error', [
                 'error' => $e->getMessage(),
-                'ip'    => request()->ip(),
+                'ip' => request()->ip(),
             ]);
+
             return redirect()->route('login')
                 ->withErrors(['email' => __('No se pudo completar la autenticación con Google. Inténtalo de nuevo.')]);
         }
@@ -47,12 +48,12 @@ class GoogleAuthController extends Controller
                 // Si es un ghost (can_login=false), activarlo — Google ya verificó el email
                 if (! $user->can_login) {
                     $user->update([
-                        'google_id'         => $googleUser->getId(),
-                        'can_login'         => true,
+                        'google_id' => $googleUser->getId(),
+                        'can_login' => true,
                         'email_verified_at' => $user->email_verified_at ?? now(),
-                        'invitation_token'      => null,
+                        'invitation_token' => null,
                         'invitation_expires_at' => null,
-                        'invitation_sent_at'    => null,
+                        'invitation_sent_at' => null,
                     ]);
                 } else {
                     // Link Google to existing active account
@@ -64,12 +65,12 @@ class GoogleAuthController extends Controller
         // 3. Create new user
         if (! $user) {
             $user = User::create([
-                'name'              => $googleUser->getName(),
-                'email'             => strtolower($googleUser->getEmail()),
-                'google_id'         => $googleUser->getId(),
+                'name' => $googleUser->getName(),
+                'email' => strtolower($googleUser->getEmail()),
+                'google_id' => $googleUser->getId(),
                 'email_verified_at' => now(), // Google already verified the email
-                'password'          => Hash::make(Str::random(32)),
-                'role'              => 'viticulturist',
+                'password' => Hash::make(Str::random(32)),
+                'role' => 'viticulturist',
             ]);
         }
 
@@ -77,8 +78,9 @@ class GoogleAuthController extends Controller
         if (! $user->can_login) {
             SecurityLogger::logSecurityEvent('google_login_blocked_can_login', [
                 'user_id' => $user->id,
-                'email'   => $user->email,
+                'email' => $user->email,
             ]);
+
             return redirect()->route('login')
                 ->withErrors(['email' => __('Tu cuenta no está activada. Contacta con el administrador.')]);
         }
@@ -92,12 +94,12 @@ class GoogleAuthController extends Controller
     private function dashboardRoute(User $user): string
     {
         return route(match ($user->role) {
-            'admin'        => 'admin.dashboard',
-            'supervisor'   => 'supervisor.dashboard',
-            'winery'       => 'winery.dashboard',
-            'producer'     => 'producer.dashboard',
+            'admin' => 'admin.dashboard',
+            'supervisor' => 'supervisor.dashboard',
+            'winery' => 'winery.dashboard',
+            'producer' => 'producer.dashboard',
             'viticulturist' => 'viticulturist.dashboard',
-            default        => 'home',
+            default => 'home',
         });
     }
 }

@@ -11,42 +11,45 @@ class WineryAnnouncement extends Model
 {
     use HasFactory;
 
+    public const TYPE_INFO = 'info';
+
+    public const TYPE_ACTION_REQUIRED = 'action_required';
+
+    public const TYPE_HARVEST_ALERT = 'harvest_alert';
+
+    public const TARGET_ALL = 'all';
+
+    public const TARGET_SPECIFIC = 'specific';
+
+    public const TYPE_LABELS = [
+        self::TYPE_INFO => 'Informativo',
+        self::TYPE_ACTION_REQUIRED => 'Acción requerida',
+        self::TYPE_HARVEST_ALERT => 'Alerta de vendimia',
+    ];
+
+    public const TYPE_COLORS = [
+        self::TYPE_INFO => 'blue',
+        self::TYPE_ACTION_REQUIRED => 'amber',
+        self::TYPE_HARVEST_ALERT => 'red',
+    ];
+
+    public const TYPE_ICONS = [
+        self::TYPE_INFO => 'information-circle',
+        self::TYPE_ACTION_REQUIRED => 'exclamation-triangle',
+        self::TYPE_HARVEST_ALERT => 'bell-alert',
+    ];
+
     protected $guarded = [];
 
     protected $casts = [
         'published_at' => 'datetime',
-        'expires_at'   => 'datetime',
-    ];
-
-    public const TYPE_INFO            = 'info';
-    public const TYPE_ACTION_REQUIRED = 'action_required';
-    public const TYPE_HARVEST_ALERT   = 'harvest_alert';
-
-    public const TARGET_ALL      = 'all';
-    public const TARGET_SPECIFIC = 'specific';
-
-    public const TYPE_LABELS = [
-        self::TYPE_INFO            => 'Informativo',
-        self::TYPE_ACTION_REQUIRED => 'Acción requerida',
-        self::TYPE_HARVEST_ALERT   => 'Alerta de vendimia',
+        'expires_at' => 'datetime',
     ];
 
     public static function typeLabelOptions(): array
     {
         return array_map(fn ($v) => __($v), static::TYPE_LABELS);
     }
-
-    public const TYPE_COLORS = [
-        self::TYPE_INFO            => 'blue',
-        self::TYPE_ACTION_REQUIRED => 'amber',
-        self::TYPE_HARVEST_ALERT   => 'red',
-    ];
-
-    public const TYPE_ICONS = [
-        self::TYPE_INFO            => 'information-circle',
-        self::TYPE_ACTION_REQUIRED => 'exclamation-triangle',
-        self::TYPE_HARVEST_ALERT   => 'bell-alert',
-    ];
 
     // ── Relationships ────────────────────────────────────────────────────────
 
@@ -77,6 +80,8 @@ class WineryAnnouncement extends Model
     /**
      * Avisos visibles para un viticulturist concreto:
      * target=all de sus bodegas vinculadas, o target=specific donde esté incluido.
+     *
+     * @param mixed $query
      */
     public function scopeVisibleTo($query, User $viticulturist)
     {
@@ -87,10 +92,10 @@ class WineryAnnouncement extends Model
         return $query->whereIn('winery_id', $wineryIds)
             ->where(function ($q) use ($viticulturist) {
                 $q->where('target', self::TARGET_ALL)
-                  ->orWhere(function ($q2) use ($viticulturist) {
-                      $q2->where('target', self::TARGET_SPECIFIC)
-                         ->whereHas('viticulturists', fn ($q3) => $q3->where('users.id', $viticulturist->id));
-                  });
+                    ->orWhere(function ($q2) use ($viticulturist) {
+                        $q2->where('target', self::TARGET_SPECIFIC)
+                            ->whereHas('viticulturists', fn ($q3) => $q3->where('users.id', $viticulturist->id));
+                    });
             });
     }
 

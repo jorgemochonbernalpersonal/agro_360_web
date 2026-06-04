@@ -12,16 +12,11 @@ class Supply extends Model
     use HasFactory;
 
     const SUPPLY_TYPES = [
-        'fertilizer'    => 'Fertilizante / Abono',
-        'seed'          => 'Semilla / Planta',
-        'postharvest'   => 'Post-cosecha',
-        'other'         => 'Otro',
+        'fertilizer' => 'Fertilizante / Abono',
+        'seed' => 'Semilla / Planta',
+        'postharvest' => 'Post-cosecha',
+        'other' => 'Otro',
     ];
-
-    public static function supplyTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::SUPPLY_TYPES);
-    }
 
     protected $fillable = [
         'viticulturist_id',
@@ -40,12 +35,17 @@ class Supply extends Model
     ];
 
     protected $casts = [
-        'initial_stock'   => 'decimal:3',
-        'current_stock'   => 'decimal:3',
+        'initial_stock' => 'decimal:3',
+        'current_stock' => 'decimal:3',
         'min_stock_alert' => 'decimal:3',
-        'expiry_date'     => 'date',
-        'active'          => 'boolean',
+        'expiry_date' => 'date',
+        'active' => 'boolean',
     ];
+
+    public static function supplyTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::SUPPLY_TYPES);
+    }
 
     public function viticulturist(): BelongsTo
     {
@@ -69,7 +69,10 @@ class Supply extends Model
 
     public function isLowStock(): bool
     {
-        if ($this->min_stock_alert === null) return false;
+        if ($this->min_stock_alert === null) {
+            return false;
+        }
+
         return $this->current_stock <= $this->min_stock_alert;
     }
 
@@ -80,7 +83,10 @@ class Supply extends Model
 
     public function isExpiringSoon(int $days = 30): bool
     {
-        if (!$this->expiry_date || $this->expiry_date->isPast()) return false;
+        if (! $this->expiry_date || $this->expiry_date->isPast()) {
+            return false;
+        }
+
         return $this->expiry_date->lte(now()->addDays($days));
     }
 

@@ -27,11 +27,11 @@ class UserObserver
         }
 
         $org = Organization::create([
-            'name'          => $user->name,
-            'type'          => $type,
-            'slug'          => Str::slug($user->name) . '-' . $user->id,
-            'email'         => !str_contains($user->email, '@noemail.agro365.es') ? $user->email : null,
-            'active'        => true,
+            'name' => $user->name,
+            'type' => $type,
+            'slug' => Str::slug($user->name).'-'.$user->id,
+            'email' => ! str_contains($user->email, '@noemail.agro365.es') ? $user->email : null,
+            'active' => true,
             'owner_user_id' => $user->id,
         ]);
 
@@ -65,9 +65,9 @@ class UserObserver
     {
         return match ($user->role) {
             User::ROLE_WINERY,
-            User::ROLE_PRODUCER   => Organization::TYPE_WINERY,
+            User::ROLE_PRODUCER => Organization::TYPE_WINERY,
             User::ROLE_SUPERVISOR => Organization::TYPE_DENOMINATION,
-            default               => null,
+            default => null,
         };
     }
 }

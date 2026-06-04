@@ -28,15 +28,15 @@ class DisputeController extends Controller
         }
 
         $perPage = $this->resolvePerPage($request, 20, 100);
-        $items   = $query->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
             'data' => $items->map(fn ($d) => $this->format($d)),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
+                'last_page' => $items->lastPage(),
             ],
         ]);
     }
@@ -75,14 +75,14 @@ class DisputeController extends Controller
 
         $delivery->update([
             'dispute_resolution_note' => $validated['dispute_resolution_note'],
-            'dispute_resolved_at'     => now(),
-            'status'                  => 'resolved',
+            'dispute_resolved_at' => now(),
+            'status' => 'resolved',
         ]);
 
         $delivery->load(['viticulturist', 'harvest', 'plotPlanting.plot']);
 
         return response()->json([
-            'data'    => $this->format($delivery),
+            'data' => $this->format($delivery),
             'message' => __('Disputa resuelta correctamente.'),
         ]);
     }
@@ -90,30 +90,30 @@ class DisputeController extends Controller
     private function format(HarvestDelivery $d): array
     {
         return [
-            'id'                       => $d->id,
-            'viticulturist_id'         => $d->viticulturist_id,
-            'viticulturist_name'       => $d->viticulturist?->name,
-            'harvest_id'               => $d->harvest_id,
-            'plot_planting_id'         => $d->plot_planting_id,
-            'vintage_year'             => $d->vintage_year,
-            'delivery_date'            => $d->delivery_date?->toDateString(),
-            'ticket_number'            => $d->ticket_number,
-            'delivered_kg'             => (float) $d->delivered_kg,
-            'discrepancy_kg'           => $d->discrepancy_kg !== null ? (float) $d->discrepancy_kg : null,
-            'discrepancy_percentage'   => $d->discrepancyPercentage(),
-            'status'                   => $d->status,
-            'dispute_note'             => $d->dispute_note,
-            'dispute_submitted_at'     => $d->dispute_submitted_at?->toIso8601String(),
-            'dispute_resolution_note'  => $d->dispute_resolution_note,
-            'dispute_resolved_at'      => $d->dispute_resolved_at?->toIso8601String(),
+            'id' => $d->id,
+            'viticulturist_id' => $d->viticulturist_id,
+            'viticulturist_name' => $d->viticulturist?->name,
+            'harvest_id' => $d->harvest_id,
+            'plot_planting_id' => $d->plot_planting_id,
+            'vintage_year' => $d->vintage_year,
+            'delivery_date' => $d->delivery_date?->toDateString(),
+            'ticket_number' => $d->ticket_number,
+            'delivered_kg' => (float) $d->delivered_kg,
+            'discrepancy_kg' => $d->discrepancy_kg !== null ? (float) $d->discrepancy_kg : null,
+            'discrepancy_percentage' => $d->discrepancyPercentage(),
+            'status' => $d->status,
+            'dispute_note' => $d->dispute_note,
+            'dispute_submitted_at' => $d->dispute_submitted_at?->toIso8601String(),
+            'dispute_resolution_note' => $d->dispute_resolution_note,
+            'dispute_resolved_at' => $d->dispute_resolved_at?->toIso8601String(),
             // Calidad
-            'baume_degree'             => $d->baume_degree !== null ? (float) $d->baume_degree : null,
-            'brix_degree'              => $d->brix_degree !== null ? (float) $d->brix_degree : null,
-            'potential_alcohol'        => $d->potential_alcohol !== null ? (float) $d->potential_alcohol : null,
-            'acidity_level'            => $d->acidity_level !== null ? (float) $d->acidity_level : null,
-            'ph_level'                 => $d->ph_level !== null ? (float) $d->ph_level : null,
-            'disqualified'             => $d->disqualified,
-            'disqualified_reason'      => $d->disqualified_reason,
+            'baume_degree' => $d->baume_degree !== null ? (float) $d->baume_degree : null,
+            'brix_degree' => $d->brix_degree !== null ? (float) $d->brix_degree : null,
+            'potential_alcohol' => $d->potential_alcohol !== null ? (float) $d->potential_alcohol : null,
+            'acidity_level' => $d->acidity_level !== null ? (float) $d->acidity_level : null,
+            'ph_level' => $d->ph_level !== null ? (float) $d->ph_level : null,
+            'disqualified' => $d->disqualified,
+            'disqualified_reason' => $d->disqualified_reason,
         ];
     }
 }

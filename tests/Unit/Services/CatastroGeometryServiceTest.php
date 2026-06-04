@@ -19,44 +19,30 @@ class CatastroGeometryServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new CatastroGeometryService();
-    }
-
-    private function callGmlToWkt(string $gml): ?string
-    {
-        $method = new ReflectionMethod(CatastroGeometryService::class, 'gmlToWkt');
-        $method->setAccessible(true);
-        return $method->invoke($this->service, $gml);
-    }
-
-    private function callPosListToWktRing(string $posList): ?string
-    {
-        $method = new ReflectionMethod(CatastroGeometryService::class, 'posListToWktRing');
-        $method->setAccessible(true);
-        return $method->invoke($this->service, $posList);
+        $this->service = new CatastroGeometryService;
     }
 
     // ── posListToWktRing ─────────────────────────────────────────────────────
 
-    public function test_posList_swap_lat_lon_to_lon_lat(): void
+    public function test_pos_list_swap_lat_lon_to_lon_lat(): void
     {
         // GML INSPIRE: "lat lon lat lon ..." → WKT necesita "lon lat"
         $posList = '40.12 -3.45 40.13 -3.46 40.14 -3.44 40.12 -3.45';
-        $result  = $this->callPosListToWktRing($posList);
+        $result = $this->callPosListToWktRing($posList);
 
         $this->assertNotNull($result);
         // Primer vértice debe ser "-3.45 40.12" (lon primero)
         $this->assertStringStartsWith('-3.45 40.12', $result);
     }
 
-    public function test_posList_returns_null_when_fewer_than_4_points(): void
+    public function test_pos_list_returns_null_when_fewer_than_4_points(): void
     {
         // Un anillo válido necesita mínimo 4 puntos (incluyendo cierre)
         $posList = '40.12 -3.45 40.13 -3.46 40.12 -3.45'; // 3 pares = 3 puntos
         $this->assertNull($this->callPosListToWktRing($posList));
     }
 
-    public function test_posList_returns_null_on_out_of_range_coords(): void
+    public function test_pos_list_returns_null_on_out_of_range_coords(): void
     {
         // lat > 90 es inválida
         $posList = '200.0 -3.45 40.13 -3.46 40.14 -3.44 200.0 -3.45';
@@ -120,6 +106,22 @@ class CatastroGeometryServiceTest extends TestCase
     public function test_fetch_wkt_returns_null_on_null_reference(): void
     {
         $this->assertNull($this->service->fetchWkt(null));
+    }
+
+    private function callGmlToWkt(string $gml): ?string
+    {
+        $method = new ReflectionMethod(CatastroGeometryService::class, 'gmlToWkt');
+        $method->setAccessible(true);
+
+        return $method->invoke($this->service, $gml);
+    }
+
+    private function callPosListToWktRing(string $posList): ?string
+    {
+        $method = new ReflectionMethod(CatastroGeometryService::class, 'posListToWktRing');
+        $method->setAccessible(true);
+
+        return $method->invoke($this->service, $posList);
     }
 
     // ── Fixtures GML ─────────────────────────────────────────────────────────

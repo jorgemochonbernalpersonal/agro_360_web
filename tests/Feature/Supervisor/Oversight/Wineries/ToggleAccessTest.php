@@ -4,7 +4,6 @@ namespace Tests\Feature\Supervisor\Oversight\Wineries;
 
 use App\Livewire\Supervisor\Oversight\Wineries\Show;
 use App\Models\SupervisorWinery;
-use App\Models\User;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -45,7 +44,7 @@ class ToggleAccessTest extends SupervisorTestCase
     public function test_another_supervisor_cannot_toggle_access(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         // otherSupervisor NO tiene SupervisorWinery con esta bodega
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);

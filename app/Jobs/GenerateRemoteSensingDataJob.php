@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\Plot;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +15,9 @@ class GenerateRemoteSensingDataJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $plotId;
+
     public bool $ultra;
+
     public ?int $plotSigpacId;
 
     /**
@@ -24,8 +25,8 @@ class GenerateRemoteSensingDataJob implements ShouldQueue
      */
     public function __construct(int $plotId, bool $ultra = true, ?int $plotSigpacId = null)
     {
-        $this->plotId       = $plotId;
-        $this->ultra        = $ultra;
+        $this->plotId = $plotId;
+        $this->ultra = $ultra;
         $this->plotSigpacId = $plotSigpacId;
     }
 
@@ -36,14 +37,14 @@ class GenerateRemoteSensingDataJob implements ShouldQueue
     {
         try {
             Log::info('Starting remote sensing data generation', [
-                'plot_id'    => $this->plotId,
-                'ultra'      => $this->ultra,
+                'plot_id' => $this->plotId,
+                'ultra' => $this->ultra,
                 'plot_sigpac_id' => $this->plotSigpacId,
             ]);
 
             $args = [
                 '--plot-id' => $this->plotId,
-                '--ultra'   => $this->ultra,
+                '--ultra' => $this->ultra,
             ];
             if ($this->plotSigpacId) {
                 $args['--recinto-id'] = $this->plotSigpacId;

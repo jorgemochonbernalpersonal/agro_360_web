@@ -7,6 +7,39 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BiodiversityRecord extends Model
 {
+    public const RECORD_TYPES = [
+        'cubierta_vegetal' => 'Cubierta Vegetal',
+        'margen' => 'Margen sin Labrar',
+        'seto' => 'Seto Vivo',
+        'fauna_auxiliar' => 'Fauna Auxiliar',
+        'nido' => 'Nido / Caja Nido',
+        'hotel_insectos' => 'Hotel de Insectos',
+        'charca' => 'Charca / Punto de Agua',
+        'otro' => 'Otro',
+    ];
+
+    public const RECORD_TYPE_ICONS = [
+        'cubierta_vegetal' => 'leaf',
+        'margen' => 'map',
+        'seto' => 'tree',
+        'fauna_auxiliar' => 'bug-ant',
+        'nido' => 'home',
+        'hotel_insectos' => 'building-office',
+        'charca' => 'arrows-pointing-in',
+        'otro' => 'sparkles',
+    ];
+
+    public const RECORD_TYPE_COLORS = [
+        'cubierta_vegetal' => 'green',
+        'margen' => 'amber',
+        'seto' => 'emerald',
+        'fauna_auxiliar' => 'blue',
+        'nido' => 'violet',
+        'hotel_insectos' => 'orange',
+        'charca' => 'cyan',
+        'otro' => 'zinc',
+    ];
+
     protected $fillable = [
         'viticulturist_id', 'plot_id', 'campaign_id', 'record_type',
         'description', 'area_m2', 'species', 'record_date',
@@ -15,46 +48,13 @@ class BiodiversityRecord extends Model
 
     protected $casts = [
         'record_date' => 'date',
-        'area_m2'     => 'decimal:2',
-    ];
-
-    public const RECORD_TYPES = [
-        'cubierta_vegetal' => 'Cubierta Vegetal',
-        'margen'           => 'Margen sin Labrar',
-        'seto'             => 'Seto Vivo',
-        'fauna_auxiliar'   => 'Fauna Auxiliar',
-        'nido'             => 'Nido / Caja Nido',
-        'hotel_insectos'   => 'Hotel de Insectos',
-        'charca'           => 'Charca / Punto de Agua',
-        'otro'             => 'Otro',
+        'area_m2' => 'decimal:2',
     ];
 
     public static function recordTypeOptions(): array
     {
         return array_map(fn ($v) => __($v), static::RECORD_TYPES);
     }
-
-    public const RECORD_TYPE_ICONS = [
-        'cubierta_vegetal' => 'leaf',
-        'margen'           => 'map',
-        'seto'             => 'tree',
-        'fauna_auxiliar'   => 'bug-ant',
-        'nido'             => 'home',
-        'hotel_insectos'   => 'building-office',
-        'charca'           => 'arrows-pointing-in',
-        'otro'             => 'sparkles',
-    ];
-
-    public const RECORD_TYPE_COLORS = [
-        'cubierta_vegetal' => 'green',
-        'margen'           => 'amber',
-        'seto'             => 'emerald',
-        'fauna_auxiliar'   => 'blue',
-        'nido'             => 'violet',
-        'hotel_insectos'   => 'orange',
-        'charca'           => 'cyan',
-        'otro'             => 'zinc',
-    ];
 
     // ── Relaciones ───────────────────────────────────────────────────────────
 

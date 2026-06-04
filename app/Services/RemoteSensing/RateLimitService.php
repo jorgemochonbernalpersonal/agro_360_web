@@ -13,10 +13,12 @@ class RateLimitService
 {
     // NASA AppEEARS rate limits (conservative approach)
     private const MAX_REQUESTS_PER_HOUR = 50;
+
     private const MAX_REQUESTS_PER_DAY = 500;
 
     // Open-Meteo rate limits (they're more permissive but we limit anyway)
     private const OPEN_METEO_MAX_PER_HOUR = 100;
+
     private const OPEN_METEO_MAX_PER_DAY = 1000;
 
     // Copernicus Sentinel Hub free tier — approx. 30,000 processing units/month
@@ -44,23 +46,23 @@ class RateLimitService
     public function canMakeRequest(string $service): bool
     {
         $limits = $this->getLimits($service);
-        
+
         $hourKey = $this->getHourKey($service);
         $dayKey = $this->getDayKey($service);
-        
+
         $hourCount = Cache::get($hourKey, 0);
         $dayCount = Cache::get($dayKey, 0);
-        
+
         $canMake = $hourCount < $limits['hour'] && $dayCount < $limits['day'];
-        
-        if (!$canMake) {
+
+        if (! $canMake) {
             Log::warning("Rate limit reached for {$service}", [
                 'hour_count' => $hourCount,
                 'day_count' => $dayCount,
                 'limits' => $limits,
             ]);
         }
-        
+
         return $canMake;
     }
 
@@ -87,15 +89,15 @@ class RateLimitService
     {
         $hourKey = $this->getHourKey($service);
         $dayKey = $this->getDayKey($service);
-        
+
         // Increment hour counter (TTL: 1 hour)
-        if (!Cache::has($hourKey)) {
+        if (! Cache::has($hourKey)) {
             Cache::put($hourKey, 0, 3600);
         }
         Cache::increment($hourKey);
-        
+
         // Increment day counter (TTL: 24 hours)
-        if (!Cache::has($dayKey)) {
+        if (! Cache::has($dayKey)) {
             Cache::put($dayKey, 0, 86400);
         }
         Cache::increment($dayKey);
@@ -109,10 +111,10 @@ class RateLimitService
         $hourKey = $this->getHourKey($service);
         $dayKey = $this->getDayKey($service);
         $limits = $this->getLimits($service);
-        
+
         $hourCount = Cache::get($hourKey, 0);
         $dayCount = Cache::get($dayKey, 0);
-        
+
         return [
             'service' => $service,
             'hour' => [
@@ -137,7 +139,7 @@ class RateLimitService
     {
         Cache::forget($this->getHourKey($service));
         Cache::forget($this->getDayKey($service));
-        
+
         Log::info("Rate limit counters reset for {$service}");
     }
 
@@ -152,43 +154,6 @@ class RateLimitService
         ];
     }
 
-    /**
-     * Get cache key for hourly counter
-     */
-    private function getHourKey(string $service): string
-    {
-        return "rate_limit:{$service}:hour:" . now()->format('Y-m-d-H');
-    }
-
-    /**
-     * Get cache key for daily counter
-     */
-    private function getDayKey(string $service): string
-    {
-        return "rate_limit:{$service}:day:" . now()->format('Y-m-d');
-    }
-
-    /**
-     * Get rate limits for a service
-     */
-    private function getLimits(string $service): array
-    {
-        return match ($service) {
-            'nasa' => [
-                'hour' => self::MAX_REQUESTS_PER_HOUR,
-                'day' => self::MAX_REQUESTS_PER_DAY,
-            ],
-            'open_meteo' => [
-                'hour' => self::OPEN_METEO_MAX_PER_HOUR,
-                'day' => self::OPEN_METEO_MAX_PER_DAY,
-            ],
-            default => [
-                'hour' => 10,
-                'day' => 100,
-            ],
-        };
-    }
-
     // -------------------------------------------------------------------------
     // Copernicus processing unit tracking (improvement #12)
     // -------------------------------------------------------------------------
@@ -198,8 +163,8 @@ class RateLimitService
      */
     public function incrementCopernicusUsage(int $units = 1): void
     {
-        $key = 'copernicus_usage_' . now()->format('Y_m');
-        if (!Cache::has($key)) {
+        $key = 'copernicus_usage_'.now()->format('Y_m');
+        if (! Cache::has($key)) {
             Cache::put($key, 0, now()->endOfMonth());
         }
         Cache::increment($key, $units);
@@ -210,7 +175,7 @@ class RateLimitService
      */
     public function getCopernicusMonthlyUsage(): int
     {
-        return (int) Cache::get('copernicus_usage_' . now()->format('Y_m'), 0);
+        return (int) Cache::get('copernicus_usage_'.now()->format('Y_m'), 0);
     }
 
     /**
@@ -237,12 +202,49 @@ class RateLimitService
     {
         $waited = 0;
         $interval = 5; // Check every 5 seconds
-        
-        while (!$this->canMakeRequest($service) && $waited < $maxWaitSeconds) {
+
+        while (! $this->canMakeRequest($service) && $waited < $maxWaitSeconds) {
             sleep($interval);
             $waited += $interval;
         }
-        
+
         return $this->canMakeRequest($service);
+    }
+
+    /**
+     * Get cache key for hourly counter
+     */
+    private function getHourKey(string $service): string
+    {
+        return "rate_limit:{$service}:hour:".now()->format('Y-m-d-H');
+    }
+
+    /**
+     * Get cache key for daily counter
+     */
+    private function getDayKey(string $service): string
+    {
+        return "rate_limit:{$service}:day:".now()->format('Y-m-d');
+    }
+
+    /**
+     * Get rate limits for a service
+     */
+    private function getLimits(string $service): array
+    {
+        return match ($service) {
+            'nasa' => [
+                'hour' => self::MAX_REQUESTS_PER_HOUR,
+                'day' => self::MAX_REQUESTS_PER_DAY,
+            ],
+            'open_meteo' => [
+                'hour' => self::OPEN_METEO_MAX_PER_HOUR,
+                'day' => self::OPEN_METEO_MAX_PER_DAY,
+            ],
+            default => [
+                'hour' => 10,
+                'day' => 100,
+            ],
+        };
     }
 }

@@ -21,25 +21,25 @@ class StagingUsersSeeder extends Seeder
 {
     private const USERS = [
         [
-            'id'       => 1,
-            'name'     => 'Demo Bodega',
-            'email'    => 'demo.bodega@agro365.es',
+            'id' => 1,
+            'name' => 'Demo Bodega',
+            'email' => 'demo.bodega@agro365.es',
             'password' => 'demo1234',
-            'role'     => 'winery',
+            'role' => 'winery',
         ],
         [
-            'id'       => 2,
-            'name'     => 'Demo Productor',
-            'email'    => 'demo.productor@agro365.es',
+            'id' => 2,
+            'name' => 'Demo Productor',
+            'email' => 'demo.productor@agro365.es',
             'password' => 'demo1234',
-            'role'     => 'producer',
+            'role' => 'producer',
         ],
         [
-            'id'       => 3,
-            'name'     => 'Demo Viticultor',
-            'email'    => 'demo.viticultor@agro365.es',
+            'id' => 3,
+            'name' => 'Demo Viticultor',
+            'email' => 'demo.viticultor@agro365.es',
             'password' => 'demo1234',
-            'role'     => 'viticulturist',
+            'role' => 'viticulturist',
         ],
     ];
 
@@ -49,12 +49,12 @@ class StagingUsersSeeder extends Seeder
             User::updateOrCreate(
                 ['id' => $data['id']],
                 [
-                    'name'                  => $data['name'],
-                    'email'                 => $data['email'],
-                    'password'              => Hash::make($data['password']),
-                    'role'                  => $data['role'],
-                    'email_verified_at'     => now(),
-                    'password_must_reset'   => false,
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'password' => Hash::make($data['password']),
+                    'role' => $data['role'],
+                    'email_verified_at' => now(),
+                    'password_must_reset' => false,
                 ]
             );
 

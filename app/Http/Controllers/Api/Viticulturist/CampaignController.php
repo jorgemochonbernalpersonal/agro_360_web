@@ -8,7 +8,6 @@ use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CampaignController extends Controller
 {
@@ -62,17 +61,17 @@ class CampaignController extends Controller
         // emite activity_type/activity_date/plot:{} y el móvil no los parsea.
         return response()->json([
             'data' => collect($activities->items())->map(fn ($a) => [
-                'id'        => $a->id,
-                'type'      => $a->activity_type,
-                'date'      => $a->activity_date?->toDateString(),
+                'id' => $a->id,
+                'type' => $a->activity_type,
+                'date' => $a->activity_date?->toDateString(),
                 'plot_name' => $a->plot?->name,
-                'notes'     => $a->notes,
+                'notes' => $a->notes,
             ]),
             'meta' => [
-                'total'        => $activities->total(),
+                'total' => $activities->total(),
                 'current_page' => $activities->currentPage(),
-                'last_page'    => $activities->lastPage(),
-                'has_more'     => $activities->hasMorePages(),
+                'last_page' => $activities->lastPage(),
+                'has_more' => $activities->hasMorePages(),
             ],
         ]);
     }
@@ -92,19 +91,19 @@ class CampaignController extends Controller
             $activities = AgriculturalActivity::forCampaign($campaign->id);
 
             return [
-                'id'               => $campaign->id,
-                'name'             => $campaign->name,
-                'year'             => $campaign->year,
-                'active'           => (bool) $campaign->active,
-                'locked'           => $campaign->locked_at !== null,
-                'start_date'       => $campaign->start_date?->toDateString(),
-                'end_date'         => $campaign->end_date?->toDateString(),
+                'id' => $campaign->id,
+                'name' => $campaign->name,
+                'year' => $campaign->year,
+                'active' => (bool) $campaign->active,
+                'locked' => $campaign->locked_at !== null,
+                'start_date' => $campaign->start_date?->toDateString(),
+                'end_date' => $campaign->end_date?->toDateString(),
                 'total_activities' => (clone $activities)->count(),
-                'treatments'       => (clone $activities)->where('activity_type', 'phytosanitary')->count(),
-                'irrigations'      => (clone $activities)->where('activity_type', 'irrigation')->count(),
-                'harvests'         => (clone $activities)->where('activity_type', 'harvest')->count(),
-                'observations'     => (clone $activities)->where('activity_type', 'observation')->count(),
-                'plots_used'       => (clone $activities)->distinct('plot_id')->count('plot_id'),
+                'treatments' => (clone $activities)->where('activity_type', 'phytosanitary')->count(),
+                'irrigations' => (clone $activities)->where('activity_type', 'irrigation')->count(),
+                'harvests' => (clone $activities)->where('activity_type', 'harvest')->count(),
+                'observations' => (clone $activities)->where('activity_type', 'observation')->count(),
+                'plots_used' => (clone $activities)->distinct('plot_id')->count('plot_id'),
             ];
         });
 
@@ -126,7 +125,7 @@ class CampaignController extends Controller
 
         $campaign->update([
             'locked_at' => now(),
-            'active'    => false,
+            'active' => false,
         ]);
 
         return response()->json(['data' => new CampaignResource($campaign->fresh())]);

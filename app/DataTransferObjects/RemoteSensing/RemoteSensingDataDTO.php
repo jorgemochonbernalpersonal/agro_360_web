@@ -14,11 +14,11 @@ final readonly class RemoteSensingDataDTO
         public float $ndviMean,
         public float $ndviMin,
         public float $ndviMax,
-        public ?float $ndwiMean = null,
-        public ?float $ndwiMin = null,
-        public ?float $ndwiMax = null,
-        public ?float $eviMean = null,
-        public int $cloudCoverage = 0,
+        public ?float $ndwiMean,
+        public ?float $ndwiMin,
+        public ?float $ndwiMax,
+        public ?float $eviMean,
+        public int $cloudCoverage,
         public Carbon $imageDate,
         public string $imageSource,
     ) {}
@@ -37,8 +37,8 @@ final readonly class RemoteSensingDataDTO
             ndwiMax: $data['ndwi_max'] ?? null,
             eviMean: $data['evi_mean'] ?? null,
             cloudCoverage: $data['cloud_coverage'] ?? 0,
-            imageDate: $data['image_date'] instanceof Carbon 
-                ? $data['image_date'] 
+            imageDate: $data['image_date'] instanceof Carbon
+                ? $data['image_date']
                 : Carbon::parse($data['image_date']),
             imageSource: $data['image_source'],
         );

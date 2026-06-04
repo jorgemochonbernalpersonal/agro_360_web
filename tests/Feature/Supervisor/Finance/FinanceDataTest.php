@@ -13,64 +13,6 @@ use Tests\Feature\SupervisorTestCase;
 
 class FinanceDataTest extends SupervisorTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeViticulturistForFinance(User $supervisor, User $winery): User
-    {
-        $vit = User::factory()->create(['role' => 'viticulturist']);
-
-        SupervisorViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
-            'viticulturist_id' => $vit->id,
-            'assigned_by'      => $supervisor->id,
-        ]);
-
-        WineryViticulturist::create([
-            'supervisor_id'    => $supervisor->id,
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $vit->id,
-            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
-            'assigned_by'      => $supervisor->id,
-        ]);
-
-        return $vit;
-    }
-
-    private function makeSubscription(User $viticulturist, array $attrs = []): Subscription
-    {
-        return Subscription::create(array_merge([
-            'user_id'    => $viticulturist->id,
-            'plan_type'  => Subscription::PLAN_MONTHLY,
-            'amount'     => 9.00,
-            'status'     => Subscription::STATUS_ACTIVE,
-            'starts_at'  => now()->subMonth(),
-            'ends_at'    => now()->addMonth(),
-        ], $attrs));
-    }
-
-    private function makeHarvest(User $winery, array $attrs = []): void
-    {
-        $activityId = DB::table('agricultural_activities')->insertGetId([
-            'viticulturist_id' => $winery->id,
-            'activity_type'    => 'observation',
-            'activity_date'    => now()->format('Y-m-d'),
-            'created_at'       => now(),
-            'updated_at'       => now(),
-        ]);
-
-        DB::table('harvests')->insert(array_merge([
-            'activity_id'        => $activityId,
-            'winery_id'          => $winery->id,
-            'harvest_start_date' => now()->format('Y-m-d'),
-            'total_weight'       => 1000,
-            'total_value'        => 500.00,
-            'vintage'            => now()->year,
-            'status'             => 'active',
-            'created_at'         => now(),
-            'updated_at'         => now(),
-        ], $attrs));
-    }
-
     // ── setTab ────────────────────────────────────────────────────────────────
 
     public function test_set_tab_switches_active_tab(): void
@@ -128,7 +70,7 @@ class FinanceDataTest extends SupervisorTestCase
 
     public function test_active_subscriptions_isolated_from_other_supervisor(): void
     {
-        [$supervisor, $winery]          = $this->makeSupervisorWithWinery();
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $otherVit = $this->makeViticulturistForFinance($otherSupervisor, $otherWinery);
@@ -210,7 +152,7 @@ class FinanceDataTest extends SupervisorTestCase
 
     public function test_harvest_value_excludes_other_supervisor_wineries(): void
     {
-        [$supervisor]                    = $this->makeSupervisorWithWinery();
+        [$supervisor] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         $this->makeHarvest($otherWinery, ['total_value' => 999.00]);
@@ -234,5 +176,62 @@ class FinanceDataTest extends SupervisorTestCase
                 return $tabs['subscriptions']['count'] === 2
                     && $tabs['wineries']['count'] === 1;
             });
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeViticulturistForFinance(User $supervisor, User $winery): User
+    {
+        $vit = User::factory()->create(['role' => 'viticulturist']);
+
+        SupervisorViticulturist::create([
+            'supervisor_id' => $supervisor->id,
+            'viticulturist_id' => $vit->id,
+            'assigned_by' => $supervisor->id,
+        ]);
+
+        WineryViticulturist::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $vit->id,
+            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
+            'assigned_by' => $supervisor->id,
+        ]);
+
+        return $vit;
+    }
+
+    private function makeSubscription(User $viticulturist, array $attrs = []): Subscription
+    {
+        return Subscription::create(array_merge([
+            'user_id' => $viticulturist->id,
+            'plan_type' => Subscription::PLAN_MONTHLY,
+            'amount' => 9.00,
+            'status' => Subscription::STATUS_ACTIVE,
+            'starts_at' => now()->subMonth(),
+            'ends_at' => now()->addMonth(),
+        ], $attrs));
+    }
+
+    private function makeHarvest(User $winery, array $attrs = []): void
+    {
+        $activityId = DB::table('agricultural_activities')->insertGetId([
+            'viticulturist_id' => $winery->id,
+            'activity_type' => 'observation',
+            'activity_date' => now()->format('Y-m-d'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('harvests')->insert(array_merge([
+            'activity_id' => $activityId,
+            'winery_id' => $winery->id,
+            'harvest_start_date' => now()->format('Y-m-d'),
+            'total_weight' => 1000,
+            'total_value' => 500.00,
+            'vintage' => now()->year,
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ], $attrs));
     }
 }

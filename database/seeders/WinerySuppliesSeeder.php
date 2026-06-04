@@ -17,11 +17,11 @@ class WinerySuppliesSeeder extends Seeder
     {
         $this->cleanup();
 
-        $now     = now();
+        $now = now();
         $litroId = DB::table('units_of_measurement')->where('symbol', 'L')->value('id');
-        $kgId    = DB::table('units_of_measurement')->where('symbol', 'kg')->value('id');
-        $gId     = DB::table('units_of_measurement')->where('symbol', 'g')->value('id');
-        $uId     = DB::table('units_of_measurement')->first()?->id; // fallback
+        $kgId = DB::table('units_of_measurement')->where('symbol', 'kg')->value('id');
+        $gId = DB::table('units_of_measurement')->where('symbol', 'g')->value('id');
+        $uId = DB::table('units_of_measurement')->first()?->id; // fallback
 
         // [name, commercial_name, supply_type, unit_id, current_stock, min_stock, expiry_months_from_now, notes]
         $supplies = [
@@ -38,7 +38,7 @@ class WinerySuppliesSeeder extends Seeder
             ['Soda Cáustica',            'NaOH Bodega 30%',    'cleaning',    $litroId,  80.00, 20.0,  12, 'Limpieza de depósitos y tuberías. Uso con EPI obligatorio.'],
             ['Ácido Peracético',         'Divosan Forte',       'cleaning',    $litroId,  40.00, 10.0,   6, 'Desinfectante sin enjuague para superficies alimentarias.'],
             ['Cartuchos de Filtración',  'Pall Profile II 1μm', 'filtration',  $uId,      48.00,  6.0,  24, 'Filtración de abrillantado pre-embotellado.'],
-            ['Azúcar de Caña',           'Sacarosa Rectificada','sugar',       $kgId,    200.00, 25.0,  24, 'Chaptalización (si autorizado). Solo campañas con bajo grado.'],
+            ['Azúcar de Caña',           'Sacarosa Rectificada', 'sugar',       $kgId,    200.00, 25.0,  24, 'Chaptalización (si autorizado). Solo campañas con bajo grado.'],
             ['Reactivo Análisis SO2',    'Kit SO2 Ripper',      'analysis',    $uId,       6.00,  2.0,   3, 'Test rápido de SO2 libre en bodega. 6 unidades por caja.'],
         ];
 
@@ -46,24 +46,24 @@ class WinerySuppliesSeeder extends Seeder
         foreach ($supplies as $s) {
             $expiry = now()->addMonths($s[6])->format('Y-m-d');
             $rows[] = [
-                'user_id'               => self::WINERY_USER_ID,
-                'name'                  => $s[0],
-                'commercial_name'       => $s[1],
-                'supply_type'           => $s[2],
-                'unit_of_measurement_id'=> $s[3],
-                'current_stock'         => $s[4],
-                'min_stock_alert'       => $s[5],
-                'expiry_date'           => $expiry,
-                'notes'                 => $s[7],
-                'active'                => true,
-                'created_at'            => $now,
-                'updated_at'            => $now,
+                'user_id' => self::WINERY_USER_ID,
+                'name' => $s[0],
+                'commercial_name' => $s[1],
+                'supply_type' => $s[2],
+                'unit_of_measurement_id' => $s[3],
+                'current_stock' => $s[4],
+                'min_stock_alert' => $s[5],
+                'expiry_date' => $expiry,
+                'notes' => $s[7],
+                'active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
         DB::table('winery_supplies')->insert($rows);
 
-        $this->command->info('✅ Suministros de bodega: ' . count($rows) . ' registros');
+        $this->command->info('✅ Suministros de bodega: '.count($rows).' registros');
     }
 
     private function cleanup(): void

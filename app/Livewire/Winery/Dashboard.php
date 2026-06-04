@@ -10,9 +10,9 @@ use App\Models\ProductLot;
 use App\Models\Wine;
 use App\Models\WineCost;
 use App\Models\WineFermentationControl;
-use App\Models\WineTransfer;
 use App\Models\WineryViticulturist;
 use App\Models\WineryYieldForecast;
+use App\Models\WineTransfer;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -24,14 +24,14 @@ class Dashboard extends Component
 
         // Campaña activa de la bodega (viticulturist_id almacena el ID del propietario, sea viticultor o bodega)
         $activeCampaign = Campaign::forViticulturist($wineryId)->where('active', true)->first();
-        $vintageYear    = $activeCampaign?->year ?? now()->year;
+        $vintageYear = $activeCampaign?->year ?? now()->year;
 
         // Viticultores vinculados (solo activos con acceso)
         $viticulturistCount = WineryViticulturist::where('winery_id', $wineryId)
-            ->whereHas('viticulturist', fn($q) => $q->where('can_login', true))
+            ->whereHas('viticulturist', fn ($q) => $q->where('can_login', true))
             ->count();
         $pendingViticulturistCount = WineryViticulturist::where('winery_id', $wineryId)
-            ->whereHas('viticulturist', fn($q) => $q->where('can_login', false))
+            ->whereHas('viticulturist', fn ($q) => $q->where('can_login', false))
             ->count();
         if (Auth::user()->isProducer()) {
             $viticulturistCount += 1; // producer counts as their own linked viticulturist
@@ -43,12 +43,12 @@ class Dashboard extends Component
             ->with(['viticulturist:id,name', 'plotPlanting.grapeVariety'])
             ->get();
 
-        $totalKgCampaign  = (float) $activeBatches->sum('total_weight_kg');
-        $openBatchCount   = $activeBatches->where('status', 'open')->count();
+        $totalKgCampaign = (float) $activeBatches->sum('total_weight_kg');
+        $openBatchCount = $activeBatches->where('status', 'open')->count();
         $closedBatchCount = $activeBatches->where('status', 'closed')->count();
-        $totalReceptions  = Harvest::where('winery_id', $wineryId)
+        $totalReceptions = Harvest::where('winery_id', $wineryId)
             ->where('status', 'active')
-            ->whereHas('batch', fn($q) => $q->where('vintage_year', $vintageYear))
+            ->whereHas('batch', fn ($q) => $q->where('vintage_year', $vintageYear))
             ->count();
 
         // Kg y entradas de hoy (una sola query)
@@ -57,7 +57,7 @@ class Dashboard extends Component
             ->whereDate('harvest_start_date', today())
             ->selectRaw('COUNT(*) as count, COALESCE(SUM(total_weight), 0) as kg')
             ->first();
-        $todayKg    = (float) $todayStats->kg;
+        $todayKg = (float) $todayStats->kg;
         $todayCount = (int) $todayStats->count;
 
         // Alertas: lotes superados o en riesgo (comparando con forecast confirmado)
@@ -68,15 +68,20 @@ class Dashboard extends Component
             ->keyBy('plot_planting_id');
 
         $alertsExceeded = 0;
-        $alertsAtRisk   = 0;
+        $alertsAtRisk = 0;
         foreach ($activeBatches as $batch) {
             $forecast = $forecasts->get($batch->plot_planting_id);
-            if (!$forecast) continue;
+            if (! $forecast) {
+                continue;
+            }
             $pct = $forecast->estimated_kg > 0
                 ? ($batch->total_weight_kg / $forecast->estimated_kg) * 100
                 : 0;
-            if ($pct > 100) $alertsExceeded++;
-            elseif ($pct >= 80) $alertsAtRisk++;
+            if ($pct > 100) {
+                $alertsExceeded++;
+            } elseif ($pct >= 80) {
+                $alertsAtRisk++;
+            }
         }
 
         // Lotes de vino en bodega
@@ -85,22 +90,22 @@ class Dashboard extends Component
         // ── Módulo bodega: vinos, fermentaciones, contenedores ───────────────
         $activeWines = Wine::where('user_id', $wineryId)->where('status', 'in_progress')->count();
 
-        $activeFermentations = WineFermentationControl::whereHas('wine', fn($q) => $q->where('user_id', $wineryId))
-            ->where(fn($q) => $q->where('density', '>', 1.000)->orWhere('brix_degree', '>', 2))
+        $activeFermentations = WineFermentationControl::whereHas('wine', fn ($q) => $q->where('user_id', $wineryId))
+            ->where(fn ($q) => $q->where('density', '>', 1.000)->orWhere('brix_degree', '>', 2))
             ->whereDate('control_date', '>=', now()->subDays(3))
             ->distinct('wine_id')
             ->count('wine_id');
 
-        $containerBase  = Container::where('user_id', $wineryId)->where('archived', false);
+        $containerBase = Container::where('user_id', $wineryId)->where('archived', false);
         $containerUsage = [
             'total' => (float) (clone $containerBase)->sum('capacity'),
-            'used'  => (float) (clone $containerBase)->selectRaw('SUM(used_capacity + wine_volume_liters)')->value('SUM(used_capacity + wine_volume_liters)'),
+            'used' => (float) (clone $containerBase)->selectRaw('SUM(used_capacity + wine_volume_liters)')->value('SUM(used_capacity + wine_volume_liters)'),
         ];
         $containerUsage['pct'] = $containerUsage['total'] > 0
             ? min(($containerUsage['used'] / $containerUsage['total']) * 100, 100)
             : 0;
 
-        $maintenanceOverdue = \App\Models\ContainerMaintenance::whereHas('container', fn($q) => $q->where('user_id', $wineryId))
+        $maintenanceOverdue = \App\Models\ContainerMaintenance::whereHas('container', fn ($q) => $q->where('user_id', $wineryId))
             ->whereNotIn('status', ['completed', 'cancelled'])
             ->whereDate('scheduled_date', '<', today())
             ->count();
@@ -112,14 +117,14 @@ class Dashboard extends Component
 
         // Últimos trasvases (3)
         $recentTransfers = WineTransfer::with(['wine', 'fromContainer', 'toContainer'])
-            ->whereHas('wine', fn($q) => $q->where('user_id', $wineryId))
+            ->whereHas('wine', fn ($q) => $q->where('user_id', $wineryId))
             ->orderByDesc('transfer_date')
             ->take(3)
             ->get();
 
         // Últimas fermentaciones (3)
         $recentFermentations = WineFermentationControl::with(['wine', 'container'])
-            ->whereHas('wine', fn($q) => $q->where('user_id', $wineryId))
+            ->whereHas('wine', fn ($q) => $q->where('user_id', $wineryId))
             ->orderByDesc('control_date')
             ->take(3)
             ->get();
@@ -141,28 +146,28 @@ class Dashboard extends Component
             ->get();
 
         return view('livewire.winery.dashboard', [
-            'activeCampaign'       => $activeCampaign,
-            'vintageYear'          => $vintageYear,
-            'viticulturistCount'        => $viticulturistCount,
+            'activeCampaign' => $activeCampaign,
+            'vintageYear' => $vintageYear,
+            'viticulturistCount' => $viticulturistCount,
             'pendingViticulturistCount' => $pendingViticulturistCount,
-            'totalKgCampaign'      => $totalKgCampaign,
-            'openBatchCount'       => $openBatchCount,
-            'closedBatchCount'     => $closedBatchCount,
-            'totalReceptions'      => $totalReceptions,
-            'todayKg'              => $todayKg,
-            'todayCount'           => $todayCount,
-            'alertsExceeded'       => $alertsExceeded,
-            'alertsAtRisk'         => $alertsAtRisk,
-            'wineLotCount'         => $wineLotCount,
-            'activeWines'          => $activeWines,
-            'activeFermentations'  => $activeFermentations,
-            'containerUsage'       => $containerUsage,
-            'maintenanceOverdue'   => $maintenanceOverdue,
-            'recentTransfers'      => $recentTransfers,
-            'recentFermentations'  => $recentFermentations,
-            'recentReceptions'     => $recentReceptions,
+            'totalKgCampaign' => $totalKgCampaign,
+            'openBatchCount' => $openBatchCount,
+            'closedBatchCount' => $closedBatchCount,
+            'totalReceptions' => $totalReceptions,
+            'todayKg' => $todayKg,
+            'todayCount' => $todayCount,
+            'alertsExceeded' => $alertsExceeded,
+            'alertsAtRisk' => $alertsAtRisk,
+            'wineLotCount' => $wineLotCount,
+            'activeWines' => $activeWines,
+            'activeFermentations' => $activeFermentations,
+            'containerUsage' => $containerUsage,
+            'maintenanceOverdue' => $maintenanceOverdue,
+            'recentTransfers' => $recentTransfers,
+            'recentFermentations' => $recentFermentations,
+            'recentReceptions' => $recentReceptions,
             'recentViticulturists' => $recentViticulturists,
-            'totalCostsYear'       => (float) $totalCostsYear,
+            'totalCostsYear' => (float) $totalCostsYear,
         ])->layout('layouts.app');
     }
 }

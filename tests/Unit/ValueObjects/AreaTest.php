@@ -31,7 +31,7 @@ class AreaTest extends TestCase
     public function test_throws_exception_for_negative_area(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         Area::fromHectares(-5);
     }
 

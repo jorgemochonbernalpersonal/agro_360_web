@@ -11,21 +11,21 @@ return new class extends Migration
     {
         // ── 1. Rename cuaderno_* → notebook_* in winery_viticulturist ─────────
         Schema::table('winery_viticulturist', function (Blueprint $table) {
-            $table->renameColumn('cuaderno_access',     'notebook_access');
+            $table->renameColumn('cuaderno_access', 'notebook_access');
             $table->renameColumn('cuaderno_granted_at', 'notebook_granted_at');
             $table->renameColumn('cuaderno_revoked_at', 'notebook_revoked_at');
         });
 
         // ── 2. Same rename in supervisor_viticulturist ────────────────────────
         Schema::table('supervisor_viticulturist', function (Blueprint $table) {
-            $table->renameColumn('cuaderno_access',     'notebook_access');
+            $table->renameColumn('cuaderno_access', 'notebook_access');
             $table->renameColumn('cuaderno_granted_at', 'notebook_granted_at');
             $table->renameColumn('cuaderno_revoked_at', 'notebook_revoked_at');
         });
 
         // ── 3. Same rename in viticultor_assignments ──────────────────────────
         Schema::table('viticultor_assignments', function (Blueprint $table) {
-            $table->renameColumn('cuaderno_access',     'notebook_access');
+            $table->renameColumn('cuaderno_access', 'notebook_access');
             $table->renameColumn('cuaderno_granted_at', 'notebook_granted_at');
             $table->renameColumn('cuaderno_revoked_at', 'notebook_revoked_at');
         });
@@ -77,17 +77,17 @@ return new class extends Migration
     {
         // ── Reverse cuaderno_* renames ────────────────────────────────────────
         Schema::table('winery_viticulturist', function (Blueprint $table) {
-            $table->renameColumn('notebook_access',     'cuaderno_access');
+            $table->renameColumn('notebook_access', 'cuaderno_access');
             $table->renameColumn('notebook_granted_at', 'cuaderno_granted_at');
             $table->renameColumn('notebook_revoked_at', 'cuaderno_revoked_at');
         });
         Schema::table('supervisor_viticulturist', function (Blueprint $table) {
-            $table->renameColumn('notebook_access',     'cuaderno_access');
+            $table->renameColumn('notebook_access', 'cuaderno_access');
             $table->renameColumn('notebook_granted_at', 'cuaderno_granted_at');
             $table->renameColumn('notebook_revoked_at', 'cuaderno_revoked_at');
         });
         Schema::table('viticultor_assignments', function (Blueprint $table) {
-            $table->renameColumn('notebook_access',     'cuaderno_access');
+            $table->renameColumn('notebook_access', 'cuaderno_access');
             $table->renameColumn('notebook_granted_at', 'cuaderno_granted_at');
             $table->renameColumn('notebook_revoked_at', 'cuaderno_revoked_at');
         });

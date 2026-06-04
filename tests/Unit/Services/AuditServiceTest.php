@@ -3,8 +3,8 @@
 namespace Tests\Unit\Services;
 
 use App\Models\AuditLog;
-use App\Models\User;
 use App\Models\Plot;
+use App\Models\User;
 use App\Services\AuditService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -20,9 +20,9 @@ class AuditServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->createGeographyData();
-        $this->service = new AuditService();
+        $this->service = new AuditService;
     }
 
     public function test_can_get_user_activity(): void
@@ -97,7 +97,7 @@ class AuditServiceTest extends TestCase
         $this->assertArrayHasKey('user', $report);
         $this->assertArrayHasKey('total_actions', $report);
         $this->assertArrayHasKey('logs', $report);
-        
+
         $this->assertEquals($user->id, $report['user']['id']);
         $this->assertEquals('2026-01-01', $report['period']['start']);
     }
@@ -149,7 +149,7 @@ class AuditServiceTest extends TestCase
 
         // Solo debe incluir Plot (crítico), no User
         $logTypes = collect($report['logs'])->pluck('model')->unique()->toArray();
-        
+
         $this->assertContains('Plot', $logTypes);
     }
 }

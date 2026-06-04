@@ -22,13 +22,13 @@ class WineFermentationControl extends Model
     ];
 
     protected $casts = [
-        'control_date'    => 'datetime',
-        'temperature'     => 'decimal:2',
-        'brix_degree'     => 'decimal:2',
-        'baume_degree'    => 'decimal:2',
-        'density'         => 'decimal:4',
-        'ph'              => 'decimal:2',
-        'volatile_acidity'=> 'decimal:2',
+        'control_date' => 'datetime',
+        'temperature' => 'decimal:2',
+        'brix_degree' => 'decimal:2',
+        'baume_degree' => 'decimal:2',
+        'density' => 'decimal:4',
+        'ph' => 'decimal:2',
+        'volatile_acidity' => 'decimal:2',
     ];
 
     public function wine(): BelongsTo
@@ -57,6 +57,7 @@ class WineFermentationControl extends Model
         if ($this->brix_degree !== null) {
             return (float) $this->brix_degree > 2;
         }
+
         return false;
     }
 }

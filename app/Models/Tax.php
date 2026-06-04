@@ -44,6 +44,8 @@ class Tax extends Model
 
     /**
      * Scope para impuestos activos
+     *
+     * @param mixed $query
      */
     public function scopeActive($query)
     {
@@ -52,6 +54,8 @@ class Tax extends Model
 
     /**
      * Scope para impuestos por defecto
+     *
+     * @param mixed $query
      */
     public function scopeDefault($query)
     {
@@ -60,6 +64,8 @@ class Tax extends Model
 
     /**
      * Scope para impuestos por región
+     *
+     * @param mixed $query
      */
     public function scopeForRegion($query, string $region)
     {
@@ -71,6 +77,6 @@ class Tax extends Model
      */
     public function getFormattedRateAttribute(): string
     {
-        return number_format($this->rate, 2) . '%';
+        return number_format($this->rate, 2).'%';
     }
 }

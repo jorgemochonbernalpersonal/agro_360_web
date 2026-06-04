@@ -7,7 +7,6 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,12 +14,14 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public Invoice $invoice;
 
     public string $invoice_date = '';
+
     public string $observations = '';
+
     public string $payment_type = '';
 
     public array $lines = [];
@@ -41,10 +42,10 @@ class Edit extends Component
         $this->lines = $this->invoice->items
             ->filter(fn ($item) => $item->harvest_id)
             ->map(fn ($item) => [
-                'harvest_id'  => (int) $item->harvest_id,
-                'quantity'    => (string) $item->quantity,
-                'unit_price'  => (string) $item->unit_price,
-                'tax_rate'    => (string) $item->tax_rate,
+                'harvest_id' => (int) $item->harvest_id,
+                'quantity' => (string) $item->quantity,
+                'unit_price' => (string) $item->unit_price,
+                'tax_rate' => (string) $item->tax_rate,
                 'description' => $item->description ?? '',
             ])
             ->values()
@@ -70,17 +71,20 @@ class Edit extends Component
         if ($existing !== false) {
             array_splice($this->lines, $existing, 1);
             $this->lines = array_values($this->lines);
+
             return;
         }
 
         $harvest = Harvest::find($harvestId);
-        if (!$harvest) return;
+        if (! $harvest) {
+            return;
+        }
 
         $this->lines[] = [
-            'harvest_id'  => $harvestId,
-            'quantity'    => (string) ($harvest->total_weight ?? 0),
-            'unit_price'  => '',
-            'tax_rate'    => '0',
+            'harvest_id' => $harvestId,
+            'quantity' => (string) ($harvest->total_weight ?? 0),
+            'unit_price' => '',
+            'tax_rate' => '0',
             'description' => '',
         ];
     }
@@ -91,70 +95,31 @@ class Edit extends Component
         $this->lines = array_values($this->lines);
     }
 
-    // ── Validation ────────────────────────────────────────────────────────────
-
-    protected function rules(): array
-    {
-        return [
-            'invoice_date'        => 'required|date',
-            'payment_type'        => 'nullable|in:cash,transfer,check,other',
-            'observations'        => 'nullable|string',
-            'lines'               => 'required|array|min:1',
-            'lines.*.harvest_id' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    $wineryId        = \Illuminate\Support\Facades\Auth::id();
-                    $viticulturistId = $this->invoice->viticulturist_id;
-                    if ($value && !\App\Models\Harvest::where('id', $value)
-                        ->where('winery_id', $wineryId)
-                        ->whereHas('batch', fn ($q) => $q->where('viticulturist_id', $viticulturistId))
-                        ->exists()) {
-                        $fail(__('La recepción seleccionada no pertenece a esta liquidación.'));
-                    }
-                },
-            ],
-            'lines.*.quantity'    => 'required|numeric|min:0.001',
-            'lines.*.unit_price'  => 'required|numeric|min:0',
-            'lines.*.tax_rate'    => 'required|numeric|min:0|max:100',
-            'lines.*.description' => 'nullable|string|max:255',
-        ];
-    }
-
-    protected function validationAttributes(): array
-    {
-        $attrs = ['invoice_date' => 'fecha'];
-        foreach ($this->lines as $i => $_) {
-            $attrs["lines.{$i}.quantity"]   = 'kg';
-            $attrs["lines.{$i}.unit_price"] = '€/kg';
-            $attrs["lines.{$i}.tax_rate"]   = 'retención';
-        }
-        return $attrs;
-    }
-
     // ── Save ──────────────────────────────────────────────────────────────────
 
     public function save()
     {
         if ($this->isLocked) {
             $this->toastError(__('Esta liquidación no se puede editar.'));
+
             return;
         }
 
         $this->validate();
 
         $viticulturistId = $this->invoice->viticulturist_id;
-        $wineryId        = Auth::id();
+        $wineryId = Auth::id();
 
         try {
             DB::transaction(function () use ($viticulturistId, $wineryId) {
                 // ── 1. Calculate new totals
-                $subtotal  = 0;
+                $subtotal = 0;
                 $taxAmount = 0;
 
                 foreach ($this->lines as $line) {
-                    $lineSubtotal  = (float) $line['quantity'] * (float) $line['unit_price'];
-                    $subtotal     += $lineSubtotal;
-                    $taxAmount    += $lineSubtotal * ((float) $line['tax_rate'] / 100);
+                    $lineSubtotal = (float) $line['quantity'] * (float) $line['unit_price'];
+                    $subtotal += $lineSubtotal;
+                    $taxAmount += $lineSubtotal * ((float) $line['tax_rate'] / 100);
                 }
 
                 $total = $subtotal - $taxAmount;
@@ -162,9 +127,9 @@ class Edit extends Component
                 // ── 2. Update invoice header (numbers stay unchanged)
                 $this->invoice->update([
                     'invoice_date' => $this->invoice_date,
-                    'subtotal'     => round($subtotal, 3),
-                    'tax_base'     => round($subtotal, 3),
-                    'tax_amount'   => round($taxAmount, 3),
+                    'subtotal' => round($subtotal, 3),
+                    'tax_base' => round($subtotal, 3),
+                    'tax_amount' => round($taxAmount, 3),
                     'total_amount' => round($total, 3),
                     'payment_type' => $this->payment_type ?: null,
                     'observations' => $this->observations ?: null,
@@ -179,7 +144,7 @@ class Edit extends Component
                 foreach ($this->lines as $line) {
                     $harvest = Harvest::lockForUpdate()->find($line['harvest_id']);
 
-                    if (!$harvest || $harvest->winery_id !== $wineryId) {
+                    if (! $harvest || $harvest->winery_id !== $wineryId) {
                         throw new \RuntimeException(
                             "La recepción #{$line['harvest_id']} no pertenece a esta bodega."
                         );
@@ -195,53 +160,53 @@ class Edit extends Component
                     // Double-invoicing guard: exclude THIS invoice from the check
                     // Lock invoice_items to prevent race condition
                     if ($harvest->invoiceItems()
-                            ->lockForUpdate()
-                            ->where('concept_type', 'harvest')
-                            ->whereHas('invoice', fn ($q) =>
-                                $q->where('status', '!=', 'cancelled')
-                                  ->where('id', '!=', $this->invoice->id)
-                            )
-                            ->exists()) {
+                        ->lockForUpdate()
+                        ->where('concept_type', 'harvest')
+                        ->whereHas('invoice', fn ($q) => $q->where('status', '!=', 'cancelled')
+                            ->where('id', '!=', $this->invoice->id)
+                        )
+                        ->exists()) {
                         throw new \RuntimeException(
                             "La recepción #{$harvest->id} ya está incluida en otra liquidación activa."
                         );
                     }
 
-                    $qty           = (float) $line['quantity'];
-                    $unitPrice     = (float) $line['unit_price'];
-                    $taxRate       = (float) $line['tax_rate'];
-                    $subtotalLine  = round($qty * $unitPrice, 3);
+                    $qty = (float) $line['quantity'];
+                    $unitPrice = (float) $line['unit_price'];
+                    $taxRate = (float) $line['tax_rate'];
+                    $subtotalLine = round($qty * $unitPrice, 3);
                     $taxAmountLine = round($subtotalLine * ($taxRate / 100), 3);
 
-                    $variety     = $harvest->plotPlanting?->grapeVariety?->name ?? 'uva';
+                    $variety = $harvest->plotPlanting?->grapeVariety?->name ?? 'uva';
                     $description = $line['description'] ?: "Vendimia #{$harvest->id} - {$variety}";
 
                     InvoiceItem::create([
-                        'invoice_id'   => $this->invoice->id,
-                        'harvest_id'   => $harvest->id,
+                        'invoice_id' => $this->invoice->id,
+                        'harvest_id' => $harvest->id,
                         'concept_type' => 'harvest',
-                        'name'         => $description,
-                        'description'  => $line['description'] ?: null,
-                        'quantity'     => $qty,
-                        'unit_price'   => $unitPrice,
-                        'tax_rate'     => $taxRate,
-                        'subtotal'     => $subtotalLine,
-                        'tax_base'     => $subtotalLine,
-                        'tax_amount'   => $taxAmountLine,
-                        'total'        => $subtotalLine - $taxAmountLine,
+                        'name' => $description,
+                        'description' => $line['description'] ?: null,
+                        'quantity' => $qty,
+                        'unit_price' => $unitPrice,
+                        'tax_rate' => $taxRate,
+                        'subtotal' => $subtotalLine,
+                        'tax_base' => $subtotalLine,
+                        'tax_amount' => $taxAmountLine,
+                        'total' => $subtotalLine - $taxAmountLine,
                     ]);
                 }
             });
 
             $this->toastSuccess(__('Liquidación actualizada correctamente.'));
+
             return $this->roleRedirect('invoices.grape-purchase.index');
 
         } catch (\Exception $e) {
-            Log::error('Error al editar liquidación de vendimia: ' . $e->getMessage(), [
+            Log::error('Error al editar liquidación de vendimia: '.$e->getMessage(), [
                 'invoice_id' => $this->invoice->id,
-                'user_id'    => $wineryId,
+                'user_id' => $wineryId,
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage()  : __('Error al guardar los cambios.'));
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al guardar los cambios.'));
         }
     }
 
@@ -249,9 +214,9 @@ class Edit extends Component
 
     public function render()
     {
-        $wineryId        = Auth::id();
+        $wineryId = Auth::id();
         $viticulturistId = $this->invoice->viticulturist_id;
-        $selectedIds     = array_column($this->lines, 'harvest_id');
+        $selectedIds = array_column($this->lines, 'harvest_id');
 
         // Available harvests = free + those already in THIS invoice
         $availableHarvests = Harvest::where('winery_id', $wineryId)
@@ -259,10 +224,9 @@ class Edit extends Component
             ->where(function ($q) {
                 $q->whereDoesntHave('invoiceItems', function ($q2) {
                     $q2->where('concept_type', 'harvest')
-                       ->whereHas('invoice', fn ($q3) =>
-                           $q3->where('status', '!=', 'cancelled')
-                              ->where('id', '!=', $this->invoice->id)
-                       );
+                        ->whereHas('invoice', fn ($q3) => $q3->where('status', '!=', 'cancelled')
+                            ->where('id', '!=', $this->invoice->id)
+                        );
                 });
             })
             ->with(['plotPlanting.grapeVariety'])
@@ -271,8 +235,49 @@ class Edit extends Component
 
         return view('livewire.winery.billing.grape-purchase.edit', [
             'availableHarvests' => $availableHarvests,
-            'selectedIds'       => $selectedIds,
-            'isLocked'          => $this->isLocked,
+            'selectedIds' => $selectedIds,
+            'isLocked' => $this->isLocked,
         ])->layout('layouts.app');
+    }
+
+    // ── Validation ────────────────────────────────────────────────────────────
+
+    protected function rules(): array
+    {
+        return [
+            'invoice_date' => 'required|date',
+            'payment_type' => 'nullable|in:cash,transfer,check,other',
+            'observations' => 'nullable|string',
+            'lines' => 'required|array|min:1',
+            'lines.*.harvest_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $wineryId = \Illuminate\Support\Facades\Auth::id();
+                    $viticulturistId = $this->invoice->viticulturist_id;
+                    if ($value && ! \App\Models\Harvest::where('id', $value)
+                        ->where('winery_id', $wineryId)
+                        ->whereHas('batch', fn ($q) => $q->where('viticulturist_id', $viticulturistId))
+                        ->exists()) {
+                        $fail(__('La recepción seleccionada no pertenece a esta liquidación.'));
+                    }
+                },
+            ],
+            'lines.*.quantity' => 'required|numeric|min:0.001',
+            'lines.*.unit_price' => 'required|numeric|min:0',
+            'lines.*.tax_rate' => 'required|numeric|min:0|max:100',
+            'lines.*.description' => 'nullable|string|max:255',
+        ];
+    }
+
+    protected function validationAttributes(): array
+    {
+        $attrs = ['invoice_date' => 'fecha'];
+        foreach ($this->lines as $i => $_) {
+            $attrs["lines.{$i}.quantity"] = 'kg';
+            $attrs["lines.{$i}.unit_price"] = '€/kg';
+            $attrs["lines.{$i}.tax_rate"] = 'retención';
+        }
+
+        return $attrs;
     }
 }

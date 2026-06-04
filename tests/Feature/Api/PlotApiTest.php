@@ -129,7 +129,7 @@ class PlotApiTest extends TestCase
             ->assertJsonPath('data.name', 'Parcela Nueva');
 
         $this->assertDatabaseHas('plots', [
-            'id'   => $plot->id,
+            'id' => $plot->id,
             'name' => 'Parcela Nueva',
         ]);
     }

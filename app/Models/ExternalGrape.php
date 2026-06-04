@@ -7,6 +7,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ExternalGrape extends Model
 {
+    const TYPES = [
+        'grapes' => 'Uva',
+        'must' => 'Mosto',
+        'bulk_wine' => 'Vino a granel',
+    ];
+
+    const COLORS = [
+        'white' => 'Blanca',
+        'red' => 'Tinta',
+        'rose' => 'Rosada',
+        'other' => 'Otra',
+    ];
+
+    const STATUSES = [
+        'available' => 'Disponible',
+        'used' => 'Usado',
+        'archived' => 'Archivado',
+    ];
+
     protected $fillable = [
         'user_id',
         'supplier_name',
@@ -29,30 +48,11 @@ class ExternalGrape extends Model
 
     protected $casts = [
         'total_weight_kg' => 'decimal:3',
-        'used_weight_kg'  => 'decimal:3',
-        'alcohol_pct'     => 'decimal:2',
-        'entry_date'      => 'date',
-        'harvest_date'    => 'date',
+        'used_weight_kg' => 'decimal:3',
+        'alcohol_pct' => 'decimal:2',
+        'entry_date' => 'date',
+        'harvest_date' => 'date',
         'expiration_date' => 'date',
-    ];
-
-    const TYPES = [
-        'grapes'    => 'Uva',
-        'must'      => 'Mosto',
-        'bulk_wine' => 'Vino a granel',
-    ];
-
-    const COLORS = [
-        'white' => 'Blanca',
-        'red'   => 'Tinta',
-        'rose'  => 'Rosada',
-        'other' => 'Otra',
-    ];
-
-    const STATUSES = [
-        'available' => 'Disponible',
-        'used'      => 'Usado',
-        'archived'  => 'Archivado',
     ];
 
     public static function typeOptions(): array

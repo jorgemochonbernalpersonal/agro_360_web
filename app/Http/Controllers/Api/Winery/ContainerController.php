@@ -18,9 +18,9 @@ class ContainerController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
-            'room_id'  => 'nullable|integer|min:1',
-            'status'   => 'nullable|string|in:empty,full,critical',
-            'unit'     => 'nullable|string|in:kg,litros',
+            'room_id' => 'nullable|integer|min:1',
+            'status' => 'nullable|string|in:empty,full,critical',
+            'unit' => 'nullable|string|in:kg,litros',
             'per_page' => 'nullable|string|max:10',
         ]);
 
@@ -35,10 +35,10 @@ class ContainerController extends Controller
         }
         if ($request->filled('status')) {
             match ($request->status) {
-                'empty'    => $base->scopes(['empty']),
-                'full'     => $base->scopes(['full']),
+                'empty' => $base->scopes(['empty']),
+                'full' => $base->scopes(['full']),
                 'critical' => $base->whereRaw('(used_capacity / NULLIF(capacity, 0)) >= 0.85'),
-                default    => null,
+                default => null,
             };
         }
 
@@ -48,8 +48,8 @@ class ContainerController extends Controller
             ->first();
 
         $perPageRaw = $request->query('per_page', '30');
-        $all        = $perPageRaw === 'all';
-        $perPage    = $all ? (int) $totals->total ?: 1000 : min((int) $perPageRaw, 500);
+        $all = $perPageRaw === 'all';
+        $perPage = $all ? (int) $totals->total ?: 1000 : min((int) $perPageRaw, 500);
 
         $containers = (clone $base)
             ->with(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine'])
@@ -59,13 +59,13 @@ class ContainerController extends Controller
         return response()->json([
             'data' => ContainerResource::collection($containers),
             'meta' => [
-                'total'          => (int) $totals->total,
-                'per_page'       => $containers->perPage(),
-                'current_page'   => $containers->currentPage(),
-                'last_page'      => $containers->lastPage(),
-                'has_more'       => $containers->hasMorePages(),
+                'total' => (int) $totals->total,
+                'per_page' => $containers->perPage(),
+                'current_page' => $containers->currentPage(),
+                'last_page' => $containers->lastPage(),
+                'has_more' => $containers->hasMorePages(),
                 'total_capacity' => round((float) $totals->total_capacity, 2),
-                'total_used'     => round((float) $totals->total_used, 2),
+                'total_used' => round((float) $totals->total_used, 2),
             ],
         ]);
     }
@@ -92,22 +92,22 @@ class ContainerController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'name'               => 'required|string|max:255',
-            'capacity'           => 'required|numeric|min:0.1',
-            'type_id'            => 'nullable|integer|exists:container_types,id',
-            'material_id'        => 'nullable|integer|exists:container_materials,id',
-            'container_room_id'  => 'nullable|integer|exists:container_rooms,id',
-            'serial_number'      => 'nullable|string|max:100',
-            'notes'              => 'nullable|string|max:1000',
+            'name' => 'required|string|max:255',
+            'capacity' => 'required|numeric|min:0.1',
+            'type_id' => 'nullable|integer|exists:container_types,id',
+            'material_id' => 'nullable|integer|exists:container_materials,id',
+            'container_room_id' => 'nullable|integer|exists:container_rooms,id',
+            'serial_number' => 'nullable|string|max:100',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         // Strip nulls so DB column defaults (type_id, material_id) kick in
-        $filtered = array_filter($validated, fn($v) => !is_null($v));
+        $filtered = array_filter($validated, fn ($v) => ! is_null($v));
 
         $container = Container::create(array_merge($filtered, [
-            'user_id'       => $user->id,
+            'user_id' => $user->id,
             'used_capacity' => 0,
-            'archived'      => false,
+            'archived' => false,
         ]));
 
         $container->load(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine']);
@@ -125,9 +125,9 @@ class ContainerController extends Controller
         $container = Container::where('user_id', $user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'name'               => 'sometimes|string|max:255',
-            'notes'              => 'nullable|string|max:1000',
-            'container_room_id'  => 'nullable|integer|exists:container_rooms,id',
+            'name' => 'sometimes|string|max:255',
+            'notes' => 'nullable|string|max:1000',
+            'container_room_id' => 'nullable|integer|exists:container_rooms,id',
         ]);
 
         $container->update($validated);

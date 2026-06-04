@@ -17,7 +17,7 @@ class InvoiceMail extends Mailable
 
     public function __construct(
         public Invoice $invoice,
-        public string  $senderName = ''
+        public string $senderName = ''
     ) {}
 
     public function envelope(): Envelope
@@ -46,14 +46,14 @@ class InvoiceMail extends Mailable
         if ($this->invoice->delivery_note_code) {
             $pdfAlbaran = Pdf::loadView('reports.delivery-note', [
                 'invoice' => $this->invoice,
-                'user'    => $this->invoice->user->load('profile.province'),
+                'user' => $this->invoice->user->load('profile.province'),
             ])
-            ->setPaper('A4', 'portrait')
-            ->setOption('defaultFont', 'DejaVu Sans')
-            ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isRemoteEnabled', false);
+                ->setPaper('A4', 'portrait')
+                ->setOption('defaultFont', 'DejaVu Sans')
+                ->setOption('isHtml5ParserEnabled', true)
+                ->setOption('isRemoteEnabled', false);
 
-            $code     = str_replace(['/', '\\', ' '], '-', $this->invoice->delivery_note_code);
+            $code = str_replace(['/', '\\', ' '], '-', $this->invoice->delivery_note_code);
             $attachments[] = Attachment::fromData(fn () => $pdfAlbaran->output(), "albaran_{$code}.pdf")
                 ->withMime('application/pdf');
         }
@@ -62,12 +62,12 @@ class InvoiceMail extends Mailable
         if ($this->invoice->invoice_number) {
             $pdfFactura = Pdf::loadView('reports.invoice', [
                 'invoice' => $this->invoice,
-                'user'    => $this->invoice->user->load('profile.province'),
+                'user' => $this->invoice->user->load('profile.province'),
             ])
-            ->setPaper('A4', 'portrait')
-            ->setOption('defaultFont', 'DejaVu Sans')
-            ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isRemoteEnabled', false);
+                ->setPaper('A4', 'portrait')
+                ->setOption('defaultFont', 'DejaVu Sans')
+                ->setOption('isHtml5ParserEnabled', true)
+                ->setOption('isRemoteEnabled', false);
 
             $num = str_replace(['/', '\\', ' '], '-', $this->invoice->invoice_number);
             $attachments[] = Attachment::fromData(fn () => $pdfFactura->output(), "factura_{$num}.pdf")

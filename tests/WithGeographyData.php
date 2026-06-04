@@ -3,8 +3,8 @@
 namespace Tests;
 
 use App\Models\AutonomousCommunity;
-use App\Models\Province;
 use App\Models\Municipality;
+use App\Models\Province;
 
 /**
  * Trait para crear datos geográficos básicos necesarios para tests

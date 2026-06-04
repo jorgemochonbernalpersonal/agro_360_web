@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Client;
+use App\Models\ClientAddress;
 use App\Models\Invoice;
 use App\Models\InvoiceGroup;
 use App\Models\User;
-use App\Models\Client;
-use App\Models\ClientAddress;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -382,4 +382,3 @@ class InvoiceTest extends TestCase
         $this->assertIsBool($invoice->gift);
     }
 }
-

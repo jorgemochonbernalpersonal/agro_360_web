@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * Exportador de informes oficiales a formato CSV compatible con SIEX
- * 
+ *
  * Cumple con estándares españoles:
  * - Delimitador: punto y coma (;)
  * - Formato de fechas: DD/MM/YYYY
@@ -19,11 +19,7 @@ class SiexCsvExporter
 {
     /**
      * Exportar informe de tratamientos fitosanitarios a CSV
-     * 
-     * @param OfficialReport $report
-     * @param User $user
-     * @param Collection $treatments
-     * @param array $stats
+     *
      * @return string Path del archivo CSV generado
      */
     public function exportPhytosanitaryTreatments(
@@ -34,17 +30,17 @@ class SiexCsvExporter
     ): string {
         // Preparar datos CSV
         $csvData = [];
-        
+
         // Cabecera del archivo con información del informe
         $csvData[] = ['INFORME OFICIAL DE TRATAMIENTOS FITOSANITARIOS'];
         $csvData[] = ['Código de Verificación', $report->verification_code];
         $csvData[] = ['Viticultor', $user->name];
         $csvData[] = ['Email', $user->email];
-        $csvData[] = ['Periodo', $report->period_start->format('d/m/Y') . ' - ' . $report->period_end->format('d/m/Y')];
+        $csvData[] = ['Periodo', $report->period_start->format('d/m/Y').' - '.$report->period_end->format('d/m/Y')];
         $csvData[] = ['Fecha de Generación', $report->signed_at->format('d/m/Y H:i:s')];
         $csvData[] = ['Total Tratamientos', $stats['total_treatments']];
         $csvData[] = []; // Línea vacía
-        
+
         // Cabecera de las columnas de datos
         $csvData[] = [
             'Fecha',
@@ -71,18 +67,18 @@ class SiexCsvExporter
             'Volumen Caldo (L)',
             'Operador',
             'Temperatura (°C)',
-            'Observaciones'
+            'Observaciones',
         ];
-        
+
         // Datos de tratamientos
         foreach ($treatments as $treatment) {
             $phyto = $treatment->phytosanitaryTreatment;
             $plot = $treatment->plot;
-            
+
             // Obtener primer código SIGPAC de la parcela (si existe)
             $sigpacCode = $plot?->sigpacCodes->first();
             $sigpacUse = $plot?->sigpacUses->first();
-            
+
             $csvData[] = [
                 $treatment->activity_date->format('d/m/Y'),
                 $treatment->phenological_stage ?? '',  // Estadio fenológico
@@ -108,29 +104,25 @@ class SiexCsvExporter
                 $phyto?->spray_volume ?? '',
                 $treatment->crewMember?->name ?? 'N/A',
                 $treatment->temperature ?? 'N/A',
-                $this->cleanCsvValue($treatment->notes ?? '')
+                $this->cleanCsvValue($treatment->notes ?? ''),
             ];
         }
-        
+
         // Generar contenido CSV
         $csvContent = $this->generateCsvContent($csvData);
-        
+
         // Guardar archivo
-        $filename = 'tratamientos_fitosanitarios_' . $report->verification_code . '.csv';
-        $path = 'official_reports/' . $filename;
-        
+        $filename = 'tratamientos_fitosanitarios_'.$report->verification_code.'.csv';
+        $path = 'official_reports/'.$filename;
+
         Storage::disk('local')->put($path, $csvContent);
-        
+
         return $path;
     }
 
     /**
      * Exportar cuaderno digital completo a CSV
-     * 
-     * @param OfficialReport $report
-     * @param User $user
-     * @param Collection $activities
-     * @param array $stats
+     *
      * @return string Path del archivo CSV generado
      */
     public function exportFullNotebook(
@@ -141,22 +133,22 @@ class SiexCsvExporter
     ): string {
         // Preparar datos CSV
         $csvData = [];
-        
+
         // Cabecera del archivo con información del informe
         $csvData[] = ['CUADERNO DIGITAL DE EXPLOTACIÓN AGRÍCOLA'];
         $csvData[] = ['Código de Verificación', $report->verification_code];
         $csvData[] = ['Viticultor', $user->name];
         $csvData[] = ['Email', $user->email];
-        
+
         // Obtener datos de la campaña desde metadata
         $campaignName = $report->report_metadata['campaign_name'] ?? 'N/A';
         $csvData[] = ['Campaña', $campaignName];
-        
-        $csvData[] = ['Periodo', $report->period_start->format('d/m/Y') . ' - ' . $report->period_end->format('d/m/Y')];
+
+        $csvData[] = ['Periodo', $report->period_start->format('d/m/Y').' - '.$report->period_end->format('d/m/Y')];
         $csvData[] = ['Fecha de Generación', $report->signed_at->format('d/m/Y H:i:s')];
         $csvData[] = ['Total Actividades', $stats['total_activities']];
         $csvData[] = []; // Línea vacía
-        
+
         // Cabecera de las columnas de datos
         $csvData[] = [
             'Fecha',
@@ -188,17 +180,17 @@ class SiexCsvExporter
             'Documento Transporte',
             'REGA Destino',
             'Matrícula',
-            'Observaciones'
+            'Observaciones',
         ];
-        
+
         // Datos de actividades
         foreach ($activities as $activity) {
             $plot = $activity->plot;
-            
+
             // Obtener primer código SIGPAC de la parcela (si existe)
             $sigpacCode = $plot?->sigpacCodes->first();
             $sigpacUse = $plot?->sigpacUses->first();
-            
+
             // Mapear tipo de actividad
             $activityTypes = [
                 'phytosanitary' => __('Tratamiento Fitosanitario'),
@@ -208,9 +200,9 @@ class SiexCsvExporter
                 'harvest' => __('Cosecha'),
                 'planting' => __('Plantación'),
                 'maintenance' => __('Mantenimiento'),
-                'other' => __('Otra')
+                'other' => __('Otra'),
             ];
-            
+
             $csvData[] = [
                 $activity->activity_date->format('d/m/Y'),
                 $activityTypes[$activity->activity_type] ?? $activity->activity_type,
@@ -241,70 +233,64 @@ class SiexCsvExporter
                 $activity->harvest?->transport_document_number ?? '',
                 $activity->harvest?->destination_rega_code ?? '',
                 $activity->harvest?->vehicle_plate ?? '',
-                $this->cleanCsvValue($activity->notes ?? '')
+                $this->cleanCsvValue($activity->notes ?? ''),
             ];
         }
-        
+
         // Generar contenido CSV
         $csvContent = $this->generateCsvContent($csvData);
-        
+
         // Guardar archivo
-        $filename = 'cuaderno_digital_' . $report->verification_code . '.csv';
-        $path = 'official_reports/' . $filename;
-        
+        $filename = 'cuaderno_digital_'.$report->verification_code.'.csv';
+        $path = 'official_reports/'.$filename;
+
         Storage::disk('local')->put($path, $csvContent);
-        
+
         return $path;
     }
 
     /**
      * Generar contenido CSV con formato español
-     * 
-     * @param array $data
-     * @return string
      */
     protected function generateCsvContent(array $data): string
     {
         // UTF-8 BOM para compatibilidad con Excel
         $csvContent = "\xEF\xBB\xBF";
-        
+
         foreach ($data as $row) {
             // Escapar y formatear cada celda
-            $escapedRow = array_map(function($cell) {
+            $escapedRow = array_map(function ($cell) {
                 // Convertir a string
-                $cell = (string)$cell;
-                
+                $cell = (string) $cell;
+
                 // Si contiene punto y coma, comillas o saltos de línea, encerrar entre comillas
                 if (str_contains($cell, ';') || str_contains($cell, '"') || str_contains($cell, "\n")) {
                     // Duplicar comillas internas
                     $cell = str_replace('"', '""', $cell);
-                    $cell = '"' . $cell . '"';
+                    $cell = '"'.$cell.'"';
                 }
-                
+
                 return $cell;
             }, $row);
-            
+
             // Unir con punto y coma (estándar europeo)
-            $csvContent .= implode(';', $escapedRow) . "\r\n";
+            $csvContent .= implode(';', $escapedRow)."\r\n";
         }
-        
+
         return $csvContent;
     }
 
     /**
      * Limpiar valor para CSV (eliminar saltos de línea extras)
-     * 
-     * @param string $value
-     * @return string
      */
     protected function cleanCsvValue(string $value): string
     {
         // Reemplazar múltiples saltos de línea por uno solo
         $value = preg_replace('/\r\n|\r|\n/', ' ', $value);
-        
+
         // Eliminar espacios extras
         $value = trim($value);
-        
+
         return $value;
     }
 }

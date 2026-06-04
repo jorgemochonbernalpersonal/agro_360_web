@@ -15,6 +15,7 @@ class Index extends AbstractIndex
 
         if ($export->status !== 'draft') {
             $this->toastError(__('Solo se pueden marcar como generadas las exportaciones en borrador.'));
+
             return;
         }
 
@@ -28,6 +29,7 @@ class Index extends AbstractIndex
 
         if ($export->status !== 'generated') {
             $this->toastError(__('Solo se pueden marcar como enviadas las exportaciones generadas.'));
+
             return;
         }
 
@@ -41,6 +43,7 @@ class Index extends AbstractIndex
 
         if ($export->status !== 'draft') {
             $this->toastError(__('Solo se pueden eliminar exportaciones en estado Borrador.'));
+
             return;
         }
 
@@ -59,7 +62,10 @@ class Index extends AbstractIndex
         $query->orderByDesc('campaign_year')->orderByDesc('created_at');
     }
 
-    protected function defaultOrderBy(): array { return ['campaign_year', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['campaign_year', 'desc'];
+    }
 
     protected function viewData(mixed $entries): array
     {
@@ -76,9 +82,9 @@ class Index extends AbstractIndex
             ->get();
 
         return [
-            'exports'       => $entries,
+            'exports' => $entries,
             'exploitations' => $exploitations,
-            'statusCounts'  => $statusCounts,
+            'statusCounts' => $statusCounts,
         ];
     }
 }

@@ -7,6 +7,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HarvestByproduct extends Model
 {
+    const BYPRODUCT_TYPES = [
+        'pomace' => 'Orujo / Hollejo',
+        'stem' => 'Raspón / Escobajo',
+        'lees' => 'Lías',
+        'other' => 'Otro',
+    ];
+
+    const DESTINATION_TYPES = [
+        'cooperative' => 'Cooperativa vinícola',
+        'winery' => 'Bodega',
+        'distillery' => 'Destilería / Alcoholera',
+        'composting' => 'Planta de compostaje',
+        'authorized_landfill' => 'Vertedero autorizado',
+        'other' => 'Otro destino',
+    ];
+
     protected $fillable = [
         'viticulturist_id', 'campaign_id', 'date',
         'byproduct_type', 'quantity_kg',
@@ -15,31 +31,15 @@ class HarvestByproduct extends Model
     ];
 
     protected $casts = [
-        'date'        => 'date',
+        'date' => 'date',
         'quantity_kg' => 'decimal:3',
-        'active'      => 'boolean',
-    ];
-
-    const BYPRODUCT_TYPES = [
-        'pomace' => 'Orujo / Hollejo',
-        'stem'   => 'Raspón / Escobajo',
-        'lees'   => 'Lías',
-        'other'  => 'Otro',
+        'active' => 'boolean',
     ];
 
     public static function byproductTypeOptions(): array
     {
         return array_map(fn ($v) => __($v), static::BYPRODUCT_TYPES);
     }
-
-    const DESTINATION_TYPES = [
-        'cooperative'        => 'Cooperativa vinícola',
-        'winery'            => 'Bodega',
-        'distillery'        => 'Destilería / Alcoholera',
-        'composting'         => 'Planta de compostaje',
-        'authorized_landfill' => 'Vertedero autorizado',
-        'other'             => 'Otro destino',
-    ];
 
     public static function destinationTypeOptions(): array
     {

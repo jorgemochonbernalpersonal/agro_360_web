@@ -10,7 +10,6 @@ use App\Models\NotebookAccessRequest;
 use App\Models\SupervisorRequest;
 use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -97,19 +96,19 @@ class Dashboard extends Component
             ->get();
 
         return view('livewire.supervisor.dashboard', [
-            'wineryCount'              => $wineryCount,
-            'viticulturistCount'       => $viticulturistCount,
-            'pendingQualifications'    => $pendingQualifications,
-            'issuedLabelsThisYear'     => $issuedLabelsThisYear,
-            'pendingLabels'            => $pendingLabels,
-            'nonCompliantInspections'  => $nonCompliantInspections,
-            'pendingRequests'          => $pendingRequests,
-            'overdueRequests'          => $overdueRequests,
-            'upcomingInspections'      => $upcomingInspections,
-            'pendingNotebookRequests'  => $pendingNotebookRequests,
-            'pendingNotebookCount'     => $pendingNotebookCount,
-            'expiringCertifications'   => $expiringCertifications,
-            'recentRequests'           => $recentRequests,
+            'wineryCount' => $wineryCount,
+            'viticulturistCount' => $viticulturistCount,
+            'pendingQualifications' => $pendingQualifications,
+            'issuedLabelsThisYear' => $issuedLabelsThisYear,
+            'pendingLabels' => $pendingLabels,
+            'nonCompliantInspections' => $nonCompliantInspections,
+            'pendingRequests' => $pendingRequests,
+            'overdueRequests' => $overdueRequests,
+            'upcomingInspections' => $upcomingInspections,
+            'pendingNotebookRequests' => $pendingNotebookRequests,
+            'pendingNotebookCount' => $pendingNotebookCount,
+            'expiringCertifications' => $expiringCertifications,
+            'recentRequests' => $recentRequests,
         ])->layout('layouts.app');
     }
 }

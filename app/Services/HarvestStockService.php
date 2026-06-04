@@ -85,7 +85,9 @@ class HarvestStockService
     public static function unreserveItems(Collection $existingItems, Invoice $invoice): void
     {
         foreach ($existingItems as $item) {
-            if ($item->concept_type !== 'harvest' || !$item->harvest_id) continue;
+            if ($item->concept_type !== 'harvest' || ! $item->harvest_id) {
+                continue;
+            }
             self::unreserve($item->harvest_id, (float) $item->quantity, $invoice, $item);
         }
     }
@@ -94,19 +96,22 @@ class HarvestStockService
      * After editing invoice items: reserve or deliver one item.
      * Used when recreating items in Edit — call per item right after persisting it.
      *
-     * @param string $deliveryStatus  The invoice's new delivery_status value
+     * @param string $deliveryStatus The invoice's new delivery_status value
+     *
      * @throws RuntimeException if available stock is insufficient
      */
     public static function moveOnItemSave(Invoice $invoice, InvoiceItem $item, string $deliveryStatus): void
     {
-        if ($item->concept_type !== 'harvest' || !$item->harvest_id) return;
+        if ($item->concept_type !== 'harvest' || ! $item->harvest_id) {
+            return;
+        }
 
         $qty = (float) $item->quantity;
 
         match ($deliveryStatus) {
             'pending', 'in_transit' => self::reserve($item->harvest_id, $qty, $invoice, $item),
-            'delivered'             => self::reserveThenDeliver($item->harvest_id, $qty, $invoice, $item),
-            default                 => null, // cancelled — leave as available
+            'delivered' => self::reserveThenDeliver($item->harvest_id, $qty, $invoice, $item),
+            default => null, // cancelled — leave as available
         };
     }
 
@@ -126,8 +131,8 @@ class HarvestStockService
 
         self::appendLedger($harvestId, $item, $invoice, 'reserve', 0, [
             'available_qty' => $state['available_qty'] - $qty,
-            'reserved_qty'  => $state['reserved_qty'] + $qty,
-            'sold_qty'      => $state['sold_qty'],
+            'reserved_qty' => $state['reserved_qty'] + $qty,
+            'sold_qty' => $state['sold_qty'],
         ], "Reservado para {$ref}");
     }
 
@@ -146,8 +151,8 @@ class HarvestStockService
 
         self::appendLedger($harvestId, $item, $invoice, 'unreserve', 0, [
             'available_qty' => $state['available_qty'] + $actualQty,
-            'reserved_qty'  => $state['reserved_qty'] - $actualQty,
-            'sold_qty'      => $state['sold_qty'],
+            'reserved_qty' => $state['reserved_qty'] - $actualQty,
+            'sold_qty' => $state['sold_qty'],
         ], "Reserva liberada de {$invoice->invoice_number}");
     }
 
@@ -164,8 +169,8 @@ class HarvestStockService
 
         self::appendLedger($harvestId, $item, $invoice, 'sale', -$qty, [
             'available_qty' => $state['available_qty'],
-            'reserved_qty'  => max(0, $state['reserved_qty'] - $qty),
-            'sold_qty'      => $state['sold_qty'] + $qty,
+            'reserved_qty' => max(0, $state['reserved_qty'] - $qty),
+            'sold_qty' => $state['sold_qty'] + $qty,
         ], "Venta confirmada: {$invoice->invoice_number}");
     }
 
@@ -181,14 +186,14 @@ class HarvestStockService
 
         self::appendLedger($harvestId, $item, $invoice, 'sale', -$qty, [
             'available_qty' => $state['available_qty'],
-            'reserved_qty'  => max(0, $state['reserved_qty'] - $qty),
-            'sold_qty'      => $state['sold_qty'] + $qty,
+            'reserved_qty' => max(0, $state['reserved_qty'] - $qty),
+            'sold_qty' => $state['sold_qty'] + $qty,
         ], "Entrega directa: {$invoice->invoice_number}");
     }
 
     private static function restore(int $harvestId, float $qty, Invoice $invoice, InvoiceItem $item, bool $fromSold): void
     {
-        $state        = self::currentState($harvestId);
+        $state = self::currentState($harvestId);
         $movementType = $fromSold ? 'return' : 'unreserve';
 
         // Clamp: only take back what's actually in the source bucket
@@ -202,8 +207,8 @@ class HarvestStockService
 
         self::appendLedger($harvestId, $item, $invoice, $movementType, $fromSold ? $actualQty : 0, [
             'available_qty' => $state['available_qty'] + $actualQty,
-            'reserved_qty'  => $fromSold ? $state['reserved_qty'] : $state['reserved_qty'] - $actualQty,
-            'sold_qty'      => $fromSold ? $state['sold_qty'] - $actualQty : $state['sold_qty'],
+            'reserved_qty' => $fromSold ? $state['reserved_qty'] : $state['reserved_qty'] - $actualQty,
+            'sold_qty' => $fromSold ? $state['sold_qty'] - $actualQty : $state['sold_qty'],
         ], "Cancelación de {$invoice->invoice_number}");
     }
 
@@ -220,19 +225,20 @@ class HarvestStockService
             ->latest('id')
             ->first();
 
-        if (!$latest) {
+        if (! $latest) {
             $harvest = Harvest::findOrFail($harvestId);
+
             return [
                 'available_qty' => (float) ($harvest->total_weight ?? 0),
-                'reserved_qty'  => 0.0,
-                'sold_qty'      => 0.0,
+                'reserved_qty' => 0.0,
+                'sold_qty' => 0.0,
             ];
         }
 
         return [
             'available_qty' => (float) $latest->available_qty,
-            'reserved_qty'  => (float) $latest->reserved_qty,
-            'sold_qty'      => (float) $latest->sold_qty,
+            'reserved_qty' => (float) $latest->reserved_qty,
+            'sold_qty' => (float) $latest->sold_qty,
         ];
     }
 
@@ -246,17 +252,17 @@ class HarvestStockService
         string $notes
     ): void {
         HarvestStock::create([
-            'harvest_id'       => $harvestId,
-            'user_id'          => Auth::id(),
-            'invoice_item_id'  => $item->id,
-            'movement_type'    => $movementType,
-            'quantity_change'  => $quantityChange,
-            'quantity_after'   => $buckets['available_qty'] + $buckets['reserved_qty'] + $buckets['sold_qty'],
-            'available_qty'    => $buckets['available_qty'],
-            'reserved_qty'     => $buckets['reserved_qty'],
-            'sold_qty'         => $buckets['sold_qty'],
+            'harvest_id' => $harvestId,
+            'user_id' => Auth::id(),
+            'invoice_item_id' => $item->id,
+            'movement_type' => $movementType,
+            'quantity_change' => $quantityChange,
+            'quantity_after' => $buckets['available_qty'] + $buckets['reserved_qty'] + $buckets['sold_qty'],
+            'available_qty' => $buckets['available_qty'],
+            'reserved_qty' => $buckets['reserved_qty'],
+            'sold_qty' => $buckets['sold_qty'],
             'reference_number' => $invoice->delivery_note_code ?? $invoice->invoice_number,
-            'notes'            => $notes,
+            'notes' => $notes,
         ]);
     }
 }

@@ -37,8 +37,8 @@ class CreateDeliveryTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('harvest_deliveries', [
             'viticulturist_id' => $this->viticulturist->id,
-            'buyer_name'       => 'Bodega Rioja',
-            'status'           => 'pending',
+            'buyer_name' => 'Bodega Rioja',
+            'status' => 'pending',
         ]);
     }
 
@@ -78,17 +78,17 @@ class CreateDeliveryTest extends ViticulturistTestCase
         $otherUser = $this->makeOtherViticulturist();
         $otherPlot = Plot::create([
             'viticulturist_id' => $otherUser->id,
-            'name'             => 'Parcela Ajena',
-            'reference'        => 'OTHER-001',
-            'area'             => 2.0,
-            'active'           => true,
+            'name' => 'Parcela Ajena',
+            'reference' => 'OTHER-001',
+            'area' => 2.0,
+            'active' => true,
         ]);
         $otherPlanting = PlotPlanting::create([
-            'plot_id'          => $otherPlot->id,
+            'plot_id' => $otherPlot->id,
             'grape_variety_id' => $this->grapeVariety->id,
-            'area_planted'     => 2.0,
-            'planting_year'    => 2015,
-            'status'           => 'active',
+            'area_planted' => 2.0,
+            'planting_year' => 2015,
+            'status' => 'active',
         ]);
 
         Livewire::test(CreateDelivery::class)
@@ -149,8 +149,8 @@ class CreateDeliveryTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvest_deliveries', [
-            'viticulturist_id'   => $this->viticulturist->id,
-            'disqualified'       => 1,
+            'viticulturist_id' => $this->viticulturist->id,
+            'disqualified' => 1,
             'disqualified_reason' => 'Exceso de botrytis',
         ]);
     }
@@ -168,8 +168,8 @@ class CreateDeliveryTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('harvest_deliveries', [
-            'viticulturist_id'   => $this->viticulturist->id,
-            'disqualified'       => 0,
+            'viticulturist_id' => $this->viticulturist->id,
+            'disqualified' => 0,
             'disqualified_reason' => null,
         ]);
     }
@@ -307,7 +307,7 @@ class CreateDeliveryTest extends ViticulturistTestCase
         Notification::fake();
 
         $otherWinery = \App\Models\User::factory()->create([
-            'role'              => 'winery',
+            'role' => 'winery',
             'email_verified_at' => now(),
         ]);
 

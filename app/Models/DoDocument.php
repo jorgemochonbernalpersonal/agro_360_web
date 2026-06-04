@@ -7,6 +7,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DoDocument extends Model
 {
+    public const TYPE_PLIEGO = 'pliego';
+
+    public const TYPE_REGLAMENTO = 'reglamento';
+
+    public const STATUS_DRAFT = 'draft';
+
+    public const STATUS_ACTIVE = 'active';
+
+    public const STATUS_ARCHIVED = 'archived';
+
+    public const STATUS_LABELS = [
+        'draft' => 'Borrador',
+        'active' => 'Vigente',
+        'archived' => 'Archivado',
+    ];
+
     protected $table = 'do_documents';
 
     protected $fillable = [
@@ -21,19 +37,6 @@ class DoDocument extends Model
 
     protected $casts = [
         'effective_date' => 'date',
-    ];
-
-    public const TYPE_PLIEGO    = 'pliego';
-    public const TYPE_REGLAMENTO = 'reglamento';
-
-    public const STATUS_DRAFT    = 'draft';
-    public const STATUS_ACTIVE   = 'active';
-    public const STATUS_ARCHIVED = 'archived';
-
-    public const STATUS_LABELS = [
-        'draft'    => 'Borrador',
-        'active'   => 'Vigente',
-        'archived' => 'Archivado',
     ];
 
     public static function statusLabelOptions(): array

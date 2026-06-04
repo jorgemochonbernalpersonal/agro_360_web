@@ -10,17 +10,20 @@ class Index extends AbstractIndex
 {
     public string $filterSpecialty = '';
 
-    public function updatingFilterSpecialty(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingFilterSpecialty(): void
     {
-        return ['filterSpecialty' => ''];
+        $this->resetPage();
     }
 
     public function deactivate(int $id): void
     {
         $this->findOwned(AdvisoryMembership::class, $id)->update(['active' => false]);
         $this->toastSuccess(__('Asesor desactivado.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['filterSpecialty' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -35,22 +38,25 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['advisor_name', 'asc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['advisor_name', 'asc'];
+    }
 
     protected function viewData(mixed $entries): array
     {
         $base = AdvisoryMembership::where('viticulturist_id', $this->viticulturistId())->active();
 
         $stats = [
-            'total'      => (clone $base)->count(),
-            'permanent'  => (clone $base)->whereNull('campaign_id')->count(),
-            'this_year'  => (clone $base)->whereHas('campaign', fn($q) => $q->where('year', now()->year))->count(),
+            'total' => (clone $base)->count(),
+            'permanent' => (clone $base)->whereNull('campaign_id')->count(),
+            'this_year' => (clone $base)->whereHas('campaign', fn ($q) => $q->where('year', now()->year))->count(),
         ];
 
         return [
-            'entries'     => $entries,
+            'entries' => $entries,
             'specialties' => AdvisoryMembership::SPECIALTIES,
-            'stats'       => $stats,
+            'stats' => $stats,
         ];
     }
 }

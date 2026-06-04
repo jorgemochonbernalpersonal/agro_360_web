@@ -19,8 +19,10 @@ class UpdatePlotSentinel2Job implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $tries   = 3;
+    public int $tries = 3;
+
     public int $timeout = 90;
+
     public int $backoff = 120;
 
     public function __construct(
@@ -32,10 +34,11 @@ class UpdatePlotSentinel2Job implements ShouldQueue
     {
         $plot = Plot::find($this->plotId);
 
-        if (!$plot) {
+        if (! $plot) {
             Log::warning('UpdatePlotSentinel2Job: plot not found', [
                 'plot_id' => $this->plotId,
             ]);
+
             return;
         }
 
@@ -43,15 +46,15 @@ class UpdatePlotSentinel2Job implements ShouldQueue
 
         if ($result) {
             Log::info('UpdatePlotSentinel2Job completed', [
-                'plot_id'        => $this->plotId,
+                'plot_id' => $this->plotId,
                 'plot_sigpac_id' => $this->plotSigpacId,
-                'ndvi'           => $result->ndvi_mean,
-                'gndvi'          => $result->gndvi,
-                'image_date'     => $result->image_date?->toDateString(),
+                'ndvi' => $result->ndvi_mean,
+                'gndvi' => $result->gndvi,
+                'image_date' => $result->image_date?->toDateString(),
             ]);
         } else {
             Log::warning('UpdatePlotSentinel2Job: no data returned', [
-                'plot_id'        => $this->plotId,
+                'plot_id' => $this->plotId,
                 'plot_sigpac_id' => $this->plotSigpacId,
             ]);
         }
@@ -60,9 +63,9 @@ class UpdatePlotSentinel2Job implements ShouldQueue
     public function failed(\Throwable $e): void
     {
         Log::error('UpdatePlotSentinel2Job permanently failed', [
-            'plot_id'        => $this->plotId,
+            'plot_id' => $this->plotId,
             'plot_sigpac_id' => $this->plotSigpacId,
-            'error'          => $e->getMessage(),
+            'error' => $e->getMessage(),
         ]);
     }
 }

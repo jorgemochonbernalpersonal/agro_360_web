@@ -8,7 +8,6 @@ use App\Models\EcoCertification;
 use App\Models\LabelBatch;
 use App\Models\ProductLot;
 use App\Models\SanitaryRegistration;
-use App\Models\Wine;
 use App\Models\WineAnalysis;
 use App\Models\WineryDocument;
 use App\Models\WinerySupply;
@@ -24,11 +23,11 @@ class Dashboard extends Component
         // ── SO₂ bajo: último análisis de vinos en proceso con free_so2 < 20 mg/L ──
         $lowSo2Wines = WineAnalysis::where('user_id', $userId)
             ->where('analysis_date', '>=', now()->subDays(60))
-            ->whereHas('wine', fn($q) => $q->where('status', 'in_progress'))
+            ->whereHas('wine', fn ($q) => $q->where('status', 'in_progress'))
             ->with('wine')
             ->orderBy('analysis_date', 'desc')
             ->get()
-            ->filter(fn($a) => $a->isSo2FreeLow())
+            ->filter(fn ($a) => $a->isSo2FreeLow())
             ->unique('wine_id')
             ->values();
 
@@ -37,7 +36,7 @@ class Dashboard extends Component
             ->where('archived', false)
             ->whereRaw('capacity > 0')
             ->whereRaw('(used_capacity / capacity) >= 0.85')
-            ->with(['containerRoom', 'currentStates' => fn($q) => $q->latest('last_movement_at')->with('wine')])
+            ->with(['containerRoom', 'currentStates' => fn ($q) => $q->latest('last_movement_at')->with('wine')])
             ->orderByRaw('(used_capacity / capacity) DESC')
             ->get();
 
@@ -60,35 +59,35 @@ class Dashboard extends Component
 
         return view('livewire.winery.alerts.dashboard', [
             // ── Elaboración ──────────────────────────────────────────────────────
-            'lowSo2Wines'           => $lowSo2Wines,
-            'nearlyFullContainers'  => $nearlyFullContainers,
-            'lowStockLots'          => $lowStockLots,
-            'lowLabelBatches'       => $lowLabelBatches,
+            'lowSo2Wines' => $lowSo2Wines,
+            'nearlyFullContainers' => $nearlyFullContainers,
+            'lowStockLots' => $lowStockLots,
+            'lowLabelBatches' => $lowLabelBatches,
             // ── Insumos ──────────────────────────────────────────────────────────
-            'lowStockSupplies'      => WinerySupply::where('user_id', $userId)
+            'lowStockSupplies' => WinerySupply::where('user_id', $userId)
                 ->whereNotNull('min_stock_alert')
                 ->whereColumn('current_stock', '<=', 'min_stock_alert')
                 ->get(),
             // ── Documentación ────────────────────────────────────────────────────
-            'expiringDocuments'     => WineryDocument::where('user_id', $userId)
+            'expiringDocuments' => WineryDocument::where('user_id', $userId)
                 ->whereNotNull('expiry_date')
                 ->whereBetween('expiry_date', [now(), now()->addDays(30)])
                 ->get(),
-            'expiredDocuments'      => WineryDocument::where('user_id', $userId)
+            'expiredDocuments' => WineryDocument::where('user_id', $userId)
                 ->whereNotNull('expiry_date')
                 ->where('expiry_date', '<', now())
                 ->get(),
-            'expiringCerts'         => EcoCertification::where('user_id', $userId)
+            'expiringCerts' => EcoCertification::where('user_id', $userId)
                 ->where('status', 'active')
                 ->whereNotNull('valid_until')
                 ->whereBetween('valid_until', [now(), now()->addDays(30)])
                 ->get(),
-            'expiredCerts'          => EcoCertification::where('user_id', $userId)
+            'expiredCerts' => EcoCertification::where('user_id', $userId)
                 ->where('status', 'active')
                 ->whereNotNull('valid_until')
                 ->where('valid_until', '<', now())
                 ->get(),
-            'expiringSanitary'      => SanitaryRegistration::where('user_id', $userId)
+            'expiringSanitary' => SanitaryRegistration::where('user_id', $userId)
                 ->where('status', 'active')
                 ->whereNotNull('renewal_date')
                 ->whereBetween('renewal_date', [now(), now()->addDays(30)])

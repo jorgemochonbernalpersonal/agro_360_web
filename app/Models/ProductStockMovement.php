@@ -54,7 +54,7 @@ class ProductStockMovement extends Model
 
     public function getMovementDescription(): string
     {
-        return match($this->movement_type) {
+        return match ($this->movement_type) {
             'purchase' => 'Compra/Entrada',
             'consumption' => 'Consumo por tratamiento',
             'adjustment_in' => 'Ajuste positivo',

@@ -3,31 +3,42 @@
 namespace App\Livewire\Viticulturist\Inventory;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Models\ProductStock;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\PhytosanitaryProduct;
+use App\Models\ProductStock;
 use App\Models\Unit;
 use App\Models\Warehouse;
-use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class EditStock extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
 
     public ProductStock $stock;
-    
+
     public $product_id;
+
     public $warehouse_id;
+
     public $batch_number;
+
     public $expiry_date;
+
     public $manufacturing_date;
+
     public $quantity;
+
     public $minimum_stock;
+
     public $unit;
+
     public $unit_price;
+
     public $supplier;
+
     public $invoice_number;
+
     public $notes;
 
     protected $rules = [
@@ -50,12 +61,12 @@ class EditStock extends Component
 
     public function mount($stock)
     {
-        if (!Auth::user()->hasViticulturistAccess()) {
+        if (! Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
 
         $this->stock = ProductStock::findOrFail($stock);
-        
+
         // Verificar propiedad
         if ($this->stock->user_id !== Auth::id()) {
             abort(403);
@@ -82,12 +93,12 @@ class EditStock extends Component
 
         $changes = [];
         $quantityBefore = $this->stock->quantity;
-        
+
         // Detectar cambios importantes
         if ($this->quantity != $quantityBefore) {
             $changes['quantity'] = [
                 'from' => $quantityBefore,
-                'to' => $this->quantity
+                'to' => $this->quantity,
             ];
         }
 
@@ -107,7 +118,7 @@ class EditStock extends Component
         ]);
 
         // Log de cambios si hubo ajuste de cantidad
-        if (!empty($changes)) {
+        if (! empty($changes)) {
             $quantityChange = $this->quantity - $quantityBefore;
             $this->stock->movements()->create([
                 'user_id' => Auth::id(),
@@ -120,6 +131,7 @@ class EditStock extends Component
         }
 
         $this->toastSuccess(__('Stock actualizado correctamente'));
+
         return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'fitosanitarios']);
     }
 

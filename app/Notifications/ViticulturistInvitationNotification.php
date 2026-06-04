@@ -2,20 +2,19 @@
 
 namespace App\Notifications;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
-use Illuminate\Support\HtmlString;
 use App\Models\User;
 use App\Support\AppLink;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ViticulturistInvitationNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public function __construct(
-        protected User   $creator,
+        protected User $creator,
         protected string $token,
     ) {}
 
@@ -34,8 +33,8 @@ class ViticulturistInvitationNotification extends Notification implements Should
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $webUrl  = route('auth.claim-account', ['token' => $this->token]);
-        $deepUrl = 'agro365://claim/' . $this->token;
+        $webUrl = route('auth.claim-account', ['token' => $this->token]);
+        $deepUrl = 'agro365://claim/'.$this->token;
 
         if (app()->environment('production')) {
             $webUrl = str_replace('http://', 'https://', $webUrl);
@@ -44,7 +43,7 @@ class ViticulturistInvitationNotification extends Notification implements Should
         return (new MailMessage)
             ->subject(__('Invitación a Agro365'))
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line($this->creatorLabel() . ' te ha invitado a acceder a Agro365.')
+            ->line($this->creatorLabel().' te ha invitado a acceder a Agro365.')
             ->line(__('Ya tienes tus parcelas y plantaciones configuradas. Solo necesitas activar tu cuenta para acceder al cuaderno de campo digital.'))
             ->line(__('El enlace de activación es válido — úsalo para elegir tu contraseña:'))
             ->action(__('Activar mi cuenta'), AppLink::url($webUrl, $deepUrl))
@@ -52,12 +51,6 @@ class ViticulturistInvitationNotification extends Notification implements Should
             ->line('**Para volver a entrar después:** ve a agro365.es, haz clic en "Iniciar sesión" y usa tu email con la contraseña que elijas ahora. Si no la recuerdas, usa "¿Olvidaste tu contraseña?".')
             ->line(__('Si no esperabas esta invitación, puedes ignorar este correo.'))
             ->salutation(__('Saludos,\nAgro365'));
-    }
-
-    private function creatorLabel(): string
-    {
-        $type = $this->creator->isSupervisor() ? 'La denominación de origen' : 'La bodega';
-        return "{$type} **{$this->creator->name}**";
     }
 
     /**
@@ -69,6 +62,11 @@ class ViticulturistInvitationNotification extends Notification implements Should
     {
         return [];
     }
+
+    private function creatorLabel(): string
+    {
+        $type = $this->creator->isSupervisor() ? 'La denominación de origen' : 'La bodega';
+
+        return "{$type} **{$this->creator->name}**";
+    }
 }
-
-

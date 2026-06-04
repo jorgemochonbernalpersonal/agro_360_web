@@ -42,10 +42,10 @@ class ViticulturistExport implements FromCollection, WithHeadings, WithMapping, 
         $v = $relation->viticulturist;
 
         $sourceMap = [
-            'own'           => __('Propio'),
-            'supervisor'    => __('Del supervisor'),
+            'own' => __('Propio'),
+            'supervisor' => __('Del supervisor'),
             'viticulturist' => __('Por invitación'),
-            'self'          => __('Autogestionado'),
+            'self' => __('Autogestionado'),
         ];
 
         return [
@@ -64,7 +64,7 @@ class ViticulturistExport implements FromCollection, WithHeadings, WithMapping, 
             1 => [
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => [
-                    'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '16a34a'],
                 ],
             ],

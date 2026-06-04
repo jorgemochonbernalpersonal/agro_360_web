@@ -2,17 +2,17 @@
 
 namespace App\Livewire\Viticulturist;
 
-use App\Models\Campaign;
-use App\Repositories\AgriculturalActivityRepository;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\Campaign;
+use App\Repositories\AgriculturalActivityRepository;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class DigitalNotebook extends Component
 {
-    use WithToastNotifications, WithRoleAwareRedirect;
+    use WithRoleAwareRedirect, WithToastNotifications;
 
     public $selectedCampaign = null;
 
@@ -26,17 +26,18 @@ class DigitalNotebook extends Component
             $valid = Campaign::forViticulturist(Auth::id())
                 ->where('id', $this->selectedCampaign)
                 ->exists();
-            if (!$valid) {
+            if (! $valid) {
                 $this->selectedCampaign = null;
             }
         }
 
-        if (!$this->selectedCampaign) {
+        if (! $this->selectedCampaign) {
             $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
 
-            if (!$campaign) {
+            if (! $campaign) {
                 $this->toastError(__('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.'));
                 $this->viticulturistRoleRedirect('campaign.index');
+
                 return;
             }
 
@@ -54,12 +55,12 @@ class DigitalNotebook extends Component
     }
 
     #[Layout('layouts.app', [
-        'title'       => 'Cuaderno de Campo - Agro365',
+        'title' => 'Cuaderno de Campo - Agro365',
         'description' => 'Resumen de actividades agrícolas por campaña.',
     ])]
     public function render()
     {
-        $user       = Auth::user();
+        $user = Auth::user();
         $repository = app(AgriculturalActivityRepository::class);
 
         $campaigns = Campaign::forViticulturist($user->id)
@@ -73,9 +74,9 @@ class DigitalNotebook extends Component
             : ['total' => 0, 'phytosanitary' => 0, 'fertilization' => 0, 'irrigation' => 0, 'cultural' => 0, 'observation' => 0, 'harvest' => 0];
 
         return view('livewire.viticulturist.digital-notebook', [
-            'campaigns'       => $campaigns,
+            'campaigns' => $campaigns,
             'currentCampaign' => $currentCampaign,
-            'stats'           => $stats,
+            'stats' => $stats,
         ]);
     }
 }

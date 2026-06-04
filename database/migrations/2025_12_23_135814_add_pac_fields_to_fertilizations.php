@@ -16,7 +16,7 @@ return new class extends Migration
             $table->decimal('nitrogen_uf', 8, 3)->nullable()->comment('Unidades Fertilizantes N / ha');
             $table->decimal('phosphorus_uf', 8, 3)->nullable()->comment('Unidades Fertilizantes P / ha');
             $table->decimal('potassium_uf', 8, 3)->nullable()->comment('Unidades Fertilizantes K / ha');
-            
+
             // Datos para fertilizantes orgánicos (Estiércoles)
             $table->string('manure_type', 100)->nullable()->comment('Tipo de estiércol');
             $table->date('burial_date')->nullable()->comment('Fecha de enterrado');
@@ -31,12 +31,12 @@ return new class extends Migration
     {
         Schema::table('fertilizations', function (Blueprint $table) {
             $table->dropColumn([
-                'nitrogen_uf', 
-                'phosphorus_uf', 
-                'potassium_uf', 
-                'manure_type', 
+                'nitrogen_uf',
+                'phosphorus_uf',
+                'potassium_uf',
+                'manure_type',
                 'burial_date',
-                'emission_reduction_method'
+                'emission_reduction_method',
             ]);
         });
     }

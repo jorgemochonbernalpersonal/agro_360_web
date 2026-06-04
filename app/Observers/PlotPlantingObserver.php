@@ -62,7 +62,7 @@ class PlotPlantingObserver
             }
         }
 
-        if (!empty($changes)) {
+        if (! empty($changes)) {
             PlotPlantingAuditLog::log($planting, 'updated', $changes);
         }
     }

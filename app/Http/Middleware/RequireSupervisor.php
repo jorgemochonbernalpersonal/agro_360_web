@@ -15,7 +15,7 @@ class RequireSupervisor
     {
         $user = $request->user();
 
-        if (!$user || !$user->hasViticulturistAccess() || !$user->hasSupervisor()) {
+        if (! $user || ! $user->hasViticulturistAccess() || ! $user->hasSupervisor()) {
             return redirect()->route('viticulturist.dashboard')
                 ->with('warning', __('Esta funcionalidad requiere estar adscrito a una Denominación de Origen.'));
         }

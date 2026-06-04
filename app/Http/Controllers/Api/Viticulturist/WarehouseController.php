@@ -16,7 +16,7 @@ class WarehouseController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'search'       => 'nullable|string|max:255',
+            'search' => 'nullable|string|max:255',
             'warehouse_id' => 'nullable|integer|exists:warehouses,id',
             'product_type' => 'nullable|string|max:100',
         ]);
@@ -26,7 +26,7 @@ class WarehouseController extends Controller
             ->orderByDesc('updated_at');
 
         if ($request->filled('search')) {
-            $query->where('product_name', 'LIKE', '%' . $request->search . '%');
+            $query->where('product_name', 'LIKE', '%'.$request->search.'%');
         }
 
         if ($request->filled('warehouse_id')) {
@@ -42,10 +42,10 @@ class WarehouseController extends Controller
         return response()->json([
             'data' => WarehouseStockResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -56,15 +56,15 @@ class WarehouseController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'location'    => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'location' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:500',
         ]);
 
         $record = \App\Models\Warehouse::create([...$validated, 'user_id' => $user->id, 'active' => true]);
 
         return response()->json([
-            'data'    => $record,
+            'data' => $record,
             'message' => __('Almacén registrado correctamente.'),
         ], 201);
     }

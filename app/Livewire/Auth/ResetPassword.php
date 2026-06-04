@@ -2,64 +2,71 @@
 
 namespace App\Livewire\Auth;
 
-use Livewire\Attributes\Layout;
-use Livewire\Component;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rules\Password as PasswordRule;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\RateLimiter;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\Rules\Password as PasswordRule;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 class ResetPassword extends Component
 {
     use WithToastNotifications;
+
     public $email = '';
+
     public $password = '';
+
     public $password_confirmation = '';
+
     public $token = '';
+
     public $tokenValid = false;
+
     public $platform = '';
 
     public function mount($token, $email = null)
     {
-        $this->token    = $token;
+        $this->token = $token;
         $this->platform = request()->query('platform', '');
-        
+
         // Obtener email del query string si no viene como parámetro
-        if (!$email && request()->has('email')) {
+        if (! $email && request()->has('email')) {
             $email = request()->query('email');
         }
-        
+
         // Decodificar email si viene codificado en la URL
         if ($email) {
             $this->email = urldecode($email);
-            
+
             // Validar que el email existe
             $user = User::where('email', $this->email)->first();
-            if (!$user) {
+            if (! $user) {
                 $this->toastError(__('El email proporcionado no existe en nuestro sistema.'));
+
                 return $this->redirect(route('password.request'), navigate: true);
             }
-            
+
             // Validar token al cargar la página
             // Verificar si existe un registro de reset para este email y si no ha expirado
             $expireMinutes = config('auth.passwords.users.expire', 120);
-            
+
             $resetRecord = DB::table('password_reset_tokens')
                 ->where('email', $this->email)
                 ->first();
-            
-            if (!$resetRecord) {
+
+            if (! $resetRecord) {
                 $this->tokenValid = false;
                 $this->toastError(__('No se encontró una solicitud de restablecimiento para este email. Por favor, solicita uno nuevo.'));
             } else {
                 // Verificar si el token ha expirado
                 $createdAt = \Carbon\Carbon::parse($resetRecord->created_at);
                 $expireTime = $createdAt->addMinutes($expireMinutes);
-                
+
                 if (now()->greaterThan($expireTime)) {
                     $this->tokenValid = false;
                     $this->toastError(__('El enlace de restablecimiento ha expirado. Por favor, solicita uno nuevo.'));
@@ -72,32 +79,13 @@ class ResetPassword extends Component
         }
     }
 
-    protected function rules(): array
-    {
-        return [
-            'email' => 'required|email',
-            'password' => ['required', 'confirmed', PasswordRule::defaults()],
-        ];
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'email.required' => __('El campo email es obligatorio.'),
-            'email.email' => __('El email debe ser una dirección de correo válida.'),
-            'password.required' => __('El campo contraseña es obligatorio.'),
-            'password.confirmed' => __('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.'),
-            'password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
-        ];
-    }
-
     public function resetPassword()
     {
         // Rate limiting: por IP
-        $key = 'reset-password.' . request()->ip();
+        $key = 'reset-password.'.request()->ip();
         $maxAttempts = app()->environment('production') ? 5 : 100;
         $decaySeconds = app()->environment('production') ? 60 : 10;
-        
+
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
@@ -128,7 +116,8 @@ class ResetPassword extends Component
                 return redirect()->route('password.reset.mobile-success');
             }
             $this->toastSuccess(__('Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión.'));
-            return $this->redirect(route('login') . '?reset_email=' . urlencode($this->email), navigate: true);
+
+            return $this->redirect(route('login').'?reset_email='.urlencode($this->email), navigate: true);
         } else {
             throw ValidationException::withMessages([
                 'email' => __('El enlace de restablecimiento no es válido o ha expirado. Por favor, solicita uno nuevo.'),
@@ -140,5 +129,24 @@ class ResetPassword extends Component
     public function render()
     {
         return view('livewire.auth.reset-password');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'email' => 'required|email',
+            'password' => ['required', 'confirmed', PasswordRule::defaults()],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'email.required' => __('El campo email es obligatorio.'),
+            'email.email' => __('El email debe ser una dirección de correo válida.'),
+            'password.required' => __('El campo contraseña es obligatorio.'),
+            'password.confirmed' => __('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.'),
+            'password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
+        ];
     }
 }

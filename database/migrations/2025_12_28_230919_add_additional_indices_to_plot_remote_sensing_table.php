@@ -19,16 +19,16 @@ return new class extends Migration
             $table->decimal('precipitation', 6, 2)->nullable()->comment('mm');
             $table->decimal('humidity', 5, 2)->nullable()->comment('%');
             $table->decimal('wind_speed', 5, 2)->nullable()->comment('km/h');
-            
+
             // Humedad del suelo
             $table->decimal('soil_moisture', 5, 2)->nullable()->comment('% volumétrico');
             $table->decimal('soil_temperature', 5, 2)->nullable()->comment('°C');
-            
+
             // Radiación solar
             $table->decimal('solar_radiation', 8, 2)->nullable()->comment('W/m²');
             $table->decimal('et0', 5, 2)->nullable()->comment('mm/día - Evapotranspiración referencia');
             $table->decimal('sunshine_hours', 4, 1)->nullable()->comment('horas');
-            
+
             // Estado hídrico
             $table->string('water_stress_status', 20)->nullable()->comment('optimal, mild, moderate, severe');
         });

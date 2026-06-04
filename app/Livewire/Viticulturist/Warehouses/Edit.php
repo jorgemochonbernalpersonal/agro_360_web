@@ -5,8 +5,8 @@ namespace App\Livewire\Viticulturist\Warehouses;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Warehouse;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Edit extends Component
 {
@@ -14,10 +14,13 @@ class Edit extends Component
 
     public Warehouse $warehouse;
 
-    public string $name        = '';
-    public string $location    = '';
+    public string $name = '';
+
+    public string $location = '';
+
     public string $description = '';
-    public bool   $active      = true;
+
+    public bool $active = true;
 
     public function mount(Warehouse $warehouse): void
     {
@@ -25,21 +28,11 @@ class Edit extends Component
             abort(403);
         }
 
-        $this->warehouse   = $warehouse;
-        $this->name        = $warehouse->name;
-        $this->location    = $warehouse->location ?? '';
+        $this->warehouse = $warehouse;
+        $this->name = $warehouse->name;
+        $this->location = $warehouse->location ?? '';
         $this->description = $warehouse->description ?? '';
-        $this->active      = $warehouse->active;
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'name'        => 'required|string|max:255',
-            'location'    => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'active'      => 'boolean',
-        ];
+        $this->active = $warehouse->active;
     }
 
     public function save(): mixed
@@ -47,10 +40,10 @@ class Edit extends Component
         $this->validate();
 
         $this->warehouse->update([
-            'name'        => $this->name,
-            'location'    => $this->location ?: null,
+            'name' => $this->name,
+            'location' => $this->location ?: null,
             'description' => $this->description ?: null,
-            'active'      => $this->active,
+            'active' => $this->active,
         ]);
 
         $this->toastSuccess(__('Almacén actualizado correctamente.'));
@@ -62,5 +55,15 @@ class Edit extends Component
     {
         return view('livewire.viticulturist.warehouses.edit')
             ->layout('layouts.app', ['title' => __('Editar Almacén - Agro365')]);
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'active' => 'boolean',
+        ];
     }
 }

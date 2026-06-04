@@ -17,10 +17,10 @@ class PestController extends Controller
         abort_unless($request->user()->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'type'        => 'nullable|string|max:50',
+            'type' => 'nullable|string|max:50',
             'risk_period' => 'nullable|boolean',
-            'search'      => 'nullable|string|max:100',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = Pest::active()->orderBy('name');
@@ -37,22 +37,21 @@ class PestController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('name', 'like', "%{$term}%")
-                  ->orWhere('scientific_name', 'like', "%{$term}%");
+                    ->orWhere('scientific_name', 'like', "%{$term}%");
             });
         }
 
-        $pests = $query->with(['products' => fn ($q) =>
-                $q->orderByDesc('pest_product_effectiveness.effectiveness_rating')
-            ])
+        $pests = $query->with(['products' => fn ($q) => $q->orderByDesc('pest_product_effectiveness.effectiveness_rating'),
+        ])
             ->paginate($this->resolvePerPage($request, 30));
 
         return response()->json([
             'data' => PestResource::collection($pests->items()),
             'meta' => [
-                'total'        => $pests->total(),
+                'total' => $pests->total(),
                 'current_page' => $pests->currentPage(),
-                'last_page'    => $pests->lastPage(),
-                'has_more'     => $pests->hasMorePages(),
+                'last_page' => $pests->lastPage(),
+                'has_more' => $pests->hasMorePages(),
             ],
         ]);
     }
@@ -64,8 +63,7 @@ class PestController extends Controller
         abort_unless($request->user()->hasViticulturistAccess(), 403);
 
         $pest = Pest::active()
-            ->with(['products' => fn ($q) =>
-                $q->orderByDesc('pest_product_effectiveness.effectiveness_rating')
+            ->with(['products' => fn ($q) => $q->orderByDesc('pest_product_effectiveness.effectiveness_rating'),
             ])
             ->findOrFail($id);
 

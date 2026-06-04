@@ -24,9 +24,9 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('water_concessions', [
             'viticulturist_id' => $v->id,
-            'concession_type'  => 'subterranea',
-            'water_body'       => 'Acuífero Terciario',
-            'active'           => true,
+            'concession_type' => 'subterranea',
+            'water_body' => 'Acuífero Terciario',
+            'active' => true,
         ]);
     }
 
@@ -97,9 +97,9 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('water_concessions', [
-            'viticulturist_id'  => $v->id,
+            'viticulturist_id' => $v->id,
             'concession_number' => null,
-            'surface_ha'        => null,
+            'surface_ha' => null,
         ]);
     }
 }

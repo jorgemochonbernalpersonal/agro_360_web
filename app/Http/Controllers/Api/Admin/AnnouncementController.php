@@ -32,10 +32,10 @@ class AnnouncementController extends Controller
         return response()->json([
             'data' => AdminAnnouncementResource::collection($items),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
+                'last_page' => $items->lastPage(),
             ],
         ]);
     }
@@ -49,10 +49,10 @@ class AnnouncementController extends Controller
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $validated = $request->validate([
-            'title'      => 'required|string|max:120',
-            'message'    => 'required|string|max:1000',
-            'type'       => ['required', Rule::in(['info', 'warning', 'success', 'danger'])],
-            'is_active'  => 'boolean',
+            'title' => 'required|string|max:120',
+            'message' => 'required|string|max:1000',
+            'type' => ['required', Rule::in(['info', 'warning', 'success', 'danger'])],
+            'is_active' => 'boolean',
             'expires_at' => 'nullable|date|after:today',
         ]);
 
@@ -61,7 +61,7 @@ class AnnouncementController extends Controller
         ]));
 
         SecurityLogger::logSecurityEvent('admin_announcement_created', [
-            'admin_id'        => $admin->id,
+            'admin_id' => $admin->id,
             'announcement_id' => $announcement->id,
         ]);
 
@@ -81,10 +81,10 @@ class AnnouncementController extends Controller
         $announcement = AdminAnnouncement::findOrFail($id);
 
         $validated = $request->validate([
-            'title'      => 'sometimes|string|max:120',
-            'message'    => 'sometimes|string|max:1000',
-            'type'       => ['sometimes', Rule::in(['info', 'warning', 'success', 'danger'])],
-            'is_active'  => 'sometimes|boolean',
+            'title' => 'sometimes|string|max:120',
+            'message' => 'sometimes|string|max:1000',
+            'type' => ['sometimes', Rule::in(['info', 'warning', 'success', 'danger'])],
+            'is_active' => 'sometimes|boolean',
             'expires_at' => 'nullable|date|after:today',
         ]);
 
@@ -107,7 +107,7 @@ class AnnouncementController extends Controller
         $announcement->delete();
 
         SecurityLogger::logSecurityEvent('admin_announcement_deleted', [
-            'admin_id'        => $admin->id,
+            'admin_id' => $admin->id,
             'announcement_id' => $id,
         ]);
 

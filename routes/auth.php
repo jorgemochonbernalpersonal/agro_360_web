@@ -4,10 +4,9 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Livewire\Auth\Login;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
 
 // ─── Página intermedia de apertura para notificaciones (web o app móvil) ──────
 Route::get('/app/open', [\App\Http\Controllers\AppRedirectController::class, 'open'])
@@ -66,19 +65,20 @@ Route::middleware('auth')->group(function () {
     // Cambio de contraseña obligatorio (debe estar antes de otras rutas protegidas)
     Route::get('/change-password-required', \App\Livewire\Auth\ChangePasswordRequired::class)
         ->name('auth.change-password-required');
-    
+
     Route::post('/logout', function () {
         $user = Auth::user();
         if ($user) {
             \App\Services\SecurityLogger::logSecurityEvent('user_logout', [
                 'user_id' => $user->id,
-                'email'   => $user->email,
-                'role'    => $user->role,
+                'email' => $user->email,
+                'role' => $user->role,
             ]);
         }
         Auth::logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
+
         return redirect()->route('login');
     })->name('logout');
 
@@ -104,15 +104,15 @@ Route::middleware('auth')->group(function () {
 
     // Página de éxito de verificación
     Route::get('/email/verified', function () {
-        if (!auth()->check() || !auth()->user()->hasVerifiedEmail()) {
+        if (! auth()->check() || ! auth()->user()->hasVerifiedEmail()) {
             return redirect()->route('verification.notice');
         }
-        
+
         $dashboardRoute = auth()->user()->isAdmin() ? 'admin.dashboard' :
             (auth()->user()->isSupervisor() ? 'supervisor.dashboard' :
             (auth()->user()->isWinery() ? 'winery.dashboard' :
             (auth()->user()->isProducer() ? 'producer.dashboard' : 'viticulturist.dashboard')));
-        
+
         return view('auth.email-verified', [
             'dashboardRoute' => $dashboardRoute,
         ]);
@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
+
         return back()->with('status', 'verification-link-sent');
     })->middleware(['throttle:6,1'])->name('verification.send');
 
@@ -127,19 +128,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/email/verify/check', function (Request $request) {
         $user = $request->user();
         $verified = $user->hasVerifiedEmail();
-        
+
         if ($verified) {
             $dashboardRoute = $user->isAdmin() ? 'admin.dashboard' :
                 ($user->isSupervisor() ? 'supervisor.dashboard' :
                 ($user->isWinery() ? 'winery.dashboard' :
                 ($user->isProducer() ? 'producer.dashboard' : 'viticulturist.dashboard')));
-            
+
             return response()->json([
                 'verified' => true,
                 'redirect_url' => route($dashboardRoute),
             ]);
         }
-        
+
         return response()->json([
             'verified' => false,
         ]);

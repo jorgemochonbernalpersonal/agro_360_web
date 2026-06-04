@@ -3,7 +3,6 @@
 namespace Tests\Feature\Viticulturist\Notifications;
 
 use App\Livewire\Viticulturist\Notifications\Index;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\DatabaseNotification;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
@@ -33,12 +32,12 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
 
         $notification = DatabaseNotification::create([
-            'id'              => \Illuminate\Support\Str::uuid(),
-            'type'            => 'App\Notifications\TestNotification',
+            'id' => \Illuminate\Support\Str::uuid(),
+            'type' => 'App\Notifications\TestNotification',
             'notifiable_type' => get_class($viticulturist),
-            'notifiable_id'   => $viticulturist->id,
-            'data'            => ['title' => 'Test', 'body' => 'Mensaje test'],
-            'read_at'         => null,
+            'notifiable_id' => $viticulturist->id,
+            'data' => ['title' => 'Test', 'body' => 'Mensaje test'],
+            'read_at' => null,
         ]);
 
         $this->actingAs($viticulturist);
@@ -55,12 +54,12 @@ class IndexTest extends ViticulturistTestCase
 
         foreach (range(1, 3) as $i) {
             DatabaseNotification::create([
-                'id'              => \Illuminate\Support\Str::uuid(),
-                'type'            => 'App\Notifications\TestNotification',
+                'id' => \Illuminate\Support\Str::uuid(),
+                'type' => 'App\Notifications\TestNotification',
                 'notifiable_type' => get_class($viticulturist),
-                'notifiable_id'   => $viticulturist->id,
-                'data'            => ['title' => "Notif {$i}", 'body' => 'test'],
-                'read_at'         => null,
+                'notifiable_id' => $viticulturist->id,
+                'data' => ['title' => "Notif {$i}", 'body' => 'test'],
+                'read_at' => null,
             ]);
         }
 
@@ -80,12 +79,12 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
 
         $notification = DatabaseNotification::create([
-            'id'              => \Illuminate\Support\Str::uuid(),
-            'type'            => 'App\Notifications\TestNotification',
+            'id' => \Illuminate\Support\Str::uuid(),
+            'type' => 'App\Notifications\TestNotification',
             'notifiable_type' => get_class($viticulturist),
-            'notifiable_id'   => $viticulturist->id,
-            'data'            => ['title' => 'Para borrar', 'body' => 'test'],
-            'read_at'         => null,
+            'notifiable_id' => $viticulturist->id,
+            'data' => ['title' => 'Para borrar', 'body' => 'test'],
+            'read_at' => null,
         ]);
 
         $this->actingAs($viticulturist);
@@ -101,27 +100,27 @@ class IndexTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
 
         DatabaseNotification::create([
-            'id'              => \Illuminate\Support\Str::uuid(),
-            'type'            => 'App\Notifications\TestNotification',
+            'id' => \Illuminate\Support\Str::uuid(),
+            'type' => 'App\Notifications\TestNotification',
             'notifiable_type' => get_class($viticulturist),
-            'notifiable_id'   => $viticulturist->id,
-            'data'            => ['title' => 'No leída', 'body' => 'test'],
-            'read_at'         => null,
+            'notifiable_id' => $viticulturist->id,
+            'data' => ['title' => 'No leída', 'body' => 'test'],
+            'read_at' => null,
         ]);
 
         DatabaseNotification::create([
-            'id'              => \Illuminate\Support\Str::uuid(),
-            'type'            => 'App\Notifications\TestNotification',
+            'id' => \Illuminate\Support\Str::uuid(),
+            'type' => 'App\Notifications\TestNotification',
             'notifiable_type' => get_class($viticulturist),
-            'notifiable_id'   => $viticulturist->id,
-            'data'            => ['title' => 'Leída', 'body' => 'test'],
-            'read_at'         => now(),
+            'notifiable_id' => $viticulturist->id,
+            'data' => ['title' => 'Leída', 'body' => 'test'],
+            'read_at' => now(),
         ]);
 
         $this->actingAs($viticulturist);
 
         Livewire::test(Index::class)
             ->set('filter', 'unread')
-            ->assertViewHas('notifications', fn($n) => $n->total() === 1);
+            ->assertViewHas('notifications', fn ($n) => $n->total() === 1);
     }
 }

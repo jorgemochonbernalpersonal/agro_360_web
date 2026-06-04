@@ -18,10 +18,10 @@ class ResidueManagementController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'campaign_id'   => 'nullable|integer|min:1',
+            'campaign_id' => 'nullable|integer|min:1',
             'practice_type' => 'nullable|string|max:50',
             'material_type' => 'nullable|string|max:50',
-            'per_page'      => 'nullable|integer|min:1|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = ResidueManagement::active()
@@ -46,10 +46,10 @@ class ResidueManagementController extends Controller
         return response()->json([
             'data' => ResidueManagementResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -60,14 +60,14 @@ class ResidueManagementController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'         => 'nullable|integer|exists:campaigns,id',
-            'plot_id'             => 'nullable|integer|exists:plots,id',
-            'date'                => 'required|date',
-            'practice_type'       => 'required|string|max:100',
-            'material_type'       => 'required|string|max:100',
-            'estimated_quantity'  => 'nullable|numeric|min:0',
-            'quantity_unit'       => 'nullable|string|max:50',
-            'notes'               => 'nullable|string|max:2000',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'plot_id' => 'nullable|integer|exists:plots,id',
+            'date' => 'required|date',
+            'practice_type' => 'required|string|max:100',
+            'material_type' => 'required|string|max:100',
+            'estimated_quantity' => 'nullable|numeric|min:0',
+            'quantity_unit' => 'nullable|string|max:50',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (isset($validated['plot_id'])) {
@@ -85,7 +85,7 @@ class ResidueManagementController extends Controller
         $record = \App\Models\ResidueManagement::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\ResidueManagementResource($record),
+            'data' => new \App\Http\Resources\Api\ResidueManagementResource($record),
             'message' => __('Gestión de residuos registrada correctamente.'),
         ], 201);
     }

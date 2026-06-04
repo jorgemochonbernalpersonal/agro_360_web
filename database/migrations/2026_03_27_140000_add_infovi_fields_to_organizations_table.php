@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::table('organizations', function (Blueprint $table) {
             $table->string('reovi_number', 50)->nullable()->after('vat_number')
-                  ->comment('Número de registro en el REOVI (Registro de Operadores Vitivinícolas)');
+                ->comment('Número de registro en el REOVI (Registro de Operadores Vitivinícolas)');
             $table->string('nidpb', 50)->nullable()->after('reovi_number')
-                  ->comment('Número de Identificación del Depósito o Punto de Bodega (instalación INFOVI)');
+                ->comment('Número de Identificación del Depósito o Punto de Bodega (instalación INFOVI)');
         });
     }
 

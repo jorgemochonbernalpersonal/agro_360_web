@@ -20,6 +20,7 @@ class SendDailyDigestCommand extends Command
             ->get()
             ->filter(function (User $user) {
                 $prefs = $user->notification_preferences;
+
                 return ($prefs['delivery'] ?? 'instant') === 'digest';
             });
 

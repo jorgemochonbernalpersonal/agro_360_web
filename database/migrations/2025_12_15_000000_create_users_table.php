@@ -5,7 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -54,8 +55,8 @@ return new class extends Migration {
         if (app()->environment('production')) {
             throw new \RuntimeException(
                 'No se puede ejecutar migrate:rollback en producción. '
-                . 'Este comando eliminaría todos los usuarios. '
-                . 'Si necesitas revertir cambios, crea una nueva migración.'
+                .'Este comando eliminaría todos los usuarios. '
+                .'Si necesitas revertir cambios, crea una nueva migración.'
             );
         }
 
@@ -64,7 +65,7 @@ return new class extends Migration {
         if ($userCount > 0) {
             throw new \RuntimeException(
                 "No se puede eliminar la tabla 'users' porque contiene {$userCount} usuario(s). "
-                . 'Si estás seguro, elimina los usuarios manualmente primero.'
+                .'Si estás seguro, elimina los usuarios manualmente primero.'
             );
         }
 

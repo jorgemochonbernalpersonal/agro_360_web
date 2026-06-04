@@ -10,22 +10,6 @@ use Tests\Feature\WineryTestCase;
 
 class InspectionsTest extends WineryTestCase
 {
-    private function makeSupervisor(): User
-    {
-        return User::factory()->create(['role' => 'supervisor', 'email_verified_at' => now()]);
-    }
-
-    private function makeInspection(User $supervisor, User $winery, array $attrs = []): DoInspection
-    {
-        return DoInspection::create(array_merge([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $winery->id,
-            'inspection_date' => now()->toDateString(),
-            'status'          => 'scheduled',
-        ], $attrs));
-    }
-
     // ── access ────────────────────────────────────────────────────────────────
 
     public function test_winery_can_access_denomination_inspections(): void
@@ -51,33 +35,33 @@ class InspectionsTest extends WineryTestCase
     public function test_winery_sees_only_inspections_targeting_it(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
-        $other      = $this->makeOtherWinery();
+        $winery = $this->makeWinery();
+        $other = $this->makeOtherWinery();
 
-        $own    = $this->makeInspection($supervisor, $winery);
+        $own = $this->makeInspection($supervisor, $winery);
         $theirs = $this->makeInspection($supervisor, $other);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
-            ->assertViewHas('inspections', fn($i) => $i->contains('id', $own->id) && !$i->contains('id', $theirs->id));
+            ->assertViewHas('inspections', fn ($i) => $i->contains('id', $own->id) && ! $i->contains('id', $theirs->id));
     }
 
     public function test_viticulturist_subject_inspections_not_visible_to_winery(): void
     {
-        $supervisor    = $this->makeSupervisor();
-        $winery        = $this->makeWinery();
+        $supervisor = $this->makeSupervisor();
+        $winery = $this->makeWinery();
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'viticulturist',
-            'subject_id'      => $viticulturist->id,
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'viticulturist',
+            'subject_id' => $viticulturist->id,
             'inspection_date' => now()->toDateString(),
         ]);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
-            ->assertViewHas('inspections', fn($i) => $i->isEmpty());
+            ->assertViewHas('inspections', fn ($i) => $i->isEmpty());
     }
 
     // ── counts ────────────────────────────────────────────────────────────────
@@ -85,14 +69,14 @@ class InspectionsTest extends WineryTestCase
     public function test_counts_reflect_inspection_statuses(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         $this->makeInspection($supervisor, $winery, ['status' => 'scheduled']);
         $this->makeInspection($supervisor, $winery, ['status' => 'completed']);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
-            ->assertViewHas('counts', fn($c) => $c['all'] === 2 && $c['scheduled'] === 1 && $c['completed'] === 1);
+            ->assertViewHas('counts', fn ($c) => $c['all'] === 2 && $c['scheduled'] === 1 && $c['completed'] === 1);
     }
 
     // ── filter ────────────────────────────────────────────────────────────────
@@ -100,7 +84,7 @@ class InspectionsTest extends WineryTestCase
     public function test_status_filter_narrows_results(): void
     {
         $supervisor = $this->makeSupervisor();
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
 
         $scheduled = $this->makeInspection($supervisor, $winery, ['status' => 'scheduled']);
         $completed = $this->makeInspection($supervisor, $winery, ['status' => 'completed']);
@@ -108,6 +92,22 @@ class InspectionsTest extends WineryTestCase
         Livewire::actingAs($winery)
             ->test(Index::class)
             ->set('statusFilter', 'scheduled')
-            ->assertViewHas('inspections', fn($i) => $i->contains('id', $scheduled->id) && !$i->contains('id', $completed->id));
+            ->assertViewHas('inspections', fn ($i) => $i->contains('id', $scheduled->id) && ! $i->contains('id', $completed->id));
+    }
+
+    private function makeSupervisor(): User
+    {
+        return User::factory()->create(['role' => 'supervisor', 'email_verified_at' => now()]);
+    }
+
+    private function makeInspection(User $supervisor, User $winery, array $attrs = []): DoInspection
+    {
+        return DoInspection::create(array_merge([
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $winery->id,
+            'inspection_date' => now()->toDateString(),
+            'status' => 'scheduled',
+        ], $attrs));
     }
 }

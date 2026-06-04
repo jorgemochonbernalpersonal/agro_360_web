@@ -220,7 +220,7 @@ class PlotRemoteSensing extends Model
             $coverage <= 20 => 'Excelente',
             $coverage <= 40 => 'Buena',
             $coverage <= 60 => 'Aceptable',
-            default         => 'Baja calidad',
+            default => 'Baja calidad',
         };
     }
 
@@ -258,15 +258,18 @@ class PlotRemoteSensing extends Model
         if ($this->ndvi_mean === null) {
             return 0;
         }
-        
+
         // NDVI va de -1 a 1, normalizamos a 0-100
         // Valores típicos de vegetación saludable: 0.2 a 0.9
         $normalized = (($this->ndvi_mean + 1) / 2) * 100;
+
         return (int) min(100, max(0, $normalized));
     }
 
     /**
      * Scope para obtener el último registro por parcela
+     *
+     * @param mixed $query
      */
     public function scopeLatestPerPlot($query)
     {
@@ -279,6 +282,10 @@ class PlotRemoteSensing extends Model
 
     /**
      * Scope para filtrar por rango de fechas
+     *
+     * @param mixed $query
+     * @param mixed $startDate
+     * @param mixed $endDate
      */
     public function scopeDateRange($query, $startDate, $endDate)
     {
@@ -287,6 +294,8 @@ class PlotRemoteSensing extends Model
 
     /**
      * Scope para parcelas con problemas
+     *
+     * @param mixed $query
      */
     public function scopeWithIssues($query)
     {
@@ -314,7 +323,7 @@ class PlotRemoteSensing extends Model
     {
         $change = $current - $previous;
         $threshold = 0.05; // 5% de cambio mínimo para considerar tendencia
-        
+
         return match (true) {
             $change > $threshold => 'increasing',
             $change < -$threshold => 'decreasing',

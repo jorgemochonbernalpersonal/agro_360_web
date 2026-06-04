@@ -16,22 +16,22 @@ class ProducerMenu
             ['icon' => 'squares-2x2',          'label' => __('Vista general'),        'route' => 'producer.dashboard',        'active' => request()->routeIs('producer.dashboard')],
             ['icon' => 'calendar-days',        'label' => __('Calendario'),           'route' => 'producer.calendar',         'active' => request()->routeIs('producer.calendar')],
             ['icon' => 'bolt',                 'label' => __('Entrada Rápida'),       'route' => 'producer.quick-entry',      'active' => request()->routeIs('producer.quick-entry')],
-            ['icon' => 'arrow-trending-up',    'label' => __('Trazabilidad Completa'),'route' => 'producer.full-traceability','active' => request()->routeIs('producer.full-traceability')],
+            ['icon' => 'arrow-trending-up',    'label' => __('Trazabilidad Completa'), 'route' => 'producer.full-traceability', 'active' => request()->routeIs('producer.full-traceability')],
         ];
 
         // ── Viñedo: Campaña ───────────────────────────────────────────────────
         $menu['campaigns'] = [
-            ['icon' => 'clipboard-document-list', 'label' => __('Campañas'),              'route' => 'producer.campaign.index',           'active' => request()->routeIs('producer.campaign*') && !request()->routeIs('producer.campaign-documents.*') && !request()->routeIs('producer.campaign-sign.*')],
+            ['icon' => 'clipboard-document-list', 'label' => __('Campañas'),              'route' => 'producer.campaign.index',           'active' => request()->routeIs('producer.campaign*') && ! request()->routeIs('producer.campaign-documents.*') && ! request()->routeIs('producer.campaign-sign.*')],
             ['icon' => 'folder-open',             'label' => __('Documentos de Campaña'), 'route' => 'producer.campaign-documents.index', 'active' => request()->routeIs('producer.campaign-documents.*')],
             ['icon' => 'check-badge',             'label' => __('Firma y Cierre'),        'route' => 'producer.campaign-sign.index',      'active' => request()->routeIs('producer.campaign-sign.*')],
             ['divider' => true],
             ['icon' => 'squares-plus',     'label' => __('Dashboard Integrado'),   'route' => 'producer.integrated-campaign',    'active' => request()->routeIs('producer.integrated-campaign')],
             ['icon' => 'queue-list',       'label' => __('Plan de Trabajos'),      'route' => 'producer.planned-works.index',    'active' => request()->routeIs('producer.planned-works.*')],
-            ['icon' => 'chart-bar-square', 'label' => __('Comparativa de Campañas'),'route' => 'producer.campaign-comparison',   'active' => request()->routeIs('producer.campaign-comparison')],
+            ['icon' => 'chart-bar-square', 'label' => __('Comparativa de Campañas'), 'route' => 'producer.campaign-comparison',   'active' => request()->routeIs('producer.campaign-comparison')],
         ];
 
         // ── Plan de acceso del producer ───────────────────────────────────────
-        $producerLocked = !$user->hasActiveAccess();
+        $producerLocked = ! $user->hasActiveAccess();
 
         // ── Viñedo: Cuaderno de Campo ─────────────────────────────────────────
         $menu['notebook_inputs'] = ViticulturistMenu::notebookInputs('producer', 'Vendimia Campo', $producerLocked);
@@ -51,8 +51,8 @@ class ProducerMenu
             ['icon' => 'eye',                     'label' => __('Panel Visual'),           'route' => 'producer.visual',                   'active' => request()->routeIs('producer.visual')],
             ['icon' => 'clipboard-document-list', 'label' => __('Campañas Bodega'),   'route' => 'producer.winery-campaigns.index',   'active' => request()->routeIs('producer.winery-campaigns*')],
             ['icon' => 'clipboard-document-list', 'label' => __('Previsiones'),        'route' => 'producer.harvest-forecasts.index',  'active' => request()->routeIs('producer.harvest-forecasts*')],
-            ['icon' => 'archive-box-arrow-down',  'label' => __('Recepciones'),        'route' => 'producer.grape-reception.index',    'active' => request()->routeIs('producer.grape-reception*') && !request()->routeIs('producer.grape-reception.disputes')],
-            ['icon' => 'beaker',                  'label' => __('Análisis de Calidad'),'route' => 'producer.harvest-quality.index',    'active' => request()->routeIs('producer.harvest-quality*')],
+            ['icon' => 'archive-box-arrow-down',  'label' => __('Recepciones'),        'route' => 'producer.grape-reception.index',    'active' => request()->routeIs('producer.grape-reception*') && ! request()->routeIs('producer.grape-reception.disputes')],
+            ['icon' => 'beaker',                  'label' => __('Análisis de Calidad'), 'route' => 'producer.harvest-quality.index',    'active' => request()->routeIs('producer.harvest-quality*')],
         ];
 
         if ($user->compra_uva_externa) {
@@ -90,12 +90,12 @@ class ProducerMenu
         $menu['estate'] = [
             ['icon' => 'squares-plus',        'label' => __('Panel de Finca'),      'route' => 'producer.integrated-estate',       'active' => request()->routeIs('producer.integrated-estate')],
             ['divider' => true],
-            ['icon' => 'map',                 'label' => __('Parcelas'),            'route' => 'producer.plots.index',             'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
+            ['icon' => 'map',                 'label' => __('Parcelas'),            'route' => 'producer.plots.index',             'active' => request()->routeIs('producer.plots.*') && ! request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'book-open',           'label' => __('Plantaciones'),        'route' => 'plots.plantings.index',            'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => __('SIGPAC'),              'route' => 'sigpac.codes',                     'active' => request()->routeIs('sigpac.*')],
             ['icon' => 'globe-europe-africa', 'label' => __('Gestión Territorial'), 'route' => 'plots.territory',                  'active' => request()->routeIs('plots.territory')],
             ['divider' => true],
-            ['icon' => 'pencil-square',       'label' => __('Actividades de Campo'),'route' => 'producer.field-activities.index',  'active' => request()->routeIs('producer.field-activities*')],
+            ['icon' => 'pencil-square',       'label' => __('Actividades de Campo'), 'route' => 'producer.field-activities.index',  'active' => request()->routeIs('producer.field-activities*')],
         ];
 
         // ── Análisis de Finca ─────────────────────────────────────────────────
@@ -118,7 +118,7 @@ class ProducerMenu
 
         // ── Negocio viñedo (usado por tab viñedo del producer) ────────────────
         $menu['billing'] = [
-            ['icon' => 'calculator',             'label' => __('Facturas'),               'route' => 'producer.invoices.index',          'active' => request()->routeIs('producer.invoices.*') && !request()->routeIs('producer.invoices.products.*') && !request()->routeIs('producer.invoices.grape-purchase.*') && !request()->routeIs('producer.invoices.mixed.*')],
+            ['icon' => 'calculator',             'label' => __('Facturas'),               'route' => 'producer.invoices.index',          'active' => request()->routeIs('producer.invoices.*') && ! request()->routeIs('producer.invoices.products.*') && ! request()->routeIs('producer.invoices.grape-purchase.*') && ! request()->routeIs('producer.invoices.mixed.*')],
             ['icon' => 'document-arrow-up',      'label' => __('Albaranes Mixtos'),       'route' => 'producer.invoices.mixed.index',    'active' => request()->routeIs('producer.invoices.mixed.*')],
             ['icon' => 'document-check',         'label' => __('VeriFactu'),              'route' => 'producer.verifactu.index',         'active' => request()->routeIs('producer.verifactu*')],
             ['icon' => 'shopping-cart',          'label' => __('Cosecha Comercializada'), 'route' => 'producer.marketed-harvests.index', 'active' => request()->routeIs('producer.marketed-harvests.*')],
@@ -134,7 +134,7 @@ class ProducerMenu
             ['divider' => true],
             ['icon' => 'arrow-down-tray',         'label' => __('Compra de Uva'),       'route' => 'producer.invoices.grape-purchase.index', 'active' => request()->routeIs('producer.invoices.grape-purchase*')],
             ['icon' => 'arrow-up-tray',           'label' => __('Venta de Productos'),  'route' => 'producer.invoices.products.index',       'active' => request()->routeIs('producer.invoices.products*')],
-            ['icon' => 'calculator',              'label' => __('Costes de Producción'),'route' => 'producer.production-costs.index',        'active' => request()->routeIs('producer.production-costs*')],
+            ['icon' => 'calculator',              'label' => __('Costes de Producción'), 'route' => 'producer.production-costs.index',        'active' => request()->routeIs('producer.production-costs*')],
             ['icon' => 'users',                   'label' => __('Clientes Bodega'),     'route' => 'producer.winery-clients.index',          'active' => request()->routeIs('producer.winery-clients*')],
         ];
 

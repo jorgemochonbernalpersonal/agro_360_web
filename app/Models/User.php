@@ -6,8 +6,6 @@ use App\Models\Traits\HasBetaAccess;
 use App\Models\Traits\HasHierarchy;
 use App\Models\Traits\HasInvoicing;
 use App\Models\Traits\HasSubscriptions;
-use App\Models\SupportTicket;
-use App\Models\UserProfile;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,10 +13,26 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail, HasLocalePreference
+class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
-    use HasSubscriptions, HasBetaAccess, HasHierarchy, HasInvoicing;
+    use HasBetaAccess, HasHierarchy, HasInvoicing, HasSubscriptions;
+
+    /**
+     * Roles disponibles
+     */
+    public const ROLE_ADMIN = 'admin';
+
+    public const ROLE_SUPERVISOR = 'supervisor';
+
+    public const ROLE_WINERY = 'winery';
+
+    public const ROLE_VITICULTURIST = 'viticulturist';
+
+    public const ROLE_PRODUCER = 'producer';
+
+    // ROLE_DO is an alias for ROLE_SUPERVISOR — denomination_of_origin uses 'supervisor' in DB
+    public const ROLE_DO = 'supervisor';
 
     /**
      * The attributes that are mass assignable.
@@ -62,32 +76,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'password_must_reset' => 'boolean',
-            'can_login' => 'boolean',
-            'abilities_configured' => 'boolean',
-            'invitation_sent_at'   => 'datetime',
-            'invitation_expires_at' => 'datetime',
-            'activated_at'          => 'datetime',
-            'is_beta_user' => 'boolean',
-            'beta_ends_at' => 'datetime',
-            'beta_access_granted' => 'boolean',
-            'compra_uva_externa' => 'boolean',
-            'preferences' => 'array',
-            'notification_preferences' => 'array',
-            'last_login_at' => 'datetime',
-        ];
-    }
-
     public function preferredLocale(): string
     {
         return $this->locale ?? 'es';
@@ -98,19 +86,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
      */
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new \App\Notifications\VerifyEmailNotification());
+        $this->notify(new \App\Notifications\VerifyEmailNotification);
     }
-
-    /**
-     * Roles disponibles
-     */
-    public const ROLE_ADMIN              = 'admin';
-    public const ROLE_SUPERVISOR         = 'supervisor';
-    public const ROLE_WINERY             = 'winery';
-    public const ROLE_VITICULTURIST      = 'viticulturist';
-    public const ROLE_PRODUCER           = 'producer';
-    // ROLE_DO is an alias for ROLE_SUPERVISOR — denomination_of_origin uses 'supervisor' in DB
-    public const ROLE_DO                 = 'supervisor';
 
     /**
      * Verificar si el usuario es admin
@@ -264,6 +241,32 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
     }
 
     /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'password_must_reset' => 'boolean',
+            'can_login' => 'boolean',
+            'abilities_configured' => 'boolean',
+            'invitation_sent_at' => 'datetime',
+            'invitation_expires_at' => 'datetime',
+            'activated_at' => 'datetime',
+            'is_beta_user' => 'boolean',
+            'beta_ends_at' => 'datetime',
+            'beta_access_granted' => 'boolean',
+            'compra_uva_externa' => 'boolean',
+            'preferences' => 'array',
+            'notification_preferences' => 'array',
+            'last_login_at' => 'datetime',
+        ];
+    }
+
+    /**
      * Boot del modelo - limpiar cache cuando se actualiza
      */
     protected static function booted()
@@ -300,4 +303,3 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
         });
     }
 }
-

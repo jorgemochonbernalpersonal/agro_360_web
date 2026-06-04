@@ -7,21 +7,28 @@ use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
 use App\Models\PlotAlertPreference;
 use App\Models\PlotRemoteSensing;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.app-layout')]
 class ExecutiveDashboard extends Component
 {
     public ?int $selectedPlotId = null;
+
     public ?int $selectedSigpacId = null;
+
     public $plots = [];
+
     public $sigpacs = [];
+
     public ?Plot $selectedPlot = null;
+
     public array $summary = [];
+
     public bool $loading = false;
+
     public string $generateError = '';
 
     // Vigor map data (all plots with geometries + NDVI color)
@@ -29,6 +36,7 @@ class ExecutiveDashboard extends Component
 
     // Per-plot alert settings
     public float $ndviThreshold = 0.30;
+
     public bool $alertEmailEnabled = false;
 
     public function mount()
@@ -38,9 +46,177 @@ class ExecutiveDashboard extends Component
         if ($this->sigpacs->isNotEmpty()) {
             $first = $this->sigpacs->first();
             $this->selectedSigpacId = $first['id'];
-            $this->selectedPlotId    = $first['plot_id'];
+            $this->selectedPlotId = $first['plot_id'];
             $this->loadSummary();
         }
+    }
+
+    public function updatedSelectedSigpacId(): void
+    {
+        $sigpac = $this->sigpacs->firstWhere('id', $this->selectedSigpacId);
+        $this->selectedPlotId = $sigpac['plot_id'] ?? null;
+        $this->loadSummary();
+    }
+
+    public function updatedSelectedPlotId()
+    {
+        $this->loadSummary();
+    }
+
+    /**
+     * Called from the Leaflet map when the user clicks a plot polygon.
+     */
+    public function selectPlot(int $plotId): void
+    {
+        if (! collect($this->plots)->contains('id', $plotId)) {
+            return; // unauthorized or unknown plot
+        }
+
+        $this->selectedPlotId = $plotId;
+
+        // Sync the sigpac selector to the first sigpac parcel of this plot
+        $sigpac = $this->sigpacs->firstWhere('plot_id', $plotId);
+        if ($sigpac) {
+            $this->selectedSigpacId = $sigpac['id'];
+        }
+
+        $this->loadSummary();
+    }
+
+    /**
+     * Save NDVI alert threshold and email toggle for the authenticated user + selected plot.
+     * Each user (viticulturist, winery, supervisor) keeps their own independent preferences.
+     */
+    public function saveAlertSettings(): void
+    {
+        $this->validate([
+            'ndviThreshold' => ['required', 'numeric', 'min:0', 'max:1'],
+        ]);
+
+        if (! $this->selectedPlotId) {
+            return;
+        }
+
+        PlotAlertPreference::updateOrCreate(
+            ['plot_id' => $this->selectedPlotId, 'user_id' => auth()->id()],
+            ['ndvi_threshold' => $this->ndviThreshold, 'email_enabled' => $this->alertEmailEnabled]
+        );
+
+        $this->dispatch('notify', message: __('Configuración de alertas guardada.'));
+    }
+
+    public function loadSummary()
+    {
+        $this->loading = true;
+
+        try {
+            $this->selectedPlot = Plot::select('id', 'name', 'area', 'viticulturist_id')
+                ->find($this->selectedPlotId);
+
+            if (! $this->selectedPlot) {
+                $this->summary = [];
+
+                return;
+            }
+
+            // Load this user's own alert preferences for the selected plot
+            $pref = PlotAlertPreference::forUser($this->selectedPlotId, auth()->id());
+            $this->ndviThreshold = $pref->ndvi_threshold;
+            $this->alertEmailEnabled = $pref->email_enabled;
+
+            // Usar caché de 5 minutos para el resumen
+            $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";
+
+            $this->summary = Cache::remember($cacheKey, 300, function () {
+                $latestData = $this->selectedPlot->remoteSensingData()
+                    ->latest('image_date')
+                    ->first();
+
+                if (! $latestData) {
+                    return $this->getEmptySummary();
+                }
+
+                return [
+                    'vigor' => $this->calculateVigorSummary($latestData),
+                    'water' => $this->calculateWaterSummary($latestData),
+                    'temperature' => $this->calculateTemperatureSummary($latestData),
+                    'harvest' => $this->calculateHarvestSummary($latestData),
+                    'nutrition' => $this->calculateNutritionSummary($latestData),
+                    'alerts' => $this->calculateAlerts($latestData),
+                    'last_update' => $latestData->image_date->diffForHumans(),
+                    'satellite' => $latestData->image_source ?? 'MODIS',
+                    'is_estimated' => str_contains($latestData->image_source ?? '', 'Estimado') || str_contains($latestData->image_source ?? '', 'Mock'),
+                ];
+            });
+
+        } catch (\Exception $e) {
+            logger()->error('Executive dashboard load failed', [
+                'plot_id' => $this->selectedPlotId,
+                'error' => $e->getMessage(),
+            ]);
+            $this->summary = $this->getEmptySummary();
+        } finally {
+            $this->loading = false;
+        }
+    }
+
+    public function refreshData()
+    {
+        // Limpiar caché y recargar
+        $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";
+        Cache::forget($cacheKey);
+        $this->loadSummary();
+    }
+
+    public function generateData()
+    {
+        if (! $this->selectedPlotId) {
+            return;
+        }
+
+        $this->generateError = '';
+
+        try {
+            $plot = Plot::find($this->selectedPlotId);
+            if (! $plot) {
+                return;
+            }
+
+            // Dispatch Sentinel-2 jobs for each sigpac parcel with geometry.
+            // Falls back to a single plot-level job if no sigpac geometries exist.
+            $sigpacs = MultipartPlotSigpac::where('plot_id', $plot->id)
+                ->whereNotNull('plot_geometry_id')
+                ->pluck('id');
+
+            if ($sigpacs->isNotEmpty()) {
+                foreach ($sigpacs as $sigpacId) {
+                    UpdatePlotSentinel2Job::dispatch($plot->id, $sigpacId)
+                        ->onQueue('remote-sensing');
+                }
+            } else {
+                UpdatePlotSentinel2Job::dispatch($plot->id)
+                    ->onQueue('remote-sensing');
+            }
+
+            Cache::forget("executive_dashboard_summary_{$this->selectedPlotId}");
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => __('Actualización Sentinel-2 en proceso. Los datos estarán disponibles en unos momentos.'),
+            ]);
+
+        } catch (\Exception $e) {
+            $this->generateError = 'Error al encolar la actualización: '.$e->getMessage();
+            logger()->error('generateData (Sentinel-2 dispatch) failed', [
+                'plot_id' => $this->selectedPlotId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function render()
+    {
+        return view('livewire.viticulturist.remote-sensing.executive-dashboard');
     }
 
     private function loadSigpacs(): void
@@ -58,11 +234,11 @@ class ExecutiveDashboard extends Component
                 ->with('sigpacCode')
                 ->get()
                 ->map(fn ($mps) => [
-                    'id'           => $mps->id,
-                    'plot_id'      => $plot->id,
-                    'plot_name'    => $plot->name,
-                    'sigpac_code'  => $mps->sigpacCode?->formatted_code ?? 'Recinto ' . $mps->id,
-                    'display_name' => $plot->name . ' — ' . ($mps->sigpacCode?->formatted_code ?? 'Recinto ' . $mps->id),
+                    'id' => $mps->id,
+                    'plot_id' => $plot->id,
+                    'plot_name' => $plot->name,
+                    'sigpac_code' => $mps->sigpacCode?->formatted_code ?? 'Recinto '.$mps->id,
+                    'display_name' => $plot->name.' — '.($mps->sigpacCode?->formatted_code ?? 'Recinto '.$mps->id),
                 ]);
         });
 
@@ -110,17 +286,17 @@ class ExecutiveDashboard extends Component
                 }
 
                 $latest = $latestNdvi->get($plot->id);
-                $ndvi   = $latest?->ndvi_mean !== null ? (float) $latest->ndvi_mean : null;
-                $color  = $this->getNdviColor($ndvi);
+                $ndvi = $latest?->ndvi_mean !== null ? (float) $latest->ndvi_mean : null;
+                $color = $this->getNdviColor($ndvi);
 
                 return [
-                    'plot_id'       => $plot->id,
-                    'plot_name'     => $plot->name,
-                    'ndvi'          => $ndvi !== null ? round($ndvi, 3) : null,
+                    'plot_id' => $plot->id,
+                    'plot_name' => $plot->name,
+                    'ndvi' => $ndvi !== null ? round($ndvi, 3) : null,
                     'health_status' => $latest?->health_status ?? 'no_data',
-                    'fill'          => $color['fill'],
-                    'line'          => $color['line'],
-                    'wkts'          => $plotGeoms->pluck('wkt')->filter()->values()->toArray(),
+                    'fill' => $color['fill'],
+                    'line' => $color['line'],
+                    'wkts' => $plotGeoms->pluck('wkt')->filter()->values()->toArray(),
                 ];
             })
             ->filter()
@@ -135,170 +311,12 @@ class ExecutiveDashboard extends Component
         }
 
         return match (true) {
-            $ndvi >= 0.7  => ['fill' => 'rgba(34, 197, 94, 0.6)',  'line' => '#16a34a'],
-            $ndvi >= 0.5  => ['fill' => 'rgba(52, 211, 153, 0.6)', 'line' => '#10b981'],
-            $ndvi >= 0.3  => ['fill' => 'rgba(250, 204, 21, 0.6)', 'line' => '#ca8a04'],
+            $ndvi >= 0.7 => ['fill' => 'rgba(34, 197, 94, 0.6)',  'line' => '#16a34a'],
+            $ndvi >= 0.5 => ['fill' => 'rgba(52, 211, 153, 0.6)', 'line' => '#10b981'],
+            $ndvi >= 0.3 => ['fill' => 'rgba(250, 204, 21, 0.6)', 'line' => '#ca8a04'],
             $ndvi >= 0.15 => ['fill' => 'rgba(251, 146, 60, 0.6)', 'line' => '#ea580c'],
-            default       => ['fill' => 'rgba(239, 68, 68, 0.6)',  'line' => '#dc2626'],
+            default => ['fill' => 'rgba(239, 68, 68, 0.6)',  'line' => '#dc2626'],
         };
-    }
-
-    public function updatedSelectedSigpacId(): void
-    {
-        $sigpac = $this->sigpacs->firstWhere('id', $this->selectedSigpacId);
-        $this->selectedPlotId = $sigpac['plot_id'] ?? null;
-        $this->loadSummary();
-    }
-
-    public function updatedSelectedPlotId()
-    {
-        $this->loadSummary();
-    }
-
-    /**
-     * Called from the Leaflet map when the user clicks a plot polygon.
-     */
-    public function selectPlot(int $plotId): void
-    {
-        if (!collect($this->plots)->contains('id', $plotId)) {
-            return; // unauthorized or unknown plot
-        }
-
-        $this->selectedPlotId = $plotId;
-
-        // Sync the sigpac selector to the first sigpac parcel of this plot
-        $sigpac = $this->sigpacs->firstWhere('plot_id', $plotId);
-        if ($sigpac) {
-            $this->selectedSigpacId = $sigpac['id'];
-        }
-
-        $this->loadSummary();
-    }
-
-    /**
-     * Save NDVI alert threshold and email toggle for the authenticated user + selected plot.
-     * Each user (viticulturist, winery, supervisor) keeps their own independent preferences.
-     */
-    public function saveAlertSettings(): void
-    {
-        $this->validate([
-            'ndviThreshold' => ['required', 'numeric', 'min:0', 'max:1'],
-        ]);
-
-        if (!$this->selectedPlotId) {
-            return;
-        }
-
-        PlotAlertPreference::updateOrCreate(
-            ['plot_id' => $this->selectedPlotId, 'user_id' => auth()->id()],
-            ['ndvi_threshold' => $this->ndviThreshold, 'email_enabled' => $this->alertEmailEnabled]
-        );
-
-        $this->dispatch('notify', message: __('Configuración de alertas guardada.'));
-    }
-
-    public function loadSummary()
-    {
-        $this->loading = true;
-
-        try {
-            $this->selectedPlot = Plot::select('id', 'name', 'area', 'viticulturist_id')
-                ->find($this->selectedPlotId);
-
-            if (!$this->selectedPlot) {
-                $this->summary = [];
-                return;
-            }
-
-            // Load this user's own alert preferences for the selected plot
-            $pref = PlotAlertPreference::forUser($this->selectedPlotId, auth()->id());
-            $this->ndviThreshold     = $pref->ndvi_threshold;
-            $this->alertEmailEnabled = $pref->email_enabled;
-
-            // Usar caché de 5 minutos para el resumen
-            $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";
-            
-            $this->summary = Cache::remember($cacheKey, 300, function () {
-                $latestData = $this->selectedPlot->remoteSensingData()
-                    ->latest('image_date')
-                    ->first();
-
-                if (!$latestData) {
-                    return $this->getEmptySummary();
-                }
-
-                return [
-                    'vigor' => $this->calculateVigorSummary($latestData),
-                    'water' => $this->calculateWaterSummary($latestData),
-                    'temperature' => $this->calculateTemperatureSummary($latestData),
-                    'harvest' => $this->calculateHarvestSummary($latestData),
-                    'nutrition' => $this->calculateNutritionSummary($latestData),
-                    'alerts' => $this->calculateAlerts($latestData),
-                    'last_update' => $latestData->image_date->diffForHumans(),
-                    'satellite' => $latestData->image_source ?? 'MODIS',
-                    'is_estimated' => str_contains($latestData->image_source ?? '', 'Estimado') || str_contains($latestData->image_source ?? '', 'Mock'),
-                ];
-            });
-
-        } catch (\Exception $e) {
-            logger()->error('Executive dashboard load failed', [
-                'plot_id' => $this->selectedPlotId,
-                'error' => $e->getMessage(),
-            ]);
-            $this->summary = $this->getEmptySummary();
-        } finally {
-            $this->loading = false;
-        }
-    }
-
-    public function refreshData()
-    {
-        // Limpiar caché y recargar
-        $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";
-        Cache::forget($cacheKey);
-        $this->loadSummary();
-    }
-
-    public function generateData()
-    {
-        if (!$this->selectedPlotId) return;
-
-        $this->generateError = '';
-
-        try {
-            $plot = Plot::find($this->selectedPlotId);
-            if (!$plot) return;
-
-            // Dispatch Sentinel-2 jobs for each sigpac parcel with geometry.
-            // Falls back to a single plot-level job if no sigpac geometries exist.
-            $sigpacs = MultipartPlotSigpac::where('plot_id', $plot->id)
-                ->whereNotNull('plot_geometry_id')
-                ->pluck('id');
-
-            if ($sigpacs->isNotEmpty()) {
-                foreach ($sigpacs as $sigpacId) {
-                    UpdatePlotSentinel2Job::dispatch($plot->id, $sigpacId)
-                        ->onQueue('remote-sensing');
-                }
-            } else {
-                UpdatePlotSentinel2Job::dispatch($plot->id)
-                    ->onQueue('remote-sensing');
-            }
-
-            Cache::forget("executive_dashboard_summary_{$this->selectedPlotId}");
-
-            $this->dispatch('notify', [
-                'type'    => 'success',
-                'message' => __('Actualización Sentinel-2 en proceso. Los datos estarán disponibles en unos momentos.'),
-            ]);
-
-        } catch (\Exception $e) {
-            $this->generateError = 'Error al encolar la actualización: ' . $e->getMessage();
-            logger()->error('generateData (Sentinel-2 dispatch) failed', [
-                'plot_id' => $this->selectedPlotId,
-                'error'   => $e->getMessage(),
-            ]);
-        }
     }
 
     private function calculateVigorSummary(PlotRemoteSensing $data): array
@@ -436,7 +454,7 @@ class ExecutiveDashboard extends Component
     private function calculateHarvestSummary(PlotRemoteSensing $data): array
     {
         $lai = $data->lai ?? null;
-        
+
         if ($lai === null) {
             return $this->getEmptyCard('harvest');
         }
@@ -617,10 +635,5 @@ class ExecutiveDashboard extends Component
             'satellite' => __('N/A'),
             'is_estimated' => false,
         ];
-    }
-
-    public function render()
-    {
-        return view('livewire.viticulturist.remote-sensing.executive-dashboard');
     }
 }

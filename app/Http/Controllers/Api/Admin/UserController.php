@@ -43,7 +43,7 @@ class UserController extends Controller
             $term = $request->input('search');
             $query->where(function ($q) use ($term) {
                 $q->where('name', 'like', "%{$term}%")
-                  ->orWhere('email', 'like', "%{$term}%");
+                    ->orWhere('email', 'like', "%{$term}%");
             });
         }
 
@@ -52,10 +52,10 @@ class UserController extends Controller
         return response()->json([
             'data' => AdminUserResource::collection($items),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
+                'last_page' => $items->lastPage(),
             ],
         ]);
     }
@@ -78,10 +78,10 @@ class UserController extends Controller
         return response()->json([
             'data' => AdminUserResource::collection($items),
             'meta' => [
-                'total'        => $items->total(),
-                'per_page'     => $items->perPage(),
+                'total' => $items->total(),
+                'per_page' => $items->perPage(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
+                'last_page' => $items->lastPage(),
             ],
         ]);
     }
@@ -101,10 +101,10 @@ class UserController extends Controller
             ->get();
 
         return response()->json([
-            'data'  => new AdminUserResource($user),
+            'data' => new AdminUserResource($user),
             'notes' => $notes->map(fn ($note) => [
-                'id'         => $note->id,
-                'note'       => $note->note,
+                'id' => $note->id,
+                'note' => $note->note,
                 'admin_name' => $note->admin?->name,
                 'created_at' => $note->created_at?->toIso8601String(),
             ])->values(),
@@ -127,12 +127,12 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            'name'  => 'sometimes|string|max:255',
+            'name' => 'sometimes|string|max:255',
             'email' => [
                 'sometimes', 'email',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
-            'role'  => ['sometimes', Rule::in([
+            'role' => ['sometimes', Rule::in([
                 User::ROLE_ADMIN,
                 User::ROLE_SUPERVISOR,
                 User::ROLE_WINERY,
@@ -150,8 +150,8 @@ class UserController extends Controller
 
         SecurityLogger::logSecurityEvent('admin_user_updated', [
             'admin_id' => $admin->id,
-            'user_id'  => $user->id,
-            'fields'   => array_keys($validated),
+            'user_id' => $user->id,
+            'fields' => array_keys($validated),
         ]);
 
         return response()->json(['data' => new AdminUserResource($user->fresh('profile'))]);
@@ -168,14 +168,14 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $user->update([
-            'can_login'          => true,
-            'email_verified_at'  => $user->email_verified_at ?? now(),
+            'can_login' => true,
+            'email_verified_at' => $user->email_verified_at ?? now(),
         ]);
 
         SecurityLogger::logSecurityEvent('admin_user_approved', [
             'admin_id' => $admin->id,
-            'user_id'  => $user->id,
-            'email'    => $user->email,
+            'user_id' => $user->id,
+            'email' => $user->email,
         ]);
 
         return response()->json(['data' => new AdminUserResource($user->fresh('profile'))]);
@@ -194,8 +194,8 @@ class UserController extends Controller
 
         SecurityLogger::logSecurityEvent('admin_user_activated', [
             'admin_id' => $admin->id,
-            'user_id'  => $user->id,
-            'email'    => $user->email,
+            'user_id' => $user->id,
+            'email' => $user->email,
         ]);
 
         return response()->json(['data' => new AdminUserResource($user->fresh('profile'))]);
@@ -221,8 +221,8 @@ class UserController extends Controller
 
         SecurityLogger::logSecurityEvent('admin_user_deactivated', [
             'admin_id' => $admin->id,
-            'user_id'  => $user->id,
-            'email'    => $user->email,
+            'user_id' => $user->id,
+            'email' => $user->email,
         ]);
 
         return response()->json(['data' => new AdminUserResource($user->fresh('profile'))]);
@@ -242,15 +242,15 @@ class UserController extends Controller
         ]);
 
         $note = AdminNote::create([
-            'user_id'  => $id,
+            'user_id' => $id,
             'admin_id' => $admin->id,
-            'note'     => $validated['note'],
+            'note' => $validated['note'],
         ]);
 
         return response()->json([
             'data' => [
-                'id'         => $note->id,
-                'note'       => $note->note,
+                'id' => $note->id,
+                'note' => $note->note,
                 'admin_name' => $admin->name,
                 'created_at' => now()->toIso8601String(),
             ],

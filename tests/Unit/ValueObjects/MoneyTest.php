@@ -26,7 +26,7 @@ class MoneyTest extends TestCase
     public function test_throws_exception_for_negative_amount(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         new Money(-10, 'EUR');
     }
 
@@ -80,7 +80,7 @@ class MoneyTest extends TestCase
     public function test_throws_exception_when_adding_different_currencies(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         $eur = Money::EUR(100);
         $usd = new Money(100, 'USD');
 

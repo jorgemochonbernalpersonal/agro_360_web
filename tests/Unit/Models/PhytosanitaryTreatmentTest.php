@@ -2,17 +2,17 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\PhytosanitaryTreatment;
-use App\Models\PhytosanitaryProduct;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
+use App\Models\GrapeVariety;
+use App\Models\PhytosanitaryProduct;
+use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
-use App\Models\GrapeVariety;
-use App\Models\Campaign;
 use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
-use Database\Seeders\ProvinceSeeder;
 use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,25 +29,6 @@ class PhytosanitaryTreatmentTest extends TestCase
             AutonomousCommunitySeeder::class,
             ProvinceSeeder::class,
             MunicipalitySeeder::class,
-        ]);
-    }
-    
-    /**
-     * Helper para crear una plantación activa en una parcela
-     */
-    private function createPlantingForPlot(Plot $plot): PlotPlanting
-    {
-        $grapeVariety = GrapeVariety::firstOrCreate(
-            ['code' => 'TEMP'],
-            ['name' => 'Tempranillo', 'color' => 'red']
-        );
-        
-        return PlotPlanting::create([
-            'plot_id' => $plot->id,
-            'grape_variety_id' => $grapeVariety->id,
-            'area_planted' => $plot->area * 0.8,
-            'planting_year' => now()->year - 5,
-            'status' => 'active',
         ]);
     }
 
@@ -332,15 +313,15 @@ class PhytosanitaryTreatmentTest extends TestCase
     public function test_field_applicator_id_saved_and_relationship_loads(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $plot     = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $applicator = \App\Models\FieldApplicator::create([
             'viticulturist_id' => $viticulturist->id,
-            'name'             => 'Juan Aplicador',
-            'ropo_number'      => 'ROPO-FA-001',
-            'ropo_category'    => 'qualified',
-            'active'           => true,
+            'name' => 'Juan Aplicador',
+            'ropo_number' => 'ROPO-FA-001',
+            'ropo_category' => 'qualified',
+            'active' => true,
         ]);
 
         $product = PhytosanitaryProduct::create([
@@ -355,11 +336,11 @@ class PhytosanitaryTreatmentTest extends TestCase
         ]);
 
         $treatment = PhytosanitaryTreatment::create([
-            'activity_id'        => $activity->id,
-            'product_id'         => $product->id,
+            'activity_id' => $activity->id,
+            'product_id' => $product->id,
             'field_applicator_id' => $applicator->id,
-            'dose_per_hectare'   => 1.0,
-            'area_treated'       => 1.0,
+            'dose_per_hectare' => 1.0,
+            'area_treated' => 1.0,
         ]);
 
         $this->assertEquals($applicator->id, $treatment->fresh()->field_applicator_id);
@@ -370,7 +351,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     public function test_field_applicator_nullified_on_delete(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $plot     = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $applicator = \App\Models\FieldApplicator::create([
@@ -390,11 +371,11 @@ class PhytosanitaryTreatmentTest extends TestCase
         ]);
 
         $treatment = PhytosanitaryTreatment::create([
-            'activity_id'        => $activity->id,
-            'product_id'         => $product->id,
+            'activity_id' => $activity->id,
+            'product_id' => $product->id,
             'field_applicator_id' => $applicator->id,
-            'dose_per_hectare'   => 1.0,
-            'area_treated'       => 1.0,
+            'dose_per_hectare' => 1.0,
+            'area_treated' => 1.0,
         ]);
 
         $applicator->delete();
@@ -405,7 +386,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     public function test_buffer_zone_respected_and_distance_stored_correctly(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $plot     = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -420,12 +401,12 @@ class PhytosanitaryTreatmentTest extends TestCase
         ]);
 
         $treatment = PhytosanitaryTreatment::create([
-            'activity_id'           => $activity->id,
-            'product_id'            => $product->id,
-            'dose_per_hectare'      => 1.0,
-            'area_treated'          => 1.0,
+            'activity_id' => $activity->id,
+            'product_id' => $product->id,
+            'dose_per_hectare' => 1.0,
+            'area_treated' => 1.0,
             'buffer_zone_respected' => true,
-            'distance_to_water_m'   => 7.50,
+            'distance_to_water_m' => 7.50,
         ]);
 
         $fresh = $treatment->fresh();
@@ -436,7 +417,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     public function test_advisory_recommendation_date_stored_and_cast_as_date(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $plot     = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -451,11 +432,11 @@ class PhytosanitaryTreatmentTest extends TestCase
         ]);
 
         $treatment = PhytosanitaryTreatment::create([
-            'activity_id'                  => $activity->id,
-            'product_id'                   => $product->id,
-            'dose_per_hectare'             => 1.0,
-            'area_treated'                 => 1.0,
-            'under_advisory'               => true,
+            'activity_id' => $activity->id,
+            'product_id' => $product->id,
+            'dose_per_hectare' => 1.0,
+            'area_treated' => 1.0,
+            'under_advisory' => true,
             'advisory_recommendation_date' => '2026-03-10',
         ]);
 
@@ -468,7 +449,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     public function test_ipm_flags_default_to_false(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $plot     = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -483,10 +464,10 @@ class PhytosanitaryTreatmentTest extends TestCase
         ]);
 
         $treatment = PhytosanitaryTreatment::create([
-            'activity_id'     => $activity->id,
-            'product_id'      => $product->id,
+            'activity_id' => $activity->id,
+            'product_id' => $product->id,
             'dose_per_hectare' => 1.0,
-            'area_treated'    => 1.0,
+            'area_treated' => 1.0,
         ]);
 
         $fresh = $treatment->fresh();
@@ -497,5 +478,23 @@ class PhytosanitaryTreatmentTest extends TestCase
         $this->assertFalse($fresh->cultural_preventions);
         $this->assertFalse($fresh->under_advisory);
     }
-}
 
+    /**
+     * Helper para crear una plantación activa en una parcela
+     */
+    private function createPlantingForPlot(Plot $plot): PlotPlanting
+    {
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+
+        return PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => $plot->area * 0.8,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
+    }
+}

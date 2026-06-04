@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Tax;
+use Illuminate\Database\Seeder;
 
 class TaxSeeder extends Seeder
 {
@@ -26,7 +26,7 @@ class TaxSeeder extends Seeder
                 'active' => true,
                 'description' => 'Exento de impuestos (0%)',
             ],
-            
+
             // IVA España Peninsular
             [
                 'name' => 'IVA (21%)',
@@ -37,7 +37,7 @@ class TaxSeeder extends Seeder
                 'active' => true,
                 'description' => 'Impuesto sobre el Valor Añadido - Tipo general',
             ],
-            
+
             // IVA reducido (productos alimenticios)
             [
                 'name' => 'IVA (10%)',
@@ -67,7 +67,7 @@ class TaxSeeder extends Seeder
                 ->where('rate', $tax['rate'])
                 ->where('region', $tax['region'])
                 ->first();
-            
+
             if ($existing) {
                 $existing->update($tax);
                 $this->command->info("  ↻ {$tax['name']} ({$tax['rate']}%) - actualizado");

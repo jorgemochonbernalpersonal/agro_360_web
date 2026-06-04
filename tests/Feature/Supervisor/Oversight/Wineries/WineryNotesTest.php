@@ -25,9 +25,9 @@ class WineryNotesTest extends SupervisorTestCase
 
         $this->assertDatabaseHas('supervisor_winery_notes', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'note',
-            'content'       => 'Visita realizada sin incidencias.',
+            'winery_id' => $winery->id,
+            'type' => 'note',
+            'content' => 'Visita realizada sin incidencias.',
         ]);
     }
 
@@ -104,10 +104,10 @@ class WineryNotesTest extends SupervisorTestCase
 
         SupervisorWineryNote::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'note',
-            'note_date'     => now()->format('Y-m-d'),
-            'content'       => 'Nota visible en la vista.',
+            'winery_id' => $winery->id,
+            'type' => 'note',
+            'note_date' => now()->format('Y-m-d'),
+            'content' => 'Nota visible en la vista.',
         ]);
 
         Livewire::actingAs($supervisor)
@@ -117,21 +117,21 @@ class WineryNotesTest extends SupervisorTestCase
 
     public function test_notes_from_another_supervisor_are_not_visible(): void
     {
-        [$supervisor, $winery]          = $this->makeSupervisorWithWinery();
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
         [$otherSupervisor, $otherWinery] = $this->makeSupervisorWithWinery();
 
         // Vinculamos también la misma bodega al otro supervisor para que pueda existir la nota
         \App\Models\SupervisorWinery::firstOrCreate([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
+            'winery_id' => $winery->id,
         ], ['assigned_by' => $otherSupervisor->id]);
 
         SupervisorWineryNote::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'note',
-            'note_date'     => now()->format('Y-m-d'),
-            'content'       => 'Nota de otro supervisor.',
+            'winery_id' => $winery->id,
+            'type' => 'note',
+            'note_date' => now()->format('Y-m-d'),
+            'content' => 'Nota de otro supervisor.',
         ]);
 
         Livewire::actingAs($supervisor)
@@ -147,10 +147,10 @@ class WineryNotesTest extends SupervisorTestCase
 
         $note = SupervisorWineryNote::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'note',
-            'note_date'     => now()->format('Y-m-d'),
-            'content'       => 'Contenido original.',
+            'winery_id' => $winery->id,
+            'type' => 'note',
+            'note_date' => now()->format('Y-m-d'),
+            'content' => 'Contenido original.',
         ]);
 
         Livewire::actingAs($supervisor)
@@ -163,8 +163,8 @@ class WineryNotesTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('supervisor_winery_notes', [
-            'id'      => $note->id,
-            'type'    => 'visit',
+            'id' => $note->id,
+            'type' => 'visit',
             'content' => 'Contenido actualizado.',
         ]);
     }
@@ -175,10 +175,10 @@ class WineryNotesTest extends SupervisorTestCase
 
         $note = SupervisorWineryNote::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'call',
-            'note_date'     => now()->format('Y-m-d'),
-            'content'       => 'Llamada.',
+            'winery_id' => $winery->id,
+            'type' => 'call',
+            'note_date' => now()->format('Y-m-d'),
+            'content' => 'Llamada.',
         ]);
 
         Livewire::actingAs($supervisor)
@@ -191,15 +191,15 @@ class WineryNotesTest extends SupervisorTestCase
 
     public function test_supervisor_cannot_update_note_from_another_supervisor(): void
     {
-        [$supervisor, $winery]  = $this->makeSupervisorWithWinery();
-        $otherSupervisor        = $this->makeSupervisor();
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $otherSupervisor = $this->makeSupervisor();
 
         $note = SupervisorWineryNote::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'note',
-            'note_date'     => now()->format('Y-m-d'),
-            'content'       => 'Nota ajena.',
+            'winery_id' => $winery->id,
+            'type' => 'note',
+            'note_date' => now()->format('Y-m-d'),
+            'content' => 'Nota ajena.',
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -215,10 +215,10 @@ class WineryNotesTest extends SupervisorTestCase
 
         $note = SupervisorWineryNote::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'note',
-            'note_date'     => now()->format('Y-m-d'),
-            'content'       => 'Contenido.',
+            'winery_id' => $winery->id,
+            'type' => 'note',
+            'note_date' => now()->format('Y-m-d'),
+            'content' => 'Contenido.',
         ]);
 
         Livewire::actingAs($supervisor)
@@ -237,10 +237,10 @@ class WineryNotesTest extends SupervisorTestCase
 
         $note = SupervisorWineryNote::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'warning',
-            'note_date'     => now()->format('Y-m-d'),
-            'content'       => 'Aviso a eliminar.',
+            'winery_id' => $winery->id,
+            'type' => 'warning',
+            'note_date' => now()->format('Y-m-d'),
+            'content' => 'Aviso a eliminar.',
         ]);
 
         Livewire::actingAs($supervisor)
@@ -254,14 +254,14 @@ class WineryNotesTest extends SupervisorTestCase
     public function test_supervisor_cannot_delete_note_from_another_supervisor(): void
     {
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
-        $otherSupervisor       = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
 
         $note = SupervisorWineryNote::create([
             'supervisor_id' => $otherSupervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'note',
-            'note_date'     => now()->format('Y-m-d'),
-            'content'       => 'Nota ajena.',
+            'winery_id' => $winery->id,
+            'type' => 'note',
+            'note_date' => now()->format('Y-m-d'),
+            'content' => 'Nota ajena.',
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -277,10 +277,10 @@ class WineryNotesTest extends SupervisorTestCase
 
         $note = SupervisorWineryNote::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => 'note',
-            'note_date'     => now()->format('Y-m-d'),
-            'content'       => 'Nota que se va a borrar.',
+            'winery_id' => $winery->id,
+            'type' => 'note',
+            'note_date' => now()->format('Y-m-d'),
+            'content' => 'Nota que se va a borrar.',
         ]);
 
         Livewire::actingAs($supervisor)

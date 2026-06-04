@@ -22,10 +22,10 @@ class WineStockSnapshot extends Model
     ];
 
     protected $casts = [
-        'snapshot_date'      => 'date',
-        'quantity_liters'    => 'decimal:3',
+        'snapshot_date' => 'date',
+        'quantity_liters' => 'decimal:3',
         'alcohol_percentage' => 'decimal:2',
-        'is_must'            => 'boolean',
+        'is_must' => 'boolean',
     ];
 
     public function user(): BelongsTo

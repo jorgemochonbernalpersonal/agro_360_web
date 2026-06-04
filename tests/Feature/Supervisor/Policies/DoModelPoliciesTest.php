@@ -16,46 +16,6 @@ class DoModelPoliciesTest extends TestCase
 {
     use RefreshDatabase;
 
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeUser(string $role): User
-    {
-        return User::factory()->create(['role' => $role, 'email_verified_at' => now()]);
-    }
-
-    private function makeLabel(User $supervisor): DoLabel
-    {
-        return DoLabel::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $supervisor->id, // same for simplicity
-            'vintage'            => now()->year,
-            'quantity_requested' => 100,
-            'status'             => 'pending',
-        ]);
-    }
-
-    private function makeInspection(User $supervisor): DoInspection
-    {
-        return DoInspection::create([
-            'supervisor_id'   => $supervisor->id,
-            'subject_type'    => 'winery',
-            'subject_id'      => $supervisor->id,
-            'inspection_date' => now()->toDateString(),
-            'status'          => 'scheduled',
-        ]);
-    }
-
-    private function makeQualification(User $supervisor): DoQualification
-    {
-        return DoQualification::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $supervisor->id,
-            'vintage'            => now()->year,
-            'wine_name'          => 'Prueba',
-            'qualification_date' => now()->toDateString(),
-        ]);
-    }
-
     // ── DoLabelPolicy ─────────────────────────────────────────────────────────
 
     public function test_label_view_any_allows_supervisor(): void
@@ -81,7 +41,7 @@ class DoModelPoliciesTest extends TestCase
     public function test_label_view_allows_own_supervisor(): void
     {
         $supervisor = $this->makeUser('supervisor');
-        $label      = $this->makeLabel($supervisor);
+        $label = $this->makeLabel($supervisor);
 
         $this->assertTrue((new DoLabelPolicy)->view($supervisor, $label));
     }
@@ -117,7 +77,7 @@ class DoModelPoliciesTest extends TestCase
     public function test_label_update_allows_own_supervisor(): void
     {
         $supervisor = $this->makeUser('supervisor');
-        $label      = $this->makeLabel($supervisor);
+        $label = $this->makeLabel($supervisor);
 
         $this->assertTrue((new DoLabelPolicy)->update($supervisor, $label));
     }
@@ -155,16 +115,16 @@ class DoModelPoliciesTest extends TestCase
 
     public function test_inspection_view_allows_own_supervisor(): void
     {
-        $supervisor  = $this->makeUser('supervisor');
-        $inspection  = $this->makeInspection($supervisor);
+        $supervisor = $this->makeUser('supervisor');
+        $inspection = $this->makeInspection($supervisor);
 
         $this->assertTrue((new DoInspectionPolicy)->view($supervisor, $inspection));
     }
 
     public function test_inspection_view_denies_other_supervisor(): void
     {
-        $owner      = $this->makeUser('supervisor');
-        $other      = $this->makeUser('supervisor');
+        $owner = $this->makeUser('supervisor');
+        $other = $this->makeUser('supervisor');
         $inspection = $this->makeInspection($owner);
 
         $this->assertFalse((new DoInspectionPolicy)->view($other, $inspection));
@@ -172,16 +132,16 @@ class DoModelPoliciesTest extends TestCase
 
     public function test_inspection_update_allows_own_supervisor(): void
     {
-        $supervisor  = $this->makeUser('supervisor');
-        $inspection  = $this->makeInspection($supervisor);
+        $supervisor = $this->makeUser('supervisor');
+        $inspection = $this->makeInspection($supervisor);
 
         $this->assertTrue((new DoInspectionPolicy)->update($supervisor, $inspection));
     }
 
     public function test_inspection_update_denies_other_supervisor(): void
     {
-        $owner      = $this->makeUser('supervisor');
-        $other      = $this->makeUser('supervisor');
+        $owner = $this->makeUser('supervisor');
+        $other = $this->makeUser('supervisor');
         $inspection = $this->makeInspection($owner);
 
         $this->assertFalse((new DoInspectionPolicy)->update($other, $inspection));
@@ -189,8 +149,8 @@ class DoModelPoliciesTest extends TestCase
 
     public function test_inspection_delete_allows_admin_on_any(): void
     {
-        $owner      = $this->makeUser('supervisor');
-        $admin      = $this->makeUser('admin');
+        $owner = $this->makeUser('supervisor');
+        $admin = $this->makeUser('admin');
         $inspection = $this->makeInspection($owner);
 
         $this->assertTrue((new DoInspectionPolicy)->delete($admin, $inspection));
@@ -210,16 +170,16 @@ class DoModelPoliciesTest extends TestCase
 
     public function test_qualification_view_allows_own_supervisor(): void
     {
-        $supervisor     = $this->makeUser('supervisor');
-        $qualification  = $this->makeQualification($supervisor);
+        $supervisor = $this->makeUser('supervisor');
+        $qualification = $this->makeQualification($supervisor);
 
         $this->assertTrue((new DoQualificationPolicy)->view($supervisor, $qualification));
     }
 
     public function test_qualification_view_denies_other_supervisor(): void
     {
-        $owner         = $this->makeUser('supervisor');
-        $other         = $this->makeUser('supervisor');
+        $owner = $this->makeUser('supervisor');
+        $other = $this->makeUser('supervisor');
         $qualification = $this->makeQualification($owner);
 
         $this->assertFalse((new DoQualificationPolicy)->view($other, $qualification));
@@ -227,7 +187,7 @@ class DoModelPoliciesTest extends TestCase
 
     public function test_qualification_update_allows_own_supervisor(): void
     {
-        $supervisor    = $this->makeUser('supervisor');
+        $supervisor = $this->makeUser('supervisor');
         $qualification = $this->makeQualification($supervisor);
 
         $this->assertTrue((new DoQualificationPolicy)->update($supervisor, $qualification));
@@ -235,8 +195,8 @@ class DoModelPoliciesTest extends TestCase
 
     public function test_qualification_update_denies_other_supervisor(): void
     {
-        $owner         = $this->makeUser('supervisor');
-        $other         = $this->makeUser('supervisor');
+        $owner = $this->makeUser('supervisor');
+        $other = $this->makeUser('supervisor');
         $qualification = $this->makeQualification($owner);
 
         $this->assertFalse((new DoQualificationPolicy)->update($other, $qualification));
@@ -244,11 +204,51 @@ class DoModelPoliciesTest extends TestCase
 
     public function test_qualification_delete_mirrors_update(): void
     {
-        $owner         = $this->makeUser('supervisor');
-        $other         = $this->makeUser('supervisor');
+        $owner = $this->makeUser('supervisor');
+        $other = $this->makeUser('supervisor');
         $qualification = $this->makeQualification($owner);
 
         $this->assertTrue((new DoQualificationPolicy)->delete($owner, $qualification));
         $this->assertFalse((new DoQualificationPolicy)->delete($other, $qualification));
+    }
+
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeUser(string $role): User
+    {
+        return User::factory()->create(['role' => $role, 'email_verified_at' => now()]);
+    }
+
+    private function makeLabel(User $supervisor): DoLabel
+    {
+        return DoLabel::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $supervisor->id, // same for simplicity
+            'vintage' => now()->year,
+            'quantity_requested' => 100,
+            'status' => 'pending',
+        ]);
+    }
+
+    private function makeInspection(User $supervisor): DoInspection
+    {
+        return DoInspection::create([
+            'supervisor_id' => $supervisor->id,
+            'subject_type' => 'winery',
+            'subject_id' => $supervisor->id,
+            'inspection_date' => now()->toDateString(),
+            'status' => 'scheduled',
+        ]);
+    }
+
+    private function makeQualification(User $supervisor): DoQualification
+    {
+        return DoQualification::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $supervisor->id,
+            'vintage' => now()->year,
+            'wine_name' => 'Prueba',
+            'qualification_date' => now()->toDateString(),
+        ]);
     }
 }

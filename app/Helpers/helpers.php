@@ -1,32 +1,32 @@
 <?php
 
-if (!function_exists('format_area')) {
+if (! function_exists('format_area')) {
     /**
      * Formatear área en hectáreas
      */
     function format_area(float $hectares, int $decimals = 2): string
     {
-        return number_format($hectares, $decimals, ',', '.') . ' ha';
+        return number_format($hectares, $decimals, ',', '.').' ha';
     }
 }
 
-if (!function_exists('format_money')) {
+if (! function_exists('format_money')) {
     /**
      * Formatear cantidad de dinero
      */
     function format_money(float $amount, string $currency = 'EUR', int $decimals = 2): string
     {
         $formatted = number_format($amount, $decimals, ',', '.');
-        
-        return match($currency) {
-            'EUR' => $formatted . ' €',
-            'USD' => '$ ' . $formatted,
-            default => $formatted . ' ' . $currency,
+
+        return match ($currency) {
+            'EUR' => $formatted.' €',
+            'USD' => '$ '.$formatted,
+            default => $formatted.' '.$currency,
         };
     }
 }
 
-if (!function_exists('calculate_tax')) {
+if (! function_exists('calculate_tax')) {
     /**
      * Calcular impuesto sobre un monto
      */
@@ -36,7 +36,7 @@ if (!function_exists('calculate_tax')) {
     }
 }
 
-if (!function_exists('calculate_total_with_tax')) {
+if (! function_exists('calculate_total_with_tax')) {
     /**
      * Calcular total con impuesto incluido
      */
@@ -46,9 +46,11 @@ if (!function_exists('calculate_total_with_tax')) {
     }
 }
 
-if (!function_exists('spanish_date')) {
+if (! function_exists('spanish_date')) {
     /**
      * Formatear fecha en español
+     *
+     * @param mixed $date
      */
     function spanish_date($date, string $format = 'd/m/Y'): string
     {
@@ -60,9 +62,11 @@ if (!function_exists('spanish_date')) {
     }
 }
 
-if (!function_exists('spanish_datetime')) {
+if (! function_exists('spanish_datetime')) {
     /**
      * Formatear fecha y hora en español
+     *
+     * @param mixed $date
      */
     function spanish_datetime($date): string
     {
@@ -74,9 +78,11 @@ if (!function_exists('spanish_datetime')) {
     }
 }
 
-if (!function_exists('time_ago')) {
+if (! function_exists('time_ago')) {
     /**
      * Mostrar tiempo transcurrido en español
+     *
+     * @param mixed $date
      */
     function time_ago($date): string
     {
@@ -88,7 +94,7 @@ if (!function_exists('time_ago')) {
     }
 }
 
-if (!function_exists('campaign_year')) {
+if (! function_exists('campaign_year')) {
     /**
      * Obtener año de campaña actual
      */
@@ -98,7 +104,7 @@ if (!function_exists('campaign_year')) {
     }
 }
 
-if (!function_exists('current_campaign')) {
+if (! function_exists('current_campaign')) {
     /**
      * Obtener campaña actual del usuario autenticado
      */
@@ -110,7 +116,7 @@ if (!function_exists('current_campaign')) {
     }
 }
 
-if (!function_exists('format_nif')) {
+if (! function_exists('format_nif')) {
     /**
      * Formatear NIF/CIF español
      */
@@ -119,14 +125,14 @@ if (!function_exists('format_nif')) {
         $nif = strtoupper(preg_replace('/[\s\-]/', '', $nif));
 
         if (strlen($nif) === 9) {
-            return substr($nif, 0, 8) . '-' . substr($nif, 8);
+            return substr($nif, 0, 8).'-'.substr($nif, 8);
         }
 
         return $nif;
     }
 }
 
-if (!function_exists('mask_nif')) {
+if (! function_exists('mask_nif')) {
     /**
      * Enmascarar NIF/DNI para mostrar en pantalla (RGPD).
      * Muestra los 4 últimos caracteres y enmascara el resto con '*'.
@@ -134,15 +140,20 @@ if (!function_exists('mask_nif')) {
      */
     function mask_nif(?string $nif): string
     {
-        if (empty($nif)) return '—';
+        if (empty($nif)) {
+            return '—';
+        }
         $nif = strtoupper(trim($nif));
         $len = strlen($nif);
-        if ($len <= 4) return $nif;
-        return str_repeat('*', $len - 4) . substr($nif, -4);
+        if ($len <= 4) {
+            return $nif;
+        }
+
+        return str_repeat('*', $len - 4).substr($nif, -4);
     }
 }
 
-if (!function_exists('format_phone')) {
+if (! function_exists('format_phone')) {
     /**
      * Formatear teléfono español
      */
@@ -151,14 +162,14 @@ if (!function_exists('format_phone')) {
         $phone = preg_replace('/[\s\-]/', '', $phone);
 
         if (strlen($phone) === 9) {
-            return '+34 ' . substr($phone, 0, 3) . ' ' . substr($phone, 3, 3) . ' ' . substr($phone, 6);
+            return '+34 '.substr($phone, 0, 3).' '.substr($phone, 3, 3).' '.substr($phone, 6);
         }
 
         return $phone;
     }
 }
 
-if (!function_exists('obfuscate_email')) {
+if (! function_exists('obfuscate_email')) {
     /**
      * Ofuscar email para privacidad
      */
@@ -167,14 +178,14 @@ if (!function_exists('obfuscate_email')) {
         [$local, $domain] = explode('@', $email);
 
         if (strlen($local) <= 2) {
-            return substr($local, 0, 1) . '***@' . $domain;
+            return substr($local, 0, 1).'***@'.$domain;
         }
 
-        return substr($local, 0, 2) . '***@' . $domain;
+        return substr($local, 0, 2).'***@'.$domain;
     }
 }
 
-if (!function_exists('flash_success')) {
+if (! function_exists('flash_success')) {
     /**
      * Flash success message
      */
@@ -184,7 +195,7 @@ if (!function_exists('flash_success')) {
     }
 }
 
-if (!function_exists('flash_error')) {
+if (! function_exists('flash_error')) {
     /**
      * Flash error message
      */
@@ -194,7 +205,7 @@ if (!function_exists('flash_error')) {
     }
 }
 
-if (!function_exists('flash_warning')) {
+if (! function_exists('flash_warning')) {
     /**
      * Flash warning message
      */
@@ -204,7 +215,7 @@ if (!function_exists('flash_warning')) {
     }
 }
 
-if (!function_exists('flash_info')) {
+if (! function_exists('flash_info')) {
     /**
      * Flash info message
      */
@@ -214,7 +225,7 @@ if (!function_exists('flash_info')) {
     }
 }
 
-if (!function_exists('is_production')) {
+if (! function_exists('is_production')) {
     /**
      * Verificar si estamos en producción
      */
@@ -224,7 +235,7 @@ if (!function_exists('is_production')) {
     }
 }
 
-if (!function_exists('is_local')) {
+if (! function_exists('is_local')) {
     /**
      * Verificar si estamos en local
      */
@@ -234,18 +245,19 @@ if (!function_exists('is_local')) {
     }
 }
 
-if (!function_exists('asset_versioned')) {
+if (! function_exists('asset_versioned')) {
     /**
      * Asset con versioning automático
      */
     function asset_versioned(string $path): string
     {
         $timestamp = filemtime(public_path($path));
-        return asset($path) . '?v=' . $timestamp;
+
+        return asset($path).'?v='.$timestamp;
     }
 }
 
-if (!function_exists('percentage')) {
+if (! function_exists('percentage')) {
     /**
      * Calcular porcentaje
      */
@@ -259,7 +271,7 @@ if (!function_exists('percentage')) {
     }
 }
 
-if (!function_exists('truncate_text')) {
+if (! function_exists('truncate_text')) {
     /**
      * Truncar texto manteniendo palabras completas
      */
@@ -269,11 +281,11 @@ if (!function_exists('truncate_text')) {
             return $text;
         }
 
-        return rtrim(substr($text, 0, $length)) . $ending;
+        return rtrim(substr($text, 0, $length)).$ending;
     }
 }
 
-if (!function_exists('active_route')) {
+if (! function_exists('active_route')) {
     /**
      * Verificar si la ruta está activa (para menús)
      */
@@ -283,7 +295,7 @@ if (!function_exists('active_route')) {
     }
 }
 
-if (!function_exists('roleRoute')) {
+if (! function_exists('roleRoute')) {
     /**
      * Generate a role-aware URL for shared Blade views.
      *

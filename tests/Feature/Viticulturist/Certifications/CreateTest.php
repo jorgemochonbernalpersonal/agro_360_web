@@ -23,10 +23,10 @@ class CreateTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.certifications.index'));
 
         $this->assertDatabaseHas('certifications', [
-            'viticulturist_id'   => $v->id,
+            'viticulturist_id' => $v->id,
             'certification_type' => 'globalgap',
-            'certifying_body'    => 'Bureau Veritas',
-            'active'             => true,
+            'certifying_body' => 'Bureau Veritas',
+            'active' => true,
         ]);
     }
 
@@ -91,9 +91,9 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('certifications', [
-            'viticulturist_id'   => $v->id,
+            'viticulturist_id' => $v->id,
             'certificate_number' => null,
-            'expiry_date'        => null,
+            'expiry_date' => null,
         ]);
     }
 }

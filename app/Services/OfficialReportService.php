@@ -45,6 +45,10 @@ class OfficialReportService
 
     /**
      * Generar PDF de tratamientos fitosanitarios (llamado por Job)
+     *
+     * @param mixed $user
+     * @param mixed $treatments
+     * @param mixed $stats
      */
     public function generatePDF(OfficialReport $report, $user, $treatments, $stats): string
     {
@@ -53,6 +57,11 @@ class OfficialReportService
 
     /**
      * Generar PDF de cuaderno digital completo (llamado por Job)
+     *
+     * @param mixed $user
+     * @param mixed $campaign
+     * @param mixed $activities
+     * @param mixed $stats
      */
     public function generateFullNotebookPDF(OfficialReport $report, $user, $campaign, $activities, $stats): string
     {
@@ -64,7 +73,7 @@ class OfficialReportService
      */
     public function downloadReport(OfficialReport $report)
     {
-        if (!$report->pdfExists()) {
+        if (! $report->pdfExists()) {
             throw new \Exception(__('El archivo PDF no existe o no se puede encontrar.'));
         }
 
@@ -82,7 +91,7 @@ class OfficialReportService
     public function downloadReportInFormat(OfficialReport $report, string $format)
     {
         // Validar formato
-        if (!in_array($format, ['pdf', 'csv', 'xml'])) {
+        if (! in_array($format, ['pdf', 'csv', 'xml'])) {
             throw new \Exception(__('Formato no válido. Usa "pdf", "csv" o "xml".'));
         }
 
@@ -93,7 +102,7 @@ class OfficialReportService
         $fullPath = $this->getFullPath($path);
 
         // Log de descarga para auditoría
-        Log::info('Descarga de informe en formato ' . strtoupper($format), [
+        Log::info('Descarga de informe en formato '.strtoupper($format), [
             'report_id' => $report->id,
             'format' => $format,
             'user_id' => auth()->id(),
@@ -117,7 +126,7 @@ class OfficialReportService
             ]);
 
             // Eliminar usando Storage
-            if (!str_starts_with($report->pdf_path, storage_path())) {
+            if (! str_starts_with($report->pdf_path, storage_path())) {
                 Storage::disk('local')->delete($report->pdf_path);
             } else {
                 if (file_exists($report->pdf_path)) {
@@ -141,15 +150,15 @@ class OfficialReportService
         return match ($format) {
             'pdf' => [
                 $report->pdf_path ?? throw new \Exception(__('El archivo PDF no existe.')),
-                $report->pdf_filename ?? 'informe_oficial.pdf'
+                $report->pdf_filename ?? 'informe_oficial.pdf',
             ],
             'csv' => [
                 $report->csv_path ?? throw new \Exception(__('El archivo CSV no está disponible.')),
-                basename($report->csv_path)
+                basename($report->csv_path),
             ],
             'xml' => [
                 $report->xml_path ?? throw new \Exception(__('El archivo XML no está disponible.')),
-                basename($report->xml_path)
+                basename($report->xml_path),
             ],
         };
     }
@@ -167,9 +176,10 @@ class OfficialReportService
      */
     protected function getFullPath(string $path): string
     {
-        if (!str_starts_with($path, storage_path())) {
+        if (! str_starts_with($path, storage_path())) {
             return Storage::disk('local')->path($path);
         }
+
         return $path;
     }
 }

@@ -12,69 +12,32 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithToastNotifications, WithReadOnlyGuard;
-
-    public string $activeTab = 'pest';
-    public bool   $showModal = false;
-
-    public ?int    $editingId    = null;
-    public string  $editingModel = '';
-
-    // Campos traducibles por modelo y locale (es / en / ca)
-    public array $translations = [];
+    use WithReadOnlyGuard, WithToastNotifications;
 
     // Locales soportados en el panel
     public const LOCALES = ['es', 'en', 'ca', 'eu', 'gl'];
 
-    // Definición de cada catálogo: modelo, label, campos traducibles
-    private function catalogs(): array
-    {
-        return [
-            'pest' => [
-                'model'  => Pest::class,
-                'label'  => __('Plagas y enfermedades'),
-                'fields' => [
-                    'name'               => __('Nombre'),
-                    'description'        => __('Descripción'),
-                    'symptoms'           => __('Síntomas'),
-                    'lifecycle'          => __('Ciclo de vida'),
-                    'prevention_methods' => __('Métodos de prevención'),
-                ],
-            ],
-            'grape_variety' => [
-                'model'  => GrapeVariety::class,
-                'label'  => __('Variedades de uva'),
-                'fields' => [
-                    'name'        => __('Nombre'),
-                    'description' => __('Descripción'),
-                ],
-            ],
-            'machinery_type' => [
-                'model'  => MachineryType::class,
-                'label'  => __('Tipos de maquinaria'),
-                'fields' => [
-                    'name' => __('Nombre'),
-                ],
-            ],
-            'container_type' => [
-                'model'  => ContainerType::class,
-                'label'  => __('Tipos de contenedor'),
-                'fields' => [
-                    'name'        => __('Nombre'),
-                    'description' => __('Descripción'),
-                ],
-            ],
-        ];
-    }
+    public string $activeTab = 'pest';
+
+    public bool $showModal = false;
+
+    public ?int $editingId = null;
+
+    public string $editingModel = '';
+
+    // Campos traducibles por modelo y locale (es / en / ca)
+    public array $translations = [];
 
     public function openEdit(int $id, string $modelKey): void
     {
         $catalog = $this->catalogs()[$modelKey] ?? null;
-        if (!$catalog) return;
+        if (! $catalog) {
+            return;
+        }
 
         $record = ($catalog['model'])::findOrFail($id);
 
-        $this->editingId    = $id;
+        $this->editingId = $id;
         $this->editingModel = $modelKey;
         $this->translations = [];
 
@@ -94,7 +57,9 @@ class Index extends Component
         }
 
         $catalog = $this->catalogs()[$this->editingModel] ?? null;
-        if (!$catalog || !$this->editingId) return;
+        if (! $catalog || ! $this->editingId) {
+            return;
+        }
 
         $record = ($catalog['model'])::findOrFail($this->editingId);
 
@@ -121,17 +86,58 @@ class Index extends Component
     public function render()
     {
         $catalogs = $this->catalogs();
-        $catalog  = $catalogs[$this->activeTab];
-        $records  = ($catalog['model'])::all();
+        $catalog = $catalogs[$this->activeTab];
+        $records = ($catalog['model'])::all();
 
         return view('livewire.admin.catalogs.index', [
             'catalogs' => $catalogs,
-            'catalog'  => $catalog,
-            'records'  => $records,
-            'locales'  => self::LOCALES,
+            'catalog' => $catalog,
+            'records' => $records,
+            'locales' => self::LOCALES,
         ])->layout('layouts.app', [
-            'title'       => __('Catálogos — Admin — Agro365'),
+            'title' => __('Catálogos — Admin — Agro365'),
             'description' => __('Gestiona las traducciones de los catálogos del sistema.'),
         ]);
+    }
+
+    // Definición de cada catálogo: modelo, label, campos traducibles
+    private function catalogs(): array
+    {
+        return [
+            'pest' => [
+                'model' => Pest::class,
+                'label' => __('Plagas y enfermedades'),
+                'fields' => [
+                    'name' => __('Nombre'),
+                    'description' => __('Descripción'),
+                    'symptoms' => __('Síntomas'),
+                    'lifecycle' => __('Ciclo de vida'),
+                    'prevention_methods' => __('Métodos de prevención'),
+                ],
+            ],
+            'grape_variety' => [
+                'model' => GrapeVariety::class,
+                'label' => __('Variedades de uva'),
+                'fields' => [
+                    'name' => __('Nombre'),
+                    'description' => __('Descripción'),
+                ],
+            ],
+            'machinery_type' => [
+                'model' => MachineryType::class,
+                'label' => __('Tipos de maquinaria'),
+                'fields' => [
+                    'name' => __('Nombre'),
+                ],
+            ],
+            'container_type' => [
+                'model' => ContainerType::class,
+                'label' => __('Tipos de contenedor'),
+                'fields' => [
+                    'name' => __('Nombre'),
+                    'description' => __('Descripción'),
+                ],
+            ],
+        ];
     }
 }

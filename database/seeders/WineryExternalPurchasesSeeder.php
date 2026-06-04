@@ -56,8 +56,8 @@ class WineryExternalPurchasesSeeder extends Seeder
     private const PRODUCT_TYPE_DIST = [
         ['type' => 'grape',             'weight' => 65, 'price_min' => 0.75, 'price_max' => 1.60, 'qty_min' => 500,  'qty_max' => 8000,  'params' => true],
         ['type' => 'must',              'weight' => 20, 'price_min' => 0.90, 'price_max' => 1.80, 'qty_min' => 300,  'qty_max' => 4000,  'params' => true],
-        ['type' => 'concentrated_must', 'weight' =>  9, 'price_min' => 1.80, 'price_max' => 3.00, 'qty_min' => 200,  'qty_max' => 1500,  'params' => false],
-        ['type' => 'rectified_must',    'weight' =>  6, 'price_min' => 2.50, 'price_max' => 4.50, 'qty_min' => 100,  'qty_max' => 800,   'params' => false],
+        ['type' => 'concentrated_must', 'weight' => 9, 'price_min' => 1.80, 'price_max' => 3.00, 'qty_min' => 200,  'qty_max' => 1500,  'params' => false],
+        ['type' => 'rectified_must',    'weight' => 6, 'price_min' => 2.50, 'price_max' => 4.50, 'qty_min' => 100,  'qty_max' => 800,   'params' => false],
     ];
 
     // ── Campaigns ────────────────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ class WineryExternalPurchasesSeeder extends Seeder
     private const CAMPAIGNS = [
         ['year' => 2023, 'count' => 45, 'statuses' => ['processed' => 80, 'rejected' => 15, 'received' => 5,  'pending' => 0]],
         ['year' => 2024, 'count' => 55, 'statuses' => ['processed' => 70, 'rejected' => 10, 'received' => 15, 'pending' => 5]],
-        ['year' => 2025, 'count' => 50, 'statuses' => ['processed' => 40, 'rejected' =>  5, 'received' => 30, 'pending' => 25]],
+        ['year' => 2025, 'count' => 50, 'statuses' => ['processed' => 40, 'rejected' => 5, 'received' => 30, 'pending' => 25]],
     ];
 
     // ── Notes by product type ────────────────────────────────────────────────────
@@ -122,74 +122,74 @@ class WineryExternalPurchasesSeeder extends Seeder
             ->pluck('id')
             ->toArray();
 
-        $now  = now();
+        $now = now();
         $rows = [];
-        $idx  = 0; // deterministic index for cycling arrays
+        $idx = 0; // deterministic index for cycling arrays
 
         foreach (self::CAMPAIGNS as $campaign) {
-            $year     = $campaign['year'];
-            $count    = $campaign['count'];
+            $year = $campaign['year'];
+            $count = $campaign['count'];
             $statuses = $this->expandStatuses($campaign['statuses'], $count);
             shuffle($statuses);
 
             // Campaign harvest window: mid-August to end-October
             $campaignStart = \Carbon\Carbon::create($year, 8, 15);
-            $campaignEnd   = \Carbon\Carbon::create($year, 10, 31);
+            $campaignEnd = \Carbon\Carbon::create($year, 10, 31);
 
             for ($i = 0; $i < $count; $i++) {
-                $statusStr   = $statuses[$i];
-                $productDef  = $this->pickProductType($idx);
-                $variety     = self::VARIETIES[$idx % count(self::VARIETIES)];
+                $statusStr = $statuses[$i];
+                $productDef = $this->pickProductType($idx);
+                $variety = self::VARIETIES[$idx % count(self::VARIETIES)];
                 $supplierDef = self::SUPPLIERS[$idx % count(self::SUPPLIERS)];
 
                 $purchaseDate = $this->randomDateBetween($campaignStart, $campaignEnd);
                 $deliveryDate = $this->deliveryDate($statusStr, $purchaseDate);
 
-                $quantityKg  = $this->randomInRange($productDef['qty_min'], $productDef['qty_max'], 50);
-                $pricePerKg  = $this->randomDecimal($productDef['price_min'], $productDef['price_max'], 4);
-                $totalPrice  = round($quantityKg * $pricePerKg, 2);
+                $quantityKg = $this->randomInRange($productDef['qty_min'], $productDef['qty_max'], 50);
+                $pricePerKg = $this->randomDecimal($productDef['price_min'], $productDef['price_max'], 4);
+                $totalPrice = round($quantityKg * $pricePerKg, 2);
 
                 [$baume, $brix, $potAlcohol, $acidity, $ph] = $productDef['params']
                     ? $this->qualityParams($variety, $idx)
                     : [null, null, null, null, null];
 
-                $supplierId   = $supplierIds[$idx % max(1, count($supplierIds))] ?? null;
-                $wineId       = ($statusStr === 'processed' && !empty($wineIds))
+                $supplierId = $supplierIds[$idx % max(1, count($supplierIds))] ?? null;
+                $wineId = ($statusStr === 'processed' && ! empty($wineIds))
                     ? $wineIds[$idx % count($wineIds)]
                     : null;
-                $containerId  = ($statusStr !== 'pending' && !empty($containerIds))
+                $containerId = ($statusStr !== 'pending' && ! empty($containerIds))
                     ? $containerIds[$idx % count($containerIds)]
                     : null;
 
                 $notes = self::NOTES[$productDef['type']][$idx % count(self::NOTES[$productDef['type']])];
 
                 $rows[] = [
-                    'user_id'                  => self::WINERY_USER_ID,
-                    'supplier_id'              => $supplierId,
+                    'user_id' => self::WINERY_USER_ID,
+                    'supplier_id' => $supplierId,
                     'destination_container_id' => $containerId,
-                    'wine_id'                  => $wineId,
-                    'supplier_name'            => $supplierDef['name'],
-                    'product_type'             => $productDef['type'],
-                    'variety'                  => $variety['variety'],
-                    'origin'                   => $supplierDef['origin_hint'],
-                    'vintage_year'             => $year,
-                    'quantity_kg'              => $quantityKg,
-                    'price_per_kg'             => $pricePerKg,
-                    'total_price'              => $totalPrice,
-                    'purchase_date'            => $purchaseDate->format('Y-m-d'),
-                    'delivery_date'            => $deliveryDate?->format('Y-m-d'),
-                    'rega_code'                => $this->reGaCode($idx),
-                    'quality_certificate'      => $this->qualityCert($idx, $statusStr),
-                    'baume_degree'             => $baume,
-                    'brix_degree'              => $brix,
-                    'potential_alcohol'        => $potAlcohol,
-                    'acidity_level'            => $acidity,
-                    'ph_level'                 => $ph,
-                    'status'                   => $statusStr,
-                    'notes'                    => $notes,
-                    'created_by'               => self::WINERY_USER_ID,
-                    'created_at'               => $now,
-                    'updated_at'               => $now,
+                    'wine_id' => $wineId,
+                    'supplier_name' => $supplierDef['name'],
+                    'product_type' => $productDef['type'],
+                    'variety' => $variety['variety'],
+                    'origin' => $supplierDef['origin_hint'],
+                    'vintage_year' => $year,
+                    'quantity_kg' => $quantityKg,
+                    'price_per_kg' => $pricePerKg,
+                    'total_price' => $totalPrice,
+                    'purchase_date' => $purchaseDate->format('Y-m-d'),
+                    'delivery_date' => $deliveryDate?->format('Y-m-d'),
+                    'rega_code' => $this->reGaCode($idx),
+                    'quality_certificate' => $this->qualityCert($idx, $statusStr),
+                    'baume_degree' => $baume,
+                    'brix_degree' => $brix,
+                    'potential_alcohol' => $potAlcohol,
+                    'acidity_level' => $acidity,
+                    'ph_level' => $ph,
+                    'status' => $statusStr,
+                    'notes' => $notes,
+                    'created_by' => self::WINERY_USER_ID,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
 
                 $idx++;
@@ -198,13 +198,13 @@ class WineryExternalPurchasesSeeder extends Seeder
 
         DB::table('external_grape_purchases')->insert($rows);
 
-        $total    = count($rows);
+        $total = count($rows);
         $byStatus = array_count_values(array_column($rows, 'status'));
-        $byType   = array_count_values(array_column($rows, 'product_type'));
+        $byType = array_count_values(array_column($rows, 'product_type'));
 
         $this->command->info("✅ Compras externas: {$total} registros");
-        $this->command->line('   Por estado: ' . collect($byStatus)->map(fn ($v, $k) => "{$k}={$v}")->implode(', '));
-        $this->command->line('   Por tipo:   ' . collect($byType)->map(fn ($v, $k) => "{$k}={$v}")->implode(', '));
+        $this->command->line('   Por estado: '.collect($byStatus)->map(fn ($v, $k) => "{$k}={$v}")->implode(', '));
+        $this->command->line('   Por tipo:   '.collect($byType)->map(fn ($v, $k) => "{$k}={$v}")->implode(', '));
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -220,6 +220,7 @@ class WineryExternalPurchasesSeeder extends Seeder
         while (count($result) < $total) {
             $result[] = array_key_first($weights);
         }
+
         return array_slice($result, 0, $total);
     }
 
@@ -230,17 +231,18 @@ class WineryExternalPurchasesSeeder extends Seeder
         foreach (self::PRODUCT_TYPE_DIST as $def) {
             $pool = array_merge($pool, array_fill(0, $def['weight'], $def));
         }
+
         return $pool[$idx % count($pool)];
     }
 
     private function qualityParams(array $variety, int $idx): array
     {
         $offset = ($idx % 7) - 3; // -3..+3 variation
-        $baume  = round($variety['base_baume'] + $offset * 0.1, 2);
-        $brix   = round($variety['base_brix']  + $offset * 0.2, 2);
-        $ph     = round($variety['base_ph']    + $offset * 0.01, 2);
-        $acid   = round($variety['base_acid']  - $offset * 0.05, 2);
-        $alc    = round($baume * 1.035, 2);
+        $baume = round($variety['base_baume'] + $offset * 0.1, 2);
+        $brix = round($variety['base_brix'] + $offset * 0.2, 2);
+        $ph = round($variety['base_ph'] + $offset * 0.01, 2);
+        $acid = round($variety['base_acid'] - $offset * 0.05, 2);
+        $alc = round($baume * 1.035, 2);
 
         return [$baume, $brix, $alc, $acid, $ph];
     }
@@ -248,28 +250,31 @@ class WineryExternalPurchasesSeeder extends Seeder
     private function randomDateBetween(\Carbon\Carbon $start, \Carbon\Carbon $end): \Carbon\Carbon
     {
         $diff = $end->diffInDays($start);
+
         return $start->copy()->addDays((int) ($diff > 0 ? mt_rand(0, $diff) : 0));
     }
 
     private function deliveryDate(string $status, \Carbon\Carbon $purchaseDate): ?\Carbon\Carbon
     {
         return match ($status) {
-            'pending'   => null,
-            'rejected'  => $purchaseDate->copy()->addDays(mt_rand(1, 5)),
-            default     => $purchaseDate->copy()->addDays(mt_rand(1, 3)),
+            'pending' => null,
+            'rejected' => $purchaseDate->copy()->addDays(mt_rand(1, 5)),
+            default => $purchaseDate->copy()->addDays(mt_rand(1, 3)),
         };
     }
 
     private function randomInRange(int $min, int $max, int $step = 1): float
     {
         $steps = (int) (($max - $min) / $step);
+
         return (float) ($min + mt_rand(0, $steps) * $step);
     }
 
     private function randomDecimal(float $min, float $max, int $decimals = 4): float
     {
         $factor = 10 ** $decimals;
-        return round(mt_rand((int)($min * $factor), (int)($max * $factor)) / $factor, $decimals);
+
+        return round(mt_rand((int) ($min * $factor), (int) ($max * $factor)) / $factor, $decimals);
     }
 
     private function reGaCode(int $idx): ?string
@@ -280,6 +285,7 @@ class WineryExternalPurchasesSeeder extends Seeder
         }
         $province = ['35', '38', '35', '38', '07', '35'][$idx % 6];
         $num = str_pad((($idx * 13) % 9000) + 1000, 6, '0', STR_PAD_LEFT);
+
         return "ES{$province}{$num}GAN";
     }
 
@@ -289,6 +295,7 @@ class WineryExternalPurchasesSeeder extends Seeder
             return null;
         }
         $certs = ['CCPAE-2024', 'CRAEGA-2024', 'CAAE-2024', 'BIOLCAN-2024', null, null];
+
         return $certs[$idx % count($certs)];
     }
 

@@ -22,15 +22,15 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $q = DoQualification::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => 2023,
-            'wine_name'          => 'Reserva Especial',
-            'color'              => 'tinto',
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => 2023,
+            'wine_name' => 'Reserva Especial',
+            'color' => 'tinto',
             'alcohol_percentage' => '14.5',
             'qualification_date' => '2024-03-15',
-            'tasting_notes'      => 'Notas de frutos rojos',
-            'result'             => DoQualification::RESULT_PENDING,
+            'tasting_notes' => 'Notas de frutos rojos',
+            'result' => DoQualification::RESULT_PENDING,
         ]);
 
         $this->actingAs($supervisor);
@@ -51,12 +51,12 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $q = DoQualification::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => 2023,
-            'wine_name'          => 'Vino Test',
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => 2023,
+            'wine_name' => 'Vino Test',
             'qualification_date' => now()->toDateString(),
-            'result'             => DoQualification::RESULT_PENDING,
+            'result' => DoQualification::RESULT_PENDING,
         ]);
 
         $this->actingAs($supervisor);
@@ -76,12 +76,12 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $q = DoQualification::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => 2022,
-            'wine_name'          => 'Original',
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => 2022,
+            'wine_name' => 'Original',
             'qualification_date' => '2023-01-01',
-            'result'             => DoQualification::RESULT_PENDING,
+            'result' => DoQualification::RESULT_PENDING,
         ]);
 
         $this->actingAs($supervisor);
@@ -108,12 +108,12 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $q = DoQualification::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => 2023,
-            'wine_name'          => 'Vino Analítico',
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => 2023,
+            'wine_name' => 'Vino Analítico',
             'qualification_date' => now()->toDateString(),
-            'result'             => DoQualification::RESULT_PENDING,
+            'result' => DoQualification::RESULT_PENDING,
         ]);
 
         $this->actingAs($supervisor);
@@ -135,11 +135,11 @@ class EditTest extends SupervisorTestCase
 
         $fresh = $q->fresh();
         $this->assertEquals(22.5, (float) $fresh->brix_degree);
-        $this->assertEquals(6.2,  (float) $fresh->acidity_level);
-        $this->assertEquals(3.4,  (float) $fresh->ph_level);
-        $this->assertEquals(8.0,  (float) $fresh->visual_score);
-        $this->assertEquals(9.0,  (float) $fresh->aroma_score);
-        $this->assertEquals(7.0,  (float) $fresh->taste_score);
+        $this->assertEquals(6.2, (float) $fresh->acidity_level);
+        $this->assertEquals(3.4, (float) $fresh->ph_level);
+        $this->assertEquals(8.0, (float) $fresh->visual_score);
+        $this->assertEquals(9.0, (float) $fresh->aroma_score);
+        $this->assertEquals(7.0, (float) $fresh->taste_score);
         $this->assertEquals(85.0, (float) $fresh->overall_score);
     }
 
@@ -150,12 +150,12 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $q = DoQualification::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => 2023,
-            'wine_name'          => 'Vino',
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => 2023,
+            'wine_name' => 'Vino',
             'qualification_date' => now()->toDateString(),
-            'result'             => DoQualification::RESULT_PENDING,
+            'result' => DoQualification::RESULT_PENDING,
         ]);
 
         $this->actingAs($supervisor);
@@ -172,12 +172,12 @@ class EditTest extends SupervisorTestCase
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
 
         $q = DoQualification::create([
-            'supervisor_id'      => $supervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => 2023,
-            'wine_name'          => 'Vino',
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => 2023,
+            'wine_name' => 'Vino',
             'qualification_date' => now()->toDateString(),
-            'result'             => DoQualification::RESULT_PENDING,
+            'result' => DoQualification::RESULT_PENDING,
         ]);
 
         $this->actingAs($supervisor);
@@ -196,16 +196,16 @@ class EditTest extends SupervisorTestCase
 
     public function test_cannot_edit_another_supervisors_qualification(): void
     {
-        [$supervisor, $winery]  = $this->makeSupervisorWithWinery();
-        $otherSupervisor        = $this->makeSupervisor();
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $otherSupervisor = $this->makeSupervisor();
 
         $q = DoQualification::create([
-            'supervisor_id'      => $otherSupervisor->id,
-            'winery_id'          => $winery->id,
-            'vintage'            => 2023,
-            'wine_name'          => 'Ajeno',
+            'supervisor_id' => $otherSupervisor->id,
+            'winery_id' => $winery->id,
+            'vintage' => 2023,
+            'wine_name' => 'Ajeno',
             'qualification_date' => now()->toDateString(),
-            'result'             => DoQualification::RESULT_PENDING,
+            'result' => DoQualification::RESULT_PENDING,
         ]);
 
         $this->actingAs($supervisor);

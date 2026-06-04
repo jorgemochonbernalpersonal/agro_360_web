@@ -11,27 +11,6 @@ use Tests\Feature\WineryTestCase;
 
 class RequestsTest extends WineryTestCase
 {
-    private function makeSupervisor(): User
-    {
-        return User::factory()->create([
-            'role'              => 'supervisor',
-            'email_verified_at' => now(),
-        ]);
-    }
-
-    private function makeLinkedSupervisor(User $winery): User
-    {
-        $supervisor = $this->makeSupervisor();
-
-        SupervisorWinery::create([
-            'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'assigned_by'   => $supervisor->id,
-        ]);
-
-        return $supervisor;
-    }
-
     // ── render ────────────────────────────────────────────────────────────────
 
     public function test_renders(): void
@@ -45,16 +24,16 @@ class RequestsTest extends WineryTestCase
 
     public function test_shows_pending_requests(): void
     {
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $supervisor = $this->makeLinkedSupervisor($winery);
 
         SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_LABEL_REQUEST,
-            'status'        => SupervisorRequest::STATUS_PENDING,
-            'title'         => 'Solicitud etiquetas lote A',
-            'sent_at'       => now(),
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_LABEL_REQUEST,
+            'status' => SupervisorRequest::STATUS_PENDING,
+            'title' => 'Solicitud etiquetas lote A',
+            'sent_at' => now(),
         ]);
 
         Livewire::actingAs($winery)
@@ -66,15 +45,15 @@ class RequestsTest extends WineryTestCase
 
     public function test_winery_can_respond_to_pending_request(): void
     {
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $supervisor = $this->makeLinkedSupervisor($winery);
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_QUALIFICATION,
-            'status'        => SupervisorRequest::STATUS_PENDING,
-            'sent_at'       => now(),
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_QUALIFICATION,
+            'status' => SupervisorRequest::STATUS_PENDING,
+            'sent_at' => now(),
         ]);
 
         Livewire::actingAs($winery)
@@ -91,14 +70,14 @@ class RequestsTest extends WineryTestCase
 
     public function test_winery_cannot_respond_to_non_pending_request(): void
     {
-        $winery     = $this->makeWinery();
+        $winery = $this->makeWinery();
         $supervisor = $this->makeLinkedSupervisor($winery);
 
         $req = SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'type'          => SupervisorRequest::TYPE_CERTIFICATION,
-            'status'        => SupervisorRequest::STATUS_APPROVED, // ya resuelta
+            'winery_id' => $winery->id,
+            'type' => SupervisorRequest::TYPE_CERTIFICATION,
+            'status' => SupervisorRequest::STATUS_APPROVED, // ya resuelta
         ]);
 
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -113,22 +92,43 @@ class RequestsTest extends WineryTestCase
 
     public function test_winery_only_sees_their_own_requests(): void
     {
-        $winery      = $this->makeWinery();
+        $winery = $this->makeWinery();
         $otherWinery = $this->makeOtherWinery();
-        $supervisor  = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
 
         SupervisorWinery::create(['supervisor_id' => $supervisor->id, 'winery_id' => $otherWinery->id, 'assigned_by' => $supervisor->id]);
 
         SupervisorRequest::create([
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $otherWinery->id,
-            'type'          => SupervisorRequest::TYPE_NONCONFORMITY,
-            'title'         => 'Acta ajena',
-            'status'        => SupervisorRequest::STATUS_PENDING,
+            'winery_id' => $otherWinery->id,
+            'type' => SupervisorRequest::TYPE_NONCONFORMITY,
+            'title' => 'Acta ajena',
+            'status' => SupervisorRequest::STATUS_PENDING,
         ]);
 
         Livewire::actingAs($winery)
             ->test(Index::class)
             ->assertDontSee('Acta ajena');
+    }
+
+    private function makeSupervisor(): User
+    {
+        return User::factory()->create([
+            'role' => 'supervisor',
+            'email_verified_at' => now(),
+        ]);
+    }
+
+    private function makeLinkedSupervisor(User $winery): User
+    {
+        $supervisor = $this->makeSupervisor();
+
+        SupervisorWinery::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+            'assigned_by' => $supervisor->id,
+        ]);
+
+        return $supervisor;
     }
 }

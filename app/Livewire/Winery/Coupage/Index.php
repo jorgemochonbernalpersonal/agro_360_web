@@ -20,12 +20,15 @@ class Index extends Component
     #[Url(except: '')]
     public string $vintageFilter = '';
 
-    public function updatingVintageFilter(): void { $this->resetPage(); }
+    public function updatingVintageFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function delete(int $id): void
     {
-        $userId   = Auth::id();
-        $transfer = WineTransfer::whereHas('wine', fn($q) => $q->where('user_id', $userId))
+        $userId = Auth::id();
+        $transfer = WineTransfer::whereHas('wine', fn ($q) => $q->where('user_id', $userId))
             ->where('transfer_type', 'blending')
             ->findOrFail($id);
 
@@ -45,14 +48,14 @@ class Index extends Component
         $userId = Auth::id();
 
         $blends = WineTransfer::with(['wine', 'sourceWine', 'fromContainer', 'toContainer', 'oenologist'])
-            ->whereHas('wine', fn($q) => $q->where('user_id', $userId))
+            ->whereHas('wine', fn ($q) => $q->where('user_id', $userId))
             ->where('transfer_type', 'blending')
-            ->when($this->vintageFilter, fn($q) => $q->whereHas('wine', fn($wq) => $wq->where('vintage', $this->vintageFilter)))
+            ->when($this->vintageFilter, fn ($q) => $q->whereHas('wine', fn ($wq) => $wq->where('vintage', $this->vintageFilter)))
             ->orderByDesc('transfer_date')
             ->orderByDesc('id')
             ->paginate(20);
 
-        $availableVintages = WineTransfer::whereHas('wine', fn($q) => $q->where('user_id', $userId))
+        $availableVintages = WineTransfer::whereHas('wine', fn ($q) => $q->where('user_id', $userId))
             ->where('transfer_type', 'blending')
             ->join('wines', 'wine_transfers.wine_id', '=', 'wines.id')
             ->distinct()
@@ -60,7 +63,7 @@ class Index extends Component
             ->pluck('wines.vintage');
 
         return view('livewire.winery.coupage.index', [
-            'blends'            => $blends,
+            'blends' => $blends,
             'availableVintages' => $availableVintages,
         ]);
     }

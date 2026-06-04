@@ -9,20 +9,6 @@ use Tests\Feature\SupervisorTestCase;
 
 class QualificationCrudTest extends SupervisorTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeQualification(int $supervisorId, int $wineryId, array $attrs = []): DoQualification
-    {
-        return DoQualification::create(array_merge([
-            'supervisor_id'      => $supervisorId,
-            'winery_id'          => $wineryId,
-            'vintage'            => now()->year,
-            'wine_name'          => 'Vino Test',
-            'qualification_date' => now()->format('Y-m-d'),
-            'result'             => DoQualification::RESULT_PENDING,
-        ], $attrs));
-    }
-
     // ── saveQualification ─────────────────────────────────────────────────────
 
     public function test_supervisor_can_create_qualification(): void
@@ -40,9 +26,9 @@ class QualificationCrudTest extends SupervisorTestCase
 
         $this->assertDatabaseHas('do_qualifications', [
             'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-            'wine_name'     => 'Ribera Selección',
-            'result'        => DoQualification::RESULT_PENDING,
+            'winery_id' => $winery->id,
+            'wine_name' => 'Ribera Selección',
+            'result' => DoQualification::RESULT_PENDING,
         ]);
     }
 
@@ -76,7 +62,7 @@ class QualificationCrudTest extends SupervisorTestCase
 
     public function test_save_qualification_rejects_unlinked_winery(): void
     {
-        $supervisor  = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $otherWinery = $this->makeWinery();
 
         Livewire::actingAs($supervisor)
@@ -90,7 +76,7 @@ class QualificationCrudTest extends SupervisorTestCase
 
         $this->assertDatabaseMissing('do_qualifications', [
             'supervisor_id' => $supervisor->id,
-            'wine_name'     => 'Vino Ajeno',
+            'wine_name' => 'Vino Ajeno',
         ]);
     }
 
@@ -138,8 +124,8 @@ class QualificationCrudTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_qualifications', [
-            'id'           => $q->id,
-            'result'       => DoQualification::RESULT_QUALIFIED,
+            'id' => $q->id,
+            'result' => DoQualification::RESULT_QUALIFIED,
             'qualified_by' => $supervisor->id,
         ]);
     }
@@ -170,8 +156,8 @@ class QualificationCrudTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('do_qualifications', [
-            'id'           => $q->id,
-            'result'       => DoQualification::RESULT_DISQUALIFIED,
+            'id' => $q->id,
+            'result' => DoQualification::RESULT_DISQUALIFIED,
             'qualified_by' => $supervisor->id,
         ]);
     }
@@ -215,11 +201,23 @@ class QualificationCrudTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('tabs', fn ($tabs) =>
-                $tabs['qualified']['count'] === 1 &&
+            ->assertViewHas('tabs', fn ($tabs) => $tabs['qualified']['count'] === 1 &&
                 $tabs['disqualified']['count'] === 1 &&
                 $tabs['pending']['count'] === 1 &&
                 $tabs['all']['count'] === 3
             );
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeQualification(int $supervisorId, int $wineryId, array $attrs = []): DoQualification
+    {
+        return DoQualification::create(array_merge([
+            'supervisor_id' => $supervisorId,
+            'winery_id' => $wineryId,
+            'vintage' => now()->year,
+            'wine_name' => 'Vino Test',
+            'qualification_date' => now()->format('Y-m-d'),
+            'result' => DoQualification::RESULT_PENDING,
+        ], $attrs));
     }
 }

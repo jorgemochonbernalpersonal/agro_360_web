@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::table('product_stocks', function (Blueprint $table) {
             $table->decimal('minimum_stock', 10, 3)
-                  ->nullable()
-                  ->after('quantity')
-                  ->comment('Umbral mínimo de stock para alertas');
+                ->nullable()
+                ->after('quantity')
+                ->comment('Umbral mínimo de stock para alertas');
         });
     }
 

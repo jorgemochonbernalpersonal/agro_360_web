@@ -21,21 +21,26 @@ class MunicipalityCoordinatesSeeder extends Seeder
 
         if (! file_exists($csvPath)) {
             $this->command->error('Archivo no encontrado: database/data/municipios.csv');
+
             return;
         }
 
-        $handle  = fopen($csvPath, 'r');
+        $handle = fopen($csvPath, 'r');
         $updated = 0;
         $skipped = 0;
 
         while (($row = fgetcsv($handle, 0, ';')) !== false) {
-            if (count($row) < 5) continue;
+            if (count($row) < 5) {
+                continue;
+            }
 
             $municipioName = trim($row[2]);
-            $lat           = (float) $row[3];
-            $lng           = (float) $row[4];
+            $lat = (float) $row[3];
+            $lng = (float) $row[4];
 
-            if ($lat === 0.0 && $lng === 0.0) continue;
+            if ($lat === 0.0 && $lng === 0.0) {
+                continue;
+            }
 
             $affected = DB::table('municipalities')
                 ->where('name', $municipioName)

@@ -9,15 +9,18 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $currentTab             = 'active';
-    public string $search                 = '';
-    public string $filterCampaign         = '';
-    public string $filterByproductType    = '';
+    public string $currentTab = 'active';
+
+    public string $search = '';
+
+    public string $filterCampaign = '';
+
+    public string $filterByproductType = '';
 
     protected $queryString = [
-        'currentTab'          => ['as' => 'tab',  'except' => 'active'],
-        'search'              => ['as' => 'q',    'except' => ''],
-        'filterCampaign'      => ['as' => 'campaign', 'except' => ''],
+        'currentTab' => ['as' => 'tab',  'except' => 'active'],
+        'search' => ['as' => 'q',    'except' => ''],
+        'filterCampaign' => ['as' => 'campaign', 'except' => ''],
         'filterByproductType' => ['as' => 'type', 'except' => ''],
     ];
 
@@ -29,13 +32,19 @@ class Index extends AbstractIndex
         }
     }
 
-    public function updatingSearch(): void             { $this->resetPage(); }
-    public function updatingFilterCampaign(): void     { $this->resetPage(); }
-    public function updatingFilterByproductType(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'filterCampaign' => '', 'filterByproductType' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingFilterCampaign(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterByproductType(): void
+    {
+        $this->resetPage();
     }
 
     public function switchTab(string $tab): void
@@ -62,6 +71,11 @@ class Index extends AbstractIndex
         $this->toastSuccess(__('Registro eliminado.'));
     }
 
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'filterCampaign' => '', 'filterByproductType' => ''];
+    }
+
     protected function baseQuery(): Builder
     {
         return HarvestByproduct::where('viticulturist_id', $this->viticulturistId())
@@ -72,8 +86,8 @@ class Index extends AbstractIndex
     {
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('destination_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('document_reference', 'like', '%' . $this->search . '%');
+                $q->where('destination_name', 'like', '%'.$this->search.'%')
+                    ->orWhere('document_reference', 'like', '%'.$this->search.'%');
             });
         }
         if ($this->filterCampaign) {
@@ -84,33 +98,39 @@ class Index extends AbstractIndex
         }
     }
 
-    protected function defaultOrderBy(): array { return ['date', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['date', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
-        $userId    = $this->viticulturistId();
+        $userId = $this->viticulturistId();
         $baseQuery = HarvestByproduct::where('viticulturist_id', $userId);
 
         $activeQ = (clone $baseQuery)->where('active', true)
-            ->when($this->filterCampaign, fn($q) => $q->where('campaign_id', $this->filterCampaign));
+            ->when($this->filterCampaign, fn ($q) => $q->where('campaign_id', $this->filterCampaign));
 
         $stats = [
-            'active'     => (clone $baseQuery)->where('active', true)->count(),
-            'archived'   => (clone $baseQuery)->where('active', false)->count(),
-            'total_kg'   => $activeQ->sum('quantity_kg'),
-            'pomace_kg'  => (clone $activeQ)->where('byproduct_type', 'pomace')->sum('quantity_kg'),
-            'stem_kg'    => (clone $activeQ)->where('byproduct_type', 'stem')->sum('quantity_kg'),
-            'lees_kg'    => (clone $activeQ)->where('byproduct_type', 'lees')->sum('quantity_kg'),
+            'active' => (clone $baseQuery)->where('active', true)->count(),
+            'archived' => (clone $baseQuery)->where('active', false)->count(),
+            'total_kg' => $activeQ->sum('quantity_kg'),
+            'pomace_kg' => (clone $activeQ)->where('byproduct_type', 'pomace')->sum('quantity_kg'),
+            'stem_kg' => (clone $activeQ)->where('byproduct_type', 'stem')->sum('quantity_kg'),
+            'lees_kg' => (clone $activeQ)->where('byproduct_type', 'lees')->sum('quantity_kg'),
         ];
 
         return [
-            'entries'          => $entries,
-            'campaigns'        => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
-            'byproductTypes'   => HarvestByproduct::BYPRODUCT_TYPES,
+            'entries' => $entries,
+            'campaigns' => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
+            'byproductTypes' => HarvestByproduct::BYPRODUCT_TYPES,
             'destinationTypes' => HarvestByproduct::DESTINATION_TYPES,
-            'stats'            => $stats,
+            'stats' => $stats,
         ];
     }
 }

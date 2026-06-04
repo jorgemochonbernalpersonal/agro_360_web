@@ -19,9 +19,9 @@ class PhytosanitaryAlertController extends Controller
 
         $request->validate([
             'alert_type' => 'nullable|string|max:50',
-            'severity'   => 'nullable|string|max:50',
-            'search'     => 'nullable|string|max:100',
-            'per_page'   => 'nullable|integer|min:1|max:100',
+            'severity' => 'nullable|string|max:50',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = PhytosanitaryAlert::active()
@@ -32,7 +32,7 @@ class PhytosanitaryAlertController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('title', 'like', "%{$term}%")
-                  ->orWhere('description', 'like', "%{$term}%");
+                    ->orWhere('description', 'like', "%{$term}%");
             });
         }
 
@@ -49,10 +49,10 @@ class PhytosanitaryAlertController extends Controller
         return response()->json([
             'data' => PhytosanitaryAlertResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -63,19 +63,19 @@ class PhytosanitaryAlertController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'source'      => 'required|string|max:100',
-            'alert_type'  => 'required|string|max:100',
-            'severity'    => 'required|string|max:50',
+            'title' => 'required|string|max:255',
+            'source' => 'required|string|max:100',
+            'alert_type' => 'required|string|max:100',
+            'severity' => 'required|string|max:50',
             'description' => 'required|string|max:2000',
-            'alert_date'  => 'required|date',
+            'alert_date' => 'required|date',
             'expiry_date' => 'nullable|date|after_or_equal:alert_date',
         ]);
 
         $record = \App\Models\PhytosanitaryAlert::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\PhytosanitaryAlertResource($record),
+            'data' => new \App\Http\Resources\Api\PhytosanitaryAlertResource($record),
             'message' => __('Alerta fitosanitaria registrada correctamente.'),
         ], 201);
     }

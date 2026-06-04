@@ -8,19 +8,32 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search      = '';
-    public string $typeFilter  = '';
+    public string $search = '';
+
+    public string $typeFilter = '';
+
     public string $statusFilter = '';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'typeFilter'   => ['except' => ''],
+        'search' => ['except' => ''],
+        'typeFilter' => ['except' => ''],
         'statusFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void       { $this->resetPage(); }
-    public function updatingTypeFilter(): void   { $this->resetPage(); }
-    public function updatingStatusFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter(): void
+    {
+        $this->resetPage();
+    }
 
     protected function filterDefaults(): array
     {
@@ -31,8 +44,8 @@ class Index extends AbstractIndex
     {
         return Wine::where('user_id', $this->wineryId())
             ->with([
-                'analyses'    => fn($q) => $q->latest('analysis_date')->limit(1),
-                'tastingNotes'=> fn($q) => $q->latest('evaluation_date')->limit(1),
+                'analyses' => fn ($q) => $q->latest('analysis_date')->limit(1),
+                'tastingNotes' => fn ($q) => $q->latest('evaluation_date')->limit(1),
                 'oenologist:id,name,surname',
             ]);
     }
@@ -40,7 +53,7 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->whereRaw('LOWER(name) LIKE ?', [$term]);
         }
 
@@ -60,26 +73,32 @@ class Index extends AbstractIndex
         $query->orderByDesc('vintage')->orderBy('name');
     }
 
-    protected function defaultOrderBy(): array { return ['vintage', 'desc']; }
+    protected function defaultOrderBy(): array
+    {
+        return ['vintage', 'desc'];
+    }
 
-    protected function perPage(): int { return 15; }
+    protected function perPage(): int
+    {
+        return 15;
+    }
 
     protected function viewData(mixed $entries): array
     {
         $base = Wine::where('user_id', $this->wineryId());
 
         $stats = [
-            'total'         => (clone $base)->count(),
-            'active'        => (clone $base)->whereIn('status', ['in_progress', 'aged'])->count(),
-            'bottled'       => (clone $base)->where('status', 'bottled')->count(),
+            'total' => (clone $base)->count(),
+            'active' => (clone $base)->whereIn('status', ['in_progress', 'aged'])->count(),
+            'bottled' => (clone $base)->where('status', 'bottled')->count(),
             'with_analysis' => (clone $base)->whereHas('analyses')->count(),
         ];
 
         return [
-            'wines'      => $entries,
-            'wineTypes'  => Wine::wineTypeOptions(),
-            'statuses'   => Wine::statusOptions(),
-            'stats'      => $stats,
+            'wines' => $entries,
+            'wineTypes' => Wine::wineTypeOptions(),
+            'statuses' => Wine::statusOptions(),
+            'stats' => $stats,
         ];
     }
 }

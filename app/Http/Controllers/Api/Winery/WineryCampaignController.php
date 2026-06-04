@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
-use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,16 +36,16 @@ class WineryCampaignController extends Controller
             $query->active();
         }
 
-        $perPage   = $this->resolvePerPage($request, 20, 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $campaigns = $query->paginate($perPage);
 
         return response()->json([
             'data' => $campaigns->map(fn ($c) => $this->format($c)),
             'meta' => [
-                'total'        => $campaigns->total(),
-                'per_page'     => $campaigns->perPage(),
+                'total' => $campaigns->total(),
+                'per_page' => $campaigns->perPage(),
                 'current_page' => $campaigns->currentPage(),
-                'last_page'    => $campaigns->lastPage(),
+                'last_page' => $campaigns->lastPage(),
             ],
         ]);
     }
@@ -76,20 +75,20 @@ class WineryCampaignController extends Controller
             ->pluck('viticulturist_id');
 
         $validated = $request->validate([
-            'viticulturist_id' => 'required|integer|in:' . $viticulturistIds->implode(','),
-            'name'             => 'required|string|max:255',
-            'year'             => 'required|integer|min:2000|max:' . (now()->year + 2),
-            'start_date'       => 'nullable|date',
-            'end_date'         => 'nullable|date|after_or_equal:start_date',
-            'active'           => 'nullable|boolean',
-            'description'      => 'nullable|string|max:2000',
+            'viticulturist_id' => 'required|integer|in:'.$viticulturistIds->implode(','),
+            'name' => 'required|string|max:255',
+            'year' => 'required|integer|min:2000|max:'.(now()->year + 2),
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'active' => 'nullable|boolean',
+            'description' => 'nullable|string|max:2000',
         ]);
 
         $campaign = Campaign::create($validated);
         $campaign->load('viticulturist');
 
         return response()->json([
-            'data'    => $this->format($campaign),
+            'data' => $this->format($campaign),
             'message' => __('Campaña creada correctamente.'),
         ], 201);
     }
@@ -106,11 +105,11 @@ class WineryCampaignController extends Controller
         $campaign = Campaign::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
 
         $validated = $request->validate([
-            'name'        => 'sometimes|string|max:255',
-            'year'        => 'sometimes|integer|min:2000|max:' . (now()->year + 2),
-            'start_date'  => 'sometimes|nullable|date',
-            'end_date'    => 'sometimes|nullable|date|after_or_equal:start_date',
-            'active'      => 'sometimes|boolean',
+            'name' => 'sometimes|string|max:255',
+            'year' => 'sometimes|integer|min:2000|max:'.(now()->year + 2),
+            'start_date' => 'sometimes|nullable|date',
+            'end_date' => 'sometimes|nullable|date|after_or_equal:start_date',
+            'active' => 'sometimes|boolean',
             'description' => 'sometimes|nullable|string|max:2000',
         ]);
 
@@ -141,19 +140,19 @@ class WineryCampaignController extends Controller
     private function format(Campaign $c): array
     {
         return [
-            'id'                      => $c->id,
-            'name'                    => $c->name,
-            'year'                    => $c->year,
-            'viticulturist_id'        => $c->viticulturist_id,
-            'viticulturist_name'      => $c->viticulturist?->name,
-            'start_date'              => $c->start_date?->toDateString(),
-            'end_date'                => $c->end_date?->toDateString(),
-            'active'                  => $c->active,
-            'description'             => $c->description,
-            'mid_validation_signed'   => $c->mid_validation_signed,
+            'id' => $c->id,
+            'name' => $c->name,
+            'year' => $c->year,
+            'viticulturist_id' => $c->viticulturist_id,
+            'viticulturist_name' => $c->viticulturist?->name,
+            'start_date' => $c->start_date?->toDateString(),
+            'end_date' => $c->end_date?->toDateString(),
+            'active' => $c->active,
+            'description' => $c->description,
+            'mid_validation_signed' => $c->mid_validation_signed,
             'final_validation_signed' => $c->final_validation_signed,
-            'locked_at'               => $c->locked_at?->toIso8601String(),
-            'created_at'              => $c->created_at->toIso8601String(),
+            'locked_at' => $c->locked_at?->toIso8601String(),
+            'created_at' => $c->created_at->toIso8601String(),
         ];
     }
 }

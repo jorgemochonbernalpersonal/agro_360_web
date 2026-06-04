@@ -15,17 +15,17 @@ return new class extends Migration
             // Superficie admisible PAC
             $table->decimal('pac_eligible_area', 10, 3)->nullable()->after('area')
                 ->comment('Superficie admisible para ayudas PAC (excluye caminos, linderos, etc.)');
-            
+
             $table->decimal('non_eligible_area', 10, 3)->default(0)->after('pac_eligible_area')
                 ->comment('Superficie no admisible (caminos, construcciones, etc.)');
-            
+
             $table->decimal('eligibility_coefficient', 5, 4)->default(1.0000)->after('non_eligible_area')
                 ->comment('Coeficiente de admisibilidad (pac_eligible_area / area)');
-            
+
             // Régimen de tenencia
             $table->string('tenure_regime')->default('propiedad')->after('eligibility_coefficient')
                 ->comment('Régimen de tenencia: propiedad, arrendamiento, aparceria, cesion, usufructo');
-            
+
             // Índices para búsquedas
             $table->index('tenure_regime');
         });

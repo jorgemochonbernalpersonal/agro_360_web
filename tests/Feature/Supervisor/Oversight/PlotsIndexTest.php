@@ -3,7 +3,6 @@
 namespace Tests\Feature\Supervisor\Oversight;
 
 use App\Livewire\Supervisor\Oversight\Plots\Index;
-use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
@@ -23,7 +22,7 @@ class PlotsIndexTest extends SupervisorTestCase
 
     public function test_index_shows_plots_of_own_viticulturists(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         $this->makePlot($viticulturist, ['name' => 'Parcela Propia']);
@@ -51,7 +50,7 @@ class PlotsIndexTest extends SupervisorTestCase
 
     public function test_global_stats_reflect_supervisor_plots(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         $this->makePlot($viticulturist, ['area' => 3.0, 'pac_eligible_area' => null]);
@@ -59,8 +58,7 @@ class PlotsIndexTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
-            ->assertViewHas('globalStats', fn($stats) =>
-                $stats->total_plots == 2
+            ->assertViewHas('globalStats', fn ($stats) => $stats->total_plots == 2
                 && (float) $stats->total_area == 5.0
                 && $stats->without_pac == 1
             );
@@ -71,8 +69,8 @@ class PlotsIndexTest extends SupervisorTestCase
     public function test_filter_by_viticulturist_narrows_results(): void
     {
         $supervisor = $this->makeSupervisor();
-        $vit1       = $this->makeViticulturistForSupervisor($supervisor);
-        $vit2       = $this->makeViticulturistForSupervisor($supervisor);
+        $vit1 = $this->makeViticulturistForSupervisor($supervisor);
+        $vit2 = $this->makeViticulturistForSupervisor($supervisor);
 
         $this->makePlot($vit1, ['name' => 'Parcela Uno']);
         $this->makePlot($vit2, ['name' => 'Parcela Dos']);
@@ -86,7 +84,7 @@ class PlotsIndexTest extends SupervisorTestCase
 
     public function test_filter_locked_shows_only_locked_plots(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         $this->makePlot($viticulturist, ['name' => 'Bloqueada', 'is_locked' => true]);
@@ -101,7 +99,7 @@ class PlotsIndexTest extends SupervisorTestCase
 
     public function test_search_filters_by_plot_name(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         $this->makePlot($viticulturist, ['name' => 'Viña Alta']);

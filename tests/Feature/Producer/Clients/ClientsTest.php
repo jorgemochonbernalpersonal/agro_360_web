@@ -60,10 +60,10 @@ class ClientsTest extends ProducerTestCase
     public function test_other_producer_cannot_edit_winery_client(): void
     {
         $client = Client::create([
-            'user_id'     => $this->producer->id,
+            'user_id' => $this->producer->id,
             'client_type' => 'individual',
-            'first_name'  => 'Private Client',
-            'active'      => true,
+            'first_name' => 'Private Client',
+            'active' => true,
         ]);
 
         $this->actingAs($this->makeOtherProducer())

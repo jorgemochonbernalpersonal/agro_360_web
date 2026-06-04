@@ -16,14 +16,23 @@ class Create extends Component
     use WithRoleAwareRedirect, WithToastNotifications, WithViticulturistValidation;
 
     public $plot_planting_id = '';
+
     public $campaign_id = '';
+
     public $event = '';
+
     public $obs_date = '';
+
     public $source = 'manual';
+
     public $confidence = 100;
+
     public $degree_days_accumulated = '';
+
     public $bbch_code = '';
+
     public $notes = '';
+
     public bool $plantingLocked = false;
 
     public function mount(): void
@@ -39,7 +48,7 @@ class Create extends Component
 
         $planting_id = request()->integer('planting_id') ?: null;
         if ($planting_id) {
-            $planting = PlotPlanting::whereHas('plot', fn($q) => $q->where('viticulturist_id', $user->id))
+            $planting = PlotPlanting::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $user->id))
                 ->find($planting_id);
             if ($planting) {
                 $this->plot_planting_id = $planting->id;
@@ -51,21 +60,6 @@ class Create extends Component
     public function updatedEvent($value): void
     {
         $this->bbch_code = PhenologyObservation::BBCH_CODES[$value] ?? '';
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'plot_planting_id'        => $this->plotPlantingOwnershipRule(true),
-            'campaign_id'             => $this->campaignOwnershipRule(),
-            'event'                   => 'required|in:' . implode(',', array_keys(PhenologyObservation::EVENTS)),
-            'obs_date'                => 'required|date',
-            'source'                  => 'required|in:manual,sensor,model,auto',
-            'confidence'              => 'required|integer|min:0|max:100',
-            'degree_days_accumulated' => 'nullable|numeric|min:0',
-            'bbch_code'               => 'nullable|integer|min:0|max:99',
-            'notes'                   => 'nullable|string',
-        ];
     }
 
     public function save()
@@ -80,18 +74,18 @@ class Create extends Component
         PhenologyObservation::updateOrCreate(
             [
                 'plot_planting_id' => $this->plot_planting_id,
-                'campaign_id'      => $this->campaign_id,
-                'event'            => $this->event,
+                'campaign_id' => $this->campaign_id,
+                'event' => $this->event,
             ],
             [
-                'viticulturist_id'        => Auth::id(),
-                'obs_date'                => $this->obs_date,
-                'source'                  => $this->source,
-                'confidence'              => $this->confidence,
+                'viticulturist_id' => Auth::id(),
+                'obs_date' => $this->obs_date,
+                'source' => $this->source,
+                'confidence' => $this->confidence,
                 'degree_days_accumulated' => $this->degree_days_accumulated ?: null,
-                'bbch_code'               => $this->bbch_code ?: null,
-                'notes'                   => $this->notes ?: null,
-                'active'                  => true,
+                'bbch_code' => $this->bbch_code ?: null,
+                'notes' => $this->notes ?: null,
+                'active' => true,
             ]
         );
 
@@ -109,7 +103,7 @@ class Create extends Component
         $campaigns = Campaign::where('viticulturist_id', $user->id)
             ->orderBy('year', 'desc')->get();
 
-        $plantings = PlotPlanting::whereHas('plot', fn($q) => $q->where('viticulturist_id', $user->id))
+        $plantings = PlotPlanting::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $user->id))
             ->where('status', 'active')
             ->with(['plot', 'grapeVariety'])
             ->orderBy('plot_id')
@@ -118,8 +112,23 @@ class Create extends Component
         return view('livewire.viticulturist.phenology.create', [
             'campaigns' => $campaigns,
             'plantings' => $plantings,
-            'events'    => PhenologyObservation::eventOptions(),
-            'sources'   => PhenologyObservation::sourceOptions(),
+            'events' => PhenologyObservation::eventOptions(),
+            'sources' => PhenologyObservation::sourceOptions(),
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'plot_planting_id' => $this->plotPlantingOwnershipRule(true),
+            'campaign_id' => $this->campaignOwnershipRule(),
+            'event' => 'required|in:'.implode(',', array_keys(PhenologyObservation::EVENTS)),
+            'obs_date' => 'required|date',
+            'source' => 'required|in:manual,sensor,model,auto',
+            'confidence' => 'required|integer|min:0|max:100',
+            'degree_days_accumulated' => 'nullable|numeric|min:0',
+            'bbch_code' => 'nullable|integer|min:0|max:99',
+            'notes' => 'nullable|string',
+        ];
     }
 }

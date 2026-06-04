@@ -72,6 +72,8 @@ class PlotPlantingAuditLog extends Model
 
     /**
      * Scope: Filtrar por plantación
+     *
+     * @param mixed $query
      */
     public function scopeForPlanting($query, int $plantingId)
     {
@@ -80,6 +82,8 @@ class PlotPlantingAuditLog extends Model
 
     /**
      * Scope: Filtrar por usuario
+     *
+     * @param mixed $query
      */
     public function scopeByUser($query, int $userId)
     {
@@ -88,6 +92,8 @@ class PlotPlantingAuditLog extends Model
 
     /**
      * Scope: Filtrar por acción
+     *
+     * @param mixed $query
      */
     public function scopeOfAction($query, string $action)
     {
@@ -96,6 +102,8 @@ class PlotPlantingAuditLog extends Model
 
     /**
      * Scope: Ordenar por más reciente
+     *
+     * @param mixed $query
      */
     public function scopeRecent($query)
     {

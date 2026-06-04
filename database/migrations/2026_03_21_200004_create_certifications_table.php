@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('viticulturist_id')->constrained('users')->cascadeOnDelete();
             $table->enum('certification_type', [
                 'ecologico', 'produccion_integrada', 'globalgap',
-                'rainforest', 'denominacion_origen', 'indicacion_geografica', 'otro'
+                'rainforest', 'denominacion_origen', 'indicacion_geografica', 'otro',
             ]);
             $table->string('certifying_body', 255);
             $table->string('certificate_number', 100)->nullable();

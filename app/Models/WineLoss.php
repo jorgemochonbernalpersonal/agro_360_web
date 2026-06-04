@@ -9,28 +9,18 @@ class WineLoss extends Model
 {
     const LOSS_TYPES = [
         'evaporation' => 'Evaporación / Merma natural',
-        'filtration'  => 'Filtración',
-        'sampling'    => 'Muestreo / Analítica',
-        'spillage'    => 'Derrame accidental',
-        'other'       => 'Otro',
+        'filtration' => 'Filtración',
+        'sampling' => 'Muestreo / Analítica',
+        'spillage' => 'Derrame accidental',
+        'other' => 'Otro',
     ];
 
     const LOSS_AUTHORIZATIONS = [
-        'authorized'    => 'Pérdida autorizada',
-        'processing'    => 'Pérdida por proceso',
+        'authorized' => 'Pérdida autorizada',
+        'processing' => 'Pérdida por proceso',
         'extraordinary' => 'Pérdida extraordinaria',
-        'quality'       => 'Rechazo por calidad',
+        'quality' => 'Rechazo por calidad',
     ];
-
-    public static function lossTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::LOSS_TYPES);
-    }
-
-    public static function lossAuthorizationOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::LOSS_AUTHORIZATIONS);
-    }
 
     protected $fillable = [
         'wine_id',
@@ -46,9 +36,19 @@ class WineLoss extends Model
     ];
 
     protected $casts = [
-        'quantity'  => 'decimal:3',
+        'quantity' => 'decimal:3',
         'loss_date' => 'date',
     ];
+
+    public static function lossTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::LOSS_TYPES);
+    }
+
+    public static function lossAuthorizationOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::LOSS_AUTHORIZATIONS);
+    }
 
     public function wine(): BelongsTo
     {

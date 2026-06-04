@@ -25,20 +25,20 @@ class TraceabilityController extends Controller
             ->withPivot(['quantity_kg', 'percentage'])
             ->get()
             ->map(fn ($wine) => [
-                'id'           => $wine->id,
-                'name'         => $wine->name,
-                'vintage'      => $wine->vintage,
-                'wine_type'    => $wine->wine_type,
-                'status'       => $wine->status,
-                'variety'      => $wine->variety,
-                'internal_code'=> $wine->internal_code,
-                'quantity_kg'  => $wine->pivot->quantity_kg  !== null ? (float) $wine->pivot->quantity_kg  : null,
-                'percentage'   => $wine->pivot->percentage   !== null ? (float) $wine->pivot->percentage   : null,
+                'id' => $wine->id,
+                'name' => $wine->name,
+                'vintage' => $wine->vintage,
+                'wine_type' => $wine->wine_type,
+                'status' => $wine->status,
+                'variety' => $wine->variety,
+                'internal_code' => $wine->internal_code,
+                'quantity_kg' => $wine->pivot->quantity_kg !== null ? (float) $wine->pivot->quantity_kg : null,
+                'percentage' => $wine->pivot->percentage !== null ? (float) $wine->pivot->percentage : null,
             ]);
 
         return response()->json([
             'reception_id' => $harvest->id,
-            'data'         => $wines,
+            'data' => $wines,
         ]);
     }
 
@@ -57,23 +57,23 @@ class TraceabilityController extends Controller
             ->withPivot(['quantity_kg', 'percentage'])
             ->get()
             ->map(fn ($harvest) => [
-                'id'               => $harvest->id,
-                'date'             => $harvest->harvest_start_date?->toDateString(),
-                'vintage'          => $harvest->vintage,
-                'total_weight'     => (float) $harvest->total_weight,
-                'brix_degree'      => $harvest->brix_degree !== null ? (float) $harvest->brix_degree : null,
-                'price_per_kg'     => $harvest->price_per_kg !== null ? (float) $harvest->price_per_kg : null,
-                'viticulturist'    => $harvest->batch?->viticulturist
+                'id' => $harvest->id,
+                'date' => $harvest->harvest_start_date?->toDateString(),
+                'vintage' => $harvest->vintage,
+                'total_weight' => (float) $harvest->total_weight,
+                'brix_degree' => $harvest->brix_degree !== null ? (float) $harvest->brix_degree : null,
+                'price_per_kg' => $harvest->price_per_kg !== null ? (float) $harvest->price_per_kg : null,
+                'viticulturist' => $harvest->batch?->viticulturist
                     ? ['id' => $harvest->batch->viticulturist->id, 'name' => $harvest->batch->viticulturist->name]
                     : null,
-                'grape_variety'    => $harvest->plotPlanting?->grapeVariety?->name,
-                'quantity_kg'      => $harvest->pivot->quantity_kg !== null ? (float) $harvest->pivot->quantity_kg : null,
-                'percentage'       => $harvest->pivot->percentage  !== null ? (float) $harvest->pivot->percentage  : null,
+                'grape_variety' => $harvest->plotPlanting?->grapeVariety?->name,
+                'quantity_kg' => $harvest->pivot->quantity_kg !== null ? (float) $harvest->pivot->quantity_kg : null,
+                'percentage' => $harvest->pivot->percentage !== null ? (float) $harvest->pivot->percentage : null,
             ]);
 
         return response()->json([
             'wine_id' => $wine->id,
-            'data'    => $harvests,
+            'data' => $harvests,
         ]);
     }
 }

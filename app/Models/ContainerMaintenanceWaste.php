@@ -20,8 +20,8 @@ class ContainerMaintenanceWaste extends Model
     ];
 
     protected $casts = [
-        'quantity'   => 'decimal:3',
-        'cost'       => 'decimal:2',
+        'quantity' => 'decimal:3',
+        'cost' => 'decimal:2',
         'waste_date' => 'date',
     ];
 
@@ -47,6 +47,7 @@ class ContainerMaintenanceWaste extends Model
                 ? ($this->custom_waste_type ?: 'Otro')
                 : $this->wasteType->name;
         }
+
         return $this->custom_waste_type ?: '—';
     }
 }

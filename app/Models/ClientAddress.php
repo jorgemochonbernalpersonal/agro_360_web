@@ -74,28 +74,30 @@ class ClientAddress extends Model
     public function getFullAddressAttribute(): string
     {
         $parts = [];
-        
+
         if ($this->address) {
             $parts[] = $this->address;
         }
-        
+
         if ($this->municipality) {
             $parts[] = $this->municipality->name;
         }
-        
+
         if ($this->province) {
             $parts[] = $this->province->name;
         }
-        
+
         if ($this->postal_code) {
             $parts[] = $this->postal_code;
         }
-        
+
         return implode(', ', $parts);
     }
 
     /**
      * Scope para direcciones por defecto
+     *
+     * @param mixed $query
      */
     public function scopeDefault($query)
     {

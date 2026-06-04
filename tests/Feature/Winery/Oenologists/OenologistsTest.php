@@ -42,7 +42,7 @@ class OenologistsTest extends WineryTestCase
 
         $this->assertDatabaseHas('oenologists', [
             'user_id' => $this->winery->id,
-            'name'    => 'Dr. García',
+            'name' => 'Dr. García',
         ]);
     }
 
@@ -50,8 +50,8 @@ class OenologistsTest extends WineryTestCase
     {
         $oenologist = Oenologist::create([
             'user_id' => $this->winery->id,
-            'name'    => 'Pedro',
-            'active'  => true,
+            'name' => 'Pedro',
+            'active' => true,
         ]);
 
         Livewire::test(Edit::class, ['oenologist' => $oenologist])
@@ -60,7 +60,7 @@ class OenologistsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('oenologists', [
-            'id'   => $oenologist->id,
+            'id' => $oenologist->id,
             'name' => 'Pedro Actualizado',
         ]);
     }
@@ -71,8 +71,8 @@ class OenologistsTest extends WineryTestCase
 
         $oenologist = Oenologist::create([
             'user_id' => $this->winery->id,
-            'name'    => 'Test Enólogo',
-            'active'  => true,
+            'name' => 'Test Enólogo',
+            'active' => true,
         ]);
 
         $this->actingAs($otherWinery)

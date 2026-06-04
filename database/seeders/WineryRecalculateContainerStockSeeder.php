@@ -35,6 +35,7 @@ class WineryRecalculateContainerStockSeeder extends Seeder
 
         if (empty($containers)) {
             $this->command->warn('  ⚠️  No hay contenedores activos para recalcular.');
+
             return;
         }
 
@@ -79,28 +80,28 @@ class WineryRecalculateContainerStockSeeder extends Seeder
         // ── Build capacity map for clamping ──────────────────────────────────
         $capacityMap = array_column($containers, 'capacity', 'id');
 
-        $updated    = 0;
-        $nonZero    = 0;
-        $wineTotal  = 0.0;
+        $updated = 0;
+        $nonZero = 0;
+        $wineTotal = 0.0;
 
         foreach ($containers as $container) {
-            $id       = $container->id;
+            $id = $container->id;
             $capacity = (float) ($capacityMap[$id] ?? 0);
 
-            $in   = $transfersIn[$id]   ?? 0.0;
-            $out  = $transfersOut[$id]  ?? 0.0;
-            $lost = $losses[$id]        ?? 0.0;
+            $in = $transfersIn[$id] ?? 0.0;
+            $out = $transfersOut[$id] ?? 0.0;
+            $lost = $losses[$id] ?? 0.0;
 
-            $wineVolume   = max(0.0, $in - $out - $lost);
-            $wineVolume   = $capacity > 0 ? min($wineVolume, $capacity) : $wineVolume;
+            $wineVolume = max(0.0, $in - $out - $lost);
+            $wineVolume = $capacity > 0 ? min($wineVolume, $capacity) : $wineVolume;
 
             $usedCapacity = $harvestWeights[$id] ?? 0.0;
             $usedCapacity = $capacity > 0 ? min($usedCapacity, $capacity) : $usedCapacity;
 
             DB::table('containers')->where('id', $id)->update([
                 'wine_volume_liters' => round($wineVolume, 3),
-                'used_capacity'      => round($usedCapacity, 2),
-                'updated_at'         => now(),
+                'used_capacity' => round($usedCapacity, 2),
+                'updated_at' => now(),
             ]);
 
             $updated++;
@@ -150,10 +151,12 @@ class WineryRecalculateContainerStockSeeder extends Seeder
             ->get()
             ->unique('container_id'); // Keep only the latest per container
 
-        if ($latestTransfers->isEmpty()) return;
+        if ($latestTransfers->isEmpty()) {
+            return;
+        }
 
-        $now     = now();
-        $rows    = [];
+        $now = now();
+        $rows = [];
         $created = 0;
 
         foreach ($latestTransfers as $transfer) {
@@ -165,24 +168,26 @@ class WineryRecalculateContainerStockSeeder extends Seeder
                 ->first(['wine_volume_liters']);
 
             $qty = (float) ($container->wine_volume_liters ?? 0);
-            if ($qty <= 0) continue;
+            if ($qty <= 0) {
+                continue;
+            }
 
             $rows[] = [
-                'container_id'     => $containerId,
-                'wine_id'          => $transfer->wine_id,
+                'container_id' => $containerId,
+                'wine_id' => $transfer->wine_id,
                 'current_quantity' => $qty,
-                'available_qty'    => $qty,
-                'reserved_qty'     => 0,
-                'sold_qty'         => 0,
+                'available_qty' => $qty,
+                'reserved_qty' => 0,
+                'sold_qty' => 0,
                 'last_movement_at' => $transfer->transfer_date,
                 'last_movement_by' => self::WINERY_USER_ID,
-                'created_at'       => $now,
-                'updated_at'       => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
             $created++;
         }
 
-        if (!empty($rows)) {
+        if (! empty($rows)) {
             foreach (array_chunk($rows, 50) as $chunk) {
                 DB::table('container_current_states')->insert($chunk);
             }

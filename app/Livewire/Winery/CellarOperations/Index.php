@@ -8,23 +8,31 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search       = '';
-    public string $typeFilter   = '';
+    public string $search = '';
+
+    public string $typeFilter = '';
+
     public string $statusFilter = '';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'typeFilter'   => ['except' => ''],
+        'search' => ['except' => ''],
+        'typeFilter' => ['except' => ''],
         'statusFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void       { $this->resetPage(); }
-    public function updatingTypeFilter(): void   { $this->resetPage(); }
-    public function updatingStatusFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'typeFilter' => '', 'statusFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
@@ -32,6 +40,11 @@ class Index extends AbstractIndex
         $operation = CellarOperation::where('user_id', $this->wineryId())->findOrFail($id);
         $operation->delete();
         $this->toastSuccess(__('Operación eliminada.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'typeFilter' => '', 'statusFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -43,10 +56,10 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(IFNULL(responsible_person, \'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(notes, \'\')) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(IFNULL(notes, \'\')) LIKE ?', [$term]);
             });
         }
         if ($this->typeFilter) {
@@ -62,15 +75,22 @@ class Index extends AbstractIndex
         $query->orderByDesc('operation_date')->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['operation_date', 'desc']; }
-    protected function perPage(): int { return 20; }
+    protected function defaultOrderBy(): array
+    {
+        return ['operation_date', 'desc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
         return [
             'operations' => $entries,
-            'types'      => CellarOperation::operationTypeOptions(),
-            'statuses'   => CellarOperation::statusOptions(),
+            'types' => CellarOperation::operationTypeOptions(),
+            'statuses' => CellarOperation::statusOptions(),
         ];
     }
 }

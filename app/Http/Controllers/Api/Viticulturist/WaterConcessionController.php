@@ -18,9 +18,9 @@ class WaterConcessionController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'campaign_id'     => 'nullable|integer|min:1',
+            'campaign_id' => 'nullable|integer|min:1',
             'concession_type' => 'nullable|string|max:50',
-            'per_page'        => 'nullable|integer|min:1|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = WaterConcession::where('viticulturist_id', $user->id)
@@ -41,10 +41,10 @@ class WaterConcessionController extends Controller
         return response()->json([
             'data' => WaterConcessionResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -55,20 +55,20 @@ class WaterConcessionController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'        => 'nullable|integer|exists:campaigns,id',
-            'concession_type'    => 'required|in:superficial,subterranea,comunidad_regantes,otro',
-            'concession_number'  => 'nullable|string|max:100',
-            'water_body'         => 'required|string|max:255',
-            'authority'          => 'required|string|max:255',
-            'expiry_date'        => 'nullable|date',
-            'max_volume_m3'      => 'required|numeric|min:0',
-            'notes'              => 'nullable|string|max:2000',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'concession_type' => 'required|in:superficial,subterranea,comunidad_regantes,otro',
+            'concession_number' => 'nullable|string|max:100',
+            'water_body' => 'required|string|max:255',
+            'authority' => 'required|string|max:255',
+            'expiry_date' => 'nullable|date',
+            'max_volume_m3' => 'required|numeric|min:0',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         $record = \App\Models\WaterConcession::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\WaterConcessionResource($record),
+            'data' => new \App\Http\Resources\Api\WaterConcessionResource($record),
             'message' => __('Concesión de agua registrada correctamente.'),
         ], 201);
     }

@@ -7,31 +7,12 @@ use App\Livewire\Viticulturist\OfficialReports\Create;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\DigitalSignature;
-use App\Models\OfficialReport;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
 class CreateTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makeDigitalSignature(int $userId, string $password = 'firma123'): DigitalSignature
-    {
-        return DigitalSignature::createOrUpdateForUser($userId, $password);
-    }
-
-    private function makeCampaign(int $userId, array $overrides = []): Campaign
-    {
-        return Campaign::create(array_merge([
-            'viticulturist_id' => $userId,
-            'year'             => 2026,
-            'name'             => 'Campaña Test 2026',
-            'start_date'       => '2026-01-01',
-            'end_date'         => '2026-12-31',
-        ], $overrides));
-    }
-
     // ── Mount ──────────────────────────────────────────────────────────────────
 
     public function test_create_page_renders_correctly(): void
@@ -163,7 +144,7 @@ class CreateTest extends ViticulturistTestCase
 
     public function test_calculate_summary_fails_when_campaign_has_no_activities(): void
     {
-        $v        = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $campaign = $this->makeCampaign($v->id);
         $this->actingAs($v);
 
@@ -217,7 +198,7 @@ class CreateTest extends ViticulturistTestCase
     {
         Queue::fake();
 
-        $v        = $this->makeViticulturist();
+        $v = $this->makeViticulturist();
         $password = 'firma_segura_123';
         $this->makeDigitalSignature($v->id, $password);
         $campaign = $this->makeCampaign($v->id);
@@ -225,9 +206,9 @@ class CreateTest extends ViticulturistTestCase
         // Need at least one activity so calculateSummary doesn't error
         AgriculturalActivity::create([
             'viticulturist_id' => $v->id,
-            'campaign_id'      => $campaign->id,
-            'activity_type'    => 'irrigation',
-            'activity_date'    => '2026-03-01',
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'irrigation',
+            'activity_date' => '2026-03-01',
         ]);
 
         $this->actingAs($v);
@@ -239,8 +220,8 @@ class CreateTest extends ViticulturistTestCase
             ->call('confirmAndGenerateReport');
 
         $this->assertDatabaseHas('official_reports', [
-            'user_id'           => $v->id,
-            'report_type'       => 'full_digital_notebook',
+            'user_id' => $v->id,
+            'report_type' => 'full_digital_notebook',
             'processing_status' => 'pending',
         ]);
 
@@ -255,5 +236,22 @@ class CreateTest extends ViticulturistTestCase
         Livewire::test(Create::class)
             ->set('reportType', 'full_digital_notebook')
             ->assertSet('reportType', 'full_digital_notebook');
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makeDigitalSignature(int $userId, string $password = 'firma123'): DigitalSignature
+    {
+        return DigitalSignature::createOrUpdateForUser($userId, $password);
+    }
+
+    private function makeCampaign(int $userId, array $overrides = []): Campaign
+    {
+        return Campaign::create(array_merge([
+            'viticulturist_id' => $userId,
+            'year' => 2026,
+            'name' => 'Campaña Test 2026',
+            'start_date' => '2026-01-01',
+            'end_date' => '2026-12-31',
+        ], $overrides));
     }
 }

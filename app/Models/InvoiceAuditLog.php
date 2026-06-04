@@ -58,6 +58,8 @@ class InvoiceAuditLog extends Model
 
     /**
      * Scope para logs de una factura
+     *
+     * @param mixed $query
      */
     public function scopeForInvoice($query, int $invoiceId)
     {
@@ -66,6 +68,8 @@ class InvoiceAuditLog extends Model
 
     /**
      * Scope para logs de un usuario
+     *
+     * @param mixed $query
      */
     public function scopeByUser($query, int $userId)
     {
@@ -74,6 +78,8 @@ class InvoiceAuditLog extends Model
 
     /**
      * Scope para una acción específica
+     *
+     * @param mixed $query
      */
     public function scopeAction($query, string $action)
     {

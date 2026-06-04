@@ -7,8 +7,6 @@ use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Harvest;
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
-use App\Models\MarketedHarvest;
 use App\Models\User;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
@@ -22,39 +20,6 @@ class CreateTest extends ViticulturistTestCase
         parent::setUp();
         $this->viticulturist = $this->makeViticulturist();
         $this->actingAs($this->viticulturist);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function makeHarvest(float $weight = 1000, User $owner = null): Harvest
-    {
-        $owner    = $owner ?? $this->viticulturist;
-        $campaign = Campaign::getOrCreateActiveForYear($owner->id);
-
-        $activity = AgriculturalActivity::create([
-            'viticulturist_id' => $owner->id,
-            'campaign_id'      => $campaign->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => now()->toDateString(),
-        ]);
-
-        return Harvest::create([
-            'activity_id'        => $activity->id,
-            'total_weight'       => $weight,
-            'vintage'            => now()->year,
-            'harvest_start_date' => now()->toDateString(),
-        ]);
-    }
-
-    private function validLines(int $harvestId, float $qty = 500, float $price = 0.45): array
-    {
-        return [[
-            'harvest_id'  => $harvestId,
-            'quantity'    => (string) $qty,
-            'unit_price'  => (string) $price,
-            'tax_rate'    => '2',
-            'description' => '',
-        ]];
     }
 
     // ── Happy path ────────────────────────────────────────────────────────────
@@ -74,20 +39,20 @@ class CreateTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.invoices.harvest-sale.index'));
 
         $this->assertDatabaseHas('invoices', [
-            'user_id'      => $this->viticulturist->id,
+            'user_id' => $this->viticulturist->id,
             'invoice_type' => 'harvest_sale',
-            'status'       => 'draft',
+            'status' => 'draft',
         ]);
 
         $this->assertDatabaseHas('invoice_items', [
-            'harvest_id'   => $harvest->id,
+            'harvest_id' => $harvest->id,
             'concept_type' => 'harvest',
-            'quantity'     => 500,
+            'quantity' => 500,
         ]);
 
         // Stock: 500 kg reserved in harvest_stocks table
         $this->assertDatabaseHas('harvest_stocks', [
-            'harvest_id'    => $harvest->id,
+            'harvest_id' => $harvest->id,
             'movement_type' => 'reserve',
         ]);
     }
@@ -105,7 +70,7 @@ class CreateTest extends ViticulturistTestCase
             ->call('save')
             ->assertHasNoErrors();
 
-        $year    = now()->year;
+        $year = now()->year;
         $invoice = Invoice::where('user_id', $this->viticulturist->id)->first();
 
         $this->assertStringStartsWith("HS-{$year}-", $invoice->invoice_number);
@@ -128,9 +93,9 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $invoice = Invoice::where('user_id', $this->viticulturist->id)->first();
-        $this->assertEquals(225.0,  (float) $invoice->subtotal);
-        $this->assertEquals(4.5,    (float) $invoice->tax_amount);
-        $this->assertEquals(220.5,  (float) $invoice->total_amount);
+        $this->assertEquals(225.0, (float) $invoice->subtotal);
+        $this->assertEquals(4.5, (float) $invoice->tax_amount);
+        $this->assertEquals(220.5, (float) $invoice->total_amount);
     }
 
     public function test_creates_marketed_harvest_record(): void
@@ -150,12 +115,12 @@ class CreateTest extends ViticulturistTestCase
         $invoice = Invoice::where('user_id', $this->viticulturist->id)->first();
 
         $this->assertDatabaseHas('marketed_harvests', [
-            'harvest_id'       => $harvest->id,
+            'harvest_id' => $harvest->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'buyer_name'       => 'Bodega Castillo',
-            'buyer_rega_code'  => 'ES123456',
+            'buyer_name' => 'Bodega Castillo',
+            'buyer_rega_code' => 'ES123456',
             'destination_type' => 'own_winery',
-            'invoice_id'       => $invoice->id,
+            'invoice_id' => $invoice->id,
         ]);
     }
 
@@ -183,10 +148,10 @@ class CreateTest extends ViticulturistTestCase
             ->set('delivery_date', '2024-10-31')
             ->set('invoice_date', '2024-10-31')
             ->set('lines', [[
-                'harvest_id'  => $harvest->id,
-                'quantity'    => '',      // required
-                'unit_price'  => '',      // required
-                'tax_rate'    => '150',   // max:100
+                'harvest_id' => $harvest->id,
+                'quantity' => '',      // required
+                'unit_price' => '',      // required
+                'tax_rate' => '150',   // max:100
                 'description' => '',
             ]])
             ->call('save')
@@ -201,7 +166,7 @@ class CreateTest extends ViticulturistTestCase
 
     public function test_harvest_from_other_viticulturist_is_rejected(): void
     {
-        $other         = $this->makeOtherViticulturist();
+        $other = $this->makeOtherViticulturist();
         $foreignHarvest = $this->makeHarvest(1000, $other);
 
         Livewire::test(Create::class)
@@ -214,5 +179,38 @@ class CreateTest extends ViticulturistTestCase
 
         // No invoice should be created
         $this->assertDatabaseMissing('invoices', ['user_id' => $this->viticulturist->id]);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function makeHarvest(float $weight = 1000, ?User $owner = null): Harvest
+    {
+        $owner = $owner ?? $this->viticulturist;
+        $campaign = Campaign::getOrCreateActiveForYear($owner->id);
+
+        $activity = AgriculturalActivity::create([
+            'viticulturist_id' => $owner->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'harvest',
+            'activity_date' => now()->toDateString(),
+        ]);
+
+        return Harvest::create([
+            'activity_id' => $activity->id,
+            'total_weight' => $weight,
+            'vintage' => now()->year,
+            'harvest_start_date' => now()->toDateString(),
+        ]);
+    }
+
+    private function validLines(int $harvestId, float $qty = 500, float $price = 0.45): array
+    {
+        return [[
+            'harvest_id' => $harvestId,
+            'quantity' => (string) $qty,
+            'unit_price' => (string) $price,
+            'tax_rate' => '2',
+            'description' => '',
+        ]];
     }
 }

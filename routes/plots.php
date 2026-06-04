@@ -1,13 +1,13 @@
 <?php
 
-use App\Livewire\Plots\Index;
 use App\Livewire\Plots\Create;
 use App\Livewire\Plots\Edit;
+use App\Livewire\Plots\Index;
 use App\Livewire\Plots\MapExplorer;
-use App\Livewire\Plots\Show;
-use App\Livewire\Plots\Plantings\Index as PlantingsIndex;
 use App\Livewire\Plots\Plantings\Create as PlantingCreate;
 use App\Livewire\Plots\Plantings\Edit as PlantingEdit;
+use App\Livewire\Plots\Plantings\Index as PlantingsIndex;
+use App\Livewire\Plots\Show;
 use App\Livewire\Settings\TerritorialManagement;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +31,3 @@ Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist,producer'
             ->name('plantings.create')
             ->middleware('can:create,App\Models\PlotPlanting,plot');
     });
-

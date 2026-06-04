@@ -4,8 +4,8 @@ namespace App\Livewire\Supervisor\Oversight\Notebook;
 
 use App\Models\AgriculturalActivity;
 use App\Models\Plot;
-use App\Models\User;
 use App\Models\SupervisorViticulturist;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -15,32 +15,52 @@ class Index extends Component
 {
     use WithPagination;
 
-    public string $filterVit    = '';
-    public string $filterPlot   = '';
-    public string $filterType   = '';
-    public string $filterFrom   = '';
-    public string $filterTo     = '';
+    public string $filterVit = '';
+
+    public string $filterPlot = '';
+
+    public string $filterType = '';
+
+    public string $filterFrom = '';
+
+    public string $filterTo = '';
 
     protected $queryString = [
-        'filterVit'  => ['except' => ''],
+        'filterVit' => ['except' => ''],
         'filterPlot' => ['except' => ''],
         'filterType' => ['except' => ''],
         'filterFrom' => ['except' => ''],
-        'filterTo'   => ['except' => ''],
+        'filterTo' => ['except' => ''],
     ];
 
-    public function updatingFilterVit(): void  { $this->filterPlot = ''; $this->resetPage(); }
-    public function updatingFilterType(): void  { $this->resetPage(); }
-    public function updatingFilterFrom(): void  { $this->resetPage(); }
-    public function updatingFilterTo(): void    { $this->resetPage(); }
+    public function updatingFilterVit(): void
+    {
+        $this->filterPlot = '';
+        $this->resetPage();
+    }
+
+    public function updatingFilterType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterFrom(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterTo(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters(): void
     {
-        $this->filterVit  = '';
+        $this->filterVit = '';
         $this->filterPlot = '';
         $this->filterType = '';
         $this->filterFrom = '';
-        $this->filterTo   = '';
+        $this->filterTo = '';
         $this->resetPage();
     }
 
@@ -93,14 +113,14 @@ class Index extends Component
 
         $activities = $query->paginate(25);
 
-        $totalWithAccess    = $accessibleVitIds->count();
-        $activityTypes      = AgriculturalActivity::activityTypes();
+        $totalWithAccess = $accessibleVitIds->count();
+        $activityTypes = AgriculturalActivity::activityTypes();
 
         return view('livewire.supervisor.oversight.notebook.index', [
-            'activities'      => $activities,
-            'viticulturists'  => $viticulturists,
-            'plots'           => $plots,
-            'activityTypes'   => $activityTypes,
+            'activities' => $activities,
+            'viticulturists' => $viticulturists,
+            'plots' => $plots,
+            'activityTypes' => $activityTypes,
             'totalWithAccess' => $totalWithAccess,
         ]);
     }

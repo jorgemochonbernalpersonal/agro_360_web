@@ -15,8 +15,11 @@ class CampaignLockPolicyTest extends TestCase
     use RefreshDatabase;
 
     private User $owner;
+
     private User $other;
+
     private Campaign $unlocked;
+
     private Campaign $locked;
 
     protected function setUp(): void
@@ -28,14 +31,14 @@ class CampaignLockPolicyTest extends TestCase
 
         $this->unlocked = Campaign::factory()->create([
             'viticulturist_id' => $this->owner->id,
-            'year'             => now()->year,
-            'locked_at'        => null,
+            'year' => now()->year,
+            'locked_at' => null,
         ]);
 
         $this->locked = Campaign::factory()->create([
             'viticulturist_id' => $this->owner->id,
-            'year'             => now()->year - 1,
-            'locked_at'        => now()->subDays(30),
+            'year' => now()->year - 1,
+            'locked_at' => now()->subDays(30),
         ]);
     }
 

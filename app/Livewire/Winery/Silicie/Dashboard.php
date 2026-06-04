@@ -13,14 +13,17 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Dashboard extends Component
 {
-    public string $filterVintage    = '';
+    public string $filterVintage = '';
+
     public string $filterFiscalYear = '';
-    public string $currentTab       = 'entries';
-    public bool   $showExportGuide  = false;
+
+    public string $currentTab = 'entries';
+
+    public bool $showExportGuide = false;
 
     public function mount(): void
     {
-        $this->filterVintage    = (string) now()->year;
+        $this->filterVintage = (string) now()->year;
         $this->filterFiscalYear = (string) now()->year;
     }
 
@@ -33,7 +36,7 @@ class Dashboard extends Component
     public function takeSnapshot(): void
     {
         $wineryId = Auth::id();
-        $today    = now()->toDateString();
+        $today = now()->toDateString();
 
         $rows = DB::table('container_current_states as ccs')
             ->join('containers as c', 'c.id', '=', 'ccs.container_id')
@@ -55,17 +58,17 @@ class Dashboard extends Component
         foreach ($rows as $row) {
             WineStockSnapshot::updateOrCreate(
                 [
-                    'user_id'       => $wineryId,
-                    'wine_id'       => $row->wine_id,
+                    'user_id' => $wineryId,
+                    'wine_id' => $row->wine_id,
                     'snapshot_date' => $today,
                 ],
                 [
                     'quantity_liters' => $row->total_liters,
                     'container_count' => $row->container_count,
-                    'vintage'         => $row->vintage,
-                    'wine_type'       => $row->wine_type,
-                    'is_must'         => (bool) $row->is_must,
-                    'created_by'      => $wineryId,
+                    'vintage' => $row->vintage,
+                    'wine_type' => $row->wine_type,
+                    'is_must' => (bool) $row->is_must,
+                    'created_by' => $wineryId,
                 ]
             );
         }
@@ -77,14 +80,14 @@ class Dashboard extends Component
     public function exportCsv(): StreamedResponse
     {
         $wineryId = Auth::id();
-        $vintage  = (int) ($this->filterVintage ?: now()->year);
-        $csv      = (new SilicieCsvExporter())->export($wineryId, $vintage);
-        $filename = 'SILICIE_' . $wineryId . '_' . $vintage . '.csv';
+        $vintage = (int) ($this->filterVintage ?: now()->year);
+        $csv = (new SilicieCsvExporter)->export($wineryId, $vintage);
+        $filename = 'SILICIE_'.$wineryId.'_'.$vintage.'.csv';
 
         $this->showExportGuide = true;
 
         return response()->streamDownload(
-            fn () => print($csv),
+            fn () => print ($csv),
             $filename,
             ['Content-Type' => 'text/csv; charset=UTF-8']
         );
@@ -99,7 +102,7 @@ class Dashboard extends Component
     public function render()
     {
         $wineryId = Auth::id();
-        $vintage  = (int) ($this->filterVintage ?: now()->year);
+        $vintage = (int) ($this->filterVintage ?: now()->year);
 
         // ── Stats globales (siempre visibles) ─────────────────────────────
         $stats = $this->buildStats($wineryId, $vintage);
@@ -115,28 +118,28 @@ class Dashboard extends Component
             $vintages = collect([now()->year]);
         }
 
-        $fiscalYear     = (int) ($this->filterFiscalYear ?: now()->year);
+        $fiscalYear = (int) ($this->filterFiscalYear ?: now()->year);
 
         // ── Datos del tab activo ──────────────────────────────────────────
         $tabData = match ($this->currentTab) {
-            'entries'    => $this->queryEntries($wineryId, $vintage),
+            'entries' => $this->queryEntries($wineryId, $vintage),
             'elaboration' => $this->queryElaboration($wineryId, $vintage),
-            'inventory'  => $this->queryInventory($wineryId),
-            'outputs'    => $this->queryOutputs($wineryId, $vintage),
-            'opening'    => $this->buildFiscalYearOpeningBalances($wineryId, $fiscalYear),
-            default       => [],
+            'inventory' => $this->queryInventory($wineryId),
+            'outputs' => $this->queryOutputs($wineryId, $vintage),
+            'opening' => $this->buildFiscalYearOpeningBalances($wineryId, $fiscalYear),
+            default => [],
         };
 
         // Fiscal years for apertura tab — same set as vintages
         $fiscalYears = $vintages;
 
         return view('livewire.winery.silicie.dashboard', [
-            'stats'       => $stats,
-            'vintages'    => $vintages,
-            'vintage'     => $vintage,
+            'stats' => $stats,
+            'vintages' => $vintages,
+            'vintage' => $vintage,
             'fiscalYears' => $fiscalYears,
-            'fiscalYear'  => $fiscalYear,
-            'tabData'     => $tabData,
+            'fiscalYear' => $fiscalYear,
+            'tabData' => $tabData,
         ]);
     }
 
@@ -183,10 +186,10 @@ class Dashboard extends Component
             ->get();
 
         $totals = [
-            'recepciones'   => $recepciones->count(),
-            'kg_total'      => $recepciones->sum('total_weight'),
-            'externas_count'=> $externas->count(),
-            'externas_kg'   => $externas->sum('total_weight_kg'),
+            'recepciones' => $recepciones->count(),
+            'kg_total' => $recepciones->sum('total_weight'),
+            'externas_count' => $externas->count(),
+            'externas_kg' => $externas->sum('total_weight_kg'),
         ];
 
         return compact('recepciones', 'externas', 'totals');
@@ -290,19 +293,19 @@ class Dashboard extends Component
             ->get();
 
         $byWine = $stock->groupBy('wine_id')->map(fn ($rows) => [
-            'wine_name'    => $rows->first()->wine_name,
-            'wine_type'    => $rows->first()->wine_type,
-            'vintage'      => $rows->first()->vintage,
-            'wine_status'  => $rows->first()->wine_status,
+            'wine_name' => $rows->first()->wine_name,
+            'wine_type' => $rows->first()->wine_type,
+            'vintage' => $rows->first()->vintage,
+            'wine_status' => $rows->first()->wine_status,
             'total_liters' => $rows->sum('current_quantity'),
-            'containers'   => $rows->count(),
+            'containers' => $rows->count(),
         ])->values();
 
         $totals = [
-            'total_liters'    => $stock->sum('current_quantity'),
-            'harvest_kg'      => $stockHarvest->sum('current_quantity'),
+            'total_liters' => $stock->sum('current_quantity'),
+            'harvest_kg' => $stockHarvest->sum('current_quantity'),
             'container_count' => $stock->count() + $stockHarvest->count(),
-            'wine_count'      => $stock->pluck('wine_id')->filter()->unique()->count(),
+            'wine_count' => $stock->pluck('wine_id')->filter()->unique()->count(),
         ];
 
         // Último snapshot disponible (excluye mostos — solo vino elaborado)
@@ -374,10 +377,10 @@ class Dashboard extends Component
             ->get();
 
         $totals = [
-            'ventas_count'    => $ventas->count(),
-            'ventas_amount'   => $ventas->sum('total_amount'),
-            'perdidas_qty'    => $perdidas->sum('quantity'),
-            'subproductos_qty'=> $subproductos->sum('quantity'),
+            'ventas_count' => $ventas->count(),
+            'ventas_amount' => $ventas->sum('total_amount'),
+            'perdidas_qty' => $perdidas->sum('quantity'),
+            'subproductos_qty' => $subproductos->sum('quantity'),
         ];
 
         return compact('ventas', 'perdidas', 'subproductos', 'totals');
@@ -406,10 +409,10 @@ class Dashboard extends Component
 
         if (! $snapshotDate) {
             return [
-                'fiscal_year'   => $fiscalYear,
+                'fiscal_year' => $fiscalYear,
                 'snapshot_date' => null,
-                'rows'          => [],
-                'total_hl'      => 0,
+                'rows' => [],
+                'total_hl' => 0,
             ];
         }
 
@@ -428,42 +431,42 @@ class Dashboard extends Component
             ->get();
 
         $wineCategories = \App\Livewire\Winery\Silicie\Infovi::WINE_CATEGORIES;
-        $result         = [];
-        $total          = 0;
+        $result = [];
+        $total = 0;
 
         foreach ($rows as $row) {
-            $hl       = round((float) $row->hl, 3);
-            $label    = $row->is_must
-                ? 'Mosto (' . ($wineCategories[$row->wine_type] ?? $row->wine_type) . ')'
+            $hl = round((float) $row->hl, 3);
+            $label = $row->is_must
+                ? 'Mosto ('.($wineCategories[$row->wine_type] ?? $row->wine_type).')'
                 : ($wineCategories[$row->wine_type] ?? $row->wine_type);
             $result[] = [
-                'wine_type'  => $row->wine_type,
-                'is_must'    => (bool) $row->is_must,
-                'label'      => $label,
-                'hl'         => $hl,
+                'wine_type' => $row->wine_type,
+                'is_must' => (bool) $row->is_must,
+                'label' => $label,
+                'hl' => $hl,
                 'wine_count' => (int) $row->wine_count,
                 // SILICIE 2.0 format for A22 row
                 'silicie_row' => [
-                    'TIPO_MOVIMIENTO'       => 'A22',
-                    'FECHA_OPERACION'       => \Carbon\Carbon::parse($openingDate)->format('d/m/Y'),
-                    'TIPO_DOCUMENTO'        => 'OTR',
-                    'PERIODO_FISCAL'        => $fiscalYear . '-01',
-                    'CODIGO_NC'             => $row->is_must ? '22043096' : '22042199',
-                    'DESCRIPCION_PRODUCTO'  => $label,
-                    'CANTIDAD'              => number_format($hl, 3, ',', ''),
-                    'UNIDAD_MEDIDA'         => 'HL',
-                    'NUM_DOCUMENTO'         => __('APERTURA-') . $fiscalYear,
-                    'OBSERVACIONES'         => __('Apertura ejercicio ') . $fiscalYear,
+                    'TIPO_MOVIMIENTO' => 'A22',
+                    'FECHA_OPERACION' => \Carbon\Carbon::parse($openingDate)->format('d/m/Y'),
+                    'TIPO_DOCUMENTO' => 'OTR',
+                    'PERIODO_FISCAL' => $fiscalYear.'-01',
+                    'CODIGO_NC' => $row->is_must ? '22043096' : '22042199',
+                    'DESCRIPCION_PRODUCTO' => $label,
+                    'CANTIDAD' => number_format($hl, 3, ',', ''),
+                    'UNIDAD_MEDIDA' => 'HL',
+                    'NUM_DOCUMENTO' => __('APERTURA-').$fiscalYear,
+                    'OBSERVACIONES' => __('Apertura ejercicio ').$fiscalYear,
                 ],
             ];
             $total += $hl;
         }
 
         return [
-            'fiscal_year'   => $fiscalYear,
+            'fiscal_year' => $fiscalYear,
             'snapshot_date' => $snapshotDate,
-            'rows'          => $result,
-            'total_hl'      => round($total, 3),
+            'rows' => $result,
+            'total_hl' => round($total, 3),
         ];
     }
 

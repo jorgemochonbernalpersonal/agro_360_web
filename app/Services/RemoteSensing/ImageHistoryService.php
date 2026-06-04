@@ -5,7 +5,6 @@ namespace App\Services\RemoteSensing;
 use App\Models\Plot;
 use App\Models\PlotRemoteSensing;
 use Illuminate\Support\Collection;
-use Carbon\Carbon;
 
 class ImageHistoryService
 {
@@ -54,9 +53,10 @@ class ImageHistoryService
         $history = $this->getHistory($plot, $months);
 
         return $history->groupBy(function ($item) {
-            return $item['year'] . '-' . str_pad($item['date_sort'], 2, '0', STR_PAD_LEFT);
+            return $item['year'].'-'.str_pad($item['date_sort'], 2, '0', STR_PAD_LEFT);
         })->map(function ($records, $key) {
             $first = $records->first();
+
             return [
                 'month' => $first['month'],
                 'year' => $first['year'],
@@ -65,25 +65,8 @@ class ImageHistoryService
                 'best_record' => $records->sortByDesc('ndvi')->first(),
             ];
         })->sortByDesc(function ($item) {
-            return $item['year'] . '-' . $item['month'];
+            return $item['year'].'-'.$item['month'];
         });
-    }
-
-    /**
-     * Get NDVI color for visualization
-     */
-    private function getNdviColor(?float $ndvi): string
-    {
-        if ($ndvi === null) return '#6b7280'; // gray
-
-        return match (true) {
-            $ndvi >= 0.7 => '#166534', // dark green (excellent)
-            $ndvi >= 0.5 => '#16a34a', // green (good)
-            $ndvi >= 0.3 => '#84cc16', // lime (moderate)
-            $ndvi >= 0.15 => '#eab308', // yellow (poor)
-            $ndvi >= 0 => '#f97316', // orange (very poor)
-            default => '#dc2626', // red (critical/negative)
-        };
     }
 
     /**
@@ -92,7 +75,7 @@ class ImageHistoryService
     public function getTimelineEvents(Plot $plot, int $months = 12): array
     {
         $history = $this->getHistory($plot, $months);
-        
+
         $events = [];
         foreach ($history as $record) {
             $events[] = [
@@ -104,5 +87,24 @@ class ImageHistoryService
         }
 
         return $events;
+    }
+
+    /**
+     * Get NDVI color for visualization
+     */
+    private function getNdviColor(?float $ndvi): string
+    {
+        if ($ndvi === null) {
+            return '#6b7280';
+        } // gray
+
+        return match (true) {
+            $ndvi >= 0.7 => '#166534', // dark green (excellent)
+            $ndvi >= 0.5 => '#16a34a', // green (good)
+            $ndvi >= 0.3 => '#84cc16', // lime (moderate)
+            $ndvi >= 0.15 => '#eab308', // yellow (poor)
+            $ndvi >= 0 => '#f97316', // orange (very poor)
+            default => '#dc2626', // red (critical/negative)
+        };
     }
 }

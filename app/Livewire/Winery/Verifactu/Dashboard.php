@@ -4,7 +4,6 @@ namespace App\Livewire\Winery\Verifactu;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Invoice;
-use App\Models\SifRecord;
 use App\Services\VerifactuService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -27,13 +26,14 @@ class Dashboard extends Component
     {
         $invoice = $this->findInvoice($id);
 
-        if (!$invoice) {
+        if (! $invoice) {
             $this->toastError(__('Factura no encontrada.'));
+
             return;
         }
 
         $service = app(VerifactuService::class);
-        $result  = $service->send($invoice);
+        $result = $service->send($invoice);
 
         if ($result['success']) {
             $this->toastSuccess(__('Factura verificada y enviada correctamente. CSV: :csv', ['csv' => $result['csv']]));
@@ -44,10 +44,10 @@ class Dashboard extends Component
 
     public function sendAll(): void
     {
-        $service  = app(VerifactuService::class);
+        $service = app(VerifactuService::class);
         $invoices = $this->pendingQuery()->get();
-        $ok       = 0;
-        $err      = 0;
+        $ok = 0;
+        $err = 0;
 
         foreach ($invoices as $invoice) {
             $result = $service->send($invoice);
@@ -65,13 +65,14 @@ class Dashboard extends Component
     {
         $invoice = $this->findInvoice($id);
 
-        if (!$invoice) {
+        if (! $invoice) {
             $this->toastError(__('Factura no encontrada.'));
+
             return;
         }
 
         $service = app(VerifactuService::class);
-        $result  = $service->retry($invoice);
+        $result = $service->retry($invoice);
 
         if ($result['success']) {
             $this->toastSuccess(__('Factura reintentada correctamente. CSV: :csv', ['csv' => $result['csv']]));
@@ -84,13 +85,14 @@ class Dashboard extends Component
     {
         $invoice = $this->findInvoice($id);
 
-        if (!$invoice) {
+        if (! $invoice) {
             $this->toastError(__('Factura no encontrada.'));
+
             return;
         }
 
         $service = app(VerifactuService::class);
-        $result  = $service->cancel($invoice);
+        $result = $service->cancel($invoice);
 
         if ($result['success']) {
             $this->toastSuccess(__('Anulación registrada. La factura vuelve a estado pendiente.'));
@@ -107,14 +109,14 @@ class Dashboard extends Component
 
         $stats = [
             'pending' => Invoice::forUser($userId)->whereNotNull('invoice_number')->where('sif_status', 'pendiente')->where('sif_excluded', false)->whereNotIn('status', ['draft'])->count(),
-            'sent'    => Invoice::forUser($userId)->whereNotNull('invoice_number')->where('sif_status', 'aceptado')->count(),
-            'errors'  => Invoice::forUser($userId)->whereNotNull('invoice_number')->where('sif_status', 'error')->count(),
+            'sent' => Invoice::forUser($userId)->whereNotNull('invoice_number')->where('sif_status', 'aceptado')->count(),
+            'errors' => Invoice::forUser($userId)->whereNotNull('invoice_number')->where('sif_status', 'error')->count(),
         ];
 
         $pending = null;
-        $sent    = null;
-        $errors  = null;
-        $config  = null;
+        $sent = null;
+        $errors = null;
+        $config = null;
 
         if ($this->tab === 'pending') {
             $pending = $this->pendingQuery()->with(['client'])->paginate(20);
@@ -129,7 +131,7 @@ class Dashboard extends Component
             $errors = Invoice::forUser($userId)
                 ->whereNotNull('invoice_number')
                 ->where('sif_status', 'error')
-                ->with(['client', 'sifRecords' => fn($q) => $q->where('status', 'ER')->latest()->limit(1)])
+                ->with(['client', 'sifRecords' => fn ($q) => $q->where('status', 'ER')->latest()->limit(1)])
                 ->orderByDesc('updated_at')
                 ->paginate(20);
         } elseif ($this->tab === 'config') {
@@ -139,6 +141,26 @@ class Dashboard extends Component
         return view('livewire.winery.verifactu.dashboard', compact(
             'stats', 'pending', 'sent', 'errors', 'config'
         ))->layout('layouts.app');
+    }
+
+    public function excludeInvoice(int $id): void
+    {
+        $invoice = $this->findInvoice($id);
+
+        if (! $invoice) {
+            $this->toastError(__('Factura no encontrada.'));
+
+            return;
+        }
+
+        $invoice->update(['sif_excluded' => true]);
+        $this->toastSuccess(__('Factura excluida de Verifactu.'));
+    }
+
+    public function excludeAll(): void
+    {
+        $count = $this->pendingQuery()->update(['sif_excluded' => true]);
+        $this->toastSuccess("{$count} facturas excluidas de Verifactu.");
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────────
@@ -151,25 +173,6 @@ class Dashboard extends Component
             ->where('sif_excluded', false)
             ->whereNotIn('status', ['draft'])
             ->orderByDesc('invoice_date');
-    }
-
-    public function excludeInvoice(int $id): void
-    {
-        $invoice = $this->findInvoice($id);
-
-        if (!$invoice) {
-            $this->toastError(__('Factura no encontrada.'));
-            return;
-        }
-
-        $invoice->update(['sif_excluded' => true]);
-        $this->toastSuccess(__('Factura excluida de Verifactu.'));
-    }
-
-    public function excludeAll(): void
-    {
-        $count = $this->pendingQuery()->update(['sif_excluded' => true]);
-        $this->toastSuccess("{$count} facturas excluidas de Verifactu.");
     }
 
     private function findInvoice(int $id): ?Invoice

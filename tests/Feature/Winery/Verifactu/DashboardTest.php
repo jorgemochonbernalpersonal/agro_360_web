@@ -10,20 +10,6 @@ use Tests\Feature\WineryTestCase;
 
 class DashboardTest extends WineryTestCase
 {
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeInvoice(int $wineryId, array $attrs = []): Invoice
-    {
-        return Invoice::create(array_merge([
-            'user_id'        => $wineryId,
-            'invoice_number' => 'F-' . rand(1000, 9999),
-            'invoice_date'   => now()->format('Y-m-d'),
-            'total_amount'   => 100.00,
-            'status'         => 'sent',
-            'sif_status'     => 'pendiente',
-        ], $attrs));
-    }
-
     // ── access ────────────────────────────────────────────────────────────────
 
     public function test_winery_can_access_verifactu_dashboard(): void
@@ -73,7 +59,7 @@ class DashboardTest extends WineryTestCase
 
     public function test_winery_can_exclude_own_invoice(): void
     {
-        $winery  = $this->makeWinery();
+        $winery = $this->makeWinery();
         $invoice = $this->makeInvoice($winery->id, ['sif_status' => 'pendiente', 'sif_excluded' => false]);
 
         Livewire::actingAs($winery)
@@ -82,7 +68,7 @@ class DashboardTest extends WineryTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseHas('invoices', [
-            'id'           => $invoice->id,
+            'id' => $invoice->id,
             'sif_excluded' => true,
         ]);
     }
@@ -99,7 +85,7 @@ class DashboardTest extends WineryTestCase
 
         // Invoice must remain un-excluded
         $this->assertDatabaseHas('invoices', [
-            'id'           => $invoice->id,
+            'id' => $invoice->id,
             'sif_excluded' => false,
         ]);
     }
@@ -108,13 +94,13 @@ class DashboardTest extends WineryTestCase
 
     public function test_send_invoice_calls_verifactu_service(): void
     {
-        $winery  = $this->makeWinery();
+        $winery = $this->makeWinery();
         $invoice = $this->makeInvoice($winery->id, ['sif_status' => 'pendiente']);
 
         $this->mock(VerifactuService::class, function ($mock) use ($invoice) {
             $mock->shouldReceive('send')
                 ->once()
-                ->with(\Mockery::on(fn($i) => $i->id === $invoice->id))
+                ->with(\Mockery::on(fn ($i) => $i->id === $invoice->id))
                 ->andReturn(['success' => true, 'csv' => 'ABC123', 'errors' => []]);
         });
 
@@ -126,10 +112,10 @@ class DashboardTest extends WineryTestCase
 
     public function test_send_invoice_shows_error_on_failure(): void
     {
-        $winery  = $this->makeWinery();
+        $winery = $this->makeWinery();
         $invoice = $this->makeInvoice($winery->id, ['sif_status' => 'pendiente']);
 
-        $this->mock(VerifactuService::class, function ($mock) use ($invoice) {
+        $this->mock(VerifactuService::class, function ($mock) {
             $mock->shouldReceive('send')
                 ->once()
                 ->andReturn(['success' => false, 'csv' => null, 'errors' => ['Error de firma']]);
@@ -139,5 +125,18 @@ class DashboardTest extends WineryTestCase
             ->test(Dashboard::class)
             ->call('sendInvoice', $invoice->id)
             ->assertDispatched('toast');
+    }
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeInvoice(int $wineryId, array $attrs = []): Invoice
+    {
+        return Invoice::create(array_merge([
+            'user_id' => $wineryId,
+            'invoice_number' => 'F-'.rand(1000, 9999),
+            'invoice_date' => now()->format('Y-m-d'),
+            'total_amount' => 100.00,
+            'status' => 'sent',
+            'sif_status' => 'pendiente',
+        ], $attrs));
     }
 }

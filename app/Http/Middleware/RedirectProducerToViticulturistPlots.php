@@ -13,7 +13,8 @@ class RedirectProducerToViticulturistPlots
             $pathInfo = $request->getPathInfo();
             $path = ltrim(preg_replace('#^/winery(?=/|$)#', '', $pathInfo), '/');
             $qs = $request->getQueryString();
-            return redirect('/' . $path . ($qs ? '?' . $qs : ''));
+
+            return redirect('/'.$path.($qs ? '?'.$qs : ''));
         }
 
         return $next($request);

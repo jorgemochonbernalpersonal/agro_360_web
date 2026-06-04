@@ -2,27 +2,33 @@
 
 namespace App\Livewire\Viticulturist\Campaign;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\WineryViticulturist;
-use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class Create extends Component
 {
     use WithToastNotifications;
+
     public $name = '';
+
     public $year = '';
+
     public $start_date = '';
+
     public $end_date = '';
+
     public $description = '';
+
     public $active = false;
 
     public function mount()
     {
         // Validar autorización
-        if (!Auth::user()->can('create', Campaign::class)) {
+        if (! Auth::user()->can('create', Campaign::class)) {
             abort(403, __('No tienes permiso para crear campañas.'));
         }
 
@@ -31,18 +37,6 @@ class Create extends Component
         $this->start_date = now()->startOfYear()->format('Y-m-d');
         $this->end_date = now()->endOfYear()->format('Y-m-d');
         $this->name = "Campaña {$this->year}";
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'name' => 'required|string|max:255',
-            'year' => 'required|integer|min:2000|max:' . (now()->year + 5),
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'description' => 'nullable|string',
-            'active' => 'boolean',
-        ];
     }
 
     public function save()
@@ -58,6 +52,7 @@ class Create extends Component
 
         if ($existingCampaign) {
             $this->addError('year', __('Ya existe una campaña para el año :year.', ['year' => $this->year]));
+
             return;
         }
 
@@ -96,11 +91,13 @@ class Create extends Component
             if ($this->active) {
                 session()->flash('campaign_activated', __('Campaña :year activada. Ya puedes registrar actividades.', ['year' => $this->year]));
                 $route = $user->isProducer() ? route('producer.digital-notebook.estimated-yields.index') : route('viticulturist.digital-notebook');
+
                 return $this->redirect($route, navigate: true);
             }
 
             $this->toastSuccess(__('Campaña creada correctamente. Actívala cuando quieras empezar a registrar actividades.'));
             $route = $user->isProducer() ? route('producer.campaign.index') : route('viticulturist.campaign.index');
+
             return $this->redirect($route, navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al crear campaña', [
@@ -111,6 +108,7 @@ class Create extends Component
             ]);
 
             $this->toastError(__('Error al crear la campaña. Por favor, intenta de nuevo.'));
+
             return;
         }
     }
@@ -119,5 +117,17 @@ class Create extends Component
     {
         return view('livewire.viticulturist.campaign.create')
             ->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'year' => 'required|integer|min:2000|max:'.(now()->year + 5),
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'description' => 'nullable|string',
+            'active' => 'boolean',
+        ];
     }
 }

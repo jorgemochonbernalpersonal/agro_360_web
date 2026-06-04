@@ -78,7 +78,7 @@ class AuditLog extends Model
         $new = $this->new_values ?? [];
 
         foreach ($new as $key => $value) {
-            if (!isset($old[$key]) || $old[$key] !== $value) {
+            if (! isset($old[$key]) || $old[$key] !== $value) {
                 $changes[$key] = [
                     'old' => $old[$key] ?? null,
                     'new' => $value,
@@ -97,7 +97,7 @@ class AuditLog extends Model
         $userName = $this->user?->name ?? 'Sistema';
         $modelName = class_basename($this->auditable_type);
 
-        return match($this->event) {
+        return match ($this->event) {
             'created' => "{$userName} creó {$modelName} #{$this->auditable_id}",
             'updated' => "{$userName} actualizó {$modelName} #{$this->auditable_id}",
             'deleted' => "{$userName} eliminó {$modelName} #{$this->auditable_id}",
@@ -108,6 +108,8 @@ class AuditLog extends Model
 
     /**
      * Scope for specific model
+     *
+     * @param mixed $query
      */
     public function scopeForModel($query, string $modelType, int $modelId)
     {
@@ -117,6 +119,8 @@ class AuditLog extends Model
 
     /**
      * Scope for specific user
+     *
+     * @param mixed $query
      */
     public function scopeByUser($query, int $userId)
     {
@@ -125,6 +129,8 @@ class AuditLog extends Model
 
     /**
      * Scope for specific event
+     *
+     * @param mixed $query
      */
     public function scopeEvent($query, string $event)
     {

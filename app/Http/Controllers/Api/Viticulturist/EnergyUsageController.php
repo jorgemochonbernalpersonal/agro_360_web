@@ -19,10 +19,10 @@ class EnergyUsageController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
-            'campaign_id'  => 'nullable|integer',
-            'energy_type'  => 'nullable|string',
-            'search'       => 'nullable|string|max:100',
-            'per_page'     => 'nullable|integer|min:1|max:100',
+            'campaign_id' => 'nullable|integer',
+            'energy_type' => 'nullable|string',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = EnergyUsage::active()
@@ -47,10 +47,10 @@ class EnergyUsageController extends Controller
         return response()->json([
             'data' => EnergyUsageResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -61,16 +61,16 @@ class EnergyUsageController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'campaign_id'       => 'nullable|integer|exists:campaigns,id',
-            'machinery_id'      => 'nullable|integer|exists:machinery,id',
-            'date'              => 'required|date',
-            'energy_type'       => 'required|in:diesel,gasoline,electricity,lpg,natural_gas,water_pump,other',
-            'unit'              => 'required|in:liters,kwh,m3,kg',
-            'quantity'          => 'required|numeric|min:0',
-            'total_cost'        => 'nullable|numeric|min:0',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'machinery_id' => 'nullable|integer|exists:machinery,id',
+            'date' => 'required|date',
+            'energy_type' => 'required|in:diesel,gasoline,electricity,lpg,natural_gas,water_pump,other',
+            'unit' => 'required|in:liters,kwh,m3,kg',
+            'quantity' => 'required|numeric|min:0',
+            'total_cost' => 'nullable|numeric|min:0',
             'co2_kg_equivalent' => 'nullable|numeric|min:0',
             'usage_description' => 'nullable|string|max:500',
-            'notes'             => 'nullable|string|max:2000',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (empty($validated['campaign_id'])) {
@@ -82,7 +82,7 @@ class EnergyUsageController extends Controller
         $record = \App\Models\EnergyUsage::create([...$validated, 'viticulturist_id' => $user->id, 'active' => true]);
 
         return response()->json([
-            'data'    => new \App\Http\Resources\Api\EnergyUsageResource($record),
+            'data' => new \App\Http\Resources\Api\EnergyUsageResource($record),
             'message' => __('Consumo energético registrado correctamente.'),
         ], 201);
     }

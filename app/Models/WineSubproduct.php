@@ -8,28 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineSubproduct extends Model
 {
     const TYPES = [
-        'pomace'  => 'Orujo',
-        'lees'   => 'Lías',
+        'pomace' => 'Orujo',
+        'lees' => 'Lías',
         'vinasse' => 'Vinaza',
-        'other'  => 'Otro subproducto',
+        'other' => 'Otro subproducto',
     ];
 
     const DESTINATIONS = [
-        'distillery'      => 'Destilería',
-        'authorized_plant'=> 'Planta autorizada',
-        'own_use'         => 'Uso propio',
-        'other'           => 'Otro destino',
+        'distillery' => 'Destilería',
+        'authorized_plant' => 'Planta autorizada',
+        'own_use' => 'Uso propio',
+        'other' => 'Otro destino',
     ];
-
-    public static function typeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::TYPES);
-    }
-
-    public static function destinationOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::DESTINATIONS);
-    }
 
     protected $fillable = [
         'user_id',
@@ -47,8 +37,18 @@ class WineSubproduct extends Model
 
     protected $casts = [
         'subproduct_date' => 'date',
-        'quantity'        => 'float',
+        'quantity' => 'float',
     ];
+
+    public static function typeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::TYPES);
+    }
+
+    public static function destinationOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::DESTINATIONS);
+    }
 
     public function user(): BelongsTo
     {
@@ -83,10 +83,10 @@ class WineSubproduct extends Model
     public function getTypeBadgeColorAttribute(): string
     {
         return match ($this->type) {
-            'pomace'  => 'amber',
-            'lees'   => 'blue',
+            'pomace' => 'amber',
+            'lees' => 'blue',
             'vinasse' => 'purple',
-            default  => 'zinc',
+            default => 'zinc',
         };
     }
 

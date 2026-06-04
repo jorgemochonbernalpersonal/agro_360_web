@@ -5,8 +5,6 @@ namespace Tests\Feature\Supervisor;
 use App\Livewire\Supervisor\OnboardingChecklist;
 use App\Models\InvoicingSetting;
 use App\Models\OnboardingProgress;
-use App\Models\SupervisorViticulturist;
-use App\Models\SupervisorWinery;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
 
@@ -49,7 +47,7 @@ class OnboardingChecklistTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
 
         InvoicingSetting::create([
-            'user_id'           => $supervisor->id,
+            'user_id' => $supervisor->id,
             'issuer_legal_name' => 'Denominación de Origen Test',
         ]);
 
@@ -70,7 +68,7 @@ class OnboardingChecklistTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
 
         InvoicingSetting::create([
-            'user_id'           => $supervisor->id,
+            'user_id' => $supervisor->id,
             'issuer_legal_name' => '',
         ]);
 
@@ -81,7 +79,7 @@ class OnboardingChecklistTest extends SupervisorTestCase
             ->where('step', OnboardingProgress::STEP_SUPERVISOR_PROFILE)
             ->first();
 
-        $this->assertTrue($progress === null || !$progress->isCompleted());
+        $this->assertTrue($progress === null || ! $progress->isCompleted());
     }
 
     // ── auto-complete: winery step ────────────────────────────────────────────
@@ -105,7 +103,7 @@ class OnboardingChecklistTest extends SupervisorTestCase
 
     public function test_viticulturist_step_auto_completes_when_viticulturist_linked(): void
     {
-        $supervisor    = $this->makeSupervisor();
+        $supervisor = $this->makeSupervisor();
         $viticulturist = $this->makeViticulturistForSupervisor($supervisor);
 
         Livewire::actingAs($supervisor)

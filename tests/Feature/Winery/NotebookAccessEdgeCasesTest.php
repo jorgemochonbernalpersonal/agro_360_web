@@ -19,7 +19,9 @@ use Tests\Feature\WineryTestCase;
 class NotebookAccessEdgeCasesTest extends WineryTestCase
 {
     protected User $winery;
+
     protected User $viticulturist;
+
     protected WineryViticulturist $relation;
 
     protected function setUp(): void
@@ -29,15 +31,15 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
         $this->winery = $this->makeWinery();
 
         $this->viticulturist = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
         ]);
 
         $this->relation = WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         $this->actingAs($this->winery);
@@ -49,11 +51,11 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
     {
         // Primera solicitud ya rechazada
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_REJECTED,
-            'requested_at'     => now()->subDays(5),
-            'responded_at'     => now()->subDays(3),
+            'status' => NotebookAccessRequest::STATUS_REJECTED,
+            'requested_at' => now()->subDays(5),
+            'responded_at' => now()->subDays(3),
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $this->viticulturist])
@@ -61,9 +63,9 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('notebook_access_requests', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'status' => NotebookAccessRequest::STATUS_PENDING,
         ]);
     }
 
@@ -72,11 +74,11 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
         Notification::fake();
 
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_REJECTED,
-            'requested_at'     => now()->subDays(5),
-            'responded_at'     => now()->subDays(3),
+            'status' => NotebookAccessRequest::STATUS_REJECTED,
+            'requested_at' => now()->subDays(5),
+            'responded_at' => now()->subDays(3),
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $this->viticulturist])
@@ -88,11 +90,11 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
     public function test_re_request_does_not_duplicate_records(): void
     {
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_REJECTED,
-            'requested_at'     => now()->subDays(5),
-            'responded_at'     => now()->subDays(3),
+            'status' => NotebookAccessRequest::STATUS_REJECTED,
+            'requested_at' => now()->subDays(5),
+            'responded_at' => now()->subDays(3),
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $this->viticulturist])
@@ -107,16 +109,16 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
     public function test_show_renders_without_error_for_ghost_viticulturist(): void
     {
         $ghost = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => false,
-            'email'     => 'viticultores.' . uniqid() . '@placeholder.agro365.es',
+            'email' => 'viticultores.'.uniqid().'@placeholder.agro365.es',
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $ghost->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         // The show component must render without exceptions even for ghost viticultors
@@ -131,18 +133,18 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
         $otherWinery = $this->makeOtherWinery();
 
         WineryViticulturist::create([
-            'winery_id'        => $otherWinery->id,
+            'winery_id' => $otherWinery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $otherWinery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $otherWinery->id,
         ]);
 
         // Another winery has a pending request to the same viticulturist
         NotebookAccessRequest::create([
-            'winery_id'        => $otherWinery->id,
+            'winery_id' => $otherWinery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         // This winery should still be able to request (different winery_id scope)
@@ -151,9 +153,9 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('notebook_access_requests', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'status' => NotebookAccessRequest::STATUS_PENDING,
         ]);
     }
 
@@ -162,15 +164,15 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
     public function test_notebook_access_state_is_per_viticulturist(): void
     {
         $secondViticulturist = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $secondViticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         // Grant access only to the first viticulturist
@@ -178,16 +180,16 @@ class NotebookAccessEdgeCasesTest extends WineryTestCase
 
         // Second viticulturist should have NO access
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $secondViticulturist->id,
-            'notebook_access'  => false,
+            'notebook_access' => false,
         ]);
 
         // First viticulturist should still have access
         $this->assertDatabaseHas('winery_viticulturist', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'notebook_access'  => true,
+            'notebook_access' => true,
         ]);
     }
 }

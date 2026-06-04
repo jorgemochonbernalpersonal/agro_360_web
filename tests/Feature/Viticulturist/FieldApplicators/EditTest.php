@@ -9,22 +9,10 @@ use Tests\Feature\ViticulturistTestCase;
 
 class EditTest extends ViticulturistTestCase
 {
-    private function makeApplicator(int $viticulturistId): FieldApplicator
-    {
-        return FieldApplicator::create([
-            'viticulturist_id' => $viticulturistId,
-            'name'             => 'Aplicador Original',
-            'ropo_number'      => 'ROPO-ORIG-001',
-            'ropo_category'    => 'basic',
-            'is_advisor'       => false,
-            'active'           => true,
-        ]);
-    }
-
     public function test_mount_fills_fields_from_model(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id);
+        $applicator = $this->makeApplicator($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -38,7 +26,7 @@ class EditTest extends ViticulturistTestCase
     public function test_can_update_applicator(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id);
+        $applicator = $this->makeApplicator($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -51,9 +39,9 @@ class EditTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.field-applicators.index'));
 
         $this->assertDatabaseHas('field_applicators', [
-            'id'            => $applicator->id,
-            'name'          => 'Aplicador Actualizado',
-            'ropo_number'   => 'ROPO-NEW-001',
+            'id' => $applicator->id,
+            'name' => 'Aplicador Actualizado',
+            'ropo_number' => 'ROPO-NEW-001',
             'ropo_category' => 'qualified',
         ]);
     }
@@ -61,7 +49,7 @@ class EditTest extends ViticulturistTestCase
     public function test_validates_required_fields_on_update(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id);
+        $applicator = $this->makeApplicator($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -75,7 +63,7 @@ class EditTest extends ViticulturistTestCase
     public function test_advisor_license_required_when_is_advisor_toggled_on(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id);
+        $applicator = $this->makeApplicator($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -89,11 +77,23 @@ class EditTest extends ViticulturistTestCase
     public function test_cannot_edit_other_viticulturists_applicator(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeViticulturist();
-        $applicator    = $this->makeApplicator($viticulturist->id);
+        $other = $this->makeViticulturist();
+        $applicator = $this->makeApplicator($viticulturist->id);
 
         $this->actingAs($other)
             ->get(route('viticulturist.field-applicators.edit', $applicator))
             ->assertStatus(403);
+    }
+
+    private function makeApplicator(int $viticulturistId): FieldApplicator
+    {
+        return FieldApplicator::create([
+            'viticulturist_id' => $viticulturistId,
+            'name' => 'Aplicador Original',
+            'ropo_number' => 'ROPO-ORIG-001',
+            'ropo_category' => 'basic',
+            'is_advisor' => false,
+            'active' => true,
+        ]);
     }
 }

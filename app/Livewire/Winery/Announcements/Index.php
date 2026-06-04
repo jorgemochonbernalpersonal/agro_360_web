@@ -17,24 +17,17 @@ class Index extends Component
     public bool $showCreateModal = false;
 
     // Form fields
-    public string $title       = '';
-    public string $body        = '';
-    public string $type        = 'info';
-    public string $target      = 'all';
-    public ?string $expires_at = null;
-    public array $selectedViticulturists = [];
+    public string $title = '';
 
-    protected function rules(): array
-    {
-        return [
-            'title'      => ['required', 'string', 'max:150'],
-            'body'       => ['required', 'string', 'max:2000'],
-            'type'       => ['required', 'in:info,action_required,harvest_alert'],
-            'target'     => ['required', 'in:all,specific'],
-            'expires_at' => ['nullable', 'date', 'after:now'],
-            'selectedViticulturists' => ['required_if:target,specific', 'array'],
-        ];
-    }
+    public string $body = '';
+
+    public string $type = 'info';
+
+    public string $target = 'all';
+
+    public ?string $expires_at = null;
+
+    public array $selectedViticulturists = [];
 
     public function openCreate(): void
     {
@@ -47,17 +40,17 @@ class Index extends Component
         $this->validate();
 
         $announcement = WineryAnnouncement::create([
-            'winery_id'    => Auth::id(),
-            'title'        => $this->title,
-            'body'         => $this->body,
-            'type'         => $this->type,
-            'target'       => $this->target,
+            'winery_id' => Auth::id(),
+            'title' => $this->title,
+            'body' => $this->body,
+            'type' => $this->type,
+            'target' => $this->target,
             'published_at' => now(),
-            'expires_at'   => $this->expires_at ?: null,
+            'expires_at' => $this->expires_at ?: null,
         ]);
 
         // Determinar destinatarios
-        if ($this->target === 'specific' && !empty($this->selectedViticulturists)) {
+        if ($this->target === 'specific' && ! empty($this->selectedViticulturists)) {
             $recipientIds = $this->selectedViticulturists;
             foreach ($recipientIds as $vitId) {
                 $announcement->viticulturists()->attach($vitId);
@@ -109,9 +102,21 @@ class Index extends Component
             ->get();
 
         return view('livewire.winery.announcements.index', [
-            'announcements'  => $announcements,
+            'announcements' => $announcements,
             'viticulturists' => $viticulturists,
-            'typeLabels'     => WineryAnnouncement::typeLabelOptions(),
+            'typeLabels' => WineryAnnouncement::typeLabelOptions(),
         ])->layout('layouts.app');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'title' => ['required', 'string', 'max:150'],
+            'body' => ['required', 'string', 'max:2000'],
+            'type' => ['required', 'in:info,action_required,harvest_alert'],
+            'target' => ['required', 'in:all,specific'],
+            'expires_at' => ['nullable', 'date', 'after:now'],
+            'selectedViticulturists' => ['required_if:target,specific', 'array'],
+        ];
     }
 }

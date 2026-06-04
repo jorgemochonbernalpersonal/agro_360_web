@@ -9,17 +9,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private function makePest(array $overrides = []): Pest
-    {
-        return Pest::create(array_merge([
-            'type'   => 'pest',
-            'name'   => 'Test Plaga',
-            'active' => true,
-        ], $overrides));
-    }
-
     // ── Render ────────────────────────────────────────────────────────────────
 
     public function test_renders_index(): void
@@ -171,5 +160,15 @@ class IndexTest extends ViticulturistTestCase
         Livewire::test(Index::class)
             ->assertSee('Plaga Activa')
             ->assertDontSee('Plaga Inactiva');
+    }
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private function makePest(array $overrides = []): Pest
+    {
+        return Pest::create(array_merge([
+            'type' => 'pest',
+            'name' => 'Test Plaga',
+            'active' => true,
+        ], $overrides));
     }
 }

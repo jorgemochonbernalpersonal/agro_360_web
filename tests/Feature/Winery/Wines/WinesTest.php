@@ -38,7 +38,7 @@ class WinesTest extends WineryTestCase
 
     public function test_create_saves_wine(): void
     {
-        $firstType   = array_key_first(Wine::WINE_TYPES);   // 'red'
+        $firstType = array_key_first(Wine::WINE_TYPES);   // 'red'
         $firstStatus = array_key_first(Wine::STATUSES);     // 'in_progress'
 
         Livewire::test(Create::class)
@@ -50,17 +50,17 @@ class WinesTest extends WineryTestCase
 
         $this->assertDatabaseHas('wines', [
             'user_id' => $this->winery->id,
-            'name'    => 'Tempranillo 2024',
+            'name' => 'Tempranillo 2024',
         ]);
     }
 
     public function test_edit_saves_changes(): void
     {
         $wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Old Name',
+            'user_id' => $this->winery->id,
+            'name' => 'Old Name',
             'wine_type' => array_key_first(Wine::WINE_TYPES),
-            'status'    => array_key_first(Wine::STATUSES),
+            'status' => array_key_first(Wine::STATUSES),
         ]);
 
         Livewire::test(Edit::class, ['wine' => $wine])
@@ -69,7 +69,7 @@ class WinesTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wines', [
-            'id'   => $wine->id,
+            'id' => $wine->id,
             'name' => 'New Name',
         ]);
     }
@@ -77,10 +77,10 @@ class WinesTest extends WineryTestCase
     public function test_other_winery_cannot_edit(): void
     {
         $wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Protected Wine',
+            'user_id' => $this->winery->id,
+            'name' => 'Protected Wine',
             'wine_type' => array_key_first(Wine::WINE_TYPES),
-            'status'    => array_key_first(Wine::STATUSES),
+            'status' => array_key_first(Wine::STATUSES),
         ]);
 
         $otherWinery = $this->makeOtherWinery();

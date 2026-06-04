@@ -2,65 +2,89 @@
 
 namespace App\Livewire\Viticulturist;
 
-use App\Models\Tax;
-use App\Models\UserTax;
-use App\Models\InvoicingSetting;
-use App\Models\DigitalSignature;
-use App\Models\UserProfile;
-use App\Models\ViticulturistSetting;
-use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\DigitalSignature;
+use App\Models\InvoicingSetting;
+use App\Models\Tax;
+use App\Models\UserProfile;
+use App\Models\UserTax;
+use App\Models\ViticulturistSetting;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Settings extends Component
 {
     use WithToastNotifications;
 
     public $currentTab = 'taxes';
-    
-    protected $queryString = ['currentTab' => ['as' => 'tab']];
 
     // === TAXES TAB ===
     public $taxes;
+
     public $activeTaxId;
 
     // === INVOICING TAB ===
     public $invoice_prefix;
+
     public $invoice_padding;
+
     public $invoice_counter;
+
     public $invoice_year_reset;
+
     public $delivery_note_prefix;
+
     public $delivery_note_padding;
+
     public $delivery_note_counter;
+
     public $delivery_note_year_reset;
+
     public $invoicePreview;
+
     public $deliveryNotePreview;
 
     // === FIELDBOOK TAB ===
     public $default_limit_kg_per_ha = '';
+
     public $degree_day_base = 10;
+
     public $document_prefix_activity = 'ACT';
+
     public $document_prefix_harvest = 'VND';
+
     public $legal_text_fieldbook = '';
+
     public $notify_harvest_alerts = true;
+
     public $notify_activity_alerts = true;
 
     // === FISCAL TAB ===
-    public $fiscal_nif          = '';
-    public $fiscal_legal_name   = '';
-    public $fiscal_address      = '';
-    public $fiscal_city         = '';
-    public $fiscal_postal_code  = '';
-    public $fiscal_phone        = '';
+    public $fiscal_nif = '';
+
+    public $fiscal_legal_name = '';
+
+    public $fiscal_address = '';
+
+    public $fiscal_city = '';
+
+    public $fiscal_postal_code = '';
+
+    public $fiscal_phone = '';
 
     // === SIGNATURE TAB ===
     public $signaturePassword = '';
+
     public $signaturePassword_confirmation = '';
+
     public $hasDigitalSignature = false;
-    
+
     // Para resetear contraseña de firma olvidada
     public $showResetPasswordModal = false;
+
     public $loginPasswordForReset = '';
+
+    protected $queryString = ['currentTab' => ['as' => 'tab']];
 
     public function mount()
     {
@@ -83,10 +107,10 @@ class Settings extends Component
     public function loadTaxes()
     {
         $user = Auth::user();
-        
+
         // Obtener todos los impuestos disponibles
         $this->taxes = Tax::orderBy('rate', 'asc')->get();
-        
+
         // Obtener el impuesto activo del usuario
         $userTax = UserTax::where('user_id', $user->id)->first();
         $this->activeTaxId = $userTax?->tax_id;
@@ -95,18 +119,18 @@ class Settings extends Component
     public function selectTax($taxId)
     {
         $user = Auth::user();
-        
+
         // Eliminar impuesto anterior
         UserTax::where('user_id', $user->id)->delete();
-        
+
         // Crear nuevo
         UserTax::create([
             'user_id' => $user->id,
             'tax_id' => $taxId,
             'is_default' => true,
-            'order' => 1
+            'order' => 1,
         ]);
-        
+
         $this->activeTaxId = $taxId;
         $this->toastSuccess(__('Impuesto configurado correctamente'));
     }
@@ -118,11 +142,11 @@ class Settings extends Component
     public function loadInvoicing()
     {
         $user = Auth::user();
-        
+
         // Obtener o crear configuración
         $settings = InvoicingSetting::forUser($user->id)->first();
-        
-        if (!$settings) {
+
+        if (! $settings) {
             $settings = InvoicingSetting::createDefaultForUser($user->id);
         }
 
@@ -149,21 +173,11 @@ class Settings extends Component
 
     public function updatePreviews()
     {
-        $this->invoicePreview = $this->replaceVariables($this->invoice_prefix) . 
+        $this->invoicePreview = $this->replaceVariables($this->invoice_prefix).
                                 str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
 
-        $this->deliveryNotePreview = $this->replaceVariables($this->delivery_note_prefix) . 
+        $this->deliveryNotePreview = $this->replaceVariables($this->delivery_note_prefix).
                                      str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
-    }
-
-    protected function replaceVariables(string $prefix): string
-    {
-        $now = now();
-        return str_replace(
-            ['{YEAR}', '{MONTH}', '{DAY}'],
-            [$now->format('Y'), $now->format('m'), $now->format('d')],
-            $prefix
-        );
     }
 
     public function saveInvoicing()
@@ -215,27 +229,27 @@ class Settings extends Component
 
     public function loadFiscal(): void
     {
-        $user    = Auth::user();
+        $user = Auth::user();
         $profile = UserProfile::where('user_id', $user->id)->first();
-        $inv     = InvoicingSetting::forUser($user->id)->first();
+        $inv = InvoicingSetting::forUser($user->id)->first();
 
-        $this->fiscal_nif         = $user->dni ?? '';
-        $this->fiscal_legal_name  = $inv?->issuer_legal_name ?? '';
-        $this->fiscal_address     = $profile?->address ?? '';
-        $this->fiscal_city        = $profile?->city ?? '';
+        $this->fiscal_nif = $user->dni ?? '';
+        $this->fiscal_legal_name = $inv?->issuer_legal_name ?? '';
+        $this->fiscal_address = $profile?->address ?? '';
+        $this->fiscal_city = $profile?->city ?? '';
         $this->fiscal_postal_code = $profile?->postal_code ?? '';
-        $this->fiscal_phone       = $profile?->phone ?? '';
+        $this->fiscal_phone = $profile?->phone ?? '';
     }
 
     public function saveFiscal(): void
     {
         $this->validate([
-            'fiscal_nif'         => 'nullable|string|max:20',
-            'fiscal_legal_name'  => 'nullable|string|max:150',
-            'fiscal_address'     => 'nullable|string|max:255',
-            'fiscal_city'        => 'nullable|string|max:100',
+            'fiscal_nif' => 'nullable|string|max:20',
+            'fiscal_legal_name' => 'nullable|string|max:150',
+            'fiscal_address' => 'nullable|string|max:255',
+            'fiscal_city' => 'nullable|string|max:100',
             'fiscal_postal_code' => 'nullable|string|max:10',
-            'fiscal_phone'       => 'nullable|string|max:20',
+            'fiscal_phone' => 'nullable|string|max:20',
         ]);
 
         $user = Auth::user();
@@ -249,10 +263,10 @@ class Settings extends Component
         UserProfile::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'address'     => $this->fiscal_address ?: null,
-                'city'        => $this->fiscal_city ?: null,
+                'address' => $this->fiscal_address ?: null,
+                'city' => $this->fiscal_city ?: null,
                 'postal_code' => $this->fiscal_postal_code ?: null,
-                'phone'       => $this->fiscal_phone ?: null,
+                'phone' => $this->fiscal_phone ?: null,
             ]
         );
 
@@ -290,7 +304,7 @@ class Settings extends Component
             'signaturePassword.confirmed' => __('Las contraseñas no coinciden.'),
             'signaturePassword.regex' => __('La contraseña debe contener al menos una mayúscula, una minúscula y un número.'),
         ]);
-        
+
         // Lista de contraseñas prohibidas (comunes)
         $forbiddenPasswords = [
             'Password1', 'Password123', 'Password12345',
@@ -299,11 +313,12 @@ class Settings extends Component
             'Welcome1', 'Welcome123', 'Firma123',
             '12345678Aa', 'Aa123456', 'Password1!',
         ];
-        
+
         // Verificar si la contraseña está en la lista prohibida (case-insensitive)
         foreach ($forbiddenPasswords as $forbidden) {
             if (strcasecmp($this->signaturePassword, $forbidden) === 0) {
                 $this->addError('signaturePassword', __('Esta contraseña es demasiado común y predecible. Por seguridad, elige una contraseña más única para firmar documentos oficiales.'));
+
                 return;
             }
         }
@@ -311,35 +326,35 @@ class Settings extends Component
         try {
             $user = Auth::user();
             $wasUpdate = $this->hasDigitalSignature;
-            
+
             DigitalSignature::createOrUpdateForUser($user->id, $this->signaturePassword);
-            
+
             $this->signaturePassword = '';
             $this->signaturePassword_confirmation = '';
             $this->hasDigitalSignature = true;
-            
+
             // Emitir evento para que otros componentes se enteren
             $this->dispatch('signature-updated');
-            
-            $this->toastSuccess('Contraseña de firma digital ' . ($wasUpdate ? __('actualizada') : __('creada')) . ' correctamente');
-            
+
+            $this->toastSuccess('Contraseña de firma digital '.($wasUpdate ? __('actualizada') : __('creada')).' correctamente');
+
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al guardar la configuración. Inténtalo de nuevo.'));
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : __('Error al guardar la configuración. Inténtalo de nuevo.'));
         }
     }
-    
+
     public function openResetPasswordModal()
     {
         $this->showResetPasswordModal = true;
     }
-    
+
     public function closeResetPasswordModal()
     {
         $this->showResetPasswordModal = false;
         $this->loginPasswordForReset = '';
         $this->resetValidation('loginPasswordForReset');
     }
-    
+
     public function resetForgottenSignaturePassword()
     {
         $this->validate([
@@ -347,20 +362,21 @@ class Settings extends Component
         ], [
             'loginPasswordForReset.required' => __('Debes ingresar tu contraseña de login.'),
         ]);
-        
+
         // Verificar contraseña de login
         $user = Auth::user();
-        if (!\Hash::check($this->loginPasswordForReset, $user->password)) {
+        if (! \Hash::check($this->loginPasswordForReset, $user->password)) {
             $this->addError('loginPasswordForReset', __('Contraseña de login incorrecta.'));
+
             return;
         }
-        
+
         // Resetear contraseña de firma (eliminarla)
         try {
             $signature = DigitalSignature::forUser($user->id);
             if ($signature) {
                 $signature->delete();
-                
+
                 // Preparar datos del reseteo para el log y el email
                 $resetData = [
                     'reset_at' => now()->format('d/m/Y H:i:s'),
@@ -368,7 +384,7 @@ class Settings extends Component
                     'browser' => $this->getBrowserName(request()->userAgent()),
                     'device' => $this->getDeviceName(request()->userAgent()),
                 ];
-                
+
                 // Log del reseteo para auditoría
                 \Log::warning('Signature password reset', [
                     'user_id' => $user->id,
@@ -377,7 +393,7 @@ class Settings extends Component
                     'browser' => $resetData['browser'],
                     'device' => $resetData['device'],
                 ]);
-                
+
                 // Enviar email de notificación
                 try {
                     \Mail::to($user->email)->send(
@@ -385,47 +401,21 @@ class Settings extends Component
                     );
                 } catch (\Exception $emailError) {
                     // Log error pero no fallar operación
-                    \Log::error('Error sending signature reset email: ' . $emailError->getMessage());
+                    \Log::error('Error sending signature reset email: '.$emailError->getMessage());
                 }
             }
-            
+
             $this->hasDigitalSignature = false;
             $this->closeResetPasswordModal();
-            
+
             // Emitir evento
             $this->dispatch('signature-updated');
-            
+
             $this->toastSuccess(__('Contraseña de firma eliminada. Te hemos enviado un email de confirmación. Ahora puedes crear una nueva.'));
-            
+
         } catch (\Exception $e) {
-            $this->toastError($e instanceof RuntimeException ? $e->getMessage()  : __('Error al resetear. Inténtalo de nuevo.'));
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : __('Error al resetear. Inténtalo de nuevo.'));
         }
-    }
-    
-    /**
-     * Obtener nombre del navegador del user agent
-     */
-    protected function getBrowserName($userAgent)
-    {
-        if (str_contains($userAgent, 'Chrome')) return __('Chrome');
-        if (str_contains($userAgent, 'Firefox')) return __('Firefox');
-        if (str_contains($userAgent, 'Safari')) return __('Safari');
-        if (str_contains($userAgent, 'Edge')) return __('Edge');
-        if (str_contains($userAgent, 'Opera')) return __('Opera');
-        return __('Desconocido');
-    }
-    
-    /**
-     * Obtener nombre del dispositivo del user agent
-     */
-    protected function getDeviceName($userAgent)
-    {
-        if (str_contains($userAgent, 'Mobile')) return __('Móvil');
-        if (str_contains($userAgent, 'Tablet')) return __('Tablet');
-        if (str_contains($userAgent, 'Windows')) return __('Windows PC');
-        if (str_contains($userAgent, 'Macintosh')) return __('Mac');
-        if (str_contains($userAgent, 'Linux')) return __('Linux PC');
-        return __('Escritorio');
     }
 
     // ==========================================
@@ -437,30 +427,30 @@ class Settings extends Component
         $user = Auth::user();
         $settings = ViticulturistSetting::forUser($user->id);
 
-        if (!$settings) {
+        if (! $settings) {
             $settings = ViticulturistSetting::createDefaultForUser($user->id);
         }
 
-        $this->default_limit_kg_per_ha  = $settings->default_limit_kg_per_ha ?? '';
-        $this->degree_day_base          = $settings->degree_day_base;
+        $this->default_limit_kg_per_ha = $settings->default_limit_kg_per_ha ?? '';
+        $this->degree_day_base = $settings->degree_day_base;
         $this->document_prefix_activity = $settings->document_prefix_activity;
-        $this->document_prefix_harvest  = $settings->document_prefix_harvest;
-        $this->legal_text_fieldbook     = $settings->legal_text_fieldbook ?? '';
-        $this->notify_harvest_alerts    = $settings->notify_harvest_alerts;
-        $this->notify_activity_alerts   = $settings->notify_activity_alerts;
+        $this->document_prefix_harvest = $settings->document_prefix_harvest;
+        $this->legal_text_fieldbook = $settings->legal_text_fieldbook ?? '';
+        $this->notify_harvest_alerts = $settings->notify_harvest_alerts;
+        $this->notify_activity_alerts = $settings->notify_activity_alerts;
     }
 
     public function saveFieldbook(): void
     {
         $this->validate([
-            'default_limit_kg_per_ha'  => 'nullable|numeric|min:0|max:999999',
-            'degree_day_base'          => 'required|numeric|min:0|max:30',
+            'default_limit_kg_per_ha' => 'nullable|numeric|min:0|max:999999',
+            'degree_day_base' => 'required|numeric|min:0|max:30',
             'document_prefix_activity' => 'required|string|max:20|regex:/^[A-Z0-9_\-]+$/',
-            'document_prefix_harvest'  => 'required|string|max:20|regex:/^[A-Z0-9_\-]+$/',
-            'legal_text_fieldbook'     => 'nullable|string|max:2000',
+            'document_prefix_harvest' => 'required|string|max:20|regex:/^[A-Z0-9_\-]+$/',
+            'legal_text_fieldbook' => 'nullable|string|max:2000',
         ], [
             'document_prefix_activity.regex' => __('Solo letras mayúsculas, números, guión y guión bajo.'),
-            'document_prefix_harvest.regex'  => __('Solo letras mayúsculas, números, guión y guión bajo.'),
+            'document_prefix_harvest.regex' => __('Solo letras mayúsculas, números, guión y guión bajo.'),
         ]);
 
         $user = Auth::user();
@@ -468,13 +458,13 @@ class Settings extends Component
             ?? ViticulturistSetting::createDefaultForUser($user->id);
 
         $settings->update([
-            'default_limit_kg_per_ha'  => $this->default_limit_kg_per_ha ?: null,
-            'degree_day_base'          => $this->degree_day_base,
+            'default_limit_kg_per_ha' => $this->default_limit_kg_per_ha ?: null,
+            'degree_day_base' => $this->degree_day_base,
             'document_prefix_activity' => strtoupper($this->document_prefix_activity),
-            'document_prefix_harvest'  => strtoupper($this->document_prefix_harvest),
-            'legal_text_fieldbook'     => $this->legal_text_fieldbook ?: null,
-            'notify_harvest_alerts'    => $this->notify_harvest_alerts,
-            'notify_activity_alerts'   => $this->notify_activity_alerts,
+            'document_prefix_harvest' => strtoupper($this->document_prefix_harvest),
+            'legal_text_fieldbook' => $this->legal_text_fieldbook ?: null,
+            'notify_harvest_alerts' => $this->notify_harvest_alerts,
+            'notify_activity_alerts' => $this->notify_activity_alerts,
         ]);
 
         $this->loadFieldbook();
@@ -487,5 +477,68 @@ class Settings extends Component
             'title' => __('Configuración - Agro365'),
             'description' => __('Gestiona la configuración de tu cuenta: impuestos, numeración de facturas y albaranes, y preferencias de facturación.'),
         ]);
+    }
+
+    protected function replaceVariables(string $prefix): string
+    {
+        $now = now();
+
+        return str_replace(
+            ['{YEAR}', '{MONTH}', '{DAY}'],
+            [$now->format('Y'), $now->format('m'), $now->format('d')],
+            $prefix
+        );
+    }
+
+    /**
+     * Obtener nombre del navegador del user agent
+     *
+     * @param mixed $userAgent
+     */
+    protected function getBrowserName($userAgent)
+    {
+        if (str_contains($userAgent, 'Chrome')) {
+            return __('Chrome');
+        }
+        if (str_contains($userAgent, 'Firefox')) {
+            return __('Firefox');
+        }
+        if (str_contains($userAgent, 'Safari')) {
+            return __('Safari');
+        }
+        if (str_contains($userAgent, 'Edge')) {
+            return __('Edge');
+        }
+        if (str_contains($userAgent, 'Opera')) {
+            return __('Opera');
+        }
+
+        return __('Desconocido');
+    }
+
+    /**
+     * Obtener nombre del dispositivo del user agent
+     *
+     * @param mixed $userAgent
+     */
+    protected function getDeviceName($userAgent)
+    {
+        if (str_contains($userAgent, 'Mobile')) {
+            return __('Móvil');
+        }
+        if (str_contains($userAgent, 'Tablet')) {
+            return __('Tablet');
+        }
+        if (str_contains($userAgent, 'Windows')) {
+            return __('Windows PC');
+        }
+        if (str_contains($userAgent, 'Macintosh')) {
+            return __('Mac');
+        }
+        if (str_contains($userAgent, 'Linux')) {
+            return __('Linux PC');
+        }
+
+        return __('Escritorio');
     }
 }

@@ -16,30 +16,41 @@ use Livewire\Component;
 
 class Show extends Component
 {
-    use WithToastNotifications, GeneratesCatastroGeometry;
+    use GeneratesCatastroGeometry, WithToastNotifications;
 
     public Plot $plot;
 
     // Tab
     public string $currentTab = 'info';
-    public bool   $fromVisual  = false;
+
+    public bool $fromVisual = false;
 
     // Entorno de parcela (por campaña activa)
     public ?int $env_id = null;
+
     public string $env_campaign_id = '';
+
     public bool $env_water_intake_nearby = false;
+
     public string $env_water_intake_distance_m = '';
+
     public bool $env_protected_zone_total = false;
+
     public bool $env_protected_zone_partial = false;
+
     public string $env_protection_zone_type = '';
+
     public string $env_buffer_zone_m = '';
+
     public string $env_slope_pct = '';
+
     public bool $env_erosion_risk = false;
+
     public string $env_notes = '';
 
     public function mount(Plot $plot)
     {
-        if (!Auth::user()->can('view', $plot)) {
+        if (! Auth::user()->can('view', $plot)) {
             abort(403);
         }
 
@@ -67,64 +78,36 @@ class Show extends Component
         $this->currentTab = $tab;
     }
 
-    private function loadEnvironment(): void
-    {
-        $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
-        if (!$campaign) {
-            return;
-        }
-
-        $this->env_campaign_id = $campaign->id;
-
-        $env = PlotEnvironment::where('viticulturist_id', Auth::id())
-            ->where('plot_id', $this->plot->id)
-            ->where('campaign_id', $campaign->id)
-            ->first();
-
-        if ($env) {
-            $this->env_id                      = $env->id;
-            $this->env_water_intake_nearby      = (bool) $env->water_intake_nearby;
-            $this->env_water_intake_distance_m  = $env->water_intake_distance_m ?? '';
-            $this->env_protected_zone_total     = (bool) $env->protected_zone_total;
-            $this->env_protected_zone_partial   = (bool) $env->protected_zone_partial;
-            $this->env_protection_zone_type     = $env->protection_zone_type ?? '';
-            $this->env_buffer_zone_m            = $env->buffer_zone_m ?? '';
-            $this->env_slope_pct                = $env->slope_pct ?? '';
-            $this->env_erosion_risk             = (bool) $env->erosion_risk;
-            $this->env_notes                    = $env->notes ?? '';
-        }
-    }
-
     public function saveEnvironment(): void
     {
-        if (!Auth::user()->hasViticulturistAccess()) {
+        if (! Auth::user()->hasViticulturistAccess()) {
             return;
         }
 
         $this->validate([
             'env_water_intake_distance_m' => 'nullable|numeric|min:0',
-            'env_protection_zone_type'    => 'nullable|string|max:100',
-            'env_buffer_zone_m'           => 'nullable|numeric|min:0',
-            'env_slope_pct'               => 'nullable|numeric|min:0|max:100',
-            'env_notes'                   => 'nullable|string',
+            'env_protection_zone_type' => 'nullable|string|max:100',
+            'env_buffer_zone_m' => 'nullable|numeric|min:0',
+            'env_slope_pct' => 'nullable|numeric|min:0|max:100',
+            'env_notes' => 'nullable|string',
         ]);
 
         $env = PlotEnvironment::updateOrCreate(
             [
                 'campaign_id' => $this->env_campaign_id,
-                'plot_id'     => $this->plot->id,
+                'plot_id' => $this->plot->id,
             ],
             [
-                'viticulturist_id'        => Auth::id(),
-                'water_intake_nearby'     => $this->env_water_intake_nearby,
+                'viticulturist_id' => Auth::id(),
+                'water_intake_nearby' => $this->env_water_intake_nearby,
                 'water_intake_distance_m' => $this->env_water_intake_distance_m ?: null,
-                'protected_zone_total'    => $this->env_protected_zone_total,
-                'protected_zone_partial'  => $this->env_protected_zone_partial,
-                'protection_zone_type'    => $this->env_protection_zone_type ?: null,
-                'buffer_zone_m'           => $this->env_buffer_zone_m ?: null,
-                'slope_pct'               => $this->env_slope_pct ?: null,
-                'erosion_risk'            => $this->env_erosion_risk,
-                'notes'                   => $this->env_notes ?: null,
+                'protected_zone_total' => $this->env_protected_zone_total,
+                'protected_zone_partial' => $this->env_protected_zone_partial,
+                'protection_zone_type' => $this->env_protection_zone_type ?: null,
+                'buffer_zone_m' => $this->env_buffer_zone_m ?: null,
+                'slope_pct' => $this->env_slope_pct ?: null,
+                'erosion_risk' => $this->env_erosion_risk,
+                'notes' => $this->env_notes ?: null,
             ]
         );
 
@@ -137,8 +120,9 @@ class Show extends Component
         $plotId = $plotId ?? $this->plot->id;
         $plot = Plot::findOrFail($plotId);
 
-        if (!Auth::user()->can('update', $plot)) {
+        if (! Auth::user()->can('update', $plot)) {
             $this->toastError(__('No tienes permiso para modificar esta parcela.'));
+
             return;
         }
 
@@ -151,6 +135,7 @@ class Show extends Component
 
         if ($sigpacCodes->isEmpty()) {
             $this->toastError(__('Esta parcela no tiene códigos SIGPAC asociados.'));
+
             return;
         }
 
@@ -166,15 +151,17 @@ class Show extends Component
                 try {
                     $wkt = $service->fetchWkt($sigpacCode);
 
-                    if (!$wkt) {
+                    if (! $wkt) {
                         $errorCount++;
                         $errors[] = "No se pudieron obtener coordenadas para el código {$sigpacCode->code}";
+
                         continue;
                     }
 
-                    if (!preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
+                    if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
                         $errorCount++;
                         $errors[] = "Formato de coordenadas inválido para el código {$sigpacCode->code}";
+
                         continue;
                     }
 
@@ -182,7 +169,7 @@ class Show extends Component
                     $successCount++;
                 } catch (\Exception $e) {
                     $errorCount++;
-                    $errors[] = "Error procesando código {$sigpacCode->code}: " . $e->getMessage();
+                    $errors[] = "Error procesando código {$sigpacCode->code}: ".$e->getMessage();
                     Log::error('Error generating map for sigpac code', [
                         'sigpac_code_id' => $sigpacCode->id,
                         'plot_id' => $plotId,
@@ -212,7 +199,7 @@ class Show extends Component
             }
 
             if ($errorCount > 0) {
-                $errorMessage = "Error al generar {$errorCount} mapa(s). " . implode(' ', array_slice($errors, 0, 3));
+                $errorMessage = "Error al generar {$errorCount} mapa(s). ".implode(' ', array_slice($errors, 0, 3));
                 $this->toastError($errorMessage);
             }
         } catch (\Exception $e) {
@@ -234,18 +221,18 @@ class Show extends Component
 
         // Computed from already-loaded relation — zero extra queries.
         $geometryRows = $this->plot->multiplePlotSigpacs
-            ->filter(fn($mps) => $mps->plot_geometry_id !== null && $mps->plotGeometry !== null);
+            ->filter(fn ($mps) => $mps->plot_geometry_id !== null && $mps->plotGeometry !== null);
 
-        $hasGeometry         = $geometryRows->isNotEmpty();
-        $hasSigpacGeometry   = $geometryRows->where('source', 'sigpac')->isNotEmpty();
+        $hasGeometry = $geometryRows->isNotEmpty();
+        $hasSigpacGeometry = $geometryRows->where('source', 'sigpac')->isNotEmpty();
         $hasCatastroGeometry = $geometryRows->where('source', 'catastro')->isNotEmpty();
-        $geometrySource      = $geometryRows->first()?->source; // 'sigpac'|'catastro'|'manual'|null
+        $geometrySource = $geometryRows->first()?->source; // 'sigpac'|'catastro'|'manual'|null
         $plotGeometries = $geometryRows
-            ->map(fn($mps) => [
-                'wkt'         => $mps->plotGeometry->getWktCoordinates(),
+            ->map(fn ($mps) => [
+                'wkt' => $mps->plotGeometry->getWktCoordinates(),
                 'sigpac_code' => $mps->sigpacCode?->code ?? null,
             ])
-            ->filter(fn($g) => $g['wkt'])
+            ->filter(fn ($g) => $g['wkt'])
             ->values()
             ->all();
 
@@ -255,8 +242,36 @@ class Show extends Component
             'geometrySource', 'plotGeometries'
         ))
             ->layout('layouts.app', [
-                'title' => $this->plot->name . ' - Parcela - Agro365',
-                'description' => __('Detalles de la parcela ') . $this->plot->name . '. Información completa, códigos SIGPAC, ubicación y plantaciones asociadas.',
+                'title' => $this->plot->name.' - Parcela - Agro365',
+                'description' => __('Detalles de la parcela ').$this->plot->name.'. Información completa, códigos SIGPAC, ubicación y plantaciones asociadas.',
             ]);
+    }
+
+    private function loadEnvironment(): void
+    {
+        $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
+        if (! $campaign) {
+            return;
+        }
+
+        $this->env_campaign_id = $campaign->id;
+
+        $env = PlotEnvironment::where('viticulturist_id', Auth::id())
+            ->where('plot_id', $this->plot->id)
+            ->where('campaign_id', $campaign->id)
+            ->first();
+
+        if ($env) {
+            $this->env_id = $env->id;
+            $this->env_water_intake_nearby = (bool) $env->water_intake_nearby;
+            $this->env_water_intake_distance_m = $env->water_intake_distance_m ?? '';
+            $this->env_protected_zone_total = (bool) $env->protected_zone_total;
+            $this->env_protected_zone_partial = (bool) $env->protected_zone_partial;
+            $this->env_protection_zone_type = $env->protection_zone_type ?? '';
+            $this->env_buffer_zone_m = $env->buffer_zone_m ?? '';
+            $this->env_slope_pct = $env->slope_pct ?? '';
+            $this->env_erosion_risk = (bool) $env->erosion_risk;
+            $this->env_notes = $env->notes ?? '';
+        }
     }
 }

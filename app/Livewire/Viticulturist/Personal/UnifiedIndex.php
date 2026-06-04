@@ -2,30 +2,33 @@
 
 namespace App\Livewire\Viticulturist\Personal;
 
-use App\Models\AgriculturalActivity;
+use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithUserFilters;
 use App\Models\Crew;
 use App\Models\CrewMember;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use App\Notifications\ViticulturistInvitationNotification;
-use App\Livewire\Concerns\WithToastNotifications;
-use App\Livewire\Concerns\WithUserFilters;
-use Livewire\Component;
-use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class UnifiedIndex extends Component
 {
     use WithPagination, WithToastNotifications, WithUserFilters;
 
     public $viewMode = 'personal'; // 'personal' o 'crews'
+
     public $search = '';
+
     public $wineryFilter = '';
+
     public $statusFilter = ''; // 'in_crew', 'individual', 'unassigned'
+
     public $crewFilter = ''; // Filtro por cuadrilla específica
-    
+
     // Para asignaciones
     public $assignToCrewId = '';
 
@@ -67,6 +70,7 @@ class UnifiedIndex extends Component
     {
         if (empty($viticulturistId) || empty($this->assignToCrewId)) {
             $this->toastError(__('Debes seleccionar un equipo.'));
+
             return;
         }
 
@@ -79,6 +83,7 @@ class UnifiedIndex extends Component
 
         if (! $canEdit) {
             $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
+
             return;
         }
 
@@ -89,6 +94,7 @@ class UnifiedIndex extends Component
 
         if (! $crew) {
             $this->toastError(__('No tienes permiso para gestionar este equipo.'));
+
             return;
         }
 
@@ -97,6 +103,7 @@ class UnifiedIndex extends Component
 
         if ($member && $member->crew_id === $crew->id) {
             $this->toastError(__('Este viticultor ya forma parte de este equipo.'));
+
             return;
         }
 
@@ -142,12 +149,13 @@ class UnifiedIndex extends Component
 
         if (! $canEdit) {
             $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
+
             return;
         }
 
         $member = CrewMember::where('viticulturist_id', $viticulturistId)->first();
 
-        if (!$member) {
+        if (! $member) {
             // Crear como trabajador sin equipo
             CrewMember::create([
                 'viticulturist_id' => $viticulturistId,
@@ -164,13 +172,15 @@ class UnifiedIndex extends Component
 
     public function deleteCrew(Crew $crew)
     {
-        if (!Auth::user()->can('delete', $crew)) {
+        if (! Auth::user()->can('delete', $crew)) {
             $this->toastError(__('No tienes permiso para eliminar este equipo.'));
+
             return;
         }
 
         if ($crew->activities()->exists()) {
             $this->toastError(__('No se puede eliminar un equipo con actividades asociadas.'));
+
             return;
         }
 
@@ -180,7 +190,7 @@ class UnifiedIndex extends Component
                 $crew->members()->delete();
                 $crew->delete();
             });
-            
+
             $this->toastSuccess(__('Equipo eliminado correctamente.'));
         } catch (\Exception $e) {
             Log::error('Error deleting crew', [
@@ -202,34 +212,38 @@ class UnifiedIndex extends Component
             ->where('viticulturist_id', $viticulturistId)
             ->exists();
 
-        if (!$canEdit) {
+        if (! $canEdit) {
             $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
+
             return;
         }
 
         $viticulturist = User::find($viticulturistId);
 
-        if (!$viticulturist) {
+        if (! $viticulturist) {
             $this->toastError(__('Viticultor no encontrado.'));
+
             return;
         }
 
         // Verificar que no se haya enviado ya la invitación
         if ($viticulturist->invitation_sent_at !== null) {
             $this->toastError(__('La invitación ya fue enviada anteriormente.'));
+
             return;
         }
 
         // Verificar que el viticultor aún no puede hacer login (estado inicial)
         if ($viticulturist->can_login) {
             $this->toastError(__('Este viticultor ya puede iniciar sesión. No es necesario enviar invitación.'));
+
             return;
         }
 
         try {
             // Enviar solo la invitación (el email de verificación se enviará cuando se registre)
             $viticulturist->notify(new ViticulturistInvitationNotification($user));
-            
+
             // Marcar que se envió la invitación
             $viticulturist->update([
                 'invitation_sent_at' => now(),
@@ -256,8 +270,9 @@ class UnifiedIndex extends Component
             ->where('parent_viticulturist_id', $user->id)
             ->first();
 
-        if (!$relation) {
+        if (! $relation) {
             $this->toastError(__('No tienes permiso para eliminar este viticultor.'));
+
             return;
         }
 
@@ -276,19 +291,21 @@ class UnifiedIndex extends Component
         $hasWineryRelations = WineryViticulturist::where('viticulturist_id', $viticulturistId)
             ->where(function ($q) use ($user) {
                 $q->where('source', '!=', WineryViticulturist::SOURCE_VITICULTURIST)
-                  ->orWhere('parent_viticulturist_id', '!=', $user->id);
+                    ->orWhere('parent_viticulturist_id', '!=', $user->id);
             })
             ->exists();
 
         if ($hasPlots || $hasCampaigns || $hasActivities || $hasDeliveries || $hasInvoices
             || $hasCrews || $hasSubs || $hasPayments || $hasSupervisorLinks || $hasWineryRelations) {
             $this->toastError(__('No se puede eliminar el viticultor porque tiene datos relacionados.'));
+
             return;
         }
 
         $vit = User::find($viticulturistId);
-        if (!$vit) {
+        if (! $vit) {
             $this->toastError(__('Viticultor no encontrado.'));
+
             return;
         }
 
@@ -339,10 +356,10 @@ class UnifiedIndex extends Component
 
         // Búsqueda
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
             });
         }
 
@@ -396,14 +413,14 @@ class UnifiedIndex extends Component
         $allViticulturists = User::where('role', 'viticulturist')
             ->whereIn('id', $visibleIds)
             ->get();
-        
+
         $allMembers = CrewMember::whereIn('viticulturist_id', $allViticulturists->pluck('id'))
             ->with('crew')
             ->get()
             ->keyBy('viticulturist_id');
-        
-        $inCrewCount = $allMembers->filter(fn($m) => $m->crew_id !== null)->count();
-        $individualCount = $allMembers->filter(fn($m) => $m->crew_id === null)->count();
+
+        $inCrewCount = $allMembers->filter(fn ($m) => $m->crew_id !== null)->count();
+        $individualCount = $allMembers->filter(fn ($m) => $m->crew_id === null)->count();
         $unassignedCount = $allViticulturists->count() - $allMembers->count();
         $crewsCount = Crew::forViticulturist($user->id)->count();
 
@@ -413,8 +430,8 @@ class UnifiedIndex extends Component
             ->with('winery')
             ->get()
             ->groupBy('viticulturist_id');
-        
-        $wineriesByViticulturist = $wineryRelations->map(function($relations) {
+
+        $wineriesByViticulturist = $wineryRelations->map(function ($relations) {
             return $relations->pluck('winery')->filter()->unique('id')->values();
         });
 
@@ -437,7 +454,7 @@ class UnifiedIndex extends Component
 
     private function renderCrewsView($user, $wineries)
     {
-        if (!$user->can('viewAny', Crew::class)) {
+        if (! $user->can('viewAny', Crew::class)) {
             abort(403, __('No tienes permiso para ver equipos.'));
         }
 
@@ -446,10 +463,10 @@ class UnifiedIndex extends Component
             ->withCount(['members', 'activities']);
 
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
             });
         }
 
@@ -458,11 +475,11 @@ class UnifiedIndex extends Component
         }
 
         $crewsPaginated = $query->orderBy('created_at', 'desc')->paginate(10);
-        
+
         // Calcular estadísticas para equipos
         $allCrews = Crew::forViticulturist($user->id)->get();
         $crewsCount = $allCrews->count();
-        
+
         // Calcular estadísticas de viticultores para el panel
         $createdViticulturistIds = WineryViticulturist::editableBy($user)
             ->pluck('viticulturist_id');
@@ -482,4 +499,3 @@ class UnifiedIndex extends Component
         ]);
     }
 }
-

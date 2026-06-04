@@ -20,9 +20,9 @@ class WineryYieldForecast extends Model
     ];
 
     protected $casts = [
-        'vintage_year'   => 'integer',
-        'estimated_kg'   => 'decimal:3',
-        'estimation_date'=> 'date',
+        'vintage_year' => 'integer',
+        'estimated_kg' => 'decimal:3',
+        'estimation_date' => 'date',
     ];
 
     // ─── Relaciones ─────────────────────────────────────────────────────────
@@ -75,7 +75,7 @@ class WineryYieldForecast extends Model
      */
     public function executionPercentage(): ?float
     {
-        if (!$this->estimated_kg || $this->estimated_kg <= 0) {
+        if (! $this->estimated_kg || $this->estimated_kg <= 0) {
             return null;
         }
 

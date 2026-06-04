@@ -20,7 +20,8 @@ use Tests\Feature\WineryTestCase;
  */
 class ContainerMaintenanceTest extends WineryTestCase
 {
-    private User      $winery;
+    private User $winery;
+
     private Container $container;
 
     protected function setUp(): void
@@ -33,27 +34,14 @@ class ContainerMaintenanceTest extends WineryTestCase
         $type = ContainerType::firstOrCreate(['name' => 'Depósito Inox']);
 
         $this->container = Container::create([
-            'user_id'       => $this->winery->id,
-            'name'          => 'Cuba Mantenimiento',
-            'type_id'       => $type->id,
-            'capacity'      => 5000,
-            'unit'          => 'litros',
+            'user_id' => $this->winery->id,
+            'name' => 'Cuba Mantenimiento',
+            'type_id' => $type->id,
+            'capacity' => 5000,
+            'unit' => 'litros',
             'used_capacity' => 0,
-            'archived'      => false,
+            'archived' => false,
         ]);
-    }
-
-    // ── Helper ────────────────────────────────────────────────────────────────
-
-    private function makeMaintenance(array $attrs = []): ContainerMaintenance
-    {
-        return ContainerMaintenance::create(array_merge([
-            'container_id'     => $this->container->id,
-            'maintenance_type' => 'cleaning',
-            'maintenance_name' => 'Limpieza inicial',
-            'scheduled_date'   => now()->toDateString(),
-            'status'           => 'scheduled',
-        ], $attrs));
     }
 
     // ── Index ─────────────────────────────────────────────────────────────────
@@ -84,10 +72,10 @@ class ContainerMaintenanceTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('container_maintenances', [
-            'container_id'     => $this->container->id,
+            'container_id' => $this->container->id,
             'maintenance_type' => 'cleaning',
             'maintenance_name' => 'Limpieza programada',
-            'status'           => 'scheduled',
+            'status' => 'scheduled',
         ]);
     }
 
@@ -127,9 +115,9 @@ class ContainerMaintenanceTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('container_maintenances', [
-            'id'               => $maintenance->id,
+            'id' => $maintenance->id,
             'maintenance_name' => 'Limpieza actualizada',
-            'status'           => 'completed',
+            'status' => 'completed',
         ]);
     }
 
@@ -154,7 +142,7 @@ class ContainerMaintenanceTest extends WineryTestCase
             ->call('markCompleted', $maintenance->id);
 
         $this->assertDatabaseHas('container_maintenances', [
-            'id'     => $maintenance->id,
+            'id' => $maintenance->id,
             'status' => 'completed',
         ]);
     }
@@ -167,8 +155,21 @@ class ContainerMaintenanceTest extends WineryTestCase
             ->call('cancel', $maintenance->id);
 
         $this->assertDatabaseHas('container_maintenances', [
-            'id'     => $maintenance->id,
+            'id' => $maintenance->id,
             'status' => 'cancelled',
         ]);
+    }
+
+    // ── Helper ────────────────────────────────────────────────────────────────
+
+    private function makeMaintenance(array $attrs = []): ContainerMaintenance
+    {
+        return ContainerMaintenance::create(array_merge([
+            'container_id' => $this->container->id,
+            'maintenance_type' => 'cleaning',
+            'maintenance_name' => 'Limpieza inicial',
+            'scheduled_date' => now()->toDateString(),
+            'status' => 'scheduled',
+        ], $attrs));
     }
 }

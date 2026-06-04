@@ -6,14 +6,14 @@ use App\Models\Plot;
 use App\Models\PlotAlertPreference;
 use App\Models\PlotRemoteSensing;
 use App\Models\User;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Collection;
 
 class AlertService
 {
     // Default thresholds
     private const DEFAULT_NDVI_THRESHOLD = 0.35;
+
     private const DEFAULT_NDWI_THRESHOLD = -0.15;
+
     private const DEFAULT_TEMP_THRESHOLD = 40;
 
     /**
@@ -28,9 +28,9 @@ class AlertService
 
         foreach ($plots as $plot) {
             $plotAlerts = $this->checkPlotAlerts($plot, $user);
-            if (!empty($plotAlerts)) {
+            if (! empty($plotAlerts)) {
                 $alerts[$plot->id] = [
-                    'plot'   => $plot,
+                    'plot' => $plot,
                     'alerts' => $plotAlerts,
                 ];
             }
@@ -45,12 +45,12 @@ class AlertService
     public function checkPlotAlerts(Plot $plot, User $user): array
     {
         $alerts = [];
-        
+
         $latestData = PlotRemoteSensing::where('plot_id', $plot->id)
             ->orderBy('image_date', 'desc')
             ->first();
 
-        if (!$latestData) {
+        if (! $latestData) {
             return $alerts;
         }
 
@@ -118,31 +118,8 @@ class AlertService
     public function getAlertCountForUser(User $user): int
     {
         $alerts = $this->checkAlertsForUser($user);
-        return collect($alerts)->sum(fn($plotData) => count($plotData['alerts']));
-    }
 
-    /**
-     * Get thresholds for a plot from this user's personal preferences.
-     */
-    private function getPlotThresholds(Plot $plot, User $user): array
-    {
-        $pref = PlotAlertPreference::where('plot_id', $plot->id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        return [
-            'ndvi' => $pref?->ndvi_threshold ?? self::DEFAULT_NDVI_THRESHOLD,
-            'ndwi' => self::DEFAULT_NDWI_THRESHOLD,
-            'temp' => self::DEFAULT_TEMP_THRESHOLD,
-        ];
-    }
-
-    /**
-     * Format numeric value
-     */
-    private function formatValue($value, int $decimals): string
-    {
-        return number_format($value, $decimals);
+        return collect($alerts)->sum(fn ($plotData) => count($plotData['alerts']));
     }
 
     /**
@@ -169,5 +146,31 @@ class AlertService
             'info' => 'ℹ️',
             default => '📋',
         };
+    }
+
+    /**
+     * Get thresholds for a plot from this user's personal preferences.
+     */
+    private function getPlotThresholds(Plot $plot, User $user): array
+    {
+        $pref = PlotAlertPreference::where('plot_id', $plot->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        return [
+            'ndvi' => $pref?->ndvi_threshold ?? self::DEFAULT_NDVI_THRESHOLD,
+            'ndwi' => self::DEFAULT_NDWI_THRESHOLD,
+            'temp' => self::DEFAULT_TEMP_THRESHOLD,
+        ];
+    }
+
+    /**
+     * Format numeric value
+     *
+     * @param mixed $value
+     */
+    private function formatValue($value, int $decimals): string
+    {
+        return number_format($value, $decimals);
     }
 }

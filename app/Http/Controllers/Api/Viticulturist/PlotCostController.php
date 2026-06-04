@@ -19,10 +19,10 @@ class PlotCostController extends Controller
 
         $request->validate([
             'campaign_id' => 'nullable|integer',
-            'plot_id'     => 'nullable|integer',
-            'category'    => 'nullable|string',
-            'search'      => 'nullable|string|max:100',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'plot_id' => 'nullable|integer',
+            'category' => 'nullable|string',
+            'search' => 'nullable|string|max:100',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = PlotCost::where('viticulturist_id', $user->id)
@@ -45,7 +45,7 @@ class PlotCostController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('description', 'like', "%{$term}%")
-                  ->orWhere('supplier', 'like', "%{$term}%");
+                    ->orWhere('supplier', 'like', "%{$term}%");
             });
         }
 
@@ -54,10 +54,10 @@ class PlotCostController extends Controller
         return response()->json([
             'data' => PlotCostResource::collection($items->items()),
             'meta' => [
-                'total'        => $items->total(),
+                'total' => $items->total(),
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'has_more'     => $items->hasMorePages(),
+                'last_page' => $items->lastPage(),
+                'has_more' => $items->hasMorePages(),
             ],
         ]);
     }
@@ -68,15 +68,15 @@ class PlotCostController extends Controller
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
-            'plot_id'           => 'nullable|integer|exists:plots,id',
-            'campaign_id'       => 'nullable|integer|exists:campaigns,id',
-            'category'          => 'required|in:labor,machinery,materials,phytosanitary,fertilizer,water,insurance,transport,subcontracting,other',
-            'description'       => 'required|string|max:255',
-            'amount'            => 'required|numeric|min:0.01',
-            'cost_date'         => 'required|date',
-            'supplier'          => 'nullable|string|max:255',
+            'plot_id' => 'nullable|integer|exists:plots,id',
+            'campaign_id' => 'nullable|integer|exists:campaigns,id',
+            'category' => 'required|in:labor,machinery,materials,phytosanitary,fertilizer,water,insurance,transport,subcontracting,other',
+            'description' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0.01',
+            'cost_date' => 'required|date',
+            'supplier' => 'nullable|string|max:255',
             'invoice_reference' => 'nullable|string|max:100',
-            'notes'             => 'nullable|string|max:2000',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         if (isset($validated['plot_id'])) {
@@ -87,7 +87,7 @@ class PlotCostController extends Controller
         $record->load(['plot']);
 
         return response()->json([
-            'data'    => new PlotCostResource($record),
+            'data' => new PlotCostResource($record),
             'message' => __('Coste registrado correctamente.'),
         ], 201);
     }

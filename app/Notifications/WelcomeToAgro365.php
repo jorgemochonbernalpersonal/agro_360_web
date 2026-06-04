@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,13 +32,13 @@ class WelcomeToAgro365 extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $isWinery   = $notifiable->hasWineryAccess();
+        $isWinery = $notifiable->hasWineryAccess();
         $isProducer = $notifiable->role === 'producer';
 
         $dashboardPath = match (true) {
-            $isWinery   => '/winery/dashboard',
+            $isWinery => '/winery/dashboard',
             $isProducer => '/producer/dashboard',
-            default     => '/viticulturist/dashboard',
+            default => '/viticulturist/dashboard',
         };
 
         $dashboardUrl = AppLink::url(url($dashboardPath), 'agro365://home');

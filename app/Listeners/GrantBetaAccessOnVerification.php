@@ -12,11 +12,11 @@ class GrantBetaAccessOnVerification
         $user = $event->user;
 
         // Solo otorgar beta si aún no lo tiene (evita sobreescribir)
-        if (!$user->isBetaUser()) {
+        if (! $user->isBetaUser()) {
             $user->grantBetaAccess();
         }
 
         // Enviar email de bienvenida tras verificación
-        $user->notify(new WelcomeToAgro365());
+        $user->notify(new WelcomeToAgro365);
     }
 }

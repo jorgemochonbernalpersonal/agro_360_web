@@ -18,7 +18,7 @@ return new class extends Migration
             $table->tinyInteger('effectiveness_rating')->default(3)->comment('Eficacia 1-5 estrellas');
             $table->text('notes')->nullable()->comment('Notas adicionales');
             $table->timestamps();
-            
+
             $table->unique(['pest_id', 'product_id']);
             $table->index('effectiveness_rating');
         });

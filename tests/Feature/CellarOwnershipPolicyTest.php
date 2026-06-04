@@ -23,7 +23,9 @@ class CellarOwnershipPolicyTest extends TestCase
     use RefreshDatabase;
 
     private User $owner;
+
     private User $other;
+
     private User $admin;
 
     protected function setUp(): void
@@ -88,11 +90,11 @@ class CellarOwnershipPolicyTest extends TestCase
 
     public function test_harvest_grower_can_view_via_activity_viticulturist(): void
     {
-        $grower   = User::factory()->create(['role' => 'viticulturist']);
+        $grower = User::factory()->create(['role' => 'viticulturist']);
         $activity = AgriculturalActivity::factory()->create(['viticulturist_id' => $grower->id]);
-        $harvest  = Harvest::factory()->create([
+        $harvest = Harvest::factory()->create([
             'activity_id' => $activity->id,
-            'winery_id'   => null,
+            'winery_id' => null,
         ]);
 
         $this->assertTrue($grower->can('view', $harvest));

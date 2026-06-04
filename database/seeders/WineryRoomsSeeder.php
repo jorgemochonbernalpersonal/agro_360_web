@@ -27,8 +27,8 @@ class WineryRoomsSeeder extends Seeder
     {
         $this->cleanup();
 
-        $now          = now();
-        $rows         = [];
+        $now = now();
+        $rows = [];
         $typeCounters = array_fill(0, count(self::ROOM_TYPES), 0);
 
         for ($i = 0; $i < 450; $i++) {
@@ -37,18 +37,18 @@ class WineryRoomsSeeder extends Seeder
             [$baseName, $desc, $temp, $humidity, $capacity] = self::ROOM_TYPES[$typeIdx];
 
             // Pequeña variación en temperatura y humedad para realismo
-            $tempVariation     = round(($i % 5 - 2) * 0.2, 1);
+            $tempVariation = round(($i % 5 - 2) * 0.2, 1);
             $humidityVariation = round(($i % 5 - 2) * 0.5, 1);
 
             $rows[] = [
-                'user_id'     => self::WINERY_USER_ID,
-                'name'        => $baseName . ' ' . str_pad($typeCounters[$typeIdx], 2, '0', STR_PAD_LEFT),
+                'user_id' => self::WINERY_USER_ID,
+                'name' => $baseName.' '.str_pad($typeCounters[$typeIdx], 2, '0', STR_PAD_LEFT),
                 'description' => $desc,
-                'capacity'    => $capacity,
+                'capacity' => $capacity,
                 'temperature' => $temp + $tempVariation,
-                'humidity'    => $humidity + $humidityVariation,
-                'created_at'  => $now,
-                'updated_at'  => $now,
+                'humidity' => $humidity + $humidityVariation,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -56,7 +56,7 @@ class WineryRoomsSeeder extends Seeder
             DB::table('container_rooms')->insert($chunk);
         }
 
-        $this->command->info('✅ Salas de bodega: ' . count($rows) . ' registros');
+        $this->command->info('✅ Salas de bodega: '.count($rows).' registros');
     }
 
     private function cleanup(): void

@@ -42,7 +42,7 @@ class InvoiceObserver
         } catch (\Exception $e) {
             Log::error('[InvoiceObserver] Error al crear factura', [
                 'invoice_id' => $invoice->id,
-                'error'      => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
             throw $e;
         }
@@ -54,8 +54,8 @@ class InvoiceObserver
      */
     public function updating(Invoice $invoice): void
     {
-        $oldStatus         = $invoice->getOriginal('status');
-        $newStatus         = $invoice->status;
+        $oldStatus = $invoice->getOriginal('status');
+        $newStatus = $invoice->status;
         $oldDeliveryStatus = $invoice->getOriginal('delivery_status');
         $newDeliveryStatus = $invoice->delivery_status;
 
@@ -63,7 +63,7 @@ class InvoiceObserver
         // Los borradores (draft) sí se pueden cancelar aunque tengan número asignado
         if ($newStatus === 'cancelled' && $oldStatus === 'sent') {
             throw new \Exception(
-                'No se puede cancelar la factura ' . $invoice->invoice_number . '. Debe crear una factura rectificativa.'
+                'No se puede cancelar la factura '.$invoice->invoice_number.'. Debe crear una factura rectificativa.'
             );
         }
 
@@ -80,12 +80,12 @@ class InvoiceObserver
      */
     public function updated(Invoice $invoice): void
     {
-        $oldStatus         = $invoice->getOriginal('status');
-        $newStatus         = $invoice->status;
+        $oldStatus = $invoice->getOriginal('status');
+        $newStatus = $invoice->status;
         $oldDeliveryStatus = $invoice->getOriginal('delivery_status');
         $newDeliveryStatus = $invoice->delivery_status;
-        $oldPaymentStatus  = $invoice->getOriginal('payment_status');
-        $newPaymentStatus  = $invoice->payment_status;
+        $oldPaymentStatus = $invoice->getOriginal('payment_status');
+        $newPaymentStatus = $invoice->payment_status;
 
         try {
             // delivery_status tiene prioridad sobre status para el stock
@@ -100,12 +100,12 @@ class InvoiceObserver
             }
         } catch (\Exception $e) {
             Log::error('[InvoiceObserver] Error al actualizar factura', [
-                'invoice_id'          => $invoice->id,
-                'old_status'          => $oldStatus,
-                'new_status'          => $newStatus,
+                'invoice_id' => $invoice->id,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
                 'old_delivery_status' => $oldDeliveryStatus,
                 'new_delivery_status' => $newDeliveryStatus,
-                'error'               => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -120,7 +120,7 @@ class InvoiceObserver
         } catch (\Exception $e) {
             Log::error('[InvoiceObserver] Error al eliminar factura', [
                 'invoice_id' => $invoice->id,
-                'error'      => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -163,7 +163,7 @@ class InvoiceObserver
     {
         if ($oldStatus === 'draft' && $newStatus === 'sent') {
             if (! $invoice->invoice_number) {
-                $settings      = \App\Models\InvoicingSetting::getOrCreateForUser($invoice->user_id);
+                $settings = \App\Models\InvoicingSetting::getOrCreateForUser($invoice->user_id);
                 $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
                 $invoice->updateQuietly(['invoice_number' => $invoiceNumber]);
             }
@@ -240,7 +240,7 @@ class InvoiceObserver
         });
 
         Log::info('[InvoiceObserver] Stock de cosecha confirmado por entrega', [
-            'invoice_id'     => $invoice->id,
+            'invoice_id' => $invoice->id,
             'invoice_number' => $invoice->invoice_number,
         ]);
     }
@@ -264,7 +264,7 @@ class InvoiceObserver
         });
 
         Log::info('[InvoiceObserver] Stock de cosecha restaurado por cancelación de entrega', [
-            'invoice_id'          => $invoice->id,
+            'invoice_id' => $invoice->id,
             'old_delivery_status' => $oldDeliveryStatus,
         ]);
     }
@@ -283,9 +283,9 @@ class InvoiceObserver
         });
 
         Log::info('[InvoiceObserver] Todo el stock liberado', [
-            'invoice_id'     => $invoice->id,
+            'invoice_id' => $invoice->id,
             'invoice_number' => $invoice->invoice_number,
-            'from_status'    => $fromStatus,
+            'from_status' => $fromStatus,
         ]);
     }
 
@@ -326,17 +326,17 @@ class InvoiceObserver
         }
 
         $invoice->updateQuietly([
-            'billing_company_name'     => $client->company_name,
+            'billing_company_name' => $client->company_name,
             'billing_company_document' => $client->company_document ?: $client->particular_document,
-            'billing_first_name'       => ($address?->first_name) ?: $client->first_name,
-            'billing_last_name'        => ($address?->last_name) ?: $client->last_name,
-            'billing_email'            => ($address?->email) ?: $client->email,
-            'billing_phone'            => ($address?->phone) ?: $client->phone,
-            'billing_address'          => $address?->address,
-            'billing_postal_code'      => $address?->postal_code,
-            'billing_city'             => $address?->municipality?->name,
-            'billing_state'            => $address?->province?->name,
-            'billing_country'          => __('España'),
+            'billing_first_name' => ($address?->first_name) ?: $client->first_name,
+            'billing_last_name' => ($address?->last_name) ?: $client->last_name,
+            'billing_email' => ($address?->email) ?: $client->email,
+            'billing_phone' => ($address?->phone) ?: $client->phone,
+            'billing_address' => $address?->address,
+            'billing_postal_code' => $address?->postal_code,
+            'billing_city' => $address?->municipality?->name,
+            'billing_state' => $address?->province?->name,
+            'billing_country' => __('España'),
         ]);
     }
 }

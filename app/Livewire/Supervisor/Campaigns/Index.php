@@ -30,7 +30,7 @@ class Index extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        $doId        = Auth::id();
+        $doId = Auth::id();
         $currentYear = now()->year;
 
         $wineryIds = SupervisorWinery::where('supervisor_id', $doId)
@@ -74,14 +74,14 @@ class Index extends Component
 
         $summaryRows = $allYears->map(function ($year) use ($campaignsByYear, $harvestsByVintage) {
             $campaigns = $campaignsByYear->get($year);
-            $harvests  = $harvestsByVintage->get($year);
+            $harvests = $harvestsByVintage->get($year);
 
             return (object) [
-                'year'            => $year,
-                'campaign_count'  => $campaigns?->campaign_count  ?? 0,
-                'active_count'    => $campaigns?->active_count    ?? 0,
-                'total_kg'        => $harvests?->total_kg         ?? 0,
-                'reception_count' => $harvests?->reception_count  ?? 0,
+                'year' => $year,
+                'campaign_count' => $campaigns?->campaign_count ?? 0,
+                'active_count' => $campaigns?->active_count ?? 0,
+                'total_kg' => $harvests?->total_kg ?? 0,
+                'reception_count' => $harvests?->reception_count ?? 0,
             ];
         });
 
@@ -120,17 +120,17 @@ class Index extends Component
             ->pluck('total_kg', 'viticulturist_id');
 
         $tabs = [
-            'resumen'      => ['label' => __('Resumen por año'),  'count' => $allYears->count()],
+            'resumen' => ['label' => __('Resumen por año'),  'count' => $allYears->count()],
             'viticultores' => ['label' => __('Viticultores'),     'count' => $viticulturistIds->count()],
         ];
 
         return view('livewire.supervisor.campaigns.index', [
-            'tabs'                 => $tabs,
-            'summaryRows'          => $summaryRows,
-            'viticulturistList'    => $viticulturistList,
+            'tabs' => $tabs,
+            'summaryRows' => $summaryRows,
+            'viticulturistList' => $viticulturistList,
             'campaignSummaryByVit' => $campaignSummaryByVit,
-            'kgByVit'              => $kgByVit,
-            'currentYear'          => $currentYear,
+            'kgByVit' => $kgByVit,
+            'currentYear' => $currentYear,
         ]);
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Client extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'client_type',
@@ -78,7 +79,8 @@ class Client extends Model
         if ($this->client_type === 'company') {
             return $this->company_name ?? '';
         }
-        return trim(($this->first_name ?? '') . ' ' . ($this->last_name ?? ''));
+
+        return trim(($this->first_name ?? '').' '.($this->last_name ?? ''));
     }
 
     /**
@@ -99,6 +101,8 @@ class Client extends Model
 
     /**
      * Scope para clientes activos
+     *
+     * @param mixed $query
      */
     public function scopeActive($query)
     {
@@ -107,6 +111,8 @@ class Client extends Model
 
     /**
      * Scope para clientes de un usuario
+     *
+     * @param mixed $query
      */
     public function scopeForUser($query, int $userId)
     {

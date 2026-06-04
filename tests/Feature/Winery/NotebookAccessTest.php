@@ -14,7 +14,9 @@ use Tests\Feature\WineryTestCase;
 class NotebookAccessTest extends WineryTestCase
 {
     protected User $winery;
+
     protected User $viticulturist;
+
     protected WineryViticulturist $relation;
 
     protected function setUp(): void
@@ -24,15 +26,15 @@ class NotebookAccessTest extends WineryTestCase
         $this->winery = $this->makeWinery();
 
         $this->viticulturist = User::factory()->create([
-            'role'      => 'viticulturist',
+            'role' => 'viticulturist',
             'can_login' => true,
         ]);
 
         $this->relation = WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
 
         $this->actingAs($this->winery);
@@ -47,19 +49,19 @@ class NotebookAccessTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('notebook_access_requests', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'status' => NotebookAccessRequest::STATUS_PENDING,
         ]);
     }
 
     public function test_duplicate_pending_request_shows_info_toast(): void
     {
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $this->viticulturist])
@@ -79,7 +81,7 @@ class NotebookAccessTest extends WineryTestCase
         Notification::assertSentTo(
             $this->viticulturist,
             NotebookAccessRequestedNotification::class,
-            fn ($n) => $n->toMail($this->viticulturist)->subject === 'Nueva solicitud de acceso al cuaderno — ' . $this->winery->name,
+            fn ($n) => $n->toMail($this->viticulturist)->subject === 'Nueva solicitud de acceso al cuaderno — '.$this->winery->name,
         );
     }
 
@@ -88,10 +90,10 @@ class NotebookAccessTest extends WineryTestCase
         Notification::fake();
 
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $this->viticulturist])
@@ -105,11 +107,11 @@ class NotebookAccessTest extends WineryTestCase
         $this->relation->grantNotebookAccess();
 
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now()->subDay(),
-            'responded_at'     => now()->subDay(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now()->subDay(),
+            'responded_at' => now()->subDay(),
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $this->viticulturist])
@@ -118,20 +120,20 @@ class NotebookAccessTest extends WineryTestCase
 
         // Request must remain approved — not overwritten back to pending
         $this->assertDatabaseHas('notebook_access_requests', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
         ]);
     }
 
     public function test_winery_can_re_request_after_rejection(): void
     {
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_REJECTED,
-            'requested_at'     => now()->subDays(3),
-            'responded_at'     => now()->subDays(1),
+            'status' => NotebookAccessRequest::STATUS_REJECTED,
+            'requested_at' => now()->subDays(3),
+            'responded_at' => now()->subDays(1),
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $this->viticulturist])
@@ -139,9 +141,9 @@ class NotebookAccessTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('notebook_access_requests', [
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'status' => NotebookAccessRequest::STATUS_PENDING,
         ]);
     }
 
@@ -150,10 +152,10 @@ class NotebookAccessTest extends WineryTestCase
     public function test_winery_can_cancel_pending_request(): void
     {
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $this->viticulturist])
@@ -174,11 +176,11 @@ class NotebookAccessTest extends WineryTestCase
     public function test_cancel_does_not_delete_approved_request(): void
     {
         NotebookAccessRequest::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_APPROVED,
-            'requested_at'     => now()->subDay(),
-            'responded_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at' => now()->subDay(),
+            'responded_at' => now(),
         ]);
 
         Livewire::test(Show::class, ['viticulturist' => $this->viticulturist])
@@ -254,10 +256,10 @@ class NotebookAccessTest extends WineryTestCase
         $otherWinery = $this->makeOtherWinery();
 
         NotebookAccessRequest::create([
-            'winery_id'        => $otherWinery->id,
+            'winery_id' => $otherWinery->id,
             'viticulturist_id' => $this->viticulturist->id,
-            'status'           => NotebookAccessRequest::STATUS_PENDING,
-            'requested_at'     => now(),
+            'status' => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at' => now(),
         ]);
 
         // Acting as $this->winery — cancel should only affect own winery's requests
@@ -267,7 +269,7 @@ class NotebookAccessTest extends WineryTestCase
         // Other winery's request must remain untouched
         $this->assertDatabaseHas('notebook_access_requests', [
             'winery_id' => $otherWinery->id,
-            'status'    => NotebookAccessRequest::STATUS_PENDING,
+            'status' => NotebookAccessRequest::STATUS_PENDING,
         ]);
     }
 }

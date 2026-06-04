@@ -33,40 +33,6 @@ class PlotFieldsTest extends TestCase
         ]);
     }
 
-    private function makeViticulturistWithPlot(): array
-    {
-        $viticulturist = User::factory()->create([
-            'role'              => 'viticulturist',
-            'email_verified_at' => now(),
-        ]);
-
-        $winery = User::factory()->create(['role' => 'winery']);
-        WineryViticulturist::create([
-            'winery_id'        => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $winery->id,
-        ]);
-
-        $ac         = AutonomousCommunity::first();
-        $province   = Province::where('autonomous_community_id', $ac->id)->first();
-        $municipality = Municipality::where('province_id', $province->id)->first();
-
-        $plot = Plot::factory()->create([
-            'viticulturist_id'        => $viticulturist->id,
-            'autonomous_community_id' => $ac->id,
-            'province_id'             => $province->id,
-            'municipality_id'         => $municipality->id,
-        ]);
-
-        $plot->refresh();
-
-        $sigpacUse = SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
-        $plot->sigpacUses()->sync([$sigpacUse->id]);
-
-        return [$viticulturist, $plot, $ac, $province, $municipality];
-    }
-
     // ──────────────────────────────────────────────────────────────────────────
     // soil_type_id
     // ──────────────────────────────────────────────────────────────────────────
@@ -84,7 +50,7 @@ class PlotFieldsTest extends TestCase
             ->call('update');
 
         $this->assertDatabaseHas('plots', [
-            'id'           => $plot->id,
+            'id' => $plot->id,
             'soil_type_id' => $soilType->id,
         ]);
     }
@@ -113,7 +79,7 @@ class PlotFieldsTest extends TestCase
             ->assertHasNoErrors(['soil_type_id']);
 
         $this->assertDatabaseHas('plots', [
-            'id'           => $plot->id,
+            'id' => $plot->id,
             'soil_type_id' => null,
         ]);
     }
@@ -135,7 +101,7 @@ class PlotFieldsTest extends TestCase
             ->call('update');
 
         $this->assertDatabaseHas('plots', [
-            'id'             => $plot->id,
+            'id' => $plot->id,
             'orientation_id' => $orientation->id,
         ]);
     }
@@ -164,8 +130,42 @@ class PlotFieldsTest extends TestCase
             ->assertHasNoErrors(['orientation_id']);
 
         $this->assertDatabaseHas('plots', [
-            'id'             => $plot->id,
+            'id' => $plot->id,
             'orientation_id' => null,
         ]);
+    }
+
+    private function makeViticulturistWithPlot(): array
+    {
+        $viticulturist = User::factory()->create([
+            'role' => 'viticulturist',
+            'email_verified_at' => now(),
+        ]);
+
+        $winery = User::factory()->create(['role' => 'winery']);
+        WineryViticulturist::create([
+            'winery_id' => $winery->id,
+            'viticulturist_id' => $viticulturist->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $winery->id,
+        ]);
+
+        $ac = AutonomousCommunity::first();
+        $province = Province::where('autonomous_community_id', $ac->id)->first();
+        $municipality = Municipality::where('province_id', $province->id)->first();
+
+        $plot = Plot::factory()->create([
+            'viticulturist_id' => $viticulturist->id,
+            'autonomous_community_id' => $ac->id,
+            'province_id' => $province->id,
+            'municipality_id' => $municipality->id,
+        ]);
+
+        $plot->refresh();
+
+        $sigpacUse = SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
+        $plot->sigpacUses()->sync([$sigpacUse->id]);
+
+        return [$viticulturist, $plot, $ac, $province, $municipality];
     }
 }

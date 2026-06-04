@@ -65,122 +65,123 @@ class WineryInvoicesSeeder extends Seeder
 
         if (empty($clientIds)) {
             $this->command->warn('  ⚠️  Sin clientes. Saltando facturas de venta.');
+
             return;
         }
 
-        $now           = now();
+        $now = now();
         $totalInvoices = 0;
-        $totalItems    = 0;
-        $invoiceRows   = [];
-        $itemRows      = [];
+        $totalItems = 0;
+        $invoiceRows = [];
+        $itemRows = [];
 
         // Hoy: 2026-04-22
         // 2025: daysAgo 487 (2025-01-01) → 112 (2025-12-31)
         // 2026: daysAgo 111 (2026-01-01) → 0   (2026-04-22)
 
         for ($i = 0; $i < 300; $i++) {
-            $is2026   = $i >= 150;
-            $yearIdx  = $is2026 ? ($i - 150) : $i;
-            $year     = $is2026 ? 2026 : 2025;
+            $is2026 = $i >= 150;
+            $yearIdx = $is2026 ? ($i - 150) : $i;
+            $year = $is2026 ? 2026 : 2025;
 
             // Fecha distribuida linealmente dentro del año
             if ($is2026) {
-                $daysAgo     = (int)round(111 - $yearIdx * 111 / 149);
-                $invoiceNum  = 'FAC-2026-' . str_pad($yearIdx + 1, 3, '0', STR_PAD_LEFT);
+                $daysAgo = (int) round(111 - $yearIdx * 111 / 149);
+                $invoiceNum = 'FAC-2026-'.str_pad($yearIdx + 1, 3, '0', STR_PAD_LEFT);
             } else {
-                $daysAgo     = (int)round(487 - $yearIdx * 375 / 149);
-                $invoiceNum  = 'FAC-2025-' . str_pad($yearIdx + 1, 3, '0', STR_PAD_LEFT);
+                $daysAgo = (int) round(487 - $yearIdx * 375 / 149);
+                $invoiceNum = 'FAC-2025-'.str_pad($yearIdx + 1, 3, '0', STR_PAD_LEFT);
             }
 
-            $invoiceDate  = now()->subDays($daysAgo)->toDateString();
-            $clientId     = $clientIds[$i % count($clientIds)];
-            $taxRate      = 21.0;
+            $invoiceDate = now()->subDays($daysAgo)->toDateString();
+            $clientId = $clientIds[$i % count($clientIds)];
+            $taxRate = 21.0;
             $paymentTypes = ['transfer', 'transfer', 'cash', 'transfer', 'other'];
-            $paymentType  = $paymentTypes[$i % count($paymentTypes)];
+            $paymentType = $paymentTypes[$i % count($paymentTypes)];
 
             // Status: 2025 → más pagadas; 2026 → más recientes (draft/sent)
             if ($is2026) {
                 $status = match ($i % 6) {
-                    0, 1    => 'draft',
-                    2, 3    => 'sent',
+                    0, 1 => 'draft',
+                    2, 3 => 'sent',
                     default => 'paid',
                 };
             } else {
                 $status = match ($i % 5) {
-                    0       => 'sent',
-                    1       => 'paid',
+                    0 => 'sent',
+                    1 => 'paid',
                     2, 3, 4 => 'paid',
                 };
             }
 
             $paymentStatus = match ($status) {
-                'paid'  => 'paid',
-                'sent'  => ($i % 3 === 0 ? 'partial' : 'unpaid'),
+                'paid' => 'paid',
+                'sent' => ($i % 3 === 0 ? 'partial' : 'unpaid'),
                 default => 'unpaid',
             };
 
             // Items: 1–3 líneas por factura
-            $products    = $is2026 ? self::PRODUCTS_2026 : self::PRODUCTS_2025;
-            $numItems    = 1 + ($i % 3);
-            $subtotal    = 0.000;
+            $products = $is2026 ? self::PRODUCTS_2026 : self::PRODUCTS_2025;
+            $numItems = 1 + ($i % 3);
+            $subtotal = 0.000;
             $pendingItems = [];
 
             for ($j = 0; $j < $numItems; $j++) {
                 [$prodName, $unitPrice] = $products[($i + $j * 5) % count($products)];
-                $qty         = 24 + (($i + $j) % 8) * 12;  // 24, 36, 48 ... 108 botellas
-                $itemSubtotal= round($qty * $unitPrice, 3);
-                $itemTax     = round($itemSubtotal * $taxRate / 100, 3);
-                $subtotal   += $itemSubtotal;
+                $qty = 24 + (($i + $j) % 8) * 12;  // 24, 36, 48 ... 108 botellas
+                $itemSubtotal = round($qty * $unitPrice, 3);
+                $itemTax = round($itemSubtotal * $taxRate / 100, 3);
+                $subtotal += $itemSubtotal;
 
                 $pendingItems[] = [
-                    'name'                => $prodName,
-                    'concept_type'        => 'product',
-                    'quantity'            => $qty,
-                    'unit'                => 'botella',
-                    'unit_price'          => $unitPrice,
+                    'name' => $prodName,
+                    'concept_type' => 'product',
+                    'quantity' => $qty,
+                    'unit' => 'botella',
+                    'unit_price' => $unitPrice,
                     'discount_percentage' => 0,
-                    'discount_amount'     => 0,
-                    'tax_rate'            => $taxRate,
-                    'tax_base'            => $itemSubtotal,
-                    'tax_amount'          => $itemTax,
-                    'subtotal'            => $itemSubtotal,
-                    'total'               => round($itemSubtotal + $itemTax, 3),
-                    'status'              => 'active',
-                    'payment_status'      => $paymentStatus === 'paid' ? 'paid' : 'unpaid',
-                    'delivery_status'     => $status === 'paid' ? 'delivered' : 'pending',
-                    'created_at'          => $now,
-                    'updated_at'          => $now,
+                    'discount_amount' => 0,
+                    'tax_rate' => $taxRate,
+                    'tax_base' => $itemSubtotal,
+                    'tax_amount' => $itemTax,
+                    'subtotal' => $itemSubtotal,
+                    'total' => round($itemSubtotal + $itemTax, 3),
+                    'status' => 'active',
+                    'payment_status' => $paymentStatus === 'paid' ? 'paid' : 'unpaid',
+                    'delivery_status' => $status === 'paid' ? 'delivered' : 'pending',
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
             }
 
             $taxAmount = round($subtotal * $taxRate / 100, 3);
-            $total     = round($subtotal + $taxAmount, 3);
+            $total = round($subtotal + $taxAmount, 3);
 
             $invoiceId = DB::table('invoices')->insertGetId([
-                'user_id'         => self::WINERY_USER_ID,
-                'client_id'       => $clientId,
-                'invoice_number'  => $invoiceNum,
-                'invoice_date'    => $invoiceDate,
-                'invoice_type'    => 'wine_sale',
-                'status'          => $status,
-                'payment_status'  => $paymentStatus,
-                'payment_type'    => $status === 'draft' ? null : $paymentType,
-                'subtotal'        => round($subtotal, 3),
-                'tax_base'        => round($subtotal, 3),
-                'tax_rate'        => $taxRate,
-                'tax_amount'      => $taxAmount,
-                'total_amount'    => $total,
+                'user_id' => self::WINERY_USER_ID,
+                'client_id' => $clientId,
+                'invoice_number' => $invoiceNum,
+                'invoice_date' => $invoiceDate,
+                'invoice_type' => 'wine_sale',
+                'status' => $status,
+                'payment_status' => $paymentStatus,
+                'payment_type' => $status === 'draft' ? null : $paymentType,
+                'subtotal' => round($subtotal, 3),
+                'tax_base' => round($subtotal, 3),
+                'tax_rate' => $taxRate,
+                'tax_amount' => $taxAmount,
+                'total_amount' => $total,
                 'delivery_status' => $status === 'paid' ? 'delivered' : 'pending',
-                'sif_status'      => 'pendiente',
-                'corrective'      => false,
-                'gift'            => false,
-                'created_at'      => $now,
-                'updated_at'      => $now,
+                'sif_status' => 'pendiente',
+                'corrective' => false,
+                'gift' => false,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
             foreach ($pendingItems as $item) {
                 $item['invoice_id'] = $invoiceId;
-                $itemRows[]         = $item;
+                $itemRows[] = $item;
                 $totalItems++;
             }
 
@@ -193,7 +194,7 @@ class WineryInvoicesSeeder extends Seeder
             }
         }
 
-        if (!empty($itemRows)) {
+        if (! empty($itemRows)) {
             DB::table('invoice_items')->insert($itemRows);
         }
 

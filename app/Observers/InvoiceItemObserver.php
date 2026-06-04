@@ -34,11 +34,11 @@ class InvoiceItemObserver
             }
         } catch (\Exception $e) {
             Log::error('[InvoiceItemObserver] Error al gestionar stock en created', [
-                'item_id'        => $item->id,
-                'invoice_id'     => $item->invoice_id,
-                'harvest_id'     => $item->harvest_id,
+                'item_id' => $item->id,
+                'invoice_id' => $item->invoice_id,
+                'harvest_id' => $item->harvest_id,
                 'invoice_status' => $invoice->status,
-                'error'          => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
             throw $e;
         }
@@ -77,11 +77,11 @@ class InvoiceItemObserver
             );
         } catch (\Exception $e) {
             Log::error('[InvoiceItemObserver] Error al ajustar stock en updated', [
-                'item_id'        => $item->id,
-                'old_qty'        => $oldQty,
-                'new_qty'        => $newQty,
+                'item_id' => $item->id,
+                'old_qty' => $oldQty,
+                'new_qty' => $newQty,
                 'invoice_status' => $invoiceStatus,
-                'error'          => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -103,7 +103,7 @@ class InvoiceItemObserver
             return;
         }
 
-        $invoiceStatus  = $invoice->status;
+        $invoiceStatus = $invoice->status;
         $deliveryStatus = $invoice->delivery_status;
 
         try {
@@ -114,12 +114,12 @@ class InvoiceItemObserver
             }
         } catch (\Exception $e) {
             Log::error('[InvoiceItemObserver] Error al liberar stock en deleting', [
-                'item_id'         => $item->id,
-                'invoice_id'      => $item->invoice_id,
-                'invoice_status'  => $invoiceStatus,
+                'item_id' => $item->id,
+                'invoice_id' => $item->invoice_id,
+                'invoice_status' => $invoiceStatus,
                 'delivery_status' => $deliveryStatus,
-                'harvest_id'      => $item->harvest_id,
-                'error'           => $e->getMessage(),
+                'harvest_id' => $item->harvest_id,
+                'error' => $e->getMessage(),
             ]);
             // No re-throw: permitir que el item se elimine aunque falle el stock
         }
@@ -139,7 +139,7 @@ class InvoiceItemObserver
         } catch (\Exception $e) {
             Log::error('[InvoiceItemObserver] Error al re-reservar stock tras restaurar item', [
                 'item_id' => $item->id,
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
             throw $e;
         }

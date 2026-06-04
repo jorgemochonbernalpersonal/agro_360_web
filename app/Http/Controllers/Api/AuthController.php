@@ -18,40 +18,41 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     private const MAX_LOGIN_ATTEMPTS = 5;
-    private const LOCKOUT_MINUTES    = 15;
+
+    private const LOCKOUT_MINUTES = 15;
 
     // ─── POST /register ───────────────────────────────────────────────────────
 
     public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|email:rfc,dns|max:255|unique:users,email',
-            'password'    => ['required', 'confirmed', PasswordRule::min(10)->mixedCase()->numbers()],
-            'role'        => 'sometimes|string|in:winery,viticulturist,producer,supervisor',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email:rfc,dns|max:255|unique:users,email',
+            'password' => ['required', 'confirmed', PasswordRule::min(10)->mixedCase()->numbers()],
+            'role' => 'sometimes|string|in:winery,viticulturist,producer,supervisor',
             'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
         ]);
 
         $user = User::create([
-            'name'      => $validated['name'],
-            'email'     => $validated['email'],
-            'password'  => Hash::make($validated['password']),
-            'role'      => $validated['role'] ?? 'winery',
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'] ?? 'winery',
             'can_login' => true,
         ]);
 
-        $user->notify(new \App\Notifications\MobileVerifyEmailNotification());
+        $user->notify(new \App\Notifications\MobileVerifyEmailNotification);
 
         SecurityLogger::logSecurityEvent('register_success', [
             'user_id' => $user->id,
-            'role'    => $user->role,
+            'role' => $user->role,
         ]);
 
         // No emitir token hasta que el email esté verificado
         return response()->json([
-            'message'          => __('Cuenta creada. Verifica tu email para continuar.'),
+            'message' => __('Cuenta creada. Verifica tu email para continuar.'),
             'email_unverified' => true,
-            'user'             => new UserResource($user),
+            'user' => new UserResource($user),
         ], 201);
     }
 
@@ -60,12 +61,12 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $request->validate([
-            'email'       => 'required|email',
-            'password'    => 'required|string',
+            'email' => 'required|email',
+            'password' => 'required|string',
             'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
         ]);
 
-        $throttleKey = 'login:' . strtolower($request->email) . '|' . $request->ip();
+        $throttleKey = 'login:'.strtolower($request->email).'|'.$request->ip();
 
         // ── Bloqueo por intentos excesivos ────────────────────────────────────
         if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_LOGIN_ATTEMPTS)) {
@@ -73,7 +74,7 @@ class AuthController extends Controller
             SecurityLogger::logAccountLocked($request->email);
 
             return response()->json([
-                'message'     => __('Demasiados intentos. Inténtalo en :minutes minutos.', ['minutes' => ceil($seconds / 60)]),
+                'message' => __('Demasiados intentos. Inténtalo en :minutes minutos.', ['minutes' => ceil($seconds / 60)]),
                 'retry_after' => $seconds,
             ], 429);
         }
@@ -91,6 +92,7 @@ class AuthController extends Controller
 
         if (! $user->can_login) {
             SecurityLogger::logAccessDenied($user->id, 'login', 'can_login=false');
+
             return response()->json(['message' => __('Cuenta desactivada. Contacta con soporte.')], 403);
         }
 
@@ -98,7 +100,7 @@ class AuthController extends Controller
         // Consistente con el flujo web (Login.php)
         if (! $user->hasVerifiedEmail() && ! $user->wasCreatedByAnotherUser()) {
             return response()->json([
-                'message'          => __('Verifica tu email para continuar.'),
+                'message' => __('Verifica tu email para continuar.'),
                 'email_unverified' => true,
             ], 403);
         }
@@ -117,9 +119,9 @@ class AuthController extends Controller
         RateLimiter::clear($throttleKey);
 
         // Beta expirada sin acceso básico gratuito → bloquear login
-        if ($user->betaExpired() && !$user->hasBasicFreeAccess()) {
+        if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
             return response()->json([
-                'message'      => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
+                'message' => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -135,9 +137,9 @@ class AuthController extends Controller
         $token = $user->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;
 
         return response()->json([
-            'token'      => $token,
+            'token' => $token,
             'expires_in' => $this->tokenExpiresIn(),
-            'user'       => new UserResource($user->load('profile')),
+            'user' => new UserResource($user->load('profile')),
         ]);
     }
 
@@ -147,9 +149,9 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if ($user->betaExpired() && !$user->hasBasicFreeAccess()) {
+        if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
             return response()->json([
-                'message'      => __('Tu periodo de prueba ha finalizado.'),
+                'message' => __('Tu periodo de prueba ha finalizado.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -164,10 +166,10 @@ class AuthController extends Controller
     public function claimAccount(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'token'       => 'required|string',
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|email:rfc|max:255',
-            'password'    => ['required', 'confirmed', PasswordRule::min(10)->mixedCase()->numbers()],
+            'token' => 'required|string',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email:rfc|max:255',
+            'password' => ['required', 'confirmed', PasswordRule::min(10)->mixedCase()->numbers()],
             'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
         ]);
 
@@ -189,28 +191,28 @@ class AuthController extends Controller
         $emailMatches = strtolower($user->email) === strtolower($validated['email']);
 
         $user->update([
-            'name'                  => $validated['name'],
-            'email'                 => $validated['email'],
-            'password'              => Hash::make($validated['password']),
-            'can_login'             => true,
-            'email_verified_at'     => $emailMatches ? ($user->email_verified_at ?? now()) : null,
-            'invitation_token'      => null,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'can_login' => true,
+            'email_verified_at' => $emailMatches ? ($user->email_verified_at ?? now()) : null,
+            'invitation_token' => null,
             'invitation_expires_at' => null,
-            'invitation_sent_at'    => null,
+            'invitation_sent_at' => null,
         ]);
 
         // Si el email cambió, enviar verificación
-        if (!$emailMatches) {
-            $user->fresh()->notify(new \App\Notifications\MobileVerifyEmailNotification());
+        if (! $emailMatches) {
+            $user->fresh()->notify(new \App\Notifications\MobileVerifyEmailNotification);
         }
 
         $device = $validated['device_name'] ?? 'mobile';
-        $token  = $user->fresh()->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;
+        $token = $user->fresh()->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;
 
         return response()->json([
-            'token'      => $token,
+            'token' => $token,
             'expires_in' => $this->tokenExpiresIn(),
-            'user'       => new UserResource($user->fresh()),
+            'user' => new UserResource($user->fresh()),
         ], 201);
     }
 
@@ -237,13 +239,13 @@ class AuthController extends Controller
     public function updateMe(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name'         => 'sometimes|string|max:255',
-            'phone'        => 'sometimes|nullable|string|max:20',
-            'address'      => 'sometimes|nullable|string|max:255',
-            'city'         => 'sometimes|nullable|string|max:100',
-            'postal_code'  => 'sometimes|nullable|string|max:10',
-            'country'      => 'sometimes|nullable|string|max:100',
-            'province_id'  => 'sometimes|nullable|integer|exists:provinces,id',
+            'name' => 'sometimes|string|max:255',
+            'phone' => 'sometimes|nullable|string|max:20',
+            'address' => 'sometimes|nullable|string|max:255',
+            'city' => 'sometimes|nullable|string|max:100',
+            'postal_code' => 'sometimes|nullable|string|max:10',
+            'country' => 'sometimes|nullable|string|max:100',
+            'province_id' => 'sometimes|nullable|integer|exists:provinces,id',
         ]);
 
         $user = $request->user();
@@ -271,7 +273,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'current_password' => 'required|string',
-            'password'         => ['required', 'confirmed', PasswordRule::min(10)->mixedCase()->numbers()],
+            'password' => ['required', 'confirmed', PasswordRule::min(10)->mixedCase()->numbers()],
         ]);
 
         $user = $request->user();
@@ -283,7 +285,7 @@ class AuthController extends Controller
         }
 
         $user->update([
-            'password'            => Hash::make($request->password),
+            'password' => Hash::make($request->password),
             'password_must_reset' => false,
         ]);
 
@@ -300,16 +302,16 @@ class AuthController extends Controller
 
     public function refresh(Request $request): JsonResponse
     {
-        $user         = $request->user();
+        $user = $request->user();
         $currentToken = $user->currentAccessToken();
-        $device       = $currentToken->name;
+        $device = $currentToken->name;
 
         // Beta expirada sin acceso básico gratuito → bloquear refresh
-        if ($user->betaExpired() && !$user->hasBasicFreeAccess()) {
+        if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
             $currentToken->delete();
 
             return response()->json([
-                'message'      => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
+                'message' => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -319,7 +321,7 @@ class AuthController extends Controller
         $token = $user->createToken($device, [$user->role], $this->tokenExpiresAt())->plainTextToken;
 
         return response()->json([
-            'token'      => $token,
+            'token' => $token,
             'expires_in' => $this->tokenExpiresIn(),
         ]);
     }
@@ -332,7 +334,7 @@ class AuthController extends Controller
             return response()->json(['message' => __('El email ya está verificado.')]);
         }
 
-        $request->user()->notify(new \App\Notifications\MobileVerifyEmailNotification());
+        $request->user()->notify(new \App\Notifications\MobileVerifyEmailNotification);
 
         return response()->json(['message' => __('Correo de verificación enviado.')]);
     }
@@ -355,7 +357,7 @@ class AuthController extends Controller
 
         SecurityLogger::logSecurityEvent('account_deleted', [
             'user_id' => $user->id,
-            'role'    => $user->role,
+            'role' => $user->role,
         ]);
 
         // Revocar todos los tokens antes de borrar (evita race conditions)
@@ -392,7 +394,7 @@ class AuthController extends Controller
     public function loginWithGoogle(Request $request): JsonResponse
     {
         $request->validate([
-            'id_token'    => 'required|string',
+            'id_token' => 'required|string',
             'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
         ]);
 
@@ -431,8 +433,8 @@ class AuthController extends Controller
         }
 
         $googleId = $payload['sub'] ?? null;
-        $email    = $payload['email'] ?? null;
-        $name     = $payload['name'] ?? null;
+        $email = $payload['email'] ?? null;
+        $name = $payload['name'] ?? null;
 
         if (! $googleId || ! $email) {
             return response()->json(['message' => __('No se pudo obtener la información del perfil de Google.')], 422);
@@ -455,25 +457,25 @@ class AuthController extends Controller
         } else {
             // Crear nuevo usuario — Google ya verificó el email
             $user = User::create([
-                'name'              => $name ?? $email,
-                'email'             => $email,
-                'google_id'         => $googleId,
-                'password'          => Hash::make(str()->random(32)), // password inutilizable
-                'role'              => 'winery',
-                'can_login'         => true,
+                'name' => $name ?? $email,
+                'email' => $email,
+                'google_id' => $googleId,
+                'password' => Hash::make(str()->random(32)), // password inutilizable
+                'role' => 'winery',
+                'can_login' => true,
                 'email_verified_at' => now(),
             ]);
 
             SecurityLogger::logSecurityEvent('register_google', [
                 'user_id' => $user->id,
-                'email'   => $email,
+                'email' => $email,
             ]);
         }
 
         // Beta expirada
         if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
             return response()->json([
-                'message'      => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
+                'message' => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -485,9 +487,9 @@ class AuthController extends Controller
         SecurityLogger::logSecurityEvent('login_google', ['user_id' => $user->id]);
 
         return response()->json([
-            'token'      => $token,
+            'token' => $token,
             'expires_in' => $this->tokenExpiresIn(),
-            'user'       => new UserResource($user->fresh()->load('profile')),
+            'user' => new UserResource($user->fresh()->load('profile')),
         ]);
     }
 
@@ -497,7 +499,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'identity_token' => 'required|string',
-            'device_name'    => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
+            'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
         ]);
 
         // Decodificar el JWT de Apple sin verificar la firma (Apple verifica en su servidor)
@@ -533,7 +535,7 @@ class AuthController extends Controller
         }
 
         $appleId = $payload['sub'] ?? null;
-        $email   = $payload['email'] ?? null;  // solo disponible en el primer login
+        $email = $payload['email'] ?? null;  // solo disponible en el primer login
 
         if (! $appleId) {
             return response()->json(['message' => __('No se pudo obtener la información del perfil de Apple.')], 422);
@@ -560,24 +562,24 @@ class AuthController extends Controller
             }
 
             $user = User::create([
-                'name'              => $email,  // Apple no siempre provee nombre
-                'email'             => $email,
-                'apple_id'          => $appleId,
-                'password'          => Hash::make(str()->random(32)),
-                'role'              => 'winery',
-                'can_login'         => true,
+                'name' => $email,  // Apple no siempre provee nombre
+                'email' => $email,
+                'apple_id' => $appleId,
+                'password' => Hash::make(str()->random(32)),
+                'role' => 'winery',
+                'can_login' => true,
                 'email_verified_at' => now(),
             ]);
 
             SecurityLogger::logSecurityEvent('register_apple', [
                 'user_id' => $user->id,
-                'email'   => $email,
+                'email' => $email,
             ]);
         }
 
         if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
             return response()->json([
-                'message'      => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
+                'message' => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
                 'beta_expired' => true,
             ], 403);
         }
@@ -589,22 +591,10 @@ class AuthController extends Controller
         SecurityLogger::logSecurityEvent('login_apple', ['user_id' => $user->id]);
 
         return response()->json([
-            'token'      => $token,
+            'token' => $token,
             'expires_in' => $this->tokenExpiresIn(),
-            'user'       => new UserResource($user->fresh()->load('profile')),
+            'user' => new UserResource($user->fresh()->load('profile')),
         ]);
-    }
-
-    // ─── Helpers ──────────────────────────────────────────────────────────────
-
-    private function tokenExpiresAt(): \Illuminate\Support\Carbon
-    {
-        return now()->addMinutes((int) config('sanctum.expiration', 43200));
-    }
-
-    private function tokenExpiresIn(): int
-    {
-        return (int) config('sanctum.expiration', 43200) * 60;
     }
 
     // ─── POST /reset-password ─────────────────────────────────────────────────
@@ -612,8 +602,8 @@ class AuthController extends Controller
     public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
-            'token'    => 'required|string',
-            'email'    => 'required|email',
+            'token' => 'required|string',
+            'email' => 'required|email',
             'password' => ['required', 'confirmed', PasswordRule::min(10)->mixedCase()->numbers()],
         ]);
 
@@ -639,5 +629,17 @@ class AuthController extends Controller
         return response()->json([
             'message' => __('Contraseña actualizada correctamente. Por favor, inicia sesión de nuevo.'),
         ]);
+    }
+
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    private function tokenExpiresAt(): \Illuminate\Support\Carbon
+    {
+        return now()->addMinutes((int) config('sanctum.expiration', 43200));
+    }
+
+    private function tokenExpiresIn(): int
+    {
+        return (int) config('sanctum.expiration', 43200) * 60;
     }
 }

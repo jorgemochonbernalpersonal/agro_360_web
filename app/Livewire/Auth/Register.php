@@ -2,28 +2,37 @@
 
 namespace App\Livewire\Auth;
 
-use App\Models\User;
-use App\Models\SupervisorWinery;
-use App\Models\WineryViticulturist;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\SupervisorWinery;
+use App\Models\User;
+use App\Models\WineryViticulturist;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\DB;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Livewire\Component;
 
 class Register extends Component
 {
     use WithToastNotifications;
+
     public $name = '';
+
     public $email = '';
+
     public $password = '';
+
     public $password_confirmation = '';
-    public $dni  = '';
+
+    public $dni = '';
+
     public $role = 'viticulturist'; // Por defecto
+
     public $winery_id = ''; // Si lo crea un winery
+
     public $supervisor_id = ''; // Si lo crea un supervisor
+
     public $honeypot = ''; // Honeypot anti-bots
 
     public function mount()
@@ -31,7 +40,7 @@ class Register extends Component
         // Si está autenticado, determinar rol por defecto según quién crea
         if (Auth::check()) {
             $user = Auth::user();
-            $this->role = match($user->role) {
+            $this->role = match ($user->role) {
                 'admin' => 'viticulturist', // Admin puede elegir cualquier rol
                 'supervisor' => 'viticulturist', // Supervisor crea winery o viticulturist
                 'winery' => 'viticulturist', // Winery solo crea viticulturist
@@ -45,77 +54,37 @@ class Register extends Component
         }
     }
 
-    protected function rules(): array
-    {
-        $rules = [
-            'name'     => 'required|string|max:255',
-            // La unicidad se gestionará manualmente en register() para permitir activar viticultores pre-creados
-            'email'    => 'required|string|email|max:255',
-            'password' => ['required', 'confirmed', Password::defaults()],
-            'dni'      => ['nullable', 'string', 'max:20', 'regex:/^[A-Za-z0-9\-]+$/'],
-        ];
-
-        // Si está autenticado, puede seleccionar rol
-        if (Auth::check()) {
-            $user = Auth::user();
-            $allowedRoles = $this->getAllowedRoles($user);
-            $rules['role'] = 'required|in:' . implode(',', $allowedRoles);
-        } else {
-            // Registro público: viticulturist, winery, producer (supervisor solo por invitación/admin)
-            $rules['role'] = 'required|in:viticulturist,winery,producer';
-        }
-
-        return $rules;
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'name.required' => __('El campo nombre es obligatorio.'),
-            'name.max' => __('El nombre no puede tener más de 255 caracteres.'),
-            'email.required' => __('El campo email es obligatorio.'),
-            'email.email' => __('El email debe ser una dirección de correo válida.'),
-            'email.max' => __('El email no puede tener más de 255 caracteres.'),
-            'password.required' => __('El campo contraseña es obligatorio.'),
-            'password.confirmed' => __('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.'),
-            'password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
-            'role.required' => __('Debes seleccionar un rol.'),
-            'role.in'       => __('El rol seleccionado no es válido.'),
-            'dni.max'       => __('El DNI no puede tener más de 20 caracteres.'),
-            'dni.regex'     => __('El DNI solo puede contener letras, números y guiones.'),
-        ];
-    }
-
     public function getAllowedRoles(?User $user = null): array
     {
-        if (!$user) {
+        if (! $user) {
             return ['viticulturist', 'winery', 'producer']; // Registro público (supervisor solo por invitación/admin)
         }
 
-        return match($user->role) {
-            'admin'         => ['admin', 'supervisor', 'winery', 'viticulturist', 'producer'],
-            'supervisor'    => ['winery', 'viticulturist', 'producer'],
-            'winery'        => ['viticulturist'],
+        return match ($user->role) {
+            'admin' => ['admin', 'supervisor', 'winery', 'viticulturist', 'producer'],
+            'supervisor' => ['winery', 'viticulturist', 'producer'],
+            'winery' => ['viticulturist'],
             'viticulturist' => ['viticulturist'],
-            default         => [],
+            default => [],
         };
     }
 
     public function register()
     {
         // Honeypot: Si está lleno, es un bot
-        if (!empty($this->honeypot)) {
+        if (! empty($this->honeypot)) {
             \App\Services\SecurityLogger::logSecurityEvent('honeypot_triggered_register', [
                 'email' => $this->email,
                 'name' => $this->name,
                 'honeypot_value' => substr($this->honeypot, 0, 50),
             ]);
-            
+
             // Simular éxito para confundir al bot
             $this->toastSuccess(__('Registro completado. Revisa tu email para verificar tu cuenta.'));
+
             return;
         }
-        
+
         $this->validate();
 
         $this->email = strtolower(trim($this->email));
@@ -124,7 +93,7 @@ class Register extends Component
         $existing = User::where('email', $this->email)->first();
 
         // Registro público (sin usuario autenticado): puede ser alta nueva o activación de viticultor pre-creado
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             if ($existing) {
                 // Activar viticultor que fue creado previamente sin acceso (can_login = false)
                 if ($existing->role === User::ROLE_VITICULTURIST && $existing->can_login === false) {
@@ -134,19 +103,19 @@ class Register extends Component
                     $ghostEmailMatches = strtolower($existing->email) === strtolower($this->email);
 
                     $existing->update([
-                        'name'                  => $this->name,
-                        'password'              => Hash::make($this->password),
-                        'can_login'             => true,
-                        'password_must_reset'   => false,
-                        'email_verified_at'     => $ghostEmailMatches ? ($existing->email_verified_at ?? now()) : null,
-                        'dni'                   => $normalizedDni ?? $existing->dni,
-                        'invitation_token'      => null,
+                        'name' => $this->name,
+                        'password' => Hash::make($this->password),
+                        'can_login' => true,
+                        'password_must_reset' => false,
+                        'email_verified_at' => $ghostEmailMatches ? ($existing->email_verified_at ?? now()) : null,
+                        'dni' => $normalizedDni ?? $existing->dni,
+                        'invitation_token' => null,
                         'invitation_expires_at' => null,
-                        'invitation_sent_at'    => null,
+                        'invitation_sent_at' => null,
                     ]);
 
                     // Si el email no coincide con el ghost, enviar verificación
-                    if (!$ghostEmailMatches) {
+                    if (! $ghostEmailMatches) {
                         $existing->fresh()->sendEmailVerificationNotification();
                     }
 
@@ -156,11 +125,13 @@ class Register extends Component
                     $this->toastSuccess(__('Cuenta activada correctamente. ¡Bienvenido a Agro365!'));
 
                     $target = $ghostEmailMatches ? 'viticulturist.dashboard' : 'verification.notice';
+
                     return $this->redirect(route($target), navigate: true);
                 }
 
                 // Cualquier otro caso: email ya usado por una cuenta activa
                 $this->addError('email', __('Este email ya está registrado.'));
+
                 return;
             }
 
@@ -169,10 +140,12 @@ class Register extends Component
                 $merged = $this->mergeGhostByDni($normalizedDni, $this->email);
                 if ($merged instanceof \App\Models\User) {
                     $target = $merged->email_verified_at ? 'viticulturist.dashboard' : 'verification.notice';
+
                     return $this->redirect(route($target), navigate: true);
                 }
                 if ($merged === 'email_taken') {
                     $this->addError('email', __('Este email ya está registrado.'));
+
                     return;
                 }
                 // null → no ghost found, continue with normal registration
@@ -183,6 +156,7 @@ class Register extends Component
                 $dniTaken = User::where('dni', $normalizedDni)->where('can_login', true)->exists();
                 if ($dniTaken) {
                     $this->addError('dni', __('Este DNI ya está registrado en el sistema.'));
+
                     return;
                 }
             }
@@ -190,15 +164,16 @@ class Register extends Component
             // Creación interna (admin/supervisor/winery/viticultor): no permitir reutilizar emails
             if ($existing) {
                 $this->addError('email', __('Este email ya está registrado.'));
+
                 return;
             }
         }
 
         // Detectar si viticultor esta creando otro viticultor (requiere password temporal)
-        $isViticulturistCreatingViticulturist = Auth::check() 
-            && Auth::user()->hasViticulturistAccess() 
+        $isViticulturistCreatingViticulturist = Auth::check()
+            && Auth::user()->hasViticulturistAccess()
             && $this->role === 'viticulturist';
-        
+
         // Generar contraseña temporal si es necesario
         $temporaryPassword = null;
         if ($isViticulturistCreatingViticulturist) {
@@ -211,13 +186,13 @@ class Register extends Component
         try {
             $user = DB::transaction(function () use ($password, $normalizedDni, $isViticulturistCreatingViticulturist) {
                 $user = User::create([
-                    'name'                => $this->name,
-                    'email'               => $this->email,
-                    'password'            => $password,
-                    'role'                => $this->role,
-                    'dni'                 => $normalizedDni ?? null,
+                    'name' => $this->name,
+                    'email' => $this->email,
+                    'password' => $password,
+                    'role' => $this->role,
+                    'dni' => $normalizedDni ?? null,
                     'password_must_reset' => $isViticulturistCreatingViticulturist,
-                    'can_login'           => true,
+                    'can_login' => true,
                 ]);
 
                 // Crear relaciones automáticas si está autenticado
@@ -264,10 +239,12 @@ class Register extends Component
         } catch (QueryException $e) {
             if (str_contains($e->getMessage(), 'users_email_unique')) {
                 $this->addError('email', __('Este email ya está registrado.'));
+
                 return;
             }
             if (str_contains($e->getMessage(), 'users_dni_unique')) {
                 $this->addError('dni', __('Este DNI ya está registrado en el sistema.'));
+
                 return;
             }
             throw $e;
@@ -281,8 +258,8 @@ class Register extends Component
             if ($isViticulturistCreatingViticulturist) {
                 // Generar PDF con credenciales en memoria (sin escritura a disco)
                 $pdf = \PDF::loadView('pdf.credentials', [
-                    'email'      => $user->email,
-                    'password'   => $temporaryPassword,
+                    'email' => $user->email,
+                    'password' => $temporaryPassword,
                     'created_at' => now()->format('d/m/Y H:i'),
                 ]);
                 $pdfContent = $pdf->output();
@@ -292,7 +269,7 @@ class Register extends Component
 
                 $this->toastSuccess(__('Viticultor creado correctamente. Se ha enviado un email con las credenciales de acceso.'));
                 session()->flash('pdf_download', base64_encode($pdfContent));
-                session()->flash('pdf_filename', 'credenciales_' . str_replace(['@', '.'], '_', $user->email) . '.pdf');
+                session()->flash('pdf_filename', 'credenciales_'.str_replace(['@', '.'], '_', $user->email).'.pdf');
             } else {
                 // Enviar email de verificación tradicional
                 $user->sendEmailVerificationNotification();
@@ -316,32 +293,78 @@ class Register extends Component
         return $this->redirect(route('verification.notice'), navigate: true);
     }
 
-    protected function getDashboardRoute(): string
+    public function getRedirectRoute(): string
     {
         $user = Auth::user();
-        
-        return match($user->role) {
+
+        // Redirigir según quién creó el usuario
+        return match ($user->role) {
             'admin' => 'admin.dashboard',
             'supervisor' => 'supervisor.dashboard',
             'winery' => 'winery.dashboard',
-            'viticulturist' => 'viticulturist.dashboard',
-            'producer'      => 'producer.dashboard',
+            'viticulturist' => 'viticulturist.personal.index', // Redirigir a Personal después de crear viticultor
+            'producer' => 'producer.dashboard',
             default => 'home',
         };
     }
 
-    public function getRedirectRoute(): string
+    public function render()
+    {
+        return view('livewire.auth.register')->layout(\Illuminate\Support\Facades\Auth::check() ? 'layouts.app' : 'layouts.guest');
+    }
+
+    protected function rules(): array
+    {
+        $rules = [
+            'name' => 'required|string|max:255',
+            // La unicidad se gestionará manualmente en register() para permitir activar viticultores pre-creados
+            'email' => 'required|string|email|max:255',
+            'password' => ['required', 'confirmed', Password::defaults()],
+            'dni' => ['nullable', 'string', 'max:20', 'regex:/^[A-Za-z0-9\-]+$/'],
+        ];
+
+        // Si está autenticado, puede seleccionar rol
+        if (Auth::check()) {
+            $user = Auth::user();
+            $allowedRoles = $this->getAllowedRoles($user);
+            $rules['role'] = 'required|in:'.implode(',', $allowedRoles);
+        } else {
+            // Registro público: viticulturist, winery, producer (supervisor solo por invitación/admin)
+            $rules['role'] = 'required|in:viticulturist,winery,producer';
+        }
+
+        return $rules;
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'name.required' => __('El campo nombre es obligatorio.'),
+            'name.max' => __('El nombre no puede tener más de 255 caracteres.'),
+            'email.required' => __('El campo email es obligatorio.'),
+            'email.email' => __('El email debe ser una dirección de correo válida.'),
+            'email.max' => __('El email no puede tener más de 255 caracteres.'),
+            'password.required' => __('El campo contraseña es obligatorio.'),
+            'password.confirmed' => __('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.'),
+            'password.min' => __('La contraseña debe tener al menos 8 caracteres.'),
+            'role.required' => __('Debes seleccionar un rol.'),
+            'role.in' => __('El rol seleccionado no es válido.'),
+            'dni.max' => __('El DNI no puede tener más de 20 caracteres.'),
+            'dni.regex' => __('El DNI solo puede contener letras, números y guiones.'),
+        ];
+    }
+
+    protected function getDashboardRoute(): string
     {
         $user = Auth::user();
-        
-        // Redirigir según quién creó el usuario
-        return match($user->role) {
+
+        return match ($user->role) {
             'admin' => 'admin.dashboard',
             'supervisor' => 'supervisor.dashboard',
-            'winery'        => 'winery.dashboard',
-            'viticulturist' => 'viticulturist.personal.index', // Redirigir a Personal después de crear viticultor
-            'producer'      => 'producer.dashboard',
-            default         => 'home',
+            'winery' => 'winery.dashboard',
+            'viticulturist' => 'viticulturist.dashboard',
+            'producer' => 'producer.dashboard',
+            default => 'home',
         };
     }
 
@@ -358,7 +381,7 @@ class Register extends Component
             ->where('can_login', false)
             ->first();
 
-        if (!$ghost) {
+        if (! $ghost) {
             return null;
         }
 
@@ -377,21 +400,21 @@ class Register extends Component
         $emailMatches = strtolower($ghost->email) === strtolower($email);
 
         $ghost->update([
-            'name'                  => $this->name,
-            'email'                 => $email,
-            'password'              => Hash::make($this->password),
-            'can_login'             => true,
-            'password_must_reset'   => false,
-            'email_verified_at'     => $emailMatches ? ($ghost->email_verified_at ?? now()) : null,
-            'invitation_token'      => null,
+            'name' => $this->name,
+            'email' => $email,
+            'password' => Hash::make($this->password),
+            'can_login' => true,
+            'password_must_reset' => false,
+            'email_verified_at' => $emailMatches ? ($ghost->email_verified_at ?? now()) : null,
+            'invitation_token' => null,
             'invitation_expires_at' => null,
-            'invitation_sent_at'    => null,
+            'invitation_sent_at' => null,
         ]);
 
         $freshGhost = $ghost->fresh();
 
         // Si el email cambió, enviar verificación
-        if (!$emailMatches) {
+        if (! $emailMatches) {
             $freshGhost->sendEmailVerificationNotification();
         }
 
@@ -401,10 +424,5 @@ class Register extends Component
         $this->toastSuccess(__('¡Cuenta vinculada! Tu bodega ya tenía tus datos registrados. Bienvenido a Agro365.'));
 
         return $freshGhost;
-    }
-
-    public function render()
-    {
-        return view('livewire.auth.register')->layout(\Illuminate\Support\Facades\Auth::check() ? 'layouts.app' : 'layouts.guest');
     }
 }

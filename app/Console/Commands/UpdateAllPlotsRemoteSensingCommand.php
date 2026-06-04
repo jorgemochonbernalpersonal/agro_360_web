@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Jobs\UpdatePlotSentinel2Job;
 use App\Models\MultipartPlotSigpac;
-use App\Models\Plot;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -41,19 +40,20 @@ class UpdateAllPlotsRemoteSensingCommand extends Command
 
         if ($plotSigpacs->isEmpty()) {
             $this->warn('No sigpac parcels found for plots with active subscriptions.');
+
             return self::SUCCESS;
         }
 
         $this->info("Found {$plotSigpacs->count()} sigpac parcels to update");
         $this->newLine();
 
-        $bar      = $this->output->createProgressBar($plotSigpacs->count());
+        $bar = $this->output->createProgressBar($plotSigpacs->count());
         $bar->start();
 
-        $queued    = 0;
-        $skipped   = 0;
+        $queued = 0;
+        $skipped = 0;
         $queueName = $this->option('queue') ?? 'default';
-        $delay     = (int) ($this->option('delay') ?? 0);
+        $delay = (int) ($this->option('delay') ?? 0);
 
         foreach ($plotSigpacs as $plotSigpac) {
             try {
@@ -65,9 +65,9 @@ class UpdateAllPlotsRemoteSensingCommand extends Command
             } catch (\Exception $e) {
                 $skipped++;
                 Log::error('Failed to queue sigpac parcel update', [
-                    'plot_id'        => $plotSigpac->plot_id,
+                    'plot_id' => $plotSigpac->plot_id,
                     'plot_sigpac_id' => $plotSigpac->id,
-                    'error'          => $e->getMessage(),
+                    'error' => $e->getMessage(),
                 ]);
             }
 
@@ -85,15 +85,15 @@ class UpdateAllPlotsRemoteSensingCommand extends Command
                 ['Jobs queued',          $queued],
                 ['Skipped',              $skipped],
                 ['Queue',                $queueName],
-                ['Delay per job',        $delay . 's'],
+                ['Delay per job',        $delay.'s'],
             ]
         );
 
         Log::info('Remote sensing update queued (per sigpac parcel)', [
-            'total'   => $plotSigpacs->count(),
-            'queued'  => $queued,
+            'total' => $plotSigpacs->count(),
+            'queued' => $queued,
             'skipped' => $skipped,
-            'queue'   => $queueName,
+            'queue' => $queueName,
         ]);
 
         return self::SUCCESS;

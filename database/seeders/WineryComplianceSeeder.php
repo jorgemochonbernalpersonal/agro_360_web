@@ -22,22 +22,22 @@ class WineryComplianceSeeder extends Seeder
     private const ECO_TYPES = ['organic', 'biodynamic', 'vegan', 'denomination', 'fairtrade', 'integrated', 'carbon_neutral'];
 
     private const ECO_NAMES = [
-        'organic'        => ['Certificación Agricultura Ecológica — Viñas', 'Sello Ecológico Canario', 'Vino Ecológico Certificado', 'Eco Viticultura', 'Certificado Sin Fitosanitarios'],
-        'biodynamic'     => ['Certificación Biodinámica — Viñedos en Ladera', 'Demeter Bodega', 'Biodinámico Canarias', 'Preparados Biodinámicos Certificados', 'Ciclos Lunares Certificados'],
-        'vegan'          => ['Certificación Vegan-Friendly', 'Sello Vegano — Sin Clarificantes Animales', 'Vegan Wine Certified', 'Clarificación Mineral Certificada', 'Vegan Society Sello'],
-        'denomination'   => ['Sello D.O. Gran Canaria', 'D.O. Prot. Canarias', 'Mención Calidad D.O.', 'Habilitación Operador D.O.', 'Certificado Elaborador D.O.'],
-        'fairtrade'      => ['Sello Fair Trade', 'Comercio Justo Vitivinícola', 'Fair Trade Certified', 'Precio Justo Viticultor', 'Cadena Suministro Ético'],
-        'integrated'     => ['Producción Integrada Canarias', 'Sello PI — Viticultura Sostenible', 'Producción Integrada Viñedo', 'Control Biológico Certificado', 'Sostenibilidad Vitícola'],
+        'organic' => ['Certificación Agricultura Ecológica — Viñas', 'Sello Ecológico Canario', 'Vino Ecológico Certificado', 'Eco Viticultura', 'Certificado Sin Fitosanitarios'],
+        'biodynamic' => ['Certificación Biodinámica — Viñedos en Ladera', 'Demeter Bodega', 'Biodinámico Canarias', 'Preparados Biodinámicos Certificados', 'Ciclos Lunares Certificados'],
+        'vegan' => ['Certificación Vegan-Friendly', 'Sello Vegano — Sin Clarificantes Animales', 'Vegan Wine Certified', 'Clarificación Mineral Certificada', 'Vegan Society Sello'],
+        'denomination' => ['Sello D.O. Gran Canaria', 'D.O. Prot. Canarias', 'Mención Calidad D.O.', 'Habilitación Operador D.O.', 'Certificado Elaborador D.O.'],
+        'fairtrade' => ['Sello Fair Trade', 'Comercio Justo Vitivinícola', 'Fair Trade Certified', 'Precio Justo Viticultor', 'Cadena Suministro Ético'],
+        'integrated' => ['Producción Integrada Canarias', 'Sello PI — Viticultura Sostenible', 'Producción Integrada Viñedo', 'Control Biológico Certificado', 'Sostenibilidad Vitícola'],
         'carbon_neutral' => ['Huella de Carbono Compensada', 'Neutro en CO₂ Certificado', 'Carbon Neutral Bodega', 'Emisiones Cero Verificadas', 'Sello Climáticamente Responsable'],
     ];
 
     private const ECO_BODIES = [
-        'organic'        => ['CAAE', 'CCPAE', 'CRAE Canarias', 'Agrocolor'],
-        'biodynamic'     => ['Demeter International', 'Biodynamic Association', 'Demeter España'],
-        'vegan'          => ['The Vegan Society', 'V-Label', 'BeVeg International'],
-        'denomination'   => ['Consejo Regulador D.O. Gran Canaria', 'OIVE', 'MAPA'],
-        'fairtrade'      => ['Fairtrade International', 'CLAC', 'Fairtrade Ibérica'],
-        'integrated'     => ['CAAE', 'Consejería de Agricultura de Canarias', 'AGROINTEGRA'],
+        'organic' => ['CAAE', 'CCPAE', 'CRAE Canarias', 'Agrocolor'],
+        'biodynamic' => ['Demeter International', 'Biodynamic Association', 'Demeter España'],
+        'vegan' => ['The Vegan Society', 'V-Label', 'BeVeg International'],
+        'denomination' => ['Consejo Regulador D.O. Gran Canaria', 'OIVE', 'MAPA'],
+        'fairtrade' => ['Fairtrade International', 'CLAC', 'Fairtrade Ibérica'],
+        'integrated' => ['CAAE', 'Consejería de Agricultura de Canarias', 'AGROINTEGRA'],
         'carbon_neutral' => ['Bureau Veritas', 'SGS Ibérica', 'AENOR', 'Carbon Trust'],
     ];
 
@@ -53,8 +53,8 @@ class WineryComplianceSeeder extends Seeder
 
     private const SAN_ACTIVITIES = [
         'elaborador' => 'Elaboración, crianza y embotellado de vinos tranquilos y espumosos.',
-        'almacenista'=> 'Almacenamiento y comercialización de vinos a granel y embotellados.',
-        'operador'   => 'Operador vitivinícola inscrito en el Registro de la Viña y el Vino — OIVE.',
+        'almacenista' => 'Almacenamiento y comercialización de vinos a granel y embotellados.',
+        'operador' => 'Operador vitivinícola inscrito en el Registro de la Viña y el Vino — OIVE.',
         'importador' => 'Importación de vinos y mostos de terceros países.',
         'exportador' => 'Exportación de vinos y productos derivados de la uva.',
     ];
@@ -91,41 +91,41 @@ class WineryComplianceSeeder extends Seeder
 
     private function seedEcoCertifications($now): void
     {
-        $rows        = [];
-        $typeCounters= array_fill_keys(self::ECO_TYPES, 0);
-        $yearPool    = [2020, 2021, 2022, 2022, 2023, 2023, 2024, 2024, 2025, 2025, 2026, 2026, 2026, 2026, 2026];
+        $rows = [];
+        $typeCounters = array_fill_keys(self::ECO_TYPES, 0);
+        $yearPool = [2020, 2021, 2022, 2022, 2023, 2023, 2024, 2024, 2025, 2025, 2026, 2026, 2026, 2026, 2026];
 
         for ($i = 0; $i < 450; $i++) {
             $type = self::ECO_TYPES[$i % count(self::ECO_TYPES)];
             $typeCounters[$type]++;
-            $tc   = $typeCounters[$type];
+            $tc = $typeCounters[$type];
 
-            $names      = self::ECO_NAMES[$type];
-            $baseName   = $names[$i % count($names)];
-            $body       = self::ECO_BODIES[$type][$i % count(self::ECO_BODIES[$type])];
+            $names = self::ECO_NAMES[$type];
+            $baseName = $names[$i % count($names)];
+            $body = self::ECO_BODIES[$type][$i % count(self::ECO_BODIES[$type])];
             $validYears = self::ECO_VALIDITY[$type];
 
-            $issueYear  = $yearPool[$i % count($yearPool)];
-            $issueMon   = str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT);
-            $issueDay   = str_pad(($i % 28) + 1, 2, '0', STR_PAD_LEFT);
-            $validFrom  = "$issueYear-$issueMon-$issueDay";
+            $issueYear = $yearPool[$i % count($yearPool)];
+            $issueMon = str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT);
+            $issueDay = str_pad(($i % 28) + 1, 2, '0', STR_PAD_LEFT);
+            $validFrom = "$issueYear-$issueMon-$issueDay";
             $validUntil = date('Y-m-d', strtotime("+{$validYears} years", strtotime($validFrom)));
-            $status     = $validUntil >= now()->toDateString() ? 'active' : 'expired';
+            $status = $validUntil >= now()->toDateString() ? 'active' : 'expired';
 
-            $certNum = strtoupper(substr($type, 0, 3)) . '-GC-' . $issueYear . '-' . str_pad($tc, 5, '0', STR_PAD_LEFT);
+            $certNum = strtoupper(substr($type, 0, 3)).'-GC-'.$issueYear.'-'.str_pad($tc, 5, '0', STR_PAD_LEFT);
 
             $rows[] = [
-                'user_id'            => self::WINERY_USER_ID,
-                'name'               => "$baseName — $issueYear",
+                'user_id' => self::WINERY_USER_ID,
+                'name' => "$baseName — $issueYear",
                 'certification_type' => $type,
-                'certifying_body'    => $body,
+                'certifying_body' => $body,
                 'certificate_number' => $certNum,
-                'valid_from'         => $validFrom,
-                'valid_until'        => $validUntil,
-                'status'             => $status,
-                'notes'              => "Cert. $type emitida en $issueYear por $body. Registro interno Nº $tc.",
-                'created_at'         => $now,
-                'updated_at'         => $now,
+                'valid_from' => $validFrom,
+                'valid_until' => $validUntil,
+                'status' => $status,
+                'notes' => "Cert. $type emitida en $issueYear por $body. Registro interno Nº $tc.",
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -133,48 +133,48 @@ class WineryComplianceSeeder extends Seeder
             DB::table('eco_certifications')->insert($chunk);
         }
 
-        $activos = count(array_filter($rows, fn($r) => $r['status'] === 'active'));
-        $this->command->info("✅ Ecocertificaciones: " . count($rows) . " registros ({$activos} activas)");
+        $activos = count(array_filter($rows, fn ($r) => $r['status'] === 'active'));
+        $this->command->info('✅ Ecocertificaciones: '.count($rows)." registros ({$activos} activas)");
     }
 
     // ── 450 registros sanitarios ──────────────────────────────────────────────
 
     private function seedSanitaryRegistrations($now): void
     {
-        $rows    = [];
-        $tcMap   = array_fill_keys(self::SAN_TYPES, 0);
-        $yearPool= [2018, 2018, 2019, 2019, 2020, 2020, 2021, 2022, 2023, 2024, 2025, 2025, 2026, 2026, 2026];
+        $rows = [];
+        $tcMap = array_fill_keys(self::SAN_TYPES, 0);
+        $yearPool = [2018, 2018, 2019, 2019, 2020, 2020, 2021, 2022, 2023, 2024, 2025, 2025, 2026, 2026, 2026];
 
         for ($i = 0; $i < 450; $i++) {
             $type = self::SAN_TYPES[$i % count(self::SAN_TYPES)];
             $tcMap[$type]++;
-            $tc   = $tcMap[$type];
+            $tc = $tcMap[$type];
 
-            $authority   = self::SAN_AUTHORITIES[$i % count(self::SAN_AUTHORITIES)];
-            $regYear     = $yearPool[$i % count($yearPool)];
-            $regMon      = str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT);
-            $regDay      = str_pad(($i % 28) + 1, 2, '0', STR_PAD_LEFT);
-            $regDate     = "$regYear-$regMon-$regDay";
+            $authority = self::SAN_AUTHORITIES[$i % count(self::SAN_AUTHORITIES)];
+            $regYear = $yearPool[$i % count($yearPool)];
+            $regMon = str_pad(($i % 12) + 1, 2, '0', STR_PAD_LEFT);
+            $regDay = str_pad(($i % 28) + 1, 2, '0', STR_PAD_LEFT);
+            $regDate = "$regYear-$regMon-$regDay";
 
             // Renovación: 10 años para la mayoría, null para operador
             $renewalDate = $type === 'operador' ? null
                 : date('Y-m-d', strtotime('+10 years', strtotime($regDate)));
 
-            $regNum = 'REG-' . strtoupper(substr($type, 0, 3)) . '-' . $regYear . '-' . str_pad($tc, 5, '0', STR_PAD_LEFT);
+            $regNum = 'REG-'.strtoupper(substr($type, 0, 3)).'-'.$regYear.'-'.str_pad($tc, 5, '0', STR_PAD_LEFT);
             $status = ($renewalDate === null || $renewalDate >= now()->toDateString()) ? 'active' : 'expired';
 
             $rows[] = [
-                'user_id'              => self::WINERY_USER_ID,
-                'registration_number'  => $regNum,
-                'registration_type'    => $type,
+                'user_id' => self::WINERY_USER_ID,
+                'registration_number' => $regNum,
+                'registration_type' => $type,
                 'activity_description' => self::SAN_ACTIVITIES[$type],
-                'registration_date'    => $regDate,
-                'renewal_date'         => $renewalDate,
-                'issuing_authority'    => $authority,
-                'status'               => $status,
-                'notes'                => "Registro sanitario de $type expedido en $regYear. Nº interno $tc.",
-                'created_at'           => $now,
-                'updated_at'           => $now,
+                'registration_date' => $regDate,
+                'renewal_date' => $renewalDate,
+                'issuing_authority' => $authority,
+                'status' => $status,
+                'notes' => "Registro sanitario de $type expedido en $regYear. Nº interno $tc.",
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -182,8 +182,8 @@ class WineryComplianceSeeder extends Seeder
             DB::table('sanitary_registrations')->insert($chunk);
         }
 
-        $activos = count(array_filter($rows, fn($r) => $r['status'] === 'active'));
-        $this->command->info("✅ Registros sanitarios: " . count($rows) . " registros ({$activos} activos)");
+        $activos = count(array_filter($rows, fn ($r) => $r['status'] === 'active'));
+        $this->command->info('✅ Registros sanitarios: '.count($rows)." registros ({$activos} activos)");
     }
 
     // ── 450 autorizaciones de embotellado (1 por vino) ────────────────────────
@@ -198,40 +198,41 @@ class WineryComplianceSeeder extends Seeder
 
         if (empty($wines)) {
             $this->command->warn('  ⚠️  Sin vinos. Saltando autorizaciones de embotellado.');
+
             return;
         }
 
         $rows = [];
 
         for ($i = 0; $i < 450; $i++) {
-            $wine        = $wines[$i % count($wines)];
-            $vintage     = $wine->vintage ?? 2024;
-            $volBase     = $wine->volume_liters > 0 ? $wine->volume_liters : 5000.0;
-            $authVol     = round($volBase * 1.05, 3);
+            $wine = $wines[$i % count($wines)];
+            $vintage = $wine->vintage ?? 2024;
+            $volBase = $wine->volume_liters > 0 ? $wine->volume_liters : 5000.0;
+            $authVol = round($volBase * 1.05, 3);
 
             // Fechas: los de 2026 son más recientes
-            $monthsBack  = 12 - ($i % 12);
+            $monthsBack = 12 - ($i % 12);
             $monthsAhead = 6 + ($i % 6);
-            $validFrom   = now()->subMonths($monthsBack)->format('Y-m-d');
-            $validUntil  = now()->addMonths($monthsAhead)->format('Y-m-d');
-            $status      = $validUntil >= now()->toDateString() ? 'active' : 'expired';
+            $validFrom = now()->subMonths($monthsBack)->format('Y-m-d');
+            $validUntil = now()->addMonths($monthsAhead)->format('Y-m-d');
+            $status = $validUntil >= now()->toDateString() ? 'active' : 'expired';
 
-            $authNum = 'AE-GC-' . $vintage . '-' . str_pad($i + 1, 5, '0', STR_PAD_LEFT);
+            $authNum = 'AE-GC-'.$vintage.'-'.str_pad($i + 1, 5, '0', STR_PAD_LEFT);
 
             $rows[] = [
-                'user_id'                  => self::WINERY_USER_ID,
-                'authorization_number'     => $authNum,
-                'authorization_type'       => 'embotellado',
-                'wine_id'                  => $wine->id,
+                'user_id' => self::WINERY_USER_ID,
+                'authorization_number' => $authNum,
+                'authorization_type' => 'embotellado',
+                'wine_id' => $wine->id,
                 'authorized_volume_liters' => $authVol,
-                'valid_from'               => $validFrom,
-                'valid_until'              => $validUntil,
-                'issuing_authority'        => 'Consejo Regulador D.O. Gran Canaria',
-                'status'                   => $status,
-                'conditions'               => self::BOTTLING_CONDITIONS[$i % count(self::BOTTLING_CONDITIONS)],
-                'notes'                    => null,
-                'created_at'               => $now,
-                'updated_at'               => $now,
+                'valid_from' => $validFrom,
+                'valid_until' => $validUntil,
+                'issuing_authority' => 'Consejo Regulador D.O. Gran Canaria',
+                'status' => $status,
+                'conditions' => self::BOTTLING_CONDITIONS[$i % count(self::BOTTLING_CONDITIONS)],
+                'notes' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -239,8 +240,8 @@ class WineryComplianceSeeder extends Seeder
             DB::table('bottling_authorizations')->insert($chunk);
         }
 
-        $activos = count(array_filter($rows, fn($r) => $r['status'] === 'active'));
-        $this->command->info("✅ Autorizaciones de embotellado: " . count($rows) . " registros ({$activos} activas)");
+        $activos = count(array_filter($rows, fn ($r) => $r['status'] === 'active'));
+        $this->command->info('✅ Autorizaciones de embotellado: '.count($rows)." registros ({$activos} activas)");
     }
 
     private function cleanupAll(): void

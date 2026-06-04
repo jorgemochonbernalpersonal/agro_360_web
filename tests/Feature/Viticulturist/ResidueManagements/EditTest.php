@@ -16,28 +16,10 @@ class EditTest extends ViticulturistTestCase
         $this->seed(\Database\Seeders\UnitSeeder::class);
     }
 
-    private function makeManagement(int $viticulturistId, string $practiceType = 'incorporation'): ResidueManagement
-    {
-        $campaign = Campaign::create([
-            'viticulturist_id' => $viticulturistId,
-            'year'             => 2024,
-            'name'             => 'Campaña 2024',
-        ]);
-
-        return ResidueManagement::create([
-            'viticulturist_id' => $viticulturistId,
-            'campaign_id'      => $campaign->id,
-            'date'             => '2024-03-15',
-            'practice_type'    => $practiceType,
-            'material_type'    => 'pruning_wood',
-            'active'           => true,
-        ]);
-    }
-
     public function test_mount_fills_fields(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $management    = $this->makeManagement($viticulturist->id);
+        $management = $this->makeManagement($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -50,7 +32,7 @@ class EditTest extends ViticulturistTestCase
     public function test_can_update_residue_management(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $management    = $this->makeManagement($viticulturist->id);
+        $management = $this->makeManagement($viticulturist->id);
 
         $this->actingAs($viticulturist);
 
@@ -63,7 +45,7 @@ class EditTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.residue-managements.index'));
 
         $this->assertDatabaseHas('residue_managements', [
-            'id'            => $management->id,
+            'id' => $management->id,
             'practice_type' => 'composting',
             'material_type' => 'grape_marc',
         ]);
@@ -72,7 +54,7 @@ class EditTest extends ViticulturistTestCase
     public function test_burning_justification_required_on_update(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $management    = $this->makeManagement($viticulturist->id, 'burning');
+        $management = $this->makeManagement($viticulturist->id, 'burning');
 
         $this->actingAs($viticulturist);
 
@@ -86,7 +68,7 @@ class EditTest extends ViticulturistTestCase
     public function test_switch_from_burning_to_other_clears_justification_in_db(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $management    = $this->makeManagement($viticulturist->id, 'burning');
+        $management = $this->makeManagement($viticulturist->id, 'burning');
         // Manually add justification
         $management->update(['justification' => 'Justificación de prueba que supera los 20 caracteres']);
 
@@ -99,7 +81,7 @@ class EditTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('residue_managements', [
-            'id'            => $management->id,
+            'id' => $management->id,
             'practice_type' => 'composting',
             'justification' => null,
         ]);
@@ -108,11 +90,29 @@ class EditTest extends ViticulturistTestCase
     public function test_cannot_edit_other_viticulturists_management(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $other         = $this->makeViticulturist();
-        $management    = $this->makeManagement($viticulturist->id);
+        $other = $this->makeViticulturist();
+        $management = $this->makeManagement($viticulturist->id);
 
         $this->actingAs($other)
             ->get(route('viticulturist.residue-managements.edit', $management))
             ->assertStatus(403);
+    }
+
+    private function makeManagement(int $viticulturistId, string $practiceType = 'incorporation'): ResidueManagement
+    {
+        $campaign = Campaign::create([
+            'viticulturist_id' => $viticulturistId,
+            'year' => 2024,
+            'name' => 'Campaña 2024',
+        ]);
+
+        return ResidueManagement::create([
+            'viticulturist_id' => $viticulturistId,
+            'campaign_id' => $campaign->id,
+            'date' => '2024-03-15',
+            'practice_type' => $practiceType,
+            'material_type' => 'pruning_wood',
+            'active' => true,
+        ]);
     }
 }

@@ -45,7 +45,7 @@ class ChangePasswordRequiredTest extends TestCase
     public function test_user_can_change_password_successfully(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => null,
@@ -70,24 +70,24 @@ class ChangePasswordRequiredTest extends TestCase
 
         // Verificar que el email fue verificado
         $this->assertNotNull($created->fresh()->email_verified_at);
-        
+
         // Verificar que puede hacer login con nueva contraseña usando Livewire
         auth()->logout();
         $this->get('/login');
-        
+
         Livewire::test(\App\Livewire\Auth\Login::class)
             ->set('email', $created->email)
             ->set('password', 'new-password-123')
             ->call('login')
             ->assertRedirect(route('viticulturist.dashboard'));
-        
+
         $this->assertAuthenticatedAs($created);
     }
 
     public function test_user_cannot_use_same_password(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => null,
@@ -114,7 +114,7 @@ class ChangePasswordRequiredTest extends TestCase
     public function test_password_change_verifies_email(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => null,
@@ -144,7 +144,7 @@ class ChangePasswordRequiredTest extends TestCase
     public function test_password_change_clears_session_cache(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => null,
@@ -176,7 +176,7 @@ class ChangePasswordRequiredTest extends TestCase
     public function test_user_cannot_access_other_routes_until_password_changed(): void
     {
         $creator = User::factory()->create(['role' => 'viticulturist']);
-        
+
         $created = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => null,
@@ -197,4 +197,3 @@ class ChangePasswordRequiredTest extends TestCase
             ->assertRedirect(route('auth.change-password-required'));
     }
 }
-

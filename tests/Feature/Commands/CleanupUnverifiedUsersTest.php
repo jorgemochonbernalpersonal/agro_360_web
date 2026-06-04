@@ -2,13 +2,12 @@
 
 namespace Tests\Feature\Commands;
 
-use App\Models\User;
 use App\Models\SupervisorWinery;
+use App\Models\User;
 use App\Models\WineryViticulturist;
-use App\Models\Plot;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
-use Carbon\Carbon;
 use Tests\TestCase;
 
 class CleanupUnverifiedUsersTest extends TestCase
@@ -140,8 +139,7 @@ class CleanupUnverifiedUsersTest extends TestCase
         Artisan::call('users:cleanup-unverified', ['--hours' => 24]);
 
         $output = Artisan::output();
-        
+
         $this->assertStringContainsString('eliminaron', strtolower($output));
     }
 }
-

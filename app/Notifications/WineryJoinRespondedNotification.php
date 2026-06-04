@@ -16,7 +16,7 @@ class WineryJoinRespondedNotification extends Notification implements ShouldQueu
     use Queueable, RespectsPreferences;
 
     public function __construct(
-        protected User   $winery,
+        protected User $winery,
         protected string $status, // approved | rejected
     ) {}
 
@@ -41,12 +41,12 @@ class WineryJoinRespondedNotification extends Notification implements ShouldQueu
         $approved = $this->status === WineryJoinRequest::STATUS_APPROVED;
 
         $subject = $approved
-            ? __('Solicitud de vinculación aprobada — ') . $this->winery->name
-            : __('Solicitud de vinculación rechazada — ') . $this->winery->name;
+            ? __('Solicitud de vinculación aprobada — ').$this->winery->name
+            : __('Solicitud de vinculación rechazada — ').$this->winery->name;
 
         $body = $approved
-            ? __('La bodega **') . $this->winery->name . __('** ha aprobado tu solicitud. Ya estás vinculado a su bodega.')
-            : __('La bodega **') . $this->winery->name . __('** ha rechazado tu solicitud de vinculación.');
+            ? __('La bodega **').$this->winery->name.__('** ha aprobado tu solicitud. Ya estás vinculado a su bodega.')
+            : __('La bodega **').$this->winery->name.__('** ha rechazado tu solicitud de vinculación.');
 
         return (new MailMessage)
             ->subject($subject)
@@ -59,9 +59,9 @@ class WineryJoinRespondedNotification extends Notification implements ShouldQueu
     public function toArray(object $notifiable): array
     {
         return [
-            'winery_id'   => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'winery_name' => $this->winery->name,
-            'status'      => $this->status,
+            'status' => $this->status,
         ];
     }
 }

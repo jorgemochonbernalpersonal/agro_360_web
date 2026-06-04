@@ -11,6 +11,7 @@ use Tests\Feature\ViticulturistTestCase;
 class CreateTest extends ViticulturistTestCase
 {
     protected User $creator;
+
     protected User $winery;
 
     protected function setUp(): void
@@ -83,9 +84,9 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('users', [
-            'name'      => 'Sub Viticultor',
-            'email'     => 'sub@test.com',
-            'role'      => 'viticulturist',
+            'name' => 'Sub Viticultor',
+            'email' => 'sub@test.com',
+            'role' => 'viticulturist',
             'can_login' => false,
         ]);
     }
@@ -102,11 +103,11 @@ class CreateTest extends ViticulturistTestCase
         $sub = User::where('email', 'sub@test.com')->firstOrFail();
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'viticulturist_id'       => $sub->id,
-            'winery_id'              => $this->winery->id,
-            'source'                 => WineryViticulturist::SOURCE_VITICULTURIST,
+            'viticulturist_id' => $sub->id,
+            'winery_id' => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
             'parent_viticulturist_id' => $this->creator->id,
-            'assigned_by'            => $this->creator->id,
+            'assigned_by' => $this->creator->id,
         ]);
     }
 
@@ -122,9 +123,9 @@ class CreateTest extends ViticulturistTestCase
         $sub = User::where('email', 'sinbodega@test.com')->firstOrFail();
 
         $this->assertDatabaseHas('winery_viticulturist', [
-            'viticulturist_id'       => $sub->id,
-            'winery_id'              => null,
-            'source'                 => WineryViticulturist::SOURCE_VITICULTURIST,
+            'viticulturist_id' => $sub->id,
+            'winery_id' => null,
+            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
             'parent_viticulturist_id' => $this->creator->id,
         ]);
     }

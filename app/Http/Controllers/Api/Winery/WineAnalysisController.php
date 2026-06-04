@@ -14,7 +14,7 @@ class WineAnalysisController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $user    = $request->user();
+        $user = $request->user();
         $perPage = $this->resolvePerPage($request, 20, 50);
 
         $query = WineAnalysis::where('user_id', $user->id)
@@ -33,10 +33,10 @@ class WineAnalysisController extends Controller
         return response()->json([
             'data' => WineAnalysisResource::collection($analyses),
             'meta' => [
-                'total'        => $analyses->total(),
-                'per_page'     => $analyses->perPage(),
+                'total' => $analyses->total(),
+                'per_page' => $analyses->perPage(),
                 'current_page' => $analyses->currentPage(),
-                'last_page'    => $analyses->lastPage(),
+                'last_page' => $analyses->lastPage(),
             ],
         ]);
     }
@@ -49,23 +49,23 @@ class WineAnalysisController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'            => 'required|integer',
-            'container_id'       => 'nullable|integer',
-            'analysis_date'      => 'required|date',
-            'analysis_type'      => 'nullable|string|in:standard,complete,organic,custom',
-            'laboratory'         => 'nullable|string|max:200',
-            'laboratory_name'    => 'nullable|string|max:255',
+            'wine_id' => 'required|integer',
+            'container_id' => 'nullable|integer',
+            'analysis_date' => 'required|date',
+            'analysis_type' => 'nullable|string|in:standard,complete,organic,custom',
+            'laboratory' => 'nullable|string|max:200',
+            'laboratory_name' => 'nullable|string|max:255',
             'alcoholic_strength' => 'nullable|numeric|between:0,25',
-            'alcohol'            => 'nullable|numeric|between:0,25',
-            'total_acidity'      => 'nullable|numeric|between:0,30',
-            'volatile_acidity'   => 'nullable|numeric|between:0,5',
-            'residual_sugar'     => 'nullable|numeric|min:0',
-            'ph'                 => 'nullable|numeric|between:2,5',
-            'density'            => 'nullable|numeric|between:0.9,1.5',
-            'free_so2'           => 'nullable|numeric|min:0',
-            'total_so2'          => 'nullable|numeric|min:0',
-            'result'             => 'nullable|string|in:passed,failed,pending',
-            'notes'              => 'nullable|string|max:1000',
+            'alcohol' => 'nullable|numeric|between:0,25',
+            'total_acidity' => 'nullable|numeric|between:0,30',
+            'volatile_acidity' => 'nullable|numeric|between:0,5',
+            'residual_sugar' => 'nullable|numeric|min:0',
+            'ph' => 'nullable|numeric|between:2,5',
+            'density' => 'nullable|numeric|between:0.9,1.5',
+            'free_so2' => 'nullable|numeric|min:0',
+            'total_so2' => 'nullable|numeric|min:0',
+            'result' => 'nullable|string|in:passed,failed,pending',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         // Verify the wine belongs to this user
@@ -81,7 +81,7 @@ class WineAnalysisController extends Controller
 
     public function show(Request $request, int $id): JsonResponse
     {
-        $user     = $request->user();
+        $user = $request->user();
         $analysis = WineAnalysis::where('user_id', $user->id)
             ->with(['wine', 'container'])
             ->findOrFail($id);
@@ -93,27 +93,27 @@ class WineAnalysisController extends Controller
 
     public function update(Request $request, int $id): JsonResponse
     {
-        $user     = $request->user();
+        $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
         $analysis = WineAnalysis::where('user_id', $user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'container_id'       => 'nullable|integer',
-            'analysis_date'      => 'nullable|date',
-            'analysis_type'      => 'nullable|string|in:standard,complete,organic,custom',
-            'laboratory'         => 'nullable|string|max:200',
-            'laboratory_name'    => 'nullable|string|max:255',
+            'container_id' => 'nullable|integer',
+            'analysis_date' => 'nullable|date',
+            'analysis_type' => 'nullable|string|in:standard,complete,organic,custom',
+            'laboratory' => 'nullable|string|max:200',
+            'laboratory_name' => 'nullable|string|max:255',
             'alcoholic_strength' => 'nullable|numeric|between:0,25',
-            'total_acidity'      => 'nullable|numeric|between:0,30',
-            'volatile_acidity'   => 'nullable|numeric|between:0,5',
-            'residual_sugar'     => 'nullable|numeric|min:0',
-            'ph'                 => 'nullable|numeric|between:2,5',
-            'density'            => 'nullable|numeric|between:0.9,1.5',
-            'free_so2'           => 'nullable|numeric|min:0',
-            'total_so2'          => 'nullable|numeric|min:0',
-            'result'             => 'nullable|string|in:passed,failed,pending',
-            'notes'              => 'nullable|string|max:1000',
+            'total_acidity' => 'nullable|numeric|between:0,30',
+            'volatile_acidity' => 'nullable|numeric|between:0,5',
+            'residual_sugar' => 'nullable|numeric|min:0',
+            'ph' => 'nullable|numeric|between:2,5',
+            'density' => 'nullable|numeric|between:0.9,1.5',
+            'free_so2' => 'nullable|numeric|min:0',
+            'total_so2' => 'nullable|numeric|min:0',
+            'result' => 'nullable|string|in:passed,failed,pending',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         $analysis->update($validated);
@@ -126,7 +126,7 @@ class WineAnalysisController extends Controller
 
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $user     = $request->user();
+        $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
         $analysis = WineAnalysis::where('user_id', $user->id)->findOrFail($id);

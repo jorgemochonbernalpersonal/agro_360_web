@@ -12,16 +12,14 @@ class Index extends Component
 {
     use WithPagination;
 
-    public bool   $embedded     = false;
+    public bool $embedded = false;
+
     public string $statusFilter = '';
 
-    protected function queryString(): array
+    public function updatingStatusFilter(): void
     {
-        if ($this->embedded) return [];
-        return ['statusFilter' => ['except' => '']];
+        $this->resetPage();
     }
-
-    public function updatingStatusFilter(): void { $this->resetPage(); }
 
     #[Layout('layouts.app')]
     public function render()
@@ -42,18 +40,27 @@ class Index extends Component
             ->pluck('total', 'status');
 
         $counts = [
-            'all'         => $statusCounts->sum(),
-            'scheduled'   => $statusCounts->get('scheduled', 0),
+            'all' => $statusCounts->sum(),
+            'scheduled' => $statusCounts->get('scheduled', 0),
             'in_progress' => $statusCounts->get('in_progress', 0),
-            'completed'   => $statusCounts->get('completed', 0),
+            'completed' => $statusCounts->get('completed', 0),
         ];
 
         return view('livewire.winery.denomination.inspections.index', [
-            'inspections'  => $inspections,
-            'counts'       => $counts,
+            'inspections' => $inspections,
+            'counts' => $counts,
             'statusLabels' => DoInspection::statusLabelOptions(),
             'resultLabels' => DoInspection::resultLabelOptions(),
             'resultColors' => DoInspection::RESULT_COLORS,
         ]);
+    }
+
+    protected function queryString(): array
+    {
+        if ($this->embedded) {
+            return [];
+        }
+
+        return ['statusFilter' => ['except' => '']];
     }
 }

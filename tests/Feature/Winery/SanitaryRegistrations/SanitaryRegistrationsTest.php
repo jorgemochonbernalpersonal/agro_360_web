@@ -45,7 +45,7 @@ class SanitaryRegistrationsTest extends WineryTestCase
 
     public function test_winery_can_create_sanitary_registration(): void
     {
-        $firstType   = array_key_first(SanitaryRegistration::REGISTRATION_TYPES);
+        $firstType = array_key_first(SanitaryRegistration::REGISTRATION_TYPES);
         $firstStatus = array_key_first(SanitaryRegistration::STATUSES);
 
         Livewire::test(Create::class)
@@ -56,23 +56,23 @@ class SanitaryRegistrationsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('sanitary_registrations', [
-            'user_id'             => $this->winery->id,
+            'user_id' => $this->winery->id,
             'registration_number' => 'RGSEAA-12345',
-            'registration_type'   => $firstType,
-            'status'              => $firstStatus,
+            'registration_type' => $firstType,
+            'status' => $firstStatus,
         ]);
     }
 
     public function test_winery_can_edit_sanitary_registration(): void
     {
-        $firstType   = array_key_first(SanitaryRegistration::REGISTRATION_TYPES);
+        $firstType = array_key_first(SanitaryRegistration::REGISTRATION_TYPES);
         $firstStatus = array_key_first(SanitaryRegistration::STATUSES);
 
         $registration = SanitaryRegistration::create([
-            'user_id'             => $this->winery->id,
+            'user_id' => $this->winery->id,
             'registration_number' => 'RGSEAA-00001',
-            'registration_type'   => $firstType,
-            'status'              => $firstStatus,
+            'registration_type' => $firstType,
+            'status' => $firstStatus,
         ]);
 
         Livewire::test(Edit::class, ['sanitaryRegistration' => $registration])
@@ -81,21 +81,21 @@ class SanitaryRegistrationsTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('sanitary_registrations', [
-            'id'                  => $registration->id,
+            'id' => $registration->id,
             'registration_number' => 'RGSEAA-99999',
         ]);
     }
 
     public function test_winery_cannot_edit_other_winery_sanitary_registration(): void
     {
-        $firstType   = array_key_first(SanitaryRegistration::REGISTRATION_TYPES);
+        $firstType = array_key_first(SanitaryRegistration::REGISTRATION_TYPES);
         $firstStatus = array_key_first(SanitaryRegistration::STATUSES);
 
         $registration = SanitaryRegistration::create([
-            'user_id'             => $this->winery->id,
+            'user_id' => $this->winery->id,
             'registration_number' => 'RGSEAA-PROT',
-            'registration_type'   => $firstType,
-            'status'              => $firstStatus,
+            'registration_type' => $firstType,
+            'status' => $firstStatus,
         ]);
 
         $otherWinery = $this->makeOtherWinery();
@@ -107,14 +107,14 @@ class SanitaryRegistrationsTest extends WineryTestCase
 
     public function test_winery_can_delete_sanitary_registration(): void
     {
-        $firstType   = array_key_first(SanitaryRegistration::REGISTRATION_TYPES);
+        $firstType = array_key_first(SanitaryRegistration::REGISTRATION_TYPES);
         $firstStatus = array_key_first(SanitaryRegistration::STATUSES);
 
         $registration = SanitaryRegistration::create([
-            'user_id'             => $this->winery->id,
+            'user_id' => $this->winery->id,
             'registration_number' => 'RGSEAA-DEL',
-            'registration_type'   => $firstType,
-            'status'              => $firstStatus,
+            'registration_type' => $firstType,
+            'status' => $firstStatus,
         ]);
 
         Livewire::test(Index::class)

@@ -29,7 +29,7 @@ class StringMacros
 
             // Formato: 12345678-A o X1234567-A
             if (strlen($nif) === 9) {
-                return substr($nif, 0, 8) . '-' . substr($nif, 8);
+                return substr($nif, 0, 8).'-'.substr($nif, 8);
             }
 
             return $nif;
@@ -47,11 +47,11 @@ class StringMacros
 
             // Formato español: +34 XXX XXX XXX
             if (strlen($phone) === 9) {
-                return '+34 ' . substr($phone, 0, 3) . ' ' . substr($phone, 3, 3) . ' ' . substr($phone, 6);
+                return '+34 '.substr($phone, 0, 3).' '.substr($phone, 3, 3).' '.substr($phone, 6);
             }
 
             if (strlen($phone) === 11 && substr($phone, 0, 2) === '34') {
-                return '+' . substr($phone, 0, 2) . ' ' . substr($phone, 2, 3) . ' ' . substr($phone, 5, 3) . ' ' . substr($phone, 8);
+                return '+'.substr($phone, 0, 2).' '.substr($phone, 2, 3).' '.substr($phone, 5, 3).' '.substr($phone, 8);
             }
 
             return $phone;
@@ -67,10 +67,10 @@ class StringMacros
             [$local, $domain] = explode('@', $email);
 
             if (strlen($local) <= 2) {
-                return substr($local, 0, 1) . '***@' . $domain;
+                return substr($local, 0, 1).'***@'.$domain;
             }
 
-            return substr($local, 0, 2) . '***@' . $domain;
+            return substr($local, 0, 2).'***@'.$domain;
         });
     }
 
@@ -89,7 +89,7 @@ class StringMacros
             $frontChars = ceil($charsToShow / 2);
             $backChars = floor($charsToShow / 2);
 
-            return substr($string, 0, $frontChars) . $separator . substr($string, -$backChars);
+            return substr($string, 0, $frontChars).$separator.substr($string, -$backChars);
         });
     }
 
@@ -100,11 +100,11 @@ class StringMacros
     {
         Str::macro('formatCurrency', function (float $amount, string $currency = 'EUR', int $decimals = 2) {
             $formatted = number_format($amount, $decimals, ',', '.');
-            
-            return match($currency) {
-                'EUR' => $formatted . ' €',
-                'USD' => '$ ' . $formatted,
-                default => $formatted . ' ' . $currency,
+
+            return match ($currency) {
+                'EUR' => $formatted.' €',
+                'USD' => '$ '.$formatted,
+                default => $formatted.' '.$currency,
             };
         });
     }

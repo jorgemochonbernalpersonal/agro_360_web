@@ -40,12 +40,12 @@ class InfoviTest extends WineryTestCase
         $winery = $this->makeWinery();
 
         Wine::create([
-            'user_id'       => $winery->id,
-            'name'          => 'Tinto Test',
-            'vintage'       => now()->year,
-            'wine_type'     => 'red',
+            'user_id' => $winery->id,
+            'name' => 'Tinto Test',
+            'vintage' => now()->year,
+            'wine_type' => 'red',
             'volume_liters' => 5000,
-            'status'        => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         $component = Livewire::actingAs($winery)
@@ -59,22 +59,22 @@ class InfoviTest extends WineryTestCase
     {
         $winery = $this->makeWinery();
         $wine = Wine::create([
-            'user_id'   => $winery->id,
-            'name'      => 'Blanco Test',
-            'vintage'   => now()->year,
+            'user_id' => $winery->id,
+            'name' => 'Blanco Test',
+            'vintage' => now()->year,
             'wine_type' => 'white',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         WineStockSnapshot::create([
-            'user_id'         => $winery->id,
-            'wine_id'         => $wine->id,
-            'snapshot_date'   => now()->startOfMonth()->toDateString(),
+            'user_id' => $winery->id,
+            'wine_id' => $wine->id,
+            'snapshot_date' => now()->startOfMonth()->toDateString(),
             'quantity_liters' => 2000,
             'container_count' => 2,
-            'vintage'         => now()->year,
-            'wine_type'       => 'white',
-            'created_by'      => $winery->id,
+            'vintage' => now()->year,
+            'wine_type' => 'white',
+            'created_by' => $winery->id,
         ]);
 
         Livewire::actingAs($winery)
@@ -95,12 +95,12 @@ class InfoviTest extends WineryTestCase
         $winery2 = $this->makeWinery();
 
         Wine::create([
-            'user_id'       => $winery1->id,
-            'name'          => 'Tinto Reserva Exclusivo W1',
-            'vintage'       => now()->year,
-            'wine_type'     => 'red',
+            'user_id' => $winery1->id,
+            'name' => 'Tinto Reserva Exclusivo W1',
+            'vintage' => now()->year,
+            'wine_type' => 'red',
             'volume_liters' => 9000,
-            'status'        => 'aged',
+            'status' => 'aged',
         ]);
 
         // winery2 should NOT see winery1's production data

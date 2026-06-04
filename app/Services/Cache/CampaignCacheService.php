@@ -21,7 +21,7 @@ class CampaignCacheService
         return Cache::remember(
             $this->getStatsKey($campaign),
             self::CACHE_TTL,
-            fn() => $this->calculateStats($campaign)
+            fn () => $this->calculateStats($campaign)
         );
     }
 
@@ -33,7 +33,7 @@ class CampaignCacheService
         return Cache::remember(
             "user_{$user->id}_campaigns",
             self::CACHE_TTL,
-            fn() => $user->campaigns()->with('activities')->get()
+            fn () => $user->campaigns()->with('activities')->get()
         );
     }
 
@@ -59,7 +59,7 @@ class CampaignCacheService
     public function invalidateAll(Campaign $campaign): void
     {
         $this->invalidateStats($campaign);
-        
+
         if ($campaign->viticulturist) {
             $this->invalidateUserCampaigns($campaign->viticulturist);
         }

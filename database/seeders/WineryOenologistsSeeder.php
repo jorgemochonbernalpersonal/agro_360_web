@@ -42,29 +42,29 @@ class WineryOenologistsSeeder extends Seeder
     {
         $this->cleanup();
 
-        $now  = now();
+        $now = now();
         $rows = [];
 
-        $fn  = self::FIRST_NAMES;
-        $ln  = self::LAST_NAMES;
-        $sp  = self::SPECIALTIES;
+        $fn = self::FIRST_NAMES;
+        $ln = self::LAST_NAMES;
+        $sp = self::SPECIALTIES;
 
         for ($i = 0; $i < 450; $i++) {
             $firstName = $fn[$i % count($fn)];
-            $lastName  = $ln[$i % count($ln)];
-            $num       = $i + 1;
+            $lastName = $ln[$i % count($ln)];
+            $num = $i + 1;
 
             $rows[] = [
-                'user_id'        => self::WINERY_USER_ID,
-                'name'           => $firstName,
-                'surname'        => $lastName,
-                'license_number' => 'OEN-GC-' . str_pad($num, 4, '0', STR_PAD_LEFT),
-                'email'          => 'oen.' . $num . '@enologia-canarias.es',
-                'phone'          => '+34 9' . str_pad(10000000 + ($i * 13 % 89000000), 8, '0', STR_PAD_LEFT),
-                'active'         => $i % 8 !== 7,  // ~88% activos
-                'notes'          => $sp[$i % count($sp)],
-                'created_at'     => $now,
-                'updated_at'     => $now,
+                'user_id' => self::WINERY_USER_ID,
+                'name' => $firstName,
+                'surname' => $lastName,
+                'license_number' => 'OEN-GC-'.str_pad($num, 4, '0', STR_PAD_LEFT),
+                'email' => 'oen.'.$num.'@enologia-canarias.es',
+                'phone' => '+34 9'.str_pad(10000000 + ($i * 13 % 89000000), 8, '0', STR_PAD_LEFT),
+                'active' => $i % 8 !== 7,  // ~88% activos
+                'notes' => $sp[$i % count($sp)],
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -72,7 +72,7 @@ class WineryOenologistsSeeder extends Seeder
             DB::table('oenologists')->insert($chunk);
         }
 
-        $this->command->info('✅ Enólogos: ' . count($rows) . ' registros');
+        $this->command->info('✅ Enólogos: '.count($rows).' registros');
     }
 
     private function cleanup(): void

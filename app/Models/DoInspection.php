@@ -7,6 +7,39 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DoInspection extends Model
 {
+    public const STATUS_SCHEDULED = 'scheduled';
+
+    public const STATUS_IN_PROGRESS = 'in_progress';
+
+    public const STATUS_COMPLETED = 'completed';
+
+    public const STATUS_CANCELLED = 'cancelled';
+
+    public const RESULT_COMPLIANT = 'compliant';
+
+    public const RESULT_NON_COMPLIANT = 'non_compliant';
+
+    public const RESULT_PENDING = 'pending';
+
+    public const STATUS_LABELS = [
+        'scheduled' => 'Programada',
+        'in_progress' => 'En curso',
+        'completed' => 'Completada',
+        'cancelled' => 'Cancelada',
+    ];
+
+    public const RESULT_LABELS = [
+        'compliant' => 'Conforme',
+        'non_compliant' => 'No conforme',
+        'pending' => 'Pendiente',
+    ];
+
+    public const RESULT_COLORS = [
+        'compliant' => 'green',
+        'non_compliant' => 'red',
+        'pending' => 'zinc',
+    ];
+
     protected $table = 'do_inspections';
 
     protected $fillable = [
@@ -25,43 +58,15 @@ class DoInspection extends Model
         'inspection_date' => 'date',
     ];
 
-    public const STATUS_SCHEDULED   = 'scheduled';
-    public const STATUS_IN_PROGRESS = 'in_progress';
-    public const STATUS_COMPLETED   = 'completed';
-    public const STATUS_CANCELLED   = 'cancelled';
-
-    public const RESULT_COMPLIANT     = 'compliant';
-    public const RESULT_NON_COMPLIANT = 'non_compliant';
-    public const RESULT_PENDING       = 'pending';
-
-    public const STATUS_LABELS = [
-        'scheduled'   => 'Programada',
-        'in_progress' => 'En curso',
-        'completed'   => 'Completada',
-        'cancelled'   => 'Cancelada',
-    ];
-
     public static function statusLabelOptions(): array
     {
         return array_map(fn ($v) => __($v), static::STATUS_LABELS);
     }
 
-    public const RESULT_LABELS = [
-        'compliant'     => 'Conforme',
-        'non_compliant' => 'No conforme',
-        'pending'       => 'Pendiente',
-    ];
-
     public static function resultLabelOptions(): array
     {
         return array_map(fn ($v) => __($v), static::RESULT_LABELS);
     }
-
-    public const RESULT_COLORS = [
-        'compliant'     => 'green',
-        'non_compliant' => 'red',
-        'pending'       => 'zinc',
-    ];
 
     public function supervisor(): BelongsTo
     {

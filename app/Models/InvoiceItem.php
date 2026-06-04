@@ -93,6 +93,34 @@ class InvoiceItem extends Model
     }
 
     /**
+     * Verificar si está relacionado con una cosecha
+     */
+    public function hasHarvest(): bool
+    {
+        return ! is_null($this->harvest_id);
+    }
+
+    /**
+     * Scope para items activos
+     *
+     * @param mixed $query
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope para items de cosecha
+     *
+     * @param mixed $query
+     */
+    public function scopeHarvest($query)
+    {
+        return $query->where('concept_type', 'harvest');
+    }
+
+    /**
      * Calcular totales automáticamente
      */
     protected static function booted()
@@ -103,37 +131,13 @@ class InvoiceItem extends Model
             $discount = $subtotal * ($item->discount_percentage / 100);
             $item->discount_amount = round($discount, 3);
             $item->subtotal = round($subtotal - $discount, 3);
-            
+
             // Calcular base imponible y monto de impuesto
             $item->tax_base = $item->subtotal;
             $item->tax_amount = round($item->tax_base * ($item->tax_rate / 100), 3);
-            
+
             // Calcular total (subtotal + impuesto)
             $item->total = round($item->subtotal + $item->tax_amount, 3);
         });
-    }
-
-    /**
-     * Verificar si está relacionado con una cosecha
-     */
-    public function hasHarvest(): bool
-    {
-        return !is_null($this->harvest_id);
-    }
-
-    /**
-     * Scope para items activos
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'active');
-    }
-
-    /**
-     * Scope para items de cosecha
-     */
-    public function scopeHarvest($query)
-    {
-        return $query->where('concept_type', 'harvest');
     }
 }

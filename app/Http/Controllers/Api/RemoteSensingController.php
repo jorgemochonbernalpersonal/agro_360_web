@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Plot;
 use App\Models\MultipartPlotSigpac;
+use App\Models\Plot;
 use App\Services\RemoteSensing\NasaEarthdataService;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 
 /**
  * API Controller for Remote Sensing data
@@ -15,33 +15,34 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class RemoteSensingController extends Controller
 {
     use AuthorizesRequests;
+
     /**
      * Get NDVI colors for map polygons of a plot
-     * 
+     *
      * Returns an array of polygon IDs with their NDVI-based colors
      */
     public function getPlotNdviColors(Plot $plot)
     {
         $this->authorize('view', $plot);
-        
+
         $service = app(NasaEarthdataService::class);
         $data = $service->getLatestData($plot);
-        
-        if (!$data) {
+
+        if (! $data) {
             return response()->json([
                 'success' => false,
                 'message' => __('No NDVI data available'),
             ]);
         }
-        
+
         // Obtener todos los multiparts de la parcela
         $multiparts = MultipartPlotSigpac::where('plot_id', $plot->id)
             ->whereNotNull('plot_geometry_id')
             ->get();
-        
+
         // Generar colores basados en NDVI
         $ndviColor = $this->getNdviColor($data->ndvi_mean);
-        
+
         $polygons = $multiparts->map(function ($multipart) use ($ndviColor, $data) {
             return [
                 'id' => $multipart->id,
@@ -51,7 +52,7 @@ class RemoteSensingController extends Controller
                 'health_status' => $data->health_status,
             ];
         })->values();
-        
+
         return response()->json([
             'success' => true,
             'plot_id' => $plot->id,
@@ -64,7 +65,40 @@ class RemoteSensingController extends Controller
             'color' => $ndviColor,
         ]);
     }
-    
+
+    /**
+     * Get all plots NDVI summary for map overview
+     */
+    public function getAllPlotsNdvi(Request $request)
+    {
+        $user = auth()->user();
+        $service = app(NasaEarthdataService::class);
+
+        $plots = Plot::forUser($user)->get();
+
+        $data = $plots->map(function ($plot) use ($service) {
+            $sensing = $service->getLatestData($plot);
+
+            if (! $sensing) {
+                return null;
+            }
+
+            return [
+                'plot_id' => $plot->id,
+                'plot_name' => $plot->name,
+                'ndvi' => $sensing->ndvi_mean,
+                'health_status' => $sensing->health_status,
+                'color' => $this->getNdviColor($sensing->ndvi_mean),
+            ];
+        })->filter()->values();
+
+        return response()->json([
+            'success' => true,
+            'plots' => $data,
+            'count' => $data->count(),
+        ]);
+    }
+
     /**
      * Get NDVI color based on value
      */
@@ -78,38 +112,5 @@ class RemoteSensingController extends Controller
             $ndvi >= 0.15 => ['fill' => 'rgba(251, 146, 60, 0.6)', 'line' => '#ea580c'],  // Orange
             default => ['fill' => 'rgba(239, 68, 68, 0.6)', 'line' => '#dc2626'],         // Red
         };
-    }
-    
-    /**
-     * Get all plots NDVI summary for map overview
-     */
-    public function getAllPlotsNdvi(Request $request)
-    {
-        $user = auth()->user();
-        $service = app(NasaEarthdataService::class);
-        
-        $plots = Plot::forUser($user)->get();
-        
-        $data = $plots->map(function ($plot) use ($service) {
-            $sensing = $service->getLatestData($plot);
-            
-            if (!$sensing) {
-                return null;
-            }
-            
-            return [
-                'plot_id' => $plot->id,
-                'plot_name' => $plot->name,
-                'ndvi' => $sensing->ndvi_mean,
-                'health_status' => $sensing->health_status,
-                'color' => $this->getNdviColor($sensing->ndvi_mean),
-            ];
-        })->filter()->values();
-        
-        return response()->json([
-            'success' => true,
-            'plots' => $data,
-            'count' => $data->count(),
-        ]);
     }
 }

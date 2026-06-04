@@ -10,20 +10,31 @@ use App\Models\PlotPlanting;
 
 class Create extends AbstractCreate
 {
-    private bool $wasUpdated = false;
+    public string $campaign_id = '';
 
-    public string $campaign_id              = '';
-    public string $plot_id                  = '';
-    public string $plot_planting_id         = '';
-    public bool   $water_intake_nearby      = false;
-    public string $water_intake_distance_m  = '';
-    public bool   $protected_zone_total     = false;
-    public bool   $protected_zone_partial   = false;
-    public string $protection_zone_type     = '';
-    public string $buffer_zone_m            = '';
-    public string $slope_pct                = '';
-    public bool   $erosion_risk             = false;
-    public string $notes                    = '';
+    public string $plot_id = '';
+
+    public string $plot_planting_id = '';
+
+    public bool $water_intake_nearby = false;
+
+    public string $water_intake_distance_m = '';
+
+    public bool $protected_zone_total = false;
+
+    public bool $protected_zone_partial = false;
+
+    public string $protection_zone_type = '';
+
+    public string $buffer_zone_m = '';
+
+    public string $slope_pct = '';
+
+    public bool $erosion_risk = false;
+
+    public string $notes = '';
+
+    private bool $wasUpdated = false;
 
     public function mount(): void
     {
@@ -34,18 +45,18 @@ class Create extends AbstractCreate
     protected function rules(): array
     {
         return [
-            'campaign_id'             => $this->campaignOwnershipRule(),
-            'plot_id'                 => $this->plotOwnershipRule(),
-            'plot_planting_id'        => $this->plotPlantingOwnershipRule(),
-            'water_intake_nearby'     => 'boolean',
+            'campaign_id' => $this->campaignOwnershipRule(),
+            'plot_id' => $this->plotOwnershipRule(),
+            'plot_planting_id' => $this->plotPlantingOwnershipRule(),
+            'water_intake_nearby' => 'boolean',
             'water_intake_distance_m' => 'nullable|numeric|min:0',
-            'protected_zone_total'    => 'boolean',
-            'protected_zone_partial'  => 'boolean',
-            'protection_zone_type'    => 'nullable|string|max:100',
-            'buffer_zone_m'           => 'nullable|numeric|min:0',
-            'slope_pct'               => 'nullable|numeric|min:0|max:100',
-            'erosion_risk'            => 'boolean',
-            'notes'                   => 'nullable|string',
+            'protected_zone_total' => 'boolean',
+            'protected_zone_partial' => 'boolean',
+            'protection_zone_type' => 'nullable|string|max:100',
+            'buffer_zone_m' => 'nullable|numeric|min:0',
+            'slope_pct' => 'nullable|numeric|min:0|max:100',
+            'erosion_risk' => 'boolean',
+            'notes' => 'nullable|string',
         ];
     }
 
@@ -58,17 +69,17 @@ class Create extends AbstractCreate
         PlotEnvironment::updateOrCreate(
             ['campaign_id' => $this->campaign_id, 'plot_id' => $this->plot_id],
             [
-                'plot_planting_id'        => $this->plot_planting_id ?: null,
-                'viticulturist_id'        => $this->viticulturistId(),
-                'water_intake_nearby'     => $this->water_intake_nearby,
+                'plot_planting_id' => $this->plot_planting_id ?: null,
+                'viticulturist_id' => $this->viticulturistId(),
+                'water_intake_nearby' => $this->water_intake_nearby,
                 'water_intake_distance_m' => $this->water_intake_distance_m ?: null,
-                'protected_zone_total'    => $this->protected_zone_total,
-                'protected_zone_partial'  => $this->protected_zone_partial,
-                'protection_zone_type'    => $this->protection_zone_type ?: null,
-                'buffer_zone_m'           => $this->buffer_zone_m ?: null,
-                'slope_pct'               => $this->slope_pct ?: null,
-                'erosion_risk'            => $this->erosion_risk,
-                'notes'                   => $this->notes ?: null,
+                'protected_zone_total' => $this->protected_zone_total,
+                'protected_zone_partial' => $this->protected_zone_partial,
+                'protection_zone_type' => $this->protection_zone_type ?: null,
+                'buffer_zone_m' => $this->buffer_zone_m ?: null,
+                'slope_pct' => $this->slope_pct ?: null,
+                'erosion_risk' => $this->erosion_risk,
+                'notes' => $this->notes ?: null,
             ]
         );
     }
@@ -91,8 +102,8 @@ class Create extends AbstractCreate
 
         return [
             'campaigns' => Campaign::forViticulturist($id)->orderByDesc('year')->get(),
-            'plots'     => Plot::where('viticulturist_id', $id)->active()->get(),
-            'plantings' => PlotPlanting::whereHas('plot', fn($q) => $q->where('viticulturist_id', $id))
+            'plots' => Plot::where('viticulturist_id', $id)->active()->get(),
+            'plantings' => PlotPlanting::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $id))
                 ->with(['plot', 'grapeVariety'])->active()->get(),
         ];
     }

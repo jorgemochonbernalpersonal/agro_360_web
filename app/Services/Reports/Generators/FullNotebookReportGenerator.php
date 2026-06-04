@@ -99,6 +99,11 @@ class FullNotebookReportGenerator
 
     /**
      * Generar solo el PDF (para uso en Jobs)
+     *
+     * @param mixed $user
+     * @param mixed $campaign
+     * @param mixed $activities
+     * @param mixed $stats
      */
     public function generatePDF(OfficialReport $report, $user, $campaign, $activities, $stats): string
     {
@@ -112,11 +117,11 @@ class FullNotebookReportGenerator
     {
         $digitalSignature = DigitalSignature::forUser($user->id);
 
-        if (!$digitalSignature) {
+        if (! $digitalSignature) {
             throw new \Exception(__('No tienes una contraseña de firma digital configurada.'));
         }
 
-        if (!$digitalSignature->verifyPassword($password)) {
+        if (! $digitalSignature->verifyPassword($password)) {
             throw new \Exception(__('Contraseña de firma digital incorrecta.'));
         }
     }
@@ -147,6 +152,8 @@ class FullNotebookReportGenerator
 
     /**
      * Calcular estadísticas del informe
+     *
+     * @param mixed $activities
      */
     protected function calculateStats($activities, Campaign $campaign): array
     {

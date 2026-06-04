@@ -4,21 +4,20 @@ namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
-use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * Service for weather data via Open-Meteo API (100% FREE)
  * https://open-meteo.com/
- * 
+ *
  * Provides: temperature, precipitation, humidity, wind, soil moisture, solar radiation
  */
 class WeatherService
 {
     private string $baseUrl = 'https://api.open-meteo.com/v1/forecast';
+
     private bool $useMockData;
 
     public function __construct()
@@ -41,7 +40,7 @@ class WeatherService
         if ($forceRefresh) {
             Cache::forget($cacheKey);
         }
-        
+
         return Cache::remember($cacheKey, 3600, function () use ($coords) {
             return $this->fetchWeatherData($coords['lat'], $coords['lon']);
         });
@@ -62,7 +61,7 @@ class WeatherService
         if ($forceRefresh) {
             Cache::forget($cacheKey);
         }
-        
+
         return Cache::remember($cacheKey, 3600, function () use ($coords, $days) {
             return $this->fetchForecastData($coords['lat'], $coords['lon'], $days);
         });
@@ -83,7 +82,7 @@ class WeatherService
         if ($forceRefresh) {
             Cache::forget($cacheKey);
         }
-        
+
         return Cache::remember($cacheKey, 3600, function () use ($coords) {
             return $this->fetchSoilData($coords['lat'], $coords['lon']);
         });
@@ -104,10 +103,44 @@ class WeatherService
         if ($forceRefresh) {
             Cache::forget($cacheKey);
         }
-        
+
         return Cache::remember($cacheKey, 3600, function () use ($coords) {
             return $this->fetchSolarData($coords['lat'], $coords['lon']);
         });
+    }
+
+    /**
+     * Get weather icon from WMO code
+     */
+    public static function getWeatherIcon(int $code): string
+    {
+        return match (true) {
+            $code === 0 => '☀️',
+            $code <= 3 => '⛅',
+            $code <= 49 => '🌫️',
+            $code <= 59 => '🌧️',
+            $code <= 69 => '🌨️',
+            $code <= 79 => '❄️',
+            $code <= 99 => '⛈️',
+            default => '🌤️',
+        };
+    }
+
+    /**
+     * Get weather description from WMO code
+     */
+    public static function getWeatherDescription(int $code): string
+    {
+        return match (true) {
+            $code === 0 => __('Despejado'),
+            $code <= 3 => __('Parcialmente nublado'),
+            $code <= 49 => __('Niebla'),
+            $code <= 59 => __('Lluvia'),
+            $code <= 69 => __('Aguanieve'),
+            $code <= 79 => __('Nieve'),
+            $code <= 99 => __('Tormenta'),
+            default => __('Variable'),
+        };
     }
 
     /**
@@ -127,18 +160,19 @@ class WeatherService
 
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 // Validar estructura de respuesta
-                if (!isset($data['current']) || !isset($data['daily'])) {
+                if (! isset($data['current']) || ! isset($data['daily'])) {
                     Log::warning('Open-Meteo: Invalid response structure', [
                         'has_current' => isset($data['current']),
                         'has_daily' => isset($data['daily']),
                         'lat' => $lat,
                         'lon' => $lon,
                     ]);
+
                     return $this->generateMockWeatherData();
                 }
-                
+
                 $weatherData = [
                     'temperature' => $data['current']['temperature_2m'] ?? null,
                     'humidity' => $data['current']['relative_humidity_2m'] ?? null,
@@ -149,7 +183,7 @@ class WeatherService
                     'temperature_min' => $data['daily']['temperature_2m_min'][0] ?? null,
                     'success' => true,
                 ];
-                
+
                 // Si la temperatura es null, consideramos que los datos no son válidos
                 if (is_null($weatherData['temperature'])) {
                     Log::warning('Open-Meteo: Missing temperature data', [
@@ -157,9 +191,10 @@ class WeatherService
                         'lon' => $lon,
                         'data' => $data,
                     ]);
+
                     return $this->generateMockWeatherData();
                 }
-                
+
                 return $weatherData;
             } else {
                 Log::error('Open-Meteo API request failed', [
@@ -197,20 +232,21 @@ class WeatherService
 
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 // Validar estructura
-                if (!isset($data['daily']) || !isset($data['daily']['time'])) {
+                if (! isset($data['daily']) || ! isset($data['daily']['time'])) {
                     Log::warning('Open-Meteo forecast: Invalid response structure', [
                         'has_daily' => isset($data['daily']),
                         'has_time' => isset($data['daily']['time']),
                         'lat' => $lat,
                         'lon' => $lon,
                     ]);
+
                     return $this->generateMockForecast($days);
                 }
-                
+
                 $forecast = [];
-                
+
                 for ($i = 0; $i < $days; $i++) {
                     $forecast[] = [
                         'date' => $data['daily']['time'][$i] ?? null,
@@ -221,7 +257,7 @@ class WeatherService
                         'weather_code' => $data['daily']['weather_code'][$i] ?? null,
                     ];
                 }
-                
+
                 return ['forecast' => $forecast, 'success' => true];
             } else {
                 Log::error('Open-Meteo forecast API failed', [
@@ -258,19 +294,20 @@ class WeatherService
 
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 // Validar estructura
-                if (!isset($data['hourly'])) {
+                if (! isset($data['hourly'])) {
                     Log::warning('Open-Meteo soil: Invalid response structure', [
                         'has_hourly' => isset($data['hourly']),
                         'lat' => $lat,
                         'lon' => $lon,
                     ]);
+
                     return $this->generateMockSoilData();
                 }
-                
+
                 $hour = now()->hour;
-                
+
                 $soilData = [
                     'soil_moisture' => $data['hourly']['soil_moisture_0_to_1cm'][$hour] ?? null,
                     'soil_temperature' => $data['hourly']['soil_temperature_0cm'][$hour] ?? null,
@@ -279,11 +316,12 @@ class WeatherService
 
                 // Si hay nulos, usar mock
                 if (is_null($soilData['soil_moisture']) || is_null($soilData['soil_temperature'])) {
-                     Log::warning('Open-Meteo: Missing soil data', [
+                    Log::warning('Open-Meteo: Missing soil data', [
                         'lat' => $lat,
                         'lon' => $lon,
                         'data' => $data,
                     ]);
+
                     return $this->generateMockSoilData();
                 }
 
@@ -323,7 +361,7 @@ class WeatherService
 
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 $solarData = [
                     'solar_radiation' => $data['daily']['shortwave_radiation_sum'][0] ?? null,
                     'et0' => $data['daily']['et0_fao_evapotranspiration'][0] ?? null,
@@ -333,11 +371,12 @@ class WeatherService
 
                 // Si hay nulos en datos críticos, usar mock
                 if (is_null($solarData['solar_radiation']) || is_null($solarData['et0'])) {
-                     Log::warning('Open-Meteo: Missing solar data', [
+                    Log::warning('Open-Meteo: Missing solar data', [
                         'lat' => $lat,
                         'lon' => $lon,
                         'data' => $data,
                     ]);
+
                     return $this->generateMockSolarData();
                 }
 
@@ -371,7 +410,7 @@ class WeatherService
     private function generateMockWeatherData(): array
     {
         $month = now()->month;
-        
+
         // Seasonal temperatures for Ribera del Duero
         $baseTemp = match (true) {
             $month >= 6 && $month <= 8 => mt_rand(25, 35),
@@ -400,7 +439,7 @@ class WeatherService
     {
         $forecast = [];
         $baseWeather = $this->generateMockWeatherData();
-        
+
         for ($i = 0; $i < $days; $i++) {
             $variation = mt_rand(-5, 5);
             $forecast[] = [
@@ -412,7 +451,7 @@ class WeatherService
                 'weather_code' => [0, 1, 2, 3, 61][array_rand([0, 1, 2, 3, 61])],
             ];
         }
-        
+
         return ['forecast' => $forecast, 'success' => true, 'mock' => true];
     }
 
@@ -422,7 +461,7 @@ class WeatherService
     private function generateMockSoilData(): array
     {
         $month = now()->month;
-        
+
         // Seasonal soil moisture
         $baseMoisture = match (true) {
             $month >= 6 && $month <= 8 => mt_rand(10, 25), // Summer: dry
@@ -444,7 +483,7 @@ class WeatherService
     private function generateMockSolarData(): array
     {
         $month = now()->month;
-        
+
         // Seasonal radiation
         $baseRadiation = match (true) {
             $month >= 6 && $month <= 8 => mt_rand(25, 32), // Summer: high
@@ -467,39 +506,5 @@ class WeatherService
             'success' => true,
             'mock' => true,
         ];
-    }
-
-    /**
-     * Get weather icon from WMO code
-     */
-    public static function getWeatherIcon(int $code): string
-    {
-        return match (true) {
-            $code === 0 => '☀️',
-            $code <= 3 => '⛅',
-            $code <= 49 => '🌫️',
-            $code <= 59 => '🌧️',
-            $code <= 69 => '🌨️',
-            $code <= 79 => '❄️',
-            $code <= 99 => '⛈️',
-            default => '🌤️',
-        };
-    }
-
-    /**
-     * Get weather description from WMO code
-     */
-    public static function getWeatherDescription(int $code): string
-    {
-        return match (true) {
-            $code === 0 => __('Despejado'),
-            $code <= 3 => __('Parcialmente nublado'),
-            $code <= 49 => __('Niebla'),
-            $code <= 59 => __('Lluvia'),
-            $code <= 69 => __('Aguanieve'),
-            $code <= 79 => __('Nieve'),
-            $code <= 99 => __('Tormenta'),
-            default => __('Variable'),
-        };
     }
 }

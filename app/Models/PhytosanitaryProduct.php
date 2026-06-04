@@ -99,6 +99,6 @@ class PhytosanitaryProduct extends Model
             ->where('user_id', $userId)
             ->where('active', true)
             ->get()
-            ->sum(fn($stock) => $stock->getAvailableQuantity());
+            ->sum(fn ($stock) => $stock->getAvailableQuantity());
     }
 }

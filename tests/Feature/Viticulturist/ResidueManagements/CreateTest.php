@@ -3,8 +3,6 @@
 namespace Tests\Feature\Viticulturist\ResidueManagements;
 
 use App\Livewire\Viticulturist\ResidueManagements\Create;
-use App\Models\Campaign;
-use App\Models\ResidueManagement;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -32,9 +30,9 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('residue_managements', [
             'viticulturist_id' => $viticulturist->id,
-            'practice_type'    => 'incorporation',
-            'material_type'    => 'pruning_wood',
-            'active'           => true,
+            'practice_type' => 'incorporation',
+            'material_type' => 'pruning_wood',
+            'active' => true,
         ]);
     }
 
@@ -113,8 +111,8 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('residue_managements', [
             'viticulturist_id' => $viticulturist->id,
-            'practice_type'    => 'composting',
-            'justification'    => null,
+            'practice_type' => 'composting',
+            'justification' => null,
         ]);
     }
 }

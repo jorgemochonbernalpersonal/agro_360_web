@@ -15,15 +15,15 @@ class AgriculturalActivityObserver
         AgriculturalActivityAuditLog::log($activity, 'created', [
             'new' => $activity->getAttributes(),
         ]);
-        
+
         // Marcar paso de onboarding como completado
         if ($activity->viticulturist_id) {
             $progress = \App\Models\OnboardingProgress::getOrCreate(
                 $activity->viticulturist_id,
                 \App\Models\OnboardingProgress::STEP_REGISTER_ACTIVITY
             );
-            
-            if (!$progress->isCompleted()) {
+
+            if (! $progress->isCompleted()) {
                 $progress->markAsCompleted();
             }
         }
@@ -36,7 +36,7 @@ class AgriculturalActivityObserver
     public function updating(AgriculturalActivity $activity): bool
     {
         // Si está bloqueada, no permitir modificaciones
-        if ($activity->is_locked && !$activity->isDirty('is_locked')) {
+        if ($activity->is_locked && ! $activity->isDirty('is_locked')) {
             throw new \Exception(__('No se puede modificar una actividad bloqueada. Desbloquéala primero.'));
         }
 
@@ -59,12 +59,12 @@ class AgriculturalActivityObserver
             if (in_array($key, ['updated_at'])) {
                 continue; // Ignorar timestamps automáticos
             }
-            
+
             $changes['old'][$key] = $activity->getOriginal($key);
             $changes['new'][$key] = $newValue;
         }
 
-        if (!empty($changes)) {
+        if (! empty($changes)) {
             AgriculturalActivityAuditLog::log($activity, 'updated', $changes);
         }
     }

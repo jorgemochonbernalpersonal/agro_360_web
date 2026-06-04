@@ -15,11 +15,11 @@ return new class extends Migration
             // Eliminar foreign key primero
             $table->dropForeign(['winery_id']);
         });
-        
+
         Schema::table('crews', function (Blueprint $table) {
             $table->unsignedBigInteger('winery_id')->nullable()->change();
         });
-        
+
         Schema::table('crews', function (Blueprint $table) {
             // Recrear foreign key
             $table->foreign('winery_id')->references('id')->on('users')->onDelete('cascade');
@@ -35,13 +35,13 @@ return new class extends Migration
             // Eliminar foreign key primero
             $table->dropForeign(['winery_id']);
         });
-        
+
         Schema::table('crews', function (Blueprint $table) {
             // Eliminar cuadrillas sin winery antes de hacer NOT NULL
             \DB::table('crews')->whereNull('winery_id')->delete();
             $table->unsignedBigInteger('winery_id')->nullable(false)->change();
         });
-        
+
         Schema::table('crews', function (Blueprint $table) {
             // Recrear foreign key
             $table->foreign('winery_id')->references('id')->on('users')->onDelete('cascade');

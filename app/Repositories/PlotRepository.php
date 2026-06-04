@@ -149,6 +149,8 @@ class PlotRepository
 
     /**
      * Aplicar filtros a la query
+     *
+     * @param mixed $query
      */
     protected function applyFilters($query, array $filters)
     {

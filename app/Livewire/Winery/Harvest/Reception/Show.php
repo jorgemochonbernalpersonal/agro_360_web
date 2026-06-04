@@ -14,8 +14,9 @@ class Show extends Component
 
     public Harvest $harvest;
 
-    public string $resolutionNote    = '';
-    public bool   $showResolveForm   = false;
+    public string $resolutionNote = '';
+
+    public bool $showResolveForm = false;
 
     public function mount(Harvest $harvest): void
     {
@@ -36,13 +37,13 @@ class Show extends Component
     public function openResolveDispute(): void
     {
         $this->showResolveForm = true;
-        $this->resolutionNote  = '';
+        $this->resolutionNote = '';
     }
 
     public function cancelResolveDispute(): void
     {
         $this->showResolveForm = false;
-        $this->resolutionNote  = '';
+        $this->resolutionNote = '';
     }
 
     public function resolveDispute(): void
@@ -51,8 +52,8 @@ class Show extends Component
             'resolutionNote' => ['required', 'string', 'min:5', 'max:1000'],
         ], [
             'resolutionNote.required' => __('Escribe una respuesta para el viticultor.'),
-            'resolutionNote.min'      => __('La respuesta debe tener al menos 5 caracteres.'),
-            'resolutionNote.max'      => __('La respuesta no puede superar los 1000 caracteres.'),
+            'resolutionNote.min' => __('La respuesta debe tener al menos 5 caracteres.'),
+            'resolutionNote.max' => __('La respuesta no puede superar los 1000 caracteres.'),
         ]);
 
         $delivery = $this->harvest->delivery;
@@ -63,9 +64,9 @@ class Show extends Component
         );
 
         $delivery->update([
-            'status'                  => 'resolved',
+            'status' => 'resolved',
             'dispute_resolution_note' => $this->resolutionNote,
-            'dispute_resolved_at'     => now(),
+            'dispute_resolved_at' => now(),
         ]);
 
         // Reload so the view reflects the change immediately
@@ -78,7 +79,7 @@ class Show extends Component
         }
 
         $this->showResolveForm = false;
-        $this->resolutionNote  = '';
+        $this->resolutionNote = '';
 
         $name = $viticulturist?->name ?? 'el viticultor';
         $this->toastSuccess("Respuesta enviada a {$name}. Recibirá una notificación por email.");

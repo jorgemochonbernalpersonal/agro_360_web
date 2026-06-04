@@ -32,6 +32,8 @@ class InvoiceGroup extends Model
 
     /**
      * Scope para grupos de un usuario
+     *
+     * @param mixed $query
      */
     public function scopeForUser($query, int $userId)
     {

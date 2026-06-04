@@ -13,12 +13,12 @@ class PlotQueryBuilder extends Builder
     public function forUser(User $user): self
     {
         return match ($user->role) {
-            'admin'         => $this,
-            'supervisor'    => $this->forSupervisor($user),
-            'winery'        => $this->forWinery($user),
+            'admin' => $this,
+            'supervisor' => $this->forSupervisor($user),
+            'winery' => $this->forWinery($user),
             'viticulturist' => $this->forViticulturist($user),
-            'producer'      => $this->forViticulturist($user),
-            default         => $this->whereRaw('1 = 0'),
+            'producer' => $this->forViticulturist($user),
+            default => $this->whereRaw('1 = 0'),
         };
     }
 
@@ -31,19 +31,19 @@ class PlotQueryBuilder extends Builder
             // Via bodegas supervisadas: supervisor_winery → winery_viticulturist → plot
             $query->whereIn('viticulturist_id', function ($q) use ($user) {
                 $q->select('viticulturist_id')
-                  ->from('winery_viticulturist')
-                  ->whereIn('winery_id', function ($sq) use ($user) {
-                      $sq->select('winery_id')
-                         ->from('supervisor_winery')
-                         ->where('supervisor_id', $user->id);
-                  });
+                    ->from('winery_viticulturist')
+                    ->whereIn('winery_id', function ($sq) use ($user) {
+                        $sq->select('winery_id')
+                            ->from('supervisor_winery')
+                            ->where('supervisor_id', $user->id);
+                    });
             });
 
             // Via relación directa: supervisor_viticulturist → plot
             $query->orWhereIn('viticulturist_id', function ($q) use ($user) {
                 $q->select('viticulturist_id')
-                  ->from('supervisor_viticulturist')
-                  ->where('supervisor_id', $user->id);
+                    ->from('supervisor_viticulturist')
+                    ->where('supervisor_id', $user->id);
             });
         });
     }
@@ -53,10 +53,10 @@ class PlotQueryBuilder extends Builder
      */
     public function forWinery(User $user): self
     {
-        return $this->whereIn('viticulturist_id', function($q) use ($user) {
+        return $this->whereIn('viticulturist_id', function ($q) use ($user) {
             $q->select('viticulturist_id')
-              ->from('winery_viticulturist')
-              ->where('winery_id', $user->id);
+                ->from('winery_viticulturist')
+                ->where('winery_id', $user->id);
         });
     }
 
@@ -66,47 +66,47 @@ class PlotQueryBuilder extends Builder
      */
     public function forViticulturist(User $user): self
     {
-        if (!$user->hasViticulturistAccess()) {
+        if (! $user->hasViticulturistAccess()) {
             return $this->whereRaw('1 = 0');
         }
 
-        return $this->where(function($q) use ($user) {
+        return $this->where(function ($q) use ($user) {
             // Sus propias parcelas
             $q->where('viticulturist_id', $user->id);
-            
+
             // Parcelas de viticultores creados por él
-            $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
+            $q->orWhereIn('viticulturist_id', function ($subQuery) use ($user) {
                 $subQuery->select('viticulturist_id')
                     ->from('winery_viticulturist')
                     ->where('parent_viticulturist_id', $user->id)
                     ->where('source', 'viticulturist');
             });
-            
+
             // Parcelas de viticultores del mismo supervisor EN LA MISMA bodega
-            $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
+            $q->orWhereIn('viticulturist_id', function ($subQuery) use ($user) {
                 $subQuery->select('wv2.viticulturist_id')
                     ->from('winery_viticulturist as wv1')
-                    ->join('winery_viticulturist as wv2', function($join) {
+                    ->join('winery_viticulturist as wv2', function ($join) {
                         $join->on('wv2.supervisor_id', '=', 'wv1.supervisor_id')
-                             ->on('wv2.winery_id', '=', 'wv1.winery_id')
-                             ->where('wv2.source', '=', 'supervisor');
+                            ->on('wv2.winery_id', '=', 'wv1.winery_id')
+                            ->where('wv2.source', '=', 'supervisor');
                     })
                     ->where('wv1.viticulturist_id', $user->id)
                     ->where('wv1.source', 'supervisor')
                     ->whereNotNull('wv1.supervisor_id')
                     ->whereNotNull('wv1.winery_id');
             });
-            
+
             // Parcelas de viticultores de sus wineries
-            $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
+            $q->orWhereIn('viticulturist_id', function ($subQuery) use ($user) {
                 $subQuery->select('wv2.viticulturist_id')
                     ->from('winery_viticulturist as wv1')
                     ->join('winery_viticulturist as wv2', 'wv2.winery_id', '=', 'wv1.winery_id')
                     ->where('wv1.viticulturist_id', $user->id)
                     ->whereNotNull('wv1.winery_id')
-                    ->where(function($wineryQ) {
+                    ->where(function ($wineryQ) {
                         $wineryQ->where('wv2.source', 'own')
-                                ->orWhere('wv2.source', 'viticulturist');
+                            ->orWhere('wv2.source', 'viticulturist');
                     });
             });
         });
@@ -232,11 +232,11 @@ class PlotQueryBuilder extends Builder
      */
     public function search(string $term): self
     {
-        $term = '%' . strtolower($term) . '%';
-        
-        return $this->where(function($q) use ($term) {
+        $term = '%'.strtolower($term).'%';
+
+        return $this->where(function ($q) use ($term) {
             $q->whereRaw('LOWER(name) LIKE ?', [$term])
-              ->orWhereRaw('LOWER(description) LIKE ?', [$term]);
+                ->orWhereRaw('LOWER(description) LIKE ?', [$term]);
         });
     }
 
@@ -246,13 +246,13 @@ class PlotQueryBuilder extends Builder
     public function withActiveWithdrawalPeriods(): self
     {
         $today = now();
-        
-        return $this->whereHas('agriculturalActivities', function($query) use ($today) {
+
+        return $this->whereHas('agriculturalActivities', function ($query) use ($today) {
             $query->where('activity_type', 'phytosanitary')
-                  ->whereHas('phytosanitaryTreatment.product', function($q) use ($today) {
-                      $q->whereNotNull('withdrawal_period_days')
+                ->whereHas('phytosanitaryTreatment.product', function ($q) use ($today) {
+                    $q->whereNotNull('withdrawal_period_days')
                         ->whereRaw('DATE_ADD(activity_date, INTERVAL withdrawal_period_days DAY) > ?', [$today]);
-                  });
+                });
         });
     }
 }

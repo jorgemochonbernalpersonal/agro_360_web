@@ -4,7 +4,6 @@ namespace Tests\Feature\Winery\Services;
 
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use App\Models\InvoiceStockMovement;
 use App\Models\ProductLot;
 use App\Models\Wine;
 use App\Services\ProductStockService;
@@ -24,6 +23,7 @@ class ProductStockServiceTest extends WineryTestCase
     use CreatesDeliveryScenario;
 
     private ProductLot $lot;
+
     private Invoice $invoice;
 
     protected function setUp(): void
@@ -33,29 +33,29 @@ class ProductStockServiceTest extends WineryTestCase
         $this->actingAs($this->winery);
 
         $wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Ribera Test',
+            'user_id' => $this->winery->id,
+            'name' => 'Ribera Test',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         $this->lot = ProductLot::create([
-            'user_id'            => $this->winery->id,
-            'wine_id'            => $wine->id,
-            'name'               => 'Lote 2024',
-            'quantity'           => 1000,
-            'initial_quantity'   => 1000,
+            'user_id' => $this->winery->id,
+            'wine_id' => $wine->id,
+            'name' => 'Lote 2024',
+            'quantity' => 1000,
+            'initial_quantity' => 1000,
             'available_quantity' => 1000,
-            'reserved_quantity'  => 0,
-            'sold_quantity'      => 0,
-            'unit'               => 'botellas',
-            'wine_type'          => 'tinto',
-            'vintage'            => 2024,
+            'reserved_quantity' => 0,
+            'sold_quantity' => 0,
+            'unit' => 'botellas',
+            'wine_type' => 'tinto',
+            'vintage' => 2024,
         ]);
 
         $this->invoice = Invoice::factory()->create([
-            'user_id'         => $this->winery->id,
-            'invoice_number'  => 'FAC-PROD-001',
+            'user_id' => $this->winery->id,
+            'invoice_number' => 'FAC-PROD-001',
             'delivery_status' => 'pending',
         ]);
     }
@@ -74,7 +74,7 @@ class ProductStockServiceTest extends WineryTestCase
         $this->lot->refresh();
         $this->assertEquals(800.0, (float) $this->lot->available_quantity);
         $this->assertEquals(200.0, (float) $this->lot->reserved_quantity);
-        $this->assertEquals(0.0,   (float) $this->lot->sold_quantity);
+        $this->assertEquals(0.0, (float) $this->lot->sold_quantity);
     }
 
     public function test_on_create_creates_stock_movement_log(): void
@@ -87,12 +87,12 @@ class ProductStockServiceTest extends WineryTestCase
         });
 
         $this->assertDatabaseHas('invoice_stock_movements', [
-            'invoice_id'  => $this->invoice->id,
+            'invoice_id' => $this->invoice->id,
             'wine_lot_id' => $this->lot->id,
-            'action'      => 'create',
+            'action' => 'create',
             'from_bucket' => 'available',
-            'to_bucket'   => 'reserved',
-            'qty'         => 100,
+            'to_bucket' => 'reserved',
+            'qty' => 100,
         ]);
     }
 
@@ -128,7 +128,7 @@ class ProductStockServiceTest extends WineryTestCase
 
         $this->lot->refresh();
         $this->assertEquals(700.0, (float) $this->lot->available_quantity);
-        $this->assertEquals(0.0,   (float) $this->lot->reserved_quantity);
+        $this->assertEquals(0.0, (float) $this->lot->reserved_quantity);
         $this->assertEquals(300.0, (float) $this->lot->sold_quantity);
     }
 
@@ -165,8 +165,8 @@ class ProductStockServiceTest extends WineryTestCase
 
         $this->lot->refresh();
         $this->assertEquals(1000.0, (float) $this->lot->available_quantity);
-        $this->assertEquals(0.0,    (float) $this->lot->reserved_quantity);
-        $this->assertEquals(0.0,    (float) $this->lot->sold_quantity);
+        $this->assertEquals(0.0, (float) $this->lot->reserved_quantity);
+        $this->assertEquals(0.0, (float) $this->lot->sold_quantity);
     }
 
     public function test_on_cancel_from_delivered_restores_available_from_sold(): void
@@ -192,8 +192,8 @@ class ProductStockServiceTest extends WineryTestCase
 
         $this->lot->refresh();
         $this->assertEquals(1000.0, (float) $this->lot->available_quantity);
-        $this->assertEquals(0.0,    (float) $this->lot->reserved_quantity);
-        $this->assertEquals(0.0,    (float) $this->lot->sold_quantity);
+        $this->assertEquals(0.0, (float) $this->lot->reserved_quantity);
+        $this->assertEquals(0.0, (float) $this->lot->sold_quantity);
     }
 
     // ── Balance de stock ──────────────────────────────────────────────────────
@@ -253,26 +253,26 @@ class ProductStockServiceTest extends WineryTestCase
     public function test_multiple_invoices_do_not_exceed_total_quantity(): void
     {
         $invoice2 = Invoice::factory()->create([
-            'user_id'         => $this->winery->id,
-            'invoice_number'  => 'FAC-PROD-002',
+            'user_id' => $this->winery->id,
+            'invoice_number' => 'FAC-PROD-002',
             'delivery_status' => 'pending',
         ]);
 
         $item1 = $this->makeItem(600);
         $item2 = InvoiceItem::create([
-            'invoice_id'   => $invoice2->id,
-            'wine_lot_id'  => $this->lot->id,
+            'invoice_id' => $invoice2->id,
+            'wine_lot_id' => $this->lot->id,
             'concept_type' => 'wine',
-            'name'         => 'Lote 2024',
-            'quantity'     => 500,
-            'unit_price'   => 5.0,
-            'subtotal'     => 2500,
-            'total'        => 2500,
-            'tax_rate'     => 0,
-            'tax_amount'   => 0,
-            'tax_base'     => 2500,
+            'name' => 'Lote 2024',
+            'quantity' => 500,
+            'unit_price' => 5.0,
+            'subtotal' => 2500,
+            'total' => 2500,
+            'tax_rate' => 0,
+            'tax_amount' => 0,
+            'tax_base' => 2500,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
+            'discount_amount' => 0,
         ]);
 
         // Reservar 600
@@ -295,19 +295,19 @@ class ProductStockServiceTest extends WineryTestCase
     private function makeItem(float $qty): InvoiceItem
     {
         return InvoiceItem::create([
-            'invoice_id'   => $this->invoice->id,
-            'wine_lot_id'  => $this->lot->id,
+            'invoice_id' => $this->invoice->id,
+            'wine_lot_id' => $this->lot->id,
             'concept_type' => 'wine',
-            'name'         => 'Lote 2024',
-            'quantity'     => $qty,
-            'unit_price'   => 5.0,
-            'subtotal'     => $qty * 5,
-            'total'        => $qty * 5,
-            'tax_rate'     => 0,
-            'tax_amount'   => 0,
-            'tax_base'     => $qty * 5,
+            'name' => 'Lote 2024',
+            'quantity' => $qty,
+            'unit_price' => 5.0,
+            'subtotal' => $qty * 5,
+            'total' => $qty * 5,
+            'tax_rate' => 0,
+            'tax_amount' => 0,
+            'tax_base' => $qty * 5,
             'discount_percentage' => 0,
-            'discount_amount'     => 0,
+            'discount_amount' => 0,
         ]);
     }
 }

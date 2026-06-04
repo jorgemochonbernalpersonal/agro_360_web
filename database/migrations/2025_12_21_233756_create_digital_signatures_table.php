@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('signature_password'); // Contraseña hasheada para firmar documentos
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
-            
+
             $table->index('user_id');
         });
     }

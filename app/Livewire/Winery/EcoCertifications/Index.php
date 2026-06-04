@@ -8,23 +8,31 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search       = '';
-    public string $typeFilter   = '';
+    public string $search = '';
+
+    public string $typeFilter = '';
+
     public string $statusFilter = '';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'typeFilter'   => ['except' => ''],
+        'search' => ['except' => ''],
+        'typeFilter' => ['except' => ''],
         'statusFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void        { $this->resetPage(); }
-    public function updatingTypeFilter(): void    { $this->resetPage(); }
-    public function updatingStatusFilter(): void  { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function updatingSearch(): void
     {
-        return ['search' => '', 'typeFilter' => '', 'statusFilter' => ''];
+        $this->resetPage();
+    }
+
+    public function updatingTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter(): void
+    {
+        $this->resetPage();
     }
 
     public function delete(int $id): void
@@ -32,6 +40,11 @@ class Index extends AbstractIndex
         $certification = EcoCertification::where('user_id', $this->wineryId())->findOrFail($id);
         $certification->delete();
         $this->toastSuccess(__('Certificación eliminada.'));
+    }
+
+    protected function filterDefaults(): array
+    {
+        return ['search' => '', 'typeFilter' => '', 'statusFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -42,11 +55,11 @@ class Index extends AbstractIndex
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%'.mb_strtolower($this->search).'%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(certifying_body, \'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(certificate_number, \'\')) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(IFNULL(certifying_body, \'\')) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(IFNULL(certificate_number, \'\')) LIKE ?', [$term]);
             });
         }
         if ($this->typeFilter) {
@@ -62,26 +75,33 @@ class Index extends AbstractIndex
         $query->orderByRaw('valid_until IS NULL ASC')->orderBy('valid_until');
     }
 
-    protected function defaultOrderBy(): array { return ['valid_until', 'asc']; }
-    protected function perPage(): int          { return 20; }
+    protected function defaultOrderBy(): array
+    {
+        return ['valid_until', 'asc'];
+    }
+
+    protected function perPage(): int
+    {
+        return 20;
+    }
 
     protected function viewData(mixed $entries): array
     {
         $base = EcoCertification::where('user_id', $this->wineryId());
 
         $stats = [
-            'total'    => (clone $base)->count(),
-            'active'   => (clone $base)->where('status', 'active')->count(),
+            'total' => (clone $base)->count(),
+            'active' => (clone $base)->where('status', 'active')->count(),
             'expiring' => (clone $base)->where('status', 'active')->whereNotNull('valid_until')
                 ->whereBetween('valid_until', [today(), today()->addDays(90)])->count(),
-            'pending'  => (clone $base)->where('status', 'pending')->count(),
+            'pending' => (clone $base)->where('status', 'pending')->count(),
         ];
 
         return [
             'certifications' => $entries,
-            'types'          => EcoCertification::certificationTypeOptions(),
-            'statuses'       => EcoCertification::statusOptions(),
-            'stats'          => $stats,
+            'types' => EcoCertification::certificationTypeOptions(),
+            'statuses' => EcoCertification::statusOptions(),
+            'stats' => $stats,
         ];
     }
 }

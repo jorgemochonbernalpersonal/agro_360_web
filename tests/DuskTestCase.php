@@ -20,14 +20,6 @@ abstract class DuskTestCase extends BaseTestCase
      */
     protected static bool $migrated = false;
 
-    #[BeforeClass]
-    public static function prepare(): void
-    {
-        if (! static::runningInSail()) {
-            static::startChromeDriver(['--port=9515']);
-        }
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,10 +39,18 @@ abstract class DuskTestCase extends BaseTestCase
         if ($this->hasBrowser()) {
             $this->browse(function ($browser) {
                 $browser->deleteCookie('laravel_session')
-                        ->deleteCookie('XSRF-TOKEN');
+                    ->deleteCookie('XSRF-TOKEN');
             });
         }
         parent::tearDown();
+    }
+
+    #[BeforeClass]
+    public static function prepare(): void
+    {
+        if (! static::runningInSail()) {
+            static::startChromeDriver(['--port=9515']);
+        }
     }
 
     /**
@@ -70,7 +70,7 @@ abstract class DuskTestCase extends BaseTestCase
     /**
      * Tables written to during tests. Extend in subclasses if needed.
      */
-    protected function testableTables(): array
+    protected function testable_tables(): array
     {
         return [
             'users', 'plots', 'campaigns', 'wines', 'wine_process_details',
@@ -110,37 +110,50 @@ abstract class DuskTestCase extends BaseTestCase
     protected function createUser(string $role, array $extra = []): User
     {
         return User::factory()->create(array_merge([
-            'role'                => $role,
-            'password'            => bcrypt('password'),
-            'email_verified_at'   => now(),
-            'can_login'           => true,
+            'role' => $role,
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+            'can_login' => true,
             'password_must_reset' => false,
-            'is_beta_user'        => true,
-            'beta_ends_at'        => now()->addYear(),
+            'is_beta_user' => true,
+            'beta_ends_at' => now()->addYear(),
             'beta_access_granted' => true,
         ], $extra));
     }
 
-    protected function createWinery(array $extra = []): User        { return $this->createUser('winery', $extra); }
-    protected function createViticulturist(array $extra = []): User  { return $this->createUser('viticulturist', $extra); }
-    protected function createProducer(array $extra = []): User       { return $this->createUser('producer', $extra); }
+    protected function createWinery(array $extra = []): User
+    {
+        return $this->createUser('winery', $extra);
+    }
+
+    protected function createViticulturist(array $extra = []): User
+    {
+        return $this->createUser('viticulturist', $extra);
+    }
+
+    protected function createProducer(array $extra = []): User
+    {
+        return $this->createUser('producer', $extra);
+    }
 
     // ─── Navigation helpers ──────────────────────────────────────────────────
 
     protected function dashboardUrl(User $user): string
     {
         return match ($user->role) {
-            'winery'        => '/winery/dashboard',
-            'producer'      => '/producer/dashboard',
+            'winery' => '/winery/dashboard',
+            'producer' => '/producer/dashboard',
             'viticulturist' => '/viticulturist/dashboard',
-            'supervisor'    => '/supervisor/dashboard',
-            default         => '/',
+            'supervisor' => '/supervisor/dashboard',
+            default => '/',
         };
     }
 
     /**
      * Login via real Livewire form.
      * Use only in LoginTest — other tests should use loginAs().
+     *
+     * @param mixed $browser
      */
     protected function loginViaForm($browser, User $user): void
     {
@@ -155,6 +168,8 @@ abstract class DuskTestCase extends BaseTestCase
 
     /**
      * Fast session-based login. Use for all tests that aren't testing auth itself.
+     *
+     * @param mixed $browser
      */
     protected function loginAs($browser, User $user): void
     {
@@ -166,6 +181,6 @@ abstract class DuskTestCase extends BaseTestCase
      */
     private function hasBrowser(): bool
     {
-        return !empty(static::$browsers) && static::$browsers->isNotEmpty();
+        return ! empty(static::$browsers) && static::$browsers->isNotEmpty();
     }
 }

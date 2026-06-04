@@ -3,12 +3,12 @@
 use Illuminate\Support\Facades\Route;
 
 // Ruta helper: redirige al dashboard (usada por stubs mientras se implementa el módulo)
-$stub = fn() => redirect()->route('winery.dashboard');
+$stub = fn () => redirect()->route('winery.dashboard');
 
 Route::middleware(['role:winery,producer'])
     ->prefix('winery')
     ->name('winery.')
-    ->group(function () use ($stub) {
+    ->group(function () {
 
         Route::get('/dashboard', \App\Livewire\Winery\Dashboard::class)->name('dashboard');
         Route::get('/visual', \App\Livewire\Winery\VisualDashboard::class)->name('visual');
@@ -177,7 +177,7 @@ Route::middleware(['role:winery,producer'])
         });
 
         // ── Elaboración de vino ───────────────────────────────────────
-        Route::get('/wine-process', fn() => redirect()->route('winery.wines.index'))->name('wine-process.index');
+        Route::get('/wine-process', fn () => redirect()->route('winery.wines.index'))->name('wine-process.index');
 
         // ── Análisis de laboratorio ───────────────────────────────────
         Route::middleware('winery.ability:wine_process')->group(function () {
@@ -211,7 +211,7 @@ Route::middleware(['role:winery,producer'])
         Route::get('/wine-additives', \App\Livewire\Winery\WineAdditives\Index::class)->name('wine-additives.index');
 
         // ── Inventario de insumos de bodega ───────────────────────────
-        Route::get('/inventory', fn() => redirect()->route('winery.winery-supplies.index'))->name('inventory.index');
+        Route::get('/inventory', fn () => redirect()->route('winery.winery-supplies.index'))->name('inventory.index');
 
         // ── Proveedores ───────────────────────────────────────────────
         Route::get('/suppliers', \App\Livewire\Winery\Suppliers\Index::class)->name('suppliers.index');
@@ -221,7 +221,7 @@ Route::middleware(['role:winery,producer'])
         // ── SILICIE ───────────────────────────────────────────────────
         Route::get('/silicie', \App\Livewire\Winery\Silicie\Dashboard::class)
             ->name('silicie.dashboard');
-        Route::get('/silicie/movements', fn() => redirect()->route('winery.silicie.dashboard'))->name('silicie.movements.index');
+        Route::get('/silicie/movements', fn () => redirect()->route('winery.silicie.dashboard'))->name('silicie.movements.index');
         Route::get('/silicie/infovi', \App\Livewire\Winery\Silicie\Infovi::class)
             ->name('silicie.infovi');
         Route::get('/silicie/infovi/pdf', [\App\Http\Controllers\Winery\InfoviController::class, 'exportPdf'])

@@ -3,8 +3,6 @@
 namespace Tests\Feature\Viticulturist\AgriInsurance;
 
 use App\Livewire\Viticulturist\AgriInsurance\Create;
-use App\Models\AgriInsurance;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 
@@ -25,9 +23,9 @@ class CreateTest extends ViticulturistTestCase
             ->assertRedirect(route('viticulturist.agri-insurance.index'));
 
         $this->assertDatabaseHas('agri_insurances', [
-            'viticulturist_id'  => $viticulturist->id,
+            'viticulturist_id' => $viticulturist->id,
             'insurance_company' => 'Mapfre Agro',
-            'coverage_type'     => 'hail',
+            'coverage_type' => 'hail',
         ]);
     }
 

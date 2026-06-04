@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Viticulturist;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AgriculturalActivity;
 use App\Models\OnboardingProgress;
 use App\Models\PhytosanitaryProduct;
 use App\Models\Plot;
-use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
@@ -14,8 +14,11 @@ use Livewire\Component;
 class OnboardingChecklist extends Component
 {
     use WithToastNotifications;
+
     public bool $show = true;
+
     public array $steps = [];
+
     public int $progressPercentage = 0;
 
     public function mount(): void
@@ -31,16 +34,16 @@ class OnboardingChecklist extends Component
         $this->autoCompleteExistingData($userId);
 
         // Verificar si debe mostrarse
-        $this->show = !OnboardingProgress::isOnboardingComplete($userId);
+        $this->show = ! OnboardingProgress::isOnboardingComplete($userId);
 
-        if (!$this->show) {
+        if (! $this->show) {
             return;
         }
 
         // Cargar progreso de cada paso
         $this->steps = collect(OnboardingProgress::ALL_STEPS)->map(function ($step) use ($userId) {
             $progress = OnboardingProgress::getOrCreate($userId, $step);
-            
+
             return [
                 'key' => $step,
                 'title' => $this->getStepTitle($step),
@@ -88,6 +91,11 @@ class OnboardingChecklist extends Component
         $this->loadProgress();
 
         $this->toastSuccess(__('Onboarding reiniciado. Recarga la página para ver el tour de nuevo.'));
+    }
+
+    public function render()
+    {
+        return view('livewire.viticulturist.onboarding-checklist');
     }
 
     private function getStepTitle(string $step): string
@@ -143,20 +151,17 @@ class OnboardingChecklist extends Component
             // activamente, así que la marcamos completada automáticamente.
             OnboardingProgress::STEP_REVIEW_CAMPAIGN => fn () => true,
 
-            OnboardingProgress::STEP_CREATE_PLOT => fn () =>
-                Plot::forUser(Auth::user())->exists(),
+            OnboardingProgress::STEP_CREATE_PLOT => fn () => Plot::forUser(Auth::user())->exists(),
 
-            OnboardingProgress::STEP_ADD_PRODUCTS => fn () =>
-                PhytosanitaryProduct::forUser($userId)->exists(),
+            OnboardingProgress::STEP_ADD_PRODUCTS => fn () => PhytosanitaryProduct::forUser($userId)->exists(),
 
-            OnboardingProgress::STEP_REGISTER_ACTIVITY => fn () =>
-                AgriculturalActivity::forViticulturist($userId)->exists(),
+            OnboardingProgress::STEP_REGISTER_ACTIVITY => fn () => AgriculturalActivity::forViticulturist($userId)->exists(),
         ];
 
         $anyCompleted = false;
         foreach ($checks as $step => $hasData) {
             $progress = OnboardingProgress::getOrCreate($userId, $step);
-            if (!$progress->isCompleted() && $hasData()) {
+            if (! $progress->isCompleted() && $hasData()) {
                 $progress->markAsCompleted();
                 $anyCompleted = true;
             }
@@ -165,10 +170,5 @@ class OnboardingChecklist extends Component
         if ($anyCompleted) {
             Cache::forget("nav_onboarding_pending_{$userId}");
         }
-    }
-
-    public function render()
-    {
-        return view('livewire.viticulturist.onboarding-checklist');
     }
 }

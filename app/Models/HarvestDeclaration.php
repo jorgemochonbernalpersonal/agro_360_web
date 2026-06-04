@@ -8,23 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class HarvestDeclaration extends Model
 {
     const STATUSES = [
-        'draft'     => 'Borrador',
+        'draft' => 'Borrador',
         'submitted' => 'Presentada',
-        'accepted'  => 'Aceptada',
-        'rejected'  => 'Rechazada',
+        'accepted' => 'Aceptada',
+        'rejected' => 'Rechazada',
     ];
 
     const STATUS_COLORS = [
-        'draft'     => 'zinc',
+        'draft' => 'zinc',
         'submitted' => 'blue',
-        'accepted'  => 'green',
-        'rejected'  => 'red',
+        'accepted' => 'green',
+        'rejected' => 'red',
     ];
-
-    public static function statusOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::STATUSES);
-    }
 
     protected $fillable = [
         'viticulturist_id',
@@ -44,14 +39,19 @@ class HarvestDeclaration extends Model
     ];
 
     protected $casts = [
-        'declaration_date'  => 'date',
-        'submission_date'   => 'date',
-        'declaration_year'  => 'integer',
-        'total_surface_ha'  => 'decimal:4',
-        'total_kg'          => 'decimal:2',
+        'declaration_date' => 'date',
+        'submission_date' => 'date',
+        'declaration_year' => 'integer',
+        'total_surface_ha' => 'decimal:4',
+        'total_kg' => 'decimal:2',
         'declaration_lines' => 'array',
-        'active'            => 'boolean',
+        'active' => 'boolean',
     ];
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
 
     public function viticulturist(): BelongsTo
     {

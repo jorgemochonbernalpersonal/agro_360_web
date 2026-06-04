@@ -26,6 +26,7 @@ class MultiLevelHierarchyTest extends TestCase
     use RefreshDatabase;
 
     private User $winery;
+
     private User $viticulturistA;
 
     protected function setUp(): void
@@ -35,33 +36,16 @@ class MultiLevelHierarchyTest extends TestCase
         $this->winery = User::factory()->create(['role' => 'winery']);
 
         $this->viticulturistA = User::factory()->create([
-            'role'              => 'viticulturist',
+            'role' => 'viticulturist',
             'email_verified_at' => now(),
         ]);
 
         WineryViticulturist::create([
-            'winery_id'        => $this->winery->id,
+            'winery_id' => $this->winery->id,
             'viticulturist_id' => $this->viticulturistA->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $this->winery->id,
+            'source' => WineryViticulturist::SOURCE_OWN,
+            'assigned_by' => $this->winery->id,
         ]);
-    }
-
-    // ── helpers ───────────────────────────────────────────────────────────────
-
-    private function makeChildOf(User $parent, ?User $winery = null): User
-    {
-        $child = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
-
-        WineryViticulturist::create([
-            'winery_id'               => $winery?->id,
-            'viticulturist_id'        => $child->id,
-            'source'                  => WineryViticulturist::SOURCE_VITICULTURIST,
-            'parent_viticulturist_id' => $parent->id,
-            'assigned_by'             => $parent->id,
-        ]);
-
-        return $child;
     }
 
     // ── Nivel 1: A ve a B directamente (rama 1) ───────────────────────────────
@@ -202,5 +186,22 @@ class MultiLevelHierarchyTest extends TestCase
         $relation = WineryViticulturist::where('viticulturist_id', $viticulturistC->id)->first();
 
         $this->assertFalse($relation->isVisibleTo($this->viticulturistA));
+    }
+
+    // ── helpers ───────────────────────────────────────────────────────────────
+
+    private function makeChildOf(User $parent, ?User $winery = null): User
+    {
+        $child = User::factory()->create(['role' => 'viticulturist', 'email_verified_at' => now()]);
+
+        WineryViticulturist::create([
+            'winery_id' => $winery?->id,
+            'viticulturist_id' => $child->id,
+            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
+            'parent_viticulturist_id' => $parent->id,
+            'assigned_by' => $parent->id,
+        ]);
+
+        return $child;
     }
 }

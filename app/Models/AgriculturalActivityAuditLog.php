@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AgriculturalActivityAuditLog extends Model
 {
@@ -43,11 +43,7 @@ class AgriculturalActivityAuditLog extends Model
     /**
      * Crear log de auditoría
      *
-     * @param AgriculturalActivity $activity
-     * @param string $action
-     * @param array $changes
      * @param int|null $userId ID del usuario (opcional, si no se proporciona usa auth()->id() o viticulturist_id)
-     * @return self
      */
     public static function log(AgriculturalActivity $activity, string $action, array $changes = [], ?int $userId = null): self
     {
@@ -116,7 +112,7 @@ class AgriculturalActivityAuditLog extends Model
      */
     public function getChangesSummaryAttribute(): array
     {
-        if (!$this->changes || !isset($this->changes['old'], $this->changes['new'])) {
+        if (! $this->changes || ! isset($this->changes['old'], $this->changes['new'])) {
             return [];
         }
 
@@ -141,6 +137,8 @@ class AgriculturalActivityAuditLog extends Model
 
     /**
      * Scope: Filtrar por actividad
+     *
+     * @param mixed $query
      */
     public function scopeForActivity($query, int $activityId)
     {
@@ -149,6 +147,8 @@ class AgriculturalActivityAuditLog extends Model
 
     /**
      * Scope: Filtrar por usuario
+     *
+     * @param mixed $query
      */
     public function scopeByUser($query, int $userId)
     {
@@ -157,6 +157,8 @@ class AgriculturalActivityAuditLog extends Model
 
     /**
      * Scope: Filtrar por acción
+     *
+     * @param mixed $query
      */
     public function scopeOfAction($query, string $action)
     {
@@ -165,6 +167,8 @@ class AgriculturalActivityAuditLog extends Model
 
     /**
      * Scope: Ordenar por más reciente
+     *
+     * @param mixed $query
      */
     public function scopeRecent($query)
     {

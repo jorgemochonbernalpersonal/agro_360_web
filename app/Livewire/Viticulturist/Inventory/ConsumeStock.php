@@ -3,19 +3,21 @@
 namespace App\Livewire\Viticulturist\Inventory;
 
 use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Models\ProductStock;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
+use App\Models\ProductStock;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class ConsumeStock extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
 
     public ProductStock $stock;
-    
+
     public $quantity;
+
     public $reason = 'loss';
+
     public $notes = '';
 
     protected $rules = [
@@ -33,12 +35,12 @@ class ConsumeStock extends Component
 
     public function mount($stock)
     {
-        if (!Auth::user()->hasViticulturistAccess()) {
+        if (! Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
 
         $this->stock = ProductStock::findOrFail($stock);
-        
+
         if ($this->stock->user_id !== Auth::id()) {
             abort(403);
         }
@@ -55,6 +57,7 @@ class ConsumeStock extends Component
 
         if ($this->quantity > $limit) {
             $this->toastError("Cantidad superior a la existente: {$limit} {$this->stock->unit}");
+
             return;
         }
 
@@ -69,13 +72,14 @@ class ConsumeStock extends Component
 
         $note = $reasonLabels[$this->reason];
         if ($this->notes && $this->reason !== 'other') {
-            $note .= ' - ' . $this->notes;
+            $note .= ' - '.$this->notes;
         }
 
         // Consumir stock
         $this->stock->consume($this->quantity, null, $note);
 
         $this->toastSuccess(__('Consumo registrado correctamente'));
+
         return $this->viticulturistRoleRedirect('warehouse.index', ['tab' => 'fitosanitarios']);
     }
 
@@ -87,7 +91,7 @@ class ConsumeStock extends Component
 
         return view('livewire.viticulturist.inventory.consume-stock', [
             'availableQuantity' => $this->stock->getAvailableQuantity(),
-            'maxQuantity'       => $maxQuantity,
+            'maxQuantity' => $maxQuantity,
         ])->layout('layouts.app', [
             'title' => __('Registrar Consumo - Agro365'),
         ]);

@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\Settings;
 
-use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithReadOnlyGuard;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AppSetting;
 use App\Models\SecurityEvent;
 use App\Services\SecurityLogger;
@@ -13,68 +13,53 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    use WithToastNotifications, WithReadOnlyGuard;
+    use WithReadOnlyGuard, WithToastNotifications;
 
     // Platform
-    public bool   $registration_open = true;
-    public bool   $maintenance_mode  = false;
-    public string $support_email     = '';
+    public bool $registration_open = true;
+
+    public bool $maintenance_mode = false;
+
+    public string $support_email = '';
 
     // Beta
     public string $beta_end_date = '';
 
     // Security
-    public int  $password_min_length      = 8;
-    public bool $require_strong_password  = false;
+    public int $password_min_length = 8;
+
+    public bool $require_strong_password = false;
 
     // Modules
     public bool $module_silicie = true;
-    public bool $module_pac     = true;
 
-    protected function rules(): array
-    {
-        return [
-            'support_email'       => 'required|email|max:255',
-            'beta_end_date'       => 'required|date|after:today',
-            'password_min_length' => 'required|integer|min:6|max:32',
-        ];
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'support_email.required'       => __('El email de soporte es obligatorio.'),
-            'support_email.email'          => __('Introduce un email válido.'),
-            'beta_end_date.required'       => __('La fecha límite beta es obligatoria.'),
-            'beta_end_date.after'          => __('La fecha debe ser posterior a hoy.'),
-            'password_min_length.min'      => __('El mínimo permitido es 6 caracteres.'),
-            'password_min_length.max'      => __('El máximo permitido es 32 caracteres.'),
-        ];
-    }
+    public bool $module_pac = true;
 
     public function mount(): void
     {
         $this->registration_open = AppSetting::getBool('registration_open', true);
-        $this->maintenance_mode  = AppSetting::getBool('maintenance_mode', false);
-        $this->support_email     = AppSetting::get('support_email', 'info@agro365.es');
-        $this->beta_end_date     = AppSetting::get('beta_end_date', '2026-06-30');
+        $this->maintenance_mode = AppSetting::getBool('maintenance_mode', false);
+        $this->support_email = AppSetting::get('support_email', 'info@agro365.es');
+        $this->beta_end_date = AppSetting::get('beta_end_date', '2026-06-30');
 
-        $this->password_min_length     = (int) AppSetting::get('password_min_length', 8);
+        $this->password_min_length = (int) AppSetting::get('password_min_length', 8);
         $this->require_strong_password = AppSetting::getBool('require_strong_password', false);
 
         $this->module_silicie = AppSetting::getBool('module_silicie', true);
-        $this->module_pac     = AppSetting::getBool('module_pac', true);
+        $this->module_pac = AppSetting::getBool('module_pac', true);
     }
 
     public function savePlatform(): void
     {
-        if ($this->isReadOnly()) return;
+        if ($this->isReadOnly()) {
+            return;
+        }
         $this->validateOnly('support_email');
 
         $changes = [];
         $oldRegistration = AppSetting::getBool('registration_open', true);
-        $oldMaintenance  = AppSetting::getBool('maintenance_mode', false);
-        $oldEmail        = AppSetting::get('support_email', '');
+        $oldMaintenance = AppSetting::getBool('maintenance_mode', false);
+        $oldEmail = AppSetting::get('support_email', '');
 
         if ($oldRegistration !== $this->registration_open) {
             $changes['registration_open'] = ['from' => $oldRegistration, 'to' => $this->registration_open];
@@ -87,13 +72,13 @@ class Index extends Component
         }
 
         AppSetting::set('registration_open', $this->registration_open ? '1' : '0');
-        AppSetting::set('maintenance_mode',  $this->maintenance_mode  ? '1' : '0');
-        AppSetting::set('support_email',     $this->support_email);
+        AppSetting::set('maintenance_mode', $this->maintenance_mode ? '1' : '0');
+        AppSetting::set('support_email', $this->support_email);
 
-        if (!empty($changes)) {
+        if (! empty($changes)) {
             SecurityLogger::logSecurityEvent('settings_platform_changed', [
                 'admin_id' => Auth::id(),
-                'changes'  => $changes,
+                'changes' => $changes,
             ]);
         }
 
@@ -102,7 +87,9 @@ class Index extends Component
 
     public function saveBeta(): void
     {
-        if ($this->isReadOnly()) return;
+        if ($this->isReadOnly()) {
+            return;
+        }
         $this->validateOnly('beta_end_date');
 
         $oldDate = AppSetting::get('beta_end_date', '');
@@ -112,8 +99,8 @@ class Index extends Component
         if ($oldDate !== $this->beta_end_date) {
             SecurityLogger::logSecurityEvent('settings_beta_date_changed', [
                 'admin_id' => Auth::id(),
-                'from'     => $oldDate,
-                'to'       => $this->beta_end_date,
+                'from' => $oldDate,
+                'to' => $this->beta_end_date,
             ]);
         }
 
@@ -122,12 +109,14 @@ class Index extends Component
 
     public function saveSecurity(): void
     {
-        if ($this->isReadOnly()) return;
+        if ($this->isReadOnly()) {
+            return;
+        }
         $this->validateOnly('password_min_length');
 
         $changes = [];
         $prev = [
-            'password_min_length'     => (int) AppSetting::get('password_min_length', 8),
+            'password_min_length' => (int) AppSetting::get('password_min_length', 8),
             'require_strong_password' => AppSetting::getBool('require_strong_password', false),
         ];
 
@@ -138,13 +127,13 @@ class Index extends Component
             $changes['require_strong_password'] = ['from' => $prev['require_strong_password'], 'to' => $this->require_strong_password];
         }
 
-        AppSetting::set('password_min_length',     (string) $this->password_min_length);
+        AppSetting::set('password_min_length', (string) $this->password_min_length);
         AppSetting::set('require_strong_password', $this->require_strong_password ? '1' : '0');
 
-        if (!empty($changes)) {
+        if (! empty($changes)) {
             SecurityLogger::logSecurityEvent('settings_security_changed', [
                 'admin_id' => Auth::id(),
-                'changes'  => $changes,
+                'changes' => $changes,
             ]);
         }
 
@@ -153,11 +142,13 @@ class Index extends Component
 
     public function saveModules(): void
     {
-        if ($this->isReadOnly()) return;
+        if ($this->isReadOnly()) {
+            return;
+        }
         $changes = [];
         $prev = [
             'module_silicie' => AppSetting::getBool('module_silicie', true),
-            'module_pac'     => AppSetting::getBool('module_pac', true),
+            'module_pac' => AppSetting::getBool('module_pac', true),
         ];
 
         if ($prev['module_silicie'] !== $this->module_silicie) {
@@ -168,16 +159,51 @@ class Index extends Component
         }
 
         AppSetting::set('module_silicie', $this->module_silicie ? '1' : '0');
-        AppSetting::set('module_pac',     $this->module_pac     ? '1' : '0');
+        AppSetting::set('module_pac', $this->module_pac ? '1' : '0');
 
-        if (!empty($changes)) {
+        if (! empty($changes)) {
             SecurityLogger::logSecurityEvent('settings_modules_changed', [
                 'admin_id' => Auth::id(),
-                'changes'  => $changes,
+                'changes' => $changes,
             ]);
         }
 
         $this->toastSuccess(__('Configuración de módulos guardada.'));
+    }
+
+    #[Layout('layouts.app', [
+        'title' => 'Configuración - Agro365',
+        'description' => 'Configuración global del sistema',
+    ])]
+    public function render()
+    {
+        return view('livewire.admin.settings.index', [
+            'lastPlatform' => $this->lastChangeFor('settings_platform_changed'),
+            'lastBeta' => $this->lastChangeFor('settings_beta_date_changed'),
+            'lastSecurity' => $this->lastChangeFor('settings_security_changed'),
+            'lastModules' => $this->lastChangeFor('settings_modules_changed'),
+        ]);
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'support_email' => 'required|email|max:255',
+            'beta_end_date' => 'required|date|after:today',
+            'password_min_length' => 'required|integer|min:6|max:32',
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'support_email.required' => __('El email de soporte es obligatorio.'),
+            'support_email.email' => __('Introduce un email válido.'),
+            'beta_end_date.required' => __('La fecha límite beta es obligatoria.'),
+            'beta_end_date.after' => __('La fecha debe ser posterior a hoy.'),
+            'password_min_length.min' => __('El mínimo permitido es 6 caracteres.'),
+            'password_min_length.max' => __('El máximo permitido es 32 caracteres.'),
+        ];
     }
 
     private function lastChangeFor(string $event): ?SecurityEvent
@@ -189,19 +215,5 @@ class Index extends Component
         } catch (\Throwable) {
             return null;
         }
-    }
-
-    #[Layout('layouts.app', [
-        'title'       => 'Configuración - Agro365',
-        'description' => 'Configuración global del sistema',
-    ])]
-    public function render()
-    {
-        return view('livewire.admin.settings.index', [
-            'lastPlatform' => $this->lastChangeFor('settings_platform_changed'),
-            'lastBeta'     => $this->lastChangeFor('settings_beta_date_changed'),
-            'lastSecurity' => $this->lastChangeFor('settings_security_changed'),
-            'lastModules'  => $this->lastChangeFor('settings_modules_changed'),
-        ]);
     }
 }

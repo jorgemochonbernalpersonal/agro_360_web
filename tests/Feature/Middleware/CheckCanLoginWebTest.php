@@ -21,8 +21,8 @@ class CheckCanLoginWebTest extends TestCase
     public function test_disabled_user_is_redirected_to_login_on_web(): void
     {
         $user = User::factory()->create([
-            'role'              => 'viticulturist',
-            'can_login'         => false,
+            'role' => 'viticulturist',
+            'can_login' => false,
             'email_verified_at' => now(),
         ]);
 
@@ -34,8 +34,8 @@ class CheckCanLoginWebTest extends TestCase
     public function test_enabled_user_is_not_redirected_to_login_on_web(): void
     {
         $user = User::factory()->create([
-            'role'              => 'viticulturist',
-            'can_login'         => true,
+            'role' => 'viticulturist',
+            'can_login' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -48,8 +48,8 @@ class CheckCanLoginWebTest extends TestCase
     public function test_impersonating_admin_can_access_disabled_account_on_web(): void
     {
         $winery = User::factory()->create([
-            'role'              => 'winery',
-            'can_login'         => false,
+            'role' => 'winery',
+            'can_login' => false,
             'email_verified_at' => now(),
         ]);
 

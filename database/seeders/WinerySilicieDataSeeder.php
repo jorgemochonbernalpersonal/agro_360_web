@@ -74,20 +74,20 @@ class WinerySilicieDataSeeder extends Seeder
     ];
 
     private const PROCESS_NOTES = [
-        'destemming_crushing'  => ['Despalillado mecánico. Estrujado suave.', 'Despalillado total. Rodillos a 2 rpm.'],
-        'pressing'             => ['Prensado neumático a 1.2 bar.', 'Prensado suave. Tres ciclos.'],
-        'settling'             => ['Desfangado estático 12h a 10°C.', 'Desfangado enzimático 18h a 8°C.'],
-        'fermentation'         => ['Fermentación controlada a 16°C.', 'Fermentación a 26°C con remontados.', 'Densidad final 0.992.'],
-        'maceration'           => ['Maceración en frío 48h.', 'Maceración post-fermentativa 5 días.'],
-        'malolactic'           => ['FML completada. Ác. málico <0.1 g/L.', 'Inoculación con Oenococcus oeni.'],
-        'aging'                => ['Barrica roble francés 225L tostado medio.', 'Crianza 6 meses roble americano.', 'Sobre lías con bâtonnage.'],
-        'racking'              => ['Trasiego a inox. Separación lías gruesas.', 'Trasiego con sulfitado. SO2 30 mg/L.'],
-        'blending'             => ['Coupage 60/40 aprobado.', 'Mezcla bases para 2ª fermentación.'],
-        'fining'               => ['Bentonita 40 g/hL. Estabilidad proteica OK.', 'Albúmina de huevo.'],
-        'filtration'           => ['Placas 1 μm. Brillantez confirmada.', 'Amicróbica 0.45 μm pre-embotellado.'],
-        'cold_stabilization'   => ['Tartárica a -4°C, 10 días.', 'CMC (carboximetilcelulosa).'],
-        'sulfitation'          => ['SO2 libre: 25 mg/L, total: 85 mg/L.', 'Ajuste post-FML a 30 mg/L.'],
-        'bottling'             => ['Llenado con N2. Corcho natural 45mm.', 'Tapón rosca. Lote verificado.'],
+        'destemming_crushing' => ['Despalillado mecánico. Estrujado suave.', 'Despalillado total. Rodillos a 2 rpm.'],
+        'pressing' => ['Prensado neumático a 1.2 bar.', 'Prensado suave. Tres ciclos.'],
+        'settling' => ['Desfangado estático 12h a 10°C.', 'Desfangado enzimático 18h a 8°C.'],
+        'fermentation' => ['Fermentación controlada a 16°C.', 'Fermentación a 26°C con remontados.', 'Densidad final 0.992.'],
+        'maceration' => ['Maceración en frío 48h.', 'Maceración post-fermentativa 5 días.'],
+        'malolactic' => ['FML completada. Ác. málico <0.1 g/L.', 'Inoculación con Oenococcus oeni.'],
+        'aging' => ['Barrica roble francés 225L tostado medio.', 'Crianza 6 meses roble americano.', 'Sobre lías con bâtonnage.'],
+        'racking' => ['Trasiego a inox. Separación lías gruesas.', 'Trasiego con sulfitado. SO2 30 mg/L.'],
+        'blending' => ['Coupage 60/40 aprobado.', 'Mezcla bases para 2ª fermentación.'],
+        'fining' => ['Bentonita 40 g/hL. Estabilidad proteica OK.', 'Albúmina de huevo.'],
+        'filtration' => ['Placas 1 μm. Brillantez confirmada.', 'Amicróbica 0.45 μm pre-embotellado.'],
+        'cold_stabilization' => ['Tartárica a -4°C, 10 días.', 'CMC (carboximetilcelulosa).'],
+        'sulfitation' => ['SO2 libre: 25 mg/L, total: 85 mg/L.', 'Ajuste post-FML a 30 mg/L.'],
+        'bottling' => ['Llenado con N2. Corcho natural 45mm.', 'Tapón rosca. Lote verificado.'],
     ];
 
     // ── Vinos adicionales para densificar SILICIE ────────────────────────────
@@ -128,20 +128,20 @@ class WinerySilicieDataSeeder extends Seeder
         $extraWineIds = [];
         foreach (self::EXTRA_WINES as $w) {
             $extraWineIds[] = DB::table('wines')->insertGetId([
-                'user_id'          => self::WINERY_USER_ID,
-                'oenologist_id'    => $oenologistId,
-                'name'             => $w['name'],
-                'wine_type'        => $w['type'],
-                'vintage'          => $w['vintage'],
-                'status'           => $w['status'],
-                'volume_liters'    => $w['vol'],
-                'is_must'          => $w['must'],
-                'category'         => $w['cat'],
-                'created_at'       => $now,
-                'updated_at'       => $now,
+                'user_id' => self::WINERY_USER_ID,
+                'oenologist_id' => $oenologistId,
+                'name' => $w['name'],
+                'wine_type' => $w['type'],
+                'vintage' => $w['vintage'],
+                'status' => $w['status'],
+                'volume_liters' => $w['vol'],
+                'is_must' => $w['must'],
+                'category' => $w['cat'],
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
         }
-        $this->command->info("  ✅ Vinos adicionales: " . count($extraWineIds) . " registros (2023-2026)");
+        $this->command->info('  ✅ Vinos adicionales: '.count($extraWineIds).' registros (2023-2026)');
 
         // ═══════════════════════════════════════════════════════════════════
         // 1. WINE PROCESS DETAILS (todos los vinos de la bodega)
@@ -167,23 +167,23 @@ class WinerySilicieDataSeeder extends Seeder
 
         foreach ($wines as $wine) {
             $pipelineKey = match ($wine->wine_type) {
-                'red'                 => 'red',
-                'white'               => 'white',
-                'rose'                => 'rose',
-                'sparkling'           => 'sparkling',
+                'red' => 'red',
+                'white' => 'white',
+                'rose' => 'rose',
+                'sparkling' => 'sparkling',
                 'sweet', 'semi_sweet' => 'sweet',
-                'fortified'           => 'red',
-                default               => 'white',
+                'fortified' => 'red',
+                default => 'white',
             };
 
             $pipeline = self::PIPELINES[$pipelineKey];
-            $volume   = (float) $wine->volume_liters;
-            $vintage  = (int) $wine->vintage;
+            $volume = (float) $wine->volume_liters;
+            $vintage = (int) $wine->vintage;
 
             $stepCount = match ($wine->status) {
                 'in_progress' => max(2, (int) (count($pipeline) * 0.4)),
-                'aged'        => max(3, (int) (count($pipeline) * 0.7)),
-                default       => count($pipeline),
+                'aged' => max(3, (int) (count($pipeline) * 0.7)),
+                default => count($pipeline),
             };
 
             $startDate = \Carbon\Carbon::create($vintage, 9, mt_rand(1, 20));
@@ -191,23 +191,23 @@ class WinerySilicieDataSeeder extends Seeder
             for ($s = 0; $s < $stepCount && $s < count($pipeline); $s++) {
                 [$processType, $durMin, $durMax, $qtyFactor] = $pipeline[$s];
                 $duration = mt_rand($durMin, max($durMin, $durMax));
-                $endDate  = (clone $startDate)->addDays($duration);
+                $endDate = (clone $startDate)->addDays($duration);
                 $quantity = $volume > 0 ? round($volume * $qtyFactor, 3) : null;
 
                 $notes = self::PROCESS_NOTES[$processType] ?? ['Proceso registrado.'];
 
                 DB::table('wine_process_details')->insert([
-                    'wine_id'                => $wine->id,
-                    'container_id'           => !empty($containers) ? $containers[$cidx % count($containers)] : null,
-                    'process_type'           => $processType,
-                    'start_date'             => $startDate->toDateString(),
-                    'end_date'               => $duration > 0 ? $endDate->toDateString() : null,
-                    'quantity'               => $quantity,
+                    'wine_id' => $wine->id,
+                    'container_id' => ! empty($containers) ? $containers[$cidx % count($containers)] : null,
+                    'process_type' => $processType,
+                    'start_date' => $startDate->toDateString(),
+                    'end_date' => $duration > 0 ? $endDate->toDateString() : null,
+                    'quantity' => $quantity,
                     'unit_of_measurement_id' => $unitLiters,
-                    'observations'           => $notes[$cidx % count($notes)],
-                    'created_by'             => self::WINERY_USER_ID,
-                    'created_at'             => $now,
-                    'updated_at'             => $now,
+                    'observations' => $notes[$cidx % count($notes)],
+                    'created_by' => self::WINERY_USER_ID,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
 
                 $startDate = (clone $endDate)->addDays(mt_rand(1, 3));
@@ -219,17 +219,17 @@ class WinerySilicieDataSeeder extends Seeder
             if (in_array($wine->status, ['bottled', 'sold'])) {
                 $notes = self::PROCESS_NOTES['bottling'];
                 DB::table('wine_process_details')->insert([
-                    'wine_id'                => $wine->id,
-                    'container_id'           => null,
-                    'process_type'           => 'bottling',
-                    'start_date'             => $startDate->toDateString(),
-                    'end_date'               => $startDate->toDateString(),
-                    'quantity'               => $volume > 0 ? round($volume * 0.98, 3) : null,
+                    'wine_id' => $wine->id,
+                    'container_id' => null,
+                    'process_type' => 'bottling',
+                    'start_date' => $startDate->toDateString(),
+                    'end_date' => $startDate->toDateString(),
+                    'quantity' => $volume > 0 ? round($volume * 0.98, 3) : null,
                     'unit_of_measurement_id' => $unitLiters,
-                    'observations'           => $notes[$cidx % count($notes)],
-                    'created_by'             => self::WINERY_USER_ID,
-                    'created_at'             => $now,
-                    'updated_at'             => $now,
+                    'observations' => $notes[$cidx % count($notes)],
+                    'created_by' => self::WINERY_USER_ID,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
                 $totalProcesses++;
                 $cidx++;
@@ -260,51 +260,57 @@ class WinerySilicieDataSeeder extends Seeder
 
             foreach ($wines as $wine) {
                 $vintage = (int) $wine->vintage;
-                $volume  = (float) $wine->volume_liters;
+                $volume = (float) $wine->volume_liters;
 
                 // Wine exists from ~Sep of its vintage
                 $wineExistsSince = \Carbon\Carbon::create($vintage, 9, 1);
-                if ($snapCarbon->lt($wineExistsSince)) continue;
+                if ($snapCarbon->lt($wineExistsSince)) {
+                    continue;
+                }
 
                 $monthsSince = $wineExistsSince->diffInMonths($snapCarbon);
 
                 // Sold wines: only appear in snapshots near their vintage
                 if ($wine->status === 'sold') {
-                    if ($snapCarbon->year > $vintage + 1) continue;
+                    if ($snapCarbon->year > $vintage + 1) {
+                        continue;
+                    }
                     $factor = 0.85;
                 } else {
                     $factor = match (true) {
-                        $monthsSince < 3  => 0.96,
-                        $monthsSince < 6  => 0.93,
+                        $monthsSince < 3 => 0.96,
+                        $monthsSince < 6 => 0.93,
                         $monthsSince < 12 => 0.90,
                         $monthsSince < 24 => 0.85,
-                        default           => 0.80,
+                        default => 0.80,
                     };
                 }
 
                 $snapshotQty = round($volume * $factor + mt_rand(-50, 50), 3);
-                if ($snapshotQty <= 0) continue;
+                if ($snapshotQty <= 0) {
+                    continue;
+                }
 
                 DB::table('wine_stock_snapshots')->insert([
-                    'user_id'            => self::WINERY_USER_ID,
-                    'wine_id'            => $wine->id,
-                    'snapshot_date'      => $snapDate,
-                    'quantity_liters'    => $snapshotQty,
-                    'container_count'    => max(1, (int) ceil($snapshotQty / 5000)),
+                    'user_id' => self::WINERY_USER_ID,
+                    'wine_id' => $wine->id,
+                    'snapshot_date' => $snapDate,
+                    'quantity_liters' => $snapshotQty,
+                    'container_count' => max(1, (int) ceil($snapshotQty / 5000)),
                     'alcohol_percentage' => round(mt_rand(115, 145) / 10, 2),
-                    'vintage'            => $vintage,
-                    'wine_type'          => $wine->wine_type,
-                    'is_must'            => $wine->is_must ?? false,
-                    'observations'       => "Inventario trimestral {$snapDate}.",
-                    'created_by'         => self::WINERY_USER_ID,
-                    'created_at'         => $now,
-                    'updated_at'         => $now,
+                    'vintage' => $vintage,
+                    'wine_type' => $wine->wine_type,
+                    'is_must' => $wine->is_must ?? false,
+                    'observations' => "Inventario trimestral {$snapDate}.",
+                    'created_by' => self::WINERY_USER_ID,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
                 $totalSnapshots++;
             }
         }
 
-        $this->command->info("  ✅ Snapshots stock: {$totalSnapshots} registros (" . count($snapshotDates) . " fechas trimestrales)");
+        $this->command->info("  ✅ Snapshots stock: {$totalSnapshots} registros (".count($snapshotDates).' fechas trimestrales)');
 
         // ═══════════════════════════════════════════════════════════════════
         // 3. FACTURAS SUPLEMENTARIAS (2023, 2024 — Libro IV Salidas)
@@ -367,37 +373,37 @@ class WinerySilicieDataSeeder extends Seeder
         ];
 
         $totalInvoices = 0;
-        $totalItems    = 0;
+        $totalItems = 0;
 
         foreach ($invoiceTemplates as $inv) {
-            $clientId = !empty($clients) ? $clients[$inv['client_idx'] % count($clients)] : null;
+            $clientId = ! empty($clients) ? $clients[$inv['client_idx'] % count($clients)] : null;
 
             $invoiceId = DB::table('invoices')->insertGetId([
-                'user_id'        => self::WINERY_USER_ID,
-                'client_id'      => $clientId,
-                'invoice_type'   => 'wine_sale',
+                'user_id' => self::WINERY_USER_ID,
+                'client_id' => $clientId,
+                'invoice_type' => 'wine_sale',
                 'invoice_number' => $inv['num'],
-                'invoice_date'   => $inv['date'],
-                'total_amount'   => $inv['total'],
-                'status'         => 'paid',
-                'created_at'     => $now,
-                'updated_at'     => $now,
+                'invoice_date' => $inv['date'],
+                'total_amount' => $inv['total'],
+                'status' => 'paid',
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
             $totalInvoices++;
 
             foreach ($inv['items'] as $idx => $item) {
                 DB::table('invoice_items')->insert([
-                    'invoice_id'  => $invoiceId,
-                    'name'        => $item['name'],
+                    'invoice_id' => $invoiceId,
+                    'name' => $item['name'],
                     'description' => $item['name'],
-                    'quantity'    => $item['qty'],
-                    'unit_price'  => $item['price'],
-                    'unit'        => 'botella',
-                    'subtotal'    => round($item['qty'] * $item['price'], 2),
-                    'total'       => round($item['qty'] * $item['price'], 2),
+                    'quantity' => $item['qty'],
+                    'unit_price' => $item['price'],
+                    'unit' => 'botella',
+                    'subtotal' => round($item['qty'] * $item['price'], 2),
+                    'total' => round($item['qty'] * $item['price'], 2),
 
-                    'created_at'  => $now,
-                    'updated_at'  => $now,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
                 $totalItems++;
             }
@@ -427,21 +433,21 @@ class WinerySilicieDataSeeder extends Seeder
 
         foreach ($externalPurchases2026 as $ep) {
             DB::table('external_grapes')->insert([
-                'user_id'          => self::WINERY_USER_ID,
-                'grape_type'       => $ep['type'],
-                'supplier_name'    => $ep['supplier'],
-                'total_weight_kg'  => $ep['kg'],
+                'user_id' => self::WINERY_USER_ID,
+                'grape_type' => $ep['type'],
+                'supplier_name' => $ep['supplier'],
+                'total_weight_kg' => $ep['kg'],
                 'grape_variety_id' => $varietyIds[$ep['variety']] ?? null,
-                'vintage_year'     => 2026,
+                'vintage_year' => 2026,
                 'protection_level' => $ep['protection'],
-                'entry_date'       => $ep['date'],
-                'status'           => 'available',
-                'created_at'       => $now,
-                'updated_at'       => $now,
+                'entry_date' => $ep['date'],
+                'status' => 'available',
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
         }
 
-        $this->command->info("  ✅ Compras externas 2026: " . count($externalPurchases2026) . " registros");
+        $this->command->info('  ✅ Compras externas 2026: '.count($externalPurchases2026).' registros');
 
         // ═══════════════════════════════════════════════════════════════════
         // 5. MERMAS ADICIONALES distribuidas 2023-2026 (Libro IV)
@@ -454,25 +460,29 @@ class WinerySilicieDataSeeder extends Seeder
 
         foreach ([2023, 2024, 2025, 2026] as $year) {
             $yearWines = $wines->where('vintage', $year)->values();
-            if ($yearWines->isEmpty()) continue;
+            if ($yearWines->isEmpty()) {
+                continue;
+            }
 
             $lossCount = mt_rand(3, 6);
             for ($i = 0; $i < $lossCount; $i++) {
                 $wine = $yearWines[$i % count($yearWines)];
                 $month = mt_rand(1, 12);
-                if ($year === 2026 && $month > 3) $month = mt_rand(1, 3);
+                if ($year === 2026 && $month > 3) {
+                    $month = mt_rand(1, 3);
+                }
 
                 DB::table('wine_losses')->insert([
-                    'wine_id'                => $wine->id,
-                    'container_id'           => !empty($containers) ? $containers[mt_rand(0, count($containers) - 1)] : null,
-                    'loss_type'              => $lossTypes[$i % count($lossTypes)],
-                    'loss_authorization'     => $lossAuths[$i % count($lossAuths)],
-                    'quantity'               => round(mt_rand(15, 120), 2),
+                    'wine_id' => $wine->id,
+                    'container_id' => ! empty($containers) ? $containers[mt_rand(0, count($containers) - 1)] : null,
+                    'loss_type' => $lossTypes[$i % count($lossTypes)],
+                    'loss_authorization' => $lossAuths[$i % count($lossAuths)],
+                    'quantity' => round(mt_rand(15, 120), 2),
                     'unit_of_measurement_id' => $unitLiters,
-                    'loss_date'              => sprintf('%04d-%02d-%02d', $year, $month, mt_rand(1, 28)),
-                    'notes'                  => "Merma registrada — control periódico {$year}.",
-                    'created_at'             => $now,
-                    'updated_at'             => $now,
+                    'loss_date' => sprintf('%04d-%02d-%02d', $year, $month, mt_rand(1, 28)),
+                    'notes' => "Merma registrada — control periódico {$year}.",
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
                 $totalLosses++;
             }
@@ -485,38 +495,42 @@ class WinerySilicieDataSeeder extends Seeder
         // ═══════════════════════════════════════════════════════════════════
 
         $subproductTypes = ['pomace', 'lees', 'vinasse'];
-        $destinations    = ['alcohol', 'animal_feed', 'composting', 'distillery'];
+        $destinations = ['alcohol', 'animal_feed', 'composting', 'distillery'];
         $totalSubproducts = 0;
 
         foreach ([2023, 2024, 2025, 2026] as $year) {
             $yearWines = $wines->where('vintage', $year)->values();
-            if ($yearWines->isEmpty()) continue;
+            if ($yearWines->isEmpty()) {
+                continue;
+            }
 
             foreach ($subproductTypes as $spIdx => $spType) {
                 $count = mt_rand(1, 3);
                 for ($i = 0; $i < $count; $i++) {
-                    $wine  = $yearWines[$i % count($yearWines)];
+                    $wine = $yearWines[$i % count($yearWines)];
                     $month = $spType === 'pomace' ? mt_rand(9, 11) : mt_rand(1, 12);
-                    if ($year === 2026 && $month > 3) $month = mt_rand(1, 3);
+                    if ($year === 2026 && $month > 3) {
+                        $month = mt_rand(1, 3);
+                    }
 
                     DB::table('wine_subproducts')->insert([
-                        'user_id'          => self::WINERY_USER_ID,
-                        'created_by'       => self::WINERY_USER_ID,
-                        'wine_id'          => $wine->id,
-                        'type'             => $spType,
-                        'destination'      => $destinations[($spIdx + $i) % count($destinations)],
+                        'user_id' => self::WINERY_USER_ID,
+                        'created_by' => self::WINERY_USER_ID,
+                        'wine_id' => $wine->id,
+                        'type' => $spType,
+                        'destination' => $destinations[($spIdx + $i) % count($destinations)],
                         'destination_name' => match ($destinations[($spIdx + $i) % count($destinations)]) {
-                            'distillery'  => 'Destilería Canarias S.L.',
-                            'alcohol'     => 'Alcoholera del Sur',
+                            'distillery' => 'Destilería Canarias S.L.',
+                            'alcohol' => 'Alcoholera del Sur',
                             'animal_feed' => 'Ganadería Tamadaba',
-                            'composting'  => 'Compostaje Agro Norte',
+                            'composting' => 'Compostaje Agro Norte',
                         },
-                        'quantity'         => round(mt_rand(200, 2500), 2),
-                        'subproduct_date'  => sprintf('%04d-%02d-%02d', $year, $month, mt_rand(1, 28)),
-                        'lot_number'       => 'SUB-' . $year . '-' . str_pad($totalSubproducts + 1, 3, '0', STR_PAD_LEFT),
-                        'notes'            => "Subproducto {$spType} campaña {$year}.",
-                        'created_at'       => $now,
-                        'updated_at'       => $now,
+                        'quantity' => round(mt_rand(200, 2500), 2),
+                        'subproduct_date' => sprintf('%04d-%02d-%02d', $year, $month, mt_rand(1, 28)),
+                        'lot_number' => 'SUB-'.$year.'-'.str_pad($totalSubproducts + 1, 3, '0', STR_PAD_LEFT),
+                        'notes' => "Subproducto {$spType} campaña {$year}.",
+                        'created_at' => $now,
+                        'updated_at' => $now,
                     ]);
                     $totalSubproducts++;
                 }
@@ -543,7 +557,7 @@ class WinerySilicieDataSeeder extends Seeder
             ->where('user_id', self::WINERY_USER_ID)
             ->where(function ($q) {
                 $q->where('invoice_number', 'LIKE', 'FAC-2023-%')
-                  ->orWhere('invoice_number', 'LIKE', 'FAC-2024-%');
+                    ->orWhere('invoice_number', 'LIKE', 'FAC-2024-%');
             })
             ->pluck('id');
 

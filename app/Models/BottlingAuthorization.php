@@ -9,27 +9,17 @@ class BottlingAuthorization extends Model
 {
     const AUTHORIZATION_TYPES = [
         'standard' => 'Estándar',
-        'export'   => 'Exportación',
-        'organic'  => 'Ecológico',
-        'other'    => 'Otro',
+        'export' => 'Exportación',
+        'organic' => 'Ecológico',
+        'other' => 'Otro',
     ];
 
     const STATUSES = [
-        'active'    => 'Activa',
-        'used'      => 'Consumida',
-        'expired'   => 'Caducada',
+        'active' => 'Activa',
+        'used' => 'Consumida',
+        'expired' => 'Caducada',
         'cancelled' => 'Anulada',
     ];
-
-    public static function authorizationTypeOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::AUTHORIZATION_TYPES);
-    }
-
-    public static function statusOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::STATUSES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -46,10 +36,20 @@ class BottlingAuthorization extends Model
     ];
 
     protected $casts = [
-        'valid_from'               => 'date',
-        'valid_until'              => 'date',
+        'valid_from' => 'date',
+        'valid_until' => 'date',
         'authorized_volume_liters' => 'decimal:2',
     ];
+
+    public static function authorizationTypeOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::AUTHORIZATION_TYPES);
+    }
+
+    public static function statusOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::STATUSES);
+    }
 
     public function user(): BelongsTo
     {

@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Viticulturist\Machinery;
 
-use App\Models\Machinery;
 use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
+use App\Models\Machinery;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Index extends Component
 {
@@ -18,40 +18,48 @@ class Index extends Component
         'typeFilter' => ['except' => ''],
     ];
 
-    public function updatingTypeFilter() { $this->resetPage(); }
+    public function updatingTypeFilter()
+    {
+        $this->resetPage();
+    }
 
     public function toggleActive($machineryId)
     {
-        $user     = Auth::user();
+        $user = Auth::user();
         $machinery = Machinery::forViticulturist($user->id)->findOrFail($machineryId);
 
-        if (!$user->can('update', $machinery)) {
+        if (! $user->can('update', $machinery)) {
             abort(403);
         }
 
-        $newActive = !$machinery->active;
+        $newActive = ! $machinery->active;
         $machinery->update(['active' => $newActive]);
 
         if ($newActive) {
             $this->toastSuccess(__('Maquinaria activada exitosamente.'));
-            if ($this->currentTab === 'inactive') $this->currentTab = 'active';
+            if ($this->currentTab === 'inactive') {
+                $this->currentTab = 'active';
+            }
         } else {
             $this->toastSuccess(__('Maquinaria desactivada exitosamente.'));
-            if ($this->currentTab === 'active') $this->currentTab = 'inactive';
+            if ($this->currentTab === 'active') {
+                $this->currentTab = 'inactive';
+            }
         }
     }
 
     public function delete(int $machineryId): void
     {
-        $user      = Auth::user();
+        $user = Auth::user();
         $machinery = Machinery::forViticulturist($user->id)->findOrFail($machineryId);
 
-        if (!$user->can('delete', $machinery)) {
+        if (! $user->can('delete', $machinery)) {
             abort(403);
         }
 
         if ($machinery->activities()->exists()) {
             $this->toastError(__('No se puede eliminar maquinaria con actividades asociadas.'));
+
             return;
         }
 
@@ -61,7 +69,7 @@ class Index extends Component
 
     public function clearFilters()
     {
-        $this->search     = '';
+        $this->search = '';
         $this->typeFilter = '';
         $this->resetPage();
     }
@@ -75,12 +83,12 @@ class Index extends Component
             ->orderBy('name');
 
         if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
+            $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(brand) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(model) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(roma_registration) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(brand) LIKE ?', [$search])
+                    ->orWhereRaw('LOWER(model) LIKE ?', [$search])
+                    ->orWhereRaw('LOWER(roma_registration) LIKE ?', [$search]);
             });
         }
 
@@ -100,15 +108,15 @@ class Index extends Component
         $allMachinery = Machinery::forViticulturist($user->id)->select('active', 'type')->get();
         $types = $allMachinery->pluck('type')->filter()->unique()->sort()->values();
         $stats = [
-            'total'       => $allMachinery->count(),
-            'active'      => $allMachinery->where('active', true)->count(),
-            'inactive'    => $allMachinery->where('active', false)->count(),
+            'total' => $allMachinery->count(),
+            'active' => $allMachinery->where('active', true)->count(),
+            'inactive' => $allMachinery->where('active', false)->count(),
             'types_count' => $types->count(),
         ];
 
         return view('livewire.viticulturist.machinery.index', compact('machinery', 'types', 'stats'))
             ->layout('layouts.app', [
-                'title'       => __('Maquinaria Agrícola - Agro365'),
+                'title' => __('Maquinaria Agrícola - Agro365'),
                 'description' => __('Gestiona tu flota de maquinaria agrícola. Control de equipos, mantenimiento y registro de uso en actividades del viñedo.'),
             ]);
     }

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->json('photos')->nullable()->comment('Rutas de fotos');
             $table->boolean('active')->default(true)->comment('Activo/Inactivo');
             $table->timestamps();
-            
+
             $table->index('type');
             $table->index('active');
         });

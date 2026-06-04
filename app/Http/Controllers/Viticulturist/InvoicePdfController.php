@@ -20,16 +20,16 @@ class InvoicePdfController extends Controller
         app()->setLocale('es');
         $pdf = Pdf::loadView('reports.invoice', [
             'invoice' => $invoice,
-            'user'    => $invoice->user->load('profile.province'),
+            'user' => $invoice->user->load('profile.province'),
         ])
-        ->setPaper('A4', 'portrait')
-        ->setOption('defaultFont', 'DejaVu Sans')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isRemoteEnabled', false);
+            ->setPaper('A4', 'portrait')
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', false);
 
-        $date     = $invoice->invoice_date?->format('d-m-Y') ?? now()->format('d-m-Y');
-        $code     = str_replace(['/', '\\', ' '], '-', $invoice->invoice_number ?? $invoice->id);
-        $filename = 'factura_' . $code . '_' . $date . '.pdf';
+        $date = $invoice->invoice_date?->format('d-m-Y') ?? now()->format('d-m-Y');
+        $code = str_replace(['/', '\\', ' '], '-', $invoice->invoice_number ?? $invoice->id);
+        $filename = 'factura_'.$code.'_'.$date.'.pdf';
 
         return $pdf->download($filename);
     }
@@ -44,16 +44,16 @@ class InvoicePdfController extends Controller
         app()->setLocale('es');
         $pdf = Pdf::loadView('reports.delivery-note', [
             'invoice' => $invoice,
-            'user'    => $invoice->user->load('profile.province'),
+            'user' => $invoice->user->load('profile.province'),
         ])
-        ->setPaper('A4', 'portrait')
-        ->setOption('defaultFont', 'DejaVu Sans')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isRemoteEnabled', false);
+            ->setPaper('A4', 'portrait')
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', false);
 
-        $date     = $invoice->delivery_note_date?->format('d-m-Y') ?? $invoice->invoice_date?->format('d-m-Y') ?? now()->format('d-m-Y');
-        $code     = str_replace(['/', '\\', ' '], '-', $invoice->delivery_note_code ?? $invoice->invoice_number ?? $invoice->id);
-        $filename = 'albaran_' . $code . '_' . $date . '.pdf';
+        $date = $invoice->delivery_note_date?->format('d-m-Y') ?? $invoice->invoice_date?->format('d-m-Y') ?? now()->format('d-m-Y');
+        $code = str_replace(['/', '\\', ' '], '-', $invoice->delivery_note_code ?? $invoice->invoice_number ?? $invoice->id);
+        $filename = 'albaran_'.$code.'_'.$date.'.pdf';
 
         return $pdf->download($filename);
     }

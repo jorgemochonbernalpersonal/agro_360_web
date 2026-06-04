@@ -7,11 +7,9 @@ use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\ClientAddress;
-use App\Models\Container;
 use App\Models\GrapeVariety;
 use App\Models\Harvest;
 use App\Models\HarvestStock;
-use App\Models\Invoice;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\ProductLot;
@@ -33,10 +31,15 @@ use Tests\Feature\ProducerTestCase;
 class MixedInvoiceCreateTest extends ProducerTestCase
 {
     private \App\Models\User $producer;
+
     private Plot $plot;
+
     private PlotPlanting $planting;
+
     private Client $client;
+
     private ClientAddress $address;
+
     private Tax $tax;
 
     protected function setUp(): void
@@ -53,125 +56,42 @@ class MixedInvoiceCreateTest extends ProducerTestCase
 
         $this->plot = Plot::create([
             'viticulturist_id' => $this->producer->id,
-            'name'             => 'Parcela Producer Test',
-            'reference'        => 'PT-001',
-            'area'             => 3.0,
-            'active'           => true,
+            'name' => 'Parcela Producer Test',
+            'reference' => 'PT-001',
+            'area' => 3.0,
+            'active' => true,
         ]);
 
         $this->planting = PlotPlanting::create([
-            'plot_id'          => $this->plot->id,
+            'plot_id' => $this->plot->id,
             'grape_variety_id' => $grapeVariety->id,
-            'area_planted'     => 3.0,
-            'planting_year'    => now()->year - 5,
-            'status'           => 'active',
+            'area_planted' => 3.0,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
         ]);
 
         $this->client = Client::create([
-            'user_id'      => $this->producer->id,
-            'client_type'  => 'company',
+            'user_id' => $this->producer->id,
+            'client_type' => 'company',
             'company_name' => 'Restaurante Producer Test S.L.',
-            'email'        => 'cliente-producer@test.com',
-            'active'       => true,
+            'email' => 'cliente-producer@test.com',
+            'active' => true,
         ]);
 
         $this->address = ClientAddress::create([
-            'client_id'  => $this->client->id,
+            'client_id' => $this->client->id,
             'first_name' => 'Test',
-            'address'    => 'Calle Viñedo 1',
+            'address' => 'Calle Viñedo 1',
             'is_default' => true,
         ]);
 
         $this->tax = Tax::create([
-            'name'       => 'IVA 10%',
-            'code'       => 'IVA',
-            'rate'       => 10,
-            'active'     => true,
+            'name' => 'IVA 10%',
+            'code' => 'IVA',
+            'rate' => 10,
+            'active' => true,
             'is_default' => false,
         ]);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    /**
-     * Crea una cosecha de cuaderno (activity_id set, winery_id null) con su
-     * HarvestStock inicial, lista para ser facturada.
-     */
-    private function makeNotebookHarvest(float $weight = 500): Harvest
-    {
-        $campaign = Campaign::getOrCreateActiveForYear($this->producer->id, now()->year);
-
-        $activity = AgriculturalActivity::create([
-            'plot_id'          => $this->plot->id,
-            'viticulturist_id' => $this->producer->id,
-            'campaign_id'      => $campaign->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => now()->toDateString(),
-        ]);
-
-        $harvest = Harvest::withoutEvents(fn () => Harvest::create([
-            'activity_id'        => $activity->id,
-            'plot_planting_id'   => $this->planting->id,
-            'harvest_start_date' => now()->toDateString(),
-            'total_weight'       => $weight,
-            'status'             => 'active',
-        ]));
-
-        // Inicializar stock (ContainerStockService::initializeStock no aplica aquí
-        // porque la cosecha no tiene container_id; usamos ensureInitialStock vía reserveStock)
-        // → HarvestStock se auto-crea la primera vez que se reserva (ver ensureInitialStock)
-
-        return $harvest;
-    }
-
-    private function makeProductLot(int $available = 100): ProductLot
-    {
-        return ProductLot::create([
-            'user_id'            => $this->producer->id,
-            'name'               => 'Tempranillo Reserva 2021',
-            'available_quantity' => $available,
-            'reserved_quantity'  => 0,
-            'sold_quantity'      => 0,
-            'unit'               => 'botellas',
-            'price_per_unit'     => 8.50,
-            'archived'           => false,
-        ]);
-    }
-
-    private function harvestItem(int $harvestId, float $qty = 200): array
-    {
-        return [
-            'harvest_id'          => $harvestId,
-            'wine_lot_id'         => null,
-            'concept_type'        => 'harvest',
-            'name'                => 'Tempranillo - Parcela Producer Test',
-            'description'         => '',
-            'sku'                 => "HARV-{$harvestId}",
-            'quantity'            => $qty,
-            'unit'                => 'kg',
-            'available_qty'       => 500,
-            'unit_price'          => 0.45,
-            'discount_percentage' => 0,
-            'tax_id'              => $this->tax->id,
-        ];
-    }
-
-    private function wineItem(int $lotId, float $qty = 6): array
-    {
-        return [
-            'harvest_id'          => null,
-            'wine_lot_id'         => $lotId,
-            'concept_type'        => 'wine',
-            'name'                => 'Tempranillo Reserva 2021',
-            'description'         => '',
-            'sku'                 => '',
-            'quantity'            => $qty,
-            'unit'                => 'botella',
-            'available_qty'       => 100,
-            'unit_price'          => 8.50,
-            'discount_percentage' => 0,
-            'tax_id'              => $this->tax->id,
-        ];
     }
 
     // ── Crear con cosecha ─────────────────────────────────────────────────────
@@ -190,20 +110,20 @@ class MixedInvoiceCreateTest extends ProducerTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('invoices', [
-            'user_id'      => $this->producer->id,
+            'user_id' => $this->producer->id,
             'invoice_type' => 'producer_sale',
-            'status'       => 'draft',
+            'status' => 'draft',
         ]);
 
         $this->assertDatabaseHas('invoice_items', [
-            'harvest_id'   => $harvest->id,
+            'harvest_id' => $harvest->id,
             'concept_type' => 'harvest',
-            'quantity'     => 200,
+            'quantity' => 200,
         ]);
 
         // El stock de cosecha debe tener una entrada 'reserve'
         $this->assertDatabaseHas('harvest_stocks', [
-            'harvest_id'    => $harvest->id,
+            'harvest_id' => $harvest->id,
             'movement_type' => 'reserve',
         ]);
     }
@@ -244,9 +164,9 @@ class MixedInvoiceCreateTest extends ProducerTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('invoice_items', [
-            'wine_lot_id'  => $lot->id,
+            'wine_lot_id' => $lot->id,
             'concept_type' => 'wine',
-            'quantity'     => 12,
+            'quantity' => 12,
         ]);
 
         $lot->refresh();
@@ -259,7 +179,7 @@ class MixedInvoiceCreateTest extends ProducerTestCase
     public function test_create_mixed_invoice_with_harvest_and_wine_items(): void
     {
         $harvest = $this->makeNotebookHarvest(500);
-        $lot     = $this->makeProductLot(50);
+        $lot = $this->makeProductLot(50);
 
         Livewire::test(Create::class)
             ->set('client_id', (string) $this->client->id)
@@ -275,7 +195,7 @@ class MixedInvoiceCreateTest extends ProducerTestCase
 
         // Cosecha reservada
         $this->assertDatabaseHas('harvest_stocks', [
-            'harvest_id'    => $harvest->id,
+            'harvest_id' => $harvest->id,
             'movement_type' => 'reserve',
         ]);
 
@@ -318,14 +238,14 @@ class MixedInvoiceCreateTest extends ProducerTestCase
     public function test_producer_cannot_use_another_producers_lot(): void
     {
         $otherProducer = $this->makeOtherProducer();
-        $foreignLot    = ProductLot::create([
-            'user_id'            => $otherProducer->id,
-            'name'               => 'Lote Ajeno',
+        $foreignLot = ProductLot::create([
+            'user_id' => $otherProducer->id,
+            'name' => 'Lote Ajeno',
             'available_quantity' => 100,
-            'reserved_quantity'  => 0,
-            'sold_quantity'      => 0,
-            'unit'               => 'botellas',
-            'archived'           => false,
+            'reserved_quantity' => 0,
+            'sold_quantity' => 0,
+            'unit' => 'botellas',
+            'archived' => false,
         ]);
 
         Livewire::test(Create::class)
@@ -359,13 +279,96 @@ class MixedInvoiceCreateTest extends ProducerTestCase
             'harvest_id' => $foreignHarvest->id,
         ]);
         $this->assertDatabaseMissing('harvest_stocks', [
-            'harvest_id'    => $foreignHarvest->id,
+            'harvest_id' => $foreignHarvest->id,
             'movement_type' => 'reserve',
         ]);
         $this->assertDatabaseMissing('invoices', [
-            'user_id'      => $this->producer->id,
+            'user_id' => $this->producer->id,
             'invoice_type' => 'producer_sale',
         ]);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    /**
+     * Crea una cosecha de cuaderno (activity_id set, winery_id null) con su
+     * HarvestStock inicial, lista para ser facturada.
+     */
+    private function makeNotebookHarvest(float $weight = 500): Harvest
+    {
+        $campaign = Campaign::getOrCreateActiveForYear($this->producer->id, now()->year);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $this->plot->id,
+            'viticulturist_id' => $this->producer->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'harvest',
+            'activity_date' => now()->toDateString(),
+        ]);
+
+        $harvest = Harvest::withoutEvents(fn () => Harvest::create([
+            'activity_id' => $activity->id,
+            'plot_planting_id' => $this->planting->id,
+            'harvest_start_date' => now()->toDateString(),
+            'total_weight' => $weight,
+            'status' => 'active',
+        ]));
+
+        // Inicializar stock (ContainerStockService::initializeStock no aplica aquí
+        // porque la cosecha no tiene container_id; usamos ensureInitialStock vía reserveStock)
+        // → HarvestStock se auto-crea la primera vez que se reserva (ver ensureInitialStock)
+
+        return $harvest;
+    }
+
+    private function makeProductLot(int $available = 100): ProductLot
+    {
+        return ProductLot::create([
+            'user_id' => $this->producer->id,
+            'name' => 'Tempranillo Reserva 2021',
+            'available_quantity' => $available,
+            'reserved_quantity' => 0,
+            'sold_quantity' => 0,
+            'unit' => 'botellas',
+            'price_per_unit' => 8.50,
+            'archived' => false,
+        ]);
+    }
+
+    private function harvestItem(int $harvestId, float $qty = 200): array
+    {
+        return [
+            'harvest_id' => $harvestId,
+            'wine_lot_id' => null,
+            'concept_type' => 'harvest',
+            'name' => 'Tempranillo - Parcela Producer Test',
+            'description' => '',
+            'sku' => "HARV-{$harvestId}",
+            'quantity' => $qty,
+            'unit' => 'kg',
+            'available_qty' => 500,
+            'unit_price' => 0.45,
+            'discount_percentage' => 0,
+            'tax_id' => $this->tax->id,
+        ];
+    }
+
+    private function wineItem(int $lotId, float $qty = 6): array
+    {
+        return [
+            'harvest_id' => null,
+            'wine_lot_id' => $lotId,
+            'concept_type' => 'wine',
+            'name' => 'Tempranillo Reserva 2021',
+            'description' => '',
+            'sku' => '',
+            'quantity' => $qty,
+            'unit' => 'botella',
+            'available_qty' => 100,
+            'unit_price' => 8.50,
+            'discount_percentage' => 0,
+            'tax_id' => $this->tax->id,
+        ];
     }
 
     /**
@@ -381,36 +384,36 @@ class MixedInvoiceCreateTest extends ProducerTestCase
 
         $plot = Plot::create([
             'viticulturist_id' => $owner->id,
-            'name'             => 'Parcela Ajena',
-            'reference'        => 'PA-999',
-            'area'             => 2.0,
-            'active'           => true,
+            'name' => 'Parcela Ajena',
+            'reference' => 'PA-999',
+            'area' => 2.0,
+            'active' => true,
         ]);
 
         $planting = PlotPlanting::create([
-            'plot_id'          => $plot->id,
+            'plot_id' => $plot->id,
             'grape_variety_id' => $grapeVariety->id,
-            'area_planted'     => 2.0,
-            'planting_year'    => now()->year - 5,
-            'status'           => 'active',
+            'area_planted' => 2.0,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
         ]);
 
         $campaign = Campaign::getOrCreateActiveForYear($owner->id, now()->year);
 
         $activity = AgriculturalActivity::create([
-            'plot_id'          => $plot->id,
+            'plot_id' => $plot->id,
             'viticulturist_id' => $owner->id,
-            'campaign_id'      => $campaign->id,
-            'activity_type'    => 'harvest',
-            'activity_date'    => now()->toDateString(),
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'harvest',
+            'activity_date' => now()->toDateString(),
         ]);
 
         return Harvest::withoutEvents(fn () => Harvest::create([
-            'activity_id'        => $activity->id,
-            'plot_planting_id'   => $planting->id,
+            'activity_id' => $activity->id,
+            'plot_planting_id' => $planting->id,
             'harvest_start_date' => now()->toDateString(),
-            'total_weight'       => $weight,
-            'status'             => 'active',
+            'total_weight' => $weight,
+            'status' => 'active',
         ]));
     }
 }

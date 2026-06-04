@@ -37,10 +37,10 @@ class TastingNotesTest extends WineryTestCase
     public function test_create_saves_tasting_note(): void
     {
         $wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Test Wine',
+            'user_id' => $this->winery->id,
+            'name' => 'Test Wine',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         Livewire::test(Create::class)
@@ -51,8 +51,8 @@ class TastingNotesTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_tasting_notes', [
-            'user_id'        => $this->winery->id,
-            'wine_id'        => $wine->id,
+            'user_id' => $this->winery->id,
+            'wine_id' => $wine->id,
             'evaluator_name' => 'Expert',
         ]);
     }
@@ -62,18 +62,18 @@ class TastingNotesTest extends WineryTestCase
         $otherWinery = $this->makeOtherWinery();
 
         $wine = Wine::create([
-            'user_id'   => $this->winery->id,
-            'name'      => 'Test Wine',
+            'user_id' => $this->winery->id,
+            'name' => 'Test Wine',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         $tastingNote = WineTastingNote::create([
-            'user_id'         => $this->winery->id,
-            'wine_id'         => $wine->id,
+            'user_id' => $this->winery->id,
+            'wine_id' => $wine->id,
             'evaluation_date' => today(),
-            'evaluator_name'  => 'Test',
-            'created_by'      => $this->winery->id,
+            'evaluator_name' => 'Test',
+            'created_by' => $this->winery->id,
         ]);
 
         $this->actingAs($otherWinery)

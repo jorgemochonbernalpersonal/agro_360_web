@@ -3,13 +3,10 @@
 namespace Tests\Feature\Api;
 
 use App\Models\AgriculturalActivity;
-use App\Models\CulturalWork;
 use App\Models\Fertilization;
 use App\Models\Irrigation;
 use App\Models\Observation;
-use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
-use App\Models\PostHarvestTreatment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,6 +16,7 @@ class NotebookApiTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Plot $plot;
 
     protected function setUp(): void
@@ -27,20 +25,6 @@ class NotebookApiTest extends TestCase
 
         $this->user = User::factory()->viticulturist()->create(['can_login' => true]);
         $this->plot = Plot::factory()->forViticulturist($this->user)->create();
-    }
-
-    private function base(array $override = []): array
-    {
-        return array_merge([
-            'activity_type' => 'phenology',
-            'plot_id'       => $this->plot->id,
-            'activity_date' => '2026-03-15',
-        ], $override);
-    }
-
-    private function actingAsUser()
-    {
-        return $this->actingAs($this->user, 'sanctum');
     }
 
     // ─── GET /viticulturist/notebook ──────────────────────────────────────────
@@ -137,17 +121,17 @@ class NotebookApiTest extends TestCase
     {
         $this->actingAsUser()
             ->postJson('/api/v1/viticulturist/notebook', $this->base([
-                'activity_type'      => 'phenology',
+                'activity_type' => 'phenology',
                 'phenological_stage' => 'brotación',
-                'notes'              => 'Inicio de brotación',
+                'notes' => 'Inicio de brotación',
             ]))
             ->assertStatus(201)
             ->assertJsonPath('data.activity_type', 'phenology')
             ->assertJsonPath('data.phenological_stage', 'brotación');
 
         $this->assertDatabaseHas('agricultural_activities', [
-            'activity_type'      => 'phenology',
-            'viticulturist_id'   => $this->user->id,
+            'activity_type' => 'phenology',
+            'viticulturist_id' => $this->user->id,
             'phenological_stage' => 'brotación',
         ]);
     }
@@ -158,10 +142,10 @@ class NotebookApiTest extends TestCase
     {
         $this->actingAsUser()
             ->postJson('/api/v1/viticulturist/notebook', $this->base([
-                'activity_type'     => 'irrigation',
-                'water_volume'      => 500,
+                'activity_type' => 'irrigation',
+                'water_volume' => 500,
                 'water_volume_unit' => 'L',
-                'duration_minutes'  => 60,
+                'duration_minutes' => 60,
                 'is_fertirrigation' => false,
             ]))
             ->assertStatus(201)
@@ -172,9 +156,9 @@ class NotebookApiTest extends TestCase
             ->first()->id;
 
         $this->assertDatabaseHas('irrigations', [
-            'activity_id'       => $activityId,
+            'activity_id' => $activityId,
             'water_volume_unit' => 'L',
-            'duration_minutes'  => 60,
+            'duration_minutes' => 60,
         ]);
     }
 
@@ -182,8 +166,8 @@ class NotebookApiTest extends TestCase
     {
         $this->actingAsUser()
             ->postJson('/api/v1/viticulturist/notebook', $this->base([
-                'activity_type'     => 'irrigation',
-                'water_volume'      => 300.5,
+                'activity_type' => 'irrigation',
+                'water_volume' => 300.5,
                 'water_volume_unit' => 'L',
             ]))
             ->assertStatus(201)
@@ -196,10 +180,10 @@ class NotebookApiTest extends TestCase
     {
         $this->actingAsUser()
             ->postJson('/api/v1/viticulturist/notebook', $this->base([
-                'activity_type'   => 'fertilization',
+                'activity_type' => 'fertilization',
                 'fertilizer_name' => 'Nitrato amónico',
-                'quantity'        => 150,
-                'nitrogen_uf'     => 80,
+                'quantity' => 150,
+                'nitrogen_uf' => 80,
             ]))
             ->assertStatus(201);
 
@@ -208,7 +192,7 @@ class NotebookApiTest extends TestCase
             ->first()->id;
 
         $this->assertDatabaseHas('fertilizations', [
-            'activity_id'     => $activityId,
+            'activity_id' => $activityId,
             'fertilizer_name' => 'Nitrato amónico',
         ]);
     }
@@ -219,11 +203,11 @@ class NotebookApiTest extends TestCase
     {
         $this->actingAsUser()
             ->postJson('/api/v1/viticulturist/notebook', $this->base([
-                'activity_type'     => 'cultural',
-                'work_type'         => 'deshojado',
-                'hours_worked'      => 4.5,
-                'workers_count'     => 3,
-                'residue_management'=> 'triturado_incorporado',
+                'activity_type' => 'cultural',
+                'work_type' => 'deshojado',
+                'hours_worked' => 4.5,
+                'workers_count' => 3,
+                'residue_management' => 'triturado_incorporado',
             ]))
             ->assertStatus(201);
 
@@ -232,9 +216,9 @@ class NotebookApiTest extends TestCase
             ->first()->id;
 
         $this->assertDatabaseHas('cultural_works', [
-            'activity_id'       => $activityId,
-            'work_type'         => 'deshojado',
-            'residue_management'=> 'triturado_incorporado',
+            'activity_id' => $activityId,
+            'work_type' => 'deshojado',
+            'residue_management' => 'triturado_incorporado',
         ]);
     }
 
@@ -244,8 +228,8 @@ class NotebookApiTest extends TestCase
     {
         $this->actingAsUser()
             ->postJson('/api/v1/viticulturist/notebook', $this->base([
-                'activity_type'               => 'pruning',
-                'pruning_type'                => 'doble_cordón',
+                'activity_type' => 'pruning',
+                'pruning_type' => 'doble_cordón',
                 'productive_buds_per_hectare' => 12000,
             ]))
             ->assertStatus(201);
@@ -255,8 +239,8 @@ class NotebookApiTest extends TestCase
             ->first()->id;
 
         $this->assertDatabaseHas('cultural_works', [
-            'activity_id'  => $activityId,
-            'work_type'    => 'pruning',
+            'activity_id' => $activityId,
+            'work_type' => 'pruning',
             'pruning_type' => 'doble_cordón',
         ]);
     }
@@ -267,11 +251,11 @@ class NotebookApiTest extends TestCase
     {
         $this->actingAsUser()
             ->postJson('/api/v1/viticulturist/notebook', $this->base([
-                'activity_type'            => 'observation',
-                'observation_type'         => 'IPM',
-                'severity'                 => 'moderada',
+                'activity_type' => 'observation',
+                'observation_type' => 'IPM',
+                'severity' => 'moderada',
                 'affected_area_percentage' => 15.5,
-                'threshold_exceeded'       => true,
+                'threshold_exceeded' => true,
             ]))
             ->assertStatus(201);
 
@@ -280,7 +264,7 @@ class NotebookApiTest extends TestCase
             ->first()->id;
 
         $this->assertDatabaseHas('observations', [
-            'activity_id'      => $activityId,
+            'activity_id' => $activityId,
             'observation_type' => 'IPM',
             'threshold_exceeded' => true,
         ]);
@@ -302,20 +286,20 @@ class NotebookApiTest extends TestCase
     public function test_store_phytosanitary_creates_treatment(): void
     {
         $product = \App\Models\PhytosanitaryProduct::create([
-            'registration_number'   => 'ES-TEST-0001',
-            'name'                  => 'Fungicida Test',
-            'active_ingredient'     => 'Cobre',
-            'manufacturer'          => 'Test Corp',
-            'type'                  => 'fungicide',
-            'withdrawal_period_days'=> 7,
+            'registration_number' => 'ES-TEST-0001',
+            'name' => 'Fungicida Test',
+            'active_ingredient' => 'Cobre',
+            'manufacturer' => 'Test Corp',
+            'type' => 'fungicide',
+            'withdrawal_period_days' => 7,
         ]);
 
         $this->actingAsUser()
             ->postJson('/api/v1/viticulturist/notebook', $this->base([
-                'activity_type'           => 'phytosanitary',
-                'product_id'              => $product->id,
-                'dose_per_hectare'        => 2.5,
-                'area_treated'            => 1.2,
+                'activity_type' => 'phytosanitary',
+                'product_id' => $product->id,
+                'dose_per_hectare' => 2.5,
+                'area_treated' => 1.2,
                 'treatment_justification' => 'Prevención mildiu',
             ]))
             ->assertStatus(201)
@@ -327,7 +311,7 @@ class NotebookApiTest extends TestCase
 
         $this->assertDatabaseHas('phytosanitary_treatments', [
             'activity_id' => $activityId,
-            'product_id'  => $product->id,
+            'product_id' => $product->id,
         ]);
     }
 
@@ -348,10 +332,10 @@ class NotebookApiTest extends TestCase
     {
         $this->actingAsUser()
             ->postJson('/api/v1/viticulturist/notebook', $this->base([
-                'activity_type'          => 'post_harvest',
-                'application_type'       => 'copper_treatment',
-                'treated_area_ha'        => 2.0,
-                'dose_per_hectare'       => 3.0,
+                'activity_type' => 'post_harvest',
+                'application_type' => 'copper_treatment',
+                'treated_area_ha' => 2.0,
+                'dose_per_hectare' => 3.0,
                 'reentry_interval_hours' => 24,
             ]))
             ->assertStatus(201);
@@ -361,8 +345,8 @@ class NotebookApiTest extends TestCase
             ->first()->id;
 
         $this->assertDatabaseHas('post_harvest_treatments', [
-            'activity_id'            => $activityId,
-            'application_type'       => 'copper_treatment',
+            'activity_id' => $activityId,
+            'application_type' => 'copper_treatment',
             'reentry_interval_hours' => 24,
         ]);
     }
@@ -419,7 +403,7 @@ class NotebookApiTest extends TestCase
             ->assertJsonPath('data.notes', 'Actualizado');
 
         $this->assertDatabaseHas('agricultural_activities', [
-            'id'    => $activity->id,
+            'id' => $activity->id,
             'notes' => 'Actualizado',
         ]);
     }
@@ -432,8 +416,8 @@ class NotebookApiTest extends TestCase
             ->create(['activity_type' => 'irrigation']);
 
         Irrigation::create([
-            'activity_id'   => $activity->id,
-            'water_volume'  => 100,
+            'activity_id' => $activity->id,
+            'water_volume' => 100,
             'duration_minutes' => 30,
         ]);
 
@@ -444,7 +428,7 @@ class NotebookApiTest extends TestCase
             ->assertStatus(200);
 
         $this->assertDatabaseHas('irrigations', [
-            'activity_id'      => $activity->id,
+            'activity_id' => $activity->id,
             'duration_minutes' => 90,
         ]);
     }
@@ -534,5 +518,19 @@ class NotebookApiTest extends TestCase
         $this->actingAs($winery, 'sanctum')
             ->getJson('/api/v1/viticulturist/notebook')
             ->assertStatus(403);
+    }
+
+    private function base(array $override = []): array
+    {
+        return array_merge([
+            'activity_type' => 'phenology',
+            'plot_id' => $this->plot->id,
+            'activity_date' => '2026-03-15',
+        ], $override);
+    }
+
+    private function actingAsUser()
+    {
+        return $this->actingAs($this->user, 'sanctum');
     }
 }

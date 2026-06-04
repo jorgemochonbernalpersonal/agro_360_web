@@ -215,4 +215,3 @@ class VisibilityTest extends TestCase
         $this->assertEquals($winery2Viticulturist->id, $visibleWinery2->first()->viticulturist_id);
     }
 }
-

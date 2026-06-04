@@ -13,7 +13,7 @@ class VerifyEmailNotification extends VerifyEmail
 
         $isWinery = $notifiable->hasWineryAccess();
 
-        $roleLabel   = $isWinery ? 'bodega' : 'viticultor';
+        $roleLabel = $isWinery ? 'bodega' : 'viticultor';
         $description = $isWinery
             ? 'tu plataforma de gestión de vendimia, viticultores y bodega digital.'
             : 'tu cuaderno de campo digital para viticultores.';

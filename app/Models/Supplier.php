@@ -8,18 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Supplier extends Model
 {
     const CATEGORIES = [
-        'grape'     => 'Proveedor de uva',
+        'grape' => 'Proveedor de uva',
         'packaging' => 'Envases y embalaje',
         'chemicals' => 'Productos enológicos',
         'equipment' => 'Maquinaria y equipos',
-        'services'  => 'Servicios',
-        'other'     => 'Otro',
+        'services' => 'Servicios',
+        'other' => 'Otro',
     ];
-
-    public static function categoryOptions(): array
-    {
-        return array_map(fn ($v) => __($v), static::CATEGORIES);
-    }
 
     protected $fillable = [
         'user_id',
@@ -37,6 +32,11 @@ class Supplier extends Model
     protected $casts = [
         'active' => 'boolean',
     ];
+
+    public static function categoryOptions(): array
+    {
+        return array_map(fn ($v) => __($v), static::CATEGORIES);
+    }
 
     public function user(): BelongsTo
     {

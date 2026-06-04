@@ -56,17 +56,17 @@ class FieldActivityController extends Controller
             $query->whereDate('activity_date', '<=', $request->input('to'));
         }
 
-        $perPage     = $this->resolvePerPage($request, 20, 100);
-        $activities  = $query->paginate($perPage);
+        $perPage = $this->resolvePerPage($request, 20, 100);
+        $activities = $query->paginate($perPage);
 
         return response()->json([
             'data' => ActivityResource::collection($activities),
             'meta' => [
-                'total'        => $activities->total(),
-                'per_page'     => $activities->perPage(),
+                'total' => $activities->total(),
+                'per_page' => $activities->perPage(),
                 'current_page' => $activities->currentPage(),
-                'last_page'    => $activities->lastPage(),
-                'types'        => AgriculturalActivity::activityTypes(),
+                'last_page' => $activities->lastPage(),
+                'types' => AgriculturalActivity::activityTypes(),
             ],
         ]);
     }

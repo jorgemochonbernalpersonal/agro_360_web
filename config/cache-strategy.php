@@ -23,16 +23,16 @@ return [
     'ttl' => [
         // Cache de corta duración (datos que cambian frecuentemente)
         'short' => 300,      // 5 minutos
-        
+
         // Cache media (datos que cambian ocasionalmente)
         'medium' => 3600,    // 1 hora
-        
+
         // Cache larga (datos que raramente cambian)
         'long' => 86400,     // 24 horas
-        
+
         // Cache muy larga (catálogos, geografía)
         'very_long' => 604800, // 1 semana
-        
+
         // Específicos
         'campaigns' => 86400,      // 24 horas
         'plots' => 43200,          // 12 horas
