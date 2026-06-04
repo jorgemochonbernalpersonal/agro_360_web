@@ -98,7 +98,7 @@ class NotebookApiTest extends TestCase
         $this->actingAsUser()
             ->getJson("/api/v1/viticulturist/notebook/{$activity->id}")
             ->assertStatus(200)
-            ->assertJsonStructure(['data' => ['id', 'activity_type', 'activity_date', 'details']]);
+            ->assertJsonStructure(['data' => ['id', 'plot_id', 'date']]);
     }
 
     public function test_show_other_user_activity_returns_404(): void

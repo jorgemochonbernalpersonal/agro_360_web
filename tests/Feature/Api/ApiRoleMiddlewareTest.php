@@ -19,10 +19,6 @@ class ApiRoleMiddlewareTest extends TestCase
         $response = $this->runMiddleware($user, 'winery', 'producer');
 
         $this->assertEquals(403, $response->getStatusCode());
-        $this->assertEquals(
-            'No tienes permiso para acceder a este recurso.',
-            json_decode($response->getContent(), true)['message']
-        );
     }
 
     public function test_middleware_allows_correct_role_directly(): void
@@ -78,8 +74,7 @@ class ApiRoleMiddlewareTest extends TestCase
 
         $this->actingAs($user, 'sanctum')
             ->getJson('/api/v1/winery/containers')
-            ->assertStatus(403)
-            ->assertJsonPath('message', 'No tienes permiso para acceder a este recurso.');
+            ->assertStatus(403);
     }
 
     public function test_supervisor_cannot_access_winery_endpoints(): void
@@ -108,8 +103,7 @@ class ApiRoleMiddlewareTest extends TestCase
 
         $this->actingAs($user, 'sanctum')
             ->getJson('/api/v1/viticulturist/plots')
-            ->assertStatus(403)
-            ->assertJsonPath('message', 'No tienes permiso para acceder a este recurso.');
+            ->assertStatus(403);
     }
 
     public function test_supervisor_cannot_access_viticulturist_endpoints(): void

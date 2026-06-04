@@ -25,8 +25,10 @@ class AuthApiTest extends TestCase
             'role' => 'winery',
         ]);
 
+        // El registro no emite token hasta verificar email
         $response->assertStatus(201)
-            ->assertJsonStructure(['token', 'expires_in', 'user' => ['id', 'email', 'role']]);
+            ->assertJsonStructure(['message', 'email_unverified', 'user' => ['id', 'email', 'role']])
+            ->assertJsonPath('email_unverified', true);
 
         $this->assertDatabaseHas('users', ['email' => 'testuser@gmail.com', 'role' => 'winery']);
     }
