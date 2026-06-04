@@ -10,7 +10,8 @@ class RedirectProducerToViticulturistPlots
     public function handle(Request $request, Closure $next)
     {
         if (auth()->user()?->isProducer()) {
-            $path = ltrim(str_replace('/winery', '', $request->getPathInfo()), '/');
+            $pathInfo = $request->getPathInfo();
+            $path = ltrim(preg_replace('#^/winery(?=/|$)#', '', $pathInfo), '/');
             $qs = $request->getQueryString();
             return redirect('/' . $path . ($qs ? '?' . $qs : ''));
         }

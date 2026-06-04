@@ -76,6 +76,8 @@ class CreateCulturalWork extends AbstractActivityForm
             \Log::error('Error al registrar labor cultural', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError(__('Error al registrar la labor cultural. Por favor, intenta de nuevo.'));
         }
+
+        return null;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────

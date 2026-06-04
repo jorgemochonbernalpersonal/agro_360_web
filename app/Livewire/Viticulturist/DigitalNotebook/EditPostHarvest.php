@@ -103,6 +103,8 @@ class EditPostHarvest extends AbstractActivityForm
             \Log::error('Error al actualizar tratamiento post-vendimia', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
             $this->toastError(__('Error al actualizar el tratamiento. Por favor, intenta de nuevo.'));
         }
+
+        return null;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────

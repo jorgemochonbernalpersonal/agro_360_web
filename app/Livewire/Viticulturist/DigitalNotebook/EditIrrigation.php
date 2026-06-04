@@ -111,6 +111,8 @@ class EditIrrigation extends AbstractActivityForm
             \Log::error('Error al actualizar riego', ['error' => $e->getMessage(), 'user_id' => Auth::id(), 'activity_id' => $this->activity->id]);
             $this->toastError(__('Error al actualizar el riego. Por favor, intenta de nuevo.'));
         }
+
+        return null;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────

@@ -25,6 +25,7 @@ abstract class SupervisorTestCase extends TestCase
         $supervisor = User::factory()->create([
             'role'              => 'supervisor',
             'email_verified_at' => now(),
+            'can_login'         => true,
         ]);
 
         $winery = User::factory()->create([
@@ -47,6 +48,7 @@ abstract class SupervisorTestCase extends TestCase
         return User::factory()->create([
             'role'              => 'supervisor',
             'email_verified_at' => now(),
+            'can_login'         => true,
         ]);
     }
 

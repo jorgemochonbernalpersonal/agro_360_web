@@ -174,6 +174,8 @@ class CreatePhytosanitaryTreatment extends AbstractActivityForm
             \Log::error('Error al registrar tratamiento fitosanitario', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError(__('Error al registrar el tratamiento fitosanitario. Por favor, intenta de nuevo.'));
         }
+
+        return null;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────

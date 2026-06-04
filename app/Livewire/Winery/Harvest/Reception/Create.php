@@ -461,6 +461,8 @@ class Create extends Component
             ]);
             $this->toastError(__('Error al guardar la recepción. Inténtalo de nuevo.'));
         }
+
+        return null;
     }
 
     // ── Render ───────────────────────────────────────────────────────────────

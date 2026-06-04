@@ -4,33 +4,35 @@ namespace App\Livewire\Supervisor\Census;
 
 use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
-use App\Models\WineryViticulturist;
 use App\Models\User;
+use App\Models\WineryViticulturist;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class Index extends Component
 {
     use WithPagination;
 
     public string $currentTab = 'wineries'; // 'wineries' | 'viticulturists'
+
     public string $search = '';
 
-    public bool   $showAssignModal = false;
-    public string $assignSearch    = '';
+    public bool $showAssignModal = false;
+
+    public string $assignSearch = '';
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'wineries'],
-        'search'     => ['except' => ''],
+        'search' => ['except' => ''],
     ];
 
     public function switchTab(string $tab): void
     {
         $this->currentTab = $tab;
-        $this->search     = '';
+        $this->search = '';
         $this->resetPage();
     }
 
@@ -47,14 +49,14 @@ class Index extends Component
 
     public function openAssignModal(): void
     {
-        $this->assignSearch    = '';
+        $this->assignSearch = '';
         $this->showAssignModal = true;
     }
 
     public function closeAssignModal(): void
     {
         $this->showAssignModal = false;
-        $this->assignSearch    = '';
+        $this->assignSearch = '';
     }
 
     public function assignWinery(int $wineryId): void
@@ -66,7 +68,7 @@ class Index extends Component
         SupervisorWinery::firstOrCreate(
             [
                 'supervisor_id' => Auth::id(),
-                'winery_id'     => $winery->id,
+                'winery_id' => $winery->id,
             ],
             ['assigned_by' => Auth::id()]
         );
@@ -76,10 +78,19 @@ class Index extends Component
 
     public function unassignWinery(int $wineryId): void
     {
-        SupervisorWinery::where('supervisor_id', Auth::id())
+        $relation = SupervisorWinery::where('supervisor_id', Auth::id())
             ->where('winery_id', $wineryId)
-            ->firstOrFail()
-            ->delete();
+            ->firstOrFail();
+
+        // Regla de negocio: una D.O. debe mantener al menos una bodega asociada.
+        // Una D.O. sin bodegas no tiene nada que supervisar (interfaz vacía).
+        if (SupervisorWinery::where('supervisor_id', Auth::id())->count() <= 1) {
+            $this->dispatch('toast', message: __('Una denominación de origen debe mantener al menos una bodega asociada.'), type: 'error');
+
+            return;
+        }
+
+        $relation->delete();
 
         $this->dispatch('toast', message: __('Bodega desadscrita de la denominación.'), type: 'warning');
     }
@@ -105,10 +116,10 @@ class Index extends Component
             $query = User::whereIn('id', $wineryIds);
 
             if ($this->search) {
-                $search = '%' . strtolower($this->search) . '%';
+                $search = '%'.strtolower($this->search).'%';
                 $query->where(function ($q) use ($search) {
                     $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                      ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
+                        ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
                 });
             }
 
@@ -120,14 +131,14 @@ class Index extends Component
             $query = User::whereIn('id', $viticulturistIds)->withCount('plots');
 
             if ($this->search) {
-                $search = '%' . strtolower($this->search) . '%';
+                $search = '%'.strtolower($this->search).'%';
                 $query->where(function ($q) use ($search) {
                     $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                      ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
+                        ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
                 });
             }
 
-            $items            = $query->orderBy('name')->paginate(15);
+            $items = $query->orderBy('name')->paginate(15);
             $vitCountByWinery = collect();
         }
 
@@ -141,10 +152,10 @@ class Index extends Component
                 ->whereNotIn('id', $assignedWineryIds);
 
             if ($this->assignSearch) {
-                $s = '%' . strtolower($this->assignSearch) . '%';
+                $s = '%'.strtolower($this->assignSearch).'%';
                 $availableQuery->where(function ($q) use ($s) {
                     $q->whereRaw('LOWER(name) LIKE ?', [$s])
-                      ->orWhereRaw('LOWER(email) LIKE ?', [$s]);
+                        ->orWhereRaw('LOWER(email) LIKE ?', [$s]);
                 });
             }
 
@@ -152,11 +163,11 @@ class Index extends Component
         }
 
         return view('livewire.supervisor.census.index', [
-            'items'              => $items,
-            'wineryCount'        => $wineryCount,
+            'items' => $items,
+            'wineryCount' => $wineryCount,
             'viticulturistCount' => $viticulturistCount,
-            'vitCountByWinery'   => $vitCountByWinery ?? collect(),
-            'availableWineries'  => $availableWineries,
+            'vitCountByWinery' => $vitCountByWinery ?? collect(),
+            'availableWineries' => $availableWineries,
         ]);
     }
 }

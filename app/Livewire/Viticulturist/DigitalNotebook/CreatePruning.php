@@ -84,6 +84,8 @@ class CreatePruning extends AbstractActivityForm
             \Log::error('Error al registrar poda', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError(__('Error al registrar la poda. Por favor, intenta de nuevo.'));
         }
+
+        return null;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────

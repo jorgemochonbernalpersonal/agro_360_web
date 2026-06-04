@@ -90,6 +90,8 @@ class CreateIrrigation extends AbstractActivityForm
             \Log::error('Error al registrar riego', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError(__('Error al registrar el riego. Por favor, intenta de nuevo.'));
         }
+
+        return null;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────

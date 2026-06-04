@@ -310,6 +310,8 @@ class Edit extends Component
             ]);
             $this->toastError(__('Error al guardar la recepción: :error', ['error' => $e->getMessage()]));
         }
+
+        return null;
     }
 
     public function render()

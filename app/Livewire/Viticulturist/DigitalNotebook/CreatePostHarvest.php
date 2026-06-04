@@ -97,6 +97,8 @@ class CreatePostHarvest extends AbstractActivityForm
             \Log::error('Error al registrar tratamiento post-vendimia', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError(__('Error al registrar el tratamiento. Por favor, intenta de nuevo.'));
         }
+
+        return null;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────

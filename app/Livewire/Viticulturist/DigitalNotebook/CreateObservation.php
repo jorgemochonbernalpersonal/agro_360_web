@@ -94,6 +94,8 @@ class CreateObservation extends AbstractActivityForm
             \Log::error('Error al registrar observación', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError(__('Error al registrar la observación. Por favor, intenta de nuevo.'));
         }
+
+        return null;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────

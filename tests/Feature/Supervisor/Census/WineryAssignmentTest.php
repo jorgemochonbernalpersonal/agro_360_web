@@ -67,7 +67,15 @@ class WineryAssignmentTest extends SupervisorTestCase
 
     public function test_supervisor_can_unassign_winery(): void
     {
+        // La D.O. debe mantener al menos una bodega, así que partimos de dos
+        // para poder desadscribir una.
         [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+        $second = $this->makeWinery();
+        SupervisorWinery::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id'     => $second->id,
+            'assigned_by'   => $supervisor->id,
+        ]);
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
@@ -75,6 +83,23 @@ class WineryAssignmentTest extends SupervisorTestCase
             ->assertDispatched('toast');
 
         $this->assertDatabaseMissing('supervisor_winery', [
+            'supervisor_id' => $supervisor->id,
+            'winery_id'     => $winery->id,
+        ]);
+    }
+
+    public function test_supervisor_cannot_unassign_last_winery(): void
+    {
+        // Regla de negocio: una D.O. debe mantener al menos una bodega asociada.
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+
+        Livewire::actingAs($supervisor)
+            ->test(Index::class)
+            ->call('unassignWinery', $winery->id)
+            ->assertDispatched('toast');
+
+        // La única bodega sigue asociada: no se permite dejar la D.O. huérfana.
+        $this->assertDatabaseHas('supervisor_winery', [
             'supervisor_id' => $supervisor->id,
             'winery_id'     => $winery->id,
         ]);

@@ -115,6 +115,8 @@ class CreateFertilization extends AbstractActivityForm
             \Log::error('Error al registrar fertilización', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError(__('Error al registrar la fertilización. Por favor, intenta de nuevo.'));
         }
+
+        return null;
     }
 
     // ─── Render ───────────────────────────────────────────────────────────────
