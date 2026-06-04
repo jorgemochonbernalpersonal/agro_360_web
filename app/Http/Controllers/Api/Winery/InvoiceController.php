@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Winery\StoreWineSaleInvoiceRequest;
+use App\Http\Requests\Api\Winery\UpdateWineSaleInvoiceRequest;
+use App\Http\Requests\Api\Winery\WineryApiRequest;
 use App\Http\Resources\Api\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class InvoiceController extends Controller
 {
@@ -16,7 +17,7 @@ class InvoiceController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $user    = $request->user();
+        $user = $request->user();
         $perPage = $this->resolvePerPage($request, 20, 50);
 
         $query = Invoice::where('user_id', $user->id)
@@ -38,10 +39,10 @@ class InvoiceController extends Controller
         return response()->json([
             'data' => InvoiceResource::collection($invoices),
             'meta' => [
-                'total'        => $invoices->total(),
-                'per_page'     => $invoices->perPage(),
+                'total' => $invoices->total(),
+                'per_page' => $invoices->perPage(),
                 'current_page' => $invoices->currentPage(),
-                'last_page'    => $invoices->lastPage(),
+                'last_page' => $invoices->lastPage(),
             ],
         ]);
     }
@@ -50,8 +51,7 @@ class InvoiceController extends Controller
 
     public function show(Request $request, int $id): JsonResponse
     {
-        $user    = $request->user();
-        $invoice = Invoice::where('user_id', $user->id)
+        $invoice = Invoice::where('user_id', $request->user()->id)
             ->with('client')
             ->findOrFail($id);
 
@@ -60,24 +60,10 @@ class InvoiceController extends Controller
 
     // ─── POST /winery/invoices ────────────────────────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreWineSaleInvoiceRequest $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $validated = $request->validate([
-            'client_id'      => ['required', 'integer', Rule::exists('clients', 'id')->where('user_id', $user->id)],
-            'invoice_number' => 'nullable|string|max:50',
-            'invoice_date'   => 'required|date',
-            'invoice_type'   => 'nullable|string|in:standard,corrective,receipt',
-            'status'         => 'nullable|string|in:draft,sent,paid,cancelled',
-            'payment_type'   => 'nullable|string|in:transfer,cash,card,check,other',
-            'subtotal'       => 'nullable|numeric|min:0',
-            'tax_rate'       => 'nullable|numeric|min:0|max:100',
-            'total_amount'   => 'nullable|numeric|min:0',
-            'gift'           => 'nullable|boolean',
-            'observations'   => 'nullable|string|max:2000',
-        ]);
+        $validated = $request->validated();
 
         // Auto-assign invoice number if not provided
         if (empty($validated['invoice_number'])) {
@@ -86,17 +72,17 @@ class InvoiceController extends Controller
         }
 
         // Compute tax_amount from subtotal + tax_rate when not provided
-        if (isset($validated['subtotal']) && isset($validated['tax_rate']) && !isset($validated['total_amount'])) {
+        if (isset($validated['subtotal']) && isset($validated['tax_rate']) && ! isset($validated['total_amount'])) {
             $taxAmount = round($validated['subtotal'] * $validated['tax_rate'] / 100, 3);
-            $validated['tax_amount']   = $taxAmount;
+            $validated['tax_amount'] = $taxAmount;
             $validated['total_amount'] = round($validated['subtotal'] + $taxAmount, 3);
         }
 
         $invoice = Invoice::create(array_merge($validated, [
-            'user_id'        => $user->id,
-            'status'         => $validated['status'] ?? 'draft',
+            'user_id' => $user->id,
+            'status' => $validated['status'] ?? 'draft',
             'payment_status' => 'unpaid',
-            'invoice_type'   => $validated['invoice_type'] ?? 'standard',
+            'invoice_type' => $validated['invoice_type'] ?? 'standard',
         ]));
 
         $invoice->load('client');
@@ -106,29 +92,11 @@ class InvoiceController extends Controller
 
     // ─── PUT /winery/invoices/{id} ────────────────────────────────────────────
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateWineSaleInvoiceRequest $request, int $id): JsonResponse
     {
-        $user    = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
+        $invoice = Invoice::where('user_id', $request->user()->id)->findOrFail($id);
 
-        $invoice = Invoice::where('user_id', $user->id)->findOrFail($id);
-
-        $validated = $request->validate([
-            'client_id'      => ['sometimes', 'required', 'integer', Rule::exists('clients', 'id')->where('user_id', $user->id)],
-            'invoice_number' => 'nullable|string|max:50',
-            'invoice_date'   => 'nullable|date',
-            'invoice_type'   => 'nullable|string|in:standard,corrective,receipt',
-            'status'         => 'nullable|string|in:draft,sent,paid,cancelled',
-            'payment_status' => 'nullable|string|in:unpaid,partial,paid,overdue',
-            'payment_type'   => 'nullable|string|in:transfer,cash,card,check,other',
-            'subtotal'       => 'nullable|numeric|min:0',
-            'tax_rate'       => 'nullable|numeric|min:0|max:100',
-            'total_amount'   => 'nullable|numeric|min:0',
-            'gift'           => 'nullable|boolean',
-            'observations'   => 'nullable|string|max:2000',
-        ]);
-
-        $invoice->update($validated);
+        $invoice->update($request->validated());
         $invoice->load('client');
 
         return response()->json(['data' => new InvoiceResource($invoice)]);
@@ -136,12 +104,9 @@ class InvoiceController extends Controller
 
     // ─── DELETE /winery/invoices/{id} ─────────────────────────────────────────
 
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(WineryApiRequest $request, int $id): JsonResponse
     {
-        $user    = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $invoice = Invoice::where('user_id', $user->id)->findOrFail($id);
+        $invoice = Invoice::where('user_id', $request->user()->id)->findOrFail($id);
         $invoice->delete();
 
         return response()->json(['message' => __('Factura eliminada correctamente.')]);

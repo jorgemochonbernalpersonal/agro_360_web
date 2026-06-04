@@ -38,6 +38,41 @@ necesita reescritura, necesita migración disciplinada hacia patrones ya definid
   dedicado de formato, y luego reañadir `pint --test` al workflow. No incluido aquí para
   no mezclar un diff masivo de estilo con los cambios funcionales.
 
+### ✅ Fase 1 — Facturación: red de tests + Policies/FormRequests (2026-06-04)
+- **Red de caracterización (44 tests, 101 asserts, en verde)** que congela el
+  comportamiento actual de los 4 flujos de facturación antes de refactorizar:
+  - `tests/Feature/Api/Winery/GrapePurchaseInvoiceApiTest.php` (22) — liquidación compra de uva.
+  - `tests/Feature/Api/Winery/WineSaleInvoiceApiTest.php` (14) — venta de producto/vino.
+  - `tests/Feature/Api/Viticulturist/HarvestSaleInvoiceApiTest.php` (8) — listado venta de cosecha.
+  - (producer_sale ya cubierto por `Producer/Invoices/MixedInvoice*Test`.)
+- **Autorización + validación movidas a FormRequests** (patrón nuevo en el repo,
+  `app/Http/Requests/Api/...`):
+  - Bases `WineryApiRequest` / `ViticulturistApiRequest`: centralizan el chequeo de rol
+    (`authorize()` → 403) que antes estaba duplicado como `abort_unless($user->hasXAccess(), 403)`
+    en ~13 acciones.
+  - Requests específicos con `rules()` (validación inline extraída) y `withValidator()`
+    para los guards cross-entity (viticultor vinculado, recepción de la bodega) que antes
+    eran `abort_*(422)` en el controlador.
+  - Controllers afectados: `Api\Winery\GrapePurchaseInvoiceController`,
+    `Api\Winery\InvoiceController`, `Api\Viticulturist\HarvestSaleInvoiceController`.
+- **Decisión de diseño conservada**: el scoping por `user_id` que devuelve **404** ante
+  facturas de otra bodega (no `authorize()` sobre el modelo encontrado, que daría 403 y
+  filtraría existencia) se mantiene intencionadamente. Extraído a helper `findOwnedInvoice()`.
+- La máquina de estados (cancelada/pagada/borrador → 422) permanece en el controlador.
+- PHPStan: **OK, 0 errores** sobre baseline tras el refactor.
+
+### 🔴 Hallazgo nuevo (Fase 1) — la suite de tests API está ROJA
+- `ApiRole` exige **además del rol** que el token tenga la ability (`tokenCan($role)`).
+  Los tests API existentes usan `$this->actingAs($user, 'sanctum')`, que **no adjunta token**,
+  así que `tokenCan()` devuelve false → **403** en todos ellos.
+- Verificado: `ApiRoleMiddlewareTest::test_middleware_allows_correct_role_directly` **falla** hoy.
+- Afecta a `ContainerApiTest`, `PlotApiTest`, `NotebookApiTest`, `AuthApiTest`, etc.
+- **Workaround usado en los tests nuevos**: `Sanctum::actingAs($user, ['*'])` (adjunta
+  `TransientToken`, `can()` siempre true).
+- **Pendiente (separado, grande)**: decidir si (a) se corrigen todos los tests API existentes
+  para usar `Sanctum::actingAs`, o (b) se relaja `ApiRole` para no exigir `tokenCan` cuando
+  el rol del usuario ya coincide. Hasta entonces el `testsuite=Feature` no puede ir 100% verde en CI.
+
 ---
 
 ## 1. Modelo de roles y control de acceso
