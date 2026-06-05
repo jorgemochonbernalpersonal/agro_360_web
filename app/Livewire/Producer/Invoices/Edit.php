@@ -13,6 +13,7 @@ use App\Models\InvoicingSetting;
 use App\Models\ProductLot;
 use App\Models\Tax;
 use App\Services\ContainerStockService;
+use App\Services\InvoiceService;
 use App\Services\ProductStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,13 @@ use Livewire\Component;
 class Edit extends Component
 {
     use WithToastNotifications;
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public Invoice $invoice;
 
@@ -697,27 +705,7 @@ class Edit extends Component
                 InvoiceItem::withoutEvents(fn () => $this->invoice->items()->delete());
 
                 // 5. Recalculate totals
-                $subtotal = 0;
-                $discountAmount = 0;
-                $taxAmount = 0;
-
-                foreach ($this->items as $item) {
-                    $qty = (float) $item['quantity'];
-                    $unitPrice = (float) $item['unit_price'];
-                    $discPct = (float) ($item['discount_percentage'] ?? 0);
-                    $lineSubtotal = $qty * $unitPrice;
-                    $lineDiscount = $lineSubtotal * ($discPct / 100);
-                    $lineBase = $lineSubtotal - $lineDiscount;
-                    $tax = ($item['tax_id'] ?? null) ? $taxRates[$item['tax_id']] ?? null : null;
-                    $taxRate = $tax ? (float) $tax->rate : 0;
-
-                    $subtotal += $lineSubtotal;
-                    $discountAmount += $lineDiscount;
-                    $taxAmount += $lineBase * ($taxRate / 100);
-                }
-
-                $taxBase = $subtotal - $discountAmount;
-                $totalAmount = $taxBase + $taxAmount;
+                $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
 
                 // 6. Update invoice header — NOT delivery_status / payment_status
                 $this->invoice->update([
@@ -725,12 +713,12 @@ class Edit extends Component
                     'client_address_id' => $this->client_address_id ?: null,
                     'invoice_date' => $this->invoice_date ?: null,
                     'delivery_note_date' => $this->delivery_note_date ?: null,
-                    'subtotal' => round($subtotal, 3),
-                    'discount_amount' => round($discountAmount, 3),
-                    'tax_base' => round($taxBase, 3),
-                    'tax_rate' => $taxAmount > 0 && $taxBase > 0 ? round(($taxAmount / $taxBase) * 100, 4) : 0,
-                    'tax_amount' => round($taxAmount, 3),
-                    'total_amount' => round($totalAmount, 3),
+                    'subtotal' => $totals['gross_subtotal'],
+                    'discount_amount' => $totals['discount_amount'],
+                    'tax_base' => $totals['tax_base'],
+                    'tax_rate' => $totals['effective_tax_rate'],
+                    'tax_amount' => $totals['tax_amount'],
+                    'total_amount' => $totals['total'],
                     'observations' => $this->observations ?: null,
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
@@ -804,7 +792,7 @@ class Edit extends Component
                     'Factura de productor actualizada',
                     [
                         'client_id' => ['old' => $this->invoice->getOriginal('client_id'), 'new' => $this->client_id],
-                        'total_amount' => ['old' => $this->invoice->getOriginal('total_amount'), 'new' => $totalAmount],
+                        'total_amount' => ['old' => $this->invoice->getOriginal('total_amount'), 'new' => $totals['total']],
                         'items_count' => count($this->items),
                     ]
                 );

@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Harvest;
 use App\Models\Invoice;
 use App\Models\Tax;
+use App\Services\InvoiceService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -16,6 +17,13 @@ use Livewire\Component;
 class Edit extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public Invoice $invoice;
 
@@ -568,27 +576,22 @@ class Edit extends Component
                 $this->invoice->load('items.harvest');
                 $this->invoice->items->each(fn ($item) => $item->delete());
 
-                // Recreate items and accumulate totals using Tax::find() — avoids relying on
-                // $availableTaxes which may be plain arrays after Livewire serialization.
+                // Recreate items — pre-load taxes in one query to avoid N+1.
                 // InvoiceItemObserver::created() fires per item and routes:
                 //   draft → ContainerStockService::reserveStock()
                 //   sent  → ContainerStockService::directSale()
-                $subtotal = 0.0;
-                $discountAmount = 0.0;
-                $taxAmount = 0.0;
+                $taxIds = collect($this->items)->pluck('tax_id')->filter()->unique()->values()->all();
+                $taxRates = empty($taxIds) ? collect() : Tax::whereIn('id', $taxIds)->get()->keyBy('id');
+                $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
 
                 foreach ($this->items as $itemData) {
                     $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
                     $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
                     $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
 
-                    $tax = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
+                    $tax = $taxRates->get($itemData['tax_id'] ?? null);
                     $taxRate = $tax ? $tax->rate : 0;
                     $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
-
-                    $subtotal += $itemSubtotalAfterDiscount;
-                    $discountAmount += $itemDiscount;
-                    $taxAmount += $itemTax;
 
                     $this->invoice->items()->create([
                         'harvest_id' => $itemData['harvest_id'] ?? null,
@@ -611,23 +614,18 @@ class Edit extends Component
                     ]);
                 }
 
-                $subtotal = round($subtotal, 2);
-                $discountAmount = round($discountAmount, 2);
-                $taxAmount = round($taxAmount, 2);
-                $totalAmount = round($subtotal + $taxAmount, 2);
-
                 $this->invoice->update([
                     'client_id' => $this->client_id,
                     'client_address_id' => $this->client_address_id ?: null,
                     'invoice_date' => $this->invoice_date ?: null,
                     'delivery_note_date' => $this->delivery_note_date ?: null,
                     // delivery_status y payment_status se gestionan vía saveStatuses()
-                    'subtotal' => $subtotal,
-                    'discount_amount' => $discountAmount,
-                    'tax_base' => $subtotal,
-                    'tax_rate' => $taxAmount > 0 && $subtotal > 0 ? ($taxAmount / $subtotal) * 100 : 0,
-                    'tax_amount' => $taxAmount,
-                    'total_amount' => $totalAmount,
+                    'subtotal' => $totals['tax_base'],
+                    'discount_amount' => $totals['discount_amount'],
+                    'tax_base' => $totals['tax_base'],
+                    'tax_rate' => $totals['effective_tax_rate'],
+                    'tax_amount' => $totals['tax_amount'],
+                    'total_amount' => $totals['total'],
                     'observations' => $this->observations ?: null,
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
@@ -637,7 +635,7 @@ class Edit extends Component
                     'Factura actualizada',
                     [
                         'client_id' => ['old' => $this->invoice->getOriginal('client_id'), 'new' => $this->client_id],
-                        'total_amount' => ['old' => $this->invoice->getOriginal('total_amount'), 'new' => $totalAmount],
+                        'total_amount' => ['old' => $this->invoice->getOriginal('total_amount'), 'new' => $totals['total']],
                         'items_count' => count($this->items),
                     ]
                 );

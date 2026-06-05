@@ -10,6 +10,7 @@ use App\Models\Harvest;
 use App\Models\Invoice;
 use App\Models\MarketedHarvest;
 use App\Models\Tax;
+use App\Services\InvoiceService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -17,6 +18,13 @@ use Livewire\Component;
 class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public $client_id = '';
 
@@ -329,38 +337,20 @@ class Create extends Component
 
         try {
             DB::transaction(function () use ($user, &$deliveryNoteCode) {
-                // Obtener settings de invoicing
-                $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
-
                 // Generar código de albarán atómicamente (previene race conditions)
-                $deliveryNoteCode = $this->delivery_note_code_modified
-                    ? $this->delivery_note_code
-                    : $settings->generateAndIncrementDeliveryNoteCode();
+                $deliveryNoteCode = $this->invoiceService->generateDeliveryNoteCode(
+                    $user->id,
+                    $this->delivery_note_code_modified,
+                    $this->delivery_note_code,
+                );
 
                 // El número de factura se asigna al emitir (markAsSent), no al crear el borrador.
-                // Así evitamos huecos en la secuencia por borradores abandonados.
                 $invoiceNumber = null;
 
-                // Calcular totales
-                $subtotal = 0;
-                $discountAmount = 0;
-                $taxAmount = 0;
-
-                foreach ($this->items as $itemData) {
-                    $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
-                    $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
-                    $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
-
-                    $tax = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
-                    $taxRate = $tax ? $tax->rate : 0;
-                    $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
-
-                    $subtotal += $itemSubtotalAfterDiscount;
-                    $discountAmount += $itemDiscount;
-                    $taxAmount += $itemTax;
-                }
-
-                $totalAmount = $subtotal + $taxAmount;
+                // Calcular totales — pre-cargar impuestos para evitar N+1
+                $taxIds = collect($this->items)->pluck('tax_id')->filter()->unique()->values()->all();
+                $taxRates = empty($taxIds) ? collect() : Tax::whereIn('id', $taxIds)->get()->keyBy('id');
+                $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
 
                 // Crear factura con número asignado desde el inicio (como el albarán)
                 $invoice = Invoice::create([
@@ -372,12 +362,12 @@ class Create extends Component
                     'delivery_note_code' => $deliveryNoteCode,
                     'invoice_date' => $this->invoice_date,
                     'delivery_note_date' => $this->delivery_note_date ?: now(), // Usar fecha del formulario
-                    'subtotal' => $subtotal,
-                    'discount_amount' => $discountAmount,
-                    'tax_base' => $subtotal,
-                    'tax_rate' => $taxAmount > 0 ? ($taxAmount / $subtotal) * 100 : 0,
-                    'tax_amount' => $taxAmount,
-                    'total_amount' => $totalAmount,
+                    'subtotal' => $totals['tax_base'],
+                    'discount_amount' => $totals['discount_amount'],
+                    'tax_base' => $totals['tax_base'],
+                    'tax_rate' => $totals['effective_tax_rate'],
+                    'tax_amount' => $totals['tax_amount'],
+                    'total_amount' => $totals['total'],
                     'status' => 'draft',
                     'delivery_status' => 'pending', // Estado inicial de entrega
                     'payment_status' => 'unpaid', // Estado inicial de pago
@@ -386,13 +376,13 @@ class Create extends Component
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
 
-                // Crear items
+                // Crear items (usa $taxRates pre-cargada — sin N+1)
                 foreach ($this->items as $itemData) {
                     $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
                     $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
                     $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
 
-                    $tax = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
+                    $tax = $taxRates->get($itemData['tax_id'] ?? null);
                     $taxRate = $tax ? $tax->rate : 0;
                     $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
                     $itemTotal = $itemSubtotalAfterDiscount + $itemTax;
@@ -424,7 +414,7 @@ class Create extends Component
                     'Factura creada',
                     [
                         'client_id' => $this->client_id,
-                        'total_amount' => $totalAmount,
+                        'total_amount' => $totals['total'],
                         'items_count' => count($this->items),
                         'delivery_note_code' => $deliveryNoteCode,
                     ]

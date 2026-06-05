@@ -13,6 +13,7 @@ use App\Models\InvoicingSetting;
 use App\Models\ProductLot;
 use App\Models\Tax;
 use App\Services\ContainerStockService;
+use App\Services\InvoiceService;
 use App\Services\ProductStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,13 @@ use Livewire\Component;
 class Create extends Component
 {
     use WithToastNotifications;
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public string $client_id = '';
 
@@ -377,34 +385,14 @@ class Create extends Component
 
         try {
             DB::transaction(function () use ($user, $taxRates, &$noteCode) {
-                $settings = InvoicingSetting::getOrCreateForUser($user->id);
-
-                $noteCode = $this->delivery_note_code_modified
-                    ? $this->delivery_note_code
-                    : $settings->generateAndIncrementDeliveryNoteCode();
+                $noteCode = $this->invoiceService->generateDeliveryNoteCode(
+                    $user->id,
+                    $this->delivery_note_code_modified,
+                    $this->delivery_note_code,
+                );
 
                 // Calculate totals
-                $subtotal = 0;
-                $discountAmount = 0;
-                $taxAmount = 0;
-
-                foreach ($this->items as $item) {
-                    $qty = (float) $item['quantity'];
-                    $unitPrice = (float) $item['unit_price'];
-                    $discPct = (float) ($item['discount_percentage'] ?? 0);
-                    $lineSubtotal = $qty * $unitPrice;
-                    $lineDiscount = $lineSubtotal * ($discPct / 100);
-                    $lineBase = $lineSubtotal - $lineDiscount;
-                    $tax = ($item['tax_id'] ?? null) ? $taxRates[$item['tax_id']] ?? null : null;
-                    $taxRate = $tax ? (float) $tax->rate : 0;
-
-                    $subtotal += $lineSubtotal;
-                    $discountAmount += $lineDiscount;
-                    $taxAmount += $lineBase * ($taxRate / 100);
-                }
-
-                $taxBase = $subtotal - $discountAmount;
-                $totalAmount = $taxBase + $taxAmount;
+                $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
 
                 $invoice = Invoice::create([
                     'user_id' => $user->id,
@@ -420,12 +408,12 @@ class Create extends Component
                     'delivery_status' => 'pending',
                     'payment_status' => 'unpaid',
                     'payment_type' => $this->payment_type ?: null,
-                    'subtotal' => round($subtotal, 3),
-                    'discount_amount' => round($discountAmount, 3),
-                    'tax_base' => round($taxBase, 3),
-                    'tax_rate' => $taxAmount > 0 && $taxBase > 0 ? round(($taxAmount / $taxBase) * 100, 4) : 0,
-                    'tax_amount' => round($taxAmount, 3),
-                    'total_amount' => round($totalAmount, 3),
+                    'subtotal' => $totals['gross_subtotal'],
+                    'discount_amount' => $totals['discount_amount'],
+                    'tax_base' => $totals['tax_base'],
+                    'tax_rate' => $totals['effective_tax_rate'],
+                    'tax_amount' => $totals['tax_amount'],
+                    'total_amount' => $totals['total'],
                     'observations' => $this->observations ?: null,
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);

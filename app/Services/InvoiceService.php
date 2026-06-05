@@ -6,7 +6,7 @@ use App\Models\Harvest;
 use App\Models\InvoicingSetting;
 use App\Models\Tax;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -126,6 +126,70 @@ class InvoiceService
         }
 
         return $harvest;
+    }
+
+    /**
+     * Calculate VAT-style invoice totals where the tax is ADDED to the net amount
+     * (sales invoices: producer_sale, viticulturist sale).
+     *
+     * Accepts a Collection of Tax models keyed by their id so callers can pre-load
+     * taxes in a single query and avoid N+1 lookups per item.
+     *
+     * Note on subtotal semantics: this method always returns `gross_subtotal` (before
+     * discount) and `tax_base` (after discount) separately. Callers choose which value
+     * to store as the invoice's `subtotal` column depending on their convention:
+     *   - Producer: stores gross_subtotal as `subtotal`, tax_base as `tax_base`
+     *   - Viticulturist: stores tax_base as both `subtotal` and `tax_base`
+     *
+     * @param  array<int, array{quantity: mixed, unit_price: mixed, discount_percentage?: mixed, tax_id?: mixed}>  $items
+     * @param  Collection  $taxRatesById  Tax models keyed by id
+     * @return array{gross_subtotal: float, discount_amount: float, tax_base: float, tax_amount: float, total: float, effective_tax_rate: float}
+     */
+    public function calculateVatTotals(array $items, Collection $taxRatesById): array
+    {
+        $grossSubtotal  = 0.0;
+        $discountAmount = 0.0;
+        $taxAmount      = 0.0;
+
+        foreach ($items as $item) {
+            $lineGross  = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
+            $discPct    = (float) ($item['discount_percentage'] ?? 0);
+            $lineDisc   = $lineGross * ($discPct / 100);
+            $lineBase   = $lineGross - $lineDisc;
+            $taxRate    = (float) ($taxRatesById->get($item['tax_id'] ?? null)?->rate ?? 0);
+
+            $grossSubtotal  += $lineGross;
+            $discountAmount += $lineDisc;
+            $taxAmount      += $lineBase * ($taxRate / 100);
+        }
+
+        $taxBase = $grossSubtotal - $discountAmount;
+
+        return [
+            'gross_subtotal'     => round($grossSubtotal, 3),
+            'discount_amount'    => round($discountAmount, 3),
+            'tax_base'           => round($taxBase, 3),
+            'tax_amount'         => round($taxAmount, 3),
+            'total'              => round($taxBase + $taxAmount, 3),
+            'effective_tax_rate' => $taxAmount > 0.0 && $taxBase > 0.0
+                ? round(($taxAmount / $taxBase) * 100, 4)
+                : 0.0,
+        ];
+    }
+
+    /**
+     * Return the delivery note code for a new invoice.
+     * If the user has manually entered a code, use it as-is.
+     * Otherwise atomically increment InvoicingSetting and return the generated code.
+     * Must be called inside an existing DB transaction to stay atomic.
+     */
+    public function generateDeliveryNoteCode(int $userId, bool $isModified, string $manualCode): string
+    {
+        if ($isModified) {
+            return $manualCode;
+        }
+
+        return InvoicingSetting::getOrCreateForUser($userId)->generateAndIncrementDeliveryNoteCode();
     }
 
     /**
