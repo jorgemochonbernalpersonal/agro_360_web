@@ -11,6 +11,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\MarketedHarvest;
 use App\Models\ViticulturistSetting;
+use App\Services\InvoiceService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -42,6 +43,13 @@ class Edit extends Component
 
     /** @var array<int, array{harvest_id:int, quantity:string, unit_price:string, tax_rate:string, description:string}> */
     public array $lines = [];
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public function mount(int $id): void
     {
@@ -157,32 +165,25 @@ class Edit extends Component
                 MarketedHarvest::where('invoice_id', $this->invoice->id)->delete();
                 $this->invoice->items()->delete();
 
-                // ── 3. Validate new stock ───────────────────────────────────────
+                // ── 3. Validate ownership ───────────────────────────────────────
                 foreach ($this->lines as $line) {
-                    $harvest = Harvest::lockForUpdate()->find($line['harvest_id']);
-                    if (! $harvest || (int) optional($harvest->activity)->viticulturist_id !== Auth::id()) {
-                        throw new \RuntimeException("La cosecha #{$line['harvest_id']} no te pertenece.");
-                    }
+                    $this->invoiceService->validateViticulturistHarvestOwnership(
+                        (int) $line['harvest_id'],
+                        Auth::id()
+                    );
                 }
 
                 // ── 4. Recalculate totals ───────────────────────────────────────
-                $subtotal = 0;
-                $taxAmount = 0;
-                foreach ($this->lines as $line) {
-                    $sub = (float) $line['quantity'] * (float) $line['unit_price'];
-                    $subtotal += $sub;
-                    $taxAmount += $sub * ((float) $line['tax_rate'] / 100);
-                }
-                $total = $subtotal - $taxAmount;
+                $totals = $this->invoiceService->calculateIrpfTotals($this->lines);
 
                 // ── 5. Update invoice header ────────────────────────────────────
                 $this->invoice->update([
                     'invoice_date' => $this->invoice_date,
                     'billing_company_name' => $this->buyer_name,
-                    'subtotal' => round($subtotal, 3),
-                    'tax_base' => round($subtotal, 3),
-                    'tax_amount' => round($taxAmount, 3),
-                    'total_amount' => round($total, 3),
+                    'subtotal' => $totals['subtotal'],
+                    'tax_base' => $totals['tax_base'],
+                    'tax_amount' => $totals['tax_amount'],
+                    'total_amount' => $totals['total'],
                     'payment_type' => $this->payment_type ?: null,
                     'observations' => $this->observations ?: null,
                 ]);

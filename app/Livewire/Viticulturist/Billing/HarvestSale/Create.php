@@ -11,6 +11,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\MarketedHarvest;
 use App\Models\ViticulturistSetting;
+use App\Services\InvoiceService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -44,6 +45,13 @@ class Create extends Component
 
     /** Cached default IRPF (not a Livewire property) */
     private float $_defaultIrpf = 0;
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public function mount(): void
     {
@@ -101,34 +109,18 @@ class Create extends Component
             DB::beginTransaction();
 
             // ── 1. Atomic sequential numbering ─────────────────────────────────
-            DB::table('users')->where('id', Auth::id())->lockForUpdate()->first();
-            DB::table('users')->where('id', Auth::id())->increment('harvest_sale_seq');
-            $seq = DB::table('users')->where('id', Auth::id())->value('harvest_sale_seq');
-            $year = now()->year;
+            ['number' => $number, 'noteCode' => $noteCode] =
+                $this->invoiceService->generateSequentialNumber(Auth::id(), 'harvest_sale_seq', 'HS-', 'VEN-');
 
-            $number = 'HS-'.$year.'-'.str_pad($seq, 4, '0', STR_PAD_LEFT);
-            $noteCode = 'VEN-'.$year.'-'.str_pad($seq, 4, '0', STR_PAD_LEFT);
-
-            // ── 2. Validate stock & calculate totals ────────────────────────────
+            // ── 2. Validate ownership + calculate totals ────────────────────────
             foreach ($this->lines as $line) {
-                $harvest = Harvest::lockForUpdate()->find($line['harvest_id']);
-                if (! $harvest) {
-                    throw new \RuntimeException("Cosecha #{$line['harvest_id']} no encontrada.");
-                }
-                // Ownership guard via activity
-                if ((int) optional($harvest->activity)->viticulturist_id !== Auth::id()) {
-                    throw new \RuntimeException("La cosecha #{$harvest->id} no te pertenece.");
-                }
+                $this->invoiceService->validateViticulturistHarvestOwnership(
+                    (int) $line['harvest_id'],
+                    Auth::id()
+                );
             }
 
-            $subtotal = 0;
-            $taxAmount = 0;
-            foreach ($this->lines as $line) {
-                $sub = (float) $line['quantity'] * (float) $line['unit_price'];
-                $subtotal += $sub;
-                $taxAmount += $sub * ((float) $line['tax_rate'] / 100);
-            }
-            $total = $subtotal - $taxAmount;
+            $totals = $this->invoiceService->calculateIrpfTotals($this->lines);
 
             // ── 3. Create invoice ───────────────────────────────────────────────
             $invoice = Invoice::create([
@@ -138,10 +130,10 @@ class Create extends Component
                 'delivery_note_code' => $noteCode,
                 'invoice_date' => $this->invoice_date,
                 'billing_company_name' => $this->buyer_name,
-                'subtotal' => round($subtotal, 3),
-                'tax_base' => round($subtotal, 3),
-                'tax_amount' => round($taxAmount, 3),
-                'total_amount' => round($total, 3),
+                'subtotal' => $totals['subtotal'],
+                'tax_base' => $totals['tax_base'],
+                'tax_amount' => $totals['tax_amount'],
+                'total_amount' => $totals['total'],
                 'status' => 'draft',
                 'payment_status' => 'unpaid',
                 'delivery_status' => 'pending',

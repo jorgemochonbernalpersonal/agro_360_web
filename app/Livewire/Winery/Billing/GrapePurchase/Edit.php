@@ -7,6 +7,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Services\InvoiceService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,6 +26,13 @@ class Edit extends Component
     public string $payment_type = '';
 
     public array $lines = [];
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public function mount(int $id): void
     {
@@ -113,24 +121,15 @@ class Edit extends Component
         try {
             DB::transaction(function () use ($viticulturistId, $wineryId) {
                 // ── 1. Calculate new totals
-                $subtotal = 0;
-                $taxAmount = 0;
-
-                foreach ($this->lines as $line) {
-                    $lineSubtotal = (float) $line['quantity'] * (float) $line['unit_price'];
-                    $subtotal += $lineSubtotal;
-                    $taxAmount += $lineSubtotal * ((float) $line['tax_rate'] / 100);
-                }
-
-                $total = $subtotal - $taxAmount;
+                $totals = $this->invoiceService->calculateIrpfTotals($this->lines);
 
                 // ── 2. Update invoice header (numbers stay unchanged)
                 $this->invoice->update([
                     'invoice_date' => $this->invoice_date,
-                    'subtotal' => round($subtotal, 3),
-                    'tax_base' => round($subtotal, 3),
-                    'tax_amount' => round($taxAmount, 3),
-                    'total_amount' => round($total, 3),
+                    'subtotal' => $totals['subtotal'],
+                    'tax_base' => $totals['tax_base'],
+                    'tax_amount' => $totals['tax_amount'],
+                    'total_amount' => $totals['total'],
                     'payment_type' => $this->payment_type ?: null,
                     'observations' => $this->observations ?: null,
                 ]);
@@ -142,34 +141,12 @@ class Edit extends Component
 
                 // ── 4. Create new items with ownership + double-invoicing guards
                 foreach ($this->lines as $line) {
-                    $harvest = Harvest::lockForUpdate()->find($line['harvest_id']);
-
-                    if (! $harvest || $harvest->winery_id !== $wineryId) {
-                        throw new \RuntimeException(
-                            "La recepción #{$line['harvest_id']} no pertenece a esta bodega."
-                        );
-                    }
-
-                    $harvest->loadMissing('batch');
-                    if ((string) $harvest->batch?->viticulturist_id !== (string) $viticulturistId) {
-                        throw new \RuntimeException(
-                            "La recepción #{$harvest->id} no pertenece al viticultor de esta liquidación."
-                        );
-                    }
-
-                    // Double-invoicing guard: exclude THIS invoice from the check
-                    // Lock invoice_items to prevent race condition
-                    if ($harvest->invoiceItems()
-                        ->lockForUpdate()
-                        ->where('concept_type', 'harvest')
-                        ->whereHas('invoice', fn ($q) => $q->where('status', '!=', 'cancelled')
-                            ->where('id', '!=', $this->invoice->id)
-                        )
-                        ->exists()) {
-                        throw new \RuntimeException(
-                            "La recepción #{$harvest->id} ya está incluida en otra liquidación activa."
-                        );
-                    }
+                    $harvest = $this->invoiceService->validateWineryHarvestOwnership(
+                        (int) $line['harvest_id'],
+                        $wineryId,
+                        (int) $viticulturistId,
+                        $this->invoice->id,
+                    );
 
                     $qty = (float) $line['quantity'];
                     $unitPrice = (float) $line['unit_price'];
