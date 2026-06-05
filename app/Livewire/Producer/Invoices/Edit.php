@@ -24,13 +24,6 @@ class Edit extends Component
 {
     use WithToastNotifications;
 
-    protected InvoiceService $invoiceService;
-
-    public function boot(InvoiceService $invoiceService): void
-    {
-        $this->invoiceService = $invoiceService;
-    }
-
     public Invoice $invoice;
 
     public string $client_id = '';
@@ -88,7 +81,14 @@ class Edit extends Component
 
     public $availableLots = [];
 
+    protected InvoiceService $invoiceService;
+
     protected string $defaultTaxId = '';
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     // ── Computed properties ───────────────────────────────────────────────────
 

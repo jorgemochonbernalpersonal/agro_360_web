@@ -21,13 +21,6 @@ class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
 
-    protected InvoiceService $invoiceService;
-
-    public function boot(InvoiceService $invoiceService): void
-    {
-        $this->invoiceService = $invoiceService;
-    }
-
     public string $client_id = '';
 
     public string $client_address_id = '';
@@ -54,7 +47,14 @@ class Create extends Component
 
     public $availableAddresses = [];
 
+    protected InvoiceService $invoiceService;
+
     protected string $defaultTaxId = '';
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public function mount(): void
     {

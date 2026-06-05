@@ -18,13 +18,6 @@ class Edit extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
 
-    protected InvoiceService $invoiceService;
-
-    public function boot(InvoiceService $invoiceService): void
-    {
-        $this->invoiceService = $invoiceService;
-    }
-
     public Invoice $invoice;
 
     public $client_id = '';
@@ -76,6 +69,13 @@ class Edit extends Component
     public $selectedHarvestId = '';
 
     public $selectedCampaign = '';
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     /**
      * Determina si la factura ya está facturada (no se puede modificar el código)

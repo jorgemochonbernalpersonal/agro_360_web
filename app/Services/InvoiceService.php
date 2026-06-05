@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
 use App\Models\InvoicingSetting;
 use App\Models\Tax;
@@ -32,7 +33,7 @@ class InvoiceService
         $year = now()->year;
 
         return [
-            'number'   => "{$numberPrefix}{$year}-{$padded}",
+            'number' => "{$numberPrefix}{$year}-{$padded}",
             'noteCode' => "{$notePrefix}{$year}-{$padded}",
         ];
     }
@@ -41,7 +42,8 @@ class InvoiceService
      * Calculate IRPF-style invoice totals where the tax is DEDUCTED from the payment
      * (vendor invoices: harvest_sale, grape_purchase).
      *
-     * @param  array<int, array{quantity: string|float, unit_price: string|float, tax_rate: string|float}>  $lines
+     * @param array<int, array{quantity: string|float, unit_price: string|float, tax_rate: string|float}> $lines
+     *
      * @return array{subtotal: float, tax_base: float, tax_amount: float, total: float}
      */
     public function calculateIrpfTotals(array $lines): array
@@ -56,10 +58,10 @@ class InvoiceService
         }
 
         return [
-            'subtotal'   => round($subtotal, 3),
-            'tax_base'   => round($subtotal, 3),
+            'subtotal' => round($subtotal, 3),
+            'tax_base' => round($subtotal, 3),
             'tax_amount' => round($taxAmount, 3),
-            'total'      => round($subtotal - $taxAmount, 3),
+            'total' => round($subtotal - $taxAmount, 3),
         ];
     }
 
@@ -103,7 +105,10 @@ class InvoiceService
 
         $harvest->loadMissing('batch');
         $isSelfPurchase = $wineryId === $viticulturistId;
-        $batchViticulturistId = (string) ($harvest->batch?->viticulturist_id ?? '');
+        $batch = $harvest->batch;
+        $batchViticulturistId = $batch instanceof GrapeReceptionBatch
+            ? (string) $batch->viticulturist_id
+            : '';
         $matches = $isSelfPurchase || $batchViticulturistId === (string) $viticulturistId;
 
         if (! $matches) {
@@ -141,36 +146,38 @@ class InvoiceService
      *   - Producer: stores gross_subtotal as `subtotal`, tax_base as `tax_base`
      *   - Viticulturist: stores tax_base as both `subtotal` and `tax_base`
      *
-     * @param  array<int, array{quantity: mixed, unit_price: mixed, discount_percentage?: mixed, tax_id?: mixed}>  $items
-     * @param  Collection  $taxRatesById  Tax models keyed by id
+     * @param array<int, array{quantity: mixed, unit_price: mixed, discount_percentage?: mixed, tax_id?: mixed}> $items
+     * @param Collection                                                                                         $taxRatesById Tax models keyed by id
+     *
      * @return array{gross_subtotal: float, discount_amount: float, tax_base: float, tax_amount: float, total: float, effective_tax_rate: float}
      */
     public function calculateVatTotals(array $items, Collection $taxRatesById): array
     {
-        $grossSubtotal  = 0.0;
+        $grossSubtotal = 0.0;
         $discountAmount = 0.0;
-        $taxAmount      = 0.0;
+        $taxAmount = 0.0;
 
         foreach ($items as $item) {
-            $lineGross  = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
-            $discPct    = (float) ($item['discount_percentage'] ?? 0);
-            $lineDisc   = $lineGross * ($discPct / 100);
-            $lineBase   = $lineGross - $lineDisc;
-            $taxRate    = (float) ($taxRatesById->get($item['tax_id'] ?? null)?->rate ?? 0);
+            $lineGross = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
+            $discPct = (float) ($item['discount_percentage'] ?? 0);
+            $lineDisc = $lineGross * ($discPct / 100);
+            $lineBase = $lineGross - $lineDisc;
+            $tax = $taxRatesById->get($item['tax_id'] ?? null);
+            $taxRate = $tax instanceof Tax ? (float) $tax->rate : 0.0;
 
-            $grossSubtotal  += $lineGross;
+            $grossSubtotal += $lineGross;
             $discountAmount += $lineDisc;
-            $taxAmount      += $lineBase * ($taxRate / 100);
+            $taxAmount += $lineBase * ($taxRate / 100);
         }
 
         $taxBase = $grossSubtotal - $discountAmount;
 
         return [
-            'gross_subtotal'     => round($grossSubtotal, 3),
-            'discount_amount'    => round($discountAmount, 3),
-            'tax_base'           => round($taxBase, 3),
-            'tax_amount'         => round($taxAmount, 3),
-            'total'              => round($taxBase + $taxAmount, 3),
+            'gross_subtotal' => round($grossSubtotal, 3),
+            'discount_amount' => round($discountAmount, 3),
+            'tax_base' => round($taxBase, 3),
+            'tax_amount' => round($taxAmount, 3),
+            'total' => round($taxBase + $taxAmount, 3),
             'effective_tax_rate' => $taxAmount > 0.0 && $taxBase > 0.0
                 ? round(($taxAmount / $taxBase) * 100, 4)
                 : 0.0,
@@ -210,9 +217,9 @@ class InvoiceService
         $settings = InvoicingSetting::getOrCreateForUser($user->id);
 
         return [
-            'taxes'               => $taxes,
-            'defaultTax'          => $defaultTax,
-            'settings'            => $settings,
+            'taxes' => $taxes,
+            'defaultTax' => $defaultTax,
+            'settings' => $settings,
             'deliveryNotePreview' => $settings->getDeliveryNotePreview(),
         ];
     }

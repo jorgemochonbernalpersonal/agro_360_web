@@ -19,13 +19,6 @@ class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
 
-    protected InvoiceService $invoiceService;
-
-    public function boot(InvoiceService $invoiceService): void
-    {
-        $this->invoiceService = $invoiceService;
-    }
-
     public $client_id = '';
 
     public $client_address_id = '';
@@ -67,6 +60,13 @@ class Create extends Component
     public $harvestAdded = false; // Flag para evitar añadir la cosecha múltiples veces
 
     public ?int $marketedHarvestId = null; // ID de MarketedHarvest a vincular tras guardar
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public function mount()
     {

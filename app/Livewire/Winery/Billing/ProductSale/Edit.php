@@ -20,13 +20,6 @@ class Edit extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
 
-    protected InvoiceService $invoiceService;
-
-    public function boot(InvoiceService $invoiceService): void
-    {
-        $this->invoiceService = $invoiceService;
-    }
-
     public Invoice $invoice;
 
     public string $client_id = '';
@@ -58,7 +51,14 @@ class Edit extends Component
 
     public $availableTaxes = [];
 
+    protected InvoiceService $invoiceService;
+
     protected string $defaultTaxId = '';
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public function mount(int $id): void
     {
