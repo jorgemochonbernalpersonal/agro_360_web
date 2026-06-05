@@ -179,7 +179,7 @@ class CreateTest extends TestCase
     {
         [$winery, $plot] = $this->makeWineryWithOwnViticulturistAndPlot();
 
-        GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        GrapeVariety::firstOrCreate(['code' => 'TEMP'], ['name' => 'Tempranillo', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
         $olive = GrapeVariety::create(['name' => 'Picual', 'code' => 'PIC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
 
         $this->actingAs($winery);
@@ -205,7 +205,7 @@ class CreateTest extends TestCase
     {
         [$producer, $plot] = $this->makeProducerWithPlot();
 
-        GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        GrapeVariety::firstOrCreate(['code' => 'TEMP'], ['name' => 'Tempranillo', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
         $olive = GrapeVariety::create(['name' => 'Picual', 'code' => 'PIC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
 
         $this->actingAs($producer);
@@ -218,7 +218,7 @@ class CreateTest extends TestCase
     public function test_winery_can_create_planting_without_vine_count_or_density(): void
     {
         [$winery, $plot] = $this->makeWineryWithOwnViticulturistAndPlot();
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        $variety = GrapeVariety::firstOrCreate(['code' => 'TEMP'], ['name' => 'Tempranillo', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
 
         $this->actingAs($winery);
 
@@ -251,7 +251,7 @@ class CreateTest extends TestCase
 
         $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
+        $variety = GrapeVariety::firstOrCreate(['code' => 'TEMP'], ['name' => 'Tempranillo', 'color' => 'red']);
 
         return [$viticulturist, $plot, $variety];
     }

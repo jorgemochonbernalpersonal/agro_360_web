@@ -120,7 +120,7 @@ class EditTest extends TestCase
     {
         [$winery, $plot, $planting] = $this->makeWineryWithOwnViticulturistAndPlanting();
 
-        GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        GrapeVariety::firstOrCreate(['code' => 'TEMP'], ['name' => 'Tempranillo', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
         $olive = GrapeVariety::create(['name' => 'Picual', 'code' => 'PIC', 'color' => 'white', 'active' => true, 'crop_type' => 'olive']);
 
         $this->actingAs($winery);
@@ -159,7 +159,7 @@ class EditTest extends TestCase
 
         $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
+        $variety = GrapeVariety::firstOrCreate(['code' => 'TEMP'], ['name' => 'Tempranillo', 'color' => 'red']);
 
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
@@ -187,7 +187,7 @@ class EditTest extends TestCase
             'assigned_by' => $winery->id,
         ]);
         $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        $variety = GrapeVariety::firstOrCreate(['code' => 'TEMP'], ['name' => 'Tempranillo', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'grape_variety_id' => $variety->id,
@@ -203,7 +203,7 @@ class EditTest extends TestCase
     {
         $producer = User::factory()->create(['role' => 'producer', 'email_verified_at' => now()]);
         $plot = Plot::factory()->create(['viticulturist_id' => $producer->id]);
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
+        $variety = GrapeVariety::firstOrCreate(['code' => 'TEMP'], ['name' => 'Tempranillo', 'color' => 'red', 'active' => true, 'crop_type' => 'wine']);
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,
             'grape_variety_id' => $variety->id,

@@ -16,17 +16,17 @@ class HarvestByproductTest extends TestCase
 
     public function test_byproduct_type_label_returns_correct_label(): void
     {
-        $model = new HarvestByproduct(['byproduct_type' => 'orujo']);
+        $model = new HarvestByproduct(['byproduct_type' => 'pomace']);
         $this->assertEquals('Orujo / Hollejo', $model->byproduct_type_label);
     }
 
     public function test_byproduct_type_label_returns_label_for_every_type(): void
     {
         $expected = [
-            'orujo' => 'Orujo / Hollejo',
-            'raspon' => 'Raspón / Escobajo',
-            'lia' => 'Lías',
-            'otro' => 'Otro',
+            'pomace' => 'Orujo / Hollejo',
+            'stem'   => 'Raspón / Escobajo',
+            'lees'   => 'Lías',
+            'other'  => 'Otro',
         ];
 
         foreach ($expected as $key => $label) {
@@ -43,19 +43,19 @@ class HarvestByproductTest extends TestCase
 
     public function test_destination_type_label_returns_correct_label(): void
     {
-        $model = new HarvestByproduct(['destination_type' => 'destileria']);
+        $model = new HarvestByproduct(['destination_type' => 'distillery']);
         $this->assertEquals('Destilería / Alcoholera', $model->destination_type_label);
     }
 
     public function test_destination_type_label_returns_label_for_every_type(): void
     {
         $expected = [
-            'cooperativa' => 'Cooperativa vinícola',
-            'bodega' => 'Bodega',
-            'destileria' => 'Destilería / Alcoholera',
-            'compostaje' => 'Planta de compostaje',
-            'vertedero_autorizado' => 'Vertedero autorizado',
-            'otro' => 'Otro destino',
+            'cooperative'       => 'Cooperativa vinícola',
+            'winery'            => 'Bodega',
+            'distillery'        => 'Destilería / Alcoholera',
+            'composting'        => 'Planta de compostaje',
+            'authorized_landfill' => 'Vertedero autorizado',
+            'other'             => 'Otro destino',
         ];
 
         foreach ($expected as $key => $label) {
@@ -74,20 +74,20 @@ class HarvestByproductTest extends TestCase
 
     public function test_byproduct_types_constant_contains_all_expected_keys(): void
     {
-        $this->assertArrayHasKey('orujo', HarvestByproduct::BYPRODUCT_TYPES);
-        $this->assertArrayHasKey('raspon', HarvestByproduct::BYPRODUCT_TYPES);
-        $this->assertArrayHasKey('lia', HarvestByproduct::BYPRODUCT_TYPES);
-        $this->assertArrayHasKey('otro', HarvestByproduct::BYPRODUCT_TYPES);
+        $this->assertArrayHasKey('pomace', HarvestByproduct::BYPRODUCT_TYPES);
+        $this->assertArrayHasKey('stem', HarvestByproduct::BYPRODUCT_TYPES);
+        $this->assertArrayHasKey('lees', HarvestByproduct::BYPRODUCT_TYPES);
+        $this->assertArrayHasKey('other', HarvestByproduct::BYPRODUCT_TYPES);
     }
 
     public function test_destination_types_constant_contains_all_expected_keys(): void
     {
-        $this->assertArrayHasKey('cooperativa', HarvestByproduct::DESTINATION_TYPES);
-        $this->assertArrayHasKey('bodega', HarvestByproduct::DESTINATION_TYPES);
-        $this->assertArrayHasKey('destileria', HarvestByproduct::DESTINATION_TYPES);
-        $this->assertArrayHasKey('compostaje', HarvestByproduct::DESTINATION_TYPES);
-        $this->assertArrayHasKey('vertedero_autorizado', HarvestByproduct::DESTINATION_TYPES);
-        $this->assertArrayHasKey('otro', HarvestByproduct::DESTINATION_TYPES);
+        $this->assertArrayHasKey('cooperative', HarvestByproduct::DESTINATION_TYPES);
+        $this->assertArrayHasKey('winery', HarvestByproduct::DESTINATION_TYPES);
+        $this->assertArrayHasKey('distillery', HarvestByproduct::DESTINATION_TYPES);
+        $this->assertArrayHasKey('composting', HarvestByproduct::DESTINATION_TYPES);
+        $this->assertArrayHasKey('authorized_landfill', HarvestByproduct::DESTINATION_TYPES);
+        $this->assertArrayHasKey('other', HarvestByproduct::DESTINATION_TYPES);
     }
 
     // ── Relationships ─────────────────────────────────────────────────────────
@@ -99,13 +99,13 @@ class HarvestByproductTest extends TestCase
 
         $byproduct = HarvestByproduct::create([
             'viticulturist_id' => $user->id,
-            'campaign_id' => $campaign->id,
-            'date' => now(),
-            'byproduct_type' => 'orujo',
-            'quantity_kg' => 500,
-            'destination_type' => 'cooperativa',
+            'campaign_id'      => $campaign->id,
+            'date'             => now(),
+            'byproduct_type'   => 'pomace',
+            'quantity_kg'      => 500,
+            'destination_type' => 'cooperative',
             'destination_name' => 'Coop Test',
-            'active' => true,
+            'active'           => true,
         ]);
 
         $this->assertEquals($user->id, $byproduct->viticulturist->id);
@@ -118,13 +118,13 @@ class HarvestByproductTest extends TestCase
 
         $byproduct = HarvestByproduct::create([
             'viticulturist_id' => $user->id,
-            'campaign_id' => $campaign->id,
-            'date' => now(),
-            'byproduct_type' => 'lia',
-            'quantity_kg' => 200,
-            'destination_type' => 'destileria',
+            'campaign_id'      => $campaign->id,
+            'date'             => now(),
+            'byproduct_type'   => 'lees',
+            'quantity_kg'      => 200,
+            'destination_type' => 'distillery',
             'destination_name' => 'Destilería Test',
-            'active' => true,
+            'active'           => true,
         ]);
 
         $this->assertEquals($campaign->id, $byproduct->campaign->id);

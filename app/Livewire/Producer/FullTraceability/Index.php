@@ -128,7 +128,7 @@ class Index extends Component
         // ── Paso 4: Productos finales (lotes) ───────────────────────────
         $wineIds = $winesData->pluck('id');
 
-        $productStats = DB::table('product_lots')
+        $productStats = DB::table('wine_lots')
             ->whereIn('wine_id', $wineIds)
             ->selectRaw('
                 COUNT(*) as total_lots,

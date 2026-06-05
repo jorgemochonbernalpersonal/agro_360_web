@@ -30,6 +30,8 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'role' => 'viticulturist',
             'remember_token' => Str::random(10),
+            'can_login' => true,
+            'password_must_reset' => false,
         ];
     }
 

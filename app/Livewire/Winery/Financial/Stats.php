@@ -152,7 +152,7 @@ class Stats extends Component
 
         $revenueByWineType = DB::table('invoices as i')
             ->join('invoice_items as ii', 'ii.invoice_id', '=', 'i.id')
-            ->join('product_lots as pl', 'pl.id', '=', 'ii.product_lot_id')
+            ->join('wine_lots as pl', 'pl.id', '=', 'ii.product_lot_id')
             ->where('i.user_id', $userId)
             ->whereNull('i.viticulturist_id')
             ->where('i.status', 'paid')
@@ -194,7 +194,7 @@ class Stats extends Component
 
         $topProducts = DB::table('invoices as i')
             ->join('invoice_items as ii', 'ii.invoice_id', '=', 'i.id')
-            ->join('product_lots as pl', 'pl.id', '=', 'ii.product_lot_id')
+            ->join('wine_lots as pl', 'pl.id', '=', 'ii.product_lot_id')
             ->where('i.user_id', $userId)
             ->whereNull('i.viticulturist_id')
             ->where('i.status', 'paid')
@@ -227,19 +227,19 @@ class Stats extends Component
         // STOCK DE PRODUCTOS
         // ═══════════════════════════════════════════════════════════
 
-        $productStock = DB::table('product_lots')
-            ->join('wines', 'wines.id', '=', 'product_lots.wine_id')
+        $productStock = DB::table('wine_lots')
+            ->join('wines', 'wines.id', '=', 'wine_lots.wine_id')
             ->where('wines.user_id', $userId)
             ->select(
-                'product_lots.wine_type',
-                DB::raw('SUM(product_lots.quantity) as total_units'),
-                DB::raw('SUM(product_lots.available_quantity) as available'),
-                DB::raw('SUM(product_lots.reserved_quantity) as reserved'),
-                DB::raw('SUM(product_lots.sold_quantity) as sold'),
-                DB::raw('SUM(product_lots.sold_quantity * product_lots.price_per_unit) as total_revenue'),
-                DB::raw('SUM(product_lots.quantity * COALESCE(product_lots.cost_price, 0)) as total_cost'),
+                'wine_lots.wine_type',
+                DB::raw('SUM(wine_lots.quantity) as total_units'),
+                DB::raw('SUM(wine_lots.available_quantity) as available'),
+                DB::raw('SUM(wine_lots.reserved_quantity) as reserved'),
+                DB::raw('SUM(wine_lots.sold_quantity) as sold'),
+                DB::raw('SUM(wine_lots.sold_quantity * wine_lots.price_per_unit) as total_revenue'),
+                DB::raw('SUM(wine_lots.quantity * COALESCE(wine_lots.cost_price, 0)) as total_cost'),
             )
-            ->groupBy('product_lots.wine_type')
+            ->groupBy('wine_lots.wine_type')
             ->get();
 
         return view('livewire.winery.financial.stats', [
