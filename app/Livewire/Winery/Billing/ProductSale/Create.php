@@ -10,6 +10,7 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
 use App\Models\ProductLot;
 use App\Models\Tax;
+use App\Services\InvoiceService;
 use App\Services\ProductStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,13 @@ use Livewire\Component;
 class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;
+
+    protected InvoiceService $invoiceService;
+
+    public function boot(InvoiceService $invoiceService): void
+    {
+        $this->invoiceService = $invoiceService;
+    }
 
     public string $client_id = '';
 
@@ -210,31 +218,9 @@ class Create extends Component
         try {
             DB::beginTransaction();
 
-            $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
-            $noteCode = $settings->generateAndIncrementDeliveryNoteCode();
+            $noteCode = $this->invoiceService->generateDeliveryNoteCode(Auth::id(), false, '');
 
-            // Calcular totales
-            $subtotal = 0;
-            $discountAmount = 0;
-            $taxAmount = 0;
-
-            foreach ($this->items as $item) {
-                $qty = (float) $item['quantity'];
-                $unitPrice = (float) $item['unit_price'];
-                $discPct = (float) ($item['discount_percentage'] ?? 0);
-                $lineSubtotal = $qty * $unitPrice;
-                $lineDiscount = $lineSubtotal * ($discPct / 100);
-                $lineBase = $lineSubtotal - $lineDiscount;
-                $tax = $item['tax_id'] ? $taxRates[$item['tax_id']] ?? null : null;
-                $taxRate = $tax ? (float) $tax->rate : 0;
-
-                $subtotal += $lineSubtotal;
-                $discountAmount += $lineDiscount;
-                $taxAmount += $lineBase * ($taxRate / 100);
-            }
-
-            $taxBase = $subtotal - $discountAmount;
-            $total = $taxBase + $taxAmount;
+            $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
 
             $multiplyGift = $this->is_gift ? 0 : 1;
 
@@ -258,11 +244,11 @@ class Create extends Component
                 'billing_company_name' => $client->company_name,
                 'billing_email' => $client->email,
                 'billing_phone' => $client->phone,
-                'subtotal' => round($subtotal * $multiplyGift, 3),
-                'discount_amount' => round($discountAmount * $multiplyGift, 3),
-                'tax_base' => round($taxBase * $multiplyGift, 3),
-                'tax_amount' => round($taxAmount * $multiplyGift, 3),
-                'total_amount' => round($total * $multiplyGift, 3),
+                'subtotal' => round($totals['gross_subtotal'] * $multiplyGift, 3),
+                'discount_amount' => round($totals['discount_amount'] * $multiplyGift, 3),
+                'tax_base' => round($totals['tax_base'] * $multiplyGift, 3),
+                'tax_amount' => round($totals['tax_amount'] * $multiplyGift, 3),
+                'total_amount' => round($totals['total'] * $multiplyGift, 3),
                 'observations' => $this->observations ?: null,
                 'observations_invoice' => $this->observations_invoice ?: null,
             ]);
