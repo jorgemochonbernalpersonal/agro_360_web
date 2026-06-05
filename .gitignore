@@ -47,6 +47,7 @@ Homestead.yaml
 .env.*
 env.*.example
 .env.backup
+docs/.env_agro
 
 # Claude Code
 /.claude/
