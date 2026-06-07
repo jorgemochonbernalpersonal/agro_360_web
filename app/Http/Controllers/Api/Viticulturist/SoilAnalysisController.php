@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\SoilAnalysisResource;
 use App\Models\SoilAnalysis;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class SoilAnalysisController extends Controller
+class SoilAnalysisController extends BaseApiController
 {
     // ─── GET /viticulturist/soil-analyses ─────────────────────────────────────
 
@@ -42,15 +42,7 @@ class SoilAnalysisController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => SoilAnalysisResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, SoilAnalysisResource::collection($items->items()));
     }
 
     public function store(Request $request): JsonResponse

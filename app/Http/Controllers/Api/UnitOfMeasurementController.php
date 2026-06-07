@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\UnitOfMeasurement;
 use Illuminate\Http\JsonResponse;
 
-class UnitOfMeasurementController extends Controller
+class UnitOfMeasurementController extends BaseApiController
 {
     /**
      * GET /api/v1/units-of-measurement
@@ -19,6 +19,6 @@ class UnitOfMeasurementController extends Controller
         $units = UnitOfMeasurement::orderBy('name')
             ->get(['id', 'name', 'symbol', 'type']);
 
-        return response()->json(['data' => $units]);
+        return $this->success($units);
     }
 }

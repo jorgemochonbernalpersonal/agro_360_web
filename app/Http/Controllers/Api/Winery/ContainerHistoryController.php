@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Container;
 use App\Models\ContainerHistory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ContainerHistoryController extends Controller
+class ContainerHistoryController extends BaseApiController
 {
     /**
      * GET /winery/containers/{id}/history

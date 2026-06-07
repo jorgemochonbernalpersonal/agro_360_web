@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\WineAnalysisResource;
 use App\Models\WineAnalysis;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineAnalysisController extends Controller
+class WineAnalysisController extends BaseApiController
 {
     // ─── GET /winery/wine-analysis ────────────────────────────────────────────
 
@@ -30,15 +30,7 @@ class WineAnalysisController extends Controller
 
         $analyses = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => WineAnalysisResource::collection($analyses),
-            'meta' => [
-                'total' => $analyses->total(),
-                'per_page' => $analyses->perPage(),
-                'current_page' => $analyses->currentPage(),
-                'last_page' => $analyses->lastPage(),
-            ],
-        ]);
+        return $this->paginated($analyses, WineAnalysisResource::collection($analyses));
     }
 
     // ─── POST /winery/wine-analysis ──────────────────────────────────────────
@@ -74,7 +66,7 @@ class WineAnalysisController extends Controller
         $analysis = WineAnalysis::create(array_merge($validated, ['user_id' => $user->id]));
         $analysis->load(['wine', 'container']);
 
-        return response()->json(['data' => new WineAnalysisResource($analysis)], 201);
+        return $this->created(new WineAnalysisResource($analysis));
     }
 
     // ─── GET /winery/wine-analysis/{id} ──────────────────────────────────────
@@ -86,7 +78,7 @@ class WineAnalysisController extends Controller
             ->with(['wine', 'container'])
             ->findOrFail($id);
 
-        return response()->json(['data' => new WineAnalysisResource($analysis)]);
+        return $this->success(new WineAnalysisResource($analysis));
     }
 
     // ─── PUT /winery/wine-analysis/{id} ──────────────────────────────────────
@@ -119,7 +111,7 @@ class WineAnalysisController extends Controller
         $analysis->update($validated);
         $analysis->load(['wine', 'container']);
 
-        return response()->json(['data' => new WineAnalysisResource($analysis)]);
+        return $this->success(new WineAnalysisResource($analysis));
     }
 
     // ─── DELETE /winery/wine-analysis/{id} ───────────────────────────────────
@@ -132,6 +124,6 @@ class WineAnalysisController extends Controller
         $analysis = WineAnalysis::where('user_id', $user->id)->findOrFail($id);
         $analysis->delete();
 
-        return response()->json(['message' => __('Análisis eliminado correctamente.')]);
+        return $this->deleted(__('Análisis eliminado correctamente.'));
     }
 }

@@ -110,9 +110,9 @@ class IndexTest extends ViticulturistTestCase
             'viticulturist_id' => $viticulturistId,
             'campaign_id' => $campaignId,
             'date' => '2024-10-01',
-            'byproduct_type' => 'orujo',
+            'byproduct_type' => 'pomace',
             'quantity_kg' => 1500.000,
-            'destination_type' => 'cooperativa',
+            'destination_type' => 'cooperative',
             'destination_name' => 'Cooperativa Test',
             'active' => $active,
         ], $overrides));

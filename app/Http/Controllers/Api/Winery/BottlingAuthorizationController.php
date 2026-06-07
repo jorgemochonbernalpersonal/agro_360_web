@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\BottlingAuthorization;
 use App\Models\Wine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class BottlingAuthorizationController extends Controller
+class BottlingAuthorizationController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -29,16 +29,9 @@ class BottlingAuthorizationController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($a) => $this->format($a)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'types' => BottlingAuthorization::authorizationTypeOptions(),
-                'statuses' => BottlingAuthorization::statusOptions(),
-            ],
+        return $this->paginated($items, $items->map(fn ($a) => $this->format($a)), [
+            'types' => BottlingAuthorization::authorizationTypeOptions(),
+            'statuses' => BottlingAuthorization::statusOptions(),
         ]);
     }
 
@@ -49,7 +42,7 @@ class BottlingAuthorizationController extends Controller
 
         $authorization = BottlingAuthorization::forUser($user->id)->with('wine')->findOrFail($id);
 
-        return response()->json(['data' => $this->format($authorization)]);
+        return $this->success($this->format($authorization));
     }
 
     public function store(Request $request): JsonResponse
@@ -80,10 +73,7 @@ class BottlingAuthorizationController extends Controller
         $authorization = BottlingAuthorization::create($validated);
         $authorization->load('wine');
 
-        return response()->json([
-            'data' => $this->format($authorization),
-            'message' => __('Autorización de embotellado creada correctamente.'),
-        ], 201);
+        return $this->created($this->format($authorization));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -109,7 +99,7 @@ class BottlingAuthorizationController extends Controller
         $authorization->update($validated);
         $authorization->load('wine');
 
-        return response()->json(['data' => $this->format($authorization)]);
+        return $this->success($this->format($authorization));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -120,7 +110,7 @@ class BottlingAuthorizationController extends Controller
         $authorization = BottlingAuthorization::forUser($user->id)->findOrFail($id);
         $authorization->delete();
 
-        return response()->json(['message' => __('Autorización de embotellado eliminada correctamente.')]);
+        return $this->deleted(__('Autorización de embotellado eliminada correctamente.'));
     }
 
     private function format(BottlingAuthorization $a): array

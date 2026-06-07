@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\ContainerResource;
 use App\Models\Container;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ContainerController extends Controller
+class ContainerController extends BaseApiController
 {
     // ─── GET /winery/containers ───────────────────────────────────────────────
 
@@ -56,17 +56,9 @@ class ContainerController extends Controller
             ->orderBy('name')
             ->paginate($perPage);
 
-        return response()->json([
-            'data' => ContainerResource::collection($containers),
-            'meta' => [
-                'total' => (int) $totals->total,
-                'per_page' => $containers->perPage(),
-                'current_page' => $containers->currentPage(),
-                'last_page' => $containers->lastPage(),
-                'has_more' => $containers->hasMorePages(),
-                'total_capacity' => round((float) $totals->total_capacity, 2),
-                'total_used' => round((float) $totals->total_used, 2),
-            ],
+        return $this->paginated($containers, ContainerResource::collection($containers), [
+            'total_capacity' => round((float) $totals->total_capacity, 2),
+            'total_used' => round((float) $totals->total_used, 2),
         ]);
     }
 
@@ -81,7 +73,7 @@ class ContainerController extends Controller
             ->with(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine'])
             ->findOrFail($id);
 
-        return response()->json(['data' => new ContainerResource($container)]);
+        return $this->success(new ContainerResource($container));
     }
 
     // ─── POST /winery/containers ─────────────────────────────────────────────
@@ -112,7 +104,7 @@ class ContainerController extends Controller
 
         $container->load(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine']);
 
-        return response()->json(['data' => new ContainerResource($container)], 201);
+        return $this->created(new ContainerResource($container));
     }
 
     // ─── PUT /winery/containers/{id} ──────────────────────────────────────────
@@ -134,7 +126,7 @@ class ContainerController extends Controller
 
         $container->load(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine']);
 
-        return response()->json(['data' => new ContainerResource($container)]);
+        return $this->success(new ContainerResource($container));
     }
 
     // ─── DELETE /winery/containers/{id} — archive ─────────────────────────────
@@ -147,6 +139,6 @@ class ContainerController extends Controller
         $container = Container::where('user_id', $user->id)->findOrFail($id);
         $container->update(['archived' => true]);
 
-        return response()->json(['message' => __('Depósito archivado correctamente.')]);
+        return $this->deleted(__('Depósito archivado correctamente.'));
     }
 }

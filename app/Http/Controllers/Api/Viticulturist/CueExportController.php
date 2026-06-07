@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\CueExport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CueExportController extends Controller
+class CueExportController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -18,14 +18,7 @@ class CueExportController extends Controller
             ->orderByDesc('created_at')
             ->paginate(20);
 
-        return response()->json([
-            'data' => $items->map(fn ($e) => $this->format($e)),
-            'meta' => [
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, $items->map(fn ($e) => $this->format($e)));
     }
 
     private function format(CueExport $e): array

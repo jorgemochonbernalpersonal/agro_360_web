@@ -41,6 +41,7 @@ class CreateTest extends TestCase
         $viticulturist = User::factory()->create([
             'role' => 'viticulturist',
             'email_verified_at' => now(),
+            'can_login' => false,
         ]);
 
         $this->actingAs($viticulturist);

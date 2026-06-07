@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Oenologist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class OenologistController extends Controller
+class OenologistController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -22,20 +22,18 @@ class OenologistController extends Controller
 
         $oenologists = $query->orderBy('surname')->orderBy('name')->get();
 
-        return response()->json([
-            'data' => $oenologists->map(fn ($o) => [
-                'id' => $o->id,
-                'name' => $o->name,
-                'surname' => $o->surname,
-                'full_name' => $o->full_name,
-                'license_number' => $o->license_number,
-                'email' => $o->email,
-                'phone' => $o->phone,
-                'active' => $o->active,
-                'notes' => $o->notes,
-                'created_at' => $o->created_at->toIso8601String(),
-            ]),
-        ]);
+        return $this->success($oenologists->map(fn ($o) => [
+            'id' => $o->id,
+            'name' => $o->name,
+            'surname' => $o->surname,
+            'full_name' => $o->full_name,
+            'license_number' => $o->license_number,
+            'email' => $o->email,
+            'phone' => $o->phone,
+            'active' => $o->active,
+            'notes' => $o->notes,
+            'created_at' => $o->created_at->toIso8601String(),
+        ]));
     }
 
     public function store(Request $request): JsonResponse
@@ -55,10 +53,7 @@ class OenologistController extends Controller
 
         $oenologist = Oenologist::create([...$validated, 'user_id' => $user->id, 'active' => $validated['active'] ?? true]);
 
-        return response()->json([
-            'data' => ['id' => $oenologist->id, 'full_name' => $oenologist->full_name, ...$oenologist->toArray()],
-            'message' => __('Enólogo creado correctamente.'),
-        ], 201);
+        return $this->created(['id' => $oenologist->id, 'full_name' => $oenologist->full_name, ...$oenologist->toArray()]);
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -80,7 +75,7 @@ class OenologistController extends Controller
 
         $oenologist->update($validated);
 
-        return response()->json(['data' => ['id' => $oenologist->id, 'full_name' => $oenologist->full_name, ...$oenologist->fresh()->toArray()]]);
+        return $this->success(['id' => $oenologist->id, 'full_name' => $oenologist->full_name, ...$oenologist->fresh()->toArray()]);
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -91,6 +86,6 @@ class OenologistController extends Controller
         $oenologist = Oenologist::forUser($user->id)->findOrFail($id);
         $oenologist->update(['active' => false]);
 
-        return response()->json(['message' => __('Enólogo desactivado correctamente.')]);
+        return $this->deleted(__('Enólogo desactivado correctamente.'));
     }
 }

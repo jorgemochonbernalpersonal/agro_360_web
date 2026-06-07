@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\LabelBatch;
 use App\Models\Wine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class LabelBatchController extends Controller
+class LabelBatchController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -27,15 +27,8 @@ class LabelBatchController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $batches = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $batches->map(fn ($b) => $this->format($b)),
-            'meta' => [
-                'total' => $batches->total(),
-                'per_page' => $batches->perPage(),
-                'current_page' => $batches->currentPage(),
-                'last_page' => $batches->lastPage(),
-                'sources' => LabelBatch::SOURCES,
-            ],
+        return $this->paginated($batches, $batches->map(fn ($b) => $this->format($b)), [
+            'sources' => LabelBatch::SOURCES,
         ]);
     }
 
@@ -46,7 +39,7 @@ class LabelBatchController extends Controller
 
         $batch = LabelBatch::forUser($user->id)->with('wine')->findOrFail($id);
 
-        return response()->json(['data' => $this->format($batch)]);
+        return $this->success($this->format($batch));
     }
 
     public function store(Request $request): JsonResponse
@@ -76,10 +69,7 @@ class LabelBatchController extends Controller
         ]);
         $batch->load('wine');
 
-        return response()->json([
-            'data' => $this->format($batch),
-            'message' => __('Lote de etiquetas creado correctamente.'),
-        ], 201);
+        return $this->created($this->format($batch));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -102,7 +92,7 @@ class LabelBatchController extends Controller
         $batch->update($validated);
         $batch->load('wine');
 
-        return response()->json(['data' => $this->format($batch)]);
+        return $this->success($this->format($batch));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -115,7 +105,7 @@ class LabelBatchController extends Controller
 
         $batch->delete();
 
-        return response()->json(['message' => __('Lote de etiquetas eliminado correctamente.')]);
+        return $this->deleted(__('Lote de etiquetas eliminado correctamente.'));
     }
 
     private function format(LabelBatch $b): array

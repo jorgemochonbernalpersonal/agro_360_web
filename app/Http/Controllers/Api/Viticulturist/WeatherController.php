@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Plot;
 use App\Services\RemoteSensing\WeatherService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WeatherController extends Controller
+class WeatherController extends BaseApiController
 {
     public function __construct(
         private WeatherService $weatherService,
@@ -31,14 +31,12 @@ class WeatherController extends Controller
         $forecast = $this->weatherService->getForecast($plot, 7);
         $soil = $this->weatherService->getSoilData($plot);
 
-        return response()->json([
-            'data' => [
-                'plot_id' => $plot->id,
-                'plot_name' => $plot->plot_name ?? $plot->name,
-                'current' => $current,
-                'forecast' => $forecast,
-                'soil' => $soil,
-            ],
+        return $this->success([
+            'plot_id' => $plot->id,
+            'plot_name' => $plot->plot_name ?? $plot->name,
+            'current' => $current,
+            'forecast' => $forecast,
+            'soil' => $soil,
         ]);
     }
 }

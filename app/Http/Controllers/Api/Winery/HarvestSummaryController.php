@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Harvest;
 use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class HarvestSummaryController extends Controller
+class HarvestSummaryController extends BaseApiController
 {
     public function __invoke(Request $request): JsonResponse
     {

@@ -54,13 +54,12 @@ class NotebookAccessTest extends SupervisorTestCase
         $supervisor = $this->makeSupervisor();
         $outsideVit = User::factory()->create(['role' => 'viticulturist', 'can_login' => true]);
 
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-
         Livewire::actingAs($supervisor)
             ->test(Index::class)
             ->call('openRequestModal')
             ->set('targetViticulturistId', $outsideVit->id)
-            ->call('requestAccess');
+            ->call('requestAccess')
+            ->assertHasErrors(['targetViticulturistId']);
     }
 
     public function test_supervisor_cannot_request_duplicate_pending(): void

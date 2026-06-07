@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\DoDocument;
 use App\Models\DoInspection;
 use App\Models\DoLabel;
@@ -10,7 +10,7 @@ use App\Models\DoQualification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class DenominationOfOriginController extends Controller
+class DenominationOfOriginController extends BaseApiController
 {
     // GET /winery/do/qualifications
     public function qualifications(Request $request): JsonResponse
@@ -31,16 +31,9 @@ class DenominationOfOriginController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($q) => $this->formatQualification($q)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'results' => DoQualification::RESULT_LABELS,
-                'colors' => DoQualification::COLOR_LABELS,
-            ],
+        return $this->paginated($items, $items->map(fn ($q) => $this->formatQualification($q)), [
+            'results' => DoQualification::RESULT_LABELS,
+            'colors' => DoQualification::COLOR_LABELS,
         ]);
     }
 
@@ -52,7 +45,7 @@ class DenominationOfOriginController extends Controller
 
         $q = DoQualification::where('winery_id', $user->id)->findOrFail($id);
 
-        return response()->json(['data' => $this->formatQualification($q)]);
+        return $this->success($this->formatQualification($q));
     }
 
     // GET /winery/do/labels
@@ -74,15 +67,8 @@ class DenominationOfOriginController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($l) => $this->formatLabel($l)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'statuses' => DoLabel::STATUS_LABELS,
-            ],
+        return $this->paginated($items, $items->map(fn ($l) => $this->formatLabel($l)), [
+            'statuses' => DoLabel::STATUS_LABELS,
         ]);
     }
 
@@ -94,7 +80,7 @@ class DenominationOfOriginController extends Controller
 
         $l = DoLabel::where('winery_id', $user->id)->findOrFail($id);
 
-        return response()->json(['data' => $this->formatLabel($l)]);
+        return $this->success($this->formatLabel($l));
     }
 
     // GET /winery/do/inspections
@@ -116,16 +102,9 @@ class DenominationOfOriginController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($i) => $this->formatInspection($i)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'statuses' => DoInspection::STATUS_LABELS,
-                'results' => DoInspection::RESULT_LABELS,
-            ],
+        return $this->paginated($items, $items->map(fn ($i) => $this->formatInspection($i)), [
+            'statuses' => DoInspection::STATUS_LABELS,
+            'results' => DoInspection::RESULT_LABELS,
         ]);
     }
 
@@ -145,15 +124,7 @@ class DenominationOfOriginController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($d) => $this->formatDocument($d)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-            ],
-        ]);
+        return $this->paginated($items, $items->map(fn ($d) => $this->formatDocument($d)));
     }
 
     // ── Formatters ────────────────────────────────────────────────────────────

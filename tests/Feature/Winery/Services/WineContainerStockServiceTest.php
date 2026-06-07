@@ -39,6 +39,7 @@ class WineContainerStockServiceTest extends WineryTestCase
             'name' => 'Vino Test',
             'wine_type' => 'red',
             'status' => 'in_progress',
+            'volume_liters' => 99999,
         ]);
         $this->uom = UnitOfMeasurement::firstOrCreate(
             ['symbol' => 'L'],

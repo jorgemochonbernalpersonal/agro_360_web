@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\FermentationControlResource;
 use App\Http\Resources\Api\WineResource;
 use App\Models\Wine;
@@ -13,7 +13,7 @@ use App\Models\WineTastingNote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineController extends Controller
+class WineController extends BaseApiController
 {
     // ─── GET /winery/wines ────────────────────────────────────────────────────
 
@@ -53,17 +53,10 @@ class WineController extends Controller
             ->orderByDesc('created_at')
             ->paginate($perPage);
 
-        return response()->json([
-            'data' => WineResource::collection($wines),
-            'meta' => [
-                'total' => (int) $counts->total,
-                'per_page' => $wines->perPage(),
-                'current_page' => $wines->currentPage(),
-                'last_page' => $wines->lastPage(),
-                'in_progress' => (int) $counts->in_progress,
-                'aged' => (int) $counts->aged,
-                'bottled' => (int) $counts->bottled,
-            ],
+        return $this->paginated($wines, WineResource::collection($wines), [
+            'in_progress' => (int) $counts->in_progress,
+            'aged' => (int) $counts->aged,
+            'bottled' => (int) $counts->bottled,
         ]);
     }
 
@@ -78,7 +71,7 @@ class WineController extends Controller
             ->with(['fermentationControls' => fn ($q) => $q->latest('control_date')->take(10)])
             ->findOrFail($id);
 
-        return response()->json(['data' => new WineResource($wine)]);
+        return $this->success(new WineResource($wine));
     }
 
     // ─── POST /winery/wines ───────────────────────────────────────────────────
@@ -108,7 +101,7 @@ class WineController extends Controller
             'status' => 'in_progress',
         ]));
 
-        return response()->json(['data' => new WineResource($wine)], 201);
+        return $this->created(new WineResource($wine));
     }
 
     // ─── PUT /winery/wines/{id} ───────────────────────────────────────────────
@@ -137,7 +130,7 @@ class WineController extends Controller
 
         $wine->update($validated);
 
-        return response()->json(['data' => new WineResource($wine)]);
+        return $this->success(new WineResource($wine));
     }
 
     // ─── DELETE /winery/wines/{id} ────────────────────────────────────────────
@@ -150,7 +143,7 @@ class WineController extends Controller
         $wine = Wine::forUser($user->id)->findOrFail($id);
         $wine->update(['status' => 'cancelled']);
 
-        return response()->json(['message' => __('Vino cancelado correctamente.')]);
+        return $this->deleted(__('Vino cancelado correctamente.'));
     }
 
     // ─── GET /winery/wines/{id}/fermentation-controls ─────────────────────────
@@ -206,9 +199,8 @@ class WineController extends Controller
             ->selectRaw('SUM(quantity_bottles) as total_bottles, MAX(bottling_date) as last_bottling_date')
             ->first();
 
-        return response()->json([
-            'data' => [
-                'wine' => [
+        return $this->success([
+            'wine' => [
                     'id' => $wine->id,
                     'name' => $wine->name,
                     'internal_code' => $wine->internal_code,
@@ -270,7 +262,6 @@ class WineController extends Controller
                         ? \Carbon\Carbon::parse($bottlingSummary->last_bottling_date)->toDateString()
                         : null,
                 ],
-            ],
         ]);
     }
 }

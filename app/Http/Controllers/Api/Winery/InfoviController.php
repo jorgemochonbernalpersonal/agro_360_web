@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Livewire\Winery\Silicie\Infovi;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class InfoviController extends Controller
+class InfoviController extends BaseApiController
 {
     // ─── GET /winery/infovi ───────────────────────────────────────────────────
     // Cuadros completos INFOVI para una campaña
@@ -42,20 +42,18 @@ class InfoviController extends Controller
             $campaigns = collect([now()->month >= 8 ? now()->year : now()->year - 1]);
         }
 
-        return response()->json([
-            'data' => [
-                'campaign' => $campaign,
-                'campaign_start' => $campaignStart,
-                'campaign_end' => $campaignEnd,
-                'campaigns' => $campaigns,
-                'threshold' => $this->buildThreshold($wineryId),
-                'existencias' => $this->buildCuadroExistencias($wineryId, $campaign),
-                'produccion' => $this->buildCuadroProduccion($wineryId, $campaign),
-                'ventas' => $this->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd),
-                'entradas' => $this->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd),
-                'balance' => $this->buildBalanceSheet($wineryId, $campaign, $campaignStart, $campaignEnd),
-                'mosto' => $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd),
-            ],
+        return $this->success([
+            'campaign' => $campaign,
+            'campaign_start' => $campaignStart,
+            'campaign_end' => $campaignEnd,
+            'campaigns' => $campaigns,
+            'threshold' => $this->buildThreshold($wineryId),
+            'existencias' => $this->buildCuadroExistencias($wineryId, $campaign),
+            'produccion' => $this->buildCuadroProduccion($wineryId, $campaign),
+            'ventas' => $this->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd),
+            'entradas' => $this->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd),
+            'balance' => $this->buildBalanceSheet($wineryId, $campaign, $campaignStart, $campaignEnd),
+            'mosto' => $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd),
         ]);
     }
 
@@ -66,9 +64,7 @@ class InfoviController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        return response()->json([
-            'data' => $this->buildThreshold($user->id),
-        ]);
+        return $this->success($this->buildThreshold($user->id));
     }
 
     // ─── Private: Threshold ───────────────────────────────────────────────────

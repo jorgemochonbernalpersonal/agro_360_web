@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Harvest;
@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class DashboardController extends Controller
+class DashboardController extends BaseApiController
 {
     public function __invoke(Request $request): JsonResponse
     {

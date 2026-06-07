@@ -25,8 +25,8 @@ class CampaignTest extends TestCase
 
     public function test_scopes_filter_correctly(): void
     {
-        $viticulturist1 = User::factory()->create(['role' => 'viticulturist']);
-        $viticulturist2 = User::factory()->create(['role' => 'viticulturist']);
+        $viticulturist1 = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
+        $viticulturist2 = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
 
         $campaign1 = Campaign::factory()->create([
             'viticulturist_id' => $viticulturist1->id,
@@ -87,7 +87,7 @@ class CampaignTest extends TestCase
 
     public function test_get_or_create_active_for_year_creates_new_campaign_when_none_exists(): void
     {
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $viticulturist = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
 
         $campaign = Campaign::getOrCreateActiveForYear($viticulturist->id, 2030);
 
@@ -101,7 +101,7 @@ class CampaignTest extends TestCase
 
     public function test_get_or_create_active_for_year_returns_existing_active_campaign(): void
     {
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $viticulturist = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
 
         $existing = Campaign::factory()->create([
             'viticulturist_id' => $viticulturist->id,

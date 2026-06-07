@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\CellarOperation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CellarOperationController extends Controller
+class CellarOperationController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -35,16 +35,9 @@ class CellarOperationController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($op) => $this->format($op)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'types' => CellarOperation::operationTypeOptions(),
-                'statuses' => CellarOperation::statusOptions(),
-            ],
+        return $this->paginated($items, $items->map(fn ($op) => $this->format($op)), [
+            'types' => CellarOperation::operationTypeOptions(),
+            'statuses' => CellarOperation::statusOptions(),
         ]);
     }
 
@@ -57,7 +50,7 @@ class CellarOperationController extends Controller
             ->with(['sourceContainer', 'targetContainer'])
             ->findOrFail($id);
 
-        return response()->json(['data' => $this->format($operation)]);
+        return $this->success($this->format($operation));
     }
 
     public function store(Request $request): JsonResponse
@@ -82,10 +75,7 @@ class CellarOperationController extends Controller
         $operation = CellarOperation::create($validated);
         $operation->load(['sourceContainer', 'targetContainer']);
 
-        return response()->json([
-            'data' => $this->format($operation),
-            'message' => __('Operación de bodega registrada correctamente.'),
-        ], 201);
+        return $this->created($this->format($operation));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -109,7 +99,7 @@ class CellarOperationController extends Controller
         $operation->update($validated);
         $operation->load(['sourceContainer', 'targetContainer']);
 
-        return response()->json(['data' => $this->format($operation)]);
+        return $this->success($this->format($operation));
     }
 
     public function complete(Request $request, int $id): JsonResponse
@@ -142,7 +132,7 @@ class CellarOperationController extends Controller
         $operation = CellarOperation::forUser($user->id)->findOrFail($id);
         $operation->delete();
 
-        return response()->json(['message' => __('Operación eliminada correctamente.')]);
+        return $this->deleted(__('Operación eliminada correctamente.'));
     }
 
     private function format(CellarOperation $op): array

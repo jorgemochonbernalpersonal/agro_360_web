@@ -95,7 +95,7 @@ class ResetPasswordTest extends TestCase
             ->set('password', 'NuevaClave1!')
             ->set('password_confirmation', 'NuevaClave1!')
             ->call('resetPassword')
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('login').'?reset_email='.urlencode('juan@example.com'));
     }
 
     // ── resetPassword: validaciones ───────────────────────────────────────────

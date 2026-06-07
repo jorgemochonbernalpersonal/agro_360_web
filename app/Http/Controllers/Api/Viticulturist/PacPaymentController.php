@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\PacPayment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PacPaymentController extends Controller
+class PacPaymentController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -18,14 +18,7 @@ class PacPaymentController extends Controller
             ->orderByDesc('payment_date')
             ->paginate(20);
 
-        return response()->json([
-            'data' => $items->map(fn ($p) => $this->format($p)),
-            'meta' => [
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, $items->map(fn ($p) => $this->format($p)));
     }
 
     private function format(PacPayment $p): array

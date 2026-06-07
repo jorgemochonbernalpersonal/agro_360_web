@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\AppSetting;
 use App\Services\SecurityLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class SettingsController extends Controller
+class SettingsController extends BaseApiController
 {
     /** Claves de configuración gestionadas por la app móvil admin. */
     private const MANAGED_KEYS = [
@@ -34,7 +34,7 @@ class SettingsController extends Controller
             $settings[$key] = AppSetting::get($key);
         }
 
-        return response()->json(['data' => $settings]);
+        return $this->success($settings);
     }
 
     // ─── PUT /admin/settings ──────────────────────────────────────────────────
@@ -71,6 +71,6 @@ class SettingsController extends Controller
             $settings[$key] = AppSetting::get($key);
         }
 
-        return response()->json(['data' => $settings]);
+        return $this->success($settings);
     }
 }

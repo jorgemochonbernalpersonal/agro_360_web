@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -58,16 +59,14 @@ class WineryViticulturistTest extends TestCase
     public function test_scope_visible_to_returns_supervisor_pool_when_has_supervisor(): void
     {
         $supervisor = User::factory()->create(['role' => 'supervisor']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $poolViticulturist1 = User::factory()->create(['role' => 'viticulturist']);
-        $poolViticulturist2 = User::factory()->create(['role' => 'viticulturist']);
+        $viticulturist = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
+        $poolViticulturist1 = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
+        $poolViticulturist2 = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
 
-        // Asignar supervisor al viticultor
-        WineryViticulturist::create([
+        // Vincular viticultor con supervisor (tabla que usa getSupervisorAttribute)
+        SupervisorViticulturist::create([
             'viticulturist_id' => $viticulturist->id,
             'supervisor_id' => $supervisor->id,
-            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
-            'assigned_by' => $supervisor->id,
         ]);
 
         // Viticultores del pool del supervisor

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\LabelBatch;
 use App\Models\Wine;
 use App\Models\WineBottling;
@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class LabelingController extends Controller
+class LabelingController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -29,15 +29,7 @@ class LabelingController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $labelings = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $labelings->map(fn ($l) => $this->format($l)),
-            'meta' => [
-                'total' => $labelings->total(),
-                'per_page' => $labelings->perPage(),
-                'current_page' => $labelings->currentPage(),
-                'last_page' => $labelings->lastPage(),
-            ],
-        ]);
+        return $this->paginated($labelings, $labelings->map(fn ($l) => $this->format($l)));
     }
 
     public function show(Request $request, int $id): JsonResponse
@@ -47,7 +39,7 @@ class LabelingController extends Controller
 
         $labeling = WineLabeling::forUser($user->id)->with(['wine', 'bottling', 'labelBatch'])->findOrFail($id);
 
-        return response()->json(['data' => $this->format($labeling)]);
+        return $this->success($this->format($labeling));
     }
 
     public function store(Request $request): JsonResponse
@@ -98,10 +90,7 @@ class LabelingController extends Controller
 
         $labeling->load(['wine', 'bottling', 'labelBatch']);
 
-        return response()->json([
-            'data' => $this->format($labeling),
-            'message' => __('Etiquetado registrado correctamente.'),
-        ], 201);
+        return $this->created($this->format($labeling));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -140,7 +129,7 @@ class LabelingController extends Controller
 
         $labeling->load(['wine', 'bottling', 'labelBatch']);
 
-        return response()->json(['data' => $this->format($labeling)]);
+        return $this->success($this->format($labeling));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -159,7 +148,7 @@ class LabelingController extends Controller
             $labeling->delete();
         });
 
-        return response()->json(['message' => __('Etiquetado eliminado correctamente.')]);
+        return $this->deleted(__('Etiquetado eliminado correctamente.'));
     }
 
     private function format(WineLabeling $l): array

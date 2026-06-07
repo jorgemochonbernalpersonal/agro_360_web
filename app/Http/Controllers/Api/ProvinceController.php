@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Province;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ProvinceController extends Controller
+class ProvinceController extends BaseApiController
 {
     /**
      * GET /api/v1/provinces?autonomous_community_id=X
@@ -25,6 +25,6 @@ class ProvinceController extends Controller
             $query->where('autonomous_community_id', $communityId);
         }
 
-        return response()->json(['data' => $query->get(['id', 'name', 'autonomous_community_id'])]);
+        return $this->success($query->get(['id', 'name', 'autonomous_community_id']));
     }
 }

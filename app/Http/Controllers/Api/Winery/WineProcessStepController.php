@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\WineProcessStepResource;
 use App\Models\Container;
 use App\Models\Oenologist;
@@ -11,7 +11,7 @@ use App\Models\WineProcessDetail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineProcessStepController extends Controller
+class WineProcessStepController extends BaseApiController
 {
     // ─── GET /winery/wines/{id}/process ──────────────────────────────────────
 
@@ -92,10 +92,7 @@ class WineProcessStepController extends Controller
 
         $step->load(['container', 'containers', 'oenologist', 'unitOfMeasurement']);
 
-        return response()->json([
-            'data' => new WineProcessStepResource($step),
-            'message' => __('Paso de proceso registrado correctamente.'),
-        ], 201);
+        return $this->created(new WineProcessStepResource($step));
     }
 
     // ─── PUT /winery/process/{id} ─────────────────────────────────────────────
@@ -150,7 +147,7 @@ class WineProcessStepController extends Controller
 
         $step->load(['container', 'containers', 'oenologist', 'unitOfMeasurement']);
 
-        return response()->json(['data' => new WineProcessStepResource($step)]);
+        return $this->success(new WineProcessStepResource($step));
     }
 
     // ─── DELETE /winery/process/{id} ─────────────────────────────────────────
@@ -167,7 +164,7 @@ class WineProcessStepController extends Controller
         $step->containers()->detach();
         $step->delete();
 
-        return response()->json(['message' => __('Paso de proceso eliminado correctamente.')]);
+        return $this->deleted(__('Paso de proceso eliminado correctamente.'));
     }
 
     // ─── POST /winery/process/{id}/complete ──────────────────────────────────

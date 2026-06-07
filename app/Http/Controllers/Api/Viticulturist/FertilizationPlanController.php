@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\FertilizationPlanResource;
 use App\Models\FertilizationPlan;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class FertilizationPlanController extends Controller
+class FertilizationPlanController extends BaseApiController
 {
     // ─── GET /viticulturist/fertilization-plans ───────────────────────────────
 
@@ -38,15 +38,7 @@ class FertilizationPlanController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => FertilizationPlanResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, FertilizationPlanResource::collection($items->items()));
     }
 
     public function store(Request $request): JsonResponse

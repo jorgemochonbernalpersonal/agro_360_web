@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\ContainerReturnResource;
 use App\Models\PhytosanitaryContainerReturn;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ContainerReturnController extends Controller
+class ContainerReturnController extends BaseApiController
 {
     // ─── GET /viticulturist/container-returns ────────────────────────────────
 
@@ -43,15 +43,7 @@ class ContainerReturnController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => ContainerReturnResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, ContainerReturnResource::collection($items->items()));
     }
 
     // ─── POST /viticulturist/container-returns ──────────────────────────────

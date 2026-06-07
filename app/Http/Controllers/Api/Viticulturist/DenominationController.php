@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\DoDocument;
 use App\Models\SupervisorViticulturist;
 use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class DenominationController extends Controller
+class DenominationController extends BaseApiController
 {
     // ─── GET /viticulturist/denomination ─────────────────────────────────────
 
@@ -23,9 +23,7 @@ class DenominationController extends Controller
             ->first();
 
         if (! $relation) {
-            return response()->json([
-                'data' => null,
-            ]);
+            return $this->success(null);
         }
 
         $supervisor = $relation->supervisor;
@@ -56,17 +54,15 @@ class DenominationController extends Controller
                 'effective_date' => $doc->effective_date?->toDateString(),
             ]);
 
-        return response()->json([
-            'data' => [
-                'supervisor_id' => $supervisor->id,
-                'supervisor_name' => $supervisor->name,
-                'supervisor_email' => $supervisor->email,
-                'joined_at' => $relation->created_at->toIso8601String(),
-                'notebook_access' => (bool) $relation->notebook_access,
-                'notebook_granted_at' => $relation->notebook_granted_at?->toIso8601String(),
-                'wineries' => $wineries,
-                'documents' => $documents,
-            ],
+        return $this->success([
+            'supervisor_id' => $supervisor->id,
+            'supervisor_name' => $supervisor->name,
+            'supervisor_email' => $supervisor->email,
+            'joined_at' => $relation->created_at->toIso8601String(),
+            'notebook_access' => (bool) $relation->notebook_access,
+            'notebook_granted_at' => $relation->notebook_granted_at?->toIso8601String(),
+            'wineries' => $wineries,
+            'documents' => $documents,
         ]);
     }
 }

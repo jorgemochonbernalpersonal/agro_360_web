@@ -395,28 +395,19 @@ class Register extends Component
             return 'email_taken';
         }
 
-        // Solo auto-verificar si el email del registro coincide con el del ghost.
-        // Si es diferente, el usuario debe verificar su nuevo email.
-        $emailMatches = strtolower($ghost->email) === strtolower($email);
-
         $ghost->update([
             'name' => $this->name,
             'email' => $email,
             'password' => Hash::make($this->password),
             'can_login' => true,
             'password_must_reset' => false,
-            'email_verified_at' => $emailMatches ? ($ghost->email_verified_at ?? now()) : null,
+            'email_verified_at' => now(),
             'invitation_token' => null,
             'invitation_expires_at' => null,
             'invitation_sent_at' => null,
         ]);
 
         $freshGhost = $ghost->fresh();
-
-        // Si el email cambió, enviar verificación
-        if (! $emailMatches) {
-            $freshGhost->sendEmailVerificationNotification();
-        }
 
         Auth::login($freshGhost);
         session()->regenerate();

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\CampaignDocumentResource;
 use App\Models\Campaign;
 use App\Models\CampaignDocument;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CampaignDocumentController extends Controller
+class CampaignDocumentController extends BaseApiController
 {
     // ─── GET /viticulturist/campaign-documents ────────────────────────────────
 
@@ -43,15 +43,7 @@ class CampaignDocumentController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => CampaignDocumentResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, CampaignDocumentResource::collection($items->items()));
     }
 
     public function store(Request $request): JsonResponse

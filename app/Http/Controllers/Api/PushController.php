@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\DeviceToken;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PushController extends Controller
+class PushController extends BaseApiController
 {
     // ─── POST /push/register ──────────────────────────────────────────────────
 
@@ -45,6 +45,6 @@ class PushController extends Controller
             ->where('user_id', $request->user()->id)
             ->delete();
 
-        return response()->json(['message' => __('Token eliminado correctamente.')]);
+        return $this->deleted(__('Token eliminado correctamente.'));
     }
 }

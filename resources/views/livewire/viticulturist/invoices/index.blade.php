@@ -303,7 +303,6 @@
                                 @endif
 
                             </div>
-                        </div>
                     </x-slot:footer>
                 </x-agro.card>
             @endforeach

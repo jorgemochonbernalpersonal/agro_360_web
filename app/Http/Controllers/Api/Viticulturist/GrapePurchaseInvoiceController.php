@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\GrapePurchaseInvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class GrapePurchaseInvoiceController extends Controller
+class GrapePurchaseInvoiceController extends BaseApiController
 {
     // ─── GET /viticulturist/grape-purchase-invoices ──────────────────────────
 
@@ -40,14 +40,6 @@ class GrapePurchaseInvoiceController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => GrapePurchaseInvoiceResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, GrapePurchaseInvoiceResource::collection($items->items()));
     }
 }

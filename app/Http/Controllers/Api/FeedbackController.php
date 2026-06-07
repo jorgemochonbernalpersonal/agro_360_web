@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Feedback;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class FeedbackController extends Controller
+class FeedbackController extends BaseApiController
 {
     // ─── POST /feedback ───────────────────────────────────────────────────────
 

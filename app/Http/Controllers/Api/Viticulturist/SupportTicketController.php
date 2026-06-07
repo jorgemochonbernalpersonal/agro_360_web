@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\SupportTicketResource;
 use App\Models\SupportTicket;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class SupportTicketController extends Controller
+class SupportTicketController extends BaseApiController
 {
     // ─── GET /viticulturist/support-tickets ──────────────────────────────────
 
@@ -31,15 +31,7 @@ class SupportTicketController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => SupportTicketResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, SupportTicketResource::collection($items->items()));
     }
 
     // ─── POST /viticulturist/support-tickets ────────────────────────────────

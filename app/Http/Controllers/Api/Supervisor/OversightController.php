@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Supervisor;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\UserResource;
 use App\Models\Plot;
 use App\Models\SupervisorViticulturist;
@@ -11,7 +11,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class OversightController extends Controller
+class OversightController extends BaseApiController
 {
     // ─── GET /supervisor/wineries ─────────────────────────────────────────────
 
@@ -27,7 +27,7 @@ class OversightController extends Controller
             ->orderBy('name')
             ->get();
 
-        return response()->json(['data' => UserResource::collection($wineries)]);
+        return $this->success(UserResource::collection($wineries));
     }
 
     // ─── GET /supervisor/wineries/{id} ────────────────────────────────────────
@@ -43,7 +43,7 @@ class OversightController extends Controller
 
         $winery = User::with('profile')->findOrFail($id);
 
-        return response()->json(['data' => new UserResource($winery)]);
+        return $this->success(new UserResource($winery));
     }
 
     // ─── GET /supervisor/viticulturists ───────────────────────────────────────
@@ -61,7 +61,7 @@ class OversightController extends Controller
             ->orderBy('name')
             ->get();
 
-        return response()->json(['data' => UserResource::collection($viticulturists)]);
+        return $this->success(UserResource::collection($viticulturists));
     }
 
     // ─── GET /supervisor/viticulturists/{id} ──────────────────────────────────

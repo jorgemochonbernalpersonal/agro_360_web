@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Requests\Api\Viticulturist\IndexHarvestSaleInvoiceRequest;
 use App\Http\Resources\Api\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\JsonResponse;
 
-class HarvestSaleInvoiceController extends Controller
+class HarvestSaleInvoiceController extends BaseApiController
 {
     // ─── GET /viticulturist/harvest-sale-invoices ────────────────────────────
 
@@ -40,14 +40,6 @@ class HarvestSaleInvoiceController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => InvoiceResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, InvoiceResource::collection($items->items()));
     }
 }

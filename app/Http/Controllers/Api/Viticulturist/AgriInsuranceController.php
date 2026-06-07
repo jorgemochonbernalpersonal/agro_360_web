@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\AgriInsuranceResource;
 use App\Models\AgriInsurance;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class AgriInsuranceController extends Controller
+class AgriInsuranceController extends BaseApiController
 {
     // ─── GET /viticulturist/agri-insurances ──────────────────────────────────
 
@@ -40,15 +40,7 @@ class AgriInsuranceController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => AgriInsuranceResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, AgriInsuranceResource::collection($items->items()));
     }
 
     // ─── POST /viticulturist/agri-insurances ────────────────────────────────

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\ContainerRoom;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ContainerRoomController extends Controller
+class ContainerRoomController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -19,18 +19,16 @@ class ContainerRoomController extends Controller
             ->orderBy('name')
             ->get();
 
-        return response()->json([
-            'data' => $rooms->map(fn ($r) => [
-                'id' => $r->id,
-                'name' => $r->name,
-                'description' => $r->description,
-                'temperature' => $r->temperature !== null ? (float) $r->temperature : null,
-                'humidity' => $r->humidity !== null ? (float) $r->humidity : null,
-                'capacity' => $r->capacity,
-                'containers_count' => $r->containers_count,
-                'created_at' => $r->created_at->toIso8601String(),
-            ]),
-        ]);
+        return $this->success($rooms->map(fn ($r) => [
+            'id' => $r->id,
+            'name' => $r->name,
+            'description' => $r->description,
+            'temperature' => $r->temperature !== null ? (float) $r->temperature : null,
+            'humidity' => $r->humidity !== null ? (float) $r->humidity : null,
+            'capacity' => $r->capacity,
+            'containers_count' => $r->containers_count,
+            'created_at' => $r->created_at->toIso8601String(),
+        ]));
     }
 
     public function store(Request $request): JsonResponse
@@ -48,10 +46,7 @@ class ContainerRoomController extends Controller
 
         $room = ContainerRoom::create([...$validated, 'user_id' => $user->id]);
 
-        return response()->json([
-            'data' => $room,
-            'message' => __('Sala creada correctamente.'),
-        ], 201);
+        return $this->created($room);
     }
 
     public function show(Request $request, int $id): JsonResponse
@@ -63,17 +58,15 @@ class ContainerRoomController extends Controller
             ->withCount('containers')
             ->findOrFail($id);
 
-        return response()->json([
-            'data' => [
-                'id' => $room->id,
-                'name' => $room->name,
-                'description' => $room->description,
-                'temperature' => $room->temperature !== null ? (float) $room->temperature : null,
-                'humidity' => $room->humidity !== null ? (float) $room->humidity : null,
-                'capacity' => $room->capacity,
-                'containers_count' => $room->containers_count,
-                'created_at' => $room->created_at->toIso8601String(),
-            ],
+        return $this->success([
+            'id' => $room->id,
+            'name' => $room->name,
+            'description' => $room->description,
+            'temperature' => $room->temperature !== null ? (float) $room->temperature : null,
+            'humidity' => $room->humidity !== null ? (float) $room->humidity : null,
+            'capacity' => $room->capacity,
+            'containers_count' => $room->containers_count,
+            'created_at' => $room->created_at->toIso8601String(),
         ]);
     }
 
@@ -94,7 +87,7 @@ class ContainerRoomController extends Controller
 
         $room->update($validated);
 
-        return response()->json(['data' => $room->fresh()]);
+        return $this->success($room->fresh());
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -107,6 +100,6 @@ class ContainerRoomController extends Controller
 
         $room->delete();
 
-        return response()->json(['message' => __('Sala eliminada correctamente.')]);
+        return $this->deleted(__('Sala eliminada correctamente.'));
     }
 }

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\WineryDocument;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineryDocumentController extends Controller
+class WineryDocumentController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -27,15 +27,8 @@ class WineryDocumentController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($d) => $this->format($d)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'types' => WineryDocument::DOCUMENT_TYPES,
-            ],
+        return $this->paginated($items, $items->map(fn ($d) => $this->format($d)), [
+            'types' => WineryDocument::DOCUMENT_TYPES,
         ]);
     }
 
@@ -46,7 +39,7 @@ class WineryDocumentController extends Controller
 
         $document = WineryDocument::forUser($user->id)->findOrFail($id);
 
-        return response()->json(['data' => $this->format($document)]);
+        return $this->success($this->format($document));
     }
 
     public function store(Request $request): JsonResponse
@@ -70,10 +63,7 @@ class WineryDocumentController extends Controller
 
         $document = WineryDocument::create($validated);
 
-        return response()->json([
-            'data' => $this->format($document),
-            'message' => __('Documento creado correctamente.'),
-        ], 201);
+        return $this->created($this->format($document));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -96,7 +86,7 @@ class WineryDocumentController extends Controller
 
         $document->update($validated);
 
-        return response()->json(['data' => $this->format($document)]);
+        return $this->success($this->format($document));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -107,7 +97,7 @@ class WineryDocumentController extends Controller
         $document = WineryDocument::forUser($user->id)->findOrFail($id);
         $document->delete();
 
-        return response()->json(['message' => __('Documento eliminado correctamente.')]);
+        return $this->deleted(__('Documento eliminado correctamente.'));
     }
 
     private function format(WineryDocument $d): array

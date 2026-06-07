@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Container;
 use App\Models\ExternalGrapePurchase;
 use App\Models\Supplier;
@@ -10,7 +10,7 @@ use App\Models\Wine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ExternalGrapePurchaseController extends Controller
+class ExternalGrapePurchaseController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -37,16 +37,9 @@ class ExternalGrapePurchaseController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($p) => $this->format($p)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'product_types' => ExternalGrapePurchase::productTypeOptions(),
-                'statuses' => ExternalGrapePurchase::statusOptions(),
-            ],
+        return $this->paginated($items, $items->map(fn ($p) => $this->format($p)), [
+            'product_types' => ExternalGrapePurchase::productTypeOptions(),
+            'statuses' => ExternalGrapePurchase::statusOptions(),
         ]);
     }
 
@@ -59,7 +52,7 @@ class ExternalGrapePurchaseController extends Controller
             ->with(['supplier', 'destinationContainer', 'wine'])
             ->findOrFail($id);
 
-        return response()->json(['data' => $this->format($purchase)]);
+        return $this->success($this->format($purchase));
     }
 
     public function store(Request $request): JsonResponse
@@ -114,10 +107,7 @@ class ExternalGrapePurchaseController extends Controller
         $purchase = ExternalGrapePurchase::create($validated);
         $purchase->load(['supplier', 'destinationContainer', 'wine']);
 
-        return response()->json([
-            'data' => $this->format($purchase),
-            'message' => __('Compra de uva/mosto externa registrada correctamente.'),
-        ], 201);
+        return $this->created($this->format($purchase));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -164,7 +154,7 @@ class ExternalGrapePurchaseController extends Controller
         $purchase->update($validated);
         $purchase->load(['supplier', 'destinationContainer', 'wine']);
 
-        return response()->json(['data' => $this->format($purchase)]);
+        return $this->success($this->format($purchase));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -175,7 +165,7 @@ class ExternalGrapePurchaseController extends Controller
         $purchase = ExternalGrapePurchase::forUser($user->id)->findOrFail($id);
         $purchase->delete();
 
-        return response()->json(['message' => __('Compra externa eliminada correctamente.')]);
+        return $this->deleted(__('Compra externa eliminada correctamente.'));
     }
 
     private function format(ExternalGrapePurchase $p): array

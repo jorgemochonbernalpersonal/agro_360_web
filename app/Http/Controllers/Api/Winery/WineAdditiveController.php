@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Container;
 use App\Models\Oenologist;
 use App\Models\Wine;
@@ -10,7 +10,7 @@ use App\Models\WineAdditive;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineAdditiveController extends Controller
+class WineAdditiveController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -32,15 +32,7 @@ class WineAdditiveController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $additives = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $additives->map(fn ($a) => $this->format($a)),
-            'meta' => [
-                'total' => $additives->total(),
-                'per_page' => $additives->perPage(),
-                'current_page' => $additives->currentPage(),
-                'last_page' => $additives->lastPage(),
-            ],
-        ]);
+        return $this->paginated($additives, $additives->map(fn ($a) => $this->format($a)));
     }
 
     public function show(Request $request, int $id): JsonResponse
@@ -52,7 +44,7 @@ class WineAdditiveController extends Controller
             ->with(['wine', 'supply', 'oenologist', 'unitOfMeasurement'])
             ->findOrFail($id);
 
-        return response()->json(['data' => $this->format($additive)]);
+        return $this->success($this->format($additive));
     }
 
     public function byContainer(Request $request, int $containerId): JsonResponse
@@ -71,15 +63,7 @@ class WineAdditiveController extends Controller
             ->orderByDesc('application_date')
             ->paginate($perPage);
 
-        return response()->json([
-            'data' => $additives->map(fn ($a) => $this->format($a)),
-            'meta' => [
-                'total' => $additives->total(),
-                'per_page' => $additives->perPage(),
-                'current_page' => $additives->currentPage(),
-                'last_page' => $additives->lastPage(),
-            ],
-        ]);
+        return $this->paginated($additives, $additives->map(fn ($a) => $this->format($a)));
     }
 
     public function store(Request $request): JsonResponse
@@ -108,10 +92,7 @@ class WineAdditiveController extends Controller
         $additive = WineAdditive::create([...$validated, 'created_by' => $user->id]);
         $additive->load(['wine', 'supply', 'oenologist', 'unitOfMeasurement']);
 
-        return response()->json([
-            'data' => $this->format($additive),
-            'message' => __('Aditivo registrado correctamente.'),
-        ], 201);
+        return $this->created($this->format($additive));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -134,7 +115,7 @@ class WineAdditiveController extends Controller
         $additive->update($validated);
         $additive->load(['wine', 'supply', 'oenologist', 'unitOfMeasurement']);
 
-        return response()->json(['data' => $this->format($additive)]);
+        return $this->success($this->format($additive));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -145,7 +126,7 @@ class WineAdditiveController extends Controller
         $additive = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))->findOrFail($id);
         $additive->delete();
 
-        return response()->json(['message' => __('Aditivo eliminado correctamente.')]);
+        return $this->deleted(__('Aditivo eliminado correctamente.'));
     }
 
     private function format(WineAdditive $a): array

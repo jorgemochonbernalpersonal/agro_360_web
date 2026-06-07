@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Notifications\GrapePurchaseInvoiceIssuedNotification;
 use App\Notifications\HarvestDeliveryAutoDisputedNotification;
 use App\Notifications\HarvestDeliveryMatchedNotification;
@@ -10,7 +10,7 @@ use App\Notifications\HarvestDeliveryResolvedNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineryMessageController extends Controller
+class WineryMessageController extends BaseApiController
 {
     private const WINERY_TYPES = [
         HarvestDeliveryMatchedNotification::class,
@@ -71,6 +71,6 @@ class WineryMessageController extends Controller
             ->where('id', $id)
             ->update(['read_at' => now()]);
 
-        return response()->json(['message' => 'Mensaje marcado como leído.']);
+        return $this->deleted('Mensaje marcado como leído.');
     }
 }

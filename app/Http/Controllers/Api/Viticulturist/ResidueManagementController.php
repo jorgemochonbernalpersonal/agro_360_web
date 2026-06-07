@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\ResidueManagementResource;
 use App\Models\ResidueManagement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ResidueManagementController extends Controller
+class ResidueManagementController extends BaseApiController
 {
     // ─── GET /viticulturist/residue-managements ──────────────────────────────
 
@@ -43,15 +43,7 @@ class ResidueManagementController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => ResidueManagementResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, ResidueManagementResource::collection($items->items()));
     }
 
     public function store(Request $request): JsonResponse

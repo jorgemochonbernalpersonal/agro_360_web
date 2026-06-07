@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Producer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Container;
 use App\Models\ContainerMaintenance;
 use App\Models\Invoice;
@@ -10,7 +10,7 @@ use App\Models\Wine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class FinancialSummaryController extends Controller
+class FinancialSummaryController extends BaseApiController
 {
     public function __invoke(Request $request): JsonResponse
     {

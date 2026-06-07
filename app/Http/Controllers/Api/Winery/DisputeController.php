@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\HarvestDelivery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class DisputeController extends Controller
+class DisputeController extends BaseApiController
 {
     /**
      * List all disputed deliveries for this winery's harvests.
@@ -30,15 +30,7 @@ class DisputeController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($d) => $this->format($d)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-            ],
-        ]);
+        return $this->paginated($items, $items->map(fn ($d) => $this->format($d)));
     }
 
     /**
@@ -53,7 +45,7 @@ class DisputeController extends Controller
             ->with(['viticulturist', 'harvest', 'plotPlanting.plot'])
             ->findOrFail($id);
 
-        return response()->json(['data' => $this->format($delivery)]);
+        return $this->success($this->format($delivery));
     }
 
     /**

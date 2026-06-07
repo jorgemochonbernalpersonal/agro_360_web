@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Producer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Container;
@@ -13,7 +13,7 @@ use App\Models\Wine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class IntegratedCampaignController extends Controller
+class IntegratedCampaignController extends BaseApiController
 {
     public function __invoke(Request $request, int $campaignId): JsonResponse
     {

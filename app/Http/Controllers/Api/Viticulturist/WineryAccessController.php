@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineryAccessController extends Controller
+class WineryAccessController extends BaseApiController
 {
     // ─── GET /viticulturist/winery-access ────────────────────────────────────
 
@@ -30,8 +30,6 @@ class WineryAccessController extends Controller
                 'created_at' => $link->created_at->toIso8601String(),
             ]);
 
-        return response()->json([
-            'data' => $links,
-        ]);
+        return $this->success($links);
     }
 }

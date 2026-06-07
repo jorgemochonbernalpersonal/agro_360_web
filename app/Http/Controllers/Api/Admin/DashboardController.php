@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Plot;
 use App\Models\SecurityEvent;
 use App\Models\Subscription;
@@ -10,7 +10,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class DashboardController extends BaseApiController
 {
     public function __invoke(Request $request): JsonResponse
     {
@@ -51,42 +51,40 @@ class DashboardController extends Controller
             ->take(5)
             ->get(['id', 'level', 'event', 'message', 'ip', 'email', 'created_at']);
 
-        return response()->json([
-            'data' => [
-                'users' => [
-                    'total' => $totalUsers,
-                    'pending_approvals' => $pendingApprovals,
-                    'new_this_month' => $newThisMonth,
-                    'by_role' => [
-                        'admin' => (int) ($usersByRole[User::ROLE_ADMIN] ?? 0),
-                        'supervisor' => (int) ($usersByRole[User::ROLE_SUPERVISOR] ?? 0),
-                        'winery' => (int) ($usersByRole[User::ROLE_WINERY] ?? 0),
-                        'viticulturist' => (int) ($usersByRole[User::ROLE_VITICULTURIST] ?? 0),
-                        'producer' => (int) ($usersByRole[User::ROLE_PRODUCER] ?? 0),
-                    ],
+        return $this->success([
+            'users' => [
+                'total' => $totalUsers,
+                'pending_approvals' => $pendingApprovals,
+                'new_this_month' => $newThisMonth,
+                'by_role' => [
+                    'admin' => (int) ($usersByRole[User::ROLE_ADMIN] ?? 0),
+                    'supervisor' => (int) ($usersByRole[User::ROLE_SUPERVISOR] ?? 0),
+                    'winery' => (int) ($usersByRole[User::ROLE_WINERY] ?? 0),
+                    'viticulturist' => (int) ($usersByRole[User::ROLE_VITICULTURIST] ?? 0),
+                    'producer' => (int) ($usersByRole[User::ROLE_PRODUCER] ?? 0),
                 ],
-                'plots' => [
-                    'total' => (int) ($plotStats->total ?? 0),
-                    'total_area' => round((float) ($plotStats->total_area ?? 0), 2),
-                ],
-                'subscriptions' => [
-                    'active' => $activeSubscriptions,
-                ],
-                'security' => [
-                    // (object) garantiza un objeto JSON ({}) incluso sin eventos; sin el
-                    // cast, una colección vacía se serializa como [] y el cliente móvil
-                    // (que espera un Map) falla al deserializar el dashboard.
-                    'last_7_days' => (object) $securitySummary->map(fn ($v) => (int) $v)->toArray(),
-                    'recent' => $recentEvents->map(fn ($e) => [
-                        'id' => $e->id,
-                        'level' => $e->level,
-                        'event' => $e->event,
-                        'message' => $e->message,
-                        'ip' => $e->ip,
-                        'email' => $e->email,
-                        'created_at' => $e->created_at?->toIso8601String(),
-                    ])->values(),
-                ],
+            ],
+            'plots' => [
+                'total' => (int) ($plotStats->total ?? 0),
+                'total_area' => round((float) ($plotStats->total_area ?? 0), 2),
+            ],
+            'subscriptions' => [
+                'active' => $activeSubscriptions,
+            ],
+            'security' => [
+                // (object) garantiza un objeto JSON ({}) incluso sin eventos; sin el
+                // cast, una colección vacía se serializa como [] y el cliente móvil
+                // (que espera un Map) falla al deserializar el dashboard.
+                'last_7_days' => (object) $securitySummary->map(fn ($v) => (int) $v)->toArray(),
+                'recent' => $recentEvents->map(fn ($e) => [
+                    'id' => $e->id,
+                    'level' => $e->level,
+                    'event' => $e->event,
+                    'message' => $e->message,
+                    'ip' => $e->ip,
+                    'email' => $e->email,
+                    'created_at' => $e->created_at?->toIso8601String(),
+                ])->values(),
             ],
         ]);
     }

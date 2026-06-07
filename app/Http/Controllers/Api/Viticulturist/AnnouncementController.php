@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\AnnouncementResource;
 use App\Models\WineryAnnouncement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class AnnouncementController extends Controller
+class AnnouncementController extends BaseApiController
 {
     // ─── GET /viticulturist/announcements ────────────────────────────────────
 
@@ -27,15 +27,7 @@ class AnnouncementController extends Controller
             ->orderByDesc('published_at')
             ->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => AnnouncementResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, AnnouncementResource::collection($items->items()));
     }
 
     // ─── POST /viticulturist/announcements/{id}/read ────────────────────────
@@ -48,6 +40,6 @@ class AnnouncementController extends Controller
         $announcement = WineryAnnouncement::active()->visibleTo($user)->findOrFail($id);
         $announcement->viticulturists()->updateExistingPivot($user->id, ['read_at' => now()]);
 
-        return response()->json(['message' => __('Anuncio marcado como leído.')]);
+        return $this->deleted(__('Anuncio marcado como leído.'));
     }
 }

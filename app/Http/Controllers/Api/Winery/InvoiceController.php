@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Requests\Api\Winery\StoreWineSaleInvoiceRequest;
 use App\Http\Requests\Api\Winery\UpdateWineSaleInvoiceRequest;
 use App\Http\Requests\Api\Winery\WineryApiRequest;
@@ -11,7 +11,7 @@ use App\Models\Invoice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class InvoiceController extends Controller
+class InvoiceController extends BaseApiController
 {
     // ─── GET /winery/invoices ─────────────────────────────────────────────────
 
@@ -36,15 +36,7 @@ class InvoiceController extends Controller
 
         $invoices = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => InvoiceResource::collection($invoices),
-            'meta' => [
-                'total' => $invoices->total(),
-                'per_page' => $invoices->perPage(),
-                'current_page' => $invoices->currentPage(),
-                'last_page' => $invoices->lastPage(),
-            ],
-        ]);
+        return $this->paginated($invoices, InvoiceResource::collection($invoices));
     }
 
     // ─── GET /winery/invoices/{id} ────────────────────────────────────────────
@@ -55,7 +47,7 @@ class InvoiceController extends Controller
             ->with('client')
             ->findOrFail($id);
 
-        return response()->json(['data' => new InvoiceResource($invoice)]);
+        return $this->success(new InvoiceResource($invoice));
     }
 
     // ─── POST /winery/invoices ────────────────────────────────────────────────
@@ -87,7 +79,7 @@ class InvoiceController extends Controller
 
         $invoice->load('client');
 
-        return response()->json(['data' => new InvoiceResource($invoice)], 201);
+        return $this->created(new InvoiceResource($invoice));
     }
 
     // ─── PUT /winery/invoices/{id} ────────────────────────────────────────────
@@ -99,7 +91,7 @@ class InvoiceController extends Controller
         $invoice->update($request->validated());
         $invoice->load('client');
 
-        return response()->json(['data' => new InvoiceResource($invoice)]);
+        return $this->success(new InvoiceResource($invoice));
     }
 
     // ─── DELETE /winery/invoices/{id} ─────────────────────────────────────────
@@ -109,6 +101,6 @@ class InvoiceController extends Controller
         $invoice = Invoice::where('user_id', $request->user()->id)->findOrFail($id);
         $invoice->delete();
 
-        return response()->json(['message' => __('Factura eliminada correctamente.')]);
+        return $this->deleted(__('Factura eliminada correctamente.'));
     }
 }

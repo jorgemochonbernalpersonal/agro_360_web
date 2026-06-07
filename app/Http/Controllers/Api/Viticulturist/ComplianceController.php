@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ComplianceController extends Controller
+class ComplianceController extends BaseApiController
 {
     // ─── GET /viticulturist/compliance ────────────────────────────────────────
 
@@ -30,18 +30,16 @@ class ComplianceController extends Controller
         $campaignId = $campaign?->id;
         $userId = $user->id;
 
-        return response()->json([
-            'data' => [
-                'campaign_id' => $campaignId,
-                'campaign_year' => $campaign?->year,
-                'score' => $this->calculateScore($userId, $campaignId),
-                'phytosanitary' => $this->phytosanitaryStats($userId, $campaignId),
-                'observations' => $this->observationStats($userId, $campaignId),
-                'post_harvest' => $this->postHarvestStats($userId, $campaignId),
-                'cultural_works' => $this->culturalStats($userId, $campaignId),
-                'locking' => $this->lockStats($userId, $campaignId),
-                'yields' => $this->estimatedYieldStats($userId, $campaignId),
-            ],
+        return $this->success([
+            'campaign_id' => $campaignId,
+            'campaign_year' => $campaign?->year,
+            'score' => $this->calculateScore($userId, $campaignId),
+            'phytosanitary' => $this->phytosanitaryStats($userId, $campaignId),
+            'observations' => $this->observationStats($userId, $campaignId),
+            'post_harvest' => $this->postHarvestStats($userId, $campaignId),
+            'cultural_works' => $this->culturalStats($userId, $campaignId),
+            'locking' => $this->lockStats($userId, $campaignId),
+            'yields' => $this->estimatedYieldStats($userId, $campaignId),
         ]);
     }
 

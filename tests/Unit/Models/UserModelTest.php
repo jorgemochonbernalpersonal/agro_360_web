@@ -318,13 +318,11 @@ class UserModelTest extends TestCase
     public function test_get_supervisor_attribute_returns_cached_supervisor(): void
     {
         $supervisor = User::factory()->create(['role' => 'supervisor']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $viticulturist = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
 
-        WineryViticulturist::create([
+        SupervisorViticulturist::create([
             'viticulturist_id' => $viticulturist->id,
             'supervisor_id' => $supervisor->id,
-            'source' => WineryViticulturist::SOURCE_SUPERVISOR,
-            'assigned_by' => $supervisor->id,
         ]);
 
         // Primera llamada

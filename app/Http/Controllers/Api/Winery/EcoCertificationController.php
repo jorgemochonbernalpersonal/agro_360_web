@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\EcoCertification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class EcoCertificationController extends Controller
+class EcoCertificationController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -27,16 +27,9 @@ class EcoCertificationController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($c) => $this->format($c)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'types' => EcoCertification::certificationTypeOptions(),
-                'statuses' => EcoCertification::statusOptions(),
-            ],
+        return $this->paginated($items, $items->map(fn ($c) => $this->format($c)), [
+            'types' => EcoCertification::certificationTypeOptions(),
+            'statuses' => EcoCertification::statusOptions(),
         ]);
     }
 
@@ -47,7 +40,7 @@ class EcoCertificationController extends Controller
 
         $certification = EcoCertification::forUser($user->id)->findOrFail($id);
 
-        return response()->json(['data' => $this->format($certification)]);
+        return $this->success($this->format($certification));
     }
 
     public function store(Request $request): JsonResponse
@@ -71,10 +64,7 @@ class EcoCertificationController extends Controller
 
         $certification = EcoCertification::create($validated);
 
-        return response()->json([
-            'data' => $this->format($certification),
-            'message' => __('Certificación ecológica creada correctamente.'),
-        ], 201);
+        return $this->created($this->format($certification));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -97,7 +87,7 @@ class EcoCertificationController extends Controller
 
         $certification->update($validated);
 
-        return response()->json(['data' => $this->format($certification)]);
+        return $this->success($this->format($certification));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -108,7 +98,7 @@ class EcoCertificationController extends Controller
         $certification = EcoCertification::forUser($user->id)->findOrFail($id);
         $certification->delete();
 
-        return response()->json(['message' => __('Certificación eliminada correctamente.')]);
+        return $this->deleted(__('Certificación eliminada correctamente.'));
     }
 
     private function format(EcoCertification $c): array

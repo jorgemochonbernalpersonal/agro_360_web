@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Producer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\HarvestDelivery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class HarvestDeliveryController extends Controller
+class HarvestDeliveryController extends BaseApiController
 {
     // ─── GET /producer/harvest-deliveries ────────────────────────────────────
 

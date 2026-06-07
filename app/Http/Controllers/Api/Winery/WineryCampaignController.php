@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Campaign;
 use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineryCampaignController extends Controller
+class WineryCampaignController extends BaseApiController
 {
     /**
      * Campañas de los viticultores vinculados a la bodega (solo lectura).
@@ -39,15 +39,7 @@ class WineryCampaignController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $campaigns = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $campaigns->map(fn ($c) => $this->format($c)),
-            'meta' => [
-                'total' => $campaigns->total(),
-                'per_page' => $campaigns->perPage(),
-                'current_page' => $campaigns->currentPage(),
-                'last_page' => $campaigns->lastPage(),
-            ],
-        ]);
+        return $this->paginated($campaigns, $campaigns->map(fn ($c) => $this->format($c)));
     }
 
     public function show(Request $request, int $id): JsonResponse
@@ -62,7 +54,7 @@ class WineryCampaignController extends Controller
             ->with('viticulturist')
             ->findOrFail($id);
 
-        return response()->json(['data' => $this->format($campaign)]);
+        return $this->success($this->format($campaign));
     }
 
     public function store(Request $request): JsonResponse
@@ -87,10 +79,7 @@ class WineryCampaignController extends Controller
         $campaign = Campaign::create($validated);
         $campaign->load('viticulturist');
 
-        return response()->json([
-            'data' => $this->format($campaign),
-            'message' => __('Campaña creada correctamente.'),
-        ], 201);
+        return $this->created($this->format($campaign));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -116,7 +105,7 @@ class WineryCampaignController extends Controller
         $campaign->update($validated);
         $campaign->load('viticulturist');
 
-        return response()->json(['data' => $this->format($campaign)]);
+        return $this->success($this->format($campaign));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -134,7 +123,7 @@ class WineryCampaignController extends Controller
 
         $campaign->delete();
 
-        return response()->json(['message' => __('Campaña eliminada correctamente.')]);
+        return $this->deleted(__('Campaña eliminada correctamente.'));
     }
 
     private function format(Campaign $c): array

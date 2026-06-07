@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\Admin\AdminAnnouncementResource;
 use App\Models\AdminAnnouncement;
 use App\Services\SecurityLogger;
@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class AnnouncementController extends Controller
+class AnnouncementController extends BaseApiController
 {
     // ─── GET /admin/announcements ─────────────────────────────────────────────
 
@@ -29,15 +29,7 @@ class AnnouncementController extends Controller
 
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => AdminAnnouncementResource::collection($items),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-            ],
-        ]);
+        return $this->paginated($items, AdminAnnouncementResource::collection($items));
     }
 
     // ─── POST /admin/announcements ────────────────────────────────────────────
@@ -65,9 +57,7 @@ class AnnouncementController extends Controller
             'announcement_id' => $announcement->id,
         ]);
 
-        return response()->json([
-            'data' => new AdminAnnouncementResource($announcement->load('admin:id,name')),
-        ], 201);
+        return $this->created(new AdminAnnouncementResource($announcement->load('admin:id,name')));
     }
 
     // ─── PUT /admin/announcements/{id} ────────────────────────────────────────
@@ -90,9 +80,7 @@ class AnnouncementController extends Controller
 
         $announcement->update($validated);
 
-        return response()->json([
-            'data' => new AdminAnnouncementResource($announcement->fresh()->load('admin:id,name')),
-        ]);
+        return $this->success(new AdminAnnouncementResource($announcement->fresh()->load('admin:id,name')));
     }
 
     // ─── DELETE /admin/announcements/{id} ────────────────────────────────────

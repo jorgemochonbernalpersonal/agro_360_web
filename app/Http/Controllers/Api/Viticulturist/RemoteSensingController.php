@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\PlotRemoteSensing;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class RemoteSensingController extends Controller
+class RemoteSensingController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -19,14 +19,7 @@ class RemoteSensingController extends Controller
             ->orderByDesc('image_date')
             ->paginate(20);
 
-        return response()->json([
-            'data' => $items->map(fn ($r) => $this->format($r)),
-            'meta' => [
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, $items->map(fn ($r) => $this->format($r)));
     }
 
     private function format(PlotRemoteSensing $r): array

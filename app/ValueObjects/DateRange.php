@@ -11,7 +11,7 @@ class DateRange
         public readonly Carbon $end
     ) {
         if ($this->start->isAfter($this->end)) {
-            throw new \InvalidArgumentException(__('La fecha de inicio debe ser anterior a la fecha de fin.'));
+            throw new \InvalidArgumentException('La fecha de inicio debe ser anterior a la fecha de fin.');
         }
     }
 

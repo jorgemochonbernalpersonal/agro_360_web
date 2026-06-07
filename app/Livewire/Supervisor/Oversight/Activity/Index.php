@@ -3,8 +3,8 @@
 namespace App\Livewire\Supervisor\Oversight\Activity;
 
 use App\Models\AgriculturalActivity;
-use App\Models\SupervisorViticulturist;
 use App\Models\User;
+use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -64,12 +64,16 @@ class Index extends Component
         $supervisorId = Auth::id();
 
         // Viticultores con cuaderno accesible
-        $accessibleVitIds = SupervisorViticulturist::where('supervisor_id', $supervisorId)
+        $accessibleVitIds = WineryViticulturist::where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+            ->where('supervisor_id', $supervisorId)
             ->where('notebook_access', true)
+            ->distinct()
             ->pluck('viticulturist_id');
 
         // Todos los viticultores del DO (para filtro)
-        $allVitIds = SupervisorViticulturist::where('supervisor_id', $supervisorId)
+        $allVitIds = WineryViticulturist::where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+            ->where('supervisor_id', $supervisorId)
+            ->distinct()
             ->pluck('viticulturist_id');
 
         $viticulturists = User::whereIn('id', $accessibleVitIds)

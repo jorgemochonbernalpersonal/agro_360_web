@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Oenologist;
 use App\Models\Wine;
 use App\Models\WineTastingNote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class TastingNoteController extends Controller
+class TastingNoteController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -27,21 +27,14 @@ class TastingNoteController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $notes = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $notes->map(fn ($n) => $this->format($n)),
-            'meta' => [
-                'total' => $notes->total(),
-                'per_page' => $notes->perPage(),
-                'current_page' => $notes->currentPage(),
-                'last_page' => $notes->lastPage(),
-                'enums' => [
-                    'visual_clarity' => WineTastingNote::visualClarityOptions(),
-                    'visual_intensity' => WineTastingNote::visualIntensityOptions(),
-                    'aroma_intensity' => WineTastingNote::aromaIntensityOptions(),
-                    'palate_level' => WineTastingNote::palateLevelOptions(),
-                    'palate_body' => WineTastingNote::palateBodyOptions(),
-                    'palate_finish' => WineTastingNote::palateFinishOptions(),
-                ],
+        return $this->paginated($notes, $notes->map(fn ($n) => $this->format($n)), [
+            'enums' => [
+                'visual_clarity' => WineTastingNote::visualClarityOptions(),
+                'visual_intensity' => WineTastingNote::visualIntensityOptions(),
+                'aroma_intensity' => WineTastingNote::aromaIntensityOptions(),
+                'palate_level' => WineTastingNote::palateLevelOptions(),
+                'palate_body' => WineTastingNote::palateBodyOptions(),
+                'palate_finish' => WineTastingNote::palateFinishOptions(),
             ],
         ]);
     }
@@ -53,7 +46,7 @@ class TastingNoteController extends Controller
 
         $note = WineTastingNote::forUser($user->id)->with(['wine', 'oenologist'])->findOrFail($id);
 
-        return response()->json(['data' => $this->format($note)]);
+        return $this->success($this->format($note));
     }
 
     public function store(Request $request): JsonResponse
@@ -88,10 +81,7 @@ class TastingNoteController extends Controller
         $note = WineTastingNote::create([...$validated, 'user_id' => $user->id, 'created_by' => $user->id]);
         $note->load(['wine', 'oenologist']);
 
-        return response()->json([
-            'data' => $this->format($note),
-            'message' => __('Nota de cata registrada correctamente.'),
-        ], 201);
+        return $this->created($this->format($note));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -122,7 +112,7 @@ class TastingNoteController extends Controller
         $note->update($validated);
         $note->load(['wine', 'oenologist']);
 
-        return response()->json(['data' => $this->format($note)]);
+        return $this->success($this->format($note));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -133,7 +123,7 @@ class TastingNoteController extends Controller
         $note = WineTastingNote::forUser($user->id)->findOrFail($id);
         $note->delete();
 
-        return response()->json(['message' => __('Nota de cata eliminada correctamente.')]);
+        return $this->deleted(__('Nota de cata eliminada correctamente.'));
     }
 
     private function format(WineTastingNote $n): array

@@ -9,7 +9,7 @@ class Money
         public readonly string $currency = 'EUR'
     ) {
         if ($amount < 0) {
-            throw new \InvalidArgumentException(__('El monto no puede ser negativo.'));
+            throw new \InvalidArgumentException('El monto no puede ser negativo.');
         }
     }
 
@@ -71,7 +71,7 @@ class Money
     public function divide(float $divisor): self
     {
         if ($divisor === 0.0) {
-            throw new \InvalidArgumentException(__('No se puede dividir por cero.'));
+            throw new \InvalidArgumentException('No se puede dividir por cero.');
         }
 
         return new self($this->amount / $divisor, $this->currency);
@@ -144,7 +144,7 @@ class Money
     protected function ensureSameCurrency(Money $other): void
     {
         if ($this->currency !== $other->currency) {
-            throw new \InvalidArgumentException(__('Las monedas deben ser iguales.'));
+            throw new \InvalidArgumentException('Las monedas deben ser iguales.');
         }
     }
 }

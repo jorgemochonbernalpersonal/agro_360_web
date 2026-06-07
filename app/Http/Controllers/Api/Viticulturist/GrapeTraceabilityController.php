@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Harvest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class GrapeTraceabilityController extends Controller
+class GrapeTraceabilityController extends BaseApiController
 {
     // ─── GET /viticulturist/grape-traceability ───────────────────────────────
 

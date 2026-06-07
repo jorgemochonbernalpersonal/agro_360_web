@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\WineryYieldForecast;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class YieldForecastController extends Controller
+class YieldForecastController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -31,15 +31,7 @@ class YieldForecastController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($f) => $this->format($f)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-            ],
-        ]);
+        return $this->paginated($items, $items->map(fn ($f) => $this->format($f)));
     }
 
     public function show(Request $request, int $id): JsonResponse
@@ -51,7 +43,7 @@ class YieldForecastController extends Controller
             ->with(['viticulturist', 'plotPlanting', 'campaign'])
             ->findOrFail($id);
 
-        return response()->json(['data' => $this->format($forecast)]);
+        return $this->success($this->format($forecast));
     }
 
     public function store(Request $request): JsonResponse
@@ -76,10 +68,7 @@ class YieldForecastController extends Controller
         $forecast = WineryYieldForecast::create($validated);
         $forecast->load(['viticulturist', 'plotPlanting', 'campaign']);
 
-        return response()->json([
-            'data' => $this->format($forecast),
-            'message' => __('Previsión de rendimiento creada correctamente.'),
-        ], 201);
+        return $this->created($this->format($forecast));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -103,7 +92,7 @@ class YieldForecastController extends Controller
         $forecast->update($validated);
         $forecast->load(['viticulturist', 'plotPlanting', 'campaign']);
 
-        return response()->json(['data' => $this->format($forecast)]);
+        return $this->success($this->format($forecast));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -114,7 +103,7 @@ class YieldForecastController extends Controller
         $forecast = WineryYieldForecast::forWinery($user->id)->findOrFail($id);
         $forecast->delete();
 
-        return response()->json(['message' => __('Previsión eliminada correctamente.')]);
+        return $this->deleted(__('Previsión eliminada correctamente.'));
     }
 
     private function format(WineryYieldForecast $f): array

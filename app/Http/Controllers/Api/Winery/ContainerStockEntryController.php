@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\StockEntryResource;
 use App\Models\Container;
 use App\Models\Wine;
@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ContainerStockEntryController extends Controller
+class ContainerStockEntryController extends BaseApiController
 {
     // ─── GET /winery/container-stock-entries ──────────────────────────────────
 
@@ -26,14 +26,7 @@ class ContainerStockEntryController extends Controller
             ->latest('entry_date')
             ->paginate($perPage);
 
-        return response()->json([
-            'data' => StockEntryResource::collection($entries),
-            'meta' => [
-                'total' => $entries->total(),
-                'current_page' => $entries->currentPage(),
-                'last_page' => $entries->lastPage(),
-            ],
-        ]);
+        return $this->paginated($entries, StockEntryResource::collection($entries));
     }
 
     // ─── POST /winery/container-stock-entries ─────────────────────────────────
@@ -68,10 +61,7 @@ class ContainerStockEntryController extends Controller
 
         $entry->load(['wine', 'container']);
 
-        return response()->json([
-            'data' => new StockEntryResource($entry),
-            'message' => __('Entrada de stock registrada correctamente.'),
-        ], 201);
+        return $this->created(new StockEntryResource($entry));
     }
 
     // ─── DELETE /winery/container-stock-entries/{id} ──────────────────────────
@@ -90,6 +80,6 @@ class ContainerStockEntryController extends Controller
             $entry->delete();
         });
 
-        return response()->json(['message' => __('Entrada de stock eliminada correctamente.')]);
+        return $this->deleted(__('Entrada de stock eliminada correctamente.'));
     }
 }

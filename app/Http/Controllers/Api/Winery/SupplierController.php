@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Supplier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class SupplierController extends Controller
+class SupplierController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -35,28 +35,21 @@ class SupplierController extends Controller
         $perPage = $this->resolvePerPage($request, 50, 100);
         $suppliers = $query->orderBy('name')->paginate($perPage);
 
-        return response()->json([
-            'data' => $suppliers->map(fn ($s) => [
-                'id' => $s->id,
-                'name' => $s->name,
-                'contact_person' => $s->contact_person,
-                'email' => $s->email,
-                'phone' => $s->phone,
-                'address' => $s->address,
-                'vat_number' => $s->vat_number,
-                'category' => $s->category,
-                'category_label' => $s->category_label,
-                'active' => $s->active,
-                'notes' => $s->notes,
-                'created_at' => $s->created_at->toIso8601String(),
-            ]),
-            'meta' => [
-                'total' => $suppliers->total(),
-                'per_page' => $suppliers->perPage(),
-                'current_page' => $suppliers->currentPage(),
-                'last_page' => $suppliers->lastPage(),
-                'categories' => Supplier::CATEGORIES,
-            ],
+        return $this->paginated($suppliers, $suppliers->map(fn ($s) => [
+            'id' => $s->id,
+            'name' => $s->name,
+            'contact_person' => $s->contact_person,
+            'email' => $s->email,
+            'phone' => $s->phone,
+            'address' => $s->address,
+            'vat_number' => $s->vat_number,
+            'category' => $s->category,
+            'category_label' => $s->category_label,
+            'active' => $s->active,
+            'notes' => $s->notes,
+            'created_at' => $s->created_at->toIso8601String(),
+        ]), [
+            'categories' => Supplier::CATEGORIES,
         ]);
     }
 
@@ -78,10 +71,7 @@ class SupplierController extends Controller
 
         $supplier = Supplier::create([...$validated, 'user_id' => $user->id, 'active' => true]);
 
-        return response()->json([
-            'data' => $supplier,
-            'message' => __('Proveedor creado correctamente.'),
-        ], 201);
+        return $this->created($supplier);
     }
 
     public function show(Request $request, int $id): JsonResponse
@@ -91,7 +81,7 @@ class SupplierController extends Controller
 
         $supplier = Supplier::forUser($user->id)->findOrFail($id);
 
-        return response()->json(['data' => $supplier]);
+        return $this->success($supplier);
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -115,7 +105,7 @@ class SupplierController extends Controller
 
         $supplier->update($validated);
 
-        return response()->json(['data' => $supplier->fresh()]);
+        return $this->success($supplier->fresh());
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -126,6 +116,6 @@ class SupplierController extends Controller
         $supplier = Supplier::forUser($user->id)->findOrFail($id);
         $supplier->update(['active' => false]);
 
-        return response()->json(['message' => __('Proveedor desactivado correctamente.')]);
+        return $this->deleted(__('Proveedor desactivado correctamente.'));
     }
 }

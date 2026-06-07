@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\EstimatedYieldResource;
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
@@ -10,7 +10,7 @@ use App\Models\PlotPlanting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class EstimatedYieldController extends Controller
+class EstimatedYieldController extends BaseApiController
 {
     // ─── GET /viticulturist/notebook/estimated-yields ─────────────────────────
 
@@ -53,15 +53,7 @@ class EstimatedYieldController extends Controller
 
         $yields = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => EstimatedYieldResource::collection($yields->items()),
-            'meta' => [
-                'total' => $yields->total(),
-                'current_page' => $yields->currentPage(),
-                'last_page' => $yields->lastPage(),
-                'has_more' => $yields->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($yields, EstimatedYieldResource::collection($yields->items()));
     }
 
     // ─── POST /viticulturist/notebook/estimated-yields ────────────────────────
@@ -124,6 +116,6 @@ class EstimatedYieldController extends Controller
 
         $yield->load(['plotPlanting.plot', 'plotPlanting.grapeVariety', 'campaign']);
 
-        return response()->json(['data' => new EstimatedYieldResource($yield)], 201);
+        return $this->created(new EstimatedYieldResource($yield));
     }
 }

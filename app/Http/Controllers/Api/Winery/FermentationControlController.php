@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\FermentationControlResource;
 use App\Models\Container;
 use App\Models\Wine;
@@ -10,7 +10,7 @@ use App\Models\WineFermentationControl;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class FermentationControlController extends Controller
+class FermentationControlController extends BaseApiController
 {
     // ─── GET /winery/fermentation-controls ────────────────────────────────────
 
@@ -27,15 +27,7 @@ class FermentationControlController extends Controller
             ->orderByDesc('control_date')
             ->paginate($perPage);
 
-        return response()->json([
-            'data' => FermentationControlResource::collection($controls->items()),
-            'meta' => [
-                'total' => $controls->total(),
-                'per_page' => $controls->perPage(),
-                'current_page' => $controls->currentPage(),
-                'last_page' => $controls->lastPage(),
-            ],
-        ]);
+        return $this->paginated($controls, FermentationControlResource::collection($controls->items()));
     }
 
     // ─── POST /winery/fermentation-controls ───────────────────────────────────
@@ -72,7 +64,7 @@ class FermentationControlController extends Controller
 
         $control->load(['wine', 'container']);
 
-        return response()->json(['data' => new FermentationControlResource($control)], 201);
+        return $this->created(new FermentationControlResource($control));
     }
 
     // ─── GET /winery/fermentation-controls/{id} ──────────────────────────────
@@ -86,7 +78,7 @@ class FermentationControlController extends Controller
             'wine', fn ($q) => $q->where('user_id', $user->id)
         )->with(['wine', 'container'])->findOrFail($id);
 
-        return response()->json(['data' => new FermentationControlResource($control)]);
+        return $this->success(new FermentationControlResource($control));
     }
 
     // ─── PUT /winery/fermentation-controls/{id} ──────────────────────────────
@@ -119,7 +111,7 @@ class FermentationControlController extends Controller
         $control->update($validated);
         $control->load(['wine', 'container']);
 
-        return response()->json(['data' => new FermentationControlResource($control)]);
+        return $this->success(new FermentationControlResource($control));
     }
 
     // ─── DELETE /winery/fermentation-controls/{id} ────────────────────────────
@@ -135,6 +127,6 @@ class FermentationControlController extends Controller
 
         $control->delete();
 
-        return response()->json(['message' => __('Control eliminado correctamente.')]);
+        return $this->deleted(__('Control eliminado correctamente.'));
     }
 }

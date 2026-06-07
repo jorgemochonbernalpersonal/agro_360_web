@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\PlannedWorkResource;
 use App\Models\PlannedWork;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PlannedWorkController extends Controller
+class PlannedWorkController extends BaseApiController
 {
     // ─── GET /viticulturist/planned-works ─────────────────────────────────────
 
@@ -61,15 +61,7 @@ class PlannedWorkController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => PlannedWorkResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, PlannedWorkResource::collection($items->items()));
     }
 
     public function store(Request $request): JsonResponse

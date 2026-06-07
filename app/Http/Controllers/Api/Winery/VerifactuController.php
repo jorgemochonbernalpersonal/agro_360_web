@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Invoice;
 use App\Models\VerifactuRecord;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class VerifactuController extends Controller
+class VerifactuController extends BaseApiController
 {
     // GET /winery/verifactu
     public function index(Request $request): JsonResponse
@@ -33,16 +33,9 @@ class VerifactuController extends Controller
             ->whereIn('payment_status', ['paid'])
             ->count();
 
-        return response()->json([
-            'data' => $items->map(fn ($r) => $this->format($r)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'pending_invoices' => $pendingCount,
-                'statuses' => VerifactuRecord::STATUSES,
-            ],
+        return $this->paginated($items, $items->map(fn ($r) => $this->format($r)), [
+            'pending_invoices' => $pendingCount,
+            'statuses' => VerifactuRecord::STATUSES,
         ]);
     }
 
@@ -54,7 +47,7 @@ class VerifactuController extends Controller
 
         $record = VerifactuRecord::forUser($user->id)->with('invoice')->findOrFail($id);
 
-        return response()->json(['data' => $this->format($record)]);
+        return $this->success($this->format($record));
     }
 
     // POST /winery/verifactu/submit — queue an invoice for VeriFactu submission
@@ -79,10 +72,7 @@ class VerifactuController extends Controller
             ]
         );
 
-        return response()->json([
-            'data' => $this->format($record->fresh(['invoice'])),
-            'message' => __('Factura encolada para envío a VeriFactu.'),
-        ], 201);
+        return $this->created($this->format($record->fresh(['invoice'])));
     }
 
     // POST /winery/verifactu/{id}/cancel
@@ -101,7 +91,7 @@ class VerifactuController extends Controller
 
         $record->update(['submission_status' => 'cancelled']);
 
-        return response()->json(['data' => $this->format($record->fresh(['invoice']))]);
+        return $this->success($this->format($record->fresh(['invoice'])));
     }
 
     private function format(VerifactuRecord $r): array

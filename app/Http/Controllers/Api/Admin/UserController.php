@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\Admin\AdminUserResource;
 use App\Models\AdminNote;
 use App\Models\User;
@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class UserController extends Controller
+class UserController extends BaseApiController
 {
     // ─── GET /admin/users ─────────────────────────────────────────────────────
 
@@ -49,15 +49,7 @@ class UserController extends Controller
 
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => AdminUserResource::collection($items),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-            ],
-        ]);
+        return $this->paginated($items, AdminUserResource::collection($items));
     }
 
     // ─── GET /admin/users/pending ─────────────────────────────────────────────
@@ -75,15 +67,7 @@ class UserController extends Controller
             ->latest()
             ->paginate($perPage);
 
-        return response()->json([
-            'data' => AdminUserResource::collection($items),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-            ],
-        ]);
+        return $this->paginated($items, AdminUserResource::collection($items));
     }
 
     // ─── GET /admin/users/{id} ────────────────────────────────────────────────
@@ -154,7 +138,7 @@ class UserController extends Controller
             'fields' => array_keys($validated),
         ]);
 
-        return response()->json(['data' => new AdminUserResource($user->fresh('profile'))]);
+        return $this->success(new AdminUserResource($user->fresh('profile')));
     }
 
     // ─── POST /admin/users/{id}/approve ──────────────────────────────────────
@@ -178,7 +162,7 @@ class UserController extends Controller
             'email' => $user->email,
         ]);
 
-        return response()->json(['data' => new AdminUserResource($user->fresh('profile'))]);
+        return $this->success(new AdminUserResource($user->fresh('profile')));
     }
 
     // ─── POST /admin/users/{id}/activate ─────────────────────────────────────
@@ -198,7 +182,7 @@ class UserController extends Controller
             'email' => $user->email,
         ]);
 
-        return response()->json(['data' => new AdminUserResource($user->fresh('profile'))]);
+        return $this->success(new AdminUserResource($user->fresh('profile')));
     }
 
     // ─── POST /admin/users/{id}/deactivate ───────────────────────────────────
@@ -225,7 +209,7 @@ class UserController extends Controller
             'email' => $user->email,
         ]);
 
-        return response()->json(['data' => new AdminUserResource($user->fresh('profile'))]);
+        return $this->success(new AdminUserResource($user->fresh('profile')));
     }
 
     // ─── POST /admin/users/{id}/notes ─────────────────────────────────────────
@@ -247,13 +231,11 @@ class UserController extends Controller
             'note' => $validated['note'],
         ]);
 
-        return response()->json([
-            'data' => [
-                'id' => $note->id,
-                'note' => $note->note,
-                'admin_name' => $admin->name,
-                'created_at' => now()->toIso8601String(),
-            ],
-        ], 201);
+        return $this->created([
+            'id' => $note->id,
+            'note' => $note->note,
+            'admin_name' => $admin->name,
+            'created_at' => now()->toIso8601String(),
+        ]);
     }
 }

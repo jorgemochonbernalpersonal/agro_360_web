@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Producer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Campaign;
 use App\Models\Harvest;
 use App\Models\Plot;
@@ -11,7 +11,7 @@ use App\Models\Wine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class FullTraceabilityController extends Controller
+class FullTraceabilityController extends BaseApiController
 {
     public function __invoke(Request $request, int $campaignId): JsonResponse
     {

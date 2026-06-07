@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
 use App\Models\User;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
-class ViticulturistController extends Controller
+class ViticulturistController extends BaseApiController
 {
     // ─── GET /winery/viticulturists ──────────────────────────────────────────
 
@@ -41,7 +41,7 @@ class ViticulturistController extends Controller
             ->sortBy('name')
             ->values();
 
-        return response()->json(['data' => $data]);
+        return $this->success($data);
     }
 
     // ─── POST /winery/viticulturists ─────────────────────────────────────────
@@ -74,9 +74,11 @@ class ViticulturistController extends Controller
             'source' => WineryViticulturist::SOURCE_OWN,
             'assigned_by' => $winery->id,
             'notes' => $validated['notes'] ?? null,
+            'notebook_access' => true,
+            'notebook_granted_at' => now(),
         ]);
 
-        return response()->json(['data' => $this->format($vit, $rel)], 201);
+        return $this->created($this->format($vit, $rel));
     }
 
     // ─── GET /winery/viticulturists/search ───────────────────────────────────
@@ -104,7 +106,7 @@ class ViticulturistController extends Controller
             ->get(['id', 'name', 'email'])
             ->map(fn (User $u) => ['id' => $u->id, 'name' => $u->name, 'email' => $u->email]);
 
-        return response()->json(['data' => $results]);
+        return $this->success($results);
     }
 
     // ─── POST /winery/viticulturists/link ────────────────────────────────────
@@ -183,7 +185,7 @@ class ViticulturistController extends Controller
             'last_reception_date' => $stats->last_reception_date,
         ];
 
-        return response()->json(['data' => $data]);
+        return $this->success($data);
     }
 
     // ─── PUT /winery/viticulturists/{id} ─────────────────────────────────────
@@ -219,7 +221,7 @@ class ViticulturistController extends Controller
         $rel->update(['notes' => $validated['notes'] ?? null]);
         $vit->refresh();
 
-        return response()->json(['data' => $this->format($vit, $rel)]);
+        return $this->success($this->format($vit, $rel));
     }
 
     // ─── POST /winery/viticulturists/{id}/invite ─────────────────────────────

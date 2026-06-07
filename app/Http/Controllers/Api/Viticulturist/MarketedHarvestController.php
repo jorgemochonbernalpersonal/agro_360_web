@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\MarketedHarvestResource;
 use App\Models\Campaign;
 use App\Models\Harvest;
@@ -10,7 +10,7 @@ use App\Models\MarketedHarvest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class MarketedHarvestController extends Controller
+class MarketedHarvestController extends BaseApiController
 {
     // ─── GET /viticulturist/harvests/picker ─────────────────────────────────
 
@@ -24,15 +24,13 @@ class MarketedHarvestController extends Controller
             ->orderByDesc('harvest_start_date')
             ->get();
 
-        return response()->json([
-            'data' => $harvests->map(fn ($h) => [
-                'id' => $h->id,
-                'harvest_start_date' => $h->harvest_start_date?->toDateString(),
-                'plot_name' => $h->activity?->plot?->name,
-                'variety' => $h->plotPlanting?->grapeVariety?->name,
-                'total_weight' => $h->total_weight ? (float) $h->total_weight : null,
-            ]),
-        ]);
+        return $this->success($harvests->map(fn ($h) => [
+            'id' => $h->id,
+            'harvest_start_date' => $h->harvest_start_date?->toDateString(),
+            'plot_name' => $h->activity?->plot?->name,
+            'variety' => $h->plotPlanting?->grapeVariety?->name,
+            'total_weight' => $h->total_weight ? (float) $h->total_weight : null,
+        ]));
     }
 
     // ─── GET /viticulturist/marketed-harvests ────────────────────────────────
@@ -71,15 +69,7 @@ class MarketedHarvestController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => MarketedHarvestResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, MarketedHarvestResource::collection($items->items()));
     }
 
     // ─── POST /viticulturist/marketed-harvests ──────────────────────────────

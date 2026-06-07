@@ -8,7 +8,7 @@ class Area
         public readonly float $hectares
     ) {
         if ($hectares < 0) {
-            throw new \InvalidArgumentException(__('La superficie no puede ser negativa.'));
+            throw new \InvalidArgumentException('La superficie no puede ser negativa.');
         }
     }
 

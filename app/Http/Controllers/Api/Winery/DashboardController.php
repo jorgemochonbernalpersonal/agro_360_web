@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\FermentationControlResource;
 use App\Models\Container;
 use App\Models\Harvest;
@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class DashboardController extends Controller
+class DashboardController extends BaseApiController
 {
     public function __invoke(Request $request): JsonResponse
     {

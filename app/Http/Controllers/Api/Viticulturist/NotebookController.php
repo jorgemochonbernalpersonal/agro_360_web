@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\ActivityResource;
 use App\Http\Resources\Api\MobileNotebookResource;
 use App\Models\AgriculturalActivity;
@@ -18,7 +18,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class NotebookController extends Controller
+class NotebookController extends BaseApiController
 {
     // ─── Relaciones a cargar según tipo ───────────────────────────────────────
 
@@ -89,15 +89,7 @@ class NotebookController extends Controller
         $activities = $query->orderByDesc('activity_date')
             ->paginate($request->integer('per_page', 15));
 
-        return response()->json([
-            'data' => ActivityResource::collection($activities->items()),
-            'meta' => [
-                'total' => $activities->total(),
-                'current_page' => $activities->currentPage(),
-                'last_page' => $activities->lastPage(),
-                'has_more' => $activities->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($activities, ActivityResource::collection($activities->items()));
     }
 
     // ─── GET /viticulturist/notebook/{id} ─────────────────────────────────────
@@ -115,7 +107,7 @@ class NotebookController extends Controller
         $relations = self::MOBILE_RELATIONS[$activity->activity_type] ?? ['plot'];
         $activity->load($relations);
 
-        return response()->json(['data' => new MobileNotebookResource($activity)]);
+        return $this->success(new MobileNotebookResource($activity));
     }
 
     // ─── POST /viticulturist/notebook ─────────────────────────────────────────
@@ -158,7 +150,7 @@ class NotebookController extends Controller
 
         $this->bustDashboardCache($user->id);
 
-        return response()->json(['data' => new ActivityResource($activity)], 201);
+        return $this->created(new ActivityResource($activity));
     }
 
     // ─── PUT /viticulturist/notebook/{id} ─────────────────────────────────────
@@ -192,7 +184,7 @@ class NotebookController extends Controller
         }
         $activity = $activity->fresh($toLoad);
 
-        return response()->json(['data' => new ActivityResource($activity)]);
+        return $this->success(new ActivityResource($activity));
     }
 
     // ─── DELETE /viticulturist/notebook/{id} ──────────────────────────────────
@@ -212,7 +204,7 @@ class NotebookController extends Controller
 
         $this->bustDashboardCache($user->id);
 
-        return response()->json(['message' => 'Actividad eliminada correctamente.']);
+        return $this->deleted('Actividad eliminada correctamente.');
     }
 
     public function indexOfType(Request $request, string $notebookType): JsonResponse
@@ -243,15 +235,7 @@ class NotebookController extends Controller
         $activities = $query->orderByDesc('activity_date')
             ->paginate($request->integer('per_page', 15));
 
-        return response()->json([
-            'data' => MobileNotebookResource::collection($activities->items()),
-            'meta' => [
-                'total' => $activities->total(),
-                'current_page' => $activities->currentPage(),
-                'last_page' => $activities->lastPage(),
-                'has_more' => $activities->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($activities, MobileNotebookResource::collection($activities->items()));
     }
 
     // ─── POST /viticulturist/notebook/{notebook_type} ─────────────────────────

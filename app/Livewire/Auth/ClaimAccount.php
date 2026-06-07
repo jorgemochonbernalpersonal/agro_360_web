@@ -96,24 +96,16 @@ class ClaimAccount extends Component
 
         $this->validate();
 
-        // Solo auto-verificar si el email no cambió respecto al ghost
-        $emailMatches = strtolower($this->pendingUser->email) === strtolower($this->email);
-
         $this->pendingUser->update([
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
             'can_login' => true,
-            'email_verified_at' => $emailMatches ? ($this->pendingUser->email_verified_at ?? now()) : null,
+            'email_verified_at' => now(),
             'invitation_token' => null,
             'invitation_expires_at' => null,
             'invitation_sent_at' => null,
         ]);
-
-        // Si el email cambió, enviar verificación
-        if (! $emailMatches) {
-            $this->pendingUser->fresh()->sendEmailVerificationNotification();
-        }
 
         // Auto-aprobar acceso al cuaderno si el viticultor aceptó
         if ($this->shareCuaderno) {

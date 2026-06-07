@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\ContainerMaintenanceResource;
 use App\Models\Container;
 use App\Models\ContainerMaintenance;
@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ContainerMaintenanceController extends Controller
+class ContainerMaintenanceController extends BaseApiController
 {
     // ─── GET /winery/maintenances ─────────────────────────────────────────────
 
@@ -54,19 +54,12 @@ class ContainerMaintenanceController extends Controller
             SUM(CASE WHEN status = 'completed'   THEN 1 ELSE 0 END) as completed
         ")->first();
 
-        return response()->json([
-            'data' => ContainerMaintenanceResource::collection($maintenances),
-            'meta' => [
-                'total' => $maintenances->total(),
-                'per_page' => $maintenances->perPage(),
-                'current_page' => $maintenances->currentPage(),
-                'last_page' => $maintenances->lastPage(),
-                'scheduled' => (int) $counts->scheduled,
-                'in_progress' => (int) $counts->in_progress,
-                'completed' => (int) $counts->completed,
-                'types' => ContainerMaintenance::typeOptions(),
-                'statuses' => ContainerMaintenance::statusOptions(),
-            ],
+        return $this->paginated($maintenances, ContainerMaintenanceResource::collection($maintenances), [
+            'scheduled' => (int) $counts->scheduled,
+            'in_progress' => (int) $counts->in_progress,
+            'completed' => (int) $counts->completed,
+            'types' => ContainerMaintenance::typeOptions(),
+            'statuses' => ContainerMaintenance::statusOptions(),
         ]);
     }
 
@@ -81,7 +74,7 @@ class ContainerMaintenanceController extends Controller
             'container', fn ($q) => $q->where('user_id', $user->id)
         )->with(['container', 'supplies', 'wastes'])->findOrFail($id);
 
-        return response()->json(['data' => new ContainerMaintenanceResource($maintenance)]);
+        return $this->success(new ContainerMaintenanceResource($maintenance));
     }
 
     // ─── POST /winery/maintenances ────────────────────────────────────────────
@@ -165,10 +158,7 @@ class ContainerMaintenanceController extends Controller
 
         $maintenance->load(['container', 'supplies', 'wastes']);
 
-        return response()->json([
-            'data' => new ContainerMaintenanceResource($maintenance),
-            'message' => __('Mantenimiento registrado correctamente.'),
-        ], 201);
+        return $this->created(new ContainerMaintenanceResource($maintenance));
     }
 
     // ─── PUT /winery/maintenances/{id} ───────────────────────────────────────
@@ -197,7 +187,7 @@ class ContainerMaintenanceController extends Controller
         $maintenance->update($validated);
         $maintenance->load(['container', 'supplies', 'wastes']);
 
-        return response()->json(['data' => new ContainerMaintenanceResource($maintenance)]);
+        return $this->success(new ContainerMaintenanceResource($maintenance));
     }
 
     // ─── DELETE /winery/maintenances/{id} ────────────────────────────────────
@@ -217,7 +207,7 @@ class ContainerMaintenanceController extends Controller
             $maintenance->delete();
         });
 
-        return response()->json(['message' => __('Mantenimiento eliminado correctamente.')]);
+        return $this->deleted(__('Mantenimiento eliminado correctamente.'));
     }
 
     // ─── POST /winery/maintenances/{id}/complete ─────────────────────────────
@@ -247,10 +237,7 @@ class ContainerMaintenanceController extends Controller
 
         $maintenance->load(['container', 'supplies', 'wastes']);
 
-        return response()->json([
-            'data' => new ContainerMaintenanceResource($maintenance),
-            'message' => __('Mantenimiento completado correctamente.'),
-        ]);
+        return $this->success(new ContainerMaintenanceResource($maintenance));
     }
 
     // ─── GET /winery/containers/{id}/maintenances ─────────────────────────────
@@ -268,14 +255,6 @@ class ContainerMaintenanceController extends Controller
             ->orderByDesc('scheduled_date')
             ->paginate($perPage);
 
-        return response()->json([
-            'data' => ContainerMaintenanceResource::collection($maintenances),
-            'meta' => [
-                'total' => $maintenances->total(),
-                'per_page' => $maintenances->perPage(),
-                'current_page' => $maintenances->currentPage(),
-                'last_page' => $maintenances->lastPage(),
-            ],
-        ]);
+        return $this->paginated($maintenances, ContainerMaintenanceResource::collection($maintenances));
     }
 }

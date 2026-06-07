@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\MachineryResource;
 use App\Models\Machinery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class MachineryController extends Controller
+class MachineryController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -40,15 +40,7 @@ class MachineryController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => MachineryResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, MachineryResource::collection($items->items()));
     }
 
     public function store(Request $request): JsonResponse

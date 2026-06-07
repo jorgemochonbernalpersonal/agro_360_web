@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Producer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Harvest;
@@ -10,7 +10,7 @@ use App\Models\Plot;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class IntegratedEstateController extends Controller
+class IntegratedEstateController extends BaseApiController
 {
     public function __invoke(Request $request): JsonResponse
     {

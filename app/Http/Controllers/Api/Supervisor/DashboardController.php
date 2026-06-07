@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Supervisor;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Campaign;
 use App\Models\Harvest;
 use App\Models\SupervisorViticulturist;
@@ -10,7 +10,7 @@ use App\Models\SupervisorWinery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class DashboardController extends BaseApiController
 {
     public function __invoke(Request $request): JsonResponse
     {

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\PlotCosts;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
 
     public string $plot_id = '';
 

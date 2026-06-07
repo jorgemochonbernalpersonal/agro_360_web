@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Campaign;
 use App\Models\Crew;
 use App\Models\CrewMember;
 use App\Models\Plot;
@@ -72,6 +73,7 @@ class CleanupUnverifiedUsers extends Command
                 Crew::where('viticulturist_id', $user->id)->delete();
                 CrewMember::where('viticulturist_id', $user->id)->delete();
                 Plot::where('viticulturist_id', $user->id)->delete();
+                Campaign::where('viticulturist_id', $user->id)->delete();
 
                 $user->delete();
                 $deletedCount++;

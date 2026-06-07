@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\ClientResource;
 use App\Models\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ClientController extends Controller
+class ClientController extends BaseApiController
 {
     // ─── GET /winery/clients ──────────────────────────────────────────────────
 
@@ -34,15 +34,7 @@ class ClientController extends Controller
 
         $clients = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => ClientResource::collection($clients),
-            'meta' => [
-                'total' => $clients->total(),
-                'per_page' => $clients->perPage(),
-                'current_page' => $clients->currentPage(),
-                'last_page' => $clients->lastPage(),
-            ],
-        ]);
+        return $this->paginated($clients, ClientResource::collection($clients));
     }
 
     // ─── GET /winery/clients/{id} ─────────────────────────────────────────────
@@ -52,7 +44,7 @@ class ClientController extends Controller
         $user = $request->user();
         $client = Client::where('user_id', $user->id)->findOrFail($id);
 
-        return response()->json(['data' => new ClientResource($client)]);
+        return $this->success(new ClientResource($client));
     }
 
     // ─── POST /winery/clients ─────────────────────────────────────────────────
@@ -79,7 +71,7 @@ class ClientController extends Controller
 
         $client = Client::create(array_merge($validated, ['user_id' => $user->id]));
 
-        return response()->json(['data' => new ClientResource($client)], 201);
+        return $this->created(new ClientResource($client));
     }
 
     // ─── PUT /winery/clients/{id} ─────────────────────────────────────────────
@@ -107,7 +99,7 @@ class ClientController extends Controller
 
         $client->update($validated);
 
-        return response()->json(['data' => new ClientResource($client)]);
+        return $this->success(new ClientResource($client));
     }
 
     // ─── DELETE /winery/clients/{id} ──────────────────────────────────────────
@@ -120,6 +112,6 @@ class ClientController extends Controller
         $client = Client::where('user_id', $user->id)->findOrFail($id);
         $client->delete();
 
-        return response()->json(['message' => __('Cliente eliminado correctamente.')]);
+        return $this->deleted(__('Cliente eliminado correctamente.'));
     }
 }

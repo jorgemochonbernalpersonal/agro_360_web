@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\PhytosanitaryAlertResource;
 use App\Models\PhytosanitaryAlert;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PhytosanitaryAlertController extends Controller
+class PhytosanitaryAlertController extends BaseApiController
 {
     // ─── GET /viticulturist/phytosanitary-alerts ──────────────────────────────
 
@@ -46,15 +46,7 @@ class PhytosanitaryAlertController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => PhytosanitaryAlertResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, PhytosanitaryAlertResource::collection($items->items()));
     }
 
     public function store(Request $request): JsonResponse

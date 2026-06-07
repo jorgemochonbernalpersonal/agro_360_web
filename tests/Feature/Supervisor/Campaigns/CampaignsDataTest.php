@@ -208,7 +208,7 @@ class CampaignsDataTest extends SupervisorTestCase
 
     private function makeViticulturistForCampaigns(User $supervisor, User $winery): User
     {
-        $vit = User::factory()->create(['role' => 'viticulturist']);
+        $vit = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
 
         SupervisorViticulturist::create([
             'supervisor_id' => $supervisor->id,

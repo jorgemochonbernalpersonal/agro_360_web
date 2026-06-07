@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Municipality;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class MunicipalityController extends Controller
+class MunicipalityController extends BaseApiController
 {
     /**
      * GET /api/v1/municipalities?province_id=X
@@ -27,11 +27,11 @@ class MunicipalityController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name', 'province_id']);
 
-            return response()->json(['data' => $municipalities]);
+            return $this->success($municipalities);
         }
 
         if (strlen($search) < 2) {
-            return response()->json(['data' => []]);
+            return $this->success([]);
         }
 
         $municipalities = Municipality::where('name', 'like', '%'.$search.'%')
@@ -47,6 +47,6 @@ class MunicipalityController extends Controller
             'province' => $m->province ? ['id' => $m->province->id, 'name' => $m->province->name] : null,
         ]);
 
-        return response()->json(['data' => $data]);
+        return $this->success($data);
     }
 }

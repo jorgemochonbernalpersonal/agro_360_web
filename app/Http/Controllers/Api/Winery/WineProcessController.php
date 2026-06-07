@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\LossResource;
 use App\Http\Resources\Api\TransferResource;
 use App\Models\Container;
@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class WineProcessController extends Controller
+class WineProcessController extends BaseApiController
 {
     // ─── GET /winery/transfers ────────────────────────────────────────────────
 
@@ -100,10 +100,7 @@ class WineProcessController extends Controller
 
         $transfer->load(['wine', 'fromContainer', 'toContainer', 'unitOfMeasurement']);
 
-        return response()->json([
-            'data' => new TransferResource($transfer),
-            'message' => __('Trasvase registrado correctamente.'),
-        ], 201);
+        return $this->created(new TransferResource($transfer));
     }
 
     // ─── POST /winery/losses ──────────────────────────────────────────────────
@@ -140,10 +137,7 @@ class WineProcessController extends Controller
 
         $loss->load(['wine', 'container', 'unitOfMeasurement']);
 
-        return response()->json([
-            'data' => new LossResource($loss),
-            'message' => __('Merma registrada correctamente.'),
-        ], 201);
+        return $this->created(new LossResource($loss));
     }
 
     // ─── PUT /winery/transfers/{id} ──────────────────────────────────────────
@@ -182,7 +176,7 @@ class WineProcessController extends Controller
 
         $transfer->load(['wine', 'fromContainer', 'toContainer', 'unitOfMeasurement']);
 
-        return response()->json(['data' => new TransferResource($transfer)]);
+        return $this->success(new TransferResource($transfer));
     }
 
     // ─── PUT /winery/losses/{id} ──────────────────────────────────────────────
@@ -219,7 +213,7 @@ class WineProcessController extends Controller
 
         $loss->load(['wine', 'container', 'unitOfMeasurement']);
 
-        return response()->json(['data' => new LossResource($loss)]);
+        return $this->success(new LossResource($loss));
     }
 
     // ─── DELETE /winery/transfers/{id} ────────────────────────────────────────
@@ -238,7 +232,7 @@ class WineProcessController extends Controller
             $transfer->delete();
         });
 
-        return response()->json(['message' => __('Trasvase eliminado correctamente.')]);
+        return $this->deleted(__('Trasvase eliminado correctamente.'));
     }
 
     // ─── DELETE /winery/losses/{id} ───────────────────────────────────────────
@@ -257,6 +251,6 @@ class WineProcessController extends Controller
             $loss->delete();
         });
 
-        return response()->json(['message' => __('Merma eliminada correctamente.')]);
+        return $this->deleted(__('Merma eliminada correctamente.'));
     }
 }

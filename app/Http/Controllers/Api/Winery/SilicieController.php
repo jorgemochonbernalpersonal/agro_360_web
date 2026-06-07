@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Wine;
 use App\Models\WineStockSnapshot;
 use App\Services\Exporters\SilicieCsvExporter;
@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class SilicieController extends Controller
+class SilicieController extends BaseApiController
 {
     // ─── GET /winery/silicie ──────────────────────────────────────────────────
     // Stats globales + añadas disponibles
@@ -35,12 +35,10 @@ class SilicieController extends Controller
             $vintages = collect([now()->year]);
         }
 
-        return response()->json([
-            'data' => [
-                'stats' => $this->buildStats($wineryId, $vintage),
-                'vintages' => $vintages->values(),
-                'vintage' => $vintage,
-            ],
+        return $this->success([
+            'stats' => $this->buildStats($wineryId, $vintage),
+            'vintages' => $vintages->values(),
+            'vintage' => $vintage,
         ]);
     }
 
@@ -93,16 +91,14 @@ class SilicieController extends Controller
             ->limit(200)
             ->get();
 
-        return response()->json([
-            'data' => [
-                'recepciones' => $recepciones,
-                'externas' => $externas,
-                'totals' => [
-                    'recepciones' => $recepciones->count(),
-                    'kg_total' => (float) $recepciones->sum('total_weight'),
-                    'externas_count' => $externas->count(),
-                    'externas_kg' => (float) $externas->sum('total_weight_kg'),
-                ],
+        return $this->success([
+            'recepciones' => $recepciones,
+            'externas' => $externas,
+            'totals' => [
+                'recepciones' => $recepciones->count(),
+                'kg_total' => (float) $recepciones->sum('total_weight'),
+                'externas_count' => $externas->count(),
+                'externas_kg' => (float) $externas->sum('total_weight_kg'),
             ],
         ]);
     }
@@ -159,9 +155,7 @@ class SilicieController extends Controller
             ->limit(200)
             ->get();
 
-        return response()->json([
-            'data' => compact('steps', 'losses'),
-        ]);
+        return $this->success(compact('steps', 'losses'));
     }
 
     // ─── GET /winery/silicie/existencias ──────────────────────────────────────
@@ -225,18 +219,16 @@ class SilicieController extends Controller
             ->orderByDesc('snapshot_date')
             ->value('snapshot_date');
 
-        return response()->json([
-            'data' => [
-                'stock' => $stock,
-                'stock_harvest' => $stockHarvest,
-                'by_wine' => $byWine,
-                'last_snapshot' => $lastSnapshot,
-                'totals' => [
-                    'total_liters' => (float) $stock->sum('current_quantity'),
-                    'harvest_kg' => (float) $stockHarvest->sum('current_quantity'),
-                    'container_count' => $stock->count() + $stockHarvest->count(),
-                    'wine_count' => $stock->pluck('wine_id')->filter()->unique()->count(),
-                ],
+        return $this->success([
+            'stock' => $stock,
+            'stock_harvest' => $stockHarvest,
+            'by_wine' => $byWine,
+            'last_snapshot' => $lastSnapshot,
+            'totals' => [
+                'total_liters' => (float) $stock->sum('current_quantity'),
+                'harvest_kg' => (float) $stockHarvest->sum('current_quantity'),
+                'container_count' => $stock->count() + $stockHarvest->count(),
+                'wine_count' => $stock->pluck('wine_id')->filter()->unique()->count(),
             ],
         ]);
     }
@@ -305,17 +297,15 @@ class SilicieController extends Controller
             ->limit(100)
             ->get();
 
-        return response()->json([
-            'data' => [
-                'ventas' => $ventas,
-                'perdidas' => $perdidas,
-                'subproductos' => $subproductos,
-                'totals' => [
-                    'ventas_count' => $ventas->count(),
-                    'ventas_amount' => (float) $ventas->sum('total_amount'),
-                    'perdidas_qty' => (float) $perdidas->sum('quantity'),
-                    'subproductos_qty' => (float) $subproductos->sum('quantity'),
-                ],
+        return $this->success([
+            'ventas' => $ventas,
+            'perdidas' => $perdidas,
+            'subproductos' => $subproductos,
+            'totals' => [
+                'ventas_count' => $ventas->count(),
+                'ventas_amount' => (float) $ventas->sum('total_amount'),
+                'perdidas_qty' => (float) $perdidas->sum('quantity'),
+                'subproductos_qty' => (float) $subproductos->sum('quantity'),
             ],
         ]);
     }
@@ -340,13 +330,11 @@ class SilicieController extends Controller
             ->value('snapshot_date');
 
         if (! $snapshotDate) {
-            return response()->json([
-                'data' => [
-                    'fiscal_year' => $fiscalYear,
-                    'snapshot_date' => null,
-                    'rows' => [],
-                    'total_hl' => 0,
-                ],
+            return $this->success([
+                'fiscal_year' => $fiscalYear,
+                'snapshot_date' => null,
+                'rows' => [],
+                'total_hl' => 0,
             ]);
         }
 
@@ -386,13 +374,11 @@ class SilicieController extends Controller
             $total += $hl;
         }
 
-        return response()->json([
-            'data' => [
-                'fiscal_year' => $fiscalYear,
-                'snapshot_date' => $snapshotDate,
-                'rows' => $result,
-                'total_hl' => round($total, 3),
-            ],
+        return $this->success([
+            'fiscal_year' => $fiscalYear,
+            'snapshot_date' => $snapshotDate,
+            'rows' => $result,
+            'total_hl' => round($total, 3),
         ]);
     }
 

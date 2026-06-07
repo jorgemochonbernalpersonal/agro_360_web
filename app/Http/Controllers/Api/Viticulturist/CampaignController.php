@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\CampaignResource;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CampaignController extends Controller
+class CampaignController extends BaseApiController
 {
     // ─── GET /viticulturist/campaigns ─────────────────────────────────────────
 
@@ -22,7 +22,7 @@ class CampaignController extends Controller
             ->orderByDesc('year')
             ->get();
 
-        return response()->json(['data' => CampaignResource::collection($campaigns)]);
+        return $this->success(CampaignResource::collection($campaigns));
     }
 
     // ─── GET /viticulturist/campaigns/active ──────────────────────────────────
@@ -36,10 +36,10 @@ class CampaignController extends Controller
             ?? Campaign::getOrCreateActiveForYear($user->id);
 
         if (! $campaign) {
-            return response()->json(['data' => null]);
+            return $this->success(null);
         }
 
-        return response()->json(['data' => new CampaignResource($campaign)]);
+        return $this->success(new CampaignResource($campaign));
     }
 
     // ─── GET /viticulturist/campaigns/{id}/activities ─────────────────────────
@@ -59,21 +59,13 @@ class CampaignController extends Controller
         // Forma plana que espera el cliente móvil (CampaignActivityDto): type/date/plot_name.
         // No se usa ActivityResource porque ese recurso (compartido con otros endpoints)
         // emite activity_type/activity_date/plot:{} y el móvil no los parsea.
-        return response()->json([
-            'data' => collect($activities->items())->map(fn ($a) => [
-                'id' => $a->id,
-                'type' => $a->activity_type,
-                'date' => $a->activity_date?->toDateString(),
-                'plot_name' => $a->plot?->name,
-                'notes' => $a->notes,
-            ]),
-            'meta' => [
-                'total' => $activities->total(),
-                'current_page' => $activities->currentPage(),
-                'last_page' => $activities->lastPage(),
-                'has_more' => $activities->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($activities, collect($activities->items())->map(fn ($a) => [
+            'id' => $a->id,
+            'type' => $a->activity_type,
+            'date' => $a->activity_date?->toDateString(),
+            'plot_name' => $a->plot?->name,
+            'notes' => $a->notes,
+        ]));
     }
 
     // ─── GET /viticulturist/campaigns/compare ────────────────────────────────
@@ -107,7 +99,7 @@ class CampaignController extends Controller
             ];
         });
 
-        return response()->json(['data' => $data]);
+        return $this->success($data);
     }
 
     // ─── POST /viticulturist/campaigns/{id}/lock ─────────────────────────────
@@ -128,6 +120,6 @@ class CampaignController extends Controller
             'active' => false,
         ]);
 
-        return response()->json(['data' => new CampaignResource($campaign->fresh())]);
+        return $this->success(new CampaignResource($campaign->fresh()));
     }
 }

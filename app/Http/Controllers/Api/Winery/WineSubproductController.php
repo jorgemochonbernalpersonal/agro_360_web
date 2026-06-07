@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Wine;
 use App\Models\WineSubproduct;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineSubproductController extends Controller
+class WineSubproductController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -29,16 +29,9 @@ class WineSubproductController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $subproducts = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $subproducts->map(fn ($s) => $this->format($s)),
-            'meta' => [
-                'total' => $subproducts->total(),
-                'per_page' => $subproducts->perPage(),
-                'current_page' => $subproducts->currentPage(),
-                'last_page' => $subproducts->lastPage(),
-                'types' => WineSubproduct::typeOptions(),
-                'destinations' => WineSubproduct::destinationOptions(),
-            ],
+        return $this->paginated($subproducts, $subproducts->map(fn ($s) => $this->format($s)), [
+            'types' => WineSubproduct::typeOptions(),
+            'destinations' => WineSubproduct::destinationOptions(),
         ]);
     }
 
@@ -49,7 +42,7 @@ class WineSubproductController extends Controller
 
         $subproduct = WineSubproduct::forUser($user->id)->with(['wine', 'unit'])->findOrFail($id);
 
-        return response()->json(['data' => $this->format($subproduct)]);
+        return $this->success($this->format($subproduct));
     }
 
     public function store(Request $request): JsonResponse
@@ -76,10 +69,7 @@ class WineSubproductController extends Controller
         $subproduct = WineSubproduct::create([...$validated, 'user_id' => $user->id, 'created_by' => $user->id]);
         $subproduct->load(['wine', 'unit']);
 
-        return response()->json([
-            'data' => $this->format($subproduct),
-            'message' => __('Subproducto registrado correctamente.'),
-        ], 201);
+        return $this->created($this->format($subproduct));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -103,7 +93,7 @@ class WineSubproductController extends Controller
         $subproduct->update($validated);
         $subproduct->load(['wine', 'unit']);
 
-        return response()->json(['data' => $this->format($subproduct)]);
+        return $this->success($this->format($subproduct));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -114,7 +104,7 @@ class WineSubproductController extends Controller
         $subproduct = WineSubproduct::forUser($user->id)->findOrFail($id);
         $subproduct->delete();
 
-        return response()->json(['message' => __('Subproducto eliminado correctamente.')]);
+        return $this->deleted(__('Subproducto eliminado correctamente.'));
     }
 
     private function format(WineSubproduct $s): array

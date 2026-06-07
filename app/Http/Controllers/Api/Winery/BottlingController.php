@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\BottlingResource;
 use App\Models\Container;
 use App\Models\Oenologist;
@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class BottlingController extends Controller
+class BottlingController extends BaseApiController
 {
     // ─── GET /winery/bottlings ────────────────────────────────────────────────
 
@@ -40,15 +40,8 @@ class BottlingController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $bottlings = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => BottlingResource::collection($bottlings),
-            'meta' => [
-                'total' => $bottlings->total(),
-                'per_page' => $bottlings->perPage(),
-                'current_page' => $bottlings->currentPage(),
-                'last_page' => $bottlings->lastPage(),
-                'bottle_formats' => WineBottling::bottleFormatOptions(),
-            ],
+        return $this->paginated($bottlings, BottlingResource::collection($bottlings), [
+            'bottle_formats' => WineBottling::bottleFormatOptions(),
         ]);
     }
 
@@ -63,7 +56,7 @@ class BottlingController extends Controller
             ->with(['wine', 'container', 'productLot', 'oenologist', 'supplies'])
             ->findOrFail($id);
 
-        return response()->json(['data' => new BottlingResource($bottling)]);
+        return $this->success(new BottlingResource($bottling));
     }
 
     // ─── POST /winery/bottlings ───────────────────────────────────────────────
@@ -134,10 +127,7 @@ class BottlingController extends Controller
 
         $bottling->load(['wine', 'container', 'productLot', 'oenologist', 'supplies']);
 
-        return response()->json([
-            'data' => new BottlingResource($bottling),
-            'message' => __('Embotellado registrado correctamente.'),
-        ], 201);
+        return $this->created(new BottlingResource($bottling));
     }
 
     // ─── PUT /winery/bottlings/{id} ───────────────────────────────────────────
@@ -184,7 +174,7 @@ class BottlingController extends Controller
 
         $bottling->load(['wine', 'container', 'productLot', 'oenologist', 'supplies']);
 
-        return response()->json(['data' => new BottlingResource($bottling)]);
+        return $this->success(new BottlingResource($bottling));
     }
 
     // ─── DELETE /winery/bottlings/{id} ───────────────────────────────────────
@@ -202,6 +192,6 @@ class BottlingController extends Controller
             $bottling->delete();
         });
 
-        return response()->json(['message' => __('Embotellado eliminado correctamente.')]);
+        return $this->deleted(__('Embotellado eliminado correctamente.'));
     }
 }

@@ -75,7 +75,7 @@ class CampaignCacheServiceTest extends TestCase
 
     public function test_can_get_user_campaigns_cached(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['can_login' => false]);
         Campaign::factory()->count(3)->create(['viticulturist_id' => $user->id]);
 
         $campaigns1 = $this->service->getUserCampaigns($user);

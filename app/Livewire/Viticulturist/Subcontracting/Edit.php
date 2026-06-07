@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Subcontracting;
 
+use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
 
     public Subcontracting $record;
 

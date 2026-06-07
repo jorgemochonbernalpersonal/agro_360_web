@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\ProductLotResource;
 use App\Models\ProductLot;
 use App\Models\Wine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ProductLotController extends Controller
+class ProductLotController extends BaseApiController
 {
     // ─── GET /winery/product-lots ─────────────────────────────────────────────
 
@@ -42,15 +42,7 @@ class ProductLotController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $lots = $query->orderByDesc('created_at')->paginate($perPage);
 
-        return response()->json([
-            'data' => ProductLotResource::collection($lots),
-            'meta' => [
-                'total' => $lots->total(),
-                'per_page' => $lots->perPage(),
-                'current_page' => $lots->currentPage(),
-                'last_page' => $lots->lastPage(),
-            ],
-        ]);
+        return $this->paginated($lots, ProductLotResource::collection($lots));
     }
 
     // ─── GET /winery/product-lots/{id} ───────────────────────────────────────
@@ -62,7 +54,7 @@ class ProductLotController extends Controller
 
         $lot = ProductLot::forUser($user->id)->with('wine')->findOrFail($id);
 
-        return response()->json(['data' => new ProductLotResource($lot)]);
+        return $this->success(new ProductLotResource($lot));
     }
 
     // ─── POST /winery/product-lots ────────────────────────────────────────────
@@ -137,10 +129,7 @@ class ProductLotController extends Controller
 
         $lot->load('wine');
 
-        return response()->json([
-            'data' => new ProductLotResource($lot),
-            'message' => __('Lote de producto creado correctamente.'),
-        ], 201);
+        return $this->created(new ProductLotResource($lot));
     }
 
     // ─── PUT /winery/product-lots/{id} ───────────────────────────────────────
@@ -198,7 +187,7 @@ class ProductLotController extends Controller
         $lot->update($validated);
         $lot->load('wine');
 
-        return response()->json(['data' => new ProductLotResource($lot)]);
+        return $this->success(new ProductLotResource($lot));
     }
 
     // ─── DELETE /winery/product-lots/{id} ────────────────────────────────────
@@ -211,6 +200,6 @@ class ProductLotController extends Controller
         $lot = ProductLot::forUser($user->id)->findOrFail($id);
         $lot->update(['archived' => true]);
 
-        return response()->json(['message' => __('Lote archivado correctamente.')]);
+        return $this->deleted(__('Lote archivado correctamente.'));
     }
 }

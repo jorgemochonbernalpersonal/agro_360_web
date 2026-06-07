@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Requests\Api\Winery\MarkGrapePurchaseInvoicePaidRequest;
 use App\Http\Requests\Api\Winery\StoreGrapePurchaseInvoiceItemRequest;
 use App\Http\Requests\Api\Winery\StoreGrapePurchaseInvoiceRequest;
@@ -15,7 +15,7 @@ use App\Models\InvoiceItem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
-class GrapePurchaseInvoiceController extends Controller
+class GrapePurchaseInvoiceController extends BaseApiController
 {
     private const INVOICE_TYPE = 'grape_purchase';
 
@@ -61,17 +61,10 @@ class GrapePurchaseInvoiceController extends Controller
             ', ['draft', 'unpaid', 'draft', 'cancelled'])
             ->first();
 
-        return response()->json([
-            'data' => GrapePurchaseInvoiceResource::collection($invoices),
-            'meta' => [
-                'total' => $invoices->total(),
-                'per_page' => $invoices->perPage(),
-                'current_page' => $invoices->currentPage(),
-                'last_page' => $invoices->lastPage(),
-                'draft_count' => (int) $totals->draft_count,
-                'unpaid_count' => (int) $totals->unpaid_count,
-                'total_paid_amount' => (float) $totals->total_paid_amount,
-            ],
+        return $this->paginated($invoices, GrapePurchaseInvoiceResource::collection($invoices), [
+            'draft_count' => (int) $totals->draft_count,
+            'unpaid_count' => (int) $totals->unpaid_count,
+            'total_paid_amount' => (float) $totals->total_paid_amount,
         ]);
     }
 
@@ -81,7 +74,7 @@ class GrapePurchaseInvoiceController extends Controller
     {
         $invoice = $this->findOwnedInvoice($request->user()->id, $id, ['viticulturist', 'items']);
 
-        return response()->json(['data' => new GrapePurchaseInvoiceResource($invoice)]);
+        return $this->success(new GrapePurchaseInvoiceResource($invoice));
     }
 
     // ─── POST /winery/grape-invoices ──────────────────────────────────────────
@@ -148,7 +141,7 @@ class GrapePurchaseInvoiceController extends Controller
         $invoice->update($request->validated());
         $invoice->load(['viticulturist', 'items']);
 
-        return response()->json(['data' => new GrapePurchaseInvoiceResource($invoice)]);
+        return $this->success(new GrapePurchaseInvoiceResource($invoice));
     }
 
     // ─── DELETE /winery/grape-invoices/{id} ──────────────────────────────────
@@ -164,7 +157,7 @@ class GrapePurchaseInvoiceController extends Controller
             $invoice->delete();
         });
 
-        return response()->json(['message' => __('Liquidación eliminada correctamente.')]);
+        return $this->deleted(__('Liquidación eliminada correctamente.'));
     }
 
     // ─── POST /winery/grape-invoices/{id}/items ───────────────────────────────
@@ -219,7 +212,7 @@ class GrapePurchaseInvoiceController extends Controller
 
         $invoice->load(['viticulturist', 'items']);
 
-        return response()->json(['data' => new GrapePurchaseInvoiceResource($invoice)]);
+        return $this->success(new GrapePurchaseInvoiceResource($invoice));
     }
 
     // ─── DELETE /winery/grape-invoices/{id}/items/{itemId} ───────────────────
@@ -237,7 +230,7 @@ class GrapePurchaseInvoiceController extends Controller
             $this->recalculateInvoiceTotals($invoice);
         });
 
-        return response()->json(['message' => __('Línea eliminada correctamente.')]);
+        return $this->deleted(__('Línea eliminada correctamente.'));
     }
 
     // ─── POST /winery/grape-invoices/{id}/confirm ─────────────────────────────

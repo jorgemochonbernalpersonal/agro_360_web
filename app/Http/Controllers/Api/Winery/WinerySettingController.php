@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\InvoicingSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WinerySettingController extends Controller
+class WinerySettingController extends BaseApiController
 {
     public function show(Request $request): JsonResponse
     {
@@ -16,7 +16,7 @@ class WinerySettingController extends Controller
 
         $settings = InvoicingSetting::getOrCreateForUser($user->id);
 
-        return response()->json(['data' => $this->format($settings)]);
+        return $this->success($this->format($settings));
     }
 
     public function update(Request $request): JsonResponse
@@ -37,7 +37,7 @@ class WinerySettingController extends Controller
         $settings = InvoicingSetting::getOrCreateForUser($user->id);
         $settings->update($validated);
 
-        return response()->json(['data' => $this->format($settings)]);
+        return $this->success($this->format($settings));
     }
 
     private function format(InvoicingSetting $s): array

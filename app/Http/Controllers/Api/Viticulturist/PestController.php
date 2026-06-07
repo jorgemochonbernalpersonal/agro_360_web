@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\PestResource;
 use App\Models\Pest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PestController extends Controller
+class PestController extends BaseApiController
 {
     // ─── GET /viticulturist/pests ─────────────────────────────────────────────
 
@@ -45,15 +45,7 @@ class PestController extends Controller
         ])
             ->paginate($this->resolvePerPage($request, 30));
 
-        return response()->json([
-            'data' => PestResource::collection($pests->items()),
-            'meta' => [
-                'total' => $pests->total(),
-                'current_page' => $pests->currentPage(),
-                'last_page' => $pests->lastPage(),
-                'has_more' => $pests->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($pests, PestResource::collection($pests->items()));
     }
 
     // ─── GET /viticulturist/pests/{id} ────────────────────────────────────────
@@ -67,6 +59,6 @@ class PestController extends Controller
             ])
             ->findOrFail($id);
 
-        return response()->json(['data' => new PestResource($pest)]);
+        return $this->success(new PestResource($pest));
     }
 }

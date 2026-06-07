@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class NotificationController extends Controller
+class NotificationController extends BaseApiController
 {
     // ─── GET /viticulturist/notifications ────────────────────────────────────
 
@@ -57,7 +57,7 @@ class NotificationController extends Controller
 
         $user->notifications()->where('id', $id)->update(['read_at' => now()]);
 
-        return response()->json(['message' => __('Notificación marcada como leída.')]);
+        return $this->deleted(__('Notificación marcada como leída.'));
     }
 
     // ─── POST /viticulturist/notifications/read-all ─────────────────────────
@@ -69,6 +69,6 @@ class NotificationController extends Controller
 
         $user->unreadNotifications()->update(['read_at' => now()]);
 
-        return response()->json(['message' => __('Todas las notificaciones marcadas como leídas.')]);
+        return $this->deleted(__('Todas las notificaciones marcadas como leídas.'));
     }
 }

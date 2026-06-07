@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
 use App\Services\RemoteSensing\NasaEarthdataService;
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 /**
  * API Controller for Remote Sensing data
  */
-class RemoteSensingController extends Controller
+class RemoteSensingController extends BaseApiController
 {
     use AuthorizesRequests;
 

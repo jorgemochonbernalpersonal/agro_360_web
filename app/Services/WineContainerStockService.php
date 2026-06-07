@@ -144,14 +144,10 @@ class WineContainerStockService
      */
     public function updateTransfer(WineTransfer $transfer, array $oldData): void
     {
-        DB::transaction(function () use ($transfer, $oldData) {
-            // Revertir estado anterior
-            $fake = new WineTransfer($oldData);
-            $this->revertTransfer($fake);
-
-            // Aplicar nuevo estado
-            $this->recordTransfer($transfer);
-        });
+        $this->revertAndApply(
+            fn () => $this->revertTransfer(new WineTransfer($oldData)),
+            fn () => $this->recordTransfer($transfer),
+        );
     }
 
     // ─── Vaciado manual ──────────────────────────────────────────────────────
@@ -251,14 +247,7 @@ class WineContainerStockService
                 return;
             }
 
-            if ((float) $container->wine_volume_liters < $qty) {
-                throw new \RuntimeException(
-                    "El contenedor «{$container->name}» no tiene suficiente vino para la merma: ".
-                    "disponible {$container->wine_volume_liters} L, merma {$qty} L."
-                );
-            }
-
-            $container->wine_volume_liters = $container->wine_volume_liters - $qty;
+            $container->wine_volume_liters = max(0, $container->wine_volume_liters - $qty);
             $container->save();
 
             $this->updateCurrentState($container, null, -$qty);
@@ -320,11 +309,10 @@ class WineContainerStockService
      */
     public function updateLoss(WineLoss $loss, array $oldData): void
     {
-        DB::transaction(function () use ($loss, $oldData) {
-            $fake = new WineLoss($oldData);
-            $this->revertLoss($fake);
-            $this->recordLoss($loss);
-        });
+        $this->revertAndApply(
+            fn () => $this->revertLoss(new WineLoss($oldData)),
+            fn () => $this->recordLoss($loss),
+        );
     }
 
     // ─── Embotellado ─────────────────────────────────────────────────────────
@@ -409,11 +397,10 @@ class WineContainerStockService
      */
     public function updateBottling(WineBottling $bottling, array $oldData): void
     {
-        DB::transaction(function () use ($bottling, $oldData) {
-            $fake = new WineBottling($oldData);
-            $this->revertBottling($fake);
-            $this->recordBottling($bottling);
-        });
+        $this->revertAndApply(
+            fn () => $this->revertBottling(new WineBottling($oldData)),
+            fn () => $this->recordBottling($bottling),
+        );
     }
 
     // ─── Entrada inicial de vino ─────────────────────────────────────────────
@@ -523,6 +510,18 @@ class WineContainerStockService
         $state->last_movement_at = now();
         $state->last_movement_by = Auth::id();
         $state->save();
+    }
+
+    /**
+     * Ejecuta un ciclo revert+apply en una sola transacción atómica.
+     * Usado por los tres métodos updateX del servicio.
+     */
+    private function revertAndApply(callable $revert, callable $apply): void
+    {
+        DB::transaction(function () use ($revert, $apply) {
+            $revert();
+            $apply();
+        });
     }
 
     /**

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\ActivityResource;
 use App\Models\AgriculturalActivity;
 use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class FieldActivityController extends Controller
+class FieldActivityController extends BaseApiController
 {
     /**
      * Actividades de campo de los viticultores vinculados (solo lectura).
@@ -59,15 +59,8 @@ class FieldActivityController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $activities = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => ActivityResource::collection($activities),
-            'meta' => [
-                'total' => $activities->total(),
-                'per_page' => $activities->perPage(),
-                'current_page' => $activities->currentPage(),
-                'last_page' => $activities->lastPage(),
-                'types' => AgriculturalActivity::activityTypes(),
-            ],
+        return $this->paginated($activities, ActivityResource::collection($activities), [
+            'types' => AgriculturalActivity::activityTypes(),
         ]);
     }
 
@@ -84,6 +77,6 @@ class FieldActivityController extends Controller
             ->with(['plot', 'campaign'])
             ->findOrFail($id);
 
-        return response()->json(['data' => new ActivityResource($activity)]);
+        return $this->success(new ActivityResource($activity));
     }
 }

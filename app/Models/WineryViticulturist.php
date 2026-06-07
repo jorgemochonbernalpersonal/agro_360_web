@@ -244,7 +244,9 @@ class WineryViticulturist extends Model
      */
     protected static function booted(): void
     {
-        $flush = fn (self $wv) => Cache::forget("user_{$wv->viticulturist_id}_has_winery");
+        $flush = function (self $wv): void {
+            Cache::forget("user_{$wv->viticulturist_id}_has_winery");
+        };
 
         static::created($flush);
         static::updated($flush);

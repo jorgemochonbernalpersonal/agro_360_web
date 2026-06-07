@@ -96,7 +96,7 @@ class IndexTest extends TestCase
         ]);
 
         $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
+        $variety = GrapeVariety::firstOrCreate(['code' => 'TEMP'], ['name' => 'Tempranillo', 'color' => 'red']);
 
         $planting = PlotPlanting::create([
             'plot_id' => $plot->id,

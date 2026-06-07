@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\PlotResource;
 use App\Models\Plot;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PlotController extends Controller
+class PlotController extends BaseApiController
 {
     // ─── GET /viticulturist/plots ─────────────────────────────────────────────
 
@@ -47,17 +47,9 @@ class PlotController extends Controller
             $plot->has_geometry = isset($centroids[$plot->id]);
         });
 
-        return response()->json([
-            'data' => PlotResource::collection($plots),
-            'meta' => [
-                'total' => $plots->total(),
-                'per_page' => $plots->perPage(),
-                'current_page' => $plots->currentPage(),
-                'last_page' => $plots->lastPage(),
-                'has_more' => $plots->hasMorePages(),
-                'total_area' => round((float) $areaStats->total_area, 2),
-                'organic_area' => round((float) $areaStats->organic_area, 2),
-            ],
+        return $this->paginated($plots, PlotResource::collection($plots), [
+            'total_area' => round((float) $areaStats->total_area, 2),
+            'organic_area' => round((float) $areaStats->organic_area, 2),
         ]);
     }
 
@@ -186,7 +178,7 @@ class PlotController extends Controller
         $plot->centroid_data = $centroid;
         $plot->has_geometry = $centroid !== null;
 
-        return response()->json(['data' => new PlotResource($plot)]);
+        return $this->success(new PlotResource($plot));
     }
 
     // ─── GET /viticulturist/plots/{id}/geometries ─────────────────────────────
@@ -252,7 +244,7 @@ class PlotController extends Controller
                 'irrigated' => (bool) $p->irrigated,
             ]);
 
-        return response()->json(['data' => $plantings]);
+        return $this->success($plantings);
     }
 
     // ─── PUT /viticulturist/plots/{id} ────────────────────────────────────────
@@ -274,7 +266,7 @@ class PlotController extends Controller
         $plot->update($validated);
         $plot->load(['province', 'municipality', 'plantings.grapeVariety']);
 
-        return response()->json(['data' => new PlotResource($plot)]);
+        return $this->success(new PlotResource($plot));
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────

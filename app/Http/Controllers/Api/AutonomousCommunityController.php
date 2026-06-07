@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\AutonomousCommunity;
 use Illuminate\Http\JsonResponse;
 
-class AutonomousCommunityController extends Controller
+class AutonomousCommunityController extends BaseApiController
 {
     /**
      * GET /api/v1/autonomous-communities
@@ -19,6 +19,6 @@ class AutonomousCommunityController extends Controller
         $communities = AutonomousCommunity::orderBy('name')
             ->get(['id', 'name', 'code']);
 
-        return response()->json(['data' => $communities]);
+        return $this->success($communities);
     }
 }

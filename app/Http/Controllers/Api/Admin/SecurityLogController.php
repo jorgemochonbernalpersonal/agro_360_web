@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\Admin\SecurityEventResource;
 use App\Models\SecurityEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class SecurityLogController extends Controller
+class SecurityLogController extends BaseApiController
 {
     // ─── GET /admin/security-log ──────────────────────────────────────────────
 
@@ -52,14 +52,6 @@ class SecurityLogController extends Controller
 
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => SecurityEventResource::collection($items),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-            ],
-        ]);
+        return $this->paginated($items, SecurityEventResource::collection($items));
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Harvest;
 use App\Models\Wine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class TraceabilityController extends Controller
+class TraceabilityController extends BaseApiController
 {
     // ─── GET /winery/grape-receptions/{id}/traceability ───────────────────────
     // Vinos que se elaboraron con esta recepción de uva

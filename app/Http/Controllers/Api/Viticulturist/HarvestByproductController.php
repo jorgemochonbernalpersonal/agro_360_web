@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\HarvestByproductResource;
 use App\Models\Campaign;
 use App\Models\HarvestByproduct;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class HarvestByproductController extends Controller
+class HarvestByproductController extends BaseApiController
 {
     // ─── GET /viticulturist/harvest-byproducts ──────────────────────────────
 
@@ -47,15 +47,7 @@ class HarvestByproductController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => HarvestByproductResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, HarvestByproductResource::collection($items->items()));
     }
 
     // ─── POST /viticulturist/harvest-byproducts ────────────────────────────

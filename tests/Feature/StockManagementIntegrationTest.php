@@ -221,23 +221,19 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals(150, $finalStock->sold_qty);
     }
 
-    public function test_preventing_overselling_maintains_data_integrity()
+    public function test_preventing_overselling_throws_exception()
     {
         $initialStock = $this->harvest->stockMovements()->latest()->first();
         $availableQty = $initialStock->available_qty;
-
-        // Try to create invoice item with more than available
-        // Note: In real app, this should be validated BEFORE creating
-        // This test verifies that even if created, stock tracking works
 
         $invoice = Invoice::factory()->draft()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
-        // Reserve almost all stock
+        // Reserve almost all stock (leaves 50 available)
         $largeQuantity = $availableQty - 50;
-        $item1 = InvoiceItem::create([
+        InvoiceItem::create([
             'invoice_id' => $invoice->id,
             'harvest_id' => $this->harvest->id,
             'name' => 'Uva 1',
@@ -252,17 +248,17 @@ class StockManagementIntegrationTest extends TestCase
             'concept_type' => 'harvest',
         ]);
 
-        $stockAfter = $this->harvest->fresh()->stockMovements()->latest()->first();
-        $this->assertEquals(50, $stockAfter->available_qty);
+        $stockAfterFirst = $this->harvest->fresh()->stockMovements()->latest()->first();
+        $this->assertEquals(50, $stockAfterFirst->available_qty);
 
-        // Verify that attempting to reserve more results in negative available
-        // (In production, this should be prevented by validation)
+        // Attempting to reserve more than available throws and leaves stock intact
         $invoice2 = Invoice::factory()->draft()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
-        $item2 = InvoiceItem::create([
+        $this->expectException(\RuntimeException::class);
+        InvoiceItem::create([
             'invoice_id' => $invoice2->id,
             'harvest_id' => $this->harvest->id,
             'name' => 'Uva 2',
@@ -276,18 +272,6 @@ class StockManagementIntegrationTest extends TestCase
             'total' => 100,
             'concept_type' => 'harvest',
         ]);
-
-        $stockWithOversell = $this->harvest->fresh()->stockMovements()->latest()->first();
-
-        // Available should be negative (oversold)
-        $this->assertEquals(-50, $stockWithOversell->available_qty);
-        $this->assertEquals($largeQuantity + 100, $stockWithOversell->reserved_qty);
-
-        // But if we cancel one, it should restore
-        $invoice2->update(['status' => 'cancelled']);
-
-        $stockAfterCancel = $this->harvest->fresh()->stockMovements()->latest()->first();
-        $this->assertEquals(50, $stockAfterCancel->available_qty);
     }
 
     public function test_stock_movements_create_complete_audit_trail()

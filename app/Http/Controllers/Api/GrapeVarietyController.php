@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\GrapeVariety;
 use Illuminate\Http\JsonResponse;
 
-class GrapeVarietyController extends Controller
+class GrapeVarietyController extends BaseApiController
 {
     /**
      * GET /api/v1/grape-varieties
@@ -20,6 +20,6 @@ class GrapeVarietyController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'color']);
 
-        return response()->json(['data' => $varieties]);
+        return $this->success($varieties);
     }
 }

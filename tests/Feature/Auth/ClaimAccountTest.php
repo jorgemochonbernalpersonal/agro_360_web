@@ -7,7 +7,6 @@ use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -56,7 +55,7 @@ class ClaimAccountTest extends TestCase
         $user = User::factory()->create([
             'role' => 'viticulturist',
             'can_login' => true,
-            'invitation_token' => Hash::make($plainToken),
+            'invitation_token' => hash('sha256', $plainToken),
             'invitation_expires_at' => now()->addDays(7),
         ]);
 
@@ -372,7 +371,7 @@ class ClaimAccountTest extends TestCase
         User::factory()->create([
             'role' => 'viticulturist',
             'can_login' => false,
-            'invitation_token' => Hash::make($plainToken),
+            'invitation_token' => hash('sha256', $plainToken),
             'invitation_expires_at' => now()->addDays(7),
         ]);
 
@@ -417,7 +416,7 @@ class ClaimAccountTest extends TestCase
             'role' => 'viticulturist',
             'can_login' => false,
             'email' => 'viticultores.'.Str::uuid().'@noemail.agro365.es',
-            'invitation_token' => Hash::make($plainToken), // production stores hashed
+            'invitation_token' => hash('sha256', $plainToken),
             'invitation_sent_at' => now()->subHour(),
             'invitation_expires_at' => now()->addDays(7),
             'email_verified_at' => null,
@@ -455,7 +454,7 @@ class ClaimAccountTest extends TestCase
             'role' => 'viticulturist',
             'can_login' => false,
             'email' => 'viticultores.'.Str::uuid().'@noemail.agro365.es',
-            'invitation_token' => Hash::make($plainToken),
+            'invitation_token' => hash('sha256', $plainToken),
             'invitation_sent_at' => now()->subHour(),
             'invitation_expires_at' => now()->addDays(7),
             'email_verified_at' => null,

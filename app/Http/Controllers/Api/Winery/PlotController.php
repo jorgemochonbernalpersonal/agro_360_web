@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\PlotResource;
 use App\Models\AgriculturalActivity;
 use App\Models\Plot;
@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PlotController extends Controller
+class PlotController extends BaseApiController
 {
     // ─── GET /winery/plots ────────────────────────────────────────────────────
 
@@ -60,16 +60,9 @@ class PlotController extends Controller
             $plot->has_geometry = isset($centroids[$plot->id]);
         });
 
-        return response()->json([
-            'data' => PlotResource::collection($plots),
-            'meta' => [
-                'total' => $plots->total(),
-                'per_page' => $plots->perPage(),
-                'current_page' => $plots->currentPage(),
-                'last_page' => $plots->lastPage(),
-                'total_area' => round((float) $areaStats->total_area, 2),
-                'organic_area' => round((float) $areaStats->organic_area, 2),
-            ],
+        return $this->paginated($plots, PlotResource::collection($plots), [
+            'total_area' => round((float) $areaStats->total_area, 2),
+            'organic_area' => round((float) $areaStats->organic_area, 2),
         ]);
     }
 
@@ -209,7 +202,7 @@ class PlotController extends Controller
         $plot->centroid_data = $centroids[$plot->id] ?? null;
         $plot->has_geometry = isset($centroids[$plot->id]);
 
-        return response()->json(['data' => new PlotResource($plot)]);
+        return $this->success(new PlotResource($plot));
     }
 
     // ─── GET /winery/plots/{id}/geometries ────────────────────────────────────
@@ -283,7 +276,7 @@ class PlotController extends Controller
                 'irrigated' => (bool) $p->irrigated,
             ]);
 
-        return response()->json(['data' => $plantings]);
+        return $this->success($plantings);
     }
 
     // ─── POST /winery/plots ───────────────────────────────────────────────────
@@ -325,7 +318,7 @@ class PlotController extends Controller
         $plot->centroid_data = null;
         $plot->has_geometry = false;
 
-        return response()->json(['data' => new PlotResource($plot)], 201);
+        return $this->created(new PlotResource($plot));
     }
 
     // ─── POST /winery/plots/{id}/plantings ────────────────────────────────────
@@ -360,7 +353,7 @@ class PlotController extends Controller
 
         $planting->load(['grapeVariety', 'trainingSystem']);
 
-        return response()->json(['data' => [
+        return $this->created([
             'id' => $planting->id,
             'name' => $planting->name,
             'grape_variety' => $planting->grapeVariety?->name,
@@ -368,7 +361,7 @@ class PlotController extends Controller
             'planting_year' => $planting->planting_year,
             'irrigated' => (bool) $planting->irrigated,
             'status' => $planting->status,
-        ]], 201);
+        ]);
     }
 
     // ─── GET /winery/plots/{id}/harvest-quality ───────────────────────────────
@@ -392,26 +385,18 @@ class PlotController extends Controller
             ->orderByDesc('activity_date')
             ->paginate($perPage);
 
-        return response()->json([
-            'data' => $activities->map(fn ($a) => [
-                'id' => $a->id,
-                'activity_date' => $a->activity_date?->format('Y-m-d'),
-                'grape_variety' => $a->plotPlanting?->grapeVariety?->name,
-                'baume_degree' => $a->harvest?->baume_degree,
-                'brix_degree' => $a->harvest?->brix_degree,
-                'ph_level' => $a->harvest?->ph_level,
-                'acidity_level' => $a->harvest?->acidity_level,
-                'potential_alcohol' => $a->harvest?->potential_alcohol,
-                'total_weight' => $a->harvest?->total_weight,
-                'notes' => $a->notes ?? $a->harvest?->notes,
-            ]),
-            'meta' => [
-                'total' => $activities->total(),
-                'per_page' => $activities->perPage(),
-                'current_page' => $activities->currentPage(),
-                'last_page' => $activities->lastPage(),
-            ],
-        ]);
+        return $this->paginated($activities, $activities->map(fn ($a) => [
+            'id' => $a->id,
+            'activity_date' => $a->activity_date?->format('Y-m-d'),
+            'grape_variety' => $a->plotPlanting?->grapeVariety?->name,
+            'baume_degree' => $a->harvest?->baume_degree,
+            'brix_degree' => $a->harvest?->brix_degree,
+            'ph_level' => $a->harvest?->ph_level,
+            'acidity_level' => $a->harvest?->acidity_level,
+            'potential_alcohol' => $a->harvest?->potential_alcohol,
+            'total_weight' => $a->harvest?->total_weight,
+            'notes' => $a->notes ?? $a->harvest?->notes,
+        ]));
     }
 
     // ─── GET /winery/plots/{id}/notebook ─────────────────────────────────────
@@ -433,20 +418,12 @@ class PlotController extends Controller
             ->orderByDesc('activity_date')
             ->paginate($perPage);
 
-        return response()->json([
-            'data' => $activities->map(fn ($a) => [
-                'id' => $a->id,
-                'activity_type' => $a->activity_type,
-                'activity_date' => $a->activity_date?->format('Y-m-d'),
-                'notes' => $a->notes,
-            ]),
-            'meta' => [
-                'total' => $activities->total(),
-                'per_page' => $activities->perPage(),
-                'current_page' => $activities->currentPage(),
-                'last_page' => $activities->lastPage(),
-            ],
-        ]);
+        return $this->paginated($activities, $activities->map(fn ($a) => [
+            'id' => $a->id,
+            'activity_type' => $a->activity_type,
+            'activity_date' => $a->activity_date?->format('Y-m-d'),
+            'notes' => $a->notes,
+        ]));
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\WinerySupply;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WinerySupplyController extends Controller
+class WinerySupplyController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -43,16 +43,9 @@ class WinerySupplyController extends Controller
             ->whereRaw('min_stock_alert IS NOT NULL AND current_stock <= min_stock_alert')
             ->count();
 
-        return response()->json([
-            'data' => $supplies->map(fn ($s) => $this->format($s)),
-            'meta' => [
-                'total' => $supplies->total(),
-                'per_page' => $supplies->perPage(),
-                'current_page' => $supplies->currentPage(),
-                'last_page' => $supplies->lastPage(),
-                'low_stock_count' => $lowStockCount,
-                'supply_types' => WinerySupply::SUPPLY_TYPES,
-            ],
+        return $this->paginated($supplies, $supplies->map(fn ($s) => $this->format($s)), [
+            'low_stock_count' => $lowStockCount,
+            'supply_types' => WinerySupply::SUPPLY_TYPES,
         ]);
     }
 
@@ -63,7 +56,7 @@ class WinerySupplyController extends Controller
 
         $supply = WinerySupply::forUser($user->id)->with('unitOfMeasurement')->findOrFail($id);
 
-        return response()->json(['data' => $this->format($supply)]);
+        return $this->success($this->format($supply));
     }
 
     public function store(Request $request): JsonResponse
@@ -85,10 +78,7 @@ class WinerySupplyController extends Controller
         $supply = WinerySupply::create([...$validated, 'user_id' => $user->id, 'active' => true]);
         $supply->load('unitOfMeasurement');
 
-        return response()->json([
-            'data' => $this->format($supply),
-            'message' => __('Insumo creado correctamente.'),
-        ], 201);
+        return $this->created($this->format($supply));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -113,7 +103,7 @@ class WinerySupplyController extends Controller
         $supply->update($validated);
         $supply->load('unitOfMeasurement');
 
-        return response()->json(['data' => $this->format($supply)]);
+        return $this->success($this->format($supply));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -124,7 +114,7 @@ class WinerySupplyController extends Controller
         $supply = WinerySupply::forUser($user->id)->findOrFail($id);
         $supply->update(['active' => false]);
 
-        return response()->json(['message' => __('Insumo desactivado correctamente.')]);
+        return $this->deleted(__('Insumo desactivado correctamente.'));
     }
 
     private function format(WinerySupply $s): array

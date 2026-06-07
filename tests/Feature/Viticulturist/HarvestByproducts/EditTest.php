@@ -40,7 +40,7 @@ class EditTest extends ViticulturistTestCase
         $this->actingAs($v);
 
         Livewire::test(Edit::class, ['byproduct' => $byproduct])
-            ->assertSet('byproduct_type', 'orujo')
+            ->assertSet('byproduct_type', 'pomace')
             ->assertSet('destination_name', 'Cooperativa Original');
     }
 
@@ -77,9 +77,9 @@ class EditTest extends ViticulturistTestCase
             'viticulturist_id' => $viticulturistId,
             'campaign_id' => $campaignId,
             'date' => '2024-10-01',
-            'byproduct_type' => 'orujo',
+            'byproduct_type' => 'pomace',
             'quantity_kg' => 1000.000,
-            'destination_type' => 'cooperativa',
+            'destination_type' => 'cooperative',
             'destination_name' => 'Cooperativa Original',
         ]);
     }

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\AdvisoryMembership;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class AdvisoryMembershipController extends Controller
+class AdvisoryMembershipController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -18,14 +18,7 @@ class AdvisoryMembershipController extends Controller
             ->orderBy('advisor_name')
             ->paginate(20);
 
-        return response()->json([
-            'data' => $items->map(fn ($m) => $this->format($m)),
-            'meta' => [
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, $items->map(fn ($m) => $this->format($m)));
     }
 
     public function store(Request $request): JsonResponse
@@ -49,7 +42,7 @@ class AdvisoryMembershipController extends Controller
             'active' => true,
         ]);
 
-        return response()->json(['data' => $this->format($membership)], 201);
+        return $this->created($this->format($membership));
     }
 
     private function format(AdvisoryMembership $m): array

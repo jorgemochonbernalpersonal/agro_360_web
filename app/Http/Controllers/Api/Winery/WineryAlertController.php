@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\WineryAlert;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WineryAlertController extends Controller
+class WineryAlertController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -33,17 +33,10 @@ class WineryAlertController extends Controller
 
         $unreadCount = WineryAlert::forUser($user->id)->active()->unread()->count();
 
-        return response()->json([
-            'data' => $items->map(fn ($a) => $this->format($a)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'unread_count' => $unreadCount,
-                'types' => WineryAlert::ALERT_TYPES,
-                'severities' => WineryAlert::SEVERITIES,
-            ],
+        return $this->paginated($items, $items->map(fn ($a) => $this->format($a)), [
+            'unread_count' => $unreadCount,
+            'types' => WineryAlert::ALERT_TYPES,
+            'severities' => WineryAlert::SEVERITIES,
         ]);
     }
 
@@ -68,10 +61,7 @@ class WineryAlertController extends Controller
 
         $alert = WineryAlert::create($validated);
 
-        return response()->json([
-            'data' => $this->format($alert),
-            'message' => __('Alerta creada correctamente.'),
-        ], 201);
+        return $this->created($this->format($alert));
     }
 
     public function markRead(Request $request, int $id): JsonResponse
@@ -86,7 +76,7 @@ class WineryAlertController extends Controller
             'read_at' => now(),
         ]);
 
-        return response()->json(['data' => $this->format($alert)]);
+        return $this->success($this->format($alert));
     }
 
     public function markAllRead(Request $request): JsonResponse
@@ -98,7 +88,7 @@ class WineryAlertController extends Controller
             ->unread()
             ->update(['is_read' => true, 'read_at' => now()]);
 
-        return response()->json(['message' => __('Todas las alertas marcadas como leídas.')]);
+        return $this->deleted(__('Todas las alertas marcadas como leídas.'));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -109,7 +99,7 @@ class WineryAlertController extends Controller
         $alert = WineryAlert::forUser($user->id)->findOrFail($id);
         $alert->delete();
 
-        return response()->json(['message' => __('Alerta eliminada.')]);
+        return $this->deleted(__('Alerta eliminada.'));
     }
 
     private function format(WineryAlert $a): array

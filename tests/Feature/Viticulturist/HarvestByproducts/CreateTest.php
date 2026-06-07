@@ -16,9 +16,9 @@ class CreateTest extends ViticulturistTestCase
 
         Livewire::test(Create::class)
             ->set('date', '2024-10-15')
-            ->set('byproduct_type', 'raspon')
+            ->set('byproduct_type', 'stem')
             ->set('quantity_kg', '800.000')
-            ->set('destination_type', 'destileria')
+            ->set('destination_type', 'distillery')
             ->set('destination_name', 'Destilería García S.L.')
             ->call('save')
             ->assertHasNoErrors()
@@ -26,7 +26,7 @@ class CreateTest extends ViticulturistTestCase
 
         $this->assertDatabaseHas('harvest_byproducts', [
             'viticulturist_id' => $v->id,
-            'byproduct_type' => 'raspon',
+            'byproduct_type' => 'stem',
             'destination_name' => 'Destilería García S.L.',
             'active' => true,
         ]);
@@ -86,9 +86,9 @@ class CreateTest extends ViticulturistTestCase
 
         Livewire::test(Create::class)
             ->set('date', '2024-10-15')
-            ->set('byproduct_type', 'lia')
+            ->set('byproduct_type', 'lees')
             ->set('quantity_kg', '300')
-            ->set('destination_type', 'compostaje')
+            ->set('destination_type', 'composting')
             ->set('destination_name', 'Planta Compostaje SA')
             ->set('document_reference', '')
             ->call('save')

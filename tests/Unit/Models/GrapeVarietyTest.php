@@ -33,8 +33,8 @@ class GrapeVarietyTest extends TestCase
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
 
         $variety = GrapeVariety::firstOrCreate(
-            ['name' => 'Tempranillo'],
-            ['code' => 'TEMP', 'color' => 'red']
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
         );
 
         PlotPlanting::create([
@@ -158,6 +158,6 @@ class GrapeVarietyTest extends TestCase
 
         $this->assertEquals('scissors', $wine->crop_type_icon);
         $this->assertEquals('sun', $olive->crop_type_icon);
-        $this->assertEquals('leaf', $other->crop_type_icon);
+        $this->assertEquals('sparkles', $other->crop_type_icon);
     }
 }

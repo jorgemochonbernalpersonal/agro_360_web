@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Producer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Invoice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class InvoiceController extends Controller
+class InvoiceController extends BaseApiController
 {
     // ─── GET /producer/invoices ───────────────────────────────────────────────
 

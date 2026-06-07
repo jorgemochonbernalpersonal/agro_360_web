@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\WaterConcessionResource;
 use App\Models\WaterConcession;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WaterConcessionController extends Controller
+class WaterConcessionController extends BaseApiController
 {
     // ─── GET /viticulturist/water-concessions ─────────────────────────────────
 
@@ -38,15 +38,7 @@ class WaterConcessionController extends Controller
 
         $items = $query->paginate($this->resolvePerPage($request, 20));
 
-        return response()->json([
-            'data' => WaterConcessionResource::collection($items->items()),
-            'meta' => [
-                'total' => $items->total(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'has_more' => $items->hasMorePages(),
-            ],
-        ]);
+        return $this->paginated($items, WaterConcessionResource::collection($items->items()));
     }
 
     public function store(Request $request): JsonResponse

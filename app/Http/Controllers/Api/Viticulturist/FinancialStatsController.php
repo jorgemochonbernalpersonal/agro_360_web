@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Viticulturist;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Client;
 use App\Models\Invoice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class FinancialStatsController extends Controller
+class FinancialStatsController extends BaseApiController
 {
     // ─── GET /viticulturist/financial-stats ──────────────────────────────────
 
@@ -55,20 +55,18 @@ class FinancialStatsController extends Controller
             ? round((($totalInvoiced - $prevTotal) / $prevTotal) * 100, 1)
             : null;
 
-        return response()->json([
-            'data' => [
-                'year' => $year,
-                'total_invoiced' => round((float) $totalInvoiced, 2),
-                'paid_amount' => round((float) $paidAmount, 2),
-                'pending_amount' => round((float) $pendingAmount, 2),
-                'overdue_amount' => round((float) $overdueAmount, 2),
-                'collection_rate' => $collectionRate,
-                'average_invoice' => $averageInvoice,
-                'invoice_count' => $invoiceCount,
-                'active_clients' => $activeClients,
-                'monthly_income' => $monthly,
-                'growth_percentage' => $growthPercentage,
-            ],
+        return $this->success([
+            'year' => $year,
+            'total_invoiced' => round((float) $totalInvoiced, 2),
+            'paid_amount' => round((float) $paidAmount, 2),
+            'pending_amount' => round((float) $pendingAmount, 2),
+            'overdue_amount' => round((float) $overdueAmount, 2),
+            'collection_rate' => $collectionRate,
+            'average_invoice' => $averageInvoice,
+            'invoice_count' => $invoiceCount,
+            'active_clients' => $activeClients,
+            'monthly_income' => $monthly,
+            'growth_percentage' => $growthPercentage,
         ]);
     }
 }

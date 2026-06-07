@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\HarvestResource;
 use App\Models\Campaign;
 use App\Models\Container;
@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class GrapeReceptionController extends Controller
+class GrapeReceptionController extends BaseApiController
 {
     // ─── GET /winery/grape-receptions ────────────────────────────────────────
 
@@ -43,15 +43,7 @@ class GrapeReceptionController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $harvests = $query->orderByDesc('harvest_start_date')->paginate($perPage);
 
-        return response()->json([
-            'data' => HarvestResource::collection($harvests->items()),
-            'meta' => [
-                'total' => $harvests->total(),
-                'per_page' => $harvests->perPage(),
-                'current_page' => $harvests->currentPage(),
-                'last_page' => $harvests->lastPage(),
-            ],
-        ]);
+        return $this->paginated($harvests, HarvestResource::collection($harvests->items()));
     }
 
     // ─── GET /winery/grape-receptions/{id} ───────────────────────────────────
@@ -65,7 +57,7 @@ class GrapeReceptionController extends Controller
             ->with(['batch.viticulturist', 'plotPlanting.grapeVariety', 'container'])
             ->findOrFail($id);
 
-        return response()->json(['data' => new HarvestResource($harvest)]);
+        return $this->success(new HarvestResource($harvest));
     }
 
     // ─── POST /winery/grape-receptions ───────────────────────────────────────
@@ -152,7 +144,7 @@ class GrapeReceptionController extends Controller
 
         $harvest->load(['batch.viticulturist', 'plotPlanting.grapeVariety', 'container']);
 
-        return response()->json(['data' => new HarvestResource($harvest)], 201);
+        return $this->created(new HarvestResource($harvest));
     }
 
     // ─── PUT /winery/grape-receptions/{id} ───────────────────────────────────
@@ -185,7 +177,7 @@ class GrapeReceptionController extends Controller
 
         $harvest->load(['batch.viticulturist', 'plotPlanting.grapeVariety', 'container']);
 
-        return response()->json(['data' => new HarvestResource($harvest)]);
+        return $this->success(new HarvestResource($harvest));
     }
 
     // ─── DELETE /winery/grape-receptions/{id} ────────────────────────────────
@@ -205,7 +197,7 @@ class GrapeReceptionController extends Controller
             }
         });
 
-        return response()->json(['message' => __('Recepción eliminada correctamente.')]);
+        return $this->deleted(__('Recepción eliminada correctamente.'));
     }
 
     // ─── GET /winery/viticulturists ────────────────────────────────────────────
@@ -226,6 +218,6 @@ class GrapeReceptionController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'email']);
 
-        return response()->json(['data' => $viticulturists]);
+        return $this->success($viticulturists);
     }
 }

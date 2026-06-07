@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Winery;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Models\SanitaryRegistration;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class SanitaryRegistrationController extends Controller
+class SanitaryRegistrationController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
@@ -27,16 +27,9 @@ class SanitaryRegistrationController extends Controller
         $perPage = $this->resolvePerPage($request, 20, 100);
         $items = $query->paginate($perPage);
 
-        return response()->json([
-            'data' => $items->map(fn ($r) => $this->format($r)),
-            'meta' => [
-                'total' => $items->total(),
-                'per_page' => $items->perPage(),
-                'current_page' => $items->currentPage(),
-                'last_page' => $items->lastPage(),
-                'types' => SanitaryRegistration::REGISTRATION_TYPES,
-                'statuses' => SanitaryRegistration::STATUSES,
-            ],
+        return $this->paginated($items, $items->map(fn ($r) => $this->format($r)), [
+            'types' => SanitaryRegistration::REGISTRATION_TYPES,
+            'statuses' => SanitaryRegistration::STATUSES,
         ]);
     }
 
@@ -47,7 +40,7 @@ class SanitaryRegistrationController extends Controller
 
         $registration = SanitaryRegistration::forUser($user->id)->findOrFail($id);
 
-        return response()->json(['data' => $this->format($registration)]);
+        return $this->success($this->format($registration));
     }
 
     public function store(Request $request): JsonResponse
@@ -71,10 +64,7 @@ class SanitaryRegistrationController extends Controller
 
         $registration = SanitaryRegistration::create($validated);
 
-        return response()->json([
-            'data' => $this->format($registration),
-            'message' => __('Registro sanitario creado correctamente.'),
-        ], 201);
+        return $this->created($this->format($registration));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -97,7 +87,7 @@ class SanitaryRegistrationController extends Controller
 
         $registration->update($validated);
 
-        return response()->json(['data' => $this->format($registration)]);
+        return $this->success($this->format($registration));
     }
 
     public function destroy(Request $request, int $id): JsonResponse
@@ -108,7 +98,7 @@ class SanitaryRegistrationController extends Controller
         $registration = SanitaryRegistration::forUser($user->id)->findOrFail($id);
         $registration->delete();
 
-        return response()->json(['message' => __('Registro sanitario eliminado correctamente.')]);
+        return $this->deleted(__('Registro sanitario eliminado correctamente.'));
     }
 
     private function format(SanitaryRegistration $r): array
