@@ -120,13 +120,7 @@ class Index extends Component
             $relation = WineryViticulturist::where('winery_id', $id)
                 ->where('viticulturist_id', Auth::id())
                 ->where('notebook_access', true)
-                ->first();
-
-            if (! $relation) {
-                $this->toastError(__('No se encontró el acceso activo a esta bodega.'));
-
-                return;
-            }
+                ->firstOrFail();
 
             $relation->revokeNotebookAccess();
 
