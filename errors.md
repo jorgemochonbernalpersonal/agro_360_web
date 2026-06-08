@@ -185,25 +185,17 @@ Toda la clase falla. Probable: observer renombrado, modelo o relación cambiada.
 
 ---
 
-## ❌ Grupo 11 — Varios pendientes
+## ✅ Grupo 11 — Varios pendientes (RESUELTO 2026-06-08)
 
-Análisis de rol afectado e impacto en producción:
-
-| Test | Rol | Impacto | Prioridad |
-|------|-----|---------|-----------|
-| `QuickEntryTest > cannot save for another user's plot` | Viticulturist | 🔴 Gap de seguridad — un viticultor puede guardar actividades en parcelas ajenas (ModelNotFoundException no lanzada) | Alta |
-| `UnifiedIndexTest > delete viticulturist without relations works` | Admin / Winery | 🟠 Eliminar un viticulturist sin relaciones externas no tiene efecto | Media |
-| `HybridAccessTest > producer can access winery dashboard` | Producer | 🟠 El rol producer no puede acceder al dashboard de bodega | Media |
-| `ProducerRoutesTest > financial stats winery renders` | Producer | 🟠 La ruta de stats financieras crashea para el rol producer | Media |
-| `ProducerReceptionTest > producer can create self reception` | Producer | 🟠 El producer no puede crear una auto-recepción | Media |
-| `ForecastsTest` (2 tests) | Winery | 🟠 Dashboard de previsiones de cosecha falla | Media |
-| `SilicieDashboardTest > dashboard can switch tabs` | Winery | 🟠 Dashboard Silicie no cambia de pestaña | Baja |
-
-**Orden sugerido de ataque:**
-1. QuickEntry (seguridad — viticulturist)
-2. Producer (3 bugs en el mismo rol — HybridAccess + ProducerRoutes + ProducerReception)
-3. Winery (ForecastsTest + SilicieDashboard)
-4. UnifiedIndex (delete viticulturist)
+| Test | Fix |
+|------|-----|
+| `QuickEntryTest > cannot save for another user's plot` | `plotOwnershipRule()` ya previene via `ValidationException`; test actualizado a `assertHasErrors`. Eliminado `firstOrFail` redundante del componente. |
+| `HybridAccessTest > producer can access winery dashboard` | `ProducerMenu.php` referenciaba `producer.visual` (eliminado junto al Panel Visual de winery). Eliminado el item del menú. |
+| `ProducerRoutesTest > financial stats winery renders` | Mismo fix que HybridAccess. |
+| `ProducerReceptionTest > producer can create self reception` | `Winery\Harvest\Reception\Create::rules()` usaba `linkedViticulturistRule/linkedPlotRule` que requieren enlace en `WineryViticulturist`; para auto-recepción (`viticulturist_id === Auth::id()`) usa ahora `plotOwnershipRule/plotPlantingOwnershipRule`. |
+| `ForecastsTest` (2 tests) | Test creaba `Campaign` con `viticulturist_id => $winery->id` en lugar de `$viticulturist->id`; `linkedCampaignRule()` fallaba correctamente. Corregido en el test. |
+| `SilicieDashboardTest > dashboard can switch tabs` | Tabs renombrados a inglés (`entries`, `elaboration`, `inventory`, `outputs`); test actualizado. |
+| `UnifiedIndexTest > delete viticulturist without relations works` | `User::factory()->create()` sin `can_login: false` → `UserObserver` autocreaba `Campaign` → `hasCampaigns` bloqueaba el delete. Añadido `can_login: false`. |
 
 ---
 
@@ -222,5 +214,5 @@ Análisis de rol afectado e impacto en producción:
 | 9 — Middleware CheckRole / Navigation | 4 | ✅ **CORREGIDO** |
 | 10 — Campaign/DigitalNotebook | 5 | ✅ **CORREGIDO** |
 | Sesión 2 — Bugs de negocio + ownership | ~20 | ✅ **CORREGIDO** (HarvestSale stock, 11 ownership, FinancialTest SQL, revoke, scopeVisibleTo) |
-| 11 — Varios pendientes | ~7 | ❌ pendiente |
-| **Total** | **~115** | **~108 corregidos / pendiente: ~7** |
+| 11 — Varios pendientes | ~7 | ✅ **CORREGIDO** (2026-06-08) |
+| **Total** | **~115** | **~115 corregidos / pendiente: 0** |
