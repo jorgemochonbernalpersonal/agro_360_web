@@ -491,10 +491,12 @@ class Create extends Component
 
     protected function rules(): array
     {
+        $isSelfReception = Auth::user()->isProducer() && (int) $this->viticulturist_id === Auth::id();
+
         return [
-            'viticulturist_id' => $this->linkedViticulturistRule(),
-            'plot_id' => $this->linkedPlotRule(),
-            'plot_planting_id' => $this->linkedPlotPlantingRule(true),
+            'viticulturist_id' => $isSelfReception ? ['required'] : $this->linkedViticulturistRule(),
+            'plot_id' => $isSelfReception ? $this->plotOwnershipRule() : $this->linkedPlotRule(),
+            'plot_planting_id' => $isSelfReception ? $this->plotPlantingOwnershipRule(true) : $this->linkedPlotPlantingRule(true),
             'vintage_year' => ['required', 'integer', 'min:2000', 'max:'.(now()->year + 1)],
             'harvest_start_date' => ['required', 'date'],
             'harvest_ticket_number' => ['nullable', 'string', 'max:50'],

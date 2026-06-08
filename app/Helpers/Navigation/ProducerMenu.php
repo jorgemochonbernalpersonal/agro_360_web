@@ -48,7 +48,6 @@ class ProducerMenu
         // ── Bodega: Vendimia ──────────────────────────────────────────────────
         $harvestItems = [
             ['icon' => 'chart-bar',               'label' => __('Cuadro de Mando'),        'route' => 'producer.harvest-summary.index',    'active' => request()->routeIs('producer.harvest-summary*')],
-            ['icon' => 'eye',                     'label' => __('Panel Visual'),           'route' => 'producer.visual',                   'active' => request()->routeIs('producer.visual')],
             ['icon' => 'clipboard-document-list', 'label' => __('Campañas Bodega'),   'route' => 'producer.winery-campaigns.index',   'active' => request()->routeIs('producer.winery-campaigns*')],
             ['icon' => 'clipboard-document-list', 'label' => __('Previsiones'),        'route' => 'producer.harvest-forecasts.index',  'active' => request()->routeIs('producer.harvest-forecasts*')],
             ['icon' => 'archive-box-arrow-down',  'label' => __('Recepciones'),        'route' => 'producer.grape-reception.index',    'active' => request()->routeIs('producer.grape-reception*') && ! request()->routeIs('producer.grape-reception.disputes')],
