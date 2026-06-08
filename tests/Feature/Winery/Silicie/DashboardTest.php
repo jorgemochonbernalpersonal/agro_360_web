@@ -39,13 +39,13 @@ class DashboardTest extends WineryTestCase
 
         Livewire::actingAs($winery)
             ->test(Dashboard::class)
-            ->assertSet('currentTab', 'entradas')
-            ->call('switchTab', 'elaboracion')
-            ->assertSet('currentTab', 'elaboracion')
-            ->call('switchTab', 'existencias')
-            ->assertSet('currentTab', 'existencias')
-            ->call('switchTab', 'salidas')
-            ->assertSet('currentTab', 'salidas');
+            ->assertSet('currentTab', 'entries')
+            ->call('switchTab', 'elaboration')
+            ->assertSet('currentTab', 'elaboration')
+            ->call('switchTab', 'inventory')
+            ->assertSet('currentTab', 'inventory')
+            ->call('switchTab', 'outputs')
+            ->assertSet('currentTab', 'outputs');
     }
 
     public function test_take_snapshot_creates_stock_snapshot(): void

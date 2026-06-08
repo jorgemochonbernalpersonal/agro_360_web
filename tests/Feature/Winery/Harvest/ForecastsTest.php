@@ -74,7 +74,7 @@ class ForecastsTest extends WineryTestCase
         ]);
 
         $this->campaign = Campaign::create([
-            'viticulturist_id' => $this->winery->id,
+            'viticulturist_id' => $this->viticulturist->id,
             'name' => 'Vendimia Test',
             'year' => now()->year,
             'start_date' => now()->setMonth(8)->startOfMonth()->format('Y-m-d'),
