@@ -36,7 +36,7 @@ class Edit extends AbstractEdit
 
     public function mount(HarvestDeclaration $declaration): void
     {
-        $this->authorize($declaration);
+        $this->authorizeOwnership($declaration);
         $this->declaration = $declaration;
         $this->campaign_id = (string) $declaration->campaign_id;
         $this->declaration_year = (string) $declaration->declaration_year;
