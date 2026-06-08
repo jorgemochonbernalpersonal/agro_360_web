@@ -32,6 +32,9 @@ class WineryMenu
                 ['icon' => 'building-office-2', 'label' => __('Mi Denominación'),   'route' => 'winery.denomination.index',    'active' => request()->routeIs('winery.denomination.index')],
                 ['icon' => 'document-text',     'label' => __('Solicitudes DO'),    'route' => 'winery.denomination.requests.index', 'active' => request()->routeIs('winery.denomination.requests*'),
                     'badge' => $pendingDO ?: null],
+                ['icon' => 'tag',                      'label' => __('Etiquetas DO'),      'route' => 'winery.denomination.labels.index',         'active' => request()->routeIs('winery.denomination.labels*')],
+                ['icon' => 'clipboard-document-check', 'label' => __('Inspecciones DO'),   'route' => 'winery.denomination.inspections.index',    'active' => request()->routeIs('winery.denomination.inspections*')],
+                ['icon' => 'check-badge',              'label' => __('Calificaciones DO'), 'route' => 'winery.denomination.qualifications.index', 'active' => request()->routeIs('winery.denomination.qualifications*')],
             ];
         }
 
