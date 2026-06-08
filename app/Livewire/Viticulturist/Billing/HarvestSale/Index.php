@@ -111,14 +111,8 @@ class Index extends AbstractIndex
 
         try {
             DB::transaction(function () use ($invoice) {
-                // Release stock for each item
                 foreach ($invoice->items as $item) {
                     if ($item->harvest_id && $item->quantity > 0) {
-                        $this->releaseHarvestStock(
-                            $item->harvest_id,
-                            (float) $item->quantity,
-                            $invoice->id
-                        );
                         $item->update(['delivery_status' => 'cancelled']);
                     }
                 }

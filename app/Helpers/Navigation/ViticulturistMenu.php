@@ -18,9 +18,10 @@ class ViticulturistMenu
 
         // ── Main ─────────────────────────────────────────────────────────────
         $menu['main'] = [
-            ['icon' => 'home',         'label' => __('Dashboard'),      'route' => 'viticulturist.dashboard',           'active' => request()->routeIs('viticulturist.dashboard')],
-            ['icon' => 'calendar-days', 'label' => __('Calendario'),     'route' => 'viticulturist.calendar',            'active' => request()->routeIs('viticulturist.calendar')],
-            ['icon' => 'bolt',         'label' => __('Entrada Rápida'), 'route' => 'viticulturist.quick-entry',         'active' => request()->routeIs('viticulturist.quick-entry')],
+            ['icon' => 'home',         'label' => __('Dashboard'),       'route' => 'viticulturist.dashboard',            'active' => request()->routeIs('viticulturist.dashboard')],
+            ['icon' => 'calendar-days', 'label' => __('Calendario'),      'route' => 'viticulturist.calendar',             'active' => request()->routeIs('viticulturist.calendar')],
+            ['icon' => 'bell',         'label' => __('Notificaciones'),   'route' => 'viticulturist.notifications.index',  'active' => request()->routeIs('viticulturist.notifications.*')],
+            ['icon' => 'bolt',         'label' => __('Entrada Rápida'),  'route' => 'viticulturist.quick-entry',          'active' => request()->routeIs('viticulturist.quick-entry')],
         ];
 
         // ── Campaña ───────────────────────────────────────────────────────────

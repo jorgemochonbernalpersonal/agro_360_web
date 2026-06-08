@@ -113,9 +113,8 @@ class CreateTest extends ViticulturistTestCase
     public function test_mount_preselects_active_campaign(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign = Campaign::where('viticulturist_id', $viticulturist->id)
-            ->where('active', true)
-            ->first();
+        Campaign::where('viticulturist_id', $viticulturist->id)->delete();
+        $campaign = Campaign::factory()->forViticulturist($viticulturist)->active()->create();
 
         $this->actingAs($viticulturist);
 

@@ -27,7 +27,7 @@ abstract class ViticulturistTestCase extends TestCase
             'role' => 'viticulturist',
             'email_verified_at' => now(),
             'is_beta_user' => true,
-            'can_login' => false,
+            'can_login' => true,
         ]);
 
         $winery = User::factory()->create(['role' => 'winery']);

@@ -149,6 +149,10 @@ class QuickEntryTest extends ViticulturistTestCase
     {
         $viticulturist = $this->makeViticulturist();
         $plot = $this->makePlot($viticulturist);
+
+        // Remove auto-created campaign so the factory one is the only active campaign
+        Campaign::where('viticulturist_id', $viticulturist->id)->delete();
+
         $campaign = Campaign::factory()
             ->forViticulturist($viticulturist)
             ->active()
@@ -173,7 +177,9 @@ class QuickEntryTest extends ViticulturistTestCase
         $viticulturist = $this->makeViticulturist();
         $plot = $this->makePlot($viticulturist);
 
-        // No active campaign created
+        // Remove any auto-created campaign so the component finds none active
+        Campaign::where('viticulturist_id', $viticulturist->id)->delete();
+
         $this->actingAs($viticulturist);
 
         Livewire::test(QuickEntry::class)

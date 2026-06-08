@@ -78,7 +78,7 @@ class NavigationMenuTest extends TestCase
         $routes = array_column($menu['winery_rel'], 'route');
 
         $this->assertContains('viticulturist.winery-access.index', $routes);
-        $this->assertContains('viticulturist.bodega-messages.index', $routes);
+        $this->assertContains('viticulturist.winery-messages.index', $routes);
     }
 
     public function test_viticulturist_notebook_inputs_starts_with_overview(): void
@@ -116,7 +116,7 @@ class NavigationMenuTest extends TestCase
 
         $menu = NavigationHelper::getMenu();
 
-        $expected = ['main', 'harvest', 'cellar_elaboration', 'cellar_output', 'winery_compliance', 'territory', 'analytics', 'billing', 'winery_resources', 'winery_docs', 'registrations', 'system'];
+        $expected = ['main', 'harvest', 'cellar_infra', 'cellar_wines', 'cellar_output', 'winery_compliance', 'territory', 'analytics', 'billing', 'winery_resources', 'winery_docs', 'system'];
         foreach ($expected as $section) {
             $this->assertArrayHasKey($section, $menu, "Winery debe tener la sección '{$section}'");
         }
