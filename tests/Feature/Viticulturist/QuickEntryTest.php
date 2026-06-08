@@ -250,13 +250,14 @@ class QuickEntryTest extends ViticulturistTestCase
 
         $this->actingAs($viticulturist);
 
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-
         Livewire::test(QuickEntry::class)
             ->call('selectType', 'observation')
             ->set('plotId', $otherPlot->id)
             ->set('activityDate', now()->toDateString())
-            ->call('save');
+            ->call('save')
+            ->assertHasErrors(['plotId']);
+
+        $this->assertSame(0, AgriculturalActivity::count());
     }
 
     // ── render ────────────────────────────────────────────────────────────────

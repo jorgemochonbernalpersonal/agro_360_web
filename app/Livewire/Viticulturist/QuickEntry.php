@@ -51,10 +51,6 @@ class QuickEntry extends Component
 
         $user = Auth::user();
 
-        Plot::where('id', $this->plotId)
-            ->where('viticulturist_id', $user->id)
-            ->firstOrFail();
-
         $campaign = Campaign::forViticulturist($user->id)
             ->where('active', true)
             ->first();
