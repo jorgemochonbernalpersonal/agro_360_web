@@ -53,7 +53,7 @@ class ViticulturistMenu
         }
 
         // ── Cuaderno de Campo ─────────────────────────────────────────────────
-        $menu['notebook_inputs'] = self::notebookInputs('viticulturist', 'Vendimia', $isLocked);
+        $menu['notebook_inputs'] = self::notebookInputs('viticulturist', 'Vendimia', $isLocked, $hasWinery);
 
         // ── Seguimiento (cumplimiento + plagas) ───────────────────────────────
         $menu['monitoring'] = self::monitoring('viticulturist', $isLocked);
@@ -140,9 +140,9 @@ class ViticulturistMenu
 
     // ── Secciones compartidas (usadas también por ProducerMenu) ───────────────
 
-    public static function notebookInputs(string $prefix, string $harvestLabel = 'Vendimia', bool $locked = false): array
+    public static function notebookInputs(string $prefix, string $harvestLabel = 'Vendimia', bool $locked = false, bool $hasWinery = true): array
     {
-        return [
+        $items = [
             ['icon' => 'book-open',          'label' => __('Cuaderno Digital'),       'route' => "{$prefix}.digital-notebook",                          'active' => request()->routeIs("{$prefix}.digital-notebook") && ! request()->routeIs("{$prefix}.digital-notebook.*")],
             ['divider' => true, 'label' => __('Día a día')],
             ['icon' => 'shield-exclamation', 'label' => __('Tratamientos'),           'route' => "{$prefix}.digital-notebook.treatment.index",          'active' => request()->routeIs("{$prefix}.digital-notebook.treatment.*")],
@@ -156,9 +156,14 @@ class ViticulturistMenu
             ['icon' => 'scissors',           'label' => __('Podas'),                  'route' => "{$prefix}.digital-notebook.pruning.index",            'active' => request()->routeIs("{$prefix}.digital-notebook.pruning.*")],
             ['icon' => 'archive-box',        'label' => __('Post-Vendimia'),          'route' => "{$prefix}.digital-notebook.post-harvest.index",       'active' => request()->routeIs("{$prefix}.digital-notebook.post-harvest.*")],
             ['icon' => 'chart-bar-square',   'label' => __('Rendimientos Estimados'), 'route' => "{$prefix}.digital-notebook.estimated-yields.index",   'active' => request()->routeIs("{$prefix}.digital-notebook.estimated-yields.*")],
-            ['divider' => true, 'label' => __('Cosecha')],
-            ['icon' => 'archive-box-arrow-down', 'label' => $harvestLabel, 'route' => "{$prefix}.harvests.index", 'active' => request()->routeIs("{$prefix}.harvests.*")],
         ];
+
+        if ($hasWinery) {
+            $items[] = ['divider' => true, 'label' => __('Cosecha')];
+            $items[] = ['icon' => 'archive-box-arrow-down', 'label' => $harvestLabel, 'route' => "{$prefix}.harvests.index", 'active' => request()->routeIs("{$prefix}.harvests.*")];
+        }
+
+        return $items;
     }
 
     /**

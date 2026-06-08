@@ -59,18 +59,17 @@ class EditStock extends Component
         'expiry_date.after' => 'La fecha de caducidad debe ser posterior a hoy',
     ];
 
-    public function mount($stock)
+    public function mount(ProductStock $stock): void
     {
         if (! Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
 
-        $this->stock = ProductStock::findOrFail($stock);
-
-        // Verificar propiedad
-        if ($this->stock->user_id !== Auth::id()) {
+        if ($stock->user_id !== Auth::id()) {
             abort(403);
         }
+
+        $this->stock = $stock;
 
         // Cargar datos actuales
         $this->product_id = $this->stock->product_id;

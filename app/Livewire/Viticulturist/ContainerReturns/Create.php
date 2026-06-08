@@ -109,7 +109,7 @@ class Create extends AbstractCreate
 
         return [
             'campaigns' => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
-            'products' => PhytosanitaryProduct::where('viticulturist_id', $userId)->orderBy('name')->get(),
+            'products' => PhytosanitaryProduct::where('user_id', $userId)->orderBy('name')->get(),
             'containerTypes' => PhytosanitaryContainerReturn::containerTypeOptions(),
             'collectionSystems' => PhytosanitaryContainerReturn::collectionSystemOptions(),
         ];

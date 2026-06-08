@@ -379,7 +379,9 @@ class CreateHarvest extends Component
 
             $this->toastSuccess(__('Cosecha registrada correctamente.'));
 
-            return $this->viticulturistRoleRedirect('harvests.index');
+            $redirectTarget = Auth::user()->hasWinery() ? 'harvests.index' : 'digital-notebook';
+
+            return $this->viticulturistRoleRedirect($redirectTarget);
         } catch (\Exception $e) {
             \Log::error('Error al registrar cosecha', [
                 'error' => $e->getMessage(),

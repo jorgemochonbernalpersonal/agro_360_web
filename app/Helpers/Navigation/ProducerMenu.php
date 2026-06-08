@@ -34,7 +34,7 @@ class ProducerMenu
         $producerLocked = ! $user->hasActiveAccess();
 
         // ── Viñedo: Cuaderno de Campo ─────────────────────────────────────────
-        $menu['notebook_inputs'] = ViticulturistMenu::notebookInputs('producer', 'Vendimia Campo', $producerLocked);
+        $menu['notebook_inputs'] = ViticulturistMenu::notebookInputs('producer', 'Vendimia Campo', $producerLocked, true);
 
         // ── Viñedo: Seguimiento (plagas + alertas) ───────────────────────────
         $menu['monitoring'] = ViticulturistMenu::monitoring('producer', $producerLocked);

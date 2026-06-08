@@ -39,7 +39,7 @@ class Edit extends AbstractEdit
 
     public function mount(PhytosanitaryContainerReturn $containerReturn): void
     {
-        $this->authorize($containerReturn);
+        $this->authorizeOwnership($containerReturn);
         $this->containerReturn = $containerReturn;
         $this->campaign_id = (string) $containerReturn->campaign_id;
         $this->phytosanitary_product_id = (string) ($containerReturn->phytosanitary_product_id ?? '');
@@ -110,7 +110,7 @@ class Edit extends AbstractEdit
 
         return [
             'campaigns' => Campaign::forViticulturist($userId)->orderByDesc('year')->get(),
-            'products' => PhytosanitaryProduct::where('viticulturist_id', $userId)->orderBy('name')->get(),
+            'products' => PhytosanitaryProduct::where('user_id', $userId)->orderBy('name')->get(),
             'containerTypes' => PhytosanitaryContainerReturn::containerTypeOptions(),
             'collectionSystems' => PhytosanitaryContainerReturn::collectionSystemOptions(),
         ];

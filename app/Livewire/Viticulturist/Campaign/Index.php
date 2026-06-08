@@ -123,7 +123,7 @@ class Index extends Component
         $user = Auth::user();
 
         $query = Campaign::forViticulturist($user->id)
-            ->withCount('activities')
+            ->withCount(['activities', 'estimatedYields'])
             ->orderBy('year', 'desc');
 
         if ($this->currentTab === 'active') {

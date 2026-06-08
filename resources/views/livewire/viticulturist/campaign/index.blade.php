@@ -153,7 +153,7 @@
                                     />
                                 @endcan
                                 @can('delete', $campaign)
-                                    @if($campaign->activities_count === 0)
+                                    @if($campaign->activities_count === 0 && $campaign->estimated_yields_count === 0)
                                         <x-agro.action-button
                                             variant="delete"
                                             wire:click="delete({{ $campaign->id }})"
@@ -161,7 +161,7 @@
                                             :title="__('Eliminar')"
                                         />
                                     @else
-                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed" :title="__('No se puede eliminar: tiene actividades')">
+                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed" title="{{ __('No se puede eliminar: tiene actividades o rendimientos estimados') }}">
                                             <flux:icon icon="trash" class="size-4" />
                                         </span>
                                     @endif

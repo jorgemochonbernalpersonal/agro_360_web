@@ -39,10 +39,9 @@ class HarvestCalculationsTest extends ViticulturistTestCase
         $this->viticulturist = $this->makeViticulturist();
         $this->actingAs($this->viticulturist);
 
-        $this->campaign = Campaign::factory()->active()->create([
-            'viticulturist_id' => $this->viticulturist->id,
-            'year' => now()->year,
-        ]);
+        // El UserObserver crea la campaña activa al crear el usuario con can_login:true.
+        // Reutilizamos esa campaña para que $this->campaign_id del componente coincida.
+        $this->campaign = Campaign::getOrCreateActiveForYear($this->viticulturist->id);
 
         $ac = AutonomousCommunity::firstOrCreate(['code' => 'TST'], ['name' => 'Test AC']);
         $prov = Province::firstOrCreate(['code' => '00'], ['name' => 'Test Province', 'autonomous_community_id' => $ac->id]);

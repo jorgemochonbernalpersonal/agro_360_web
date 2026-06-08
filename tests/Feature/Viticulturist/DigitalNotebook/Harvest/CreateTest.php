@@ -53,7 +53,9 @@ class CreateTest extends ViticulturistTestCase
     public function test_mount_sets_campaign_id(): void
     {
         $viticulturist = $this->makeViticulturist();
-        $campaign = $this->makeCampaign($viticulturist);
+        // El UserObserver ya crea la campaña activa al crear el usuario con can_login:true.
+        // Usamos esa misma campaña para que el assertSet coincida con lo que devuelve getOrCreateActiveForYear.
+        $campaign = Campaign::forViticulturist($viticulturist->id)->active()->firstOrFail();
 
         $this->actingAs($viticulturist);
 

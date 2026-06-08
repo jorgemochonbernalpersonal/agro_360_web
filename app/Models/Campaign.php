@@ -68,6 +68,11 @@ class Campaign extends Model
         return $this->hasMany(AgriculturalActivity::class, 'campaign_id');
     }
 
+    public function estimatedYields(): HasMany
+    {
+        return $this->hasMany(\App\Models\EstimatedYield::class, 'campaign_id');
+    }
+
     /**
      * Scope para filtrar campañas activas
      *

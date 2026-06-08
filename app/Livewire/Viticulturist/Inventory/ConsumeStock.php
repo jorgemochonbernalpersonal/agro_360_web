@@ -33,17 +33,17 @@ class ConsumeStock extends Component
         'notes.required_if' => 'Debes especificar el motivo cuando seleccionas "Otro"',
     ];
 
-    public function mount($stock)
+    public function mount(ProductStock $stock): void
     {
         if (! Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
 
-        $this->stock = ProductStock::findOrFail($stock);
-
-        if ($this->stock->user_id !== Auth::id()) {
+        if ($stock->user_id !== Auth::id()) {
             abort(403);
         }
+
+        $this->stock = $stock;
     }
 
     public function consume()

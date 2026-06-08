@@ -19,9 +19,9 @@ class BiodiversityRecord extends Model
     ];
 
     public const RECORD_TYPE_ICONS = [
-        'cubierta_vegetal' => 'leaf',
+        'cubierta_vegetal' => 'sun',
         'margen' => 'map',
-        'seto' => 'tree',
+        'seto' => 'bars-3',
         'fauna_auxiliar' => 'bug-ant',
         'nido' => 'home',
         'hotel_insectos' => 'building-office',

@@ -96,9 +96,9 @@
                 <flux:button
                     type="submit"
                     variant="primary"
-                    :disabled="$quantity <= 0 || $quantity >{{ __('$maxQuantity"
+                    :disabled="$quantity <= 0 || $quantity > $maxQuantity"
                 >
-                    Registrar Consumo') }}</flux:button>
+                    {{ __('Registrar Consumo') }}</flux:button>
             </div>
         </form>
     </x-agro.card>

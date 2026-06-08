@@ -54,6 +54,12 @@ class Index extends Component
 
     public function signMidValidation()
     {
+        if (! $this->campaign || $this->campaign->viticulturist_id !== \Illuminate\Support\Facades\Auth::id()) {
+            $this->toastError(__('Campaña no válida.'));
+
+            return;
+        }
+
         if (! $this->confirmMid) {
             $this->addError('confirmMid', __('Debes confirmar la validación intermedia.'));
 
@@ -79,6 +85,12 @@ class Index extends Component
 
     public function signFinalValidation()
     {
+        if (! $this->campaign || $this->campaign->viticulturist_id !== \Illuminate\Support\Facades\Auth::id()) {
+            $this->toastError(__('Campaña no válida.'));
+
+            return;
+        }
+
         if (! $this->confirmFinal) {
             $this->addError('confirmFinal', __('Debes confirmar el cierre de campaña.'));
 
