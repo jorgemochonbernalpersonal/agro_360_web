@@ -725,9 +725,6 @@ Route::middleware(['role:producer', 'check.beta'])
             // ── Página completa de notificaciones (viticulturist) ────────────
             Route::get('/notifications', \App\Livewire\Viticulturist\Notifications\Index::class)->name('notifications.index');
 
-            // ── Dashboard visual bodega (winery) ─────────────────────────────
-            Route::get('/visual', \App\Livewire\Winery\VisualDashboard::class)->name('visual');
-
             // ── Campañas bodega (winery — CRUD completo) ─────────────────────
             Route::prefix('winery-campaigns')->name('winery-campaigns.')->group(function () {
                 Route::get('/', \App\Livewire\Winery\Harvest\Campaigns\Index::class)->name('index');

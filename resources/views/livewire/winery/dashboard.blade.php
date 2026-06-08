@@ -103,7 +103,7 @@
     @endif
 
     {{-- ── Módulo Bodega: KPIs ───────────────────────────────────────────── --}}
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
         <x-agro.card class="flex items-center gap-4">
             <div class="w-11 h-11 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
@@ -151,7 +151,7 @@
             </div>
         </x-agro.card>
 
-        <x-agro.card class="col-span-2">
+        <x-agro.card class="sm:col-span-2">
             <div class="flex items-center justify-between mb-2">
                 <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Uso de depósitos') }}</p>
                 <p class="text-sm font-bold {{ $containerUsage['pct'] > 85 ? 'text-red-500' : ($containerUsage['pct'] > 60 ? 'text-amber-500' : 'text-green-500') }}">

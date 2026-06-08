@@ -2,7 +2,7 @@
 
 Suite: `php artisan test --testsuite=Feature`
 Fecha original: 2026-06-06 — Estado inicial: 2462 passed / 117 failed
-Última actualización: 2026-06-07
+Última actualización: 2026-06-08 (sesión 2)
 
 ---
 
@@ -59,7 +59,36 @@ Tests que fallaban:
 **Fixes aplicados:**
 - `tests/Feature/Viticulturist/Campaign/CreateTest.php` — `can_login: false` en `test_validation_fails_with_invalid_data`
 - `tests/Feature/Viticulturist/Campaign/EditTest.php` — `can_login: false` en `test_viticulturist_can_update_own_campaign_via_livewire`
-- `tests/Feature/ViticulturistTestCase.php` — `can_login: false` en `makeViticulturist()` (afecta todos los tests DigitalNotebook)
+- `tests/Feature/ViticulturistTestCase.php` — `can_login: true` en `makeViticulturist()` + limpieza de Campaign en 4 tests afectados
+
+---
+
+## ✅ RESUELTO — Sesión 2 — Bugs de negocio (6 fixes)
+
+### HarvestSale: doble liberación de stock (bug de producción)
+- **Commit:** `cc7ec6e9`
+- **Causa:** `Index::cancel()` llamaba a `releaseHarvestStock()` manualmente Y después `$invoice->update(['delivery_status' => 'cancelled'])` disparaba `InvoiceObserver` → segunda liberación. Resultado: devolvía el doble de kg al stock.
+- **Fix:** eliminada la llamada manual; el observer es el único responsable.
+
+### 11 tests "cannot edit other viticulturist" + QuickEntry access (302 → 403/200)
+- **Commit:** `cc7ec6e9`
+- **Causa:** `makeViticulturist()` tenía `can_login: false`, que bloqueaba `CheckCanLogin` antes de llegar a la comprobación de autorización.
+- **Fix:** revertido a `can_login: true` en `ViticulturistTestCase::makeViticulturist()` + limpieza de Campaign autocreada en 4 tests.
+
+### FinancialTest SQL crash (bug de producción — 500 en dashboard winery)
+- **Commit:** `dd402ffe`
+- **Causa:** `Stats.php` referenciaba `ii.product_lot_id` en dos JOINs con `wine_lots`, pero la columna correcta en `invoice_items` es `wine_lot_id`.
+- **Fix:** corregido el nombre de columna en ambas queries.
+
+### WineryAccessTest: `revoke()` no lanzaba ModelNotFoundException
+- **Commit:** `3c3786b8`
+- **Causa:** `revoke()` usaba `first()` con toast silencioso en lugar de `firstOrFail()`. El test esperaba excepción al intentar revocar acceso a bodega no relacionada.
+- **Fix:** cambiado a `firstOrFail()`.
+
+### scopeVisibleTo / isVisibleTo: supervisor pool no visible
+- **Commit:** `3c3786b8`
+- **Causa:** el scope derivaba el supervisor solo de `SupervisorViticulturist`, pero los registros `WineryViticulturist` con `source=supervisor` también llevan `supervisor_id`. Sin un registro en `supervisor_viticulturist`, el $supervisorId era null y el branch 2 nunca se activaba.
+- **Fix:** fallback que lee `supervisor_id` de `winery_viticulturist` cuando `getSupervisorAttribute()` devuelve null. Aplicado en `scopeVisibleTo` e `isVisibleTo`.
 
 ---
 
@@ -156,25 +185,25 @@ Toda la clase falla. Probable: observer renombrado, modelo o relación cambiada.
 
 ---
 
-## ❌ Grupo 9 (pendiente) — Navigation (3 tests)
+## ❌ Grupo 11 — Varios pendientes
 
-- `Tests\Feature\Navigation\NavigationMenuTest` — 3 tests (secciones del menú winery)
-  - Error: `assertArrayHasKey` falla en secciones esperadas del menú winery
+Análisis de rol afectado e impacto en producción:
 
----
+| Test | Rol | Impacto | Prioridad |
+|------|-----|---------|-----------|
+| `QuickEntryTest > cannot save for another user's plot` | Viticulturist | 🔴 Gap de seguridad — un viticultor puede guardar actividades en parcelas ajenas (ModelNotFoundException no lanzada) | Alta |
+| `UnifiedIndexTest > delete viticulturist without relations works` | Admin / Winery | 🟠 Eliminar un viticulturist sin relaciones externas no tiene efecto | Media |
+| `HybridAccessTest > producer can access winery dashboard` | Producer | 🟠 El rol producer no puede acceder al dashboard de bodega | Media |
+| `ProducerRoutesTest > financial stats winery renders` | Producer | 🟠 La ruta de stats financieras crashea para el rol producer | Media |
+| `ProducerReceptionTest > producer can create self reception` | Producer | 🟠 El producer no puede crear una auto-recepción | Media |
+| `ForecastsTest` (2 tests) | Winery | 🟠 Dashboard de previsiones de cosecha falla | Media |
+| `SilicieDashboardTest > dashboard can switch tabs` | Winery | 🟠 Dashboard Silicie no cambia de pestaña | Baja |
 
-## ❌ Grupo 11 — Varios (13 tests)
-
-- `Tests\Feature\Personal\UnifiedIndexTest` > delete viticulturist without relations works
-- `Tests\Feature\Producer\HybridAccessTest` > producer can access winery dashboard
-- `Tests\Feature\Producer\ProducerRoutesTest` > financial stats winery renders
-- `Tests\Feature\Viticulturist\HarvestSale\IndexTest` > cancel releases harvest stock
-- `Tests\Feature\Viticulturist\QuickEntryTest` (3 tests)
-- `Tests\Feature\Viticulturist\WineryAccessTest` > viticulturist cannot revoke access for unrelated winery
-- `Tests\Feature\Winery\Financial\FinancialTest` > financial stats renders
-- `Tests\Feature\Winery\Harvest\ForecastsTest` (2 tests)
-- `Tests\Feature\Winery\Harvest\ProducerReceptionTest` > producer can create self reception
-- `Tests\Feature\Winery\Silicie\DashboardTest` > dashboard can switch tabs
+**Orden sugerido de ataque:**
+1. QuickEntry (seguridad — viticulturist)
+2. Producer (3 bugs en el mismo rol — HybridAccess + ProducerRoutes + ProducerReception)
+3. Winery (ForecastsTest + SilicieDashboard)
+4. UnifiedIndex (delete viticulturist)
 
 ---
 
@@ -190,8 +219,8 @@ Toda la clase falla. Probable: observer renombrado, modelo o relación cambiada.
 | 6 — Auth otros | 2 | ✅ **YA PASABAN** (verificado 2026-06-08) |
 | 7 — OrganizationsObserverTest | 12 | ✅ **YA PASABAN** (verificado 2026-06-08) |
 | 8 — Supervisor pool/supervisión | 24 | ✅ **CORREGIDO** |
-| 9 — Middleware CheckRole | 1 | ✅ **CORREGIDO** |
-| 9 — Navigation | 3 | ✅ **CORREGIDO** (notif en menú + typo ruta + secciones winery) |
+| 9 — Middleware CheckRole / Navigation | 4 | ✅ **CORREGIDO** |
 | 10 — Campaign/DigitalNotebook | 5 | ✅ **CORREGIDO** |
-| 11 — Varios | 13 | pendiente verificar con suite completa |
-| **Total** | **~105** | **~100 corregidos o ya pasaban / pendiente: Grupo 11** |
+| Sesión 2 — Bugs de negocio + ownership | ~20 | ✅ **CORREGIDO** (HarvestSale stock, 11 ownership, FinancialTest SQL, revoke, scopeVisibleTo) |
+| 11 — Varios pendientes | ~7 | ❌ pendiente |
+| **Total** | **~115** | **~108 corregidos / pendiente: ~7** |

@@ -51,7 +51,7 @@
     $chapterColors['winery_res']   = ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'];   // naranja (insumos)
     $chapterColors['cellar']       = ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'];  // rojo vino (infraestructura bodega)
     $chapterColors['wines']        = ['accent' => '#e879f9', 'bg' => 'rgba(232,121,249,0.12)', 'border' => 'rgba(232,121,249,0.5)'];  // fuchsia (vinificación)
-    $chapterColors['output']       = ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'];  // violeta (producto)
+    $chapterColors['output']       = ['accent' => '#fbbf24', 'bg' => 'rgba(251,191,36,0.12)',  'border' => 'rgba(251,191,36,0.5)'];   // ámbar dorado (producto terminado)
     $chapterColors['onboarding']   = ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'];   // amber (primeros pasos)
 
     $viticulturistChapters = [
@@ -68,8 +68,7 @@
 
     $wineryChapters = [
         ['key' => 'harvest',      'icon' => 'archive-box-arrow-down', 'label' => __('Vendimia'),      'sections' => ['harvest', 'denomination'], 'section_labels' => ['harvest' => __('Vendimia'), 'denomination' => __('Denominación de Origen')]],
-        ['key' => 'cellar',       'icon' => 'cube',                   'label' => __('Bodega'),        'sections' => ['cellar_infra']],
-        ['key' => 'wines',        'icon' => 'beaker',                 'label' => __('Vinos'),         'sections' => ['cellar_wines']],
+        ['key' => 'cellar',       'icon' => 'beaker',                 'label' => __('Bodega'),        'sections' => ['cellar_infra', 'cellar_wines'], 'section_labels' => ['cellar_infra' => __('Instalaciones'), 'cellar_wines' => __('Vinificación')]],
         ['key' => 'output',       'icon' => 'archive-box',            'label' => __('Producto'),      'sections' => ['cellar_output']],
         ['key' => 'territory',    'icon' => 'map',                    'label' => __('Parcelas'),      'sections' => ['territory', 'analytics'], 'section_labels' => ['territory' => __('Parcelas'), 'analytics' => __('Análisis de Finca')]],
         ['key' => 'compliance',   'icon' => 'shield-check',           'label' => __('Normativa'),     'sections' => ['winery_compliance', 'registrations'], 'section_labels' => ['winery_compliance' => __('Normativa Bodega'), 'registrations' => __('Registros y Autorizaciones')]],
@@ -315,7 +314,7 @@
         },
         openCmdk() { this.showCmdk = true; this.cmdkQuery = ''; this.cmdkSelected = 0; this.$nextTick(() => this.$refs.cmdkInput?.focus()); },
         closeCmdk() { this.showCmdk = false; this.cmdkQuery = ''; },
-        cmdkGo(href) { this.closeCmdk(); window.location.href = href; },
+        cmdkGo(href) { this.closeCmdk(); if (window.Livewire?.navigate) { window.Livewire.navigate(href); } else { window.location.href = href; } },
         cmdkDown() { this.cmdkSelected = Math.min(this.cmdkSelected + 1, this.cmdkFiltered.length - 1); },
         cmdkUp() { this.cmdkSelected = Math.max(this.cmdkSelected - 1, 0); },
         cmdkEnter() { const item = this.cmdkFiltered[this.cmdkSelected]; if (item) this.cmdkGo(item.href); },
@@ -350,6 +349,7 @@
         @foreach($mainItems as $item)
             <a href="{{ route($item['route']) }}" wire:navigate
                title="{{ $item['label'] }}"
+               @if($item['active'] ?? false) aria-current="page" @endif
                class="relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-150
                       {{ ($item['active'] ?? false) ? 'bg-white/20 text-white' : 'text-white/45 hover:bg-white/10 hover:text-white' }}">
                 <flux:icon icon="{{ $item['icon'] }}" class="w-5 h-5" />
@@ -458,30 +458,6 @@
             </button>
         @endforeach
         </div>
-        @endif
-
-        {{-- Winery: toggle Vista Sidebar / Vista Visual --}}
-        @if($user->role === 'winery')
-            @php $isVisual = request()->routeIs('winery.visual'); @endphp
-            <div class="w-8 border-t border-white/10 mt-1 mb-2 flex-shrink-0"></div>
-            <div class="w-full px-2 mb-1 flex-shrink-0">
-                <div class="flex rounded-xl bg-white/[0.06] ring-1 ring-white/[0.09] p-0.5 gap-0.5">
-                    <a href="{{ route('winery.dashboard') }}" wire:navigate
-                       title="{{ __('Vista con menú lateral') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-2 gap-1 rounded-[10px] transition-all duration-200
-                              {{ !$isVisual ? 'bg-white/[0.18] text-white shadow-sm' : 'text-white/35 hover:text-white/65 hover:bg-white/[0.08]' }}">
-                        <flux:icon icon="bars-3" class="w-4 h-4 shrink-0" />
-                        <span class="text-[8px] font-semibold tracking-wide leading-none">{{ __('Nav') }}</span>
-                    </a>
-                    <a href="{{ route('winery.visual') }}" wire:navigate
-                       title="{{ __('Vista mapa + bodega') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-2 gap-1 rounded-[10px] transition-all duration-200
-                              {{ $isVisual ? 'bg-white/[0.18] text-white shadow-sm' : 'text-white/35 hover:text-white/65 hover:bg-white/[0.08]' }}">
-                        <flux:icon icon="map" class="w-4 h-4 shrink-0" />
-                        <span class="text-[8px] font-semibold tracking-wide leading-none">{{ __('Mapa') }}</span>
-                    </a>
-                </div>
-            </div>
         @endif
 
         {{-- Rail bottom: Config + Soporte (viticulturist) --}}
@@ -661,6 +637,7 @@
                                 href="{{ route($item['route']) }}"
                                 wire:navigate
                                 x-on:click="$store.nav.close()"
+                                @if($item['active'] ?? false) aria-current="page" @endif
                                 class="notebook-item flex items-center gap-3 px-3 py-2.5 mx-2 transition-all duration-150 group
                                        {{ ($item['active'] ?? false) ? 'notebook-item-active' : 'text-zinc-500 hover:text-zinc-900' }}"
                                 @if($item['active'] ?? false)
@@ -887,6 +864,7 @@
                                 @else
                                     <a href="{{ route($item['route']) }}" wire:navigate
                                        @click="mobileOpen = false"
+                                       @if($item['active'] ?? false) aria-current="page" @endif
                                        class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition my-0.5
                                               {{ ($item['active'] ?? false) ? 'text-white font-medium' : 'text-white/55 hover:text-white/90 hover:bg-white/5' }}"
                                        @if($item['active'] ?? false) style="background: {{ $color['bg'] }};" @endif>

@@ -11,7 +11,6 @@ Route::middleware(['role:winery,producer'])
     ->group(function () {
 
         Route::get('/dashboard', \App\Livewire\Winery\Dashboard::class)->name('dashboard');
-        Route::get('/visual', \App\Livewire\Winery\VisualDashboard::class)->name('visual');
 
         // ── Denominación de Origen ───────────────────────────────────
         Route::get('/denomination', \App\Livewire\Winery\Denomination\Index::class)->name('denomination.index');

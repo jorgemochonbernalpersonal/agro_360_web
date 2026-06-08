@@ -48,12 +48,11 @@ class WineryMenu
                 ['icon' => 'user-group',              'label' => __('Mis Viticultores'),      'route' => 'winery.viticulturists.index',   'active' => request()->routeIs('winery.viticulturists*')],
                 ['divider' => true],
                 ['icon' => 'chart-bar',               'label' => __('Cuadro de Mando'),       'route' => 'winery.harvest-summary.index',  'active' => request()->routeIs('winery.harvest-summary*')],
-                ['icon' => 'eye',                     'label' => __('Panel Visual'),          'route' => 'winery.visual',                 'active' => request()->routeIs('winery.visual')],
                 ['icon' => 'calculator',              'label' => __('Aforos viticultores'),   'route' => 'winery.vitic-estimates.index',  'active' => request()->routeIs('winery.vitic-estimates*')],
                 ['icon' => 'clipboard-document-list', 'label' => __('Previsiones'),           'route' => 'winery.harvest-forecasts.index', 'active' => request()->routeIs('winery.harvest-forecasts*')],
                 ['icon' => 'archive-box-arrow-down',  'label' => __('Recepciones'),           'route' => 'winery.grape-reception.index',  'active' => request()->routeIs('winery.grape-reception*')],
                 ['icon' => 'exclamation-triangle',    'label' => __('Disputas'),              'route' => 'winery.grape-reception.disputes', 'active' => request()->routeIs('winery.grape-reception.disputes')],
-                ['icon' => 'beaker',                  'label' => __('Análisis de Calidad'),   'route' => 'winery.harvest-quality.index',  'active' => request()->routeIs('winery.harvest-quality*')],
+                ['icon' => 'clipboard-document-check', 'label' => __('Análisis de Calidad'),   'route' => 'winery.harvest-quality.index',  'active' => request()->routeIs('winery.harvest-quality*')],
             ];
         } else {
             $menu['harvest'] = [
@@ -61,8 +60,7 @@ class WineryMenu
                 ['icon' => 'user-group',              'label' => __('Mis Viticultores'),      'route' => 'winery.viticulturists.index',   'active' => request()->routeIs('winery.viticulturists*')],
                 ['divider' => true],
                 ['icon' => 'archive-box-arrow-down',  'label' => __('Recepciones'),           'route' => 'winery.grape-reception.index',  'active' => request()->routeIs('winery.grape-reception*')],
-                ['icon' => 'beaker',                  'label' => __('Análisis de Calidad'),   'route' => 'winery.harvest-quality.index',  'active' => request()->routeIs('winery.harvest-quality*')],
-                ['icon' => 'eye',                     'label' => __('Panel Visual'),          'route' => 'winery.visual',                 'active' => request()->routeIs('winery.visual')],
+                ['icon' => 'clipboard-document-check', 'label' => __('Análisis de Calidad'),   'route' => 'winery.harvest-quality.index',  'active' => request()->routeIs('winery.harvest-quality*')],
             ];
         }
 
@@ -85,7 +83,7 @@ class WineryMenu
             ['icon' => 'arrow-path',          'label' => __('Traslados'),             'route' => 'winery.wine-transfers.index',       'active' => request()->routeIs('winery.wine-transfers*')],
             ['icon' => 'funnel',              'label' => __('Coupage'),               'route' => 'winery.coupage.index',              'active' => request()->routeIs('winery.coupage*')],
             ['icon' => 'exclamation-circle',  'label' => __('Mermas'),                'route' => 'winery.wine-losses.index',          'active' => request()->routeIs('winery.wine-losses*')],
-            ['icon' => 'beaker',          'label' => __('Aditivos'),              'route' => 'winery.wine-additives.index',       'active' => request()->routeIs('winery.wine-additives*')],
+            ['icon' => 'cube-transparent', 'label' => __('Aditivos'),              'route' => 'winery.wine-additives.index',       'active' => request()->routeIs('winery.wine-additives*')],
             ['divider' => true, 'label' => __('Laboratorio')],
             ['icon' => 'magnifying-glass',    'label' => __('Análisis de Lab.'),      'route' => 'winery.wine-analysis.index',        'active' => request()->routeIs('winery.wine-analysis*')],
             ['icon' => 'user-circle',         'label' => __('Enólogos'),              'route' => 'winery.oenologists.index',          'active' => request()->routeIs('winery.oenologists*')],
@@ -176,7 +174,7 @@ class WineryMenu
             ['icon' => 'arrow-path',          'label' => __('Traslados'),             'route' => "{$prefix}.wine-transfers.index",          'active' => request()->routeIs("{$prefix}.wine-transfers*")],
             ['icon' => 'funnel',              'label' => __('Coupage'),               'route' => "{$prefix}.coupage.index",                 'active' => request()->routeIs("{$prefix}.coupage*")],
             ['icon' => 'exclamation-circle',  'label' => __('Mermas'),                'route' => "{$prefix}.wine-losses.index",             'active' => request()->routeIs("{$prefix}.wine-losses*")],
-            ['icon' => 'beaker',          'label' => __('Aditivos'),              'route' => "{$prefix}.wine-additives.index",          'active' => request()->routeIs("{$prefix}.wine-additives*")],
+            ['icon' => 'cube-transparent', 'label' => __('Aditivos'),              'route' => "{$prefix}.wine-additives.index",          'active' => request()->routeIs("{$prefix}.wine-additives*")],
             ['divider' => true, 'label' => __('Laboratorio')],
             ['icon' => 'magnifying-glass',    'label' => __('Análisis de Lab.'),      'route' => "{$prefix}.wine-analysis.index",           'active' => request()->routeIs("{$prefix}.wine-analysis*")],
             ['icon' => 'user-circle',         'label' => __('Enólogos'),              'route' => "{$prefix}.oenologists.index",             'active' => request()->routeIs("{$prefix}.oenologists*")],
