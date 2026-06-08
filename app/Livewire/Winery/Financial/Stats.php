@@ -152,7 +152,7 @@ class Stats extends Component
 
         $revenueByWineType = DB::table('invoices as i')
             ->join('invoice_items as ii', 'ii.invoice_id', '=', 'i.id')
-            ->join('wine_lots as pl', 'pl.id', '=', 'ii.product_lot_id')
+            ->join('wine_lots as pl', 'pl.id', '=', 'ii.wine_lot_id')
             ->where('i.user_id', $userId)
             ->whereNull('i.viticulturist_id')
             ->where('i.status', 'paid')
@@ -194,7 +194,7 @@ class Stats extends Component
 
         $topProducts = DB::table('invoices as i')
             ->join('invoice_items as ii', 'ii.invoice_id', '=', 'i.id')
-            ->join('wine_lots as pl', 'pl.id', '=', 'ii.product_lot_id')
+            ->join('wine_lots as pl', 'pl.id', '=', 'ii.wine_lot_id')
             ->where('i.user_id', $userId)
             ->whereNull('i.viticulturist_id')
             ->where('i.status', 'paid')
