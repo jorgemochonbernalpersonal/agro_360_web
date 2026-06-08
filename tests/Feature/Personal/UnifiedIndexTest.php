@@ -481,7 +481,8 @@ class UnifiedIndexTest extends TestCase
         ]);
 
         // Crear un viticultor sin relaciones (solo la relación de creación)
-        $created = User::factory()->create(['role' => 'viticulturist']);
+        // can_login: false evita que UserObserver autocree una Campaign que bloquearía el delete
+        $created = User::factory()->create(['role' => 'viticulturist', 'can_login' => false]);
 
         WineryViticulturist::create([
             'viticulturist_id' => $created->id,
