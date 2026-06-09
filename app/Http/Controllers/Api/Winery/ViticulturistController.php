@@ -33,6 +33,11 @@ class ViticulturistController extends BaseApiController
             );
         }
 
+        // ?notebook_access=1 — only viticulturists with notebook access (valid for campaign creation)
+        if ($request->boolean('notebook_access')) {
+            $query->where('notebook_access', true);
+        }
+
         $relations = $query->get();
 
         $data = $relations
