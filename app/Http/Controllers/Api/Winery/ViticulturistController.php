@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Winery;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
+use App\Models\NotebookAccessRequest;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use App\Notifications\ViticulturistInvitationNotification;
@@ -140,16 +141,32 @@ class ViticulturistController extends BaseApiController
         if ($selfRecord) {
             $rel = $selfRecord;
             $selfRecord->update([
-                'winery_id' => $winery->id,
-                'source' => WineryViticulturist::SOURCE_OWN,
+                'winery_id'   => $winery->id,
+                'source'      => WineryViticulturist::SOURCE_OWN,
                 'assigned_by' => $winery->id,
             ]);
         } else {
             $rel = WineryViticulturist::create([
-                'winery_id' => $winery->id,
+                'winery_id'        => $winery->id,
                 'viticulturist_id' => $vit->id,
-                'source' => WineryViticulturist::SOURCE_OWN,
-                'assigned_by' => $winery->id,
+                'source'           => WineryViticulturist::SOURCE_OWN,
+                'assigned_by'      => $winery->id,
+                'notebook_access'  => false,
+            ]);
+        }
+
+        // notebook_access requires the viticulturist's explicit consent — create a pending request
+        $alreadyPending = NotebookAccessRequest::where('winery_id', $winery->id)
+            ->where('viticulturist_id', $vit->id)
+            ->where('status', NotebookAccessRequest::STATUS_PENDING)
+            ->exists();
+
+        if (! $alreadyPending) {
+            NotebookAccessRequest::create([
+                'winery_id'        => $winery->id,
+                'viticulturist_id' => $vit->id,
+                'status'           => NotebookAccessRequest::STATUS_PENDING,
+                'requested_at'     => now(),
             ]);
         }
 
