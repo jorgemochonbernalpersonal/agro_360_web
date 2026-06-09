@@ -138,7 +138,7 @@ class Show extends Component
 
     public function mount(Wine $wine): void
     {
-        abort_if($wine->user_id !== Auth::id(), 403);
+        $this->authorize('view', $wine);
         $this->wine = $wine;
 
         $now = now();

@@ -37,7 +37,7 @@ class Edit extends Component
 
     public function mount(Wine $wine, WineProcessDetail $process): void
     {
-        abort_if($wine->user_id !== Auth::id(), 403);
+        $this->authorize('update', $wine);
         abort_if($process->wine_id !== $wine->id, 404);
 
         $this->wine = $wine;

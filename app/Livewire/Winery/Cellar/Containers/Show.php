@@ -31,7 +31,7 @@ class Show extends Component
 
     public function mount(Container $container): void
     {
-        abort_if($container->user_id !== Auth::id(), 403);
+        $this->authorize('view', $container);
         $this->container = $container;
         $this->fromVisual = request()->query('from') === 'visual';
     }

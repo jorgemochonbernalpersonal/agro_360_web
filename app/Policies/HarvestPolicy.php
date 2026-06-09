@@ -47,6 +47,16 @@ class HarvestPolicy
         return $this->update($user, $harvest);
     }
 
+    /**
+     * Gestión del panel de recepción de la bodega. A diferencia de view/update
+     * (dual: bodega O viticultor), aquí solo la bodega receptora — un producer
+     * que entregó uva como viticultor NO debe poder operar la recepción de otra bodega.
+     */
+    public function manageAsWinery(User $user, Harvest $harvest): bool
+    {
+        return $user->role === 'admin' || $this->isOwnerWinery($user, $harvest);
+    }
+
     protected function isOwnerWinery(User $user, Harvest $harvest): bool
     {
         return $harvest->winery_id !== null && $harvest->winery_id === $user->id;

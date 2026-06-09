@@ -37,7 +37,7 @@ class Create extends Component
 
     public function mount(Wine $wine): void
     {
-        abort_if($wine->user_id !== Auth::id(), 403);
+        $this->authorize('update', $wine);
         $this->wine = $wine;
         $this->start_date = now()->toDateString();
     }

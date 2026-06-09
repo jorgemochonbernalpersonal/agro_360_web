@@ -33,7 +33,7 @@ class Edit extends Component
 
     public function mount(Container $container, ContainerAdditiveSupply $additive): void
     {
-        abort_if($container->user_id !== Auth::id(), 403);
+        $this->authorize('update', $container);
         abort_if($additive->container_id !== $container->id, 404);
 
         $this->container = $container;

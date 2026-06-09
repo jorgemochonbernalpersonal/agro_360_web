@@ -100,7 +100,8 @@ class Edit extends Component
     {
         // Si es un modelo, usarlo directamente; si es un ID, buscarlo
         if ($invoice instanceof Invoice) {
-            abort_unless($invoice->user_id === \Illuminate\Support\Facades\Auth::id(), 404);
+            // 404 (no 403) para no revelar la existencia de facturas ajenas — fijado por test
+            abort_unless(Auth::user()->can('update', $invoice), 404);
             $this->invoice = $invoice;
         } else {
             $user = Auth::user();

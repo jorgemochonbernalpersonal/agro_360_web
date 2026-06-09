@@ -89,10 +89,8 @@ class Edit extends Component
 
     public function mount(Harvest $harvest): void
     {
-        $wineryId = Auth::id();
-
         // Guard: solo recepciones que pertenecen a esta bodega
-        abort_unless($harvest->winery_id === $wineryId, 403);
+        $this->authorize('manageAsWinery', $harvest);
 
         // Guard: una recepción ya facturada o anulada no puede editarse —
         // cambiar su peso descuadraría la liquidación emitida y podría reabrir
@@ -146,7 +144,7 @@ class Edit extends Component
         if ($planting) {
             $this->totalHarvestedInCampaign = max(
                 0,
-                $planting->getTotalWineryReceptionsForVintage($this->vintageYear, $wineryId) - (float) $this->total_weight
+                $planting->getTotalWineryReceptionsForVintage($this->vintageYear, Auth::id()) - (float) $this->total_weight
             );
             $this->updateLimitInfo();
         }

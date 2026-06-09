@@ -5,7 +5,6 @@ namespace App\Livewire\Winery\Harvest\Reception;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
 use App\Notifications\HarvestDeliveryResolvedNotification;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Show extends Component
@@ -20,9 +19,7 @@ class Show extends Component
 
     public function mount(Harvest $harvest): void
     {
-        $wineryId = Auth::id();
-
-        abort_unless($harvest->winery_id === $wineryId, 403);
+        $this->authorize('manageAsWinery', $harvest);
 
         $this->harvest = $harvest->load([
             'plotPlanting.grapeVariety',

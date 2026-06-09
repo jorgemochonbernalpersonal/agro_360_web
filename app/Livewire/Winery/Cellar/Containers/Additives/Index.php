@@ -5,7 +5,6 @@ namespace App\Livewire\Winery\Cellar\Containers\Additives;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerAdditiveSupply;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -17,7 +16,7 @@ class Index extends Component
 
     public function mount(Container $container): void
     {
-        abort_if($container->user_id !== Auth::id(), 403);
+        $this->authorize('view', $container);
         $this->container = $container;
     }
 

@@ -103,4 +103,25 @@ class CellarOwnershipPolicyTest extends TestCase
         $stranger = User::factory()->create(['role' => 'viticulturist']);
         $this->assertFalse($stranger->can('view', $harvest));
     }
+
+    // ── manageAsWinery (panel de recepción: SOLO la bodega receptora) ──────────
+
+    public function test_manage_as_winery_denies_grower_even_if_he_can_view(): void
+    {
+        // Producer que entregó la uva como viticultor: puede VER la cosecha
+        // (visibilidad dual), pero NO operar la recepción de otra bodega.
+        $producer = User::factory()->create(['role' => 'producer']);
+        $activity = AgriculturalActivity::factory()->create(['viticulturist_id' => $producer->id]);
+        $harvest = Harvest::factory()->create([
+            'activity_id' => $activity->id,
+            'winery_id' => $this->owner->id,
+        ]);
+
+        $this->assertTrue($producer->can('view', $harvest));
+        $this->assertFalse($producer->can('manageAsWinery', $harvest));
+
+        $this->assertTrue($this->owner->can('manageAsWinery', $harvest));
+        $this->assertFalse($this->other->can('manageAsWinery', $harvest));
+        $this->assertTrue($this->admin->can('manageAsWinery', $harvest));
+    }
 }
