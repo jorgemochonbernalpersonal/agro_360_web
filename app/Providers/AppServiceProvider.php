@@ -99,6 +99,13 @@ class AppServiceProvider extends ServiceProvider
 
         if ($this->app->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
+
+            // SEO — host canónico en TODA URL generada (url(), route(), asset(), canonical).
+            // Sin esto, una petición por www.agro365.es o por la ruta física de la subcarpeta
+            // (/agro_360_web/public/…) generaba <link rel="canonical"> y og:url apuntando a esos
+            // hosts/rutas, creando copias duplicadas indexables del sitio. config('app.url') es la
+            // única fuente de verdad del dominio (ya la usa el SitemapService).
+            \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
         }
 
         VerifyEmail::toMailUsing(function ($notifiable, string $url) {

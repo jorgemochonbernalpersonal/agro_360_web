@@ -55,10 +55,34 @@ class SitemapService
     ];
 
     /**
-     * Fecha de respaldo cuando no se puede leer la fecha real del archivo
+     * Fecha por defecto para páginas sin fecha explícita en LASTMOD.
      * (formato Y-m-d, constante para que el sitemap sea estable entre regeneraciones).
      */
     private const FALLBACK_DATE = '2026-06-03';
+
+    /**
+     * Fecha de última modificación REAL por slug ('' = home), en formato Y-m-d.
+     *
+     * Se actualiza a mano SOLO cuando el contenido de la página cambia de verdad.
+     * Antes esto salía de filemtime(), pero cada deploy reescribe los timestamps de
+     * los .blade y hacía que ~50 URLs compartieran exactamente el mismo lastmod —
+     * señal que Google acaba ignorando. Con fechas explícitas el lastmod vuelve a ser
+     * fiable. Lo que no aparezca aquí hereda FALLBACK_DATE.
+     */
+    private const LASTMOD = [
+        '' => '2026-06-01',                  // home
+        'faqs' => '2026-05-27',
+        'precios' => '2026-05-27',
+        'viticultores' => '2026-05-27',
+        'bodegas' => '2026-05-27',
+        'cooperativas' => '2026-05-27',
+        'ingenieros-agronomos' => '2026-05-27',
+        'firma-digital-agricultura' => '2026-05-27',
+        'privacidad' => '2026-05-27',
+        'terminos' => '2026-05-27',
+        'cookies' => '2026-05-27',
+        'aviso-legal' => '2026-05-27',
+    ];
 
     public function getUrls(): array
     {
@@ -67,7 +91,7 @@ class SitemapService
         // ── Landing page ────────────────────────────────────────────────────
         $urls[] = [
             'loc' => $this->getAbsoluteUrl(''),
-            'lastmod' => $this->lastmod(['welcome']),
+            'lastmod' => $this->lastmodFor(''),
             'changefreq' => 'weekly',
             'priority' => '1.0',
             'images' => [
@@ -87,7 +111,7 @@ class SitemapService
         // ── FAQs (ruta propia, no pasa por ContentController) ───────────────
         $urls[] = [
             'loc' => $this->getAbsoluteUrl('faqs'),
-            'lastmod' => $this->lastmod(['faqs']),
+            'lastmod' => $this->lastmodFor('faqs'),
             'changefreq' => 'monthly',
             'priority' => '0.9',
         ];
@@ -97,8 +121,7 @@ class SitemapService
             [$priority, $changefreq] = $this->priority($slug);
             $urls[] = [
                 'loc' => $this->getAbsoluteUrl($slug),
-                // Página propia por slug, o la plantilla compartida de región.
-                'lastmod' => $this->lastmod(['content/'.$slug, 'content/software-viticultores-region']),
+                'lastmod' => $this->lastmodFor($slug),
                 'changefreq' => $changefreq,
                 'priority' => $priority,
             ];
@@ -107,7 +130,7 @@ class SitemapService
         // ── Blog índice ──────────────────────────────────────────────────────
         $urls[] = [
             'loc' => $this->getAbsoluteUrl('blog'),
-            'lastmod' => $this->lastmod(['blog/index']),
+            'lastmod' => $this->lastmodFor('blog'),
             'changefreq' => 'monthly',
             'priority' => '0.7',
         ];
@@ -116,23 +139,18 @@ class SitemapService
         foreach (BlogController::getAllSlugs() as $slug) {
             $urls[] = [
                 'loc' => $this->getAbsoluteUrl("blog/{$slug}"),
-                'lastmod' => $this->lastmod(['blog/'.$slug]),
+                'lastmod' => $this->lastmodFor('blog/'.$slug),
                 'changefreq' => 'monthly',
                 'priority' => '0.6',
             ];
         }
 
         // ── Páginas legales ──────────────────────────────────────────────────
-        $legalViews = [
-            'privacidad' => 'legal/privacy',
-            'terminos' => 'legal/terms',
-            'cookies' => 'legal/cookies',
-            'aviso-legal' => 'legal/aviso-legal',
-        ];
-        foreach ($legalViews as $slug => $view) {
+        $legalSlugs = ['privacidad', 'terminos', 'cookies', 'aviso-legal'];
+        foreach ($legalSlugs as $slug) {
             $urls[] = [
                 'loc' => $this->getAbsoluteUrl($slug),
-                'lastmod' => $this->lastmod([$view]),
+                'lastmod' => $this->lastmodFor($slug),
                 'changefreq' => 'yearly',
                 'priority' => '0.3',
             ];
@@ -164,23 +182,13 @@ class SitemapService
     }
 
     /**
-     * Devuelve la fecha de última modificación real de la primera vista que exista,
-     * en formato ISO 8601. Si ninguna existe, usa FALLBACK_DATE.
-     *
-     * Usar filemtime (en vez de now()) hace que el lastmod sea estable: solo cambia
-     * cuando el contenido cambia de verdad, no en cada regeneración del sitemap.
-     *
-     * @param array<int, string> $relativeViewPaths Rutas relativas a resources/views (sin extensión)
+     * Fecha de última modificación del slug en ISO 8601, a partir del mapa LASTMOD
+     * (estable entre deploys). Si el slug no está mapeado, usa FALLBACK_DATE.
      */
-    private function lastmod(array $relativeViewPaths): string
+    private function lastmodFor(string $slug): string
     {
-        foreach ($relativeViewPaths as $relative) {
-            $file = resource_path('views/'.$relative.'.blade.php');
-            if (is_file($file)) {
-                return Carbon::createFromTimestamp(filemtime($file))->toIso8601String();
-            }
-        }
+        $date = self::LASTMOD[$slug] ?? self::FALLBACK_DATE;
 
-        return Carbon::parse(self::FALLBACK_DATE)->toIso8601String();
+        return Carbon::parse($date)->toIso8601String();
     }
 }

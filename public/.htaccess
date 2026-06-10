@@ -61,8 +61,21 @@ RedirectMatch 403 /database
 
     RewriteEngine On
 
+    # Forzar que los redirects (Location) se resuelvan contra la raíz de URL y NO contra
+    # la ruta física del subdirectorio. Sin esto, el redirect de barra final emitía
+    # /agro_360_web/public/precios en lugar de /precios, creando un sitio duplicado.
+    RewriteBase /
+
+    # Si una petición entra por la ruta física de la subcarpeta, redirigir a la raíz limpia
+    RewriteCond %{THE_REQUEST} \s/+agro_360_web/public/([^\s?]*) [NC]
+    RewriteRule ^ /%1 [R=301,L]
+
     # Redirigir agro365.eu → agro365.es (dominio canónico)
     RewriteCond %{HTTP_HOST} ^(www\.)?agro365\.eu$ [NC]
+    RewriteRule ^(.*)$ https://agro365.es/$1 [R=301,L]
+
+    # Forzar dominio canónico sin www (agro365.es)
+    RewriteCond %{HTTP_HOST} ^www\.agro365\.es$ [NC]
     RewriteRule ^(.*)$ https://agro365.es/$1 [R=301,L]
 
     # Permitir acceso directo a archivos estáticos en /build antes de otras reglas

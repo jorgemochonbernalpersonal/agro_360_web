@@ -230,7 +230,7 @@
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Cuándo entra en vigor la obligatoriedad?') }}</h3>
-                            <p class="text-gray-700">{{ __('Desde 2023 es obligatorio para explotaciones profesionales. Desde 2027 DEBE estar completamente digitalizado según normativa europea.') }}</p>
+                            <p class="text-gray-700">{{ __('El cuaderno de explotación ya es obligatorio. Desde el 1 de enero de 2026 debe registrarse la fertilización y, desde el 1 de enero de 2027, los tratamientos fitosanitarios en formato electrónico interoperable (RD 1054/2022, modificado por el RD 34/2025).') }}</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('¿Puedo seguir usando papel?') }}</h3>
@@ -289,11 +289,36 @@
             }
         },
         "datePublished": "2024-01-01",
-        "dateModified": "{{ now()->toIso8601String() }}",
+        "dateModified": "2026-06-10",
         "mainEntityOfPage": {
             "@@type": "WebPage",
             "@id": "{{ url('/cuaderno-campo-digital-2027') }}"
         }
+    }
+    </script>
+
+    <!-- FAQPage Schema -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@@type": "Question",
+                "name": "¿Cuándo entra en vigor la obligatoriedad del cuaderno de campo digital?",
+                "acceptedAnswer": {"@@type": "Answer", "text": "El cuaderno de explotación ya es obligatorio. Desde el 1 de enero de 2026 debe registrarse la fertilización y, desde el 1 de enero de 2027, los tratamientos fitosanitarios en formato electrónico interoperable (RD 1054/2022, modificado por el RD 34/2025)."}
+            },
+            {
+                "@@type": "Question",
+                "name": "¿Puedo seguir usando el cuaderno de campo en papel?",
+                "acceptedAnswer": {"@@type": "Answer", "text": "No. Desde 2027 el registro de fitosanitarios en papel no será válido. Debes tener un cuaderno de campo digital en formato electrónico interoperable que cumpla con los requisitos normativos."}
+            },
+            {
+                "@@type": "Question",
+                "name": "¿Qué pasa si tengo un cuaderno digital pero no cumple todos los requisitos?",
+                "acceptedAnswer": {"@@type": "Answer", "text": "Si tu cuaderno digital no cumple con todos los requisitos (asociación SIGPAC, firma electrónica, formato interoperable, etc.), puede no ser válido en inspecciones y resultar en sanciones o reducciones de las ayudas PAC."}
+            }
+        ]
     }
     </script>
 </body>

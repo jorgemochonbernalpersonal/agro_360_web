@@ -41,7 +41,7 @@
 
             <article class="prose prose-lg max-w-none">
                 <div class="mb-8">
-                    <span class="text-sm text-gray-500">{{ __('Junio 2026') }}</span>
+                    <span class="text-sm text-gray-500"><span class="font-medium text-gray-700">{{ __('Equipo Agro365') }}</span> · {{ __('Junio 2026') }}</span>
                     <h1 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mt-2">{{ __('Novedades PAC 2026: Cuaderno Digital, Fertilización y Condicionalidad') }}</h1>
                 </div>
 
@@ -57,7 +57,7 @@
                 <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mt-8 mb-4">{{ __('2. Cuenta atrás para el cuaderno digital') }}</h2>
                 <p class="text-gray-700 leading-relaxed mb-4">
                     {{ __('La gran fecha es el 1 de enero de 2027, cuando el registro de fitosanitarios deberá hacerse en formato electrónico interoperable. 2026 es el momento de rodar el sistema.') }}
-                    {{ __('Lo contamos en detalle en') }} <a href="{{ url('/blog/cuaderno-campo-digital-obligatorio-2027') }}" class="text-[var(--color-agro-green)] hover:underline">{{ __('Cuaderno Digital Obligatorio 2027') }}</a>.
+                    {{ __('Lo contamos en detalle en') }} <a href="{{ url('/cuaderno-campo-digital-2027') }}" class="text-[var(--color-agro-green)] hover:underline">{{ __('la guía del Cuaderno Digital Obligatorio 2027') }}</a>.
                 </p>
 
                 <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mt-8 mb-4">{{ __('3. Condicionalidad reforzada') }}</h2>

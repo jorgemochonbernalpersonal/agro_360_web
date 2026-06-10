@@ -40,7 +40,7 @@
 
             <article class="prose prose-lg max-w-none">
                 <div class="mb-8">
-                    <span class="text-sm text-gray-500">{{ __('Diciembre 2024') }}</span>
+                    <span class="text-sm text-gray-500"><span class="font-medium text-gray-700">{{ __('Equipo Agro365') }}</span> · {{ __('Diciembre 2024') }}</span>
                     <h1 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mt-2">{{ __('Calendario Vitícola 2025: Mes a Mes') }}</h1>
                 </div>
 

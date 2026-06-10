@@ -33,13 +33,6 @@
         "blogPost": [
             {
                 "@@type": "BlogPosting",
-                "headline": "Cuaderno Digital Obligatorio 2027: Fechas, Quién Está Obligado y Cómo Cumplir",
-                "url": "{{ url('/blog/cuaderno-campo-digital-obligatorio-2027') }}",
-                "datePublished": "2026-06-03",
-                "dateModified": "2026-06-03"
-            },
-            {
-                "@@type": "BlogPosting",
                 "headline": "Novedades PAC 2026: Cuaderno Digital, Fertilización y Condicionalidad",
                 "url": "{{ url('/blog/novedades-pac-2026') }}",
                 "datePublished": "2026-06-03",
@@ -99,25 +92,6 @@
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Artículo destacado: Cuaderno digital 2027 -->
-                <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-                    <div class="h-48 bg-gradient-to-br from-green-100 to-emerald-50 flex items-center justify-center">
-                        <span class="text-6xl">⏳</span>
-                    </div>
-                    <div class="p-6">
-                        <div class="text-sm text-gray-500 mb-2">Junio 2026</div>
-                        <h2 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">
-                            <a href="{{ url('/blog/cuaderno-campo-digital-obligatorio-2027') }}" class="hover:text-[var(--color-agro-green)]">
-                                Cuaderno Digital Obligatorio 2027: fechas y a quién afecta
-                            </a>
-                        </h2>
-                        <p class="text-gray-600 text-sm mb-4">{{ __('El registro electrónico de fitosanitarios será obligatorio el 1 de enero de 2027. Fechas, obligados y cómo cumplir sin papel.') }}</p>
-                        <a href="{{ url('/blog/cuaderno-campo-digital-obligatorio-2027') }}" class="text-[var(--color-agro-green)] font-semibold text-sm hover:underline">
-                            Leer más →
-                        </a>
-                    </div>
-                </article>
-
                 <!-- Artículo: PAC 2026 -->
                 <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
                     <div class="h-48 bg-gradient-to-br from-lime-100 to-green-50 flex items-center justify-center">

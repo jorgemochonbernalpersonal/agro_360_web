@@ -27,6 +27,12 @@ Route::permanentRedirect('/rendimientos-cosecha-viñedo', '/rendimientos-cosecha
 Route::permanentRedirect('/ndvi-viñedo-teledeteccion', '/ndvi-vinedo-teledeteccion');
 Route::permanentRedirect('/gestion-campañas-agricolas', '/gestion-campanas-agricolas');
 
+// SEO: consolidación del cluster "cuaderno digital 2027". El post de blog se fusiona con la
+// guía de contenido (URL de nivel superior, prioridad 0.9 y más enlazada) para evitar la
+// canibalización entre ambas por la misma intención de búsqueda. Debe declararse ANTES de
+// la ruta dinámica /blog/{slug} para que tenga prioridad.
+Route::permanentRedirect('/blog/cuaderno-campo-digital-obligatorio-2027', '/cuaderno-campo-digital-2027');
+
 // ✅ REFACTOR: Rutas de contenido SEO dinámicas
 // Todas las páginas de contenido ahora pasan por ContentController
 Route::get('/{slug}', [App\Http\Controllers\ContentController::class, 'show'])

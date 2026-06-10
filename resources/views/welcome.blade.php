@@ -8,7 +8,6 @@
     <!-- SEO Meta Tags -->
     <title>Agro365 | Cuaderno de Campo Digital Obligatorio 2027 · Software Viticultura y Bodegas</title>
     <meta name="description" content="Cuaderno de campo digital obligatorio desde 2027. Software de gestión para viticultores, bodegas y Denominaciones de Origen. Cumplimiento PAC, SIGPAC y trazabilidad completa. Viticultor básico gratis, completo desde 9€/mes.">
-    <meta name="keywords" content="software gestión agrícola, cuaderno digital campo, software viñedos España, SIGPAC, gestión parcelas agrícolas, app viticultores, software bodega, cuaderno campo digital, gestión viticultura, software agricultura, control parcelas, normativa PAC, cuaderno campo 2027, digitalización agrícola, trazabilidad viñedos, gestión vendimia, facturación agrícola, informes oficiales agricultura, firma electrónica agrícola, gestión cosechas, control fitosanitarios, software para viticultores, app agricultura, cuaderno digital viticultores, software agricultura España, gestión agrícola digital, app campo, software viñedos, digitalización campo, agricultura 4.0, viticultura digital, aplicación agrícola, software viticultura, gestión viñedos, app gestión agrícola, software agrícola móvil, cuaderno campo digital viticultores, software viticultores profesional, aplicación campo digital, app SIGPAC, software agrícola viticultura">
     <meta name="author" content="Agro365">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="language" content="Spanish">

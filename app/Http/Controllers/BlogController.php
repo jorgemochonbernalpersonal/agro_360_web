@@ -11,7 +11,8 @@ class BlogController extends Controller
      * Mapeo de slug -> vista
      */
     protected const BLOG_POSTS = [
-        'cuaderno-campo-digital-obligatorio-2027' => 'blog.cuaderno-campo-digital-obligatorio-2027',
+        // 'cuaderno-campo-digital-obligatorio-2027' fusionado (301) con la guía de contenido
+        // '/cuaderno-campo-digital-2027' — ver routes/web.php. No reintroducir sin revertir el 301.
         'novedades-pac-2026' => 'blog.novedades-pac-2026',
         'novedades-pac-2025' => 'blog.novedades-pac-2025',
         'errores-cuaderno-campo' => 'blog.errores-cuaderno-campo',
