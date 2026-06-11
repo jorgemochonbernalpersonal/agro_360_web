@@ -216,7 +216,7 @@
                         <flux:select wire:model="topography_id" id="topography_id">
                             <option value="">{{ __('Sin especificar') }}</option>
                             @foreach ($topographies as $t)
-                                <option value="{{ $t->id }}">{{ $t->name }}</option>
+                                <option value="{{ $t->id }}">{{ __($t->name) }}</option>
                             @endforeach
                         </flux:select>
                         <flux:error name="topography_id" />

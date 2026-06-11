@@ -91,7 +91,7 @@
                     @if($plot->topography)
                         <div>
                             <label class="text-sm font-semibold text-zinc-500">{{ __('Topografía') }}</label>
-                            <p class="text-zinc-900">{{ $plot->topography->name }}</p>
+                            <p class="text-zinc-900">{{ __($plot->topography->name) }}</p>
                         </div>
                     @endif
 
