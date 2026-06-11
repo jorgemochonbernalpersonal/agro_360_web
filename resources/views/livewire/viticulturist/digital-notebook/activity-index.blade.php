@@ -167,8 +167,8 @@
                                         {{ __('Volumen') }}: {{ number_format($activity->irrigation->water_volume, 2) }} L
                                     </p>
                                 @endif
-                                @if($activity->irrigation->irrigation_type)
-                                    <p class="text-xs text-zinc-500">{{ ucfirst($activity->irrigation->irrigation_type) }}</p>
+                                @if($activity->irrigation->irrigation_method)
+                                    <p class="text-xs text-zinc-500">{{ __(ucfirst($activity->irrigation->irrigation_method)) }}</p>
                                 @endif
 
                             @elseif($activityType === 'cultural' && $activity->culturalWork)

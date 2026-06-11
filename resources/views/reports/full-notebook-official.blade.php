@@ -449,7 +449,7 @@
                         <td><strong>{{ $activity->plot->name }}</strong></td>
                         <td>{{ $irr->water_volume ?? '--' }} L</td>
                         <td>{{ $irr->duration_minutes ?? '--' }} min</td>
-                        <td>{{ $irr->irrigation_method ?? 'N/A' }}</td>
+                        <td>{{ $irr->irrigation_method ? __(ucfirst($irr->irrigation_method)) : 'N/A' }}</td>
                         <td>
                             @if($applicator)
                                 {{ $applicator->name }}
