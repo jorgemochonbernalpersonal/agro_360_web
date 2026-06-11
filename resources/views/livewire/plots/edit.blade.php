@@ -45,7 +45,7 @@
                     <flux:select wire:model="property_type_id" id="property_type_id">
                         <option value="">{{ __('Sin especificar') }}</option>
                         @foreach ($propertyTypes as $pt)
-                            <option value="{{ $pt->id }}">{{ $pt->name }}</option>
+                            <option value="{{ $pt->id }}">{{ __($pt->name) }}</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="property_type_id" />
