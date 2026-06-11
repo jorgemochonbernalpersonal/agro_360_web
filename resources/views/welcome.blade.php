@@ -37,9 +37,9 @@
     <meta property="og:url" content="{{ url('/') }}">
     <meta property="og:title" content="Agro365 | Cuaderno de Campo Digital Obligatorio 2027">
     <meta property="og:description" content="La plataforma que conecta viticultores, bodegas y Denominaciones de Origen. Cuaderno digital obligatorio 2027, gestión SIGPAC y trazabilidad completa.">
-    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview-1400.jpg') }}">
+    <meta property="og:image:width" content="1400">
+    <meta property="og:image:height" content="669">
     <meta property="og:image:alt" content="Agro365 - Software de Gestión Agrícola para Viñedos">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
@@ -50,7 +50,7 @@
     <meta name="twitter:url" content="{{ url('/') }}">
     <meta name="twitter:title" content="Agro365 | Cuaderno de Campo Digital Obligatorio 2027">
     <meta name="twitter:description" content="La plataforma que conecta viticultores, bodegas y Denominaciones de Origen. Viticultor básico gratis, completo desde 9€/mes.">
-    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview-1400.jpg') }}">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
@@ -177,7 +177,7 @@
             '@type' => 'Organization',
             'name' => 'Agro365',
             'url' => url('/'),
-            'logo' => asset('images/logo.png'),
+            'logo' => asset('images/icon_512x512.png'),
             'description' => 'Plataforma de gestión agrícola profesional para viticultores y bodegas',
             'foundingDate' => '2024',
             'contactPoint' => [
@@ -207,7 +207,7 @@
             'name' => 'Agro365',
             'description' => 'Software de gestión agrícola para viticultores profesionales',
             'url' => url('/'),
-            'logo' => asset('images/logo.png'),
+            'logo' => asset('images/icon_512x512.png'),
             'address' => [
                 '@type' => 'PostalAddress',
                 'addressCountry' => 'ES',
@@ -424,14 +424,8 @@
     <link rel="preload" href="{{ asset('images/logo-nav.png') }}" as="image">
     <link rel="preload" href="{{ asset('images/dashboard-preview-1400.jpg') }}" as="image" fetchpriority="high">
     
-    <!-- Preconnect to external domains for performance -->
-    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
-    
     <!-- DNS Prefetch for faster loading -->
     <link rel="dns-prefetch" href="https://fonts.bunny.net">
-    <link rel="dns-prefetch" href="https://www.google-analytics.com">
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 </head>
 <body class="bg-white min-h-screen text-zinc-800 antialiased">
     
