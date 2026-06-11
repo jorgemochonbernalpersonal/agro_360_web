@@ -630,7 +630,7 @@
                         @endforeach
                     </ul>
                     <div class="mt-auto space-y-2">
-                        <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
+                        <a href="{{ route('register', ['role' => 'viticulturist']) }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
                             Empezar gratis
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
@@ -657,7 +657,7 @@
                         @endforeach
                     </ul>
                     <div class="mt-auto space-y-2">
-                        <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
+                        <a href="{{ route('register', ['role' => 'winery']) }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
                             Empezar como bodega
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
@@ -686,7 +686,7 @@
                         @endforeach
                     </ul>
                     <div class="mt-auto space-y-2">
-                        <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
+                        <a href="{{ route('register', ['role' => 'producer']) }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
                             Empezar como productor
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
@@ -931,7 +931,7 @@
                         </li>
                         @endforeach
                     </ul>
-                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold">
+                    <a href="{{ route('register', ['role' => 'viticulturist']) }}" class="block w-full text-center px-6 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold">
                         Comenzar Gratis
                     </a>
                     <p class="text-center text-xs text-zinc-400 mt-3">{{ __('Básico gratis siempre · 3 meses gratis en planes de pago · Sin tarjeta') }}</p>
@@ -972,7 +972,7 @@
                         </li>
                         @endforeach
                     </ul>
-                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold">
+                    <a href="{{ route('register', ['role' => 'winery']) }}" class="block w-full text-center px-6 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold">
                         Comenzar Gratis
                     </a>
                     <p class="text-center text-xs text-zinc-400 mt-3">{{ __('3 meses gratis · Sin tarjeta requerida') }}</p>
@@ -1015,7 +1015,7 @@
                         </li>
                         @endforeach
                     </ul>
-                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold">
+                    <a href="{{ route('register', ['role' => 'producer']) }}" class="block w-full text-center px-6 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold">
                         Comenzar Gratis
                     </a>
                     <p class="text-center text-xs text-zinc-400 mt-3">{{ __('3 meses gratis · Sin tarjeta requerida') }}</p>

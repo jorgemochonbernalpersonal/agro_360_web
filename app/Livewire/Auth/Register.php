@@ -51,6 +51,13 @@ class Register extends Component
             if (request()->has('email')) {
                 $this->email = request()->query('email');
             }
+            // Pre-seleccionar rol desde query param (botones de la landing page)
+            if (request()->has('role')) {
+                $requested = request()->query('role');
+                if (in_array($requested, ['viticulturist', 'winery', 'producer'])) {
+                    $this->role = $requested;
+                }
+            }
         }
     }
 
