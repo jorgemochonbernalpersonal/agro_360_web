@@ -430,7 +430,7 @@
 <body class="bg-white min-h-screen text-zinc-800 antialiased">
     
     <!-- Navigation Header -->
-    <nav class="bg-white/90 backdrop-blur-md border-b border-zinc-200 sticky top-0 z-50">
+    <nav class="bg-white/90 backdrop-blur-md border-b border-zinc-200 sticky top-0 z-50" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
@@ -447,7 +447,7 @@
                     >
                 </a>
 
-                <!-- Anchor links -->
+                <!-- Anchor links (desktop) -->
                 <div class="hidden lg:flex items-center gap-8">
                     <a href="#como-funciona" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('Cómo funciona') }}</a>
                     <a href="#ecosistema" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('Para quién') }}</a>
@@ -456,15 +456,46 @@
                     <a href="#faq" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('FAQ') }}</a>
                 </div>
 
-                <!-- Auth -->
-                <div class="flex items-center gap-5">
+                <!-- Auth + hamburger -->
+                <div class="flex items-center gap-3">
                     <a href="{{ route('login') }}" rel="nofollow" class="text-zinc-700 hover:text-zinc-900 font-medium transition-colors text-sm">
                         Iniciar sesión
                     </a>
                     <a href="{{ route('register') }}" rel="nofollow" class="px-4 py-2 rounded-lg bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 font-semibold text-sm">
                         Empezar gratis
                     </a>
+                    <!-- Hamburger (mobile only) -->
+                    <button @click="open = !open"
+                            class="lg:hidden p-2 rounded-lg text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+                            :aria-expanded="open"
+                            aria-label="{{ __('Abrir menú') }}">
+                        <svg x-show="!open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <svg x-show="open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div x-show="open"
+             x-cloak
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 -translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-100"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-1"
+             class="lg:hidden border-t border-zinc-200 bg-white/95 backdrop-blur-md">
+            <div class="max-w-7xl mx-auto px-4 py-3 space-y-1">
+                <a href="#como-funciona" @click="open = false" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">{{ __('Cómo funciona') }}</a>
+                <a href="#ecosistema"    @click="open = false" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">{{ __('Para quién') }}</a>
+                <a href="#funcionalidades" @click="open = false" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">{{ __('Funcionalidades') }}</a>
+                <a href="#precios"      @click="open = false" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">{{ __('Precios') }}</a>
+                <a href="#faq"          @click="open = false" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">{{ __('FAQ') }}</a>
             </div>
         </div>
     </nav>

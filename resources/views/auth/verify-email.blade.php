@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ __('Verifica tu Email') }} - Agro365</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/icon_512x512.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -17,8 +17,8 @@
         {{-- Logo --}}
         <div class="text-center mb-8">
             <a href="{{ url('/') }}" class="inline-block">
-                <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="160"
-                     class="mx-auto max-h-20 object-contain transition-transform hover:scale-105">
+                <img src="{{ asset('images/logo-nav.png') }}" alt="Agro365" width="128"
+                     class="mx-auto max-h-14 object-contain transition-transform hover:scale-105">
             </a>
             <p class="mt-2 text-sm text-zinc-500">{{ __('Cuaderno de campo digital para viticultores') }}</p>
         </div>
