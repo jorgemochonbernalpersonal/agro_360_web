@@ -223,7 +223,7 @@
                     <flux:select wire:model="orientation_id" id="orientation_id">
                         <option value="">{{ __('Sin especificar') }}</option>
                         @foreach ($orientations as $o)
-                            <option value="{{ $o->id }}">{{ $o->name }} ({{ $o->abbreviation }})</option>
+                            <option value="{{ $o->id }}">{{ __($o->name) }} ({{ $o->abbreviation }})</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="orientation_id" />
