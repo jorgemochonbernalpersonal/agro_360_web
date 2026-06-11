@@ -63,7 +63,7 @@
                     <flux:select wire:model.live="material_id" id="material_id" required>
                         <option value="">{{ __('Seleccionar...') }}</option>
                         @foreach($containerMaterials as $material)
-                            <option value="{{ $material->id }}">{{ $material->name }}</option>
+                            <option value="{{ $material->id }}">{{ __($material->name) }}</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="material_id" />

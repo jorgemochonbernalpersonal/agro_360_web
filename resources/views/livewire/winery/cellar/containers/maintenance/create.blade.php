@@ -136,7 +136,7 @@
                         <flux:select wire:model="wastes.{{ $i }}.container_waste_type_id">
                             <option value="">{{ __('Seleccionar...') }}</option>
                             @foreach($wasteTypes as $wt)
-                                <option value="{{ $wt->id }}">{{ $wt->name }}</option>
+                                <option value="{{ $wt->id }}">{{ __($wt->name) }}</option>
                             @endforeach
                         </flux:select>
                     </flux:field>

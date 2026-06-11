@@ -273,7 +273,7 @@
                     <flux:select wire:model.live="materialFilter">
                         <option value="">{{ __('Todos los materiales') }}</option>
                         @foreach($materials as $material)
-                            <option value="{{ $material->id }}">{{ $material->name }}</option>
+                            <option value="{{ $material->id }}">{{ __($material->name) }}</option>
                         @endforeach
                     </flux:select>
                 </div>
