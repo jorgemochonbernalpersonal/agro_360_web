@@ -3,8 +3,8 @@
     {{-- Logo --}}
     <div class="text-center mb-8">
         <a href="{{ route('home') }}" class="inline-block">
-            <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="160"
-                 class="mx-auto max-h-20 object-contain transition-transform hover:scale-105">
+            <img src="{{ asset('images/logo-nav.png') }}" alt="Agro365" width="128"
+                 class="mx-auto max-h-14 object-contain transition-transform hover:scale-105">
         </a>
         <p class="mt-2 text-sm text-zinc-500">
             @auth {{ __('Gestión de usuarios') }} @else {{ __('Crea tu cuenta para comenzar') }} @endauth
@@ -79,13 +79,18 @@
                         <label class="cursor-pointer">
                             <input type="radio" wire:model="role" value="viticulturist" class="sr-only peer">
                             <div class="flex items-start gap-3 rounded-xl border-2 p-4 transition-all duration-200
-                                        border-zinc-200 hover:border-green-300
-                                        peer-checked:border-green-500 peer-checked:bg-green-50">
-                                <span class="text-2xl leading-none mt-0.5">🌿</span>
+                                        border-zinc-200 hover:border-agro-400
+                                        peer-checked:border-agro-600 peer-checked:bg-agro-50">
+                                <div class="shrink-0 w-8 h-8 rounded-lg bg-agro-100 text-agro-700 flex items-center justify-center mt-0.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                                    </svg>
+                                </div>
                                 <div class="min-w-0">
                                     <p class="font-semibold text-zinc-800 text-sm">{{ __('Viticultor') }}</p>
                                     <p class="text-xs text-zinc-500 mt-0.5">{{ __('Cultivo uva y la vendo o entrego a una bodega. Gestiono mis parcelas, cuaderno de campo y entregas.') }}</p>
-                                    <p class="text-xs text-green-700 font-medium mt-1.5">{{ __('✓ Plan básico gratis · Completo desde 9€/mes') }}</p>
+                                    <p class="text-xs text-agro-700 font-medium mt-1.5">{{ __('Plan básico gratis · Completo desde 9€/mes') }}</p>
                                 </div>
                             </div>
                         </label>
@@ -94,13 +99,17 @@
                         <label class="cursor-pointer">
                             <input type="radio" wire:model="role" value="winery" class="sr-only peer">
                             <div class="flex items-start gap-3 rounded-xl border-2 p-4 transition-all duration-200
-                                        border-zinc-200 hover:border-red-300
-                                        peer-checked:border-red-500 peer-checked:bg-red-50">
-                                <span class="text-2xl leading-none mt-0.5">🍷</span>
+                                        border-zinc-200 hover:border-agro-400
+                                        peer-checked:border-agro-600 peer-checked:bg-agro-50">
+                                <div class="shrink-0 w-8 h-8 rounded-lg bg-agro-100 text-agro-700 flex items-center justify-center mt-0.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 22h8M7 10h10M12 15v7M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/>
+                                    </svg>
+                                </div>
                                 <div class="min-w-0">
                                     <p class="font-semibold text-zinc-800 text-sm">{{ __('Bodega') }}</p>
                                     <p class="text-xs text-zinc-500 mt-0.5">{{ __('Recibo uva de viticultores y gestiono la elaboración. Controlo depósitos, vendimia y facturación a mis proveedores.') }}</p>
-                                    <p class="text-xs text-red-700 font-medium mt-1.5">{{ __('✓ Desde 14€/mes · Incluye gestión de viticultores') }}</p>
+                                    <p class="text-xs text-agro-700 font-medium mt-1.5">{{ __('Desde 14€/mes · Incluye gestión de viticultores') }}</p>
                                 </div>
                             </div>
                         </label>
@@ -109,19 +118,25 @@
                         <label class="cursor-pointer">
                             <input type="radio" wire:model="role" value="producer" class="sr-only peer">
                             <div class="flex items-start gap-3 rounded-xl border-2 p-4 transition-all duration-200
-                                        border-zinc-200 hover:border-violet-300
-                                        peer-checked:border-violet-500 peer-checked:bg-violet-50">
-                                <span class="text-2xl leading-none mt-0.5">🌿🍷</span>
+                                        border-zinc-200 hover:border-agro-400
+                                        peer-checked:border-agro-600 peer-checked:bg-agro-50">
+                                <div class="shrink-0 w-8 h-8 rounded-lg bg-agro-100 text-agro-700 flex items-center justify-center mt-0.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>
+                                    </svg>
+                                </div>
                                 <div class="min-w-0">
                                     <p class="font-semibold text-zinc-800 text-sm">
                                         {{ __('Productor') }}
-                                        <span class="text-xs font-normal text-violet-600 ml-1">{{ __('Viticultor + Bodega en uno') }}</span>
+                                        <span class="text-xs font-normal text-agro-600 ml-1">{{ __('Viticultor + Bodega en uno') }}</span>
                                     </p>
                                     <p class="text-xs text-zinc-500 mt-0.5">
-                                        {{ __('Cultivo mis propias uvas y elaboro mi propio vino. No vendo la uva — la vinifco yo mismo. Soy viñedo y bodega en uno.') }}
+                                        {{ __('Cultivo mis propias uvas y elaboro mi propio vino. No vendo la uva — la vinfico yo mismo. Soy viñedo y bodega en uno.') }}
                                     </p>
                                     <p class="text-xs text-zinc-400 mt-1 italic">{{ __('Solo si elaboras tu propio vino. Si vendes la uva a una bodega, selecciona Viticultor.') }}</p>
-                                    <p class="text-xs text-violet-700 font-medium mt-1.5">{{ __('✓ Bundle 19€/mes · Acceso completo a viñedo y bodega') }}</p>
+                                    <p class="text-xs text-agro-700 font-medium mt-1.5">{{ __('Bundle 19€/mes · Acceso completo a viñedo y bodega') }}</p>
                                 </div>
                             </div>
                         </label>

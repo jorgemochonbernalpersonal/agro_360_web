@@ -3,8 +3,8 @@
     {{-- Logo --}}
     <div class="text-center mb-8">
         <a href="{{ route('home') }}" class="inline-block">
-            <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="160"
-                 class="mx-auto max-h-20 object-contain transition-transform hover:scale-105">
+            <img src="{{ asset('images/logo-nav.png') }}" alt="Agro365" width="128"
+                 class="mx-auto max-h-14 object-contain transition-transform hover:scale-105">
         </a>
         <p class="mt-2 text-sm text-zinc-500">{{ __('Cuaderno de campo digital para viticultores') }}</p>
     </div>
