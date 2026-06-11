@@ -90,3 +90,6 @@ test-output-*.txt
 # /public/hot ya está ignorado arriba
 bootstrap/cache/
 /public/sitemap.xml
+
+# Lotes de traduccion generados (artefactos de trabajo)
+scripts/i18n/missing/
