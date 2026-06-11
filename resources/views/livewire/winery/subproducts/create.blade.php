@@ -62,7 +62,7 @@
                         <flux:select.option value="">{{ __('Sin unidad') }}</flux:select.option>
                         @foreach($units as $unit)
                             <flux:select.option value="{{ $unit->id }}">
-                                {{ $unit->name }}{{ $unit->abbreviation ? ' (' . $unit->abbreviation . ')' : '' }}
+                                {{ __($unit->name) }}{{ $unit->abbreviation ? ' (' . $unit->abbreviation . ')' : '' }}
                             </flux:select.option>
                         @endforeach
                     </flux:select>

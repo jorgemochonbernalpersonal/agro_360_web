@@ -919,7 +919,7 @@
                     <flux:select wire:model="ad_unit_id">
                         <flux:select.option value="">{{ __('Seleccionar...') }}</flux:select.option>
                         @foreach($units as $unit)
-                            <flux:select.option value="{{ $unit->id }}">{{ $unit->abbreviation }} — {{ $unit->name }}</flux:select.option>
+                            <flux:select.option value="{{ $unit->id }}">{{ $unit->abbreviation }} — {{ __($unit->name) }}</flux:select.option>
                         @endforeach
                     </flux:select>
                     <flux:error name="ad_unit_id" />

@@ -82,7 +82,7 @@
                     <flux:select wire:model="unit_of_measurement_id" class="mt-1">
                         <flux:select.option value="">{{ __('Seleccionar...') }}</flux:select.option>
                         @foreach($units as $unit)
-                            <flux:select.option value="{{ $unit->id }}">{{ $unit->name }}</flux:select.option>
+                            <flux:select.option value="{{ $unit->id }}">{{ __($unit->name) }}</flux:select.option>
                         @endforeach
                     </flux:select>
                     @error('unit_of_measurement_id') <flux:error>{{ $message }}</flux:error> @enderror

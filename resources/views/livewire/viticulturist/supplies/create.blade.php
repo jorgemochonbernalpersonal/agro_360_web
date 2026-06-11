@@ -39,7 +39,7 @@
                     <flux:label required>{{ __('Unit of measurement') }}</flux:label>
                     <flux:select wire:model="unit_of_measurement">
                         @foreach($units as $unit)
-                            <option value="{{ $unit->symbol }}">{{ $unit->name }} ({{ $unit->symbol }})</option>
+                            <option value="{{ $unit->symbol }}">{{ __($unit->name) }} ({{ $unit->symbol }})</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="unit_of_measurement" />
