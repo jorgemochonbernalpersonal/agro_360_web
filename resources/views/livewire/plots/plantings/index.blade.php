@@ -316,7 +316,7 @@
                         @if($planting->trainingSystem)
                             <span class="inline-flex items-center gap-1">
                                 <flux:icon icon="adjustments-vertical" class="size-3.5 text-zinc-400" />
-                                {{ $planting->trainingSystem->name }}
+                                {{ __($planting->trainingSystem->name) }}
                             </span>
                         @endif
                         @if($planting->irrigated)

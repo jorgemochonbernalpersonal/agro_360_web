@@ -120,7 +120,7 @@
                     <flux:select wire:model="training_system_id" id="training_system_id">
                         <option value="">{{ __('Seleccionar...') }}</option>
                         @foreach($trainingSystems as $system)
-                            <option value="{{ $system->id }}">{{ $system->name }}</option>
+                            <option value="{{ $system->id }}">{{ __($system->name) }}</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="training_system_id" />
