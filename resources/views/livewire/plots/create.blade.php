@@ -241,7 +241,7 @@
                         <flux:select wire:model="irrigation_type_id" id="irrigation_type_id">
                             <option value="">{{ __('Sin especificar') }}</option>
                             @foreach ($irrigationTypes as $it)
-                                <option value="{{ $it->id }}">{{ $it->name }}</option>
+                                <option value="{{ $it->id }}">{{ __($it->name) }}</option>
                             @endforeach
                         </flux:select>
                         <flux:error name="irrigation_type_id" />
