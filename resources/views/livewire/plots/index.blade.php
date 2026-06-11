@@ -266,7 +266,7 @@
                                 @if ($plot->soilType)
                                     <div class="flex items-center gap-2 text-zinc-600">
                                         <flux:icon icon="beaker" class="size-4 text-zinc-400 shrink-0" />
-                                        <span class="truncate">{{ $plot->soilType->name }}</span>
+                                        <span class="truncate">{{ __($plot->soilType->name) }}</span>
                                     </div>
                                 @endif
                                 @if ($plot->orientation || $plot->slope)

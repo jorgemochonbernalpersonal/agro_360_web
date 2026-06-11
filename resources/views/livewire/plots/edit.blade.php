@@ -203,7 +203,7 @@
                     <flux:select wire:model="soil_type_id" id="soil_type_id">
                         <option value="">{{ __('Sin especificar') }}</option>
                         @foreach ($soilTypes as $st)
-                            <option value="{{ $st->id }}">{{ $st->name }}</option>
+                            <option value="{{ $st->id }}">{{ __($st->name) }}</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="soil_type_id" />

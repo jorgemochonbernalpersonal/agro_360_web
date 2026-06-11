@@ -84,7 +84,7 @@
                     @if($plot->soilType)
                         <div>
                             <label class="text-sm font-semibold text-zinc-500">{{ __('Tipo de Suelo') }}</label>
-                            <p class="text-zinc-900">{{ $plot->soilType->name }}</p>
+                            <p class="text-zinc-900">{{ __($plot->soilType->name) }}</p>
                         </div>
                     @endif
 
