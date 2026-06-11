@@ -730,7 +730,7 @@
     <section id="funcionalidades" class="py-20 bg-zinc-50 border-y border-zinc-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Todo lo que incluye el plan Viticultor') }}</h2>
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Las herramientas de Agro365') }}</h2>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
