@@ -13,9 +13,6 @@
     <meta name="language" content="Spanish">
     <meta name="geo.region" content="ES">
     <meta name="geo.placename" content="España">
-    <meta name="revisit-after" content="7 days">
-    <meta name="distribution" content="global">
-    <meta name="rating" content="general">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ url('/') }}">
@@ -27,7 +24,6 @@
     <link rel="alternate" hreflang="x-default" href="{{ url('/') }}">
     
     <!-- Additional SEO Meta Tags -->
-    <meta name="author" content="Agro365">
     <meta name="publisher" content="Agro365">
     <meta name="theme-color" content="#10b981">
     <meta name="format-detection" content="telephone=no">
@@ -60,13 +56,13 @@
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
-    <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/logo.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/logo.png') }}">
-    <meta name="msapplication-TileImage" content="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/icon_512x512.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/icon_512x512.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/icon_512x512.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/icon_512x512.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/icon_512x512.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/icon_512x512.png') }}">
+    <meta name="msapplication-TileImage" content="{{ asset('images/icon_512x512.png') }}">
     <meta name="msapplication-TileColor" content="#10b981">
     
     <!-- Fonts - Optimized for Performance -->
@@ -425,8 +421,8 @@
     </script>
     
     <!-- Preload critical resources -->
-    <link rel="preload" href="{{ asset('images/logo.png') }}" as="image">
-    <link rel="preload" href="{{ asset('images/dashboard-preview.png') }}" as="image" fetchpriority="high">
+    <link rel="preload" href="{{ asset('images/logo-nav.png') }}" as="image">
+    <link rel="preload" href="{{ asset('images/dashboard-preview-1400.jpg') }}" as="image" fetchpriority="high">
     
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
@@ -437,34 +433,42 @@
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 </head>
-<body class="bg-gradient-to-br from-[var(--color-agro-green-bg)] via-white to-[var(--color-agro-green-bright)]/30 min-h-screen">
+<body class="bg-white min-h-screen text-zinc-800 antialiased">
     
     <!-- Navigation Header -->
-    <nav class="glass-card border-b border-gray-200/50 sticky top-0 z-50">
+    <nav class="bg-white/90 backdrop-blur-md border-b border-zinc-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
-                <a href="{{ url('/') }}" class="flex items-center" aria-:label="__('Agro365 - Ir a inicio')">
-                    <img 
-                        src="{{ asset('images/logo.png') }}" 
-                        alt="Agro365 - Software de gestión agrícola para viñedos y bodegas" 
-                        width="160"
-                        height="80"
-                        class="h-20 w-auto object-contain"
+                <a href="{{ url('/') }}" class="flex items-center" aria-label="{{ __('Agro365 - Ir a inicio') }}">
+                    <img
+                        src="{{ asset('images/logo-nav.png') }}"
+                        alt="Agro365 - Software de gestión agrícola para viñedos y bodegas"
+                        width="128"
+                        height="64"
+                        class="h-14 w-auto object-contain"
                         fetchpriority="high"
                         loading="eager"
                         decoding="async"
                     >
                 </a>
-                
-                <!-- Nav links + Auth -->
-                <div class="flex items-center gap-6">
 
-                    <a href="{{ route('login') }}" rel="nofollow" class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] font-semibold transition-colors duration-300 text-sm">
-                        Iniciar Sesión
+                <!-- Anchor links -->
+                <div class="hidden lg:flex items-center gap-8">
+                    <a href="#como-funciona" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('Cómo funciona') }}</a>
+                    <a href="#ecosistema" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('Para quién') }}</a>
+                    <a href="#funcionalidades" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('Funcionalidades') }}</a>
+                    <a href="#precios" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('Precios') }}</a>
+                    <a href="#faq" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('FAQ') }}</a>
+                </div>
+
+                <!-- Auth -->
+                <div class="flex items-center gap-5">
+                    <a href="{{ route('login') }}" rel="nofollow" class="text-zinc-700 hover:text-zinc-900 font-medium transition-colors text-sm">
+                        Iniciar sesión
                     </a>
-                    <a href="{{ route('register') }}" rel="nofollow" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-sm">
-                        Comenzar Gratis →
+                    <a href="{{ route('register') }}" rel="nofollow" class="px-4 py-2 rounded-lg bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 font-semibold text-sm">
+                        Empezar gratis
                     </a>
                 </div>
             </div>
@@ -472,135 +476,123 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative py-20 lg:py-32 overflow-hidden">
+    <section class="relative py-16 lg:py-24 overflow-hidden border-b border-zinc-100 bg-gradient-to-b from-zinc-50/80 to-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                 <!-- Hero Content -->
-                <div class="space-y-8 animate-fade-in">
-                    <div class="flex flex-wrap gap-2">
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-agro-green-bg)] border border-[var(--color-agro-green-light)]/30">
-                            <span class="w-2 h-2 rounded-full bg-[var(--color-agro-green-light)] animate-pulse"></span>
-                            <span class="text-sm font-semibold text-[var(--color-agro-green-dark)]">{{ __('Básico gratis para siempre · Completo desde 9€/mes') }}</span>
-                        </div>
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-300">
-                            <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-sm font-semibold text-amber-800">Obligatorio desde 2027 — faltan <span id="days-counter">{{ now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0 }}</span> días</span>
-                        </div>
+                <div class="space-y-7 animate-fade-in">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 bg-white shadow-sm max-w-full">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                        <span class="text-xs font-semibold text-zinc-700 tracking-wide">{{ __('Cuaderno digital obligatorio desde enero 2027') }} — quedan <span id="days-counter">{{ now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0 }}</span> días</span>
                     </div>
-                    
-                    <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] leading-tight">
-                        <span class="block">{{ __('Cuaderno de Campo Digital') }}</span>
-                        <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">{{ __('Para viticultores, bodegas y Denominaciones de Origen') }}</span>
-                        <span class="block text-lg lg:text-xl font-normal text-gray-500 mt-3">{{ __('Del viñedo a la botella — cumple normativa, gestiona parcelas y lleva la trazabilidad completa. Sin papel.') }}</span>
+
+                    <h1 class="text-4xl lg:text-5xl xl:text-[3.4rem] font-bold tracking-tight text-zinc-900 leading-[1.08]">
+                        {{ __('Cuaderno de Campo Digital') }}
+                        <span class="block text-agro-600 mt-1">{{ __('del viñedo a la botella') }}</span>
                     </h1>
 
-                    <p class="text-xl text-gray-600 leading-relaxed">
-                        Cumple con la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-[var(--color-agro-green)] hover:underline">PAC</a>,
-                        gestiona tus parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>
-                        y lleva la trazabilidad completa desde el viñedo hasta la bodega.
-                        <strong>{{ __('Sin papel. Sin Excel. Todo en un solo sitio.') }}</strong>
+                    <p class="text-lg text-zinc-600 leading-relaxed max-w-xl">
+                        La plataforma de gestión para <strong class="font-semibold text-zinc-800">viticultores, bodegas y Denominaciones de Origen</strong>.
+                        Cumple la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-agro-600 font-medium hover:underline">PAC</a>,
+                        gestiona tus parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-agro-600 font-medium hover:underline">SIGPAC</a>
+                        y lleva la trazabilidad completa. {{ __('Sin papel. Sin Excel. Todo en un solo sitio.') }}
                     </p>
-                    
-                    <!-- CTAs por rol -->
-                    <div class="flex flex-wrap gap-3">
-                        <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base">
-                            <span>🌿</span> Empezar gratis — Soy Viticultor
-                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 font-semibold text-base shadow-sm">
+                            Empezar gratis
+                            <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
                         </a>
-                        <a href="{{ content_route('content.bodegas') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-dark)] hover:text-white transition-all duration-300 font-semibold text-base">
-                            <span>🍷</span> Soy Bodega
-                        </a>
-                        <a href="#precios" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-violet-400 text-violet-700 hover:bg-violet-600 hover:text-white hover:border-violet-600 transition-all duration-300 font-semibold text-base">
-                            <span>🌿🍷</span> Soy Productor
-                        </a>
-                        <a href="#ecosistema" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-[var(--color-agro-green-light)]/60 text-[var(--color-agro-green-dark)] hover:border-[var(--color-agro-green-dark)] transition-all duration-300 font-semibold text-base">
-                            <span>{{ __('🏛️') }}</span> Soy DO
+                        <a href="#precios" class="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-zinc-300 bg-white text-zinc-800 hover:border-agro-500 hover:text-agro-700 transition-colors duration-200 font-semibold text-base">
+                            Ver planes y precios
                         </a>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                    <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+                        @foreach(['Básico gratis para siempre', '3 meses de plan Completo gratis', 'Sin tarjeta de crédito', 'Cancela cuando quieras'] as $claim)
                         <div class="flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 text-agro-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-700 text-sm font-semibold">{{ __('Básico gratis para siempre') }}</span>
+                            <span class="text-zinc-600 text-sm">{{ __($claim) }}</span>
                         </div>
-                        <div class="flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-600 text-sm font-medium">{{ __('3 meses de plan Completo gratis') }}</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-600 text-sm font-medium">{{ __('Sin tarjeta de crédito') }}</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-600 text-sm font-medium">{{ __('Cancela cuando quieras') }}</span>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
-                
-                <!-- Banda normativa -->
-                <div class="flex flex-col justify-center space-y-6 animate-scale-in">
-                    <h2 class="text-2xl lg:text-3xl font-bold text-[var(--color-agro-green-dark)] leading-snug">
-                        La normativa llega en dos fases.<br>¿Estás preparado?
-                    </h2>
-                    <div class="grid sm:grid-cols-2 gap-4">
-                        <!-- Fase 1 -->
-                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
-                            <div class="text-amber-700 font-bold text-sm mb-2">📅 Enero 2027 — Fase 1</div>
-                            <p class="text-gray-700 text-sm leading-relaxed">{{ __('Obligatorio el registro digital de tratamientos fitosanitarios. Agro365 te cubre desde hoy.') }}</p>
+
+                <!-- Product screenshot -->
+                <div class="relative animate-scale-in lg:pl-4">
+                    <div class="rounded-xl border border-zinc-200 bg-white shadow-2xl shadow-zinc-900/10 overflow-hidden">
+                        <div class="flex items-center gap-1.5 px-4 py-2.5 bg-zinc-50 border-b border-zinc-200">
+                            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300"></span>
                         </div>
-                        <!-- Fase 2 -->
-                        <div class="bg-[var(--color-agro-green-bg)] border border-[var(--color-agro-green-light)]/40 rounded-2xl p-5">
-                            <div class="text-[var(--color-agro-green-dark)] font-bold text-sm mb-2">📅 Enero 2028 — Fase 2</div>
-                            <p class="text-gray-700 text-sm leading-relaxed">{{ __('Entra en vigor el cuaderno completo según el Reglamento (UE) 2022/1441. Parcelas, riegos, fertilización y maquinaria — todo en digital.') }}</p>
-                        </div>
+                        <img
+                            src="{{ asset('images/dashboard-preview-1400.jpg') }}"
+                            alt="Panel de control de Agro365 con parcelas, actividades, facturación y cosechas"
+                            width="1400"
+                            height="669"
+                            class="w-full h-auto"
+                            fetchpriority="high"
+                            loading="eager"
+                            decoding="async"
+                        >
                     </div>
-                    <p class="text-center text-sm font-semibold text-[var(--color-agro-green-dark)] bg-[var(--color-agro-green-bg)] rounded-xl px-4 py-3 border border-[var(--color-agro-green-light)]/30">{{ __('Agro365 cubre ambas fases. Empieza gratis hoy y llega a 2027 sin estrés.') }}</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">{{ __('Panel real de Agro365 · Datos de demostración') }}</p>
+                </div>
+            </div>
+
+            <!-- Normativa: dos fases -->
+            <div class="mt-14 grid md:grid-cols-2 gap-4">
+                <div class="flex gap-4 p-5 rounded-xl border border-zinc-200 bg-white">
+                    <div class="shrink-0 w-11 h-11 rounded-lg bg-amber-50 border border-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">'27</div>
+                    <div>
+                        <div class="font-semibold text-zinc-900 text-sm mb-1">{{ __('Enero 2027 — Fase 1') }}</div>
+                        <p class="text-sm text-zinc-600 leading-relaxed">{{ __('Obligatorio el registro digital de tratamientos fitosanitarios. Agro365 te cubre desde hoy.') }}</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 p-5 rounded-xl border border-zinc-200 bg-white">
+                    <div class="shrink-0 w-11 h-11 rounded-lg bg-agro-50 border border-agro-100 text-agro-700 flex items-center justify-center font-bold text-sm">'28</div>
+                    <div>
+                        <div class="font-semibold text-zinc-900 text-sm mb-1">{{ __('Enero 2028 — Fase 2') }}</div>
+                        <p class="text-sm text-zinc-600 leading-relaxed">{{ __('Entra en vigor el cuaderno completo según el Reglamento (UE) 2022/1441. Parcelas, riegos, fertilización y maquinaria — todo en digital.') }}</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Cómo funciona -->
-    <section class="py-20 bg-gray-50 border-t border-gray-100">
+    <section id="como-funciona" class="py-20 bg-zinc-50 border-t border-zinc-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Empieza en 5 minutos. Sin papel. Sin complicaciones.') }}</h2>
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Empieza en 5 minutos. Sin papel. Sin complicaciones.') }}</h2>
             </div>
             <div class="grid md:grid-cols-3 gap-8 mb-12">
                 <!-- Paso 1 -->
                 <div class="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
                     <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">1</div>
-                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Crea tu cuenta gratis') }}</h3>
+                    <h3 class="text-lg font-bold text-zinc-900 mb-2">{{ __('Crea tu cuenta gratis') }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed">{{ __('Sin tarjeta, sin llamadas. Regístrate como viticultor, productor, bodega o DO y accede al panel en segundos.') }}</p>
                 </div>
                 <!-- Paso 2 -->
                 <div class="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
                     <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">2</div>
-                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Importa tus parcelas SIGPAC') }}</h3>
+                    <h3 class="text-lg font-bold text-zinc-900 mb-2">{{ __('Importa tus parcelas SIGPAC') }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed">{{ __('Introduce tu NIF y tus parcelas se importan automáticamente desde el Ministerio. Sin introducir datos a mano.') }}</p>
                 </div>
                 <!-- Paso 3 -->
                 <div class="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
                     <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">3</div>
-                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Registra desde el móvil') }}</h3>
+                    <h3 class="text-lg font-bold text-zinc-900 mb-2">{{ __('Registra desde el móvil') }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed">{{ __('Anota tratamientos, riegos y labores desde cualquier dispositivo. La web está optimizada para móvil — sin instalar nada.') }}</p>
                 </div>
             </div>
             <div class="text-center">
-                <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base">
+                <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold text-base">
                     Comenzar gratis — sin tarjeta
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -613,214 +605,149 @@
     <!-- Ecosistema Conectado -->
     <section id="ecosistema" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 space-y-4">
-                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Una sola plataforma. Cuatro roles. Todo conectado.') }}</h2>
-                <p class="text-xl text-zinc-600 max-w-3xl mx-auto">
-                    Agro365 es la plataforma española que conecta toda la cadena del vino en un ecosistema compartido.
-                    Cada actor ve solo lo que le corresponde. Los datos fluyen solos.
-                    <strong>{{ __('Sin Excel. Sin papel. Sin duplicidades.') }}</strong>
+            <div class="text-center mb-14 space-y-4">
+                <p class="text-xs font-semibold uppercase tracking-widest text-agro-600">{{ __('Ecosistema conectado') }}</p>
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Una sola plataforma. Cuatro roles. Todo conectado.') }}</h2>
+                <p class="text-lg text-zinc-600 max-w-3xl mx-auto">
+                    Agro365 conecta toda la cadena del vino en un ecosistema compartido.
+                    Cada actor ve solo lo que le corresponde y los datos fluyen solos —
+                    {{ __('sin Excel, sin papel, sin duplicidades.') }}
                 </p>
             </div>
 
-            <!-- Diagrama visual del ecosistema -->
-            <div class="flex justify-center mb-16">
-                <div class="relative max-w-3xl w-full">
-                    <!-- DO en la cima -->
-                    <div class="flex justify-center mb-4">
-                        <div class="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-6 text-center w-80 shadow-md">
-                            <div class="text-3xl mb-2">🏛️</div>
-                            <div class="font-bold text-amber-900 text-lg">Denominación de Origen</div>
-                            <div class="text-amber-700 text-sm mt-1">Supervisa bodegas y cumplimiento normativo</div>
-                            <div class="mt-3 flex justify-center gap-2 flex-wrap">
-                                <span class="bg-amber-200/60 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">{{ __('Panel centralizado') }}</span>
-                                <span class="bg-amber-200/60 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">{{ __('Trazabilidad DO') }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Conector DO → Bodegas -->
-                    <div class="flex flex-col items-center mb-4">
-                        <div class="w-px h-4 bg-amber-300"></div>
-                        <div class="text-xs text-amber-600 font-semibold bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">supervisa</div>
-                        <div class="w-px h-4 bg-amber-300"></div>
-                        <div class="flex w-full max-w-sm justify-between px-8">
-                            <div class="w-px h-6 bg-amber-300"></div>
-                            <div class="w-px h-6 bg-amber-300"></div>
-                        </div>
-                    </div>
-                    <!-- Bodegas -->
-                    <div class="flex justify-center gap-6 mb-4">
-                        <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-48 shadow-md">
-                            <div class="text-2xl mb-1">🍷</div>
-                            <div class="font-bold text-red-900">{{ __('Bodega') }}</div>
-                            <div class="text-red-700 text-xs mt-1">{{ __('Vendimia · Depósitos · Facturación') }}</div>
-                        </div>
-                        <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-48 shadow-md">
-                            <div class="text-2xl mb-1">🍷</div>
-                            <div class="font-bold text-red-900">{{ __('Bodega') }}</div>
-                            <div class="text-red-700 text-xs mt-1">{{ __('Vendimia · Depósitos · Facturación') }}</div>
-                        </div>
-                    </div>
-                    <!-- Conector Bodegas → Viticultores -->
-                    <div class="flex justify-center gap-6 mb-4">
-                        <div class="flex flex-col items-center w-48">
-                            <div class="w-px h-4 bg-red-300"></div>
-                            <div class="text-xs text-red-600 font-semibold bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">gestiona</div>
-                            <div class="w-px h-4 bg-red-300"></div>
-                        </div>
-                        <div class="flex flex-col items-center w-48">
-                            <div class="w-px h-4 bg-red-300"></div>
-                            <div class="text-xs text-red-600 font-semibold bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">gestiona</div>
-                            <div class="w-px h-4 bg-red-300"></div>
-                        </div>
-                    </div>
-                    <!-- Viticultores -->
-                    <div class="flex justify-center gap-3 flex-wrap">
-                        <div class="bg-gradient-to-br from-[var(--color-agro-green-bg)] to-green-100 border-2 border-[var(--color-agro-green-light)]/60 rounded-xl p-3 text-center w-28 shadow-sm">
-                            <div class="text-xl mb-1">🌿</div>
-                            <div class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Viticultor</div>
-                        </div>
-                        <div class="bg-gradient-to-br from-[var(--color-agro-green-bg)] to-green-100 border-2 border-[var(--color-agro-green-light)]/60 rounded-xl p-3 text-center w-28 shadow-sm">
-                            <div class="text-xl mb-1">🌿</div>
-                            <div class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Viticultor</div>
-                        </div>
-                        <div class="bg-gradient-to-br from-[var(--color-agro-green-bg)] to-green-100 border-2 border-[var(--color-agro-green-light)]/60 rounded-xl p-3 text-center w-28 shadow-sm">
-                            <div class="text-xl mb-1">🌿</div>
-                            <div class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Viticultor</div>
-                        </div>
-                        <div class="bg-gradient-to-br from-[var(--color-agro-green-bg)] to-green-100 border-2 border-[var(--color-agro-green-light)]/60 rounded-xl p-3 text-center w-28 shadow-sm">
-                            <div class="text-xl mb-1">🌿</div>
-                            <div class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Viticultor</div>
-                        </div>
-                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl p-3 text-center w-28 shadow-sm">
-                            <div class="text-xl mb-1">🌿</div>
-                            <div class="font-semibold text-blue-700 text-xs">Viticultor independiente</div>
-                        </div>
-                    </div>
-                    <p class="text-center text-xs text-zinc-400 mt-4">{{ __('El viticultor independiente no necesita bodega ni DO para empezar') }}</p>
-
-                    <!-- Productor: nodo standalone separado -->
-                    <div class="mt-6 flex flex-col items-center">
-                        <div class="text-xs text-zinc-400 font-semibold mb-2">o bien, todo en uno:</div>
-                        <div class="bg-gradient-to-br from-violet-50 to-violet-100 border-2 border-violet-300 rounded-2xl p-4 text-center w-56 shadow-md">
-                            <div class="text-2xl mb-1">🌿🍷</div>
-                            <div class="font-bold text-violet-900">Productor</div>
-                            <div class="text-violet-700 text-xs mt-1">Viñedo propio · Elaboración propia</div>
-                            <div class="mt-2">
-                                <span class="bg-violet-200/60 text-violet-800 text-xs px-2 py-0.5 rounded-full font-medium">{{ __('Viticultor + Bodega en uno') }}</span>
-                            </div>
-                        </div>
-                        <p class="text-center text-xs text-zinc-400 mt-2">{{ __('Un solo panel · Una sola cuenta · Un precio bundle') }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <p class="text-center text-sm text-zinc-400 -mt-8 mb-16">{{ __('Una bodega puede gestionar múltiples viticultores. Un viticultor puede trabajar con varias bodegas.') }}</p>
-
-            <!-- Cuatro cards de rol -->
-            <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8">
+            <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
                 <!-- Viticultor -->
-                <div class="glass-card rounded-2xl p-8 border-2 border-[var(--color-agro-green-light)]/30 hover:border-[var(--color-agro-green-light)] hover-lift transition-all duration-300">
-                    <div class="w-14 h-14 rounded-xl bg-[var(--color-agro-green-bg)] flex items-center justify-center mb-5 text-3xl">
-                        🌿
-                    </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">{{ __('Viticultor') }}</h3>
-                    <p class="text-zinc-600 text-sm mb-2 font-semibold">{{ __('Tu cuaderno, tus datos, siempre tuyos') }}</p>
-                    <p class="text-zinc-600 text-sm mb-5">
-                        Registra tratamientos, riegos y labores desde el móvil.
-                        Trabaja de forma independiente o comparte tu cuaderno con una o varias bodegas.
-                        <strong>{{ __('Aunque cambies de bodega, tus datos siguen siendo tuyos.') }}</strong>
-                    </p>
-                    <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-[var(--color-agro-green)] font-semibold text-sm hover:underline">
-                        Empezar gratis — sin tarjeta
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                <div class="bg-white rounded-2xl p-7 border border-zinc-200 hover:border-agro-400 hover:shadow-md transition-all duration-300 flex flex-col">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
                         </svg>
-                    </a>
+                    </div>
+                    <h3 class="text-lg font-bold text-zinc-900">{{ __('Viticultor') }}</h3>
+                    <p class="text-xs font-semibold text-agro-600 uppercase tracking-wide mt-1 mb-3">{{ __('Básico gratis · Completo 9€ · Independiente 14€') }}</p>
+                    <p class="text-sm text-zinc-600 leading-relaxed mb-4">
+                        Registra tratamientos, riegos y labores desde el móvil. Trabaja solo o comparte tu cuaderno con una o varias bodegas.
+                        <strong class="text-zinc-800">{{ __('Tus datos son siempre tuyos, aunque cambies de bodega.') }}</strong>
+                    </p>
+                    <ul class="space-y-2 text-sm text-zinc-600 mb-6">
+                        @foreach(['Cuaderno obligatorio 2027', 'SIGPAC y gestión de parcelas', 'Teledetección NDVI satelital', 'Facturación + Verifactu'] as $item)
+                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-agro-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>{{ __($item) }}</li>
+                        @endforeach
+                    </ul>
+                    <div class="mt-auto space-y-2">
+                        <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
+                            Empezar gratis
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="{{ content_route('content.viticultores') }}" class="block text-zinc-500 text-sm hover:text-zinc-700 hover:underline">Ver más sobre viticultores</a>
+                    </div>
                 </div>
 
                 <!-- Bodega -->
-                <div class="glass-card rounded-2xl p-8 border-2 border-red-200/50 hover:border-red-300 hover-lift transition-all duration-300">
-                    <div class="w-14 h-14 rounded-xl bg-red-50 flex items-center justify-center mb-5 text-3xl">
-                        🍷
-                    </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">{{ __('Bodega') }}</h3>
-                    <p class="text-zinc-600 text-sm mb-2 font-semibold">{{ __('Trazabilidad completa desde la cepa') }}</p>
-                    <p class="text-zinc-600 text-sm mb-5">
-                        Conecta con tus viticultores y recibe sus cuadernos en tiempo real. Gestiona vendimia,
-                        producciones y facturación. <strong>{{ __('Invita a tus viticultores') }}</strong> — acceden en modo básico gratis
-                        o completo por 9€/mes.
-                    </p>
-                    <a href="{{ content_route('content.bodegas') }}" class="inline-flex items-center gap-1.5 text-red-600 font-semibold text-sm hover:underline">
-                        Empezar gratis — sin tarjeta
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                <div class="bg-white rounded-2xl p-7 border border-zinc-200 hover:border-agro-400 hover:shadow-md transition-all duration-300 flex flex-col">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 22h8M7 10h10M12 15v7M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/>
                         </svg>
-                    </a>
+                    </div>
+                    <h3 class="text-lg font-bold text-zinc-900">{{ __('Bodega') }}</h3>
+                    <p class="text-xs font-semibold text-agro-600 uppercase tracking-wide mt-1 mb-3">{{ __('Gratis dentro de una DO · 14€/mes independiente') }}</p>
+                    <p class="text-sm text-zinc-600 leading-relaxed mb-4">
+                        Conecta con tus viticultores y recibe sus cuadernos en tiempo real.
+                        <strong class="text-zinc-800">{{ __('Invita a tus proveedores') }}</strong> — acceden en modo básico gratis o completo por 9€/mes.
+                    </p>
+                    <ul class="space-y-2 text-sm text-zinc-600 mb-6">
+                        @foreach(['Recepción de uva y pesaje', 'Depósitos y elaboración', 'AICA, INFOVI y libros de bodega', 'Panel de viticultores en tiempo real'] as $item)
+                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-agro-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>{{ __($item) }}</li>
+                        @endforeach
+                    </ul>
+                    <div class="mt-auto space-y-2">
+                        <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
+                            Empezar como bodega
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="{{ url('/software-bodegas') }}" class="block text-zinc-500 text-sm hover:text-zinc-700 hover:underline">Ver todo lo que incluye para bodegas</a>
+                    </div>
                 </div>
 
                 <!-- Productor -->
-                <div class="glass-card rounded-2xl p-8 border-2 border-violet-200/50 hover:border-violet-400 hover-lift transition-all duration-300">
-                    <div class="w-14 h-14 rounded-xl bg-violet-50 flex items-center justify-center mb-5 text-3xl">
-                        🌿🍷
-                    </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">{{ __('Productor') }}</h3>
-                    <p class="text-zinc-600 text-sm mb-2 font-semibold">{{ __('Viticultor y bodega en uno solo') }}</p>
-                    <p class="text-zinc-600 text-sm mb-5">
-                        Cultivas tus propias uvas y elaboras tu vino. Un solo panel con contexto campo y bodega.
-                        <strong>{{ __('Gestiona viñedo, vendimia y elaboración sin duplicar cuentas ni pagar dos planes separados.') }}</strong>
-                    </p>
-                    <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-violet-600 font-semibold text-sm hover:underline">
-                        Empezar gratis — sin tarjeta
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                <div class="bg-white rounded-2xl p-7 border border-zinc-200 hover:border-agro-400 hover:shadow-md transition-all duration-300 flex flex-col">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>
                         </svg>
-                    </a>
+                    </div>
+                    <h3 class="text-lg font-bold text-zinc-900">{{ __('Productor') }}</h3>
+                    <p class="text-xs font-semibold text-agro-600 uppercase tracking-wide mt-1 mb-3">{{ __('19€/mes · Viticultor + Bodega en uno') }}</p>
+                    <p class="text-sm text-zinc-600 leading-relaxed mb-4">
+                        Cultivas tus uvas y elaboras tu vino. Un solo panel con contexto campo y bodega,
+                        <strong class="text-zinc-800">{{ __('sin duplicar cuentas ni pagar dos planes por separado.') }}</strong>
+                    </p>
+                    <ul class="space-y-2 text-sm text-zinc-600 mb-6">
+                        @foreach(['Todo del plan Viticultor Independiente', 'Todo del plan Bodega', 'Trazabilidad viñedo → bodega → botella', 'Una sola cuenta, un precio bundle'] as $item)
+                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-agro-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>{{ __($item) }}</li>
+                        @endforeach
+                    </ul>
+                    <div class="mt-auto space-y-2">
+                        <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
+                            Empezar como productor
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="#precios" class="block text-zinc-500 text-sm hover:text-zinc-700 hover:underline">Ver el ahorro del bundle</a>
+                    </div>
                 </div>
 
                 <!-- DO -->
-                <div class="glass-card rounded-2xl p-8 border-2 border-amber-200/50 hover:border-amber-300 hover-lift transition-all duration-300">
-                    <div class="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center mb-5 text-3xl">
-                        🏛️
+                <div class="bg-white rounded-2xl p-7 border border-zinc-200 hover:border-agro-400 hover:shadow-md transition-all duration-300 flex flex-col">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M5 17v-7M9.5 17v-7M14.5 17v-7M19 17v-7M12 3 4 8h16L12 3Z"/>
+                        </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">{{ __('Denominación de Origen') }}</h3>
-                    <p class="text-zinc-600 text-sm mb-2 font-semibold">{{ __('Control total de tu ecosistema') }}</p>
-                    <p class="text-zinc-600 text-sm mb-5">
-                        Registra tus bodegas adscritas y supervisa su actividad y cumplimiento normativo
-                        desde un panel centralizado. <strong>{{ __('Tus bodegas acceden gratis incluidas en tu plan.') }}</strong>
-                        Solo pagas tú por toda la red.
+                    <h3 class="text-lg font-bold text-zinc-900">{{ __('Denominación de Origen') }}</h3>
+                    <p class="text-xs font-semibold text-agro-600 uppercase tracking-wide mt-1 mb-3">{{ __('Desde 149€/mes · Bodegas incluidas gratis') }}</p>
+                    <p class="text-sm text-zinc-600 leading-relaxed mb-4">
+                        Registra tus bodegas adscritas y supervisa actividad y cumplimiento normativo desde un panel centralizado.
+                        <strong class="text-zinc-800">{{ __('Tus bodegas acceden gratis — solo pagas tú.') }}</strong>
                     </p>
-                    <div class="flex flex-col gap-2">
-                        <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-amber-700 font-semibold text-sm hover:underline">
-                            <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <ul class="space-y-2 text-sm text-zinc-600 mb-6">
+                        @foreach(['Panel de supervisión centralizado', 'Alertas de incumplimiento normativo', 'Informes consolidados por DO', 'Account manager + SLA 99,9%'] as $item)
+                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-agro-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>{{ __($item) }}</li>
+                        @endforeach
+                    </ul>
+                    <div class="mt-auto space-y-2">
+                        <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
                             Hablar por WhatsApp
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
-                        <a href="mailto:info@agro365.es?subject=Consulta%20Denominaci%C3%B3n%20de%20Origen%20Agro365" class="inline-flex items-center gap-1.5 text-amber-600 font-medium text-sm hover:underline">
-                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            Enviar un email
-                        </a>
+                        <a href="mailto:info@agro365.es?subject=Consulta%20Denominaci%C3%B3n%20de%20Origen%20Agro365" class="block text-zinc-500 text-sm hover:text-zinc-700 hover:underline">o enviar un email</a>
                     </div>
                 </div>
             </div>
+
+            <p class="text-center text-sm text-zinc-400 mt-8">{{ __('Una bodega puede gestionar múltiples viticultores. Un viticultor puede trabajar con varias bodegas. El viticultor independiente no necesita bodega ni DO para empezar.') }}</p>
         </div>
     </section>
 
     <!-- ✅ SEO: Sección de soluciones comerciales directas -->
-    <section class="py-20 bg-gray-50 border-y border-gray-100">
+    <section id="funcionalidades" class="py-20 bg-zinc-50 border-y border-zinc-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Todo lo que incluye el plan Viticultor') }}</h2>
-                <div class="w-20 h-1 bg-[var(--color-agro-green-light)] mx-auto mt-4 rounded-full"></div>
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Todo lo que incluye el plan Viticultor') }}</h2>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Card 1: Cuaderno Digital -->
                 <a href="{{ content_route('content.cuaderno-digital') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
-                    <div class="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
+                    <div class="w-14 h-14 rounded-xl bg-agro-50 flex items-center justify-center text-agro-700 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Cuaderno de Campo') }}</h3>
+                    <h3 class="font-bold text-lg text-zinc-900 mb-2">{{ __('Cuaderno de Campo') }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Registro oficial de tratamientos, riegos y fertilización 100% conforme con la normativa 2027.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
@@ -830,12 +757,12 @@
 
                 <!-- Card 2: SIGPAC -->
                 <a href="{{ content_route('content.que-es-sigpac') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
-                    <div class="w-14 h-14 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
+                    <div class="w-14 h-14 rounded-xl bg-agro-50 flex items-center justify-center text-agro-700 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Gestión SIGPAC') }}</h3>
+                    <h3 class="font-bold text-lg text-zinc-900 mb-2">{{ __('Gestión SIGPAC') }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Control de parcelas, mapas interactivos y códigos oficiales del ministerio integrados.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
@@ -845,12 +772,12 @@
 
                 <!-- Card 3: NDVI -->
                 <a href="{{ content_route('content.ndvi-teledeteccion') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
-                    <div class="w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform">
+                    <div class="w-14 h-14 rounded-xl bg-agro-50 flex items-center justify-center text-agro-700 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Teledetección NDVI') }}</h3>
+                    <h3 class="font-bold text-lg text-zinc-900 mb-2">{{ __('Teledetección NDVI') }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Análisis satelital de vigor y estrés hídrico de tus parcelas en tiempo real sin sensores.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
@@ -860,12 +787,12 @@
 
                 <!-- Card 4: Facturación -->
                 <a href="{{ content_route('content.facturacion-agricola') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
-                    <div class="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-6 group-hover:scale-110 transition-transform">
+                    <div class="w-14 h-14 rounded-xl bg-agro-50 flex items-center justify-center text-agro-700 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Facturación Agrícola') }}</h3>
+                    <h3 class="font-bold text-lg text-zinc-900 mb-2">{{ __('Facturación Agrícola') }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('De la vendimia a la factura en un clic. Gestión de entregas, cosechas y clientes integrada.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
@@ -875,12 +802,12 @@
 
                 <!-- Card 5: Vendimia -->
                 <a href="{{ content_route('content.gestion-vendimia') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
-                    <div class="w-14 h-14 rounded-xl bg-red-50 flex items-center justify-center text-red-600 mb-6 group-hover:scale-110 transition-transform">
+                    <div class="w-14 h-14 rounded-xl bg-agro-50 flex items-center justify-center text-agro-700 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Gestión de Vendimia') }}</h3>
+                    <h3 class="font-bold text-lg text-zinc-900 mb-2">{{ __('Gestión de Vendimia') }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Control de cosecha por parcela y viticultor, pesaje, calidades y entrega directa a bodega.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
@@ -890,12 +817,12 @@
 
                 <!-- Card 6: Trazabilidad -->
                 <a href="{{ content_route('content.trazabilidad-agricola') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
-                    <div class="w-14 h-14 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 mb-6 group-hover:scale-110 transition-transform">
+                    <div class="w-14 h-14 rounded-xl bg-agro-50 flex items-center justify-center text-agro-700 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ __('Trazabilidad Completa') }}</h3>
+                    <h3 class="font-bold text-lg text-zinc-900 mb-2">{{ __('Trazabilidad Completa') }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ __('Desde la parcela hasta la entrega. Cada lote documentado para auditorías y DO.') }}</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
@@ -906,214 +833,47 @@
         </div>
     </section>
 
-    <!-- Bodega & DO Bridge Section -->
-    <section class="py-16 bg-gradient-to-b from-zinc-50 to-white border-t border-zinc-100">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-zinc-400 text-sm font-semibold uppercase tracking-widest mb-8">{{ __('¿No eres viticultor?') }}</p>
-            <div class="grid md:grid-cols-3 gap-6">
 
-                <!-- Bodega -->
-                <div class="bg-white rounded-2xl p-8 border-2 border-red-100 hover:border-red-300 transition-all duration-300 shadow-sm">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-3xl">🍷</span>
-                        <div>
-                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">{{ __('¿Eres una bodega?') }}</h3>
-                            <p class="text-xs text-red-600 font-semibold">{{ __('Gratis si estás en una DO · 14€/mes independiente') }}</p>
-                        </div>
-                    </div>
-                    <ul class="space-y-2 text-sm text-zinc-600 mb-6">
-                        <li class="flex items-center gap-2"><span class="text-red-400">✓</span> Recepción de uva y control de pesaje</li>
-                        <li class="flex items-center gap-2"><span class="text-red-400">✓</span> Gestión de depósitos y pipeline de elaboración</li>
-                        <li class="flex items-center gap-2"><span class="text-red-400">✓</span> AICA, INFOVI y libros de bodega automáticos</li>
-                        <li class="flex items-center gap-2"><span class="text-red-400">✓</span> Facturación + Verifactu integrado</li>
-                        <li class="flex items-center gap-2"><span class="text-red-400">✓</span> Panel de viticultores proveedores en tiempo real</li>
-                        <li class="flex items-center gap-2"><span class="text-red-400">✓</span> Teledetección NDVI de las parcelas de tus proveedores</li>
-                    </ul>
-                    <div class="flex flex-col gap-3 mt-3">
-                        <a href="{{ url('/software-bodegas') }}" class="inline-flex items-center gap-2 text-red-600 font-semibold text-sm hover:underline">
-                            Ver todo lo que incluye para bodegas
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                        </a>
-                        <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-2 text-white bg-red-600 hover:bg-red-700 transition-colors font-semibold text-sm px-4 py-2 rounded-lg self-start">
-                            Empezar como Bodega — Gratis
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Productor -->
-                <div class="bg-white rounded-2xl p-8 border-2 border-violet-100 hover:border-violet-300 transition-all duration-300 shadow-sm">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-3xl">🌿🍷</span>
-                        <div>
-                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">{{ __('¿Cultivas y elaboras?') }}</h3>
-                            <p class="text-xs text-violet-700 font-semibold">{{ __('Básico gratis') }} · {{ __('Completo 19€/mes') }} · <span class="line-through text-zinc-400">{{ __('28€/mes') }}</span> {{ __('por separado') }}</p>
-                        </div>
-                    </div>
-                    <ul class="space-y-2 text-sm text-zinc-600 mb-6">
-                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> {{ __('Cuaderno de campo, parcelas y fenología gratis para siempre') }}</li>
-                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Todo del plan Viticultor Independiente</li>
-                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Todo del plan Bodega</li>
-                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Trazabilidad viñedo → bodega → botella</li>
-                    </ul>
-                    <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-2 text-violet-700 font-semibold text-sm hover:underline">
-                        Empezar como Productor
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </a>
-                </div>
-
-                <!-- DO -->
-                <div class="bg-white rounded-2xl p-8 border-2 border-amber-100 hover:border-amber-300 transition-all duration-300 shadow-sm">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-3xl">{{ __('🏛️') }}</span>
-                        <div>
-                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">{{ __('¿Gestionas una DO?') }}</h3>
-                            <p class="text-xs text-amber-700 font-semibold">{{ __('Desde 149€/mes · Todas tus bodegas incluidas gratis') }}</p>
-                        </div>
-                    </div>
-                    <ul class="space-y-2 text-sm text-zinc-600 mb-6">
-                        <li class="flex items-center gap-2"><span class="text-amber-500">✓</span> Panel centralizado de todas tus bodegas adscritas</li>
-                        <li class="flex items-center gap-2"><span class="text-amber-500">✓</span> Alertas automáticas de incumplimiento normativo</li>
-                        <li class="flex items-center gap-2"><span class="text-amber-500">✓</span> Informes consolidados por denominación</li>
-                        <li class="flex items-center gap-2"><span class="text-amber-500">✓</span> Firma electrónica SHA-256 en todos los documentos</li>
-                        <li class="flex items-center gap-2"><span class="text-amber-500">✓</span> Tus bodegas acceden gratis — solo pagas tú</li>
-                        <li class="flex items-center gap-2"><span class="text-amber-500">✓</span> Account manager dedicado + SLA 99,9%</li>
-                    </ul>
-                    <div class="flex items-center gap-4">
-                        <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-amber-700 font-semibold text-sm hover:underline">
-                            <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                            Hablar por WhatsApp
-                        </a>
-                        <a href="mailto:info@agro365.es?subject=Consulta%20Denominaci%C3%B3n%20de%20Origen%20Agro365" class="text-amber-600 text-sm hover:underline">o enviar email</a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Solutions by Role Section -->
-    <section id="solutions" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 space-y-4">
-                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Diseñado para los cuatro roles del vino') }}</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">{{ __('Un ecosistema conectado. Cada rol ve lo que necesita, cuando lo necesita.') }}</p>
-            </div>
-
-            <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8">
-                <!-- Viticultor -->
-                <a href="{{ content_route('content.viticultores') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-[var(--color-agro-green-light)]/30 hover:border-[var(--color-agro-green-light)] transition-all duration-300">
-                    <div class="text-4xl mb-5">🌿</div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Viticultor') }}</h3>
-                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">{{ __('Básico gratis · Completo 9€ · Independiente 14€') }}</p>
-                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">{{ __('Cuaderno de campo digital, SIGPAC, teledetección NDVI, PAC, vendimia y facturación. Tus datos son siempre tuyos aunque cambies de bodega.') }}</p>
-                    <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
-                        <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> Cuaderno obligatorio 2027</li>
-                        <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> SIGPAC y parcelas</li>
-                        <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> Teledetección satelital</li>
-                        <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> Facturación + Verifactu</li>
-                    </ul>
-                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        Ver más sobre Viticultores
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </span>
-                </a>
-
-                <!-- Bodega -->
-                <a href="{{ url('/software-bodegas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-red-200/50 hover:border-red-300 transition-all duration-300">
-                    <div class="text-4xl mb-5">🍷</div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Bodega') }}</h3>
-                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">{{ __('Gratis en DO · 14€/mes independiente') }}</p>
-                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">{{ __('Recepción de uva, depósitos, elaboración, aditivos, informes AICA/INFOVI y facturación. Conecta con tus viticultores proveedores en un clic.') }}</p>
-                    <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
-                        <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> Recepción y pesaje</li>
-                        <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> Gestión de depósitos</li>
-                        <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> AICA, INFOVI, libros de bodega</li>
-                        <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> Panel de viticultores proveedores</li>
-                    </ul>
-                    <span class="text-red-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        Ver más sobre Bodegas
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </span>
-                </a>
-
-                <!-- Productor -->
-                <a href="#precios" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-violet-200/50 hover:border-violet-400 transition-all duration-300">
-                    <div class="text-4xl mb-5">🌿🍷</div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Productor') }}</h3>
-                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">{{ __('19€/mes · Bundle Viticultor + Bodega') }}</p>
-                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">{{ __('Viñedo propio, elaboración propia. Un solo panel con contexto campo y bodega. Sin duplicar cuentas ni pagar dos planes por separado.') }}</p>
-                    <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
-                        <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Cuaderno de campo completo</li>
-                        <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Gestión de vendimia propia</li>
-                        <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Depósitos y elaboración</li>
-                        <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Trazabilidad cepa → botella</li>
-                    </ul>
-                    <span class="text-violet-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        Empezar como Productor
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </span>
-                </a>
-
-                <!-- DO -->
-                <a href="#precios" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-amber-200/50 hover:border-amber-300 transition-all duration-300">
-                    <div class="text-4xl mb-5">🏛️</div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">{{ __('Denominación de Origen') }}</h3>
-                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">{{ __('Desde 149€/mes · Bodegas incluidas gratis') }}</p>
-                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">{{ __('Panel centralizado de supervisión. Registra bodegas adscritas, controla cumplimiento normativo y accede a informes consolidados de toda tu red. Tus bodegas acceden sin coste adicional.') }}</p>
-                    <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
-                        <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Panel de supervisión centralizado</li>
-                        <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Alertas de incumplimiento</li>
-                        <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Informes consolidados DO</li>
-                        <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Account manager dedicado</li>
-                    </ul>
-                    <span class="text-amber-700 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        Ver precios para DO
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </span>
-                </a>
-            </div>
-        </div>
-    </section>
 
     <!-- Benefits Section -->
-    <section class="py-20 bg-gradient-to-br from-[var(--color-agro-green-bg)] to-white/50">
+    <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">{{ __('¿Por qué elegir Agro365?') }}</h2>
+            <div class="text-center mb-14">
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('¿Por qué elegir Agro365?') }}</h2>
             </div>
-            
-            <div class="grid md:grid-cols-3 gap-8">
+
+            <div class="grid md:grid-cols-3 gap-6">
                 <!-- Beneficio 1 -->
-                <div class="text-center glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <div class="rounded-2xl p-8 border border-zinc-200 bg-white">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Ahorra Tiempo') }}</h3>
-                    <p class="text-gray-600">{{ __('Registra un tratamiento en menos de 2 minutos desde el móvil. Sin papel, sin Excel, sin volver a la oficina.') }}</p>
+                    <h3 class="text-lg font-bold text-zinc-900 mb-2">{{ __('Ahorra tiempo') }}</h3>
+                    <p class="text-zinc-600 text-sm leading-relaxed">{{ __('Registra un tratamiento en menos de 2 minutos desde el móvil. Sin papel, sin Excel, sin volver a la oficina.') }}</p>
                 </div>
-                
+
                 <!-- Beneficio 2 -->
-                <div class="text-center glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                <div class="rounded-2xl p-8 border border-zinc-200 bg-white">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Cumplimiento Normativo') }}</h3>
-                    <p class="text-gray-600">{{ __('El cuaderno genera automáticamente los informes exigidos por PAC y la normativa 2027. Sin errores de formato, sin campos olvidados.') }}</p>
+                    <h3 class="text-lg font-bold text-zinc-900 mb-2">{{ __('Cumplimiento normativo') }}</h3>
+                    <p class="text-zinc-600 text-sm leading-relaxed">{{ __('El cuaderno genera automáticamente los informes exigidos por PAC y la normativa 2027. Sin errores de formato, sin campos olvidados.') }}</p>
                 </div>
-                
+
                 <!-- Beneficio 3 -->
-                <div class="text-center glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <div class="rounded-2xl p-8 border border-zinc-200 bg-white">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l5-5 4 4 8-8m0 0v5m0-5h-5"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">{{ __('Mejora Rentabilidad') }}</h3>
-                    <p class="text-gray-600">{{ __('Ve qué parcelas rinden más, qué costes se disparan y qué vendimias han sido más rentables. Decisiones con datos, no con intuición.') }}</p>
+                    <h3 class="text-lg font-bold text-zinc-900 mb-2">{{ __('Mejora rentabilidad') }}</h3>
+                    <p class="text-zinc-600 text-sm leading-relaxed">{{ __('Ve qué parcelas rinden más, qué costes se disparan y qué vendimias han sido más rentables. Decisiones con datos, no con intuición.') }}</p>
                 </div>
             </div>
         </div>
@@ -1123,22 +883,21 @@
     <section id="precios" class="py-20 bg-zinc-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 space-y-4">
-                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Precio justo para cada perfil') }}</h2>
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Precio justo para cada perfil') }}</h2>
                 <p class="text-xl text-zinc-600 max-w-2xl mx-auto">{{ __('Desde gratis para el viticultor básico hasta planes escalados para Denominaciones de Origen. Sin sorpresas.') }}</p>
             </div>
 
             <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
 
                 <!-- Viticultor -->
-                <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-[var(--color-agro-green)] relative overflow-hidden transition-all duration-300 shadow-xl">
+                <div class="bg-white rounded-2xl p-8 border-2 border-agro-600 relative overflow-hidden transition-all duration-300 shadow-lg">
                     <div class="absolute top-0 right-0">
-                        <div class="bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white px-5 py-1.5 rounded-bl-2xl font-semibold text-sm">
+                        <div class="bg-agro-700 text-white px-5 py-1.5 rounded-bl-2xl font-semibold text-sm">
                             Más popular
                         </div>
                     </div>
                     <div class="mb-5 pt-6">
-                        <div class="text-3xl mb-2">🌿</div>
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Viticultor') }}</h3>
+                        <h3 class="text-2xl font-bold text-zinc-900">{{ __('Viticultor') }}</h3>
                         <p class="text-zinc-500 text-sm mt-1">{{ __('Autoservicio · Sin llamadas · Cancela cuando quieras') }}</p>
                     </div>
                     <div class="mb-6 space-y-2">
@@ -1165,7 +924,7 @@
                                 <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">{{ __('14€/mes') }}</span>
                             </div>
                             <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 130€/año — acceso completo') }}</p>
-                            <p class="text-xs font-semibold text-[var(--color-agro-green-dark)] mt-1">{{ __('✦ 3 meses gratis al registrarte') }}</p>
+                            <p class="text-xs font-semibold text-[var(--color-agro-green-dark)] mt-1">{{ __('3 meses gratis al registrarte') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
@@ -1178,17 +937,16 @@
                         </li>
                         @endforeach
                     </ul>
-                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg font-semibold">
+                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold">
                         Comenzar Gratis
                     </a>
                     <p class="text-center text-xs text-zinc-400 mt-3">{{ __('Básico gratis siempre · 3 meses gratis en planes de pago · Sin tarjeta') }}</p>
                 </div>
 
                 <!-- Bodega -->
-                <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-red-200 hover:border-red-400 transition-all duration-300">
+                <div class="bg-white rounded-2xl p-8 border border-zinc-200 hover:border-zinc-300 transition-all duration-300 shadow-sm">
                     <div class="mb-5">
-                        <div class="text-3xl mb-2">🍷</div>
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Bodega') }}</h3>
+                        <h3 class="text-2xl font-bold text-zinc-900">{{ __('Bodega') }}</h3>
                         <p class="text-zinc-500 text-sm mt-1">{{ __('Demo gratuita · Onboarding incluido') }}</p>
                     </div>
                     <div class="mb-6 space-y-2">
@@ -1201,116 +959,114 @@
                             <p class="text-xs text-zinc-400 mt-0.5">{{ __('Cubierta por el paquete de la DO') }}</p>
                         </div>
                         <!-- Bodega independiente -->
-                        <div class="p-3 bg-red-50 rounded-xl border-2 border-red-400">
+                        <div class="p-3 bg-agro-50 rounded-xl border-2 border-agro-500">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-red-700">{{ __('Independiente (sin DO)') }}</span>
-                                <span class="text-xl font-bold text-red-700">{{ __('14€/mes') }}</span>
+                                <span class="text-xs font-bold text-agro-700">{{ __('Independiente (sin DO)') }}</span>
+                                <span class="text-xl font-bold text-zinc-900">{{ __('14€/mes') }}</span>
                             </div>
                             <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 130€/año · Onboarding incluido + migración gratuita') }}</p>
-                            <p class="text-xs font-semibold text-red-700 mt-1">{{ __('✦ 3 meses gratis al registrarte') }}</p>
+                            <p class="text-xs font-semibold text-agro-700 mt-1">{{ __('3 meses gratis al registrarte') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
                         @foreach(['Panel de viticultores en tiempo real', 'Gestión completa de vendimia', 'Trazabilidad desde cepa hasta botella', 'Facturación agrícola integrada', 'Gestión de vinos y elaboración', 'Comparativa rendimientos real vs estimado', 'Soporte prioritario (24h)', 'Onboarding personalizado incluido'] as $feature)
                         <li class="flex items-start gap-2.5">
-                            <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-agro-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
                             <span class="text-zinc-700">{{ $feature }}</span>
                         </li>
                         @endforeach
                     </ul>
-                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 shadow-lg font-semibold">
+                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold">
                         Comenzar Gratis
                     </a>
                     <p class="text-center text-xs text-zinc-400 mt-3">{{ __('3 meses gratis · Sin tarjeta requerida') }}</p>
                 </div>
 
                 <!-- Productor -->
-                <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-violet-300 hover:border-violet-500 transition-all duration-300 relative overflow-hidden">
+                <div class="bg-white rounded-2xl p-8 border border-zinc-200 hover:border-zinc-300 transition-all duration-300 relative overflow-hidden shadow-sm">
                     <div class="absolute top-0 right-0">
-                        <div class="bg-gradient-to-r from-violet-600 to-violet-400 text-white px-5 py-1.5 rounded-bl-2xl font-semibold text-sm">
+                        <div class="bg-zinc-900 text-white px-5 py-1.5 rounded-bl-2xl font-semibold text-sm">
                             Bundle
                         </div>
                     </div>
                     <div class="mb-5 pt-6">
-                        <div class="text-3xl mb-2">🌿🍷</div>
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Productor') }}</h3>
+                        <h3 class="text-2xl font-bold text-zinc-900">{{ __('Productor') }}</h3>
                         <p class="text-zinc-500 text-sm mt-1">{{ __('Cultivas y elaboras tu propio vino') }}</p>
                     </div>
                     <div class="mb-6 space-y-2">
                         <!-- Precio bundle -->
-                        <div class="p-3 bg-violet-50 rounded-xl border-2 border-violet-400">
+                        <div class="p-3 bg-agro-50 rounded-xl border-2 border-agro-500">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-violet-700">{{ __('Viticultor + Bodega') }}</span>
-                                <span class="text-xl font-bold text-violet-700">{{ __('19€/mes') }}</span>
+                                <span class="text-xs font-bold text-agro-700">{{ __('Viticultor + Bodega') }}</span>
+                                <span class="text-xl font-bold text-zinc-900">{{ __('19€/mes') }}</span>
                             </div>
                             <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 175€/año — ~14,5€/mes') }}</p>
-                            <p class="text-xs font-semibold text-violet-700 mt-1">{{ __('✦ 3 meses gratis al registrarte') }}</p>
+                            <p class="text-xs font-semibold text-agro-700 mt-1">{{ __('3 meses gratis al registrarte') }}</p>
                         </div>
                         <!-- Ahorro -->
                         <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-center">
                             <p class="text-xs text-zinc-500">Por separado: <span class="line-through text-zinc-400 font-semibold">{{ __('28€/mes') }}</span></p>
-                            <p class="text-xs font-semibold text-violet-600 mt-0.5">{{ __('Ahorras 9€/mes · 32% de descuento') }}</p>
+                            <p class="text-xs font-semibold text-agro-700 mt-0.5">{{ __('Ahorras 9€/mes · 32% de descuento') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
                         @foreach(['Todo del plan Viticultor Independiente', 'Todo del plan Bodega', 'Trazabilidad viñedo → bodega → botella'] as $feature)
                         <li class="flex items-start gap-2.5">
-                            <svg class="w-5 h-5 text-violet-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-agro-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
                             <span class="text-zinc-700">{{ $feature }}</span>
                         </li>
                         @endforeach
                     </ul>
-                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 text-white hover:from-violet-700 hover:to-violet-600 transition-all duration-300 shadow-lg font-semibold">
+                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 shadow-sm font-semibold">
                         Comenzar Gratis
                     </a>
                     <p class="text-center text-xs text-zinc-400 mt-3">{{ __('3 meses gratis · Sin tarjeta requerida') }}</p>
                 </div>
 
                 <!-- DO -->
-                <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-amber-200 hover:border-amber-400 transition-all duration-300">
+                <div class="bg-white rounded-2xl p-8 border border-zinc-200 hover:border-zinc-300 transition-all duration-300 shadow-sm">
                     <div class="mb-5">
-                        <div class="text-3xl mb-2">🏛️</div>
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Denominación de Origen') }}</h3>
+                        <h3 class="text-2xl font-bold text-zinc-900">{{ __('Denominación de Origen') }}</h3>
                         <p class="text-zinc-500 text-sm mt-1">{{ __('Solución a medida · Contrato anual') }}</p>
                     </div>
-                    <div class="mb-6 rounded-xl border border-amber-200 overflow-hidden">
+                    <div class="mb-6 rounded-xl border border-zinc-200 overflow-hidden">
                         <table class="w-full text-xs">
                             <thead>
-                                <tr class="bg-amber-50 border-b border-amber-200">
-                                    <th class="text-left px-3 py-2 font-semibold text-amber-800">{{ __('Bodegas') }}</th>
-                                    <th class="text-right px-3 py-2 font-semibold text-amber-800">{{ __('Mensual') }}</th>
-                                    <th class="text-right px-3 py-2 font-semibold text-amber-800">{{ __('Anual') }}</th>
+                                <tr class="bg-zinc-50 border-b border-zinc-200">
+                                    <th class="text-left px-3 py-2 font-semibold text-zinc-700">{{ __('Bodegas') }}</th>
+                                    <th class="text-right px-3 py-2 font-semibold text-zinc-700">{{ __('Mensual') }}</th>
+                                    <th class="text-right px-3 py-2 font-semibold text-zinc-700">{{ __('Anual') }}</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-amber-100 bg-white">
-                                <tr><td class="px-3 py-1.5 text-zinc-700">{{ __('Hasta 25') }}</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">149€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('1.400€/año') }}</td></tr>
-                                <tr><td class="px-3 py-1.5 text-zinc-700">26 – 50</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">249€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('2.350€/año') }}</td></tr>
-                                <tr><td class="px-3 py-1.5 text-zinc-700">51 – 75</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">349€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('3.300€/año') }}</td></tr>
-                                <tr><td class="px-3 py-1.5 text-zinc-700">76 – 100</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">449€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('4.250€/año') }}</td></tr>
-                                <tr><td class="px-3 py-1.5 text-zinc-700">+100</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800" colspan="2">{{ __('A negociar') }}</td></tr>
+                            <tbody class="divide-y divide-zinc-100 bg-white">
+                                <tr><td class="px-3 py-1.5 text-zinc-700">{{ __('Hasta 25') }}</td><td class="px-3 py-1.5 text-right font-semibold text-zinc-900">149€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('1.400€/año') }}</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">26 – 50</td><td class="px-3 py-1.5 text-right font-semibold text-zinc-900">249€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('2.350€/año') }}</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">51 – 75</td><td class="px-3 py-1.5 text-right font-semibold text-zinc-900">349€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('3.300€/año') }}</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">76 – 100</td><td class="px-3 py-1.5 text-right font-semibold text-zinc-900">449€</td><td class="px-3 py-1.5 text-right text-zinc-500">{{ __('4.250€/año') }}</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">+100</td><td class="px-3 py-1.5 text-right font-semibold text-zinc-900" colspan="2">{{ __('A negociar') }}</td></tr>
                             </tbody>
                         </table>
-                        <p class="text-xs text-zinc-400 text-center py-2 bg-amber-50 border-t border-amber-100">{{ __('Bodegas adscritas sin coste adicional') }}</p>
+                        <p class="text-xs text-zinc-400 text-center py-2 bg-zinc-50 border-t border-zinc-100">{{ __('Bodegas adscritas sin coste adicional') }}</p>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
                         @foreach(['Todo del plan Bodega', 'Alta y gestión de bodegas adscritas', 'Panel de supervisión centralizado', 'Alertas automáticas de incumplimiento', 'Informes consolidados por denominación', 'Firma electrónica SHA-256', 'API para integración con sistemas actuales', 'Account manager dedicado', 'SLA 99,9% uptime garantizado'] as $feature)
                         <li class="flex items-start gap-2.5">
-                            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-agro-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
                             <span class="text-zinc-700">{{ $feature }}</span>
                         </li>
                         @endforeach
                     </ul>
-                    <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full text-center px-6 py-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition-all duration-300 font-semibold">
+                    <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full text-center px-6 py-4 rounded-xl bg-agro-700 hover:bg-agro-600 text-white transition-colors duration-200 font-semibold">
                         <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                         Hablar por WhatsApp
                     </a>
-                    <a href="mailto:info@agro365.es?subject=Consulta%20Denominaci%C3%B3n%20de%20Origen%20Agro365" class="flex items-center justify-center gap-2 w-full text-center px-6 py-3 rounded-xl border border-amber-300 text-amber-800 hover:bg-amber-50 transition-all duration-300 font-medium text-sm mt-2">
+                    <a href="mailto:info@agro365.es?subject=Consulta%20Denominaci%C3%B3n%20de%20Origen%20Agro365" class="flex items-center justify-center gap-2 w-full text-center px-6 py-3 rounded-xl border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors duration-200 font-medium text-sm mt-2">
                         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         Enviar un email
                     </a>
@@ -1320,18 +1076,18 @@
 
             <!-- Notas explicativas -->
             <div class="mt-10 max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
-                <div class="text-center p-5 bg-[var(--color-agro-green-bg)] rounded-2xl border border-[var(--color-agro-green-light)]/30">
+                <div class="text-center p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
                     <p class="text-zinc-700 text-sm">
                         <strong>{{ __('Cómo funciona con viticultores invitados:') }}</strong> la bodega invita a sus proveedores.
                         El viticultor accede en modo <strong>{{ __('básico gratis') }}</strong> o activa el <strong>{{ __('plan completo por 9€/mes') }}</strong>
                         (SIGPAC, teledetección, PAC, facturación...). La bodega no paga por ello — el viticultor decide.
                     </p>
                 </div>
-                <div class="text-center p-5 bg-violet-50 rounded-2xl border border-violet-200">
+                <div class="text-center p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
                     <p class="text-zinc-700 text-sm">
                         <strong>{{ __('¿Eres viticultor y bodega a la vez?') }}</strong> El plan Productor incluye
                         <strong>{{ __('todo el cuaderno de campo más toda la gestión de bodega') }}</strong> en una sola cuenta.
-                        <span class="text-violet-700 font-semibold">{{ __('19€/mes') }}</span> frente a los 28€/mes que costaría contratar los dos planes por separado.
+                        <span class="text-agro-700 font-semibold">{{ __('19€/mes') }}</span> frente a los 28€/mes que costaría contratar los dos planes por separado.
                     </p>
                 </div>
             </div>
@@ -1344,10 +1100,10 @@
 
 
     <!-- FAQ Section (Schema markup para rich snippets en Google) -->
-    <section class="py-20 bg-white">
+    <section id="faq" class="py-20 bg-white">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ __('Preguntas frecuentes') }}</h2>
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Preguntas frecuentes') }}</h2>
                 <p class="text-zinc-500 mt-3">{{ __('Las dudas más habituales antes de empezar') }}</p>
             </div>
             <div class="space-y-3" itemscope itemtype="https://schema.org/FAQPage">
@@ -1413,73 +1169,30 @@
     </section>
 
     <!-- CTA Final -->
-    <section class="py-20 bg-gradient-to-br from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)]">
+    <section class="py-20 bg-agro-800">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 text-white text-sm font-semibold mb-6">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
-                </svg>
-                Básico obligatorio 2027 · Completo 2028
-            </div>
-            <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">
+            <p class="text-agro-300 text-sm font-semibold uppercase tracking-widest mb-5">{{ __('Básico obligatorio 2027 · Completo 2028') }}</p>
+            <h2 class="text-3xl lg:text-5xl font-bold tracking-tight text-white mb-5">
                 La normativa no espera.<br>Tu viñedo tampoco.
             </h2>
-            <p class="text-green-100 text-xl mb-10 max-w-2xl mx-auto">{{ __('Cuaderno básico obligatorio en 2027, completo en 2028.
-                Viticultor básico gratis · Bodega 14€/mes · Productor 19€/mes · DO desde 149€/mes.') }}</p>
-            <div class="flex flex-wrap gap-4 justify-center">
-                <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
-                    🌿 Empezar como Viticultor — Gratis
+            <p class="text-agro-100/90 text-lg mb-10 max-w-2xl mx-auto">{{ __('Viticultor básico gratis · Bodega 14€/mes · Productor 19€/mes · DO desde 149€/mes.') }}</p>
+            <div class="flex flex-wrap gap-3 justify-center">
+                <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-white text-agro-800 hover:bg-agro-50 transition-colors font-semibold text-base shadow-sm">
+                    Empezar gratis
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
                 </a>
-                <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/70 text-white hover:bg-white/10 transition-all font-semibold text-lg">
-                    🍷 Empezar como Bodega — Gratis
-                </a>
-                <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-violet-500 hover:bg-violet-400 text-white transition-all font-semibold text-lg shadow-lg">
-                    🌿🍷 Empezar como Productor — 19€/mes
-                </a>
-                <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/40 text-white/90 hover:bg-white/10 transition-all font-semibold text-lg">
-                    🏛️ Solicitar Demo — DO
+                <a href="https://wa.me/34684217167?text=Hola%2C%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg border border-white/40 text-white hover:bg-white/10 transition-colors font-semibold text-base">
+                    Hablar con nosotros
                 </a>
             </div>
-            <p class="text-green-200/70 text-sm mt-8">{{ __('Sin tarjeta requerida · Configuración en 5 minutos · Soporte en español') }}</p>
+            <p class="text-agro-200/70 text-sm mt-8">{{ __('Sin tarjeta requerida · Configuración en 5 minutos · Soporte en español') }}</p>
         </div>
     </section>
 
     @include('partials.footer-seo')
 
-    <!-- Schema.org LocalBusiness for Footer -->
-    <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "SoftwareApplication",
-        "name": "Agro365",
-        "applicationCategory": "BusinessApplication",
-        "operatingSystem": "Web, iOS, Android",
-        "offers": [
-            {"@@type": "Offer", "name": "Viticultor básico (invitado)", "price": "0", "priceCurrency": "EUR"},
-            {"@@type": "Offer", "name": "Viticultor completo (invitado)", "price": "9.00", "priceCurrency": "EUR"},
-            {"@@type": "Offer", "name": "Viticultor independiente", "price": "14.00", "priceCurrency": "EUR"},
-            {"@@type": "Offer", "name": "Bodega independiente", "price": "14.00", "priceCurrency": "EUR"}
-        ],
-        "provider": {
-            "@@type": "Organization",
-            "name": "Agro365",
-            "url": "{{ url('/') }}",
-            "logo": "{{ asset('images/logo.png') }}",
-            "contactPoint": {
-                "@@type": "ContactPoint",
-                "telephone": "+34-XXX-XXX-XXX",
-                "contactType": "customer service",
-                "email": "info@agro365.es",
-                "areaServed": "ES",
-                "availableLanguage": ["Spanish"]
-            },
-            "address": {
-                "@@type": "PostalAddress",
-                "addressCountry": "ES"
-            }
-        }
-    }
-    </script>
 </body>
 </html>
 
