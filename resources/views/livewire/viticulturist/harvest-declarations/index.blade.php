@@ -209,46 +209,29 @@
     </div>
 
     {{-- Modal: Filtros --}}
-    <x-agro.modal name="harvest-declarations-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'harvest-declarations-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
+    <x-agro.filter-modal
+        name="harvest-declarations-filters"
+        :hasActiveFilters="(bool) ($filterCampaign || $filterStatus)"
+        clearAction="clearFilters"
+    >
+        <div>
+            <x-agro.field-label>{{ __('Campaña') }}</x-agro.field-label>
+            <flux:select wire:model.live="filterCampaign">
+                <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
+                @foreach($campaigns as $c)
+                    <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
+                @endforeach
+            </flux:select>
         </div>
-        <div class="px-6 py-5 space-y-5">
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
-                <flux:select wire:model.live="filterCampaign">
-                    <flux:select.option value="">{{ __('Todas las campañas') }}</flux:select.option>
-                    @foreach($campaigns as $c)
-                        <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Estado') }}</label>
-                <flux:select wire:model.live="filterStatus">
-                    <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
-                    @foreach($statuses as $key => $label)
-                        <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
+        <div>
+            <x-agro.field-label>{{ __('Estado') }}</x-agro.field-label>
+            <flux:select wire:model.live="filterStatus">
+                <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
+                @foreach($statuses as $key => $label)
+                    <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+                @endforeach
+            </flux:select>
         </div>
-        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
-            @if($filterCampaign || $filterStatus)
-                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
-            @else
-                <span></span>
-            @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'harvest-declarations-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
-        </div>
-    </x-agro.modal>
+    </x-agro.filter-modal>
 
 </div>
