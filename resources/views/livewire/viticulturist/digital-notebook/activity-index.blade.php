@@ -316,58 +316,27 @@
     </div>
 
     {{-- Modal Filtros --}}
-    <x-agro.modal name="activity-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'activity-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
+    <x-agro.filter-modal name="activity-filters" :hasActiveFilters="$plotFilter || $campaignFilter" clearAction="clearFilters">
+        <div>
+            <x-agro.field-label>{{ __('Campaña') }}</x-agro.field-label>
+            <flux:select wire:model.live="campaignFilter">
+                <option value="">{{ __('Todas las campañas') }}</option>
+                @foreach($campaigns as $campaign)
+                    <option value="{{ $campaign->id }}">
+                        {{ $campaign->name }} ({{ $campaign->year }}){{ $campaign->active ? ' ★' : '' }}
+                    </option>
+                @endforeach
+            </flux:select>
         </div>
-
-        <div class="px-6 py-5 space-y-5">
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Campaña') }}</label>
-                <flux:select wire:model.live="campaignFilter">
-                    <option value="">{{ __('Todas las campañas') }}</option>
-                    @foreach($campaigns as $campaign)
-                        <option value="{{ $campaign->id }}">
-                            {{ $campaign->name }} ({{ $campaign->year }}){{ $campaign->active ? ' ★' : '' }}
-                        </option>
-                    @endforeach
-                </flux:select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Parcela') }}</label>
-                <flux:select wire:model.live="plotFilter">
-                    <option value="">{{ __('Todas las parcelas') }}</option>
-                    @foreach($plots as $plot)
-                        <option value="{{ $plot->id }}">{{ $plot->name }}</option>
-                    @endforeach
-                </flux:select>
-            </div>
+        <div>
+            <x-agro.field-label>{{ __('Parcela') }}</x-agro.field-label>
+            <flux:select wire:model.live="plotFilter">
+                <option value="">{{ __('Todas las parcelas') }}</option>
+                @foreach($plots as $plot)
+                    <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+                @endforeach
+            </flux:select>
         </div>
-
-        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
-            @if($plotFilter || $campaignFilter)
-                <button
-                    wire:click="clearFilters"
-                    x-on:click="$dispatch('close-modal', 'activity-filters')"
-                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
-                >
-                    {{ __('Limpiar filtros') }}
-                </button>
-            @else
-                <span></span>
-            @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'activity-filters')" variant="primary" size="sm">
-                {{ __('Aplicar') }}
-            </flux:button>
-        </div>
-    </x-agro.modal>
+    </x-agro.filter-modal>
 
 </div>

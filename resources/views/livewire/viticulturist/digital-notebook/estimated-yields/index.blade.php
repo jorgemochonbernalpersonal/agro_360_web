@@ -171,48 +171,24 @@
     @endif
 
     {{-- Modal Filtros --}}
-    <x-agro.modal name="yield-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'yield-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
-        </div>
-
-        <div class="px-6 py-5 space-y-4">
-            <flux:field>
-                <flux:label>{{ __('Campaña') }}</flux:label>
-                <flux:select wire:model.live="selectedCampaign">
-                    <option value="">{{ __('Todas las campañas') }}</option>
-                    @foreach($campaigns as $campaign)
-                        <option value="{{ $campaign->id }}">{{ $campaign->name }} ({{ $campaign->year }})</option>
-                    @endforeach
-                </flux:select>
-            </flux:field>
-            <flux:field>
-                <flux:label>{{ __('Estado') }}</flux:label>
-                <flux:select wire:model.live="filterStatus">
-                    <option value="">{{ __('Todos los estados') }}</option>
-                    <option value="draft">{{ __('Borrador') }}</option>
-                    <option value="confirmed">{{ __('Confirmada') }}</option>
-                </flux:select>
-            </flux:field>
-        </div>
-
-        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'yield-filters')"
-                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                {{ __('Limpiar filtros') }}
-            </button>
-            <flux:button x-on:click="$dispatch('close-modal', 'yield-filters')" variant="primary" size="sm">
-                {{ __('Aplicar') }}
-            </flux:button>
-        </div>
-    </x-agro.modal>
+    <x-agro.filter-modal name="yield-filters" :hasActiveFilters="$selectedCampaign || $filterStatus" clearAction="clearFilters">
+        <flux:field>
+            <flux:label>{{ __('Campaña') }}</flux:label>
+            <flux:select wire:model.live="selectedCampaign">
+                <option value="">{{ __('Todas las campañas') }}</option>
+                @foreach($campaigns as $campaign)
+                    <option value="{{ $campaign->id }}">{{ $campaign->name }} ({{ $campaign->year }})</option>
+                @endforeach
+            </flux:select>
+        </flux:field>
+        <flux:field>
+            <flux:label>{{ __('Estado') }}</flux:label>
+            <flux:select wire:model.live="filterStatus">
+                <option value="">{{ __('Todos los estados') }}</option>
+                <option value="draft">{{ __('Borrador') }}</option>
+                <option value="confirmed">{{ __('Confirmada') }}</option>
+            </flux:select>
+        </flux:field>
+    </x-agro.filter-modal>
 
 </div>
