@@ -135,49 +135,29 @@
     @endif
 
     {{-- Modal Filtros --}}
-    <x-agro.modal name="pest-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'pest-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
+    <x-agro.filter-modal
+        name="pest-filters"
+        :hasActiveFilters="$typeFilter !== 'all' || $showOnlyRisk"
+        clearAction="clearFilters"
+    >
+        <x-agro.filter-select :label="__('Tipo')" wire:model.live="typeFilter" data-cy="pest-type-filter">
+            <flux:select.option value="all">{{ __('Todos los tipos') }}</flux:select.option>
+            <flux:select.option value="pest">{{ __('Solo Plagas') }}</flux:select.option>
+            <flux:select.option value="disease">{{ __('Solo Enfermedades') }}</flux:select.option>
+        </x-agro.filter-select>
+        <div class="flex items-center gap-3">
+            <input
+                type="checkbox"
+                id="showOnlyRisk"
+                wire:model.live="showOnlyRisk"
+                data-cy="pest-risk-filter"
+                class="rounded border-zinc-300 text-agro-600 focus:ring-agro-500"
+            />
+            <label for="showOnlyRisk" class="text-sm font-medium text-zinc-700 cursor-pointer">
+                {{ __('Solo en riesgo ahora') }}
+                <span class="text-xs text-zinc-400 font-normal block">{{ __('Mes actual:') }} {{ now()->translatedFormat('F') }}</span>
+            </label>
         </div>
-
-        <div class="px-6 py-5 space-y-5">
-            <x-agro.filter-select :label="__('Tipo')" wire:model.live="typeFilter" data-cy="pest-type-filter">
-                <flux:select.option value="all">{{ __('Todos los tipos') }}</flux:select.option>
-                <flux:select.option value="pest">{{ __('Solo Plagas') }}</flux:select.option>
-                <flux:select.option value="disease">{{ __('Solo Enfermedades') }}</flux:select.option>
-            </x-agro.filter-select>
-            <div class="flex items-center gap-3">
-                <input
-                    type="checkbox"
-                    id="showOnlyRisk"
-                    wire:model.live="showOnlyRisk"
-                    data-cy="pest-risk-filter"
-                    class="rounded border-zinc-300 text-agro-600 focus:ring-agro-500"
-                />
-                <label for="showOnlyRisk" class="text-sm font-medium text-zinc-700 cursor-pointer">
-                    {{ __('Solo en riesgo ahora') }}
-                    <span class="text-xs text-zinc-400 font-normal block">{{ __('Mes actual:') }} {{ now()->translatedFormat('F') }}</span>
-                </label>
-            </div>
-        </div>
-
-        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'pest-filters')"
-                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                {{ __('Limpiar filtros') }}
-            </button>
-            <flux:button x-on:click="$dispatch('close-modal', 'pest-filters')" variant="primary" size="sm">
-                {{ __('Aplicar') }}
-            </flux:button>
-        </div>
-    </x-agro.modal>
+    </x-agro.filter-modal>
 
 </div>

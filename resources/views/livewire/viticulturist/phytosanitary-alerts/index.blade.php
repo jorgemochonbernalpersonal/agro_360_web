@@ -243,55 +243,29 @@
     </div>
 
     {{-- Modal: Filtros --}}
-    <x-agro.modal name="phyto-alerts-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'phyto-alerts-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
+    <x-agro.filter-modal
+        name="phyto-alerts-filters"
+        :hasActiveFilters="$filterAlertType || $filterSeverity"
+        clearAction="clearFilters"
+    >
+        <div>
+            <x-agro.field-label>{{ __('Tipo de Alerta') }}</x-agro.field-label>
+            <flux:select wire:model.live="filterAlertType">
+                <option value="">{{ __('Todos los tipos') }}</option>
+                @foreach ($alertTypes as $key => $label)
+                    <option value="{{ $key }}">{{ $label }}</option>
+                @endforeach
+            </flux:select>
         </div>
-
-        <div class="px-6 py-5 space-y-5">
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de Alerta') }}</label>
-                <flux:select wire:model.live="filterAlertType">
-                    <option value="">{{ __('Todos los tipos') }}</option>
-                    @foreach ($alertTypes as $key => $label)
-                        <option value="{{ $key }}">{{ $label }}</option>
-                    @endforeach
-                </flux:select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Severidad') }}</label>
-                <flux:select wire:model.live="filterSeverity">
-                    <option value="">{{ __('Todas las severidades') }}</option>
-                    @foreach ($severities as $key => $label)
-                        <option value="{{ $key }}">{{ $label }}</option>
-                    @endforeach
-                </flux:select>
-            </div>
+        <div>
+            <x-agro.field-label>{{ __('Severidad') }}</x-agro.field-label>
+            <flux:select wire:model.live="filterSeverity">
+                <option value="">{{ __('Todas las severidades') }}</option>
+                @foreach ($severities as $key => $label)
+                    <option value="{{ $key }}">{{ $label }}</option>
+                @endforeach
+            </flux:select>
         </div>
-
-        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
-            @if ($filterAlertType || $filterSeverity)
-                <button
-                    wire:click="clearFilters"
-                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
-                >
-                    {{ __('Limpiar filtros') }}
-                </button>
-            @else
-                <span></span>
-            @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'phyto-alerts-filters')" variant="primary" size="sm">
-                {{ __('Aplicar') }}
-            </flux:button>
-        </div>
-    </x-agro.modal>
+    </x-agro.filter-modal>
 
 </div>
