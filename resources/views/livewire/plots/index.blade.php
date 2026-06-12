@@ -374,69 +374,43 @@
     </div>
 
     {{-- Modal: Filtros --}}
-    <x-agro.modal name="plot-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'plot-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
+    <x-agro.filter-modal
+        name="plot-filters"
+        :hasActiveFilters="(bool) ($filterAutonomousCommunity || $filterProvince || $filterMunicipality)"
+        clearAction="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
+    >
+        <div>
+            <x-agro.field-label>{{ __('Comunidad Autónoma') }}</x-agro.field-label>
+            <flux:select wire:model.live="filterAutonomousCommunity">
+                <option value="">{{ __('Todas las comunidades') }}</option>
+                @foreach ($this->autonomousCommunities as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </flux:select>
         </div>
-
-        <div class="px-6 py-5 space-y-5">
+        @if ($filterAutonomousCommunity)
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Comunidad Autónoma') }}</label>
-                <flux:select wire:model.live="filterAutonomousCommunity">
-                    <option value="">{{ __('Todas las comunidades') }}</option>
-                    @foreach ($this->autonomousCommunities as $id => $name)
+                <x-agro.field-label>{{ __('Provincia') }}</x-agro.field-label>
+                <flux:select wire:model.live="filterProvince">
+                    <option value="">{{ __('Todas las provincias') }}</option>
+                    @foreach ($this->provinces as $id => $name)
                         <option value="{{ $id }}">{{ $name }}</option>
                     @endforeach
                 </flux:select>
             </div>
-            @if ($filterAutonomousCommunity)
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Provincia') }}</label>
-                    <flux:select wire:model.live="filterProvince">
-                        <option value="">{{ __('Todas las provincias') }}</option>
-                        @foreach ($this->provinces as $id => $name)
-                            <option value="{{ $id }}">{{ $name }}</option>
-                        @endforeach
-                    </flux:select>
-                </div>
-            @endif
-            @if ($filterProvince)
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Municipio') }}</label>
-                    <flux:select wire:model.live="filterMunicipality">
-                        <option value="">{{ __('Todos los municipios') }}</option>
-                        @foreach ($this->municipalities as $id => $name)
-                            <option value="{{ $id }}">{{ $name }}</option>
-                        @endforeach
-                    </flux:select>
-                </div>
-            @endif
-        </div>
-
-        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
-            @if ($filterAutonomousCommunity || $filterProvince || $filterMunicipality)
-                <button
-                    wire:click="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
-                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
-                >
-                    {{ __('Limpiar filtros') }}
-                </button>
-            @else
-                <span></span>
-            @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'plot-filters')" variant="primary">
-                {{ __('Aplicar') }}
-            </flux:button>
-        </div>
-    </x-agro.modal>
+        @endif
+        @if ($filterProvince)
+            <div>
+                <x-agro.field-label>{{ __('Municipio') }}</x-agro.field-label>
+                <flux:select wire:model.live="filterMunicipality">
+                    <option value="">{{ __('Todos los municipios') }}</option>
+                    @foreach ($this->municipalities as $id => $name)
+                        <option value="{{ $id }}">{{ $name }}</option>
+                    @endforeach
+                </flux:select>
+            </div>
+        @endif
+    </x-agro.filter-modal>
 
 
     {{-- Modal: Historial de Auditoría --}}

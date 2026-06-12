@@ -25,6 +25,25 @@
     --color-agro-800: #1a3a0e;
     --color-agro-900: #0f2508;
 
+    /* ─────────────────────────────────────────────────────────────────────
+       Convención de uso de color (derivada del rediseño de la landing).
+       Usar SIEMPRE la paleta agro-*; evitar green-*/emerald-* salvo estados
+       semánticos (éxito/alerta). Referencia: welcome.blade.php
+
+       · Botón primario .......... bg-agro-700 text-white hover:bg-agro-600
+       · Botón secundario ........ bg-white border-zinc-300
+                                    hover:border-agro-500 hover:text-agro-700
+       · Links / texto de acento . text-agro-600
+       · Badges / chips / icon-bg  bg-agro-50 text-agro-700
+       · Iconos decorativos ...... text-agro-500
+       · Borde de acento en card . border-agro-400
+       · Texto principal ......... text-zinc-900   secundario: text-zinc-600
+       · Radios .................. rounded-lg (botones) · rounded-xl/2xl (cards)
+
+       NOTA: el hover del botón primario ACLARA (700→600), no oscurece;
+       agro-800 (#1a3a0e) es casi negro y solo para texto/CTA muy oscuro.
+       ───────────────────────────────────────────────────────────────────── */
+
     /* Flux UI accent → green automatically */
     --color-accent: var(--color-agro-500);
     --color-accent-content: var(--color-agro-600);
