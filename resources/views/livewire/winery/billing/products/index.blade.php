@@ -445,44 +445,29 @@
     @endif
 
     {{-- Modal: Filtros --}}
-    <x-agro.modal name="products-invoice-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                    <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                </div>
-                <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
+    <x-agro.filter-modal name="products-invoice-filters" :hasActiveFilters="$filterCount > 0" clearAction="clearFilters">
+        <x-agro.filter-select :label="__('Estado de factura')" wire:model.live="filterStatus" :placeholder="__('Todos')">
+            <flux:select.option value="draft">{{ __('Borrador') }}</flux:select.option>
+            <flux:select.option value="sent">{{ __('Emitida') }}</flux:select.option>
+            <flux:select.option value="cancelled">{{ __('Cancelada') }}</flux:select.option>
+        </x-agro.filter-select>
+        <x-agro.filter-select :label="__('Estado de cobro')" wire:model.live="filterPaymentStatus" :placeholder="__('Todos')">
+            <flux:select.option value="unpaid">{{ __('Pendiente') }}</flux:select.option>
+            <flux:select.option value="partial">{{ __('Parcial') }}</flux:select.option>
+            <flux:select.option value="paid">{{ __('Cobrada') }}</flux:select.option>
+        </x-agro.filter-select>
+        <x-agro.filter-select :label="__('Estado de entrega')" wire:model.live="filterDeliveryStatus" :placeholder="__('Todos')">
+            <flux:select.option value="pending">{{ __('Pendiente') }}</flux:select.option>
+            <flux:select.option value="delivered">{{ __('Entregada') }}</flux:select.option>
+            <flux:select.option value="cancelled">{{ __('Cancelada') }}</flux:select.option>
+        </x-agro.filter-select>
+        <div class="flex items-center justify-between py-2 px-3 bg-pink-50 rounded-xl border border-pink-100">
+            <div class="flex items-center gap-2">
+                <flux:icon icon="gift" class="size-4 text-pink-500" />
+                <span class="text-sm font-medium text-pink-700">{{ __('Solo facturas regalo') }}</span>
             </div>
-            <flux:button x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="ghost" size="sm" icon="x-mark" />
+            <flux:checkbox wire:model.live="filterGift" />
         </div>
-        <div class="px-6 py-5 space-y-5">
-            <x-agro.filter-select :label="__('Estado de factura')" wire:model.live="filterStatus" :placeholder="__('Todos')">
-                <flux:select.option value="draft">{{ __('Borrador') }}</flux:select.option>
-                <flux:select.option value="sent">{{ __('Emitida') }}</flux:select.option>
-                <flux:select.option value="cancelled">{{ __('Cancelada') }}</flux:select.option>
-            </x-agro.filter-select>
-            <x-agro.filter-select :label="__('Estado de cobro')" wire:model.live="filterPaymentStatus" :placeholder="__('Todos')">
-                <flux:select.option value="unpaid">{{ __('Pendiente') }}</flux:select.option>
-                <flux:select.option value="partial">{{ __('Parcial') }}</flux:select.option>
-                <flux:select.option value="paid">{{ __('Cobrada') }}</flux:select.option>
-            </x-agro.filter-select>
-            <x-agro.filter-select :label="__('Estado de entrega')" wire:model.live="filterDeliveryStatus" :placeholder="__('Todos')">
-                <flux:select.option value="pending">{{ __('Pendiente') }}</flux:select.option>
-                <flux:select.option value="delivered">{{ __('Entregada') }}</flux:select.option>
-                <flux:select.option value="cancelled">{{ __('Cancelada') }}</flux:select.option>
-            </x-agro.filter-select>
-            <div class="flex items-center justify-between py-2 px-3 bg-pink-50 rounded-xl border border-pink-100">
-                <div class="flex items-center gap-2">
-                    <flux:icon icon="gift" class="size-4 text-pink-500" />
-                    <span class="text-sm font-medium text-pink-700">{{ __('Solo facturas regalo') }}</span>
-                </div>
-                <flux:checkbox wire:model.live="filterGift" />
-            </div>
-        </div>
-        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <flux:button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="ghost" size="sm">{{ __('Limpiar filtros') }}</flux:button>
-            <flux:button x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="primary" size="sm">{{ __('Aplicar') }}</flux:button>
-        </div>
-    </x-agro.modal>
+    </x-agro.filter-modal>
 
 </div>

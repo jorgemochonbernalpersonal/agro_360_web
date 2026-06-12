@@ -201,31 +201,15 @@
     @endif
 
     {{-- Modal Filtros --}}
-    <x-agro.modal name="client-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'client-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
-        </div>
-
-        <div class="px-6 py-5">
-            <x-agro.filter-select :label="__('Tipo de cliente')" wire:model.live="filterType" :placeholder="__('Todos los tipos')">
-                <flux:select.option value="individual">{{ __('Particular') }}</flux:select.option>
-                <flux:select.option value="company">{{ __('Empresa') }}</flux:select.option>
-            </x-agro.filter-select>
-        </div>
-
-        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'client-filters')"
-                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">{{ __('Limpiar filtros') }}</button>
-            <flux:button x-on:click="$dispatch('close-modal', 'client-filters')" variant="primary" size="sm">{{ __('Aplicar') }}</flux:button>
-        </div>
-    </x-agro.modal>
+    <x-agro.filter-modal
+        name="client-filters"
+        :hasActiveFilters="(bool) $filterType"
+        clearAction="clearFilters"
+    >
+        <x-agro.filter-select :label="__('Tipo de cliente')" wire:model.live="filterType" :placeholder="__('Todos los tipos')">
+            <flux:select.option value="individual">{{ __('Particular') }}</flux:select.option>
+            <flux:select.option value="company">{{ __('Empresa') }}</flux:select.option>
+        </x-agro.filter-select>
+    </x-agro.filter-modal>
 
 </div>
