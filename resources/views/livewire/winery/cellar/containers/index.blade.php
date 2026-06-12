@@ -220,78 +220,52 @@
     @endif
 
     {{-- Modal: Filtros --}}
-    <x-agro.modal name="container-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
+    <x-agro.filter-modal name="container-filters" :hasActiveFilters="$filterCount > 0" clearAction="clearFilters">
+
+        <div>
+            <x-agro.field-label>{{ __('Tipo de contenedor') }}</x-agro.field-label>
+            <flux:select wire:model.live="typeFilter">
+                <option value="">{{ __('Todos los tipos') }}</option>
+                @foreach($types as $type)
+                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                @endforeach
+            </flux:select>
         </div>
 
-        <div class="px-6 py-5 space-y-5">
+        <div>
+            <x-agro.field-label>{{ __('Ocupación') }}</x-agro.field-label>
+            <flux:select wire:model.live="occupancyFilter">
+                <option value="">{{ __('Cualquier estado') }}</option>
+                <option value="empty">{{ __('Vacíos') }}</option>
+                <option value="in_use">{{ __('En uso') }}</option>
+                <option value="full">{{ __('Llenos') }}</option>
+            </flux:select>
+        </div>
 
+        @if($rooms->isNotEmpty())
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de contenedor') }}</label>
-                <flux:select wire:model.live="typeFilter">
-                    <option value="">{{ __('Todos los tipos') }}</option>
-                    @foreach($types as $type)
-                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                <x-agro.field-label>{{ __('Sala de bodega') }}</x-agro.field-label>
+                <flux:select wire:model.live="roomFilter">
+                    <option value="">{{ __('Todas las salas') }}</option>
+                    @foreach($rooms as $room)
+                        <option value="{{ $room->id }}">{{ $room->name }}</option>
                     @endforeach
                 </flux:select>
             </div>
+        @endif
 
+        @if($materials->isNotEmpty())
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Ocupación') }}</label>
-                <flux:select wire:model.live="occupancyFilter">
-                    <option value="">{{ __('Cualquier estado') }}</option>
-                    <option value="empty">{{ __('Vacíos') }}</option>
-                    <option value="in_use">{{ __('En uso') }}</option>
-                    <option value="full">{{ __('Llenos') }}</option>
+                <x-agro.field-label>{{ __('Material') }}</x-agro.field-label>
+                <flux:select wire:model.live="materialFilter">
+                    <option value="">{{ __('Todos los materiales') }}</option>
+                    @foreach($materials as $material)
+                        <option value="{{ $material->id }}">{{ __($material->name) }}</option>
+                    @endforeach
                 </flux:select>
             </div>
+        @endif
 
-            @if($rooms->isNotEmpty())
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Sala de bodega') }}</label>
-                    <flux:select wire:model.live="roomFilter">
-                        <option value="">{{ __('Todas las salas') }}</option>
-                        @foreach($rooms as $room)
-                            <option value="{{ $room->id }}">{{ $room->name }}</option>
-                        @endforeach
-                    </flux:select>
-                </div>
-            @endif
-
-            @if($materials->isNotEmpty())
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Material') }}</label>
-                    <flux:select wire:model.live="materialFilter">
-                        <option value="">{{ __('Todos los materiales') }}</option>
-                        @foreach($materials as $material)
-                            <option value="{{ $material->id }}">{{ __($material->name) }}</option>
-                        @endforeach
-                    </flux:select>
-                </div>
-            @endif
-
-        </div>
-
-        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
-            @if($filterCount > 0)
-                <button
-                    wire:click="clearFilters"
-                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
-                >{{ __('Limpiar filtros') }}</button>
-            @else
-                <span></span>
-            @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
-        </div>
-    </x-agro.modal>
+    </x-agro.filter-modal>
 
 </div>

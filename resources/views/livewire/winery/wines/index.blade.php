@@ -171,57 +171,38 @@
     </div>
 
     {{-- Modal Filtros --}}
-    <x-agro.modal name="wine-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-purple-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'wine-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
+    <x-agro.filter-modal
+        name="wine-filters"
+        :hasActiveFilters="$typeFilter || $statusFilter || $vintageFilter"
+        clearAction="clearFilters"
+    >
+        <div>
+            <x-agro.field-label>{{ __('Tipo de vino') }}</x-agro.field-label>
+            <flux:select wire:model.live="typeFilter">
+                <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
+                @foreach($types as $key => $label)
+                    <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+                @endforeach
+            </flux:select>
         </div>
-
-        <div class="px-6 py-5 space-y-5">
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Tipo de vino') }}</label>
-                <flux:select wire:model.live="typeFilter">
-                    <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
-                    @foreach($types as $key => $label)
-                        <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Estado') }}</label>
-                <flux:select wire:model.live="statusFilter">
-                    <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
-                    @foreach($statuses as $key => $label)
-                        <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Añada') }}</label>
-                <flux:select wire:model.live="vintageFilter">
-                    <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
-                    @foreach($vintages as $v)
-                        <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
+        <div>
+            <x-agro.field-label>{{ __('Estado') }}</x-agro.field-label>
+            <flux:select wire:model.live="statusFilter">
+                <flux:select.option value="">{{ __('Todos los estados') }}</flux:select.option>
+                @foreach($statuses as $key => $label)
+                    <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+                @endforeach
+            </flux:select>
         </div>
-
-        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
-            @if($typeFilter || $statusFilter || $vintageFilter)
-                <flux:button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'wine-filters')" variant="ghost" size="sm">{{ __('Limpiar filtros') }}</flux:button>
-            @else
-                <span></span>
-            @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'wine-filters')" variant="primary" size="sm">{{ __('Aplicar') }}</flux:button>
+        <div>
+            <x-agro.field-label>{{ __('Añada') }}</x-agro.field-label>
+            <flux:select wire:model.live="vintageFilter">
+                <flux:select.option value="">{{ __('Todas las añadas') }}</flux:select.option>
+                @foreach($vintages as $v)
+                    <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
+                @endforeach
+            </flux:select>
         </div>
-    </x-agro.modal>
+    </x-agro.filter-modal>
 
 </div>
