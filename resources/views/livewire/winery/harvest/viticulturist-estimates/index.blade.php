@@ -213,67 +213,47 @@
     </div>
 
     {{-- Modal Filtros --}}
-    <x-agro.modal name="vitic-estimates-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'vitic-estimates-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
+    <x-agro.filter-modal
+        name="vitic-estimates-filters"
+        :hasActiveFilters="$filterCount > 0"
+        clearAction="$set('search', ''); $set('viticulturistFilter', ''); $set('vintageFilter', ''); $set('roundFilter', ''); $set('statusFilter', '')"
+    >
+        <div>
+            <x-agro.field-label>{{ __('Viticultor') }}</x-agro.field-label>
+            <flux:select wire:model.live="viticulturistFilter">
+                <option value="">{{ __('Todos') }}</option>
+                @foreach($linkedViticulturists as $v)
+                    <option value="{{ $v->id }}">{{ $v->name }}</option>
+                @endforeach
+            </flux:select>
         </div>
-
-        <div class="px-6 py-5 space-y-5">
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Viticultor') }}</label>
-                <flux:select wire:model.live="viticulturistFilter">
-                    <option value="">{{ __('Todos') }}</option>
-                    @foreach($linkedViticulturists as $v)
-                        <option value="{{ $v->id }}">{{ $v->name }}</option>
-                    @endforeach
-                </flux:select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Añada') }}</label>
-                <flux:select wire:model.live="vintageFilter">
-                    <option value="">{{ __('Todas') }}</option>
-                    @foreach($vintages as $year)
-                        <option value="{{ $year }}">{{ $year }}</option>
-                    @endforeach
-                </flux:select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Ronda') }}</label>
-                <flux:select wire:model.live="roundFilter">
-                    <option value="">{{ __('Todas las rondas') }}</option>
-                    @foreach($rounds as $num => $label)
-                        <option value="{{ $num }}">{{ $label }}</option>
-                    @endforeach
-                </flux:select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">{{ __('Estado') }}</label>
-                <flux:select wire:model.live="statusFilter">
-                    <option value="">{{ __('Todos') }}</option>
-                    <option value="confirmed">{{ __('Confirmado') }}</option>
-                    <option value="draft">{{ __('Borrador') }}</option>
-                    <option value="archived">{{ __('Archivado') }}</option>
-                </flux:select>
-            </div>
+        <div>
+            <x-agro.field-label>{{ __('Añada') }}</x-agro.field-label>
+            <flux:select wire:model.live="vintageFilter">
+                <option value="">{{ __('Todas') }}</option>
+                @foreach($vintages as $year)
+                    <option value="{{ $year }}">{{ $year }}</option>
+                @endforeach
+            </flux:select>
         </div>
-
-        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
-            @if($filterCount > 0)
-                <button wire:click="$set('search', ''); $set('viticulturistFilter', ''); $set('vintageFilter', ''); $set('roundFilter', ''); $set('statusFilter', '')"
-                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">{{ __('Limpiar filtros') }}</button>
-            @else
-                <span></span>
-            @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'vitic-estimates-filters')" variant="primary">{{ __('Aplicar') }}</flux:button>
+        <div>
+            <x-agro.field-label>{{ __('Ronda') }}</x-agro.field-label>
+            <flux:select wire:model.live="roundFilter">
+                <option value="">{{ __('Todas las rondas') }}</option>
+                @foreach($rounds as $num => $label)
+                    <option value="{{ $num }}">{{ $label }}</option>
+                @endforeach
+            </flux:select>
         </div>
-    </x-agro.modal>
+        <div>
+            <x-agro.field-label>{{ __('Estado') }}</x-agro.field-label>
+            <flux:select wire:model.live="statusFilter">
+                <option value="">{{ __('Todos') }}</option>
+                <option value="confirmed">{{ __('Confirmado') }}</option>
+                <option value="draft">{{ __('Borrador') }}</option>
+                <option value="archived">{{ __('Archivado') }}</option>
+            </flux:select>
+        </div>
+    </x-agro.filter-modal>
 
 </div>
