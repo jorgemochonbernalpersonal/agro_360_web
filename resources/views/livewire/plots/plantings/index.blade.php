@@ -434,56 +434,34 @@
     </x-agro.modal>
 
     {{-- Modal Filtros --}}
-    <x-agro.modal name="planting-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'planting-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
-        </div>
+    <x-agro.filter-modal
+        name="planting-filters"
+        :hasActiveFilters="(bool) ($cropType || $status || $year)"
+        clearAction="clearFilters"
+    >
+        {{-- Tipo de cultivo (solo viticultor/producer) --}}
+        @if(!$wineryOnly)
+        <x-agro.filter-select :label="__('Tipo de cultivo')" wire:model.live="cropType" :placeholder="__('Todos los cultivos')">
+            @foreach(\App\Models\GrapeVariety::CROP_TYPES as $key => $label)
+                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+            @endforeach
+        </x-agro.filter-select>
+        @endif
 
-        <div class="px-6 py-5 space-y-5">
+        {{-- Estado operativo --}}
+        <x-agro.filter-select :label="__('Estado operativo')" wire:model.live="status" :placeholder="__('Todos los estados')">
+            <flux:select.option value="active">{{ __('Activa') }}</flux:select.option>
+            <flux:select.option value="removed">{{ __('Arrancada') }}</flux:select.option>
+            <flux:select.option value="experimental">{{ __('Experimental') }}</flux:select.option>
+            <flux:select.option value="replanting">{{ __('Replantación') }}</flux:select.option>
+        </x-agro.filter-select>
 
-            {{-- Tipo de cultivo (solo viticultor/producer) --}}
-            @if(!$wineryOnly)
-            <x-agro.filter-select :label="__('Tipo de cultivo')" wire:model.live="cropType" :placeholder="__('Todos los cultivos')">
-                @foreach(\App\Models\GrapeVariety::CROP_TYPES as $key => $label)
-                    <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
-                @endforeach
-            </x-agro.filter-select>
-            @endif
-
-            {{-- Estado operativo --}}
-            <x-agro.filter-select :label="__('Estado operativo')" wire:model.live="status" :placeholder="__('Todos los estados')">
-                <flux:select.option value="active">{{ __('Activa') }}</flux:select.option>
-                <flux:select.option value="removed">{{ __('Arrancada') }}</flux:select.option>
-                <flux:select.option value="experimental">{{ __('Experimental') }}</flux:select.option>
-                <flux:select.option value="replanting">{{ __('Replantación') }}</flux:select.option>
-            </x-agro.filter-select>
-
-            {{-- Año de plantación --}}
-            <x-agro.filter-select :label="__('Año de plantación')" wire:model.live="year" :placeholder="__('Todos los años')">
-                @foreach($years as $yearOption)
-                    <flux:select.option value="{{ $yearOption }}">{{ $yearOption }}</flux:select.option>
-                @endforeach
-            </x-agro.filter-select>
-
-        </div>
-
-        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'planting-filters')"
-                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                {{ __('Limpiar filtros') }}
-            </button>
-            <flux:button x-on:click="$dispatch('close-modal', 'planting-filters')" variant="primary" size="sm">
-                {{ __('Aplicar') }}
-            </flux:button>
-        </div>
-    </x-agro.modal>
+        {{-- Año de plantación --}}
+        <x-agro.filter-select :label="__('Año de plantación')" wire:model.live="year" :placeholder="__('Todos los años')">
+            @foreach($years as $yearOption)
+                <flux:select.option value="{{ $yearOption }}">{{ $yearOption }}</flux:select.option>
+            @endforeach
+        </x-agro.filter-select>
+    </x-agro.filter-modal>
 
 </div>
