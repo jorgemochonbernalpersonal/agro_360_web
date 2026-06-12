@@ -8,6 +8,27 @@ Muchas vistas escriben HTML/Tailwind inline en lugar de usar los componentes exi
 
 ---
 
+## Progreso
+
+### ✅ Hecho (2026-06-12)
+
+- **Regla de color documentada** en `resources/css/app.css` (derivada del
+  rediseño de la landing). Cierra la **Fase 1**.
+- **Componente nuevo `agro/filter-modal`** — encapsula header (icono+título+X),
+  cuerpo y footer (limpiar+aplicar) del modal de filtros.
+- **Migración completa de los modales de filtros**: 38 modales en 37 vistas
+  pasados a `agro/filter-modal` (viticulturist, winery, clientes, SIGPAC,
+  plantaciones). Ya **no queda ningún modal de filtros inline** en la app.
+  Balance: −830 líneas netas. Labels crudos → `agro/field-label`.
+  Normalización: header `agro-50/700`, footer plano, icono unificado a verde.
+
+### ⏳ Pendiente
+
+- **Fase 2** — migrar inline styles de dashboards (ver abajo).
+- **Fase 3** — limpiar componentes huérfanos (ver abajo).
+
+---
+
 ## Componentes existentes (`resources/views/components/agro/`)
 
 | Componente | Usos aprox. | Notas |
@@ -127,29 +148,35 @@ Muchas vistas evitan los componentes y escriben directamente:
 
 ## Plan de acción propuesto
 
-### Fase 1 — Regla de color (sin tocar código)
-Documentar en `app.css` qué shade usar para qué:
-- `agro-600` → color de texto activo / links
-- `agro-700` → botones primarios (bg)
-- `agro-800` → hover de botones / CTA oscuro
-- `agro-50/100` → fondos de iconos / badges
+### Fase 1 — Regla de color (sin tocar código) ✅ HECHO
+Documentado en `resources/css/app.css`. La regla final (derivada de la landing)
+difiere del borrador inicial en el hover del botón primario: **aclara**
+(700→600), no oscurece a 800 (que es casi negro). Convención:
+- `agro-700` bg botón primario · `hover:agro-600`
+- `agro-600` → links / texto de acento
+- `agro-50 + text-agro-700` → fondos de icono / badges (antes se usaba 100/600)
+- `agro-500` → iconos decorativos · `agro-400` → borde de acento en card
 - Prohibir `green-*` y `emerald-*` fuera de estados semánticos
 
-### Fase 2 — Migrar inline styles recurrentes
+### Fase 2 — Migrar inline styles recurrentes ⏳ PENDIENTE
 Empezar por los archivos con más usos incorrectos:
 1. `viticulturist/dashboard.blade.php`
 2. `winery/wines/show.blade.php`
 3. Admin y supervisor (menor impacto, menos vistas)
 
-### Fase 3 — Limpiar huérfanos
-- Eliminar el `page-header` duplicado
+### Fase 3 — Limpiar huérfanos ⏳ PENDIENTE
+- Eliminar el `page-header` duplicado (`components/page-header.blade.php` vs
+  `components/agro/page-header.blade.php`)
 - Deprecar `feature-card` e `info-card` si no se usan
+
+### (Extra, no estaba en el plan) — Modal de filtros ✅ HECHO
+Componentizado en `agro/filter-modal` y propagado a las 37 vistas. Ver Progreso.
 
 ---
 
 ## Pendiente de explorar
 
-- [ ] Leer `components/agro/card.blade.php` — entender props y variantes disponibles
+- [x] Leer `components/agro/card.blade.php` — props: `padding`, `color`, `title`, slots `header`/`footer`. El `color` tiene su propio match con `green-*` raw (a migrar)
 - [ ] Leer `components/agro/stat-card.blade.php` — revisar el colorMap interno
 - [ ] Leer `layouts/app.blade.php` — ver estructura del área autenticada
 - [ ] Revisar `viticulturist/dashboard.blade.php` — mayor fuente de estilos inline
