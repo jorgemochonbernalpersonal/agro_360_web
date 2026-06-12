@@ -202,46 +202,28 @@
         @endif
 
         {{-- Modal Filtros --}}
-        <x-agro.modal name="almacen-inv-filters" maxWidth="sm">
-            <div class="px-6 py-4 border-b border-zinc-200">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                            <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                        </div>
-                        <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                    </div>
-                    <flux:button x-on:click="$dispatch('close-modal', 'almacen-inv-filters')" variant="ghost" size="sm" icon="x-mark" />
-                </div>
-            </div>
-            <div class="px-6 py-5 space-y-5">
-                <x-agro.filter-select :label="__('Producto')" wire:model.live="inv_product" :placeholder="__('Todos los productos')">
-                    @foreach($inv_products as $product)
-                        <flux:select.option value="{{ $product->id }}">{{ $product->name }}</flux:select.option>
-                    @endforeach
-                </x-agro.filter-select>
-                <x-agro.filter-select :label="__('Almacén')" wire:model.live="inv_warehouse" :placeholder="__('Todos los almacenes')">
-                    @foreach($inv_warehouses as $wh)
-                        <flux:select.option value="{{ $wh->id }}">{{ $wh->name }}</flux:select.option>
-                    @endforeach
-                </x-agro.filter-select>
-                <x-agro.filter-select :label="__('Estado')" wire:model.live="inv_status">
-                    <flux:select.option value="all">{{ __('Todos') }}</flux:select.option>
-                    <flux:select.option value="low_stock">{{ __('Stock bajo') }}</flux:select.option>
-                    <flux:select.option value="expiring">{{ __('Próximos a caducar') }}</flux:select.option>
-                    <flux:select.option value="expired">{{ __('Caducados') }}</flux:select.option>
-                </x-agro.filter-select>
-            </div>
-            <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-                <button wire:click="clearInventoryFilters" x-on:click="$dispatch('close-modal', 'almacen-inv-filters')"
-                        class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                    {{ __('Limpiar filtros') }}
-                </button>
-                <flux:button x-on:click="$dispatch('close-modal', 'almacen-inv-filters')" variant="primary" size="sm">
-                    {{ __('Aplicar') }}
-                </flux:button>
-            </div>
-        </x-agro.modal>
+        <x-agro.filter-modal
+            name="almacen-inv-filters"
+            :hasActiveFilters="$filterCount > 0"
+            clearAction="clearInventoryFilters"
+        >
+            <x-agro.filter-select :label="__('Producto')" wire:model.live="inv_product" :placeholder="__('Todos los productos')">
+                @foreach($inv_products as $product)
+                    <flux:select.option value="{{ $product->id }}">{{ $product->name }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
+            <x-agro.filter-select :label="__('Almacén')" wire:model.live="inv_warehouse" :placeholder="__('Todos los almacenes')">
+                @foreach($inv_warehouses as $wh)
+                    <flux:select.option value="{{ $wh->id }}">{{ $wh->name }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
+            <x-agro.filter-select :label="__('Estado')" wire:model.live="inv_status">
+                <flux:select.option value="all">{{ __('Todos') }}</flux:select.option>
+                <flux:select.option value="low_stock">{{ __('Stock bajo') }}</flux:select.option>
+                <flux:select.option value="expiring">{{ __('Próximos a caducar') }}</flux:select.option>
+                <flux:select.option value="expired">{{ __('Caducados') }}</flux:select.option>
+            </x-agro.filter-select>
+        </x-agro.filter-modal>
 
     {{-- =====================================================
          TAB: INSUMOS
@@ -529,36 +511,18 @@
     @endif
 
     {{-- Modal Filtros Insumos --}}
-    <x-agro.modal name="almacen-sup-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'almacen-sup-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
-        </div>
-        <div class="px-6 py-5 space-y-5">
-            <x-agro.filter-select :label="__('Tipo de insumo')" wire:model.live="sup_type" :placeholder="__('Todos los tipos')">
-                @foreach($supplyTypes as $key => $label)
-                    <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
-                @endforeach
-            </x-agro.filter-select>
-            <flux:checkbox wire:model.live="sup_low" :label="__('Solo stock bajo')" :description="__('Muestra solo insumos por debajo del mínimo')" />
-        </div>
-        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <button wire:click="clearSupplyFilters" x-on:click="$dispatch('close-modal', 'almacen-sup-filters')"
-                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
-                {{ __('Limpiar filtros') }}
-            </button>
-            <flux:button x-on:click="$dispatch('close-modal', 'almacen-sup-filters')" variant="primary" size="sm">
-                {{ __('Aplicar') }}
-            </flux:button>
-        </div>
-    </x-agro.modal>
+    <x-agro.filter-modal
+        name="almacen-sup-filters"
+        :hasActiveFilters="$sup_type || $sup_low"
+        clearAction="clearSupplyFilters"
+    >
+        <x-agro.filter-select :label="__('Tipo de insumo')" wire:model.live="sup_type" :placeholder="__('Todos los tipos')">
+            @foreach($supplyTypes as $key => $label)
+                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+            @endforeach
+        </x-agro.filter-select>
+        <flux:checkbox wire:model.live="sup_low" :label="__('Solo stock bajo')" :description="__('Muestra solo insumos por debajo del mínimo')" />
+    </x-agro.filter-modal>
 
     {{-- Modal Compra --}}
     <x-agro.modal name="supply-purchase" maxWidth="xl">

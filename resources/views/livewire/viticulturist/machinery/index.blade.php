@@ -220,34 +220,18 @@
     @endif
 
     {{-- Modal Filtros --}}
-    <x-agro.modal name="machinery-filters" maxWidth="sm">
-        <div class="px-6 py-4 border-b border-zinc-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
-                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
-                    </div>
-                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Filtros') }}</h3>
-                </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'machinery-filters')" variant="ghost" size="sm" icon="x-mark" />
-            </div>
+    <x-agro.filter-modal
+        name="machinery-filters"
+        :hasActiveFilters="$typeFilter !== ''"
+        clearAction="clearFilters"
+    >
+        <div>
+            <x-agro.filter-select :label="__('Tipo de maquinaria')" wire:model.live="typeFilter" :placeholder="__('Todos los tipos')">
+                @foreach($types as $type)
+                    <flux:select.option value="{{ $type }}">{{ $type }}</flux:select.option>
+                @endforeach
+            </x-agro.filter-select>
         </div>
-
-        <div class="px-6 py-5 space-y-5">
-            <div>
-                <x-agro.filter-select :label="__('Tipo de maquinaria')" wire:model.live="typeFilter" :placeholder="__('Todos los tipos')">
-                    @foreach($types as $type)
-                        <flux:select.option value="{{ $type }}">{{ $type }}</flux:select.option>
-                    @endforeach
-                </x-agro.filter-select>
-            </div>
-        </div>
-
-        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'machinery-filters')"
-                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">{{ __('Limpiar filtros') }}</button>
-            <flux:button x-on:click="$dispatch('close-modal', 'machinery-filters')" variant="primary" size="sm">{{ __('Aplicar') }}</flux:button>
-        </div>
-    </x-agro.modal>
+    </x-agro.filter-modal>
 
 </div>
