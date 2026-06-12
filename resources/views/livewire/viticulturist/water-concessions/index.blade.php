@@ -248,27 +248,16 @@
     </div>
 
     {{-- Modal de filtros --}}
-    <x-agro.modal name="water-concessions-filters" :title="__('Filtrar Concesiones')">
-        <div class="space-y-4">
-            <flux:field>
-                <flux:label>{{ __('Tipo de concesión') }}</flux:label>
-                <flux:select wire:model.live="filterConcessionType">
-                    <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
-                    @foreach($concessionTypes as $key => $label)
-                        <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </flux:field>
-        </div>
-
-        <x-slot:footer>
-            <flux:button wire:click="clearFilters" variant="ghost" x-on:click="$dispatch('close-modal', 'water-concessions-filters')">
-                {{ __('Limpiar filtros') }}
-            </flux:button>
-            <flux:button variant="primary" x-on:click="$dispatch('close-modal', 'water-concessions-filters')">
-                {{ __('Aplicar') }}
-            </flux:button>
-        </x-slot:footer>
-    </x-agro.modal>
+    <x-agro.filter-modal name="water-concessions-filters" :title="__('Filtrar Concesiones')" :hasActiveFilters="(bool) $filterConcessionType" clearAction="clearFilters">
+        <flux:field>
+            <flux:label>{{ __('Tipo de concesión') }}</flux:label>
+            <flux:select wire:model.live="filterConcessionType">
+                <flux:select.option value="">{{ __('Todos los tipos') }}</flux:select.option>
+                @foreach($concessionTypes as $key => $label)
+                    <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+                @endforeach
+            </flux:select>
+        </flux:field>
+    </x-agro.filter-modal>
 
 </div>
