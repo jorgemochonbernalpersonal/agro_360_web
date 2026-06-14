@@ -115,11 +115,13 @@ Receta de migración ya documentada en `2026-05-31-importante.md` (-38/+6 línea
    (Harvest/Container/ProductLot). El más crítico (inventario) y el más arriesgado.
 
 ### Menú para retomar (elegir 1 como primer concepto)
-- [ ] **Facturación (tests-first)** — carril B. Empezar por los tests de caracterización. *Recomendado por valor.*
-- [ ] **Listados (seguir WithListing)** — carril A. Bajo riesgo, mecánico, ya piloteado.
-- [ ] **Stock unificado** — carril B-core. Lo más crítico pero lo más profundo.
+- [x] **Facturación (tests-first)** — carril B. ✅ HECHO: red de tests (Fase 1) + 5 flujos
+      consolidados en `InvoiceService` (Fase 2, 2026-06-14). Sin clases base. Ver `mejoras.md` §Fase 2.
+- [x] **Listados (seguir WithListing)** — carril A. ✅ HECHO: rollout de `WithListing` completo
+      (16 listados). Ver `2026-05-31-importante.md`.
+- [ ] **Stock unificado** — carril B-core. Lo más crítico pero lo más profundo. PENDIENTE.
 - [ ] **Clientes (calentar motor)** — el más mecánico (95% idéntico); valida el patrón de unificación
-      con riesgo mínimo: `Shared/Clients/{Create,Edit,Index,Show}` role-aware, elimina 8 → 4 ficheros.
+      con riesgo mínimo: `Shared/Clients/{Create,Edit,Index,Show}` role-aware, elimina 8 → 4 ficheros. PENDIENTE.
 
 > Recomendación: si se quiere máximo valor → **Facturación con tests-first**. Si se quiere validar el
 > enfoque de unificación con riesgo mínimo antes de lo gordo → **Clientes** primero, luego Facturación.

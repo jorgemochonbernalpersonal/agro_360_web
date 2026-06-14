@@ -270,13 +270,16 @@ routes/winery.php        ~324 líneas
   intencionado**: la UI pasa de 2→3 decimales y se redondea por línea.
 - ✅ **Los 5 flujos de factura consolidados en `InvoiceService`** (totales de cabecera, totales de
   línea VAT/IRPF, numeración, ownership, datos de formulario). No hay clases base (descartado).
-- [ ] ~~`BaseInvoiceCreate`/`BaseInvoiceEdit`~~ **descartado**: los 5 flujos divergen demasiado
-  (VAT vs IRPF, cliente vs viticultor vs comprador-string, multiplicador de regalo, redondeo,
-  concept_types y post-save hooks distintos). Una clase base sería abstracción con fugas.
-  Camino elegido: **seguir consolidando en `InvoiceService`** (métodos puros compartidos),
-  no en herencia.
-- [ ] (Opcional) Conducir las computed properties de UI (subtotal/iva/total en vivo) desde el
-  servicio para que el total mostrado no pueda diverger del guardado.
+- [x] ~~`BaseInvoiceCreate`/`BaseInvoiceEdit`~~ **descartado** (decisión cerrada): los 5 flujos
+  divergen demasiado (VAT vs IRPF, cliente vs viticultor vs comprador-string, multiplicador de
+  regalo, redondeo, concept_types y post-save hooks distintos). Una clase base sería abstracción
+  con fugas. Camino elegido: **seguir consolidando en `InvoiceService`** (métodos puros
+  compartidos), no en herencia.
+- [x] Conducir las computed properties de UI (subtotal/iva/total en vivo) desde el servicio en
+  los 3 flujos con UI (Producer, ProductSale, Viticulturist) → el total mostrado no puede
+  diverger del guardado (commits `9abeb896`, `a6e90a4a`).
+
+> **Fase 2 COMPLETADA.** Los 5 flujos consolidados en `InvoiceService`; sin clases base.
 
 **Fase 3 — Listados (bajo riesgo, en paralelo)**
 - [x] Rollout de `WithListing` a los listados `Component` planos con patrón active/inactive
