@@ -51,15 +51,19 @@ Los ~59 `Index` que aún usan `WithPagination` directo NO encajan:
 1. **`AbstractIndex`** (Viticulturist/Winery): abstracción más rica (`baseQuery`/`applyFilters`/
    `viewData`) y aliasea `search` como `q`. Migrar al trait sería un **downgrade** + rompería URLs.
    Ej.: WaterConcessions, Certifications, EnergyUsages, Winery/Cellar/Containers, ProductLots.
-2. **Tab por defecto ≠ `'active'`**: el `except` del `#[Url]` no se puede variar por clase sin
-   tocar el trait. Ej.: Admin/Users (`all`), Supervisor/Qualification·Labels·Inspection (`all`),
-   Harvests (`pending`), PlannedWorks (`pending`), Invoices/Harvest (`list`).
+2. ~~**Tab por defecto ≠ `'active'`**~~ → **RESUELTO** (2026-06-14, commit `2f27efd8`): el trait
+   se generalizó con `defaultTab()` sobrescribible (`currentTab` arranca vacío, `mountWithListing()`
+   lo fija, `queryStringWithListing()` calcula el `except`). Migrados 4 más: Supervisor/Inspection
+   (`all`), Census (`wineries`), Regulation (`autorizaciones`), Invoices/Harvest (`list`).
 3. **Tabs de sección, no listado** (`$activeTab`/`$tab`): Admin/Catalogs, Winery/Denomination,
-   Territory, Warehouse. No son filtros activo/inactivo.
-4. **Solo búsqueda, sin tabs**: el trait les añadiría un `$currentTab` muerto (ruido).
+   Territory, Warehouse. No son filtros de listado.
+4. **Solo búsqueda/solo tabs (incompletos)**: el trait empaqueta search+tabs; añadir uno muerto es
+   ruido. Ej.: Supervisor/Labels·Qualification (tabs sin search), o listados solo-search.
+5. **Métodos propios no triviales sin test**: Admin/Users (`all`) encaja, pero su `switchTab` y
+   `updatingSearch` limpian `selectedUsers` (se quedarían igual) y **no tiene test** → skip por prudencia.
 
-**Decisión abierta:** para cubrir la categoría 2 habría que **generalizar el trait** (default de
-tab configurable). Tocaría los 12 componentes ya migrados → más riesgo; no hacer sin decisión.
+**Pendiente menor:** Harvests (`pending`) NO usa paginación (switchTab/updatingSearch vacíos) → no es
+listado paginado, no migrar. PlannedWorks (`pending`) es `AbstractIndex`.
 
 ### Cómo migrar un componente (receta)
 1. Añadir `use App\Livewire\Concerns\WithListing;`

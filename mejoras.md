@@ -258,8 +258,10 @@ routes/winery.php        ~324 líneas
   (8 migrados el 2026-06-14, commit `72009be4`). **Candidatos limpios agotados** — el resto
   no encaja (AbstractIndex / tab default ≠ active / tabs de sección / solo búsqueda).
   Detalle en `2026-05-31-importante.md` §Límites del rollout.
-- [ ] (Opcional) Generalizar el trait para default de tab configurable → cubriría Admin/Users,
-  Supervisor (Qualification/Labels/Inspection), Harvests, PlannedWorks. Riesgo: toca los 12 ya migrados.
+- [x] Generalizar el trait para default de tab configurable (`defaultTab()` sobrescribible,
+  commit `2f27efd8`) + 4 listados más migrados (Inspection `all`, Census `wineries`,
+  Regulation `autorizaciones`, Invoices/Harvest `list`). Los 12 previos siguen verde.
+  Test de regresión (default + override por URL) en `CensusTabsTest`.
 - [ ] Auditar conformidad con `docs/patron-vista-listado.md`.
 
 **Continuo / mayor esfuerzo**
