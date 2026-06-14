@@ -43,10 +43,10 @@ class Create extends Component
     /** @var array<int, array{harvest_id:int, quantity:string, unit_price:string, tax_rate:string, description:string}> */
     public array $lines = [];
 
+    protected InvoiceService $invoiceService;
+
     /** Cached default IRPF (not a Livewire property) */
     private float $_defaultIrpf = 0;
-
-    protected InvoiceService $invoiceService;
 
     public function boot(InvoiceService $invoiceService): void
     {
@@ -145,11 +145,9 @@ class Create extends Component
             foreach ($this->lines as $line) {
                 $harvest = Harvest::find($line['harvest_id']);
 
-                $qty = (float) $line['quantity'];
-                $unitPrice = (float) $line['unit_price'];
-                $taxRate = (float) $line['tax_rate'];
-                $subLine = round($qty * $unitPrice, 3);
-                $taxLine = round($subLine * ($taxRate / 100), 3);
+                $amounts = $this->invoiceService->calculateIrpfLine($line);
+                $qty = $amounts['quantity'];
+                $unitPrice = $amounts['unit_price'];
 
                 $description = $line['description'] ?: sprintf(
                     'Cosecha #%d — %s',
@@ -169,11 +167,11 @@ class Create extends Component
                     'description' => $line['description'] ?: null,
                     'quantity' => $qty,
                     'unit_price' => $unitPrice,
-                    'tax_rate' => $taxRate,
-                    'subtotal' => $subLine,
-                    'tax_base' => $subLine,
-                    'tax_amount' => $taxLine,
-                    'total' => $subLine - $taxLine,
+                    'tax_rate' => $amounts['tax_rate'],
+                    'subtotal' => $amounts['subtotal'],
+                    'tax_base' => $amounts['tax_base'],
+                    'tax_amount' => $amounts['tax_amount'],
+                    'total' => $amounts['total'],
                     'delivery_status' => 'pending',
                 ]);
 

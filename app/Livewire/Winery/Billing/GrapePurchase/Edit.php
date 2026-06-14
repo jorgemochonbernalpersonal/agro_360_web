@@ -148,11 +148,9 @@ class Edit extends Component
                         $this->invoice->id,
                     );
 
-                    $qty = (float) $line['quantity'];
-                    $unitPrice = (float) $line['unit_price'];
-                    $taxRate = (float) $line['tax_rate'];
-                    $subtotalLine = round($qty * $unitPrice, 3);
-                    $taxAmountLine = round($subtotalLine * ($taxRate / 100), 3);
+                    $amounts = $this->invoiceService->calculateIrpfLine($line);
+                    $qty = $amounts['quantity'];
+                    $unitPrice = $amounts['unit_price'];
 
                     $variety = $harvest->plotPlanting?->grapeVariety?->name ?? 'uva';
                     $description = $line['description'] ?: "Vendimia #{$harvest->id} - {$variety}";
@@ -165,11 +163,11 @@ class Edit extends Component
                         'description' => $line['description'] ?: null,
                         'quantity' => $qty,
                         'unit_price' => $unitPrice,
-                        'tax_rate' => $taxRate,
-                        'subtotal' => $subtotalLine,
-                        'tax_base' => $subtotalLine,
-                        'tax_amount' => $taxAmountLine,
-                        'total' => $subtotalLine - $taxAmountLine,
+                        'tax_rate' => $amounts['tax_rate'],
+                        'subtotal' => $amounts['subtotal'],
+                        'tax_base' => $amounts['tax_base'],
+                        'tax_amount' => $amounts['tax_amount'],
+                        'total' => $amounts['total'],
                     ]);
                 }
             });

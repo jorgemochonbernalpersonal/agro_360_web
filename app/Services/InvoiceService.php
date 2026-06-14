@@ -66,6 +66,37 @@ class InvoiceService
     }
 
     /**
+     * Calculate the per-line breakdown of an IRPF-style invoice item where the tax is
+     * DEDUCTED from the payment (vendor invoices: harvest_sale, grape_purchase).
+     *
+     * Single source of truth for the line columns written by the HarvestSale and
+     * GrapePurchase Create/Edit components.
+     *
+     * @param array{quantity?: mixed, unit_price?: mixed, tax_rate?: mixed} $line
+     *
+     * @return array{quantity: float, unit_price: float, tax_rate: float, subtotal: float, tax_base: float, tax_amount: float, total: float}
+     */
+    public function calculateIrpfLine(array $line): array
+    {
+        $qty = (float) ($line['quantity'] ?? 0);
+        $unitPrice = (float) ($line['unit_price'] ?? 0);
+        $taxRate = (float) ($line['tax_rate'] ?? 0);
+
+        $subtotal = round($qty * $unitPrice, 3);
+        $taxAmount = round($subtotal * ($taxRate / 100), 3);
+
+        return [
+            'quantity' => $qty,
+            'unit_price' => $unitPrice,
+            'tax_rate' => $taxRate,
+            'subtotal' => $subtotal,
+            'tax_base' => $subtotal,
+            'tax_amount' => $taxAmount,
+            'total' => round($subtotal - $taxAmount, 3),
+        ];
+    }
+
+    /**
      * Assert that a harvest (locked for update) belongs to the given viticulturist via
      * its activity relationship. Throws RuntimeException on failure.
      * Must be called inside an existing DB transaction.

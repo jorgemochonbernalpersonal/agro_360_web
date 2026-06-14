@@ -89,6 +89,46 @@ class InvoiceServiceTest extends TestCase
         $this->assertSame(0.0, $line['total']);
     }
 
+    // ── calculateIrpfLine ──────────────────────────────────────────────────────
+
+    public function test_irpf_line_deducts_tax_from_total(): void
+    {
+        $service = new InvoiceService;
+
+        $line = $service->calculateIrpfLine(
+            ['quantity' => 1000, 'unit_price' => 0.5, 'tax_rate' => 2],
+        );
+
+        $this->assertSame(500.0, $line['subtotal']);
+        $this->assertSame(500.0, $line['tax_base']);
+        $this->assertSame(2.0, $line['tax_rate']);
+        $this->assertSame(10.0, $line['tax_amount']);
+        // IRPF: el impuesto se RESTA del pago.
+        $this->assertSame(490.0, $line['total']);
+    }
+
+    public function test_irpf_line_without_tax_rate(): void
+    {
+        $service = new InvoiceService;
+
+        $line = $service->calculateIrpfLine(['quantity' => 3, 'unit_price' => 7]);
+
+        $this->assertSame(21.0, $line['subtotal']);
+        $this->assertSame(0.0, $line['tax_amount']);
+        $this->assertSame(21.0, $line['total']);
+    }
+
+    public function test_irpf_line_defaults_missing_keys_to_zero(): void
+    {
+        $service = new InvoiceService;
+
+        $line = $service->calculateIrpfLine([]);
+
+        $this->assertSame(0.0, $line['subtotal']);
+        $this->assertSame(0.0, $line['tax_amount']);
+        $this->assertSame(0.0, $line['total']);
+    }
+
     private function tax(float $rate): Tax
     {
         $tax = new Tax;
