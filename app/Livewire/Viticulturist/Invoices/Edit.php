@@ -507,55 +507,25 @@ class Edit extends Component
         // Los cálculos se actualizarán automáticamente con las propiedades computadas
     }
 
-    /**
-     * Calcular totales de la factura
-     */
+    // El subtotal del viticultor es la base NETA (tras descuentos), por convención.
     public function getSubtotalProperty(): float
     {
-        $subtotal = 0;
-        foreach ($this->items as $item) {
-            $itemSubtotal = ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
-            $itemDiscount = $itemSubtotal * (($item['discount_percentage'] ?? 0) / 100);
-            $subtotal += $itemSubtotal - $itemDiscount;
-        }
-
-        return round($subtotal, 2);
+        return $this->vatTotals()['tax_base'];
     }
 
     public function getDiscountAmountProperty(): float
     {
-        $discountAmount = 0;
-        foreach ($this->items as $item) {
-            $itemSubtotal = ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
-            $itemDiscount = $itemSubtotal * (($item['discount_percentage'] ?? 0) / 100);
-            $discountAmount += $itemDiscount;
-        }
-
-        return round($discountAmount, 2);
+        return $this->vatTotals()['discount_amount'];
     }
 
     public function getTaxAmountProperty(): float
     {
-        // Fetch tax rates directly from DB — $availableTaxes may be plain arrays after
-        // Livewire serialization, making ->rate object-property access unreliable.
-        $taxIds = collect($this->items)->pluck('tax_id')->filter()->unique()->values()->all();
-        $taxRates = empty($taxIds) ? [] : Tax::whereIn('id', $taxIds)->pluck('rate', 'id')->all();
-
-        $taxAmount = 0;
-        foreach ($this->items as $item) {
-            $itemSubtotal = ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
-            $itemDiscount = $itemSubtotal * (($item['discount_percentage'] ?? 0) / 100);
-            $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
-            $taxRate = isset($item['tax_id'], $taxRates[$item['tax_id']]) ? (float) $taxRates[$item['tax_id']] : 0;
-            $taxAmount += $itemSubtotalAfterDiscount * ($taxRate / 100);
-        }
-
-        return round($taxAmount, 2);
+        return $this->vatTotals()['tax_amount'];
     }
 
     public function getTotalAmountProperty(): float
     {
-        return round($this->subtotal + $this->taxAmount, 2);
+        return $this->vatTotals()['total'];
     }
 
     public function update()
@@ -586,31 +556,27 @@ class Edit extends Component
                 $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
 
                 foreach ($this->items as $itemData) {
-                    $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
-                    $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
-                    $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
-
                     $tax = $taxRates->get($itemData['tax_id'] ?? null);
-                    $taxRate = $tax ? $tax->rate : 0;
-                    $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
+                    $line = $this->invoiceService->calculateVatLine($itemData, $tax);
 
                     $this->invoice->items()->create([
                         'harvest_id' => $itemData['harvest_id'] ?? null,
                         'name' => $itemData['name'],
                         'description' => $itemData['description'] ?? null,
                         'sku' => $itemData['sku'] ?? null,
-                        'quantity' => $itemData['quantity'],
+                        'quantity' => $line['quantity'],
                         'unit' => $itemData['unit'] ?? 'unidades',
-                        'unit_price' => $itemData['unit_price'],
-                        'discount_percentage' => $itemData['discount_percentage'],
-                        'discount_amount' => $itemDiscount,
+                        'unit_price' => $line['unit_price'],
+                        'discount_percentage' => $line['discount_percentage'],
+                        'discount_amount' => $line['discount_amount'],
                         'tax_id' => $itemData['tax_id'] ?: null,
-                        'tax_name' => $tax ? $tax->name : null,
-                        'tax_rate' => $taxRate,
-                        'tax_base' => $itemSubtotalAfterDiscount,
-                        'tax_amount' => $itemTax,
-                        'subtotal' => $itemSubtotalAfterDiscount,
-                        'total' => $itemSubtotalAfterDiscount + $itemTax,
+                        'tax_name' => $tax?->name,
+                        'tax_rate' => $line['tax_rate'],
+                        'tax_base' => $line['tax_base'],
+                        'tax_amount' => $line['tax_amount'],
+                        // El subtotal de línea del viticultor es la base NETA, por convención.
+                        'subtotal' => $line['tax_base'],
+                        'total' => $line['total'],
                         'concept_type' => $itemData['concept_type'] ?? 'other',
                     ]);
                 }
@@ -723,6 +689,20 @@ class Edit extends Component
             'observations' => 'nullable|string',
             'observations_invoice' => 'nullable|string',
         ];
+    }
+
+    /**
+     * Totales VAT en vivo para la UI. Misma fuente de verdad que update()
+     * (InvoiceService::calculateVatTotals), de modo que el total mostrado no puede
+     * diverger del persistido. Las tasas se cargan de BD (no de $availableTaxes, que
+     * puede llegar como array plano tras la serialización de Livewire).
+     */
+    private function vatTotals(): array
+    {
+        $taxIds = collect($this->items)->pluck('tax_id')->filter()->unique()->values()->all();
+        $taxRates = empty($taxIds) ? collect() : Tax::whereIn('id', $taxIds)->get()->keyBy('id');
+
+        return $this->invoiceService->calculateVatTotals($this->items, $taxRates);
     }
 
     private function persistStatuses(): void

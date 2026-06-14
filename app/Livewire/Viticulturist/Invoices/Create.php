@@ -378,32 +378,27 @@ class Create extends Component
 
                 // Crear items (usa $taxRates pre-cargada — sin N+1)
                 foreach ($this->items as $itemData) {
-                    $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
-                    $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
-                    $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
-
                     $tax = $taxRates->get($itemData['tax_id'] ?? null);
-                    $taxRate = $tax ? $tax->rate : 0;
-                    $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
-                    $itemTotal = $itemSubtotalAfterDiscount + $itemTax;
+                    $line = $this->invoiceService->calculateVatLine($itemData, $tax);
 
                     $invoice->items()->create([
                         'harvest_id' => $itemData['harvest_id'] ?? null,
                         'name' => $itemData['name'],
                         'description' => $itemData['description'] ?? null,
                         'sku' => $itemData['sku'] ?? null,
-                        'quantity' => $itemData['quantity'],
+                        'quantity' => $line['quantity'],
                         'unit' => $itemData['unit'] ?? 'unidades',
-                        'unit_price' => $itemData['unit_price'],
-                        'discount_percentage' => $itemData['discount_percentage'] ?? 0,
-                        'discount_amount' => $itemDiscount,
+                        'unit_price' => $line['unit_price'],
+                        'discount_percentage' => $line['discount_percentage'],
+                        'discount_amount' => $line['discount_amount'],
                         'tax_id' => $itemData['tax_id'] ?: null,
-                        'tax_name' => $tax ? $tax->name : null,
-                        'tax_rate' => $taxRate,
-                        'tax_base' => $itemSubtotalAfterDiscount,
-                        'tax_amount' => $itemTax,
-                        'subtotal' => $itemSubtotalAfterDiscount,
-                        'total' => $itemTotal,
+                        'tax_name' => $tax?->name,
+                        'tax_rate' => $line['tax_rate'],
+                        'tax_base' => $line['tax_base'],
+                        'tax_amount' => $line['tax_amount'],
+                        // El subtotal de línea del viticultor es la base NETA, por convención.
+                        'subtotal' => $line['tax_base'],
+                        'total' => $line['total'],
                         'concept_type' => $itemData['concept_type'] ?? 'other',
                     ]);
                 }

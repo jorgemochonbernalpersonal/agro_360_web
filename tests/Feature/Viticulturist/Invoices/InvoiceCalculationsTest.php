@@ -300,9 +300,9 @@ class InvoiceCalculationsTest extends ViticulturistTestCase
 
     public function test_create_decimal_precision(): void
     {
-        // 33.33 × 1.11 = 36.9963 (Create no redondea por item, se almacena raw)
-        // IVA 21% of 36.9963 = 7.769223
-        // Total = 36.9963 + 7.769223 = 44.765523
+        // 33.33 × 1.11 = 36.9963 → redondeado por línea a 3 decimales (InvoiceService::calculateVatLine)
+        // IVA 21% sobre la base redondeada ≈ 7.769
+        // Total ≈ 44.765 (dentro de la tolerancia de 0.01 frente al cálculo sin redondear)
         $client = $this->makeClient();
         $address = $this->makeAddress($client);
         $tax = $this->makeTax(21);
