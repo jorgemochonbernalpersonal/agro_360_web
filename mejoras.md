@@ -264,10 +264,12 @@ routes/winery.php        ~324 líneas
 - [x] `InvoiceService::calculateIrpfLine()` — fuente única de la matemática IRPF **por línea**
   (impuesto deducido). Adoptada en los 4 flujos vendedor: Viticulturist HarvestSale Create/Edit +
   Winery GrapePurchase Create/Edit (commit `a7bad695`). Tests `calculateIrpfLine` (3 casos).
-- [ ] Viticulturist Invoices: pendiente por **decisión de producto** (no refactor invisible):
-  (a) su UI redondea a **2 decimales** (los demás flujos a 3) y (b) su matemática por línea en
-  `save()` no redondea por línea (otra convención). Alinear requiere decidir precisión de
-  visualización y si se redondea por línea → preguntar antes de tocar.
+- [x] Viticulturist Invoices alineado a 3 decimales (decisión de producto aprobada, commit `a6e90a4a`):
+  líneas de `save()` (Create/Edit) vía `calculateVatLine`, computed properties de Edit vía
+  `calculateVatTotals` (tasas de BD, base neta como subtotal). **Cambio de comportamiento
+  intencionado**: la UI pasa de 2→3 decimales y se redondea por línea.
+- ✅ **Los 5 flujos de factura consolidados en `InvoiceService`** (totales de cabecera, totales de
+  línea VAT/IRPF, numeración, ownership, datos de formulario). No hay clases base (descartado).
 - [ ] ~~`BaseInvoiceCreate`/`BaseInvoiceEdit`~~ **descartado**: los 5 flujos divergen demasiado
   (VAT vs IRPF, cliente vs viticultor vs comprador-string, multiplicador de regalo, redondeo,
   concept_types y post-save hooks distintos). Una clase base sería abstracción con fugas.
