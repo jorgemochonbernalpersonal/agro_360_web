@@ -94,45 +94,25 @@ class Create extends Component
 
     // ── Computed totals ───────────────────────────────────────────────────────
 
+    // El subtotal de venta de producto es el bruto (antes de descuentos), por convención.
     public function getSubtotalProperty(): float
     {
-        $total = 0;
-        foreach ($this->items as $item) {
-            $total += (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
-        }
-
-        return round($total, 3);
+        return $this->vatTotals()['gross_subtotal'];
     }
 
     public function getDiscountAmountProperty(): float
     {
-        $total = 0;
-        foreach ($this->items as $item) {
-            $sub = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
-            $total += $sub * ((float) ($item['discount_percentage'] ?? 0) / 100);
-        }
-
-        return round($total, 3);
+        return $this->vatTotals()['discount_amount'];
     }
 
     public function getTaxAmountProperty(): float
     {
-        $taxRates = $this->availableTaxes->keyBy('id');
-        $total = 0;
-        foreach ($this->items as $item) {
-            $sub = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
-            $discAmt = $sub * ((float) ($item['discount_percentage'] ?? 0) / 100);
-            $base = $sub - $discAmt;
-            $rate = $item['tax_id'] ? (float) ($taxRates[$item['tax_id']]?->rate ?? 0) : 0;
-            $total += $base * ($rate / 100);
-        }
-
-        return round($total, 3);
+        return $this->vatTotals()['tax_amount'];
     }
 
     public function getTotalAmountProperty(): float
     {
-        return round($this->subtotal - $this->discountAmount + $this->taxAmount, 3);
+        return $this->vatTotals()['total'];
     }
 
     // ── Añadir producto desde selector ───────────────────────────────────────
@@ -378,5 +358,18 @@ class Create extends Component
         }
 
         return $attrs;
+    }
+
+    /**
+     * Totales VAT en vivo para la UI. Misma fuente de verdad que save()
+     * (InvoiceService::calculateVatTotals), de modo que el total mostrado no puede
+     * diverger del total persistido.
+     */
+    private function vatTotals(): array
+    {
+        return $this->invoiceService->calculateVatTotals(
+            $this->items,
+            $this->availableTaxes->keyBy('id'),
+        );
     }
 }

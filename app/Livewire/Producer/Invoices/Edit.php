@@ -423,49 +423,25 @@ class Edit extends Component
 
     // ── Computed totals ───────────────────────────────────────────────────────
 
+    // El subtotal del productor es la base NETA (tras descuentos), por convención.
     public function getSubtotalProperty(): float
     {
-        $total = 0;
-        foreach ($this->items as $item) {
-            $sub = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
-            $discount = $sub * ((float) ($item['discount_percentage'] ?? 0) / 100);
-            $total += $sub - $discount;
-        }
-
-        return round($total, 3);
+        return $this->vatTotals()['tax_base'];
     }
 
     public function getDiscountAmountProperty(): float
     {
-        $total = 0;
-        foreach ($this->items as $item) {
-            $sub = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
-            $total += $sub * ((float) ($item['discount_percentage'] ?? 0) / 100);
-        }
-
-        return round($total, 3);
+        return $this->vatTotals()['discount_amount'];
     }
 
     public function getTaxAmountProperty(): float
     {
-        $taxRates = $this->availableTaxes->keyBy('id');
-        $total = 0;
-        foreach ($this->items as $item) {
-            $sub = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
-            $discAmt = $sub * ((float) ($item['discount_percentage'] ?? 0) / 100);
-            $base = $sub - $discAmt;
-            $rate = ($item['tax_id'] ?? null)
-                ? (float) ($taxRates[$item['tax_id']]?->rate ?? 0)
-                : 0;
-            $total += $base * ($rate / 100);
-        }
-
-        return round($total, 3);
+        return $this->vatTotals()['tax_amount'];
     }
 
     public function getTotalAmountProperty(): float
     {
-        return round($this->subtotal + $this->taxAmount, 3);
+        return $this->vatTotals()['total'];
     }
 
     // ── Status management ─────────────────────────────────────────────────────
@@ -884,6 +860,19 @@ class Edit extends Component
             'items.*.tax_id' => 'nullable|exists:taxes,id',
             'items.*.concept_type' => 'nullable|in:harvest,wine,service,other',
         ];
+    }
+
+    /**
+     * Totales VAT en vivo para la UI. Misma fuente de verdad que save()
+     * (InvoiceService::calculateVatTotals), de modo que el total mostrado no puede
+     * diverger del total persistido.
+     */
+    private function vatTotals(): array
+    {
+        return $this->invoiceService->calculateVatTotals(
+            $this->items,
+            $this->availableTaxes->keyBy('id'),
+        );
     }
 
     private function persistStatuses(): void
