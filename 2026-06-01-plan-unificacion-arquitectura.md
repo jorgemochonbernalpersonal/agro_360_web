@@ -120,8 +120,9 @@ Receta de migración ya documentada en `2026-05-31-importante.md` (-38/+6 línea
 - [x] **Listados (seguir WithListing)** — carril A. ✅ HECHO: rollout de `WithListing` completo
       (16 listados). Ver `2026-05-31-importante.md`.
 - [ ] **Stock unificado** — carril B-core. Lo más crítico pero lo más profundo. PENDIENTE.
-- [ ] **Clientes (calentar motor)** — el más mecánico (95% idéntico); valida el patrón de unificación
-      con riesgo mínimo: `Shared/Clients/{Create,Edit,Index,Show}` role-aware, elimina 8 → 4 ficheros. PENDIENTE.
+- [x] **Clientes** — ✅ HECHO (2026-06-14): los 3 roles usan `App\Livewire\Clients\*` (compartido,
+      role-aware). Borrados 8 componentes duplicados (`Viticulturist\Clients\*` + `Winery\Clients\*`
+      huérfano de rutas) y sus 8 vistas; −3435 líneas. Commit `25ec4878`.
 
 > Recomendación: si se quiere máximo valor → **Facturación con tests-first**. Si se quiere validar el
 > enfoque de unificación con riesgo mínimo antes de lo gordo → **Clientes** primero, luego Facturación.
