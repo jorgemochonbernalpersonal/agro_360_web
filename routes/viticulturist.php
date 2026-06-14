@@ -318,12 +318,12 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
                 Route::get('/{product}/edit', PhytosanitaryProductsEdit::class)->name('edit');
             });
 
-            // Clientes
+            // Clientes (componentes compartidos role-aware: App\Livewire\Clients\*)
             Route::prefix('clients')->name('clients.')->group(function () {
-                Route::get('/', \App\Livewire\Viticulturist\Clients\Index::class)->name('index');
-                Route::get('/create', \App\Livewire\Viticulturist\Clients\Create::class)->name('create');
-                Route::get('/{client}', \App\Livewire\Viticulturist\Clients\Show::class)->name('show');
-                Route::get('/{client}/edit', \App\Livewire\Viticulturist\Clients\Edit::class)->name('edit');
+                Route::get('/', \App\Livewire\Clients\Index::class)->name('index');
+                Route::get('/create', \App\Livewire\Clients\Create::class)->name('create');
+                Route::get('/{client}', \App\Livewire\Clients\Show::class)->name('show');
+                Route::get('/{client}/edit', \App\Livewire\Clients\Edit::class)->name('edit');
             });
 
             // Facturas/Pedidos

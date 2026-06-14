@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Producer\Clients;
 
-use App\Livewire\Winery\Clients\Create as WineryClientCreate;
+use App\Livewire\Clients\Create as WineryClientCreate;
 use App\Models\Client;
 use App\Models\User;
 use Livewire\Livewire;

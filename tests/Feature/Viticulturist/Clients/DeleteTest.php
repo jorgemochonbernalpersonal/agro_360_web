@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Viticulturist\Clients;
 
-use App\Livewire\Viticulturist\Clients\Index;
+use App\Livewire\Clients\Index;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\User;

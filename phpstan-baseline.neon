@@ -8905,66 +8905,6 @@ parameters:
 			path: app/Livewire/Viticulturist/CampaignDocuments/Index.php
 
 		-
-			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\Clients\\RuntimeException\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Create.php
-
-		-
-			message: '#^Class App\\Livewire\\Viticulturist\\Clients\\RuntimeException not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$autonomous_community_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_default\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$municipality_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$province_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Edit.php
-
-		-
-			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\Clients\\RuntimeException\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Edit.php
-
-		-
-			message: '#^Class App\\Livewire\\Viticulturist\\Clients\\RuntimeException not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Edit.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Viticulturist/Clients/Edit.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -11177,36 +11117,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Winery/Cellar/ProductLots/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$autonomous_community_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_default\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$municipality_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$province_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Clients/Edit.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>year" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
