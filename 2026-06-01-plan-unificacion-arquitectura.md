@@ -1,8 +1,10 @@
 # 📌 Auditoría backend + Plan de unificación de arquitectura
 
-**Fecha:** 2026-06-01
-**Rama de trabajo:** `fix/producer-invoice-harvest-ownership` (2 commits, sin pushear)
-**Estado:** críticos de seguridad cerrados. Pendiente: decidir carril de unificación y arrancar.
+**Fecha:** 2026-06-01 · **Actualizado:** 2026-06-14
+**Estado:** críticos de seguridad cerrados. Carriles ejecutados: **Facturación** (Fase 2),
+**Listados** (`WithListing`) y **Clientes** (compartidos) — todos en `staging`/pusheados.
+Pendiente: stock unificado, FormRequests del resto de la API, decidir `User.role` vs `Organization`.
+Resumen vivo en `ESTADO.md`.
 
 ---
 
