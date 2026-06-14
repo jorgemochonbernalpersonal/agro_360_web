@@ -250,8 +250,22 @@ routes/winery.php        ~324 líneas
 - [x] Resolver `ApiRole::tokenCan` — suite API 156/156 verde (2026-06-04).
 
 **Fase 2 — Unificación de facturación (tests-first)**
-- [ ] `InvoiceService` + `BaseInvoiceCreate`/`BaseInvoiceEdit`.
-- [ ] Migrar Producer → Viticulturist → Winery uno a uno.
+- [x] `InvoiceService` ya maduro (extraído en Fase 1): `calculateVatTotals`/`calculateIrpfTotals`,
+  `generateDeliveryNoteCode`/`generateSequentialNumber`, guards de ownership, `getInvoicingFormData`.
+  4 de los 5 flujos ya lo usan para totales de cabecera, numeración y ownership.
+- [x] `InvoiceService::calculateVatLine()` — fuente única de la matemática VAT **por línea**
+  (la que escribe importes a BD). Adoptada en los 4 ficheros con redondeo idéntico:
+  Producer Invoices Create/Edit + Winery ProductSale Create/Edit (commit `f7dcac44`).
+  Test unitario `InvoiceServiceTest` (5 casos). Viticulturist Invoices fuera (otra convención
+  de redondeo, sin `round()` por línea → requiere verificación propia).
+- [ ] Viticulturist Invoices: alinear/centralizar su matemática por línea (decidir convención).
+- [ ] ~~`BaseInvoiceCreate`/`BaseInvoiceEdit`~~ **descartado**: los 5 flujos divergen demasiado
+  (VAT vs IRPF, cliente vs viticultor vs comprador-string, multiplicador de regalo, redondeo,
+  concept_types y post-save hooks distintos). Una clase base sería abstracción con fugas.
+  Camino elegido: **seguir consolidando en `InvoiceService`** (métodos puros compartidos),
+  no en herencia.
+- [ ] (Opcional) Conducir las computed properties de UI (subtotal/iva/total en vivo) desde el
+  servicio para que el total mostrado no pueda diverger del guardado.
 
 **Fase 3 — Listados (bajo riesgo, en paralelo)**
 - [x] Rollout de `WithListing` a los listados `Component` planos con patrón active/inactive
