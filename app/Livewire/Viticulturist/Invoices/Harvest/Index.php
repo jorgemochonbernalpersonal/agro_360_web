@@ -2,28 +2,22 @@
 
 namespace App\Livewire\Viticulturist\Invoices\Harvest;
 
+use App\Livewire\Concerns\WithListing;
 use App\Models\Client;
 use App\Models\Harvest;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
-
-    public $currentTab = 'list';
-
-    public $search = '';
+    use WithListing;
 
     public $selectedCampaign = '';
 
     public $yearFilter;
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'list'],
-        'search' => ['except' => ''],
         'selectedCampaign' => ['except' => ''],
         'yearFilter' => ['as' => 'year'],
     ];
@@ -31,17 +25,6 @@ class Index extends Component
     public function mount()
     {
         $this->yearFilter = $this->yearFilter ?? now()->year;
-    }
-
-    public function switchTab($tab)
-    {
-        $this->currentTab = $tab;
-        $this->resetPage();
-    }
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
     }
 
     public function updatingSelectedCampaign()
@@ -96,6 +79,11 @@ class Index extends Component
             'title' => __('Facturación de Cosechas - Agro365'),
             'description' => __('Factura tus cosechas directamente desde la vendimia. Gestión completa de facturación de uva con análisis de rendimientos y precios.'),
         ]);
+    }
+
+    protected function defaultTab(): string
+    {
+        return 'list';
     }
 
     private function getAdvancedStatistics($user)

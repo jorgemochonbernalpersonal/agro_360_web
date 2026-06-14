@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Supervisor\Inspection;
 
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\DoInspection;
@@ -13,15 +14,10 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithOwnershipRules, WithPagination, WithToastNotifications;
-
-    public string $currentTab = 'all';
-
-    public string $search = '';
+    use WithListing, WithOwnershipRules, WithToastNotifications;
 
     public string $typeFilter = '';
 
@@ -54,25 +50,12 @@ class Index extends Component
     public string $editReferenceNumber = '';
 
     protected $queryString = [
-        'currentTab' => ['except' => 'all', 'as' => 'tab'],
-        'search' => ['except' => ''],
         'typeFilter' => ['except' => ''],
     ];
 
     public function mount(): void
     {
         $this->inspection_date = now()->format('Y-m-d');
-    }
-
-    public function switchTab(string $tab): void
-    {
-        $this->currentTab = $tab;
-        $this->resetPage();
-    }
-
-    public function updatingSearch(): void
-    {
-        $this->resetPage();
     }
 
     public function updatingTypeFilter(): void
@@ -258,5 +241,10 @@ class Index extends Component
             'wineries' => $wineries,
             'viticulturists' => $viticulturists,
         ]);
+    }
+
+    protected function defaultTab(): string
+    {
+        return 'all';
     }
 }

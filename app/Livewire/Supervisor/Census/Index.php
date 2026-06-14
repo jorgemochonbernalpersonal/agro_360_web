@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Supervisor\Census;
 
+use App\Livewire\Concerns\WithListing;
 use App\Models\SupervisorWinery;
 use App\Models\User;
 use App\Models\WineryViticulturist;
@@ -9,34 +10,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
-
-    public string $currentTab = 'wineries'; // 'wineries' | 'viticulturists'
-
-    public string $search = '';
+    use WithListing;
 
     public bool $showAssignModal = false;
 
     public string $assignSearch = '';
 
-    protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'wineries'],
-        'search' => ['except' => ''],
-    ];
-
+    // switchTab propio: ademas de paginar, limpia la busqueda al cambiar de tab.
     public function switchTab(string $tab): void
     {
         $this->currentTab = $tab;
         $this->search = '';
-        $this->resetPage();
-    }
-
-    public function updatingSearch(): void
-    {
         $this->resetPage();
     }
 
@@ -173,5 +160,10 @@ class Index extends Component
             'vitCountByWinery' => $vitCountByWinery ?? collect(),
             'availableWineries' => $availableWineries,
         ]);
+    }
+
+    protected function defaultTab(): string
+    {
+        return 'wineries';
     }
 }

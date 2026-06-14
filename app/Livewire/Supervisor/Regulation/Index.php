@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Supervisor\Regulation;
 
+use App\Livewire\Concerns\WithListing;
 use App\Models\Certification;
 use App\Models\DoDocument;
 use App\Models\PlotPlanting;
@@ -10,15 +11,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
-
-    public string $currentTab = 'autorizaciones';
-
-    public string $search = '';
+    use WithListing;
 
     public string $filterVit = '';
 
@@ -27,13 +23,12 @@ class Index extends Component
     public string $filterRightType = '';
 
     protected $queryString = [
-        'currentTab' => ['except' => 'autorizaciones', 'as' => 'tab'],
-        'search' => ['except' => ''],
         'filterVit' => ['except' => ''],
         'filterStatus' => ['except' => ''],
         'filterRightType' => ['except' => ''],
     ];
 
+    // switchTab propio: ademas de paginar, limpia busqueda y filtros al cambiar de tab.
     public function switchTab(string $tab): void
     {
         $this->currentTab = $tab;
@@ -41,11 +36,6 @@ class Index extends Component
         $this->filterVit = '';
         $this->filterStatus = '';
         $this->filterRightType = '';
-        $this->resetPage();
-    }
-
-    public function updatingSearch(): void
-    {
         $this->resetPage();
     }
 
@@ -97,6 +87,11 @@ class Index extends Component
             'tabs' => $tabs,
             'viticulturists' => $viticulturists,
         ]));
+    }
+
+    protected function defaultTab(): string
+    {
+        return 'autorizaciones';
     }
 
     private function getAutorizacionesData($viticulturistIds): array

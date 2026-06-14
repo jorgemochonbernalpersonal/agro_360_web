@@ -55,6 +55,27 @@ class CensusTabsTest extends SupervisorTestCase
             ->assertSet('search', '');
     }
 
+    // ── default tab (WithListing::defaultTab) ──────────────────────────────────
+
+    public function test_default_tab_is_wineries_without_query_string(): void
+    {
+        [$supervisor] = $this->makeSupervisorWithWinery();
+
+        Livewire::actingAs($supervisor)
+            ->test(Index::class)
+            ->assertSet('currentTab', 'wineries');
+    }
+
+    public function test_tab_from_query_string_overrides_default(): void
+    {
+        [$supervisor] = $this->makeSupervisorWithWinery();
+
+        Livewire::actingAs($supervisor)
+            ->withQueryParams(['tab' => 'viticulturists'])
+            ->test(Index::class)
+            ->assertSet('currentTab', 'viticulturists');
+    }
+
     // ── modal ─────────────────────────────────────────────────────────────────
 
     public function test_open_assign_modal_sets_state(): void
