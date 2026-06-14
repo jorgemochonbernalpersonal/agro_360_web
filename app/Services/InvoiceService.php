@@ -185,6 +185,43 @@ class InvoiceService
     }
 
     /**
+     * Calculate the per-line breakdown of a VAT-style invoice item, rounding each
+     * intermediate to 3 decimals (sales invoices: producer_sale, wine_sale).
+     *
+     * Single source of truth for the line columns written by the Producer and
+     * ProductSale Create/Edit components, so the live total and the persisted line
+     * amounts can never drift apart.
+     *
+     * @param array{quantity?: mixed, unit_price?: mixed, discount_percentage?: mixed} $item
+     *
+     * @return array{quantity: float, unit_price: float, discount_percentage: float, subtotal: float, discount_amount: float, tax_base: float, tax_rate: float, tax_amount: float, total: float}
+     */
+    public function calculateVatLine(array $item, ?Tax $tax): array
+    {
+        $qty = (float) ($item['quantity'] ?? 0);
+        $unitPrice = (float) ($item['unit_price'] ?? 0);
+        $discPct = (float) ($item['discount_percentage'] ?? 0);
+
+        $lineSubtotal = round($qty * $unitPrice, 3);
+        $lineDiscount = round($lineSubtotal * ($discPct / 100), 3);
+        $lineBase = round($lineSubtotal - $lineDiscount, 3);
+        $taxRate = $tax instanceof Tax ? (float) $tax->rate : 0.0;
+        $taxAmountLine = round($lineBase * ($taxRate / 100), 3);
+
+        return [
+            'quantity' => $qty,
+            'unit_price' => $unitPrice,
+            'discount_percentage' => $discPct,
+            'subtotal' => $lineSubtotal,
+            'discount_amount' => $lineDiscount,
+            'tax_base' => $lineBase,
+            'tax_rate' => $taxRate,
+            'tax_amount' => $taxAmountLine,
+            'total' => round($lineBase + $taxAmountLine, 3),
+        ];
+    }
+
+    /**
      * Return the delivery note code for a new invoice.
      * If the user has manually entered a code, use it as-is.
      * Otherwise atomically increment InvoicingSetting and return the generated code.

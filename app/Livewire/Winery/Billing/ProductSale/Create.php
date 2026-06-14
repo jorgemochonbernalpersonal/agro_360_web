@@ -255,15 +255,9 @@ class Create extends Component
 
             // Crear líneas
             foreach ($this->items as $item) {
-                $qty = (float) $item['quantity'];
-                $unitPrice = (float) $item['unit_price'];
-                $discPct = (float) ($item['discount_percentage'] ?? 0);
                 $tax = $item['tax_id'] ? $taxRates[$item['tax_id']] ?? null : null;
-                $taxRate = $tax ? (float) $tax->rate : 0;
-                $lineSubtotal = round($qty * $unitPrice, 3);
-                $lineDiscount = round($lineSubtotal * ($discPct / 100), 3);
-                $lineBase = round($lineSubtotal - $lineDiscount, 3);
-                $taxAmountLine = round($lineBase * ($taxRate / 100), 3);
+                $line = $this->invoiceService->calculateVatLine($item, $tax);
+                $qty = $line['quantity'];
 
                 $lot = $item['wine_lot_id']
                     ? ProductLot::where('user_id', Auth::id())->lockForUpdate()->find($item['wine_lot_id'])
@@ -277,16 +271,16 @@ class Create extends Component
                     'description' => $item['description'] ?: null,
                     'sku' => $item['sku'] ?: ($lot?->sku ?? null),
                     'quantity' => $qty,
-                    'unit_price' => $unitPrice,
-                    'discount_percentage' => $discPct,
-                    'discount_amount' => $lineDiscount * $multiplyGift,
+                    'unit_price' => $line['unit_price'],
+                    'discount_percentage' => $line['discount_percentage'],
+                    'discount_amount' => $line['discount_amount'] * $multiplyGift,
                     'tax_id' => $tax?->id,
                     'tax_name' => $tax?->name,
-                    'tax_rate' => $taxRate,
-                    'subtotal' => $lineSubtotal * $multiplyGift,
-                    'tax_base' => $lineBase * $multiplyGift,
-                    'tax_amount' => $taxAmountLine * $multiplyGift,
-                    'total' => ($lineBase + $taxAmountLine) * $multiplyGift,
+                    'tax_rate' => $line['tax_rate'],
+                    'subtotal' => $line['subtotal'] * $multiplyGift,
+                    'tax_base' => $line['tax_base'] * $multiplyGift,
+                    'tax_amount' => $line['tax_amount'] * $multiplyGift,
+                    'total' => $line['total'] * $multiplyGift,
                 ]);
 
                 if ($lot) {
