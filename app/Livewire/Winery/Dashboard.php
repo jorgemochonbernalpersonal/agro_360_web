@@ -18,6 +18,37 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * Propiedades mágicas de Livewire generadas por los métodos #[Computed] de abajo.
+ * Se declaran para que el análisis estático reconozca su acceso vía $this->nombre
+ * desde el propio componente (Livewire las resuelve en runtime).
+ *
+ * @property-read ?Campaign                                    $activeCampaign
+ * @property-read int                                          $vintageYear
+ * @property-read int                                          $viticulturistCount
+ * @property-read int                                          $pendingViticulturistCount
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, GrapeReceptionBatch> $activeBatches
+ * @property-read float                                        $totalKgCampaign
+ * @property-read int                                          $openBatchCount
+ * @property-read int                                          $closedBatchCount
+ * @property-read int                                          $totalReceptions
+ * @property-read object                                       $todayStats
+ * @property-read float                                        $todayKg
+ * @property-read int                                          $todayCount
+ * @property-read array{exceeded: int, at_risk: int}          $yieldAlerts
+ * @property-read int                                          $alertsExceeded
+ * @property-read int                                          $alertsAtRisk
+ * @property-read int                                          $wineLotCount
+ * @property-read int                                          $activeWines
+ * @property-read int                                          $activeFermentations
+ * @property-read array{total: float, used: float, pct: float} $containerUsage
+ * @property-read int                                          $maintenanceOverdue
+ * @property-read float                                        $totalCostsYear
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, WineTransfer>            $recentTransfers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, WineFermentationControl> $recentFermentations
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Harvest>                 $recentReceptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, WineryViticulturist>     $recentViticulturists
+ */
 class Dashboard extends Component
 {
     // ── Campaña ───────────────────────────────────────────────────────────────
@@ -198,8 +229,8 @@ class Dashboard extends Component
 
         return [
             'total' => $total,
-            'used'  => $used,
-            'pct'   => $total > 0 ? min(($used / $total) * 100, 100) : 0,
+            'used' => $used,
+            'pct' => $total > 0 ? min(($used / $total) * 100, 100) : 0,
         ];
     }
 
@@ -271,29 +302,29 @@ class Dashboard extends Component
     public function render()
     {
         return view('livewire.winery.dashboard', [
-            'activeCampaign'            => $this->activeCampaign,
-            'vintageYear'               => $this->vintageYear,
-            'viticulturistCount'        => $this->viticulturistCount,
+            'activeCampaign' => $this->activeCampaign,
+            'vintageYear' => $this->vintageYear,
+            'viticulturistCount' => $this->viticulturistCount,
             'pendingViticulturistCount' => $this->pendingViticulturistCount,
-            'activeBatches'             => $this->activeBatches,
-            'totalKgCampaign'           => $this->totalKgCampaign,
-            'openBatchCount'            => $this->openBatchCount,
-            'closedBatchCount'          => $this->closedBatchCount,
-            'totalReceptions'           => $this->totalReceptions,
-            'todayKg'                   => $this->todayKg,
-            'todayCount'                => $this->todayCount,
-            'alertsExceeded'            => $this->alertsExceeded,
-            'alertsAtRisk'              => $this->alertsAtRisk,
-            'wineLotCount'              => $this->wineLotCount,
-            'activeWines'               => $this->activeWines,
-            'activeFermentations'       => $this->activeFermentations,
-            'containerUsage'            => $this->containerUsage,
-            'maintenanceOverdue'        => $this->maintenanceOverdue,
-            'totalCostsYear'            => $this->totalCostsYear,
-            'recentTransfers'           => $this->recentTransfers,
-            'recentFermentations'       => $this->recentFermentations,
-            'recentReceptions'          => $this->recentReceptions,
-            'recentViticulturists'      => $this->recentViticulturists,
+            'activeBatches' => $this->activeBatches,
+            'totalKgCampaign' => $this->totalKgCampaign,
+            'openBatchCount' => $this->openBatchCount,
+            'closedBatchCount' => $this->closedBatchCount,
+            'totalReceptions' => $this->totalReceptions,
+            'todayKg' => $this->todayKg,
+            'todayCount' => $this->todayCount,
+            'alertsExceeded' => $this->alertsExceeded,
+            'alertsAtRisk' => $this->alertsAtRisk,
+            'wineLotCount' => $this->wineLotCount,
+            'activeWines' => $this->activeWines,
+            'activeFermentations' => $this->activeFermentations,
+            'containerUsage' => $this->containerUsage,
+            'maintenanceOverdue' => $this->maintenanceOverdue,
+            'totalCostsYear' => $this->totalCostsYear,
+            'recentTransfers' => $this->recentTransfers,
+            'recentFermentations' => $this->recentFermentations,
+            'recentReceptions' => $this->recentReceptions,
+            'recentViticulturists' => $this->recentViticulturists,
         ])->layout('layouts.app');
     }
 }

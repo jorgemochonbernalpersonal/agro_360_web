@@ -127,12 +127,6 @@ parameters:
 			path: app/Console/Commands/CleanupAllOfficialReports.php
 
 		-
-			message: '#^Anonymous function has an unused use \$cutoffDate\.$#'
-			identifier: closure.unusedUse
-			count: 1
-			path: app/Console/Commands/CleanupOldReportPdfs.php
-
-		-
 			message: '#^Parameter \#1 \$value of method Carbon\\Carbon\:\:subHours\(\) expects float\|int, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -373,18 +367,6 @@ parameters:
 			path: app/Console/Commands/UpdateNdviCommand.php
 
 		-
-			message: '#^Deprecated in PHP 8\.0\: Required parameter \$imageSource follows optional parameter \$cloudCoverage\.$#'
-			identifier: parameter.requiredAfterOptional
-			count: 1
-			path: app/DataTransferObjects/RemoteSensing/RemoteSensingDataDTO.php
-
-		-
-			message: '#^Deprecated in PHP 8\.1\: Required parameter \$imageDate follows optional parameter \$cloudCoverage\.$#'
-			identifier: parameter.requiredAfterOptional
-			count: 1
-			path: app/DataTransferObjects/RemoteSensing/RemoteSensingDataDTO.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 4
@@ -539,12 +521,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Controllers/Api/Producer/CampaignComparisonController.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>year" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Controllers/Api/Producer/DashboardController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$amount\.$#'
@@ -1011,7 +987,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Container\:\:\$total\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 1
 			path: app/Http/Controllers/Api/Winery/ContainerController.php
 
 		-
@@ -1741,12 +1717,6 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/WineController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$total\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\WineBottling\:\:\$last_bottling_date\.$#'
 			identifier: property.notFound
 			count: 1
@@ -2111,6 +2081,18 @@ parameters:
 			identifier: argument.type
 			count: 2
 			path: app/Http/Middleware/ApiRateLimiter.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Http/Middleware/ApiRole.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between Laravel\\Sanctum\\PersonalAccessToken and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Middleware/ApiRole.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:withAccessToken\(\)\.$#'
@@ -8155,12 +8137,6 @@ parameters:
 			path: app/Livewire/Plots/Show.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>year" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Producer/Dashboard.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -8245,18 +8221,6 @@ parameters:
 			path: app/Livewire/Producer/IntegratedEstate/PlotTable.php
 
 		-
-			message: '#^Access to an undefined property App\\Livewire\\Producer\\Invoices\\Create\:\:\$subtotal\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Create.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Producer\\Invoices\\Create\:\:\$taxAmount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Create.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty_computed\.$#'
 			identifier: property.notFound
 			count: 1
@@ -8293,12 +8257,6 @@ parameters:
 			path: app/Livewire/Producer/Invoices/Create.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>rate" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Producer/Invoices/Create.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Producer\\Invoices\\Edit\:\:\$isInvoiced\.$#'
 			identifier: property.notFound
 			count: 1
@@ -8308,18 +8266,6 @@ parameters:
 			message: '#^Access to an undefined property App\\Livewire\\Producer\\Invoices\\Edit\:\:\$isLocked\.$#'
 			identifier: property.notFound
 			count: 3
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Producer\\Invoices\\Edit\:\:\$subtotal\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Producer\\Invoices\\Edit\:\:\$taxAmount\.$#'
-			identifier: property.notFound
-			count: 1
 			path: app/Livewire/Producer/Invoices/Edit.php
 
 		-
@@ -8438,12 +8384,6 @@ parameters:
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>rate" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Producer/Invoices/Edit.php
@@ -8569,12 +8509,6 @@ parameters:
 			path: app/Livewire/Sigpac/Create.php
 
 		-
-			message: '#^Anonymous function has an unused use \$index\.$#'
-			identifier: closure.unusedUse
-			count: 1
-			path: app/Livewire/Sigpac/Create.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:sigpacCodes\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -8625,12 +8559,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacUses\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Edit.php
-
-		-
-			message: '#^Anonymous function has an unused use \$index\.$#'
-			identifier: closure.unusedUse
 			count: 1
 			path: app/Livewire/Sigpac/Edit.php
 
@@ -8717,12 +8645,6 @@ parameters:
 			identifier: nullCoalesce.variable
 			count: 1
 			path: app/Livewire/Supervisor/Census/Index.php
-
-		-
-			message: '#^Anonymous function has an unused use \$term\.$#'
-			identifier: closure.unusedUse
-			count: 1
-			path: app/Livewire/Supervisor/Growers/Index.php
 
 		-
 			message: '#^Cannot call method isAfter\(\) on string\.$#'
@@ -8959,12 +8881,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Calendar.php
 
 		-
-			message: '#^Anonymous function has an unused use \$user\.$#'
-			identifier: closure.unusedUse
-			count: 1
-			path: app/Livewire/Viticulturist/Campaign/Edit.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 2
@@ -9185,12 +9101,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$activity \(App\\Models\\AgriculturalActivity\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/ActivityAuditHistory.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\CreateHarvest\:\:\$viticulturists\.$#'
@@ -9715,18 +9625,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Invoices/Edit.php
 
 		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Invoices\\Edit\:\:\$subtotal\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Invoices\\Edit\:\:\$taxAmount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty_computed\.$#'
 			identifier: property.notFound
 			count: 1
@@ -9959,12 +9857,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Anonymous function has an unused use \$user\.$#'
-			identifier: closure.unusedUse
-			count: 1
-			path: app/Livewire/Viticulturist/Machinery/Edit.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$campaign_id\.$#'
@@ -10279,30 +10171,6 @@ parameters:
 			path: app/Livewire/Viticulturist/PlantingsDashboard.php
 
 		-
-			message: '#^Call to an undefined method App\\Livewire\\Viticulturist\\PlotCosts\\Create\:\:campaignOwnershipRule\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/PlotCosts/Create.php
-
-		-
-			message: '#^Call to an undefined method App\\Livewire\\Viticulturist\\PlotCosts\\Create\:\:plotOwnershipRule\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/PlotCosts/Create.php
-
-		-
-			message: '#^Call to an undefined method App\\Livewire\\Viticulturist\\PlotCosts\\Edit\:\:campaignOwnershipRule\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/PlotCosts/Edit.php
-
-		-
-			message: '#^Call to an undefined method App\\Livewire\\Viticulturist\\PlotCosts\\Edit\:\:plotOwnershipRule\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/PlotCosts/Edit.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -10313,12 +10181,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Viticulturist/PlotEnvironments/Index.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$plot \(App\\Models\\Plot\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: app/Livewire/Viticulturist/Plots/PlotAuditHistory.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
@@ -10723,30 +10585,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Settings/Taxes.php
 
 		-
-			message: '#^Call to an undefined method App\\Livewire\\Viticulturist\\Subcontracting\\Create\:\:campaignOwnershipRule\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Subcontracting/Create.php
-
-		-
-			message: '#^Call to an undefined method App\\Livewire\\Viticulturist\\Subcontracting\\Create\:\:plotOwnershipRule\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Subcontracting/Create.php
-
-		-
-			message: '#^Call to an undefined method App\\Livewire\\Viticulturist\\Subcontracting\\Edit\:\:campaignOwnershipRule\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Subcontracting/Edit.php
-
-		-
-			message: '#^Call to an undefined method App\\Livewire\\Viticulturist\\Subcontracting\\Edit\:\:plotOwnershipRule\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Subcontracting/Edit.php
-
-		-
 			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
 			identifier: larastan.noEnvCallsOutsideOfConfig
 			count: 4
@@ -10849,19 +10687,7 @@ parameters:
 			path: app/Livewire/Winery/Billing/GrapePurchase/Create.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/GrapePurchase/Create.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Winery/Billing/GrapePurchase/Create.php
-
-		-
-			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Harvest\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Harvest\>\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Winery/Billing/GrapePurchase/Create.php
@@ -10903,12 +10729,6 @@ parameters:
 			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -10919,24 +10739,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Winery/Billing/GrapePurchase/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Create\:\:\$discountAmount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Create.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Create\:\:\$subtotal\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Create.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Create\:\:\$taxAmount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Create.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
@@ -10951,22 +10753,10 @@ parameters:
 			path: app/Livewire/Winery/Billing/ProductSale/Create.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>rate" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Create.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>sku" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Winery/Billing/ProductSale/Create.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Edit\:\:\$discountAmount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Edit\:\:\$isInvoiced\.$#'
@@ -10978,18 +10768,6 @@ parameters:
 			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Edit\:\:\$isLocked\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Edit\:\:\$subtotal\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Edit\:\:\$taxAmount\.$#'
-			identifier: property.notFound
-			count: 1
 			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
 
 		-
@@ -11036,12 +10814,6 @@ parameters:
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>rate" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
@@ -11435,18 +11207,6 @@ parameters:
 			identifier: property.notFound
 			count: 2
 			path: app/Livewire/Winery/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Dashboard.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$kg\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Dashboard.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>year" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
@@ -11872,12 +11632,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Livewire/Winery/Harvest/Summary/Index.php
-
-		-
-			message: '#^Anonymous function has an unused use \$campaign\.$#'
-			identifier: closure.unusedUse
-			count: 1
 			path: app/Livewire/Winery/Harvest/Summary/Index.php
 
 		-
@@ -12379,12 +12133,6 @@ parameters:
 			path: app/Models/AuditLog.php
 
 		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$year \(int\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: app/Models/Campaign.php
-
-		-
 			message: '#^Offset ''analysis''\|''authorization''\|''certificate''\|''invoice''\|''lab_report''\|''map''\|''other'' on array\{invoice\: ''Factura de insumos'', certificate\: ''Certificado …'', lab_report\: ''Informe de…'', authorization\: ''Autorización'', map\: ''Mapa / croquis'', analysis\: ''Análisis \(suelo,…'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -12643,12 +12391,6 @@ parameters:
 			path: app/Models/Harvest.php
 
 		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$quantity \(float\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: app/Models/Harvest.php
-
-		-
 			message: '#^Offset ''bodega''\|''compostaje''\|''cooperativa''\|''destileria''\|''otro''\|''vertedero_autorizado'' on array\{cooperative\: ''Cooperativa vinícola'', winery\: ''Bodega'', distillery\: ''Destilería /…'', composting\: ''Planta de compostaje'', authorized_landfill\: ''Vertedero autorizado'', other\: ''Otro destino''\} on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -12787,12 +12529,6 @@ parameters:
 			path: app/Models/Plot.php
 
 		-
-			message: '#^Anonymous function has an unused use \$today\.$#'
-			identifier: closure.unusedUse
-			count: 1
-			path: app/Models/Plot.php
-
-		-
 			message: '#^Method App\\Models\\Plot\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
 			count: 1
@@ -12815,12 +12551,6 @@ parameters:
 			identifier: staticClassAccess.privateMethod
 			count: 2
 			path: app/Models/PlotGeometry.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$harvestYear \(int\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: app/Models/PlotPlanting.php
 
 		-
 			message: '#^Offset ''copper_treatment''\|''foliar_application''\|''other''\|''sulfur_treatment''\|''trunk_treatment''\|''wound_sealing'' on array\{copper_treatment\: ''Tratamiento con…'', sulfur_treatment\: ''Tratamiento con…'', wound_sealing\: ''Sellado de heridas…'', foliar_application\: ''Aplicación foliar'', trunk_treatment\: ''Tratamiento de…'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
@@ -13073,6 +12803,12 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/WinerySupply.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Models/WineryViticulturist.php
 
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
@@ -13741,12 +13477,6 @@ parameters:
 			path: app/Notifications/SupportTicketCreatedNotification.php
 
 		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$pdfContent \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: app/Notifications/TemporaryPasswordNotification.php
-
-		-
 			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
 			identifier: isset.offset
 			count: 1
@@ -14063,12 +13793,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Policies/PlotPolicy.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#3 \$limit \(int\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: app/Repositories/AgriculturalActivityRepository.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
@@ -14471,6 +14195,12 @@ parameters:
 			identifier: match.unhandled
 			count: 1
 			path: app/Services/OfficialReportService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>year" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/ProducerDashboardService.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$concept_type\.$#'
