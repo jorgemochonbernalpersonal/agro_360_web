@@ -2,38 +2,28 @@
 
 namespace App\Livewire\Viticulturist\Containers;
 
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
-
-    public $currentTab = 'active'; // 'active', 'archived'
-
-    public $search = '';
+    use WithListing, WithToastNotifications;
 
     public $filterStatus = ''; // '', 'empty', 'available', 'full'
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search' => ['except' => ''],
         'filterStatus' => ['except' => ''],
     ];
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
 
     public function updatingFilterStatus()
     {
         $this->resetPage();
     }
 
+    // switchTab propio: además de paginar, limpia el filtro de ocupación.
     public function switchTab($tab)
     {
         $this->currentTab = $tab;

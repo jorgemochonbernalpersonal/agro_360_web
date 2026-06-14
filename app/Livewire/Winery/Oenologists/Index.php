@@ -2,35 +2,15 @@
 
 namespace App\Livewire\Winery\Oenologists;
 
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Oenologist;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
-
-    public string $currentTab = 'active';
-
-    public string $search = '';
-
-    protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search' => ['except' => ''],
-    ];
-
-    public function switchTab(string $tab): void
-    {
-        $this->currentTab = $tab;
-        $this->resetPage();
-    }
-
-    public function updatingSearch(): void
-    {
-        $this->resetPage();
-    }
+    use WithListing, WithToastNotifications;
 
     public function clearFilters(): void
     {

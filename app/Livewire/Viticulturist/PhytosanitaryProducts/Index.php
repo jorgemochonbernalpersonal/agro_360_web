@@ -2,25 +2,19 @@
 
 namespace App\Livewire\Viticulturist\PhytosanitaryProducts;
 
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\PhytosanitaryProduct;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
-
-    public $currentTab = 'active'; // 'active', 'inactive'
-
-    public $search = '';
+    use WithListing, WithToastNotifications;
 
     public $typeFilter = '';
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search' => ['except' => ''],
         'typeFilter' => ['except' => ''],
     ];
 
@@ -29,17 +23,6 @@ class Index extends Component
         if (! Auth::user()->hasViticulturistAccess()) {
             abort(403, __('No tienes permiso para ver productos fitosanitarios.'));
         }
-    }
-
-    public function switchTab($tab): void
-    {
-        $this->currentTab = $tab;
-        $this->resetPage();
-    }
-
-    public function updatingSearch(): void
-    {
-        $this->resetPage();
     }
 
     public function updatingTypeFilter(): void

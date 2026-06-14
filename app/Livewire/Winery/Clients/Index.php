@@ -2,38 +2,21 @@
 
 namespace App\Livewire\Winery\Clients;
 
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
-
-    public string $currentTab = 'active';
-
-    public string $search = '';
+    use WithListing, WithToastNotifications;
 
     public string $filterType = '';
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search' => ['except' => ''],
         'filterType' => ['except' => ''],
     ];
-
-    public function switchTab(string $tab): void
-    {
-        $this->currentTab = $tab;
-        $this->resetPage();
-    }
-
-    public function updatingSearch(): void
-    {
-        $this->resetPage();
-    }
 
     public function updatingFilterType(): void
     {

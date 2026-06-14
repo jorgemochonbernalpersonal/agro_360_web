@@ -2,28 +2,22 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields;
 
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
-
-    public $currentTab = 'active'; // 'active', 'inactive'
-
-    public $search = '';
+    use WithListing, WithToastNotifications;
 
     public $selectedCampaign = '';
 
     public $filterStatus = '';
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search' => ['except' => ''],
         'selectedCampaign' => ['except' => ''],
         'filterStatus' => ['except' => ''],
     ];
@@ -38,17 +32,6 @@ class Index extends Component
                 $this->selectedCampaign = $active->id;
             }
         }
-    }
-
-    public function switchTab($tab): void
-    {
-        $this->currentTab = $tab;
-        $this->resetPage();
-    }
-
-    public function updatingSearch(): void
-    {
-        $this->resetPage();
     }
 
     public function updatingSelectedCampaign(): void

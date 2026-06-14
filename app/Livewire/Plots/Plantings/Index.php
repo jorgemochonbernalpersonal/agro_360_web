@@ -2,20 +2,16 @@
 
 namespace App\Livewire\Plots\Plantings;
 
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
-
-    public $currentTab = 'active'; // 'active', 'inactive'
-
-    public $search = '';
+    use WithListing, WithToastNotifications;
 
     public $status = '';
 
@@ -26,17 +22,10 @@ class Index extends Component
     public $plotSearch = '';
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search' => ['except' => ''],
         'status' => ['except' => ''],
         'year' => ['except' => ''],
         'cropType' => ['as' => 'crop', 'except' => ''],
     ];
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
 
     public function updatingStatus()
     {
@@ -50,12 +39,6 @@ class Index extends Component
 
     public function updatingCropType()
     {
-        $this->resetPage();
-    }
-
-    public function switchTab($tab)
-    {
-        $this->currentTab = $tab;
         $this->resetPage();
     }
 

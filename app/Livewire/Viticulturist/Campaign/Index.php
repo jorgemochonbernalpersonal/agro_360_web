@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Campaign;
 
+use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
@@ -9,21 +10,14 @@ use App\Models\EstimatedYield;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithRoleAwareRedirect, WithToastNotifications;
-
-    public $currentTab = 'active'; // 'active', 'inactive'
-
-    public $search = '';
+    use WithListing, WithRoleAwareRedirect, WithToastNotifications;
 
     public $yearFilter = '';
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search' => ['except' => ''],
         'yearFilter' => ['except' => ''],
     ];
 
@@ -32,17 +26,6 @@ class Index extends Component
         if (! Auth::user()->can('viewAny', Campaign::class)) {
             abort(403, __('No tienes permiso para ver campañas.'));
         }
-    }
-
-    public function switchTab($tab): void
-    {
-        $this->currentTab = $tab;
-        $this->resetPage();
-    }
-
-    public function updatingSearch(): void
-    {
-        $this->resetPage();
     }
 
     public function updatingYearFilter(): void
