@@ -258,7 +258,16 @@ routes/winery.php        ~324 líneas
   Producer Invoices Create/Edit + Winery ProductSale Create/Edit (commit `f7dcac44`).
   Test unitario `InvoiceServiceTest` (5 casos). Viticulturist Invoices fuera (otra convención
   de redondeo, sin `round()` por línea → requiere verificación propia).
-- [ ] Viticulturist Invoices: alinear/centralizar su matemática por línea (decidir convención).
+- [x] `InvoiceService::calculateVatTotals()` ahora también alimenta las **computed properties de
+  UI** (subtotal/iva/total en vivo) de Producer Invoices y Winery ProductSale (Create/Edit),
+  misma ruta que `save()` → el total mostrado no puede diverger del guardado (commit `9abeb896`).
+- [x] `InvoiceService::calculateIrpfLine()` — fuente única de la matemática IRPF **por línea**
+  (impuesto deducido). Adoptada en los 4 flujos vendedor: Viticulturist HarvestSale Create/Edit +
+  Winery GrapePurchase Create/Edit (commit `a7bad695`). Tests `calculateIrpfLine` (3 casos).
+- [ ] Viticulturist Invoices: pendiente por **decisión de producto** (no refactor invisible):
+  (a) su UI redondea a **2 decimales** (los demás flujos a 3) y (b) su matemática por línea en
+  `save()` no redondea por línea (otra convención). Alinear requiere decidir precisión de
+  visualización y si se redondea por línea → preguntar antes de tocar.
 - [ ] ~~`BaseInvoiceCreate`/`BaseInvoiceEdit`~~ **descartado**: los 5 flujos divergen demasiado
   (VAT vs IRPF, cliente vs viticultor vs comprador-string, multiplicador de regalo, redondeo,
   concept_types y post-save hooks distintos). Una clase base sería abstracción con fugas.
