@@ -1,7 +1,10 @@
 # 📌 IMPORTANTE — Unificación / limpieza de componentes y listados
 
-**Fecha:** 2026-05-31
-**Estado:** piloto hecho, rollout pendiente. Retomar el rollout de `WithListing` por dominios.
+**Fecha:** 2026-05-31 · **Actualizado:** 2026-06-14
+**Estado:** trait `WithListing` ya en `staging`. Rollout del patrón `search`+tabs
+`active/inactive` **completado en los componentes `Component` planos** (8 más
+migrados el 2026-06-14, ver §Progreso). Lo que queda no encaja con el trait tal
+cual (ver §Límites del rollout).
 
 ---
 
@@ -28,16 +31,35 @@
 
 ---
 
-## ▶️ LO QUE QUEDA (retomar aquí)
+## ✅ Progreso (2026-06-14)
 
-### Rollout de `WithListing` a los ~91 listados restantes
-~94 componentes Livewire repiten el mismo boilerplate (`$search`, `WithPagination`, `resetPage`, tabs). Migrar por **dominios** en microcommits:
-1. `viticulturist/` (los que tengan tabs+search)
-2. `winery/`
-3. `supervisor/`
-4. `producer/` + `admin/` + resto
+Migrados 8 listados `Component` planos al trait (commit `72009be4`, −132 líneas netas,
+sin cambio de comportamiento ni de URLs):
+`Viticulturist/Clients`, `Viticulturist/Campaign`, `Viticulturist/Containers`
+(conserva `switchTab` propio que limpia `filterStatus`), `Viticulturist/PhytosanitaryProducts`,
+`Viticulturist/DigitalNotebook/EstimatedYields`, `Plots/Plantings`, `Winery/Clients`,
+`Winery/Oenologists`. Verificado: php -l + Pint + PHPStan + tests en aislamiento.
 
-**No es 100% mecánico** — revisar cada componente: nombres de filtro propios, `mount()` que toque `currentTab`, tabs con default distinto a `'active'`.
+Con esto, **los candidatos limpios del trait están agotados** en componentes `Component`
+planos.
+
+## 🚧 Límites del rollout (por qué no se migra el resto)
+
+El trait sirve UN patrón concreto: `$search` + tabs `active/inactive` (default `'active'`).
+Los ~59 `Index` que aún usan `WithPagination` directo NO encajan:
+
+1. **`AbstractIndex`** (Viticulturist/Winery): abstracción más rica (`baseQuery`/`applyFilters`/
+   `viewData`) y aliasea `search` como `q`. Migrar al trait sería un **downgrade** + rompería URLs.
+   Ej.: WaterConcessions, Certifications, EnergyUsages, Winery/Cellar/Containers, ProductLots.
+2. **Tab por defecto ≠ `'active'`**: el `except` del `#[Url]` no se puede variar por clase sin
+   tocar el trait. Ej.: Admin/Users (`all`), Supervisor/Qualification·Labels·Inspection (`all`),
+   Harvests (`pending`), PlannedWorks (`pending`), Invoices/Harvest (`list`).
+3. **Tabs de sección, no listado** (`$activeTab`/`$tab`): Admin/Catalogs, Winery/Denomination,
+   Territory, Warehouse. No son filtros activo/inactivo.
+4. **Solo búsqueda, sin tabs**: el trait les añadiría un `$currentTab` muerto (ruido).
+
+**Decisión abierta:** para cubrir la categoría 2 habría que **generalizar el trait** (default de
+tab configurable). Tocaría los 12 componentes ya migrados → más riesgo; no hacer sin decisión.
 
 ### Cómo migrar un componente (receta)
 1. Añadir `use App\Livewire\Concerns\WithListing;`
@@ -62,5 +84,7 @@
 ---
 
 ## Estado git
-- `staging`: limpieza + notación + docs (pusheado por el usuario).
-- `refactor/with-listing-trait`: trait + piloto (4 commits) — **pendiente de push y de continuar rollout**.
+- `staging`: limpieza + notación + docs + **trait `WithListing` ya mergeado** +
+  pilotos (Clients root, Machinery, Plots) + **8 listados migrados** (commit `72009be4`).
+- Rollout del patrón active/inactive: **completo** en componentes `Component` planos.
+  El resto no encaja (ver §Límites del rollout).

@@ -254,7 +254,12 @@ routes/winery.php        ~324 líneas
 - [ ] Migrar Producer → Viticulturist → Winery uno a uno.
 
 **Fase 3 — Listados (bajo riesgo, en paralelo)**
-- [ ] Rollout de `WithListing` a los ~91 listados restantes.
+- [x] Rollout de `WithListing` a los listados `Component` planos con patrón active/inactive
+  (8 migrados el 2026-06-14, commit `72009be4`). **Candidatos limpios agotados** — el resto
+  no encaja (AbstractIndex / tab default ≠ active / tabs de sección / solo búsqueda).
+  Detalle en `2026-05-31-importante.md` §Límites del rollout.
+- [ ] (Opcional) Generalizar el trait para default de tab configurable → cubriría Admin/Users,
+  Supervisor (Qualification/Labels/Inspection), Harvests, PlannedWorks. Riesgo: toca los 12 ya migrados.
 - [ ] Auditar conformidad con `docs/patron-vista-listado.md`.
 
 **Continuo / mayor esfuerzo**
