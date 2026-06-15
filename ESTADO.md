@@ -1,6 +1,6 @@
 # 📍 ESTADO — punto de retomada
 
-> Última actualización: **2026-06-14**. Rama: `staging` (todo pusheado a `origin/staging`).
+> Última actualización: **2026-06-15**. Rama: `staging` (todo pusheado a `origin/staging`). PR staging→main pendiente de merge.
 > Este fichero es el índice vivo: resume qué está hecho y qué sigue. El detalle está en los
 > docs enlazados.
 
@@ -22,13 +22,24 @@
   borrados 8 componentes duplicados + 8 vistas (−3435 líneas).
 - **CI / PHPStan** — vuelto a verde; baseline regenerado (~3115 errores legacy congelados).
   `phpstan analyse` completo: 0 errores nuevos.
+- **Tests ownership viticulturist** (2026-06-15): FinancialStats, ShowHarvest, TreatmentIndex,
+  Teledetección (smoke + ownership PlotAnalysis + exports), Meteorología (smoke + IDOR plot ajeno),
+  PAC/Normativa (Payments ownership + smoke dashboards). ~40 tests nuevos.
+- **UI Fase 2 — paleta agro** (2026-06-15): 14 lotes, ~120 cambios en ~50 ficheros Blade.
+  Clases `green-*/emerald-*` estructurales migradas a `agro-*`; semánticas/temáticas/categóricas conservadas.
+  Reglas de clasificación consolidadas en `ui.md`.
+
+## ✅ Hecho (continuación)
+- **FormRequests API** (2026-06-15): 18 FormRequests nuevos centralizan `authorize()` + `rules()`
+  en 7 controladores (`NotebookController`, `SilicieController`, `ContainerController`,
+  `ContainerRoomController`, `ContainerStockEntryController`, `ContainerMaintenanceController`,
+  `ContainerReturnController`). Incluye reglas dinámicas por `activity_type` en Notebook
+  (con `prepareForValidation`). PHPStan: 0 errores nuevos. 88 tests verdes.
 
 ## 🔜 Pendiente (por prioridad sugerida)
 1. **Clientes — afinar** (opcional, bajo riesgo): el listado compartido no expone metadata SEO
    (title/description) que sí tenía viticultor; valorar si se quiere recuperar.
-2. **FormRequests resto de la API** — extender el patrón de Fase 1 a `NotebookController`,
-   `SilicieController`, `Container...` (validación inline → FormRequests). *(Fase 1, pendiente)*
-3. **Auditar listados** vs `docs/patron-vista-listado.md` (conformidad de las vistas). *(Fase 3)*
+2. **Auditar listados** vs `docs/patron-vista-listado.md` (conformidad de las vistas). *(Fase 3)*
 4. **Stock unificado** — `UnifiedStockService` + estrategias (Harvest/Container/ProductLot).
    Lo más crítico (inventario) y lo más profundo. *(carril B-core)*
 5. **`User.role` vs `Organization`** — decidir fuente de verdad única y migrar. *(deuda estructural)*
