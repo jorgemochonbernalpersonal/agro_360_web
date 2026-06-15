@@ -59,8 +59,8 @@
                 >
                     <x-slot:header>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-                                <flux:icon icon="map" class="size-5 text-emerald-600" />
+                            <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center shrink-0">
+                                <flux:icon icon="map" class="size-5 text-agro-600" />
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h3 class="font-bold text-zinc-900 truncate">{{ $plot->name }}</h3>
@@ -84,11 +84,11 @@
                     <div class="flex-1 space-y-4">
                         {{-- Metric boxes --}}
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Área') }}</p>
-                                <p class="text-sm font-bold text-emerald-700">
+                            <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Área') }}</p>
+                                <p class="text-sm font-bold text-agro-700">
                                     {{ number_format($plot->area, 2) }}
-                                    <span class="text-[9px] font-normal text-emerald-400">ha</span>
+                                    <span class="text-[9px] font-normal text-agro-400">ha</span>
                                 </p>
                             </div>
                             <div class="bg-blue-50 rounded-lg p-2 text-center">

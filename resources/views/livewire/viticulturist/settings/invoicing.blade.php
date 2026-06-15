@@ -100,8 +100,8 @@
         {{-- Albaranes --}}
         <x-agro.form-card>
             <x-slot:header>
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-                    <flux:icon icon="clipboard-document" class="size-5 text-emerald-600" />
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-agro-100 to-agro-200 flex items-center justify-center">
+                    <flux:icon icon="clipboard-document" class="size-5 text-agro-600" />
                 </div>
                 <span>{{ __('Albaranes') }}</span>
             </x-slot:header>
@@ -164,10 +164,10 @@
             </div>
 
             {{-- Vista previa --}}
-            <div class="mt-6 p-4 bg-emerald-50 border-2 border-emerald-200 rounded-lg">
-                <p class="text-sm font-medium text-emerald-700 mb-1">{{ __('Vista previa') }}</p>
-                <p class="text-3xl font-bold text-emerald-900 font-mono tracking-wide">{{ $deliveryNotePreview }}</p>
-                <p class="mt-1 text-xs text-emerald-600">{{ __('Próximo albarán que se generará') }}</p>
+            <div class="mt-6 p-4 bg-agro-50 border-2 border-agro-200 rounded-lg">
+                <p class="text-sm font-medium text-agro-700 mb-1">{{ __('Vista previa') }}</p>
+                <p class="text-3xl font-bold text-agro-900 font-mono tracking-wide">{{ $deliveryNotePreview }}</p>
+                <p class="mt-1 text-xs text-agro-600">{{ __('Próximo albarán que se generará') }}</p>
             </div>
 
             <div class="mt-4 flex justify-end">

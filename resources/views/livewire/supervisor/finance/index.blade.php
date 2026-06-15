@@ -61,11 +61,11 @@
                                         <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">{{ __('Plan') }}</p>
                                         <p class="text-sm font-bold text-blue-700 capitalize">{{ $sub->plan_type }}</p>
                                     </div>
-                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Importe') }}</p>
-                                        <p class="text-sm font-bold text-emerald-700">
+                                    <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Importe') }}</p>
+                                        <p class="text-sm font-bold text-agro-700">
                                             {{ number_format($sub->amount, 2, ',', '.') }}
-                                            <span class="text-[9px] font-normal text-emerald-400">{{ __('EUR') }}</span>
+                                            <span class="text-[9px] font-normal text-agro-400">{{ __('EUR') }}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -123,12 +123,12 @@
                                             {{ number_format($row->total_kg, 0, ',', '.') }}
                                         </p>
                                     </div>
-                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Valor') }}</p>
-                                        <p class="text-sm font-bold text-emerald-700">
+                                    <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Valor') }}</p>
+                                        <p class="text-sm font-bold text-agro-700">
                                             @if($row->total_value > 0)
                                                 {{ number_format($row->total_value, 2, ',', '.') }}
-                                                <span class="text-[9px] font-normal text-emerald-400">{{ __('EUR') }}</span>
+                                                <span class="text-[9px] font-normal text-agro-400">{{ __('EUR') }}</span>
                                             @else
                                                 —
                                             @endif

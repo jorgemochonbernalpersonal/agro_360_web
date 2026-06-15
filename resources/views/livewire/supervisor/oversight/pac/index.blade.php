@@ -65,8 +65,8 @@
                                 icon="user"
                                 :title="$vit->name"
                                 :subtitle="$vtot . ' parcelas'"
-                                iconBg="bg-emerald-100"
-                                iconColor="text-emerald-600"
+                                iconBg="bg-agro-50"
+                                iconColor="text-agro-600"
                                 size="md"
                                 radius="xl"
                             >
