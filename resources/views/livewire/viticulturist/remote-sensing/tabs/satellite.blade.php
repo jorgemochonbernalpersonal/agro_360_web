@@ -28,7 +28,7 @@
 
         <button wire:click="requestDataForDate"
                 wire:loading.attr="disabled"
-                class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-medium rounded-lg transition-all shadow-md disabled:opacity-50">
+                class="inline-flex items-center px-4 py-2 bg-agro-700 hover:bg-agro-600 text-white text-sm font-medium rounded-lg transition-all shadow-md disabled:opacity-50">
             <svg wire:loading.remove wire:target="requestDataForDate" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>
