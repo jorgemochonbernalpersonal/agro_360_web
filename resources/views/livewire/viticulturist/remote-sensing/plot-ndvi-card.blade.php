@@ -1,7 +1,7 @@
 <div class="bg-white rounded-lg shadow-lg p-6">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold text-agro-700 flex items-center gap-2">
-            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-agro-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
@@ -28,7 +28,7 @@
         </div>
     @elseif($isLoading)
         <div class="flex items-center justify-center py-8">
-            <svg class="w-8 h-8 animate-spin text-green-600" fill="none" viewBox="0 0 24 24">
+            <svg class="w-8 h-8 animate-spin text-agro-600" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>
@@ -190,7 +190,7 @@
             </button>
 
             <a href="{{ route('remote-sensing.dashboard') }}"
-               class="text-sm text-green-600 hover:text-green-800 flex items-center gap-1 transition">
+               class="text-sm text-agro-600 hover:text-agro-800 flex items-center gap-1 transition">
                 {{ __('Ver todas las parcelas') }}
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

@@ -14,12 +14,12 @@
                         📄 PDF
                     </a>
                     <a href="{{ route('remote-sensing.export.excel', $plot) }}" 
-                       class="bg-green-50 text-green-700 px-3 py-2 rounded-lg hover:bg-green-100 transition flex items-center gap-2 text-sm border border-green-200">
+                       class="bg-agro-50 text-agro-700 px-3 py-2 rounded-lg hover:bg-agro-100 transition flex items-center gap-2 text-sm border border-agro-200">
                         📊 Excel
                     </a>
                 </div>
                 <button wire:click="refreshData" 
-                        class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition flex items-center gap-2 shadow-lg">
+                        class="bg-agro-700 text-white px-4 py-2 rounded-lg hover:bg-agro-600 transition flex items-center gap-2 shadow-lg">
                     <svg wire:loading.remove wire:target="refreshData" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
@@ -43,7 +43,7 @@
         </div>
     @elseif($isLoading)
         <div class="flex items-center justify-center py-16">
-            <svg class="w-12 h-12 animate-spin text-green-600" fill="none" viewBox="0 0 24 24">
+            <svg class="w-12 h-12 animate-spin text-agro-600" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>

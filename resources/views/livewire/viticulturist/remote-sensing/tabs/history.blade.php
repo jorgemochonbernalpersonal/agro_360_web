@@ -25,7 +25,7 @@
                             <input type="date"
                                    wire:model="customStartDate"
                                    max="{{ now()->format('Y-m-d') }}"
-                                   class="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                                   class="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-agro-500 focus:border-agro-500 text-sm"
                                    placeholder="{{ __('Desde') }}">
                         </div>
                         <span class="text-zinc-500">→</span>
@@ -33,11 +33,11 @@
                             <input type="date"
                                    wire:model="customEndDate"
                                    max="{{ now()->format('Y-m-d') }}"
-                                   class="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                                   class="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-agro-500 focus:border-agro-500 text-sm"
                                    placeholder="{{ __('Hasta') }}">
                         </div>
                         <button wire:click="applyCustomDateRange"
-                                class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
+                                class="px-4 py-2 bg-agro-700 hover:bg-agro-600 text-white rounded-lg transition-colors text-sm font-medium">
                             {{ __('Aplicar') }}
                         </button>
                     </div>
@@ -134,9 +134,9 @@
                 <div class="text-xs text-blue-600 mb-1">{{ __('Promedio') }}</div>
                 <div class="text-2xl font-bold text-blue-900">{{ number_format($avgNdvi, 3) }}</div>
             </div>
-            <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-                <div class="text-xs text-green-600 mb-1">{{ __('Máximo') }}</div>
-                <div class="text-2xl font-bold text-green-900">{{ number_format($maxNdvi, 3) }}</div>
+            <div class="bg-agro-50 border border-agro-200 rounded-lg p-3 text-center">
+                <div class="text-xs text-agro-600 mb-1">{{ __('Máximo') }}</div>
+                <div class="text-2xl font-bold text-agro-900">{{ number_format($maxNdvi, 3) }}</div>
             </div>
             <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
                 <div class="text-xs text-orange-600 mb-1">{{ __('Mínimo') }}</div>
@@ -151,7 +151,7 @@
         {{-- Botones de acción --}}
         <div class="flex flex-wrap gap-3 mb-6">
             <button wire:click="exportCSV"
-                    class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
+                    class="inline-flex items-center px-4 py-2 bg-agro-700 hover:bg-agro-600 text-white rounded-lg transition-colors text-sm font-medium">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
