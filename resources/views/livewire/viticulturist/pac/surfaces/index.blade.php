@@ -40,8 +40,8 @@
                     >
                         <x-slot:header>
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-                                    <flux:icon icon="map" class="size-5 text-emerald-600" />
+                                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="map" class="size-5 text-agro-600" />
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <h3 class="font-bold text-zinc-900 truncate">{{ $plot->name }}</h3>

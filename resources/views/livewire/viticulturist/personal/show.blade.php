@@ -31,8 +31,8 @@
                 <div class="text-3xl font-bold text-agro-700">{{ $stats['members_count'] }}</div>
                 <div class="text-sm text-zinc-600 mt-1">{{ __('Miembros') }}</div>
             </div>
-            <div class="text-center p-4 bg-green-50 rounded-lg">
-                <div class="text-3xl font-bold text-green-600">{{ $stats['activities_count'] }}</div>
+            <div class="text-center p-4 bg-agro-50 rounded-lg">
+                <div class="text-3xl font-bold text-agro-600">{{ $stats['activities_count'] }}</div>
                 <div class="text-sm text-zinc-600 mt-1">{{ __('Actividades') }}</div>
             </div>
         </div>

@@ -46,7 +46,7 @@
                         </button>
                         <a
                             href="{{ roleRoute('viticulturist.official-reports.download', $generatedReport) }}"
-                            class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-center"
+                            class="flex-1 px-4 py-2 bg-agro-600 text-white rounded-lg hover:bg-agro-700 transition-colors font-semibold text-center"
                         >
                             {{ __('Descargar PDF') }}
                         </a>
