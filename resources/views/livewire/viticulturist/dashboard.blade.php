@@ -37,31 +37,31 @@
         icon='<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>'
         :title="__('Dashboard')"
         :description="__('Resumen de tu viñedo')"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
+        icon-color="from-agro-600 to-agro-800"
     />
 
     {{-- Contexto: última actividad o sugerencia --}}
     @if($this->isNewUser)
-        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-5" data-cy="welcome-context">
+        <div class="bg-agro-50 border border-agro-200 rounded-xl p-5" data-cy="welcome-context">
             <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-xl bg-green-500 flex items-center justify-center text-white text-2xl flex-shrink-0">
+                <div class="w-12 h-12 rounded-xl bg-agro-500 flex items-center justify-center text-white text-2xl flex-shrink-0">
                     🌱
                 </div>
                 <div>
-                    <h3 class="font-bold text-green-900">{{ __('Tu viñedo digital te espera') }}</h3>
-                    <p class="text-sm text-green-700 mt-1">
+                    <h3 class="font-bold text-agro-900">{{ __('Tu viñedo digital te espera') }}</h3>
+                    <p class="text-sm text-agro-700 mt-1">
                         {{ __('Registra tu primera actividad en el cuaderno y empieza a llevar el control de tu explotación. El cuaderno de campo es obligatorio para el cumplimiento PAC.') }}
                     </p>
                     <div class="flex gap-3 mt-3">
                         <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-agro-700 hover:bg-agro-600 text-white text-sm font-semibold rounded-lg transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             {{ __('Registrar actividad') }}
                         </a>
                         <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-green-50 text-green-700 text-sm font-semibold rounded-lg border border-green-300 transition-colors">
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-agro-50 text-agro-700 text-sm font-semibold rounded-lg border border-agro-300 transition-colors">
                             {{ __('Ver cuaderno') }}
                         </a>
                     </div>
@@ -106,44 +106,44 @@
         {{-- Teledetección - condicional --}}
         @php $ndvi = $this->ndviData; @endphp
         @if($ndvi['ndvi'] !== null)
-            <a href="{{ route('remote-sensing.dashboard') }}" wire:navigate class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl shadow-lg border-2 border-green-200 p-5 hover:shadow-xl hover:border-green-300 transition-all" data-cy="kpi-remote-sensing">
+            <a href="{{ route('remote-sensing.dashboard') }}" wire:navigate class="bg-agro-50 rounded-xl shadow-lg border-2 border-agro-200 p-5 hover:shadow-xl hover:border-agro-300 transition-all" data-cy="kpi-remote-sensing">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-green-700">{{ __('NDVI') }}</p>
-                        <p class="text-3xl font-bold {{ $ndvi['ndvi'] >= 0.5 ? 'text-green-700' : ($ndvi['ndvi'] >= 0.35 ? 'text-amber-600' : 'text-red-600') }}">{{ number_format($ndvi['ndvi'], 2) }}</p>
-                        <p class="text-xs text-green-600 truncate">{{ $ndvi['plotName'] }}</p>
+                        <p class="text-sm font-medium text-agro-700">{{ __('NDVI') }}</p>
+                        <p class="text-3xl font-bold {{ $ndvi['ndvi'] >= 0.5 ? 'text-agro-700' : ($ndvi['ndvi'] >= 0.35 ? 'text-amber-600' : 'text-red-600') }}">{{ number_format($ndvi['ndvi'], 2) }}</p>
+                        <p class="text-xs text-agro-600 truncate">{{ $ndvi['plotName'] }}</p>
                     </div>
-                    <div class="w-12 h-12 rounded-lg bg-green-200 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 rounded-lg bg-agro-200 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-agro-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                         </svg>
                     </div>
                 </div>
             </a>
         @elseif($ndvi['hasSigpac'])
-            <a href="{{ route('remote-sensing.dashboard') }}" wire:navigate class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl shadow-lg border-2 border-green-200 p-5 hover:shadow-xl hover:border-green-300 transition-all" data-cy="kpi-remote-sensing">
+            <a href="{{ route('remote-sensing.dashboard') }}" wire:navigate class="bg-agro-50 rounded-xl shadow-lg border-2 border-agro-200 p-5 hover:shadow-xl hover:border-agro-300 transition-all" data-cy="kpi-remote-sensing">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-green-700">{{ __('Teledetección') }}</p>
-                        <p class="text-base font-bold text-green-800">{{ __('Ver mapa NDVI') }}</p>
-                        <p class="text-xs text-green-600">{{ __('Análisis satelital') }}</p>
+                        <p class="text-sm font-medium text-agro-700">{{ __('Teledetección') }}</p>
+                        <p class="text-base font-bold text-agro-800">{{ __('Ver mapa NDVI') }}</p>
+                        <p class="text-xs text-agro-600">{{ __('Análisis satelital') }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-green-200 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-10 h-10 rounded-lg bg-agro-200 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-agro-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </div>
                 </div>
             </a>
         @else
-            <a href="{{ route('plots.index') }}" wire:navigate class="bg-white rounded-xl shadow-lg border-2 border-dashed border-green-300 p-5 hover:shadow-xl hover:border-green-400 transition-all" data-cy="kpi-remote-sensing-setup">
+            <a href="{{ route('plots.index') }}" wire:navigate class="bg-white rounded-xl shadow-lg border-2 border-dashed border-agro-300 p-5 hover:shadow-xl hover:border-agro-400 transition-all" data-cy="kpi-remote-sensing-setup">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-green-700">{{ __('Teledetección') }}</p>
+                        <p class="text-sm font-medium text-agro-700">{{ __('Teledetección') }}</p>
                         <p class="text-xs font-semibold text-zinc-600 mt-1">{{ __('Vincula tus parcelas con SIGPAC para ver análisis satelital gratis') }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-10 h-10 rounded-lg bg-agro-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-agro-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                     </div>
@@ -170,11 +170,11 @@
     </x-agro.card>
 
     {{-- PAC Compliance Section --}}
-    <div x-data="{ pacOpen: true }" class="bg-white rounded-xl shadow-lg border border-green-200">
+    <div x-data="{ pacOpen: true }" class="bg-white rounded-xl shadow-lg border border-agro-200">
         <button @click="pacOpen = !pacOpen" class="w-full px-6 py-4 flex items-center justify-between hover:bg-zinc-50 transition-colors rounded-xl">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-agro-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
@@ -211,7 +211,7 @@
                     @foreach($this->plotsByVariety as $index => $variety)
                         @php
                             $percentage = ($variety->count / max($this->totalPlots, 1)) * 100;
-                            $colors = ['bg-green-500', 'bg-purple-500', 'bg-blue-500', 'bg-amber-500', 'bg-rose-500'];
+                            $colors = ['bg-agro-500', 'bg-purple-500', 'bg-blue-500', 'bg-amber-500', 'bg-rose-500'];
                             $color = $colors[$index % count($colors)];
                         @endphp
                         <div>
@@ -228,7 +228,7 @@
             @else
                 <x-agro.empty-state icon="map" :title="__('Sin plantaciones')" :description="__('Aún no tienes plantaciones registradas')">
                     <a href="{{ route('plots.index') }}" wire:navigate
-                       class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                       class="inline-flex items-center gap-2 px-4 py-2 bg-agro-700 hover:bg-agro-600 text-white text-sm font-semibold rounded-lg transition-colors">
                         {{ __('Añadir plantaciones a tus parcelas') }}
                     </a>
                 </x-agro.empty-state>
@@ -295,15 +295,15 @@
     {{-- Quick Links Row --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         @if($this->isNewUser)
-            <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow border-2 border-green-200 p-4 hover:shadow-lg hover:border-green-400 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center text-xl text-white">
+            <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate class="bg-agro-50 rounded-xl shadow border-2 border-agro-200 p-4 hover:shadow-lg hover:border-agro-400 transition-all flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-agro-500 flex items-center justify-center text-xl text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>
                 </div>
                 <div>
                     <p class="font-semibold text-zinc-900">{{ __('Entrada rápida') }}</p>
-                    <p class="text-xs text-green-600 font-medium">{{ __('Actividad en 2 pasos') }}</p>
+                    <p class="text-xs text-agro-600 font-medium">{{ __('Actividad en 2 pasos') }}</p>
                 </div>
             </a>
 
@@ -319,9 +319,9 @@
                 </div>
             </a>
 
-            <a href="{{ route('plots.index') }}" wire:navigate class="bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-green-300 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="{{ route('plots.index') }}" wire:navigate class="bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-agro-300 transition-all flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-agro-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-agro-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                     </svg>
                 </div>
@@ -385,9 +385,9 @@
                 @endif
             </a>
 
-            <a href="{{ route('plots.index') }}" wire:navigate class="bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-green-300 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="{{ route('plots.index') }}" wire:navigate class="bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-agro-300 transition-all flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-agro-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-agro-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                     </svg>
                 </div>
