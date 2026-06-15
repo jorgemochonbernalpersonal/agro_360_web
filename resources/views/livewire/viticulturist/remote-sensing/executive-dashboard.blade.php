@@ -3,7 +3,7 @@
     <div wire:loading wire:target="generateData"
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
         <x-agro.card class="max-w-sm mx-4 text-center">
-            <flux:icon icon="signal" class="size-16 text-green-600 mx-auto mb-4 animate-pulse" />
+            <flux:icon icon="signal" class="size-16 text-agro-600 mx-auto mb-4 animate-pulse" />
             <p class="text-lg font-bold text-zinc-900 mb-1">{{ __('Obteniendo datos del satélite') }}</p>
             <p class="text-zinc-500 text-sm">{{ __('Consultando NASA... unos segundos.') }}</p>
         </x-agro.card>
@@ -526,7 +526,7 @@
                         <button wire:click="generateData"
                                 wire:loading.attr="disabled"
                                 wire:target="generateData"
-                                class="px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-zinc-400 text-white text-sm font-semibold rounded-lg transition-colors inline-flex items-center gap-2">
+                                class="px-6 py-2.5 bg-agro-600 hover:bg-agro-700 disabled:bg-zinc-400 text-white text-sm font-semibold rounded-lg transition-colors inline-flex items-center gap-2">
                             <svg wire:loading.remove wire:target="generateData" class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                             </svg>

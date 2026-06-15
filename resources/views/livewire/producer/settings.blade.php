@@ -181,7 +181,7 @@
                     <x-agro.card>
                         <x-slot:header>
                             <div class="flex items-center gap-3">
-                                <flux:icon icon="cube" class="size-5 text-green-600" />
+                                <flux:icon icon="cube" class="size-5 text-agro-600" />
                                 <div>
                                     <p class="font-bold text-zinc-900">{{ __('Albaranes') }}</p>
                                     <p class="text-sm text-zinc-500">{{ __('Configuración de numeración de albaranes') }}</p>
@@ -217,9 +217,9 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                            <p class="text-sm font-medium text-green-800 mb-1">{{ __('Vista Previa:') }}</p>
-                            <p class="text-2xl font-bold text-green-900 font-mono">{{ $deliveryNotePreview }}</p>
+                        <div class="mt-4 p-4 bg-agro-50 border border-agro-200 rounded-lg">
+                            <p class="text-sm font-medium text-agro-800 mb-1">{{ __('Vista Previa:') }}</p>
+                            <p class="text-2xl font-bold text-agro-900 font-mono">{{ $deliveryNotePreview }}</p>
                         </div>
 
                         <div class="mt-3 flex justify-end">
