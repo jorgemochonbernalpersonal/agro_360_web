@@ -54,16 +54,16 @@
                                         <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">{{ __('Parcelas') }}</p>
                                         <p class="text-sm font-bold text-blue-700">{{ $row->plot_count }}</p>
                                     </div>
-                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
-                                        <p class="text-sm font-bold text-emerald-700">
+                                    <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
+                                        <p class="text-sm font-bold text-agro-700">
                                             {{ number_format($row->total_area, 2) }}
-                                            <span class="text-[9px] font-normal text-emerald-400">ha</span>
+                                            <span class="text-[9px] font-normal text-agro-400">ha</span>
                                         </p>
                                     </div>
-                                    <div class="bg-green-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-green-400 uppercase tracking-wide mb-0.5">{{ __('Ecológicas') }}</p>
-                                        <p class="text-sm font-bold text-green-700">{{ $row->organic_count }}</p>
+                                    <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Ecológicas') }}</p>
+                                        <p class="text-sm font-bold text-agro-700">{{ $row->organic_count }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -113,11 +113,11 @@
                                         <p class="text-[9px] text-violet-400 uppercase tracking-wide mb-0.5">{{ __('Parcelas') }}</p>
                                         <p class="text-sm font-bold text-violet-700">{{ $row->plot_count }}</p>
                                     </div>
-                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
-                                        <p class="text-sm font-bold text-emerald-700">
+                                    <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
+                                        <p class="text-sm font-bold text-agro-700">
                                             {{ number_format($row->planted_area, 2) }}
-                                            <span class="text-[9px] font-normal text-emerald-400">ha</span>
+                                            <span class="text-[9px] font-normal text-agro-400">ha</span>
                                         </p>
                                     </div>
                                 </div>
@@ -162,11 +162,11 @@
                                         <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">{{ __('Parcelas') }}</p>
                                         <p class="text-sm font-bold text-amber-700">{{ $row->plot_count }}</p>
                                     </div>
-                                    <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                        <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
-                                        <p class="text-sm font-bold text-emerald-700">
+                                    <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                        <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Superficie') }}</p>
+                                        <p class="text-sm font-bold text-agro-700">
                                             {{ number_format($row->total_area, 2) }}
-                                            <span class="text-[9px] font-normal text-emerald-400">ha</span>
+                                            <span class="text-[9px] font-normal text-agro-400">ha</span>
                                         </p>
                                     </div>
                                 </div>
