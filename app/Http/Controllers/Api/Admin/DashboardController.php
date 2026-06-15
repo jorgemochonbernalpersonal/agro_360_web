@@ -15,7 +15,6 @@ class DashboardController extends BaseApiController
     public function __invoke(Request $request): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
 
         // Conteo de usuarios por rol
         $usersByRole = User::selectRaw('role, COUNT(*) as total')

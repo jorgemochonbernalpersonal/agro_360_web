@@ -27,7 +27,6 @@ class SettingsController extends BaseApiController
     public function show(Request $request): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
 
         $settings = [];
         foreach (self::MANAGED_KEYS as $key) {
@@ -42,7 +41,6 @@ class SettingsController extends BaseApiController
     public function update(Request $request): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $validated = $request->validate([

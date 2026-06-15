@@ -18,7 +18,6 @@ class UserController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
 
         $perPage = $this->resolvePerPage($request, 30, 100);
 
@@ -57,7 +56,6 @@ class UserController extends BaseApiController
     public function pending(Request $request): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
 
         $perPage = $this->resolvePerPage($request, 30, 100);
 
@@ -75,7 +73,6 @@ class UserController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
 
         $user = User::with('profile')->findOrFail($id);
 
@@ -100,7 +97,6 @@ class UserController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $user = User::findOrFail($id);
@@ -146,7 +142,6 @@ class UserController extends BaseApiController
     public function approve(Request $request, int $id): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $user = User::findOrFail($id);
@@ -170,7 +165,6 @@ class UserController extends BaseApiController
     public function activate(Request $request, int $id): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $user = User::findOrFail($id);
@@ -190,7 +184,6 @@ class UserController extends BaseApiController
     public function deactivate(Request $request, int $id): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $user = User::findOrFail($id);
@@ -217,7 +210,6 @@ class UserController extends BaseApiController
     public function addNote(Request $request, int $id): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
 
         User::findOrFail($id);
 

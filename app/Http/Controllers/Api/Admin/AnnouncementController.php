@@ -17,7 +17,6 @@ class AnnouncementController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
 
         $perPage = $this->resolvePerPage($request, 30, 100);
 
@@ -37,7 +36,6 @@ class AnnouncementController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $validated = $request->validate([
@@ -65,7 +63,6 @@ class AnnouncementController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $announcement = AdminAnnouncement::findOrFail($id);
@@ -88,7 +85,6 @@ class AnnouncementController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
         abort_if($admin->isReadOnlyAdmin(), 403, 'Administrador de solo lectura.');
 
         $announcement = AdminAnnouncement::findOrFail($id);

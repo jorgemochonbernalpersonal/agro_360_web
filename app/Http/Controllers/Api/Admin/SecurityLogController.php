@@ -15,7 +15,6 @@ class SecurityLogController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $admin = $request->user();
-        abort_unless($admin->isAdmin(), 403);
 
         $perPage = $this->resolvePerPage($request, 30, 100);
 

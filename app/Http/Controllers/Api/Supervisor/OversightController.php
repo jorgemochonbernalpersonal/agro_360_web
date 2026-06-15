@@ -18,7 +18,6 @@ class OversightController extends BaseApiController
     public function wineries(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->isSupervisor(), 403);
 
         $wineryIds = SupervisorWinery::where('supervisor_id', $user->id)->pluck('winery_id');
 
@@ -35,7 +34,6 @@ class OversightController extends BaseApiController
     public function winery(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->isSupervisor(), 403);
 
         $supervised = SupervisorWinery::where('supervisor_id', $user->id)
             ->where('winery_id', $id)
@@ -51,7 +49,6 @@ class OversightController extends BaseApiController
     public function viticulturists(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->isSupervisor(), 403);
 
         $viticulturistIds = SupervisorViticulturist::where('supervisor_id', $user->id)
             ->pluck('viticulturist_id');
@@ -69,7 +66,6 @@ class OversightController extends BaseApiController
     public function viticulturist(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->isSupervisor(), 403);
 
         SupervisorViticulturist::where('supervisor_id', $user->id)
             ->where('viticulturist_id', $id)

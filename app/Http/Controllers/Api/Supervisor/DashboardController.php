@@ -15,8 +15,6 @@ class DashboardController extends BaseApiController
     public function __invoke(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->isSupervisor(), 403, 'Acceso denegado.');
-
         $userId = $user->id;
 
         // ── Supervised entities ───────────────────────────────────────────────
