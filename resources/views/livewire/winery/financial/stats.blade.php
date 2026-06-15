@@ -103,8 +103,8 @@
 <x-agro.card>
     <x-slot:header>
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-                <flux:icon icon="chart-bar" class="size-4 text-green-600" />
+            <div class="w-8 h-8 rounded-lg bg-agro-50 flex items-center justify-center">
+                <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
             </div>
             <span class="font-semibold text-zinc-900">Ingresos mensuales: {{ $year }} vs {{ $year - 1 }}</span>
         </div>
@@ -130,7 +130,7 @@
                 <div class="flex items-center gap-1">
                     <div class="flex-1 relative h-4">
                         {{-- Barra año actual --}}
-                        <div class="absolute inset-y-0 left-0 bg-green-500 rounded-full h-2 top-0"
+                        <div class="absolute inset-y-0 left-0 bg-agro-500 rounded-full h-2 top-0"
                              style="width: {{ $maxMonthly > 0 ? ($m['current'] / $maxMonthly * 100) : 0 }}%"></div>
                         {{-- Barra año anterior --}}
                         <div class="absolute inset-y-0 left-0 bg-zinc-200 rounded-full h-2 top-2"
@@ -142,7 +142,7 @@
     </div>
     <div class="flex items-center gap-6 mt-4 pt-3 border-t border-zinc-100">
         <div class="flex items-center gap-2">
-            <div class="w-3 h-2 rounded-full bg-green-500"></div>
+            <div class="w-3 h-2 rounded-full bg-agro-500"></div>
             <span class="text-xs text-zinc-500">{{ $year }}</span>
         </div>
         <div class="flex items-center gap-2">

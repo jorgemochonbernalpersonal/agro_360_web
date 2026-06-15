@@ -385,9 +385,9 @@
             </a>
 
             <a href="{{ roleRoute('financial-summary.index') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-green-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center group-hover:bg-green-100 transition-colors">
-                    <flux:icon icon="chart-bar-square" class="size-5 text-green-600" />
+                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
+                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
+                    <flux:icon icon="chart-bar-square" class="size-5 text-agro-600" />
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-zinc-900">{{ __('Resumen económico') }}</p>

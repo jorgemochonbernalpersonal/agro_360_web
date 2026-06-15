@@ -122,8 +122,8 @@
     <x-agro.card class="lg:col-span-2">
         <x-slot:header>
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-                    <flux:icon icon="chart-bar" class="size-4 text-green-600" />
+                <div class="w-8 h-8 rounded-lg bg-agro-50 flex items-center justify-center">
+                    <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
                 </div>
                 <span class="font-semibold text-zinc-900">Ingresos mensuales {{ $year }}</span>
             </div>
@@ -135,7 +135,7 @@
                 <div class="flex items-center gap-3">
                     <span class="text-xs text-zinc-400 w-8 shrink-0">{{ $m['label'] }}</span>
                     <div class="flex-1 bg-zinc-100 rounded-full h-2 overflow-hidden">
-                        <div class="h-2 rounded-full bg-green-500 transition-all duration-500"
+                        <div class="h-2 rounded-full bg-agro-500 transition-all duration-500"
                              style="width: {{ $maxMonthly > 0 ? ($m['total'] / $maxMonthly * 100) : 0 }}%"></div>
                     </div>
                     <span class="text-xs font-semibold text-zinc-700 w-24 text-right shrink-0">
@@ -304,9 +304,9 @@
 {{-- ── Acciones rápidas ─────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
     <a href="{{ roleRoute('invoices.products.index') }}" wire:navigate
-        class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-green-300 transition-all group">
-        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center group-hover:bg-green-100 transition-colors">
-            <flux:icon icon="arrow-up-tray" class="size-5 text-green-600" />
+        class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
+        <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
+            <flux:icon icon="arrow-up-tray" class="size-5 text-agro-600" />
         </div>
         <div>
             <p class="text-sm font-semibold text-zinc-900">{{ __('Venta de productos') }}</p>

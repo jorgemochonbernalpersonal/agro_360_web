@@ -30,14 +30,14 @@
                  class="relative transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all sm:w-full sm:max-w-2xl">
 
                 {{-- Header with Logo --}}
-                <div class="bg-gradient-to-br from-green-500 to-emerald-600 px-8 py-8 text-center">
+                <div class="bg-agro-600 px-8 py-8 text-center">
                     <div class="mx-auto w-32 h-32 mb-4 bg-white rounded-2xl shadow-lg flex items-center justify-center p-4">
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="w-full h-full object-contain">
                     </div>
                     <h2 class="text-2xl font-bold text-white mb-2">
                         {{ __('¡Bienvenido a tu viñedo digital!') }}
                     </h2>
-                    <p class="text-green-50 text-base">
+                    <p class="text-agro-50 text-base">
                         {{ __('Gestiona tu explotación vitícola de forma profesional') }}
                     </p>
                 </div>
@@ -46,8 +46,8 @@
                 <div class="px-8 py-6">
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div class="flex items-start gap-3">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                                <flux:icon icon="calendar-days" class="size-6 text-green-600" />
+                            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-agro-100 flex items-center justify-center">
+                                <flux:icon icon="calendar-days" class="size-6 text-agro-600" />
                             </div>
                             <div>
                                 <h3 class="font-semibold text-zinc-900 text-sm">{{ __('Campañas') }}</h3>
@@ -86,10 +86,10 @@
                         </div>
                     </div>
 
-                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+                    <div class="bg-agro-50 border border-agro-200 rounded-lg p-4">
                         <div class="flex items-start gap-3">
                             <div class="flex-shrink-0">
-                                <flux:icon icon="information-circle" class="size-5 text-green-600" />
+                                <flux:icon icon="information-circle" class="size-5 text-agro-600" />
                             </div>
                             <div>
                                 <p class="text-sm text-zinc-700 font-medium">
@@ -112,7 +112,7 @@
                     </button>
                     <button wire:click="startTour"
                             type="button"
-                            class="px-6 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+                            class="px-6 py-2.5 bg-agro-700 hover:bg-agro-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2">
                         {{ __('Comenzar') }}
                         <flux:icon icon="arrow-right" class="size-4" />
                     </button>

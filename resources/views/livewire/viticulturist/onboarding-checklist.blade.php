@@ -3,20 +3,20 @@
         <div x-data="{ expanded: false }" class="mb-4">
             {{-- Compact Header (Always Visible) --}}
             <div @click="expanded = !expanded"
-                 class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 p-3 cursor-pointer hover:shadow-md transition-all">
+                 class="bg-agro-50 rounded-lg border border-agro-200 p-3 cursor-pointer hover:shadow-md transition-all">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white text-lg">
+                        <div class="w-10 h-10 rounded-full bg-agro-500 flex items-center justify-center text-white text-lg">
                             🚀
                         </div>
                         <div>
                             <h3 class="text-sm font-bold text-zinc-900">{{ __('Primeros pasos en Agro365') }}</h3>
                             <div class="flex items-center gap-2 mt-0.5">
                                 <div class="w-32 bg-zinc-200 rounded-full h-1.5">
-                                    <div class="bg-green-500 h-1.5 rounded-full transition-all duration-500"
+                                    <div class="bg-agro-500 h-1.5 rounded-full transition-all duration-500"
                                          style="width: {{ $progressPercentage }}%"></div>
                                 </div>
-                                <span class="text-xs font-medium text-green-600">{{ $progressPercentage }}%</span>
+                                <span class="text-xs font-medium text-agro-600">{{ $progressPercentage }}%</span>
                             </div>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                             {{-- Checkbox --}}
                             <div class="flex-shrink-0">
                                 @if($step['completed'])
-                                    <div class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                                    <div class="w-5 h-5 rounded-full bg-agro-500 flex items-center justify-center">
                                         <flux:icon icon="check" class="size-3 text-white" />
                                     </div>
                                 @else
@@ -60,7 +60,7 @@
                             @if(!$step['completed'])
                                 <a href="{{ $step['route'] }}"
                                    wire:navigate
-                                   class="flex-shrink-0 px-2 py-1 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded transition-colors">
+                                   class="flex-shrink-0 px-2 py-1 bg-agro-700 hover:bg-agro-600 text-white text-xs font-medium rounded transition-colors">
                                     {{ __('Ir') }}
                                 </a>
                             @endif
@@ -76,7 +76,7 @@
                     </button>
 
                     @if($progressPercentage === 100)
-                        <div class="flex items-center gap-1 text-green-600">
+                        <div class="flex items-center gap-1 text-agro-600">
                             <flux:icon icon="check-circle" class="size-4" />
                             <span class="text-xs font-semibold">{{ __('¡Completado!') }}</span>
                         </div>
@@ -87,7 +87,7 @@
 
         {{-- Success Message --}}
         @if(session('onboarding_complete'))
-            <div class="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-lg mb-4 text-sm" role="alert">
+            <div class="bg-agro-50 border border-agro-200 text-agro-700 px-3 py-2 rounded-lg mb-4 text-sm" role="alert">
                 <div class="flex items-center gap-2">
                     <flux:icon icon="check-circle" class="size-4" />
                     <span class="font-semibold">{{ __('¡Enhorabuena! Has completado el onboarding.') }}</span>
@@ -98,7 +98,7 @@
         {{-- Botón discreto para reactivar onboarding cuando está oculto --}}
         <div class="mb-4">
             <button wire:click="resetOnboarding"
-                    class="text-xs text-zinc-500 hover:text-green-600 transition-colors flex items-center gap-1">
+                    class="text-xs text-zinc-500 hover:text-agro-600 transition-colors flex items-center gap-1">
                 <flux:icon icon="arrow-path" class="size-3" />
                 {{ __('Volver a ver el tour de bienvenida') }}
             </button>
