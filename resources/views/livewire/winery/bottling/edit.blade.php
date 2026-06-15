@@ -2,7 +2,7 @@
     title="{{ __('Editar Embotellado') }}"
     :description="__('Modifica los datos de esta operación de embotellado.')"
     icon="archive-box-arrow-down"
-    icon-color="from-emerald-500 to-emerald-700"
+    icon-color="from-agro-500 to-agro-700"
     :back-url="roleRoute('bottling.index')"
 >
     <form wire:submit="save" class="space-y-8">

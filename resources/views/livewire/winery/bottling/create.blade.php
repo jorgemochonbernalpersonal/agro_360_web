@@ -2,7 +2,7 @@
     title="{{ __('Nuevo Embotellado') }}"
     :description="__('Registra una operación de embotellado con los materiales utilizados.')"
     icon="archive-box-arrow-down"
-    icon-color="from-emerald-500 to-emerald-700"
+    icon-color="from-agro-500 to-agro-700"
     :back-url="roleRoute('bottling.index')"
 >
     <form wire:submit="save" class="space-y-8">

@@ -23,7 +23,7 @@
                     </div>
                     <a
                         href="{{ roleRoute('viticulturist.official-reports.download', $reportToPreview) }}"
-                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold"
+                        class="px-4 py-2 bg-agro-600 text-white rounded-lg hover:bg-agro-700 transition-colors text-sm font-semibold"
                     >
                         <flux:icon icon="arrow-down-tray" class="size-4" /> {{ __('Descargar PDF') }}
                     </a>

@@ -107,7 +107,7 @@
                 <tbody class="divide-y divide-zinc-100">
                     @foreach($history as $index => $record)
                         <tr wire:click="selectRecord({{ $index }})"
-                            class="cursor-pointer transition-colors {{ $selectedIndex === $index ? 'bg-green-50' : 'hover:bg-zinc-50' }}">
+                            class="cursor-pointer transition-colors {{ $selectedIndex === $index ? 'bg-agro-50' : 'hover:bg-zinc-50' }}">
                             <td class="px-4 py-3 font-medium">{{ $record['date'] }}</td>
                             <td class="px-4 py-3 text-center">
                                 <span class="inline-flex items-center gap-1">

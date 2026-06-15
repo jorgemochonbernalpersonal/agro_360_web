@@ -3,7 +3,7 @@
         <div x-data="{ expanded: false }" class="mb-4">
             {{-- Compact Header (Always Visible) --}}
             <div @click="expanded = !expanded"
-                 class="bg-gradient-to-r from-agro-50 to-emerald-50 rounded-lg border border-agro-200 p-3 cursor-pointer hover:shadow-md transition-all">
+                 class="bg-gradient-to-r from-agro-50 to-agro-100 rounded-lg border border-agro-200 p-3 cursor-pointer hover:shadow-md transition-all">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-agro-600 flex items-center justify-center text-white text-lg">

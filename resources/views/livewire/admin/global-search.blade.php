@@ -109,7 +109,7 @@
                             </a>
                             <a href="{{ route('admin.subscriptions.index') }}" wire:click="closeModal"
                                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-50 transition-colors text-sm text-zinc-700">
-                                <flux:icon icon="credit-card" class="size-4 text-green-400" />
+                                <flux:icon icon="credit-card" class="size-4 text-agro-400" />
                                 Suscripciones
                             </a>
                             <a href="{{ route('admin.health.index') }}" wire:click="closeModal"

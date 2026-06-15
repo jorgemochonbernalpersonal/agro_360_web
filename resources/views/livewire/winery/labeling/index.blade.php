@@ -88,7 +88,7 @@
                                     <span class="text-zinc-700 font-medium">
                                         @if($labeling->bottling)
                                             <a href="{{ roleRoute('bottling.edit', $labeling->wine_bottling_id) }}"
-                                                class="text-emerald-600 hover:text-emerald-800 underline underline-offset-2">
+                                                class="text-agro-600 hover:text-agro-800 underline underline-offset-2">
                                                 {{ $labeling->bottling->bottling_date->format('d/m/Y') }}
                                             </a>
                                         @else

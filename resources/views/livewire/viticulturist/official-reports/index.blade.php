@@ -153,7 +153,7 @@
                                             </a>
                                             @if($report->csv_path)
                                                 <button wire:click="downloadInFormat({{ $report->id }}, 'csv')" @click="open = false" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-agro-50 rounded-lg mx-1">
-                                                    <flux:icon icon="document" class="size-4 text-emerald-500" /> CSV
+                                                    <flux:icon icon="document" class="size-4 text-agro-500" /> CSV
                                                 </button>
                                             @endif
                                             @if($report->xml_path)
