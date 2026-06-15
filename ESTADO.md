@@ -35,15 +35,17 @@
   `ContainerRoomController`, `ContainerStockEntryController`, `ContainerMaintenanceController`,
   `ContainerReturnController`). Incluye reglas dinámicas por `activity_type` en Notebook
   (con `prepareForValidation`). PHPStan: 0 errores nuevos. 88 tests verdes.
+- **UnifiedStockService** (2026-06-15): Nuevo servicio centraliza el doble despacho
+  harvest/wine_lot en `Producer/Invoices/Create` y `Edit`. Elimina HarvestStockService
+  (código muerto, reemplazado por ContainerStockService desde el origen del proyecto).
+  Baseline PHPStan: 3096 errores (−19). 292 tests Invoice + 54 stock: verdes.
 
 ## 🔜 Pendiente (por prioridad sugerida)
 1. **Clientes — afinar** (opcional, bajo riesgo): el listado compartido no expone metadata SEO
    (title/description) que sí tenía viticultor; valorar si se quiere recuperar.
 2. **Auditar listados** vs `docs/patron-vista-listado.md` (conformidad de las vistas). *(Fase 3)*
-4. **Stock unificado** — `UnifiedStockService` + estrategias (Harvest/Container/ProductLot).
-   Lo más crítico (inventario) y lo más profundo. *(carril B-core)*
-5. **`User.role` vs `Organization`** — decidir fuente de verdad única y migrar. *(deuda estructural)*
-6. **Deuda PHPStan legacy** — ir reduciendo los ~3115 errores del baseline poco a poco
+3. **`User.role` vs `Organization`** — decidir fuente de verdad única y migrar. *(deuda estructural)*
+4. **Deuda PHPStan legacy** — ir reduciendo los ~3096 errores del baseline poco a poco
    (objetivo: 0 nuevos sin baselinear; el legacy se baja por lotes).
 
 ## Convenciones del proyecto (recordatorio)
