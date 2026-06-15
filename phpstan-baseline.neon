@@ -12553,12 +12553,6 @@ parameters:
 			path: app/Models/VerifactuRecord.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isDenomination\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/ViticulturistAssignment.php
-
-		-
 			message: '#^Offset ''comunidad_regantes''\|''otro''\|''subterranea''\|''superficial'' on array\{superficial\: ''Aguas superficiales'', subterranea\: ''Aguas subterráneas'', comunidad_regantes\: ''Comunidad de…'', otro\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1

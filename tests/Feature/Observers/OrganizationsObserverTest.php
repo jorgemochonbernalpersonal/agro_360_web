@@ -4,8 +4,6 @@ namespace Tests\Feature\Observers;
 
 use App\Models\Organization;
 use App\Models\User;
-use App\Models\ViticulturistAssignment;
-use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,7 +12,7 @@ class OrganizationsObserverTest extends TestCase
     use RefreshDatabase;
 
     // ══════════════════════════════════════════════════════════════════════
-    // UserObserver
+    // UserObserver — auto-create Organization
     // ══════════════════════════════════════════════════════════════════════
 
     public function test_creates_organization_when_winery_user_is_created(): void
@@ -85,7 +83,6 @@ class OrganizationsObserverTest extends TestCase
             'organization_id' => $existingOrg->id,
         ]);
 
-        // Only the pre-existing org — no new one should be created
         $this->assertDatabaseCount('organizations', 1);
         $this->assertEquals($existingOrg->id, $winery->organization_id);
     }
@@ -105,276 +102,11 @@ class OrganizationsObserverTest extends TestCase
 
         $viticulturist->update(['name' => 'Juan Actualizado']);
 
-        // Just assert no exception was thrown and nothing was created
         $this->assertDatabaseMissing('organizations', ['owner_user_id' => $viticulturist->id]);
     }
 
     // ══════════════════════════════════════════════════════════════════════
-    // WineryViticulturistObserver
-    // ══════════════════════════════════════════════════════════════════════
-
-    public function test_creates_assignment_when_winery_viticulturist_link_is_created(): void
-    {
-        $winery = User::factory()->create(['role' => 'winery']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        // Winery has organization from UserObserver
-        $winery->refresh();
-        $this->assertNotNull($winery->organization_id);
-
-        WineryViticulturist::create([
-            'winery_id' => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $winery->id,
-        ]);
-
-        $this->assertDatabaseHas('viticulturist_assignments', [
-            'viticulturist_id' => $viticulturist->id,
-            'organization_id' => $winery->organization_id,
-            'assigned_by_org_id' => $winery->organization_id,
-            'assigned_by_user_id' => $winery->id,
-        ]);
-    }
-
-    public function test_does_not_create_assignment_for_self_registered_link(): void
-    {
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        // Self-registered record (winery_id = null)
-        WineryViticulturist::create([
-            'winery_id' => null,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_SELF,
-            'assigned_by' => $viticulturist->id,
-        ]);
-
-        $this->assertDatabaseCount('viticulturist_assignments', 0);
-    }
-
-    public function test_does_not_create_assignment_when_winery_has_no_organization(): void
-    {
-        // Create winery and manually remove organization_id to simulate legacy user
-        $winery = User::factory()->create(['role' => 'winery']);
-        $winery->updateQuietly(['organization_id' => null]);
-
-        // Remove the auto-created org so the winery truly has none
-        Organization::where('owner_user_id', $winery->id)->delete();
-
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        WineryViticulturist::create([
-            'winery_id' => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $winery->id,
-        ]);
-
-        $this->assertDatabaseCount('viticulturist_assignments', 0);
-    }
-
-    public function test_syncs_notebook_access_grant_to_assignment(): void
-    {
-        $winery = User::factory()->create(['role' => 'winery']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $relation = WineryViticulturist::create([
-            'winery_id' => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $winery->id,
-        ]);
-
-        $relation->grantNotebookAccess();
-
-        $assignment = ViticulturistAssignment::where('viticulturist_id', $viticulturist->id)
-            ->where('organization_id', $winery->fresh()->organization_id)
-            ->first();
-
-        $this->assertNotNull($assignment);
-        $this->assertTrue($assignment->notebook_access);
-        $this->assertNotNull($assignment->notebook_granted_at);
-    }
-
-    public function test_syncs_notebook_access_revoke_to_assignment(): void
-    {
-        $winery = User::factory()->create(['role' => 'winery']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $relation = WineryViticulturist::create([
-            'winery_id' => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $winery->id,
-        ]);
-
-        $relation->grantNotebookAccess();
-        $relation->revokeNotebookAccess();
-
-        $assignment = ViticulturistAssignment::where('viticulturist_id', $viticulturist->id)
-            ->where('organization_id', $winery->fresh()->organization_id)
-            ->first();
-
-        $this->assertNotNull($assignment);
-        $this->assertFalse($assignment->notebook_access);
-        $this->assertNotNull($assignment->notebook_revoked_at);
-    }
-
-    public function test_deletes_assignment_when_winery_viticulturist_link_is_deleted(): void
-    {
-        $winery = User::factory()->create(['role' => 'winery']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $relation = WineryViticulturist::create([
-            'winery_id' => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $winery->id,
-        ]);
-
-        $orgId = $winery->fresh()->organization_id;
-        $this->assertDatabaseHas('viticulturist_assignments', [
-            'viticulturist_id' => $viticulturist->id,
-            'organization_id' => $orgId,
-        ]);
-
-        $relation->delete();
-
-        $this->assertDatabaseMissing('viticulturist_assignments', [
-            'viticulturist_id' => $viticulturist->id,
-            'organization_id' => $orgId,
-        ]);
-    }
-
-    public function test_does_not_duplicate_assignment_on_updateorcreate(): void
-    {
-        $winery = User::factory()->create(['role' => 'winery']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        // Create the link twice (simulating the Invite component re-linking a self-registered viticulturist)
-        WineryViticulturist::create([
-            'winery_id' => $winery->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $winery->id,
-        ]);
-
-        // Simulate a second updateOrCreate on the same link (e.g. updating notes)
-        WineryViticulturist::where('winery_id', $winery->id)
-            ->where('viticulturist_id', $viticulturist->id)
-            ->update(['notes' => 'Test notes']);
-
-        $this->assertDatabaseCount('viticulturist_assignments', 1);
-    }
-
-    // ══════════════════════════════════════════════════════════════════════
-    // Gap 1 — Producer Organization + viticulturist_assignments
-    // ══════════════════════════════════════════════════════════════════════
-
-    public function test_producer_assignment_is_created_when_producer_adds_viticulturist(): void
-    {
-        $producer = User::factory()->create(['role' => 'producer']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $producer->refresh();
-        $this->assertNotNull($producer->organization_id, 'Producer should have an organization');
-
-        WineryViticulturist::create([
-            'winery_id' => $producer->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $producer->id,
-        ]);
-
-        $this->assertDatabaseHas('viticulturist_assignments', [
-            'viticulturist_id' => $viticulturist->id,
-            'organization_id' => $producer->organization_id,
-            'assigned_by_org_id' => $producer->organization_id,
-        ]);
-    }
-
-    public function test_producer_notebook_access_syncs_to_assignment(): void
-    {
-        $producer = User::factory()->create(['role' => 'producer']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $relation = WineryViticulturist::create([
-            'winery_id' => $producer->id,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $producer->id,
-        ]);
-
-        $relation->grantNotebookAccess();
-
-        $assignment = ViticulturistAssignment::where('viticulturist_id', $viticulturist->id)
-            ->where('organization_id', $producer->fresh()->organization_id)
-            ->first();
-
-        $this->assertNotNull($assignment);
-        $this->assertTrue($assignment->notebook_access);
-    }
-
-    // ══════════════════════════════════════════════════════════════════════
-    // Gap 2 — Self-registered viticulturist linked to winery
-    // ══════════════════════════════════════════════════════════════════════
-
-    public function test_creates_assignment_when_self_registered_viticulturist_is_linked_to_winery(): void
-    {
-        $winery = User::factory()->create(['role' => 'winery']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        // Viticulturist self-registers (winery_id = null)
-        $relation = WineryViticulturist::create([
-            'winery_id' => null,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_SELF,
-            'assigned_by' => $viticulturist->id,
-        ]);
-
-        $this->assertDatabaseCount('viticulturist_assignments', 0);
-
-        // Winery accepts / links the viticulturist
-        $relation->update([
-            'winery_id' => $winery->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $winery->id,
-        ]);
-
-        $winery->refresh();
-        $this->assertDatabaseHas('viticulturist_assignments', [
-            'viticulturist_id' => $viticulturist->id,
-            'organization_id' => $winery->organization_id,
-        ]);
-    }
-
-    public function test_does_not_create_duplicate_assignment_when_self_registered_linked_twice(): void
-    {
-        $winery = User::factory()->create(['role' => 'winery']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $relation = WineryViticulturist::create([
-            'winery_id' => null,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_SELF,
-            'assigned_by' => $viticulturist->id,
-        ]);
-
-        // Link once
-        $relation->update([
-            'winery_id' => $winery->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $winery->id,
-        ]);
-
-        // Simulate a second spurious update (e.g., notes change)
-        $relation->fresh()->update(['notes' => 'segunda actualización']);
-
-        $this->assertDatabaseCount('viticulturist_assignments', 1);
-    }
-
-    // ══════════════════════════════════════════════════════════════════════
-    // Gap 3 — Ghost viticulturist activation
+    // UserObserver — ghost viticulturist activation
     // ══════════════════════════════════════════════════════════════════════
 
     public function test_sets_activated_at_when_ghost_viticulturist_enables_login(): void
@@ -401,11 +133,9 @@ class OrganizationsObserverTest extends TestCase
         $ghost->update(['can_login' => true]);
         $firstActivation = $ghost->fresh()->activated_at;
 
-        // Disable and re-enable
         $ghost->updateQuietly(['can_login' => false]);
         $ghost->fresh()->update(['can_login' => true]);
 
-        // activated_at must remain the original value
         $this->assertEquals($firstActivation, $ghost->fresh()->activated_at);
     }
 
@@ -430,128 +160,6 @@ class OrganizationsObserverTest extends TestCase
 
         $winery->update(['can_login' => true]);
 
-        // Wineries don't follow the ghost activation flow — activated_at stays null
         $this->assertNull($winery->fresh()->activated_at);
-    }
-
-    // ══════════════════════════════════════════════════════════════════════
-    // Gap 4 — SOURCE_VITICULTURIST sub-viticulturists
-    // ══════════════════════════════════════════════════════════════════════
-
-    public function test_creates_assignment_when_producer_creates_sub_viticulturist(): void
-    {
-        // Producer has winery access but getWineriesAttribute returns empty (filters role=winery)
-        // so the Create component sets winery_id=null — the observer must fall back to assigned_by
-        $producer = User::factory()->create(['role' => 'producer']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $producer->refresh();
-        $this->assertNotNull($producer->organization_id);
-
-        WineryViticulturist::create([
-            'winery_id' => null,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
-            'parent_viticulturist_id' => $producer->id,
-            'assigned_by' => $producer->id,
-        ]);
-
-        $this->assertDatabaseHas('viticulturist_assignments', [
-            'viticulturist_id' => $viticulturist->id,
-            'organization_id' => $producer->organization_id,
-            'assigned_by_org_id' => $producer->organization_id,
-        ]);
-    }
-
-    public function test_no_assignment_when_independent_viticulturist_creates_sub_viticulturist(): void
-    {
-        // Independent viticulturist has no organization — sub-viticulturist should get no assignment
-        $parentVit = User::factory()->create(['role' => 'viticulturist']);
-        $childVit = User::factory()->create(['role' => 'viticulturist']);
-
-        WineryViticulturist::create([
-            'winery_id' => null,
-            'viticulturist_id' => $childVit->id,
-            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
-            'parent_viticulturist_id' => $parentVit->id,
-            'assigned_by' => $parentVit->id,
-        ]);
-
-        $this->assertDatabaseCount('viticulturist_assignments', 0);
-    }
-
-    public function test_deletes_assignment_when_producer_removes_sub_viticulturist_link(): void
-    {
-        $producer = User::factory()->create(['role' => 'producer']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $relation = WineryViticulturist::create([
-            'winery_id' => null,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
-            'parent_viticulturist_id' => $producer->id,
-            'assigned_by' => $producer->id,
-        ]);
-
-        $orgId = $producer->fresh()->organization_id;
-        $this->assertDatabaseHas('viticulturist_assignments', [
-            'viticulturist_id' => $viticulturist->id,
-            'organization_id' => $orgId,
-        ]);
-
-        $relation->delete();
-
-        $this->assertDatabaseMissing('viticulturist_assignments', [
-            'viticulturist_id' => $viticulturist->id,
-            'organization_id' => $orgId,
-        ]);
-    }
-
-    public function test_syncs_notebook_access_for_producer_sub_viticulturist(): void
-    {
-        $producer = User::factory()->create(['role' => 'producer']);
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $relation = WineryViticulturist::create([
-            'winery_id' => null,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_VITICULTURIST,
-            'parent_viticulturist_id' => $producer->id,
-            'assigned_by' => $producer->id,
-        ]);
-
-        $relation->grantNotebookAccess();
-
-        $assignment = ViticulturistAssignment::where('viticulturist_id', $viticulturist->id)
-            ->where('organization_id', $producer->fresh()->organization_id)
-            ->first();
-
-        $this->assertNotNull($assignment);
-        $this->assertTrue($assignment->notebook_access);
-        $this->assertNotNull($assignment->notebook_granted_at);
-    }
-
-    public function test_winery_id_change_without_organization_does_not_create_assignment(): void
-    {
-        $winery = User::factory()->create(['role' => 'winery']);
-        $winery->updateQuietly(['organization_id' => null]);
-        Organization::where('owner_user_id', $winery->id)->delete();
-
-        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-
-        $relation = WineryViticulturist::create([
-            'winery_id' => null,
-            'viticulturist_id' => $viticulturist->id,
-            'source' => WineryViticulturist::SOURCE_SELF,
-            'assigned_by' => $viticulturist->id,
-        ]);
-
-        $relation->update([
-            'winery_id' => $winery->id,
-            'source' => WineryViticulturist::SOURCE_OWN,
-            'assigned_by' => $winery->id,
-        ]);
-
-        $this->assertDatabaseCount('viticulturist_assignments', 0);
     }
 }

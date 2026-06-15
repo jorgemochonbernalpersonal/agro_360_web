@@ -40,13 +40,29 @@
   (código muerto, reemplazado por ContainerStockService desde el origen del proyecto).
   Baseline PHPStan: 3096 errores (−19). 292 tests Invoice + 54 stock: verdes.
 
+## ✅ Hecho (continuación)
+- **Tests FormRequests API** (2026-06-15): 37 tests nuevos en 4 ficheros cubren Notebook
+  (storeTyped por slug, alias buds_per_vine, indexOfType, UpdateNotebookRequest dinámico),
+  Container (store, archive, ContainerRoom CRUD, ContainerStockEntry, ContainerMaintenance),
+  Silicie (auth, vintage/fiscal_year validation, smoke 6 endpoints) y ContainerReturn
+  (auth, aislamiento, todos los campos required + enums). Commit `272b48fd`.
+- **Decisión `User.role` vs `Organization`** (2026-06-15): `role` + pivotes son la verdad de
+  identidad y jerarquía (500+ referencias, todos los middleware). `Organization` se reduce a
+  **contenedor de metadatos fiscales** (INFOVI/SILICIE). `ViticulturistAssignment` era
+  write-only (nadie la lee en producción) → se elimina el dual-write de
+  `WineryViticulturistObserver` y el modelo/tabla. `UserObserver` se conserva (autocrea
+  Organization con metadatos al registrar winery/DO/producer).
+
 ## 🔜 Pendiente (por prioridad sugerida)
-1. **Clientes — afinar** (opcional, bajo riesgo): el listado compartido no expone metadata SEO
+1. **Reducir Organization a metadatos fiscales** *(en curso)*: eliminar dual-write en
+   `WineryViticulturistObserver`, borrar `ViticulturistAssignment` modelo + tabla (drop
+   migration), limpiar tests del observer, regenerar baseline PHPStan.
+2. **Policies en la API** — 40+ controllers aún usan `abort_unless` inline en vez de
+   `$this->authorize()`. Continuación directa de la migración Livewire ya hecha.
+3. **Clientes — afinar** (opcional, bajo riesgo): el listado compartido no expone metadata SEO
    (title/description) que sí tenía viticultor; valorar si se quiere recuperar.
-2. **Auditar listados** vs `docs/patron-vista-listado.md` (conformidad de las vistas). *(Fase 3)*
-3. **`User.role` vs `Organization`** — decidir fuente de verdad única y migrar. *(deuda estructural)*
-4. **Deuda PHPStan legacy** — ir reduciendo los ~3096 errores del baseline poco a poco
-   (objetivo: 0 nuevos sin baselinear; el legacy se baja por lotes).
+4. **UI Fase 3** — tarjetas y botones inline → componentes `<x-agro.*>`. Sin urgencia.
+5. **Deuda PHPStan legacy** — ir reduciendo los ~3096 errores del baseline poco a poco.
 
 ## Convenciones del proyecto (recordatorio)
 - Verificar tests **en aislamiento** (flakiness de seeds en paralelo).
