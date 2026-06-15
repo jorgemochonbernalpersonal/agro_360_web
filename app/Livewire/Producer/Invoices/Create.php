@@ -12,9 +12,8 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
 use App\Models\ProductLot;
 use App\Models\Tax;
-use App\Services\ContainerStockService;
 use App\Services\InvoiceService;
-use App\Services\ProductStockService;
+use App\Services\UnifiedStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -394,10 +393,10 @@ class Create extends Component
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
 
-                $containerStockService = app(ContainerStockService::class);
+                $stockService = app(UnifiedStockService::class);
 
                 // Create items — bypass InvoiceItemObserver, handle stock manually
-                InvoiceItem::withoutEvents(function () use ($invoice, $taxRates, $containerStockService) {
+                InvoiceItem::withoutEvents(function () use ($invoice, $taxRates, $stockService) {
                     foreach ($this->items as $item) {
                         $tax = ($item['tax_id'] ?? null) ? $taxRates[$item['tax_id']] ?? null : null;
                         $line = $this->invoiceService->calculateVatLine($item, $tax);
@@ -424,24 +423,7 @@ class Create extends Component
                             'total' => $line['total'],
                         ]);
 
-                        // Manual stock movement
-                        if (! empty($item['harvest_id'])) {
-                            // Ownership guard: la cosecha debe pertenecer al viticultor autenticado
-                            // (el harvest_id viene del estado del cliente y no es de fiar).
-                            $harvest = Harvest::whereHas('activity', fn ($q) => $q->where('viticulturist_id', Auth::id()))
-                                ->find($item['harvest_id']);
-                            if (! $harvest) {
-                                throw new \RuntimeException("La cosecha #{$item['harvest_id']} no te pertenece.");
-                            }
-                            $containerStockService->reserveStock($harvest, $createdItem);
-                        } elseif (! empty($item['wine_lot_id'])) {
-                            $lot = ProductLot::where('user_id', Auth::id())
-                                ->lockForUpdate()
-                                ->find($item['wine_lot_id']);
-                            if ($lot) {
-                                ProductStockService::moveOnCreate($invoice, $createdItem, $lot, $qty);
-                            }
-                        }
+                        $stockService->reserveOrSell($invoice, $createdItem, Auth::id(), $qty);
                     }
                 });
             });

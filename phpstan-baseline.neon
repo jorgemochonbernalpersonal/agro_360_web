@@ -8239,13 +8239,7 @@ parameters:
 			path: app/Livewire/Producer/Invoices/Create.php
 
 		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:reserveStock\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Producer/Invoices/Create.php
-
-		-
-			message: '#^Parameter \#2 \$item of static method App\\Services\\ProductStockService\:\:moveOnCreate\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			message: '#^Parameter \#2 \$item of method App\\Services\\UnifiedStockService\:\:reserveOrSell\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Livewire/Producer/Invoices/Create.php
@@ -8275,12 +8269,6 @@ parameters:
 			path: app/Livewire/Producer/Invoices/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$concept_type\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discount_percentage\.$#'
 			identifier: property.notFound
 			count: 1
@@ -8293,15 +8281,9 @@ parameters:
 			path: app/Livewire/Producer/Invoices/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
 			identifier: property.notFound
-			count: 4
+			count: 1
 			path: app/Livewire/Producer/Invoices/Edit.php
 
 		-
@@ -8347,37 +8329,7 @@ parameters:
 			path: app/Livewire/Producer/Invoices/Edit.php
 
 		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:confirmSale\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:directSale\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:releaseFromInvoice\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:reserveStock\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:unreserveStock\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Parameter \#2 \$item of static method App\\Services\\ProductStockService\:\:moveOnCreate\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			message: '#^Parameter \#2 \$item of method App\\Services\\UnifiedStockService\:\:reserveOrSell\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Livewire/Producer/Invoices/Edit.php
@@ -14011,48 +13963,6 @@ parameters:
 			path: app/Services/Exporters/SilicieCsvExporter.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$concept_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/HarvestStockService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Services/HarvestStockService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Services/HarvestStockService.php
-
-		-
-			message: '#^Parameter \#4 \$item of static method App\\Services\\HarvestStockService\:\:deliver\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/HarvestStockService.php
-
-		-
-			message: '#^Parameter \#4 \$item of static method App\\Services\\HarvestStockService\:\:reserve\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/HarvestStockService.php
-
-		-
-			message: '#^Parameter \#4 \$item of static method App\\Services\\HarvestStockService\:\:restore\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/HarvestStockService.php
-
-		-
-			message: '#^Parameter \#4 \$item of static method App\\Services\\HarvestStockService\:\:unreserve\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/HarvestStockService.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 2
@@ -14423,6 +14333,36 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Services/SigpacGeometryService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/UnifiedStockService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/UnifiedStockService.php
+
+		-
+			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:confirmSale\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/UnifiedStockService.php
+
+		-
+			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:releaseFromInvoice\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/UnifiedStockService.php
+
+		-
+			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:unreserveStock\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/UnifiedStockService.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$applicator_ropo_number\.$#'

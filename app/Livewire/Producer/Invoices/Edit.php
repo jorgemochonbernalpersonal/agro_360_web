@@ -12,9 +12,8 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
 use App\Models\ProductLot;
 use App\Models\Tax;
-use App\Services\ContainerStockService;
 use App\Services\InvoiceService;
-use App\Services\ProductStockService;
+use App\Services\UnifiedStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -527,39 +526,13 @@ class Edit extends Component
             DB::transaction(function () use ($newStatus) {
                 $this->invoice->load('items.harvest', 'items.wineLot');
 
-                $containerStockService = app(ContainerStockService::class);
+                $stockService = app(UnifiedStockService::class);
 
                 if (! $this->invoice->corrective) {
                     if ($newStatus === 'delivered') {
-                        // Wine items: reserved → sold
-                        ProductStockService::moveForInvoice($this->invoice, 'deliver');
-
-                        // Harvest items: if draft (still reserved), confirm sale; if sent, observer already handled it
-                        if ($this->invoice->status === 'draft') {
-                            foreach ($this->invoice->items as $item) {
-                                if ($item->concept_type === 'harvest' && $item->harvest_id && $item->harvest) {
-                                    $containerStockService->confirmSale(
-                                        $item->harvest,
-                                        $item,
-                                        $this->invoice->invoice_number ?? ''
-                                    );
-                                }
-                            }
-                        }
-                        // If status = 'sent', InvoiceObserver::convertReservationsToSales() already moved harvest stock
+                        $stockService->confirmDelivery($this->invoice);
                     } else {
-                        // cancelled
-                        ProductStockService::moveForInvoice($this->invoice, 'cancel');
-
-                        foreach ($this->invoice->items as $item) {
-                            if ($item->concept_type === 'harvest' && $item->harvest_id && $item->harvest) {
-                                $containerStockService->releaseFromInvoice(
-                                    $item->harvest,
-                                    $item,
-                                    $this->invoice->status
-                                );
-                            }
-                        }
+                        $stockService->cancelDelivery($this->invoice);
                     }
                 }
 
@@ -657,25 +630,10 @@ class Edit extends Component
                 // 1. Load current items with their relations for stock reversal
                 $this->invoice->load('items.harvest', 'items.wineLot');
 
-                $containerStockService = app(ContainerStockService::class);
+                $stockService = app(UnifiedStockService::class);
 
-                // 2. Cancel wine stock for all wine items
-                ProductStockService::moveForInvoice($this->invoice, 'cancel');
-
-                // 3. Cancel harvest stock for all harvest items
-                foreach ($this->invoice->items as $item) {
-                    if ($item->concept_type === 'harvest' && $item->harvest_id && $item->harvest) {
-                        if ($this->invoice->status === 'draft') {
-                            $containerStockService->unreserveStock($item->harvest, $item);
-                        } else {
-                            $containerStockService->releaseFromInvoice(
-                                $item->harvest,
-                                $item,
-                                $this->invoice->status
-                            );
-                        }
-                    }
-                }
+                // 2 & 3. Cancel all stock (wine_lot batch + harvest per-item)
+                $stockService->cancelAllForEdit($this->invoice);
 
                 // 4. Bulk delete old items (bypass observer — stock already reversed above)
                 InvoiceItem::withoutEvents(fn () => $this->invoice->items()->delete());
@@ -700,7 +658,7 @@ class Edit extends Component
                 ]);
 
                 // 7. Recreate items and re-reserve stock (bypass observer, manual stock calls)
-                InvoiceItem::withoutEvents(function () use ($taxRates, $containerStockService) {
+                InvoiceItem::withoutEvents(function () use ($taxRates, $stockService) {
                     foreach ($this->items as $item) {
                         $tax = ($item['tax_id'] ?? null) ? $taxRates[$item['tax_id']] ?? null : null;
                         $line = $this->invoiceService->calculateVatLine($item, $tax);
@@ -727,33 +685,7 @@ class Edit extends Component
                             'total' => $line['total'],
                         ]);
 
-                        // Manual stock movement
-                        if (! empty($item['harvest_id'])) {
-                            // Ownership guard: la cosecha debe pertenecer al viticultor autenticado
-                            // (el harvest_id viene del estado del cliente y no es de fiar).
-                            $harvest = Harvest::whereHas('activity', fn ($q) => $q->where('viticulturist_id', Auth::id()))
-                                ->find($item['harvest_id']);
-                            if (! $harvest) {
-                                throw new \RuntimeException("La cosecha #{$item['harvest_id']} no te pertenece.");
-                            }
-                            if ($this->invoice->status === 'draft') {
-                                $containerStockService->reserveStock($harvest, $createdItem);
-                            } else {
-                                // status = 'sent': go straight to sold
-                                $containerStockService->directSale(
-                                    $harvest,
-                                    $createdItem,
-                                    $this->invoice->invoice_number ?? ''
-                                );
-                            }
-                        } elseif (! empty($item['wine_lot_id'])) {
-                            $lot = ProductLot::where('user_id', Auth::id())
-                                ->lockForUpdate()
-                                ->find($item['wine_lot_id']);
-                            if ($lot) {
-                                ProductStockService::moveOnCreate($this->invoice, $createdItem, $lot, $qty);
-                            }
-                        }
+                        $stockService->reserveOrSell($this->invoice, $createdItem, Auth::id(), $qty);
                     }
                 });
 
