@@ -104,6 +104,9 @@ class Index extends Component
         return view('livewire.clients.index', [
             'clients' => $clients,
             'stats' => $stats,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => __('Clientes - Agro365'),
+            'description' => __('Gestiona tus clientes y analiza tu cartera. Control completo de clientes particulares y empresas.'),
+        ]);
     }
 }
