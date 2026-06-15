@@ -86,11 +86,11 @@
                                         <span class="text-[9px] font-normal text-blue-400">ha</span>
                                     </p>
                                 </div>
-                                <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                    <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Elegible') }}</p>
-                                    <p class="text-sm font-bold text-emerald-700">
+                                <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                    <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Elegible') }}</p>
+                                    <p class="text-sm font-bold text-agro-700">
                                         {{ number_format($row?->eligible_area ?? 0, 2) }}
-                                        <span class="text-[9px] font-normal text-emerald-400">ha</span>
+                                        <span class="text-[9px] font-normal text-agro-400">ha</span>
                                     </p>
                                 </div>
                                 <div class="bg-zinc-50 rounded-lg p-2 text-center">
@@ -177,9 +177,9 @@
                                 <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">{{ __('Área') }}</p>
                                 <p class="text-sm font-bold text-zinc-700">{{ number_format($plot->area, 2) }}</p>
                             </div>
-                            <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Elegible') }}</p>
-                                <p class="text-sm font-bold text-emerald-700">
+                            <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Elegible') }}</p>
+                                <p class="text-sm font-bold text-agro-700">
                                     @if($plot->pac_eligible_area)
                                         {{ number_format($plot->pac_eligible_area, 2) }}
                                     @else

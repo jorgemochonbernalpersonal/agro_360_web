@@ -67,8 +67,8 @@
     <x-agro.card>
         <x-slot:header>
             <div class="flex items-center gap-2">
-                <div class="p-1.5 rounded-lg bg-green-50">
-                    <flux:icon icon="book-open" class="size-4 text-green-600" />
+                <div class="p-1.5 rounded-lg bg-agro-50">
+                    <flux:icon icon="book-open" class="size-4 text-agro-600" />
                 </div>
                 <span class="font-semibold text-zinc-900 text-sm">{{ __('Accesos activos') }}</span>
             </div>
@@ -84,8 +84,8 @@
                 @foreach($granted as $item)
                     @php
                         $isSupervisor = $item->type === 'supervisor';
-                        $iconBg       = $isSupervisor ? 'bg-indigo-50' : 'bg-green-50';
-                        $iconColor    = $isSupervisor ? 'text-indigo-600' : 'text-green-600';
+                        $iconBg       = $isSupervisor ? 'bg-indigo-50' : 'bg-agro-50';
+                        $iconColor    = $isSupervisor ? 'text-indigo-600' : 'text-agro-600';
                         $label        = $isSupervisor ? __('Denominación de Origen') : __('Bodega');
                     @endphp
                     <div class="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">

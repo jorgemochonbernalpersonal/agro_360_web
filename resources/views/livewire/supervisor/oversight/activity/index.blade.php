@@ -58,14 +58,14 @@
 
             <div class="flex items-center gap-2">
                 <input type="date" wire:model.live="filterFrom"
-                    class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+                    class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-agro-300" />
                 <span class="text-xs text-zinc-400">—</span>
                 <input type="date" wire:model.live="filterTo"
-                    class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+                    class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-agro-300" />
             </div>
 
             <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" wire:model.live="onlyAlerts" class="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-300" />
+                <input type="checkbox" wire:model.live="onlyAlerts" class="rounded border-zinc-300 text-agro-600 focus:ring-agro-300" />
                 <span class="text-sm text-zinc-600">{{ __('Solo alertas') }}</span>
             </label>
 

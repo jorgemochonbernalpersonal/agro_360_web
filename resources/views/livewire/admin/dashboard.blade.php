@@ -499,14 +499,14 @@
 
             <x-agro.card class="hover-lift transition-all duration-200">
                 <a href="{{ route('admin.subscriptions.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0 group-hover:bg-green-100 transition-colors">
-                        <flux:icon icon="credit-card" class="size-5 text-green-600" />
+                    <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center flex-shrink-0 group-hover:bg-agro-100 transition-colors">
+                        <flux:icon icon="credit-card" class="size-5 text-agro-600" />
                     </div>
                     <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-green-600 transition-colors text-sm">{{ __('Suscripciones') }}</p>
+                        <p class="font-semibold text-zinc-900 group-hover:text-agro-600 transition-colors text-sm">{{ __('Suscripciones') }}</p>
                         <p class="text-xs text-zinc-500 truncate">{{ __('Pagos y planes') }}</p>
                     </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-green-400 transition-colors" />
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-agro-400 transition-colors" />
                 </a>
             </x-agro.card>
 
