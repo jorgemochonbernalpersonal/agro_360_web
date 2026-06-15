@@ -16,7 +16,6 @@ class DashboardController extends BaseApiController
     public function __invoke(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403, 'Acceso denegado.');
 
         $userId = $user->id;
         $currentYear = now()->year;

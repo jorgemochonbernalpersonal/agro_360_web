@@ -15,7 +15,6 @@ class CommercialAuthorizationController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'authorization_type' => 'nullable|string',
@@ -50,7 +49,6 @@ class CommercialAuthorizationController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
             'authorization_type' => 'required|string|in:do_registration,organic_certification,planting_right,replanting_right,integrated_production,other',

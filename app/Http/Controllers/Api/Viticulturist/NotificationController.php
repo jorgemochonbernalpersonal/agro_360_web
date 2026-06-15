@@ -13,7 +13,6 @@ class NotificationController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'unread_only' => 'nullable|boolean',
@@ -53,7 +52,6 @@ class NotificationController extends BaseApiController
     public function markRead(Request $request, string $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $user->notifications()->where('id', $id)->update(['read_at' => now()]);
 
@@ -65,7 +63,6 @@ class NotificationController extends BaseApiController
     public function markAllRead(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $user->unreadNotifications()->update(['read_at' => now()]);
 

@@ -15,7 +15,6 @@ class AgriInsuranceController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'status' => 'nullable|string|in:pending,active,expired,cancelled',
@@ -48,7 +47,6 @@ class AgriInsuranceController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
             'policy_number' => 'nullable|string|max:100',

@@ -14,7 +14,6 @@ class PestController extends BaseApiController
 
     public function index(Request $request): JsonResponse
     {
-        abort_unless($request->user()->hasViticulturistAccess(), 403);
 
         $request->validate([
             'type' => 'nullable|string|max:50',
@@ -52,7 +51,6 @@ class PestController extends BaseApiController
 
     public function show(Request $request, int $id): JsonResponse
     {
-        abort_unless($request->user()->hasViticulturistAccess(), 403);
 
         $pest = Pest::active()
             ->with(['products' => fn ($q) => $q->orderByDesc('pest_product_effectiveness.effectiveness_rating'),

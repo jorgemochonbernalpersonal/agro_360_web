@@ -16,7 +16,6 @@ class CampaignController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $campaigns = Campaign::forViticulturist($user->id)
             ->orderByDesc('year')
@@ -30,7 +29,6 @@ class CampaignController extends BaseApiController
     public function active(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $campaign = Campaign::forViticulturist($user->id)->active()->first()
             ?? Campaign::getOrCreateActiveForYear($user->id);
@@ -47,7 +45,6 @@ class CampaignController extends BaseApiController
     public function activities(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $campaign = Campaign::forViticulturist($user->id)->findOrFail($id);
 
@@ -73,7 +70,6 @@ class CampaignController extends BaseApiController
     public function compare(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $campaigns = Campaign::forViticulturist($user->id)
             ->orderByDesc('year')
@@ -107,7 +103,6 @@ class CampaignController extends BaseApiController
     public function lock(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $campaign = Campaign::forViticulturist($user->id)->findOrFail($id);
 

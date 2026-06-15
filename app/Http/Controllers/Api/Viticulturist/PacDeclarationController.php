@@ -12,7 +12,6 @@ class PacDeclarationController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $items = PacDeclaration::where('viticulturist_id', $user->id)
             ->orderByDesc('year')

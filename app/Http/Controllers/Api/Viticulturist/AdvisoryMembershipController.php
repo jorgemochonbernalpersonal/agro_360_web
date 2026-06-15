@@ -12,7 +12,6 @@ class AdvisoryMembershipController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $items = AdvisoryMembership::where('viticulturist_id', $user->id)
             ->orderBy('advisor_name')
@@ -24,7 +23,6 @@ class AdvisoryMembershipController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $data = $request->validate([
             'advisor_name' => 'required|string|max:255',

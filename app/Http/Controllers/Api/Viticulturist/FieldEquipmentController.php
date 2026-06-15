@@ -13,7 +13,6 @@ class FieldEquipmentController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'search' => 'nullable|string|max:255',
@@ -44,7 +43,6 @@ class FieldEquipmentController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',

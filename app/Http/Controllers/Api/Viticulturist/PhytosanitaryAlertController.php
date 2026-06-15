@@ -15,7 +15,6 @@ class PhytosanitaryAlertController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'alert_type' => 'nullable|string|max:50',
@@ -52,7 +51,6 @@ class PhytosanitaryAlertController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',

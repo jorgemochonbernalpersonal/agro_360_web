@@ -12,7 +12,6 @@ class CueExportController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $items = CueExport::whereHas('exploitation', fn ($q) => $q->where('viticulturist_id', $user->id))
             ->orderByDesc('created_at')

@@ -16,7 +16,6 @@ class PlotController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $perPage = min((int) $request->query('per_page', 30), 100);
         $search = $request->query('search');
@@ -58,7 +57,6 @@ class PlotController extends BaseApiController
     public function centroids(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $plots = Plot::where('viticulturist_id', $user->id)
             ->where('active', true)
@@ -91,7 +89,6 @@ class PlotController extends BaseApiController
     public function allGeometries(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         // Sólo los IDs del viticulturist (consulta ligera, sin cargar todos los campos)
         $plotIds = Plot::where('viticulturist_id', $user->id)
@@ -167,7 +164,6 @@ class PlotController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $plot = Plot::where('viticulturist_id', $user->id)
             ->with(['province', 'municipality', 'plantings.grapeVariety'])
@@ -186,7 +182,6 @@ class PlotController extends BaseApiController
     public function geometries(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($id);
 
@@ -220,7 +215,6 @@ class PlotController extends BaseApiController
     public function plantings(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($id);
 
@@ -252,7 +246,6 @@ class PlotController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($id);
 

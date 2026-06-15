@@ -12,7 +12,6 @@ class PacPaymentController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $items = PacPayment::where('viticulturist_id', $user->id)
             ->orderByDesc('payment_date')

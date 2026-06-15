@@ -12,7 +12,6 @@ class RemoteSensingController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $items = PlotRemoteSensing::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $user->id))
             ->with('plot:id,name')

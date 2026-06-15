@@ -17,7 +17,6 @@ class MarketedHarvestController extends BaseApiController
     public function picker(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $harvests = Harvest::whereHas('activity', fn ($q) => $q->where('viticulturist_id', $user->id))
             ->with(['activity.plot', 'plotPlanting.grapeVariety'])
@@ -38,7 +37,6 @@ class MarketedHarvestController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'campaign_id' => 'nullable|integer',
@@ -77,7 +75,6 @@ class MarketedHarvestController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
             'harvest_id' => 'nullable|integer|exists:harvests,id',

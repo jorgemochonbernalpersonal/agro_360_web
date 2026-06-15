@@ -15,7 +15,6 @@ class CertificationController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'certification_type' => 'nullable|string',
@@ -50,7 +49,6 @@ class CertificationController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
             'certification_type' => 'required|string|in:ecologico,produccion_integrada,globalgap,rainforest,denominacion_origen,indicacion_geografica,otro',

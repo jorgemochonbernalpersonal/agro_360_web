@@ -16,7 +16,6 @@ class DenominationController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $relation = SupervisorViticulturist::where('viticulturist_id', $user->id)
             ->with('supervisor')

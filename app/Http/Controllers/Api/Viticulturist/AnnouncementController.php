@@ -15,7 +15,6 @@ class AnnouncementController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'per_page' => 'nullable|integer|min:1|max:100',
@@ -35,7 +34,6 @@ class AnnouncementController extends BaseApiController
     public function markRead(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $announcement = WineryAnnouncement::active()->visibleTo($user)->findOrFail($id);
         $announcement->viticulturists()->updateExistingPivot($user->id, ['read_at' => now()]);

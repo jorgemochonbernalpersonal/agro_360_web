@@ -24,7 +24,6 @@ class WineryMessageController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'per_page' => 'nullable|integer|min:1|max:100',
@@ -64,7 +63,6 @@ class WineryMessageController extends BaseApiController
     public function markRead(Request $request, string $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $user->notifications()
             ->whereIn('type', self::WINERY_TYPES)

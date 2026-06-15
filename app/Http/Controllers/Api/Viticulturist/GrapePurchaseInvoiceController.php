@@ -15,7 +15,6 @@ class GrapePurchaseInvoiceController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'payment_status' => 'nullable|string|in:unpaid,paid,overdue',

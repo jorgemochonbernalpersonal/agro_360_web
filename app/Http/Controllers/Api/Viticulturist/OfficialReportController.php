@@ -15,7 +15,6 @@ class OfficialReportController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'report_type' => 'nullable|string',

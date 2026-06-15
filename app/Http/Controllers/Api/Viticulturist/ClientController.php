@@ -15,7 +15,6 @@ class ClientController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'search' => 'nullable|string|max:100',
@@ -48,7 +47,6 @@ class ClientController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
             'client_type' => 'required|string|in:company,individual',

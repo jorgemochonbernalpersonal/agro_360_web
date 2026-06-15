@@ -16,7 +16,6 @@ class FinancialStatsController extends BaseApiController
     public function __invoke(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $year = $request->input('year', now()->year);
 

@@ -12,7 +12,6 @@ class PlantingController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $items = PlotPlanting::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $user->id))
             ->with(['plot:id,name', 'grapeVariety:id,name'])

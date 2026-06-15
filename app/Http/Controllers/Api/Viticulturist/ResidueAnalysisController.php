@@ -15,7 +15,6 @@ class ResidueAnalysisController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $request->validate([
             'campaign_id' => 'nullable|integer|min:1',
@@ -44,7 +43,6 @@ class ResidueAnalysisController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $validated = $request->validate([
             'campaign_id' => 'nullable|integer|exists:campaigns,id',
