@@ -3,6 +3,11 @@
 namespace App\Http\Controllers\Api\Viticulturist;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Viticulturist\IndexNotebookRequest;
+use App\Http\Requests\Api\Viticulturist\IndexTypedNotebookRequest;
+use App\Http\Requests\Api\Viticulturist\StoreNotebookRequest;
+use App\Http\Requests\Api\Viticulturist\UpdateNotebookRequest;
+use App\Http\Requests\Api\Viticulturist\ViticulturistApiRequest;
 use App\Http\Resources\Api\ActivityResource;
 use App\Http\Resources\Api\MobileNotebookResource;
 use App\Models\AgriculturalActivity;
@@ -15,7 +20,6 @@ use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
 use App\Models\PostHarvestTreatment;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class NotebookController extends BaseApiController
@@ -61,19 +65,9 @@ class NotebookController extends BaseApiController
 
     // ─── GET /viticulturist/notebook ──────────────────────────────────────────
 
-    public function index(Request $request): JsonResponse
+    public function index(IndexNotebookRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
-
-        $request->validate([
-            'type' => 'nullable|string|in:phytosanitary,fertilization,irrigation,cultural,observation,harvest,pruning,phenology,post_harvest',
-            'plot_id' => 'nullable|integer|min:1',
-            'campaign_id' => 'nullable|integer|min:1',
-            'per_page' => 'nullable|integer|min:1|max:100',
-        ]);
-
-        $query = AgriculturalActivity::forViticulturist($user->id)
+        $query = AgriculturalActivity::forViticulturist($request->user()->id)
             ->with(['plot', 'campaign']);
 
         if ($request->filled('type')) {
@@ -94,12 +88,9 @@ class NotebookController extends BaseApiController
 
     // ─── GET /viticulturist/notebook/{id} ─────────────────────────────────────
 
-    public function show(Request $request, int|string $id): JsonResponse
+    public function show(ViticulturistApiRequest $request, int|string $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
-
-        $activity = AgriculturalActivity::forViticulturist($user->id)
+        $activity = AgriculturalActivity::forViticulturist($request->user()->id)
             ->findOrFail((int) $id);
 
         // El móvil consume el detalle con el mismo shape plano que el listado
@@ -112,15 +103,10 @@ class NotebookController extends BaseApiController
 
     // ─── POST /viticulturist/notebook ─────────────────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreNotebookRequest $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
-
-        $validated = $request->validate(array_merge(
-            $this->baseRules(),
-            $this->detailRules($request->activity_type)
-        ));
+        $validated = $request->validated();
 
         // Ownership check
         Plot::where('viticulturist_id', $user->id)->findOrFail($validated['plot_id']);
@@ -155,10 +141,9 @@ class NotebookController extends BaseApiController
 
     // ─── PUT /viticulturist/notebook/{id} ─────────────────────────────────────
 
-    public function update(Request $request, int|string $id): JsonResponse
+    public function update(UpdateNotebookRequest $request, int|string $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $activity = AgriculturalActivity::forViticulturist($user->id)->findOrFail((int) $id);
 
@@ -166,10 +151,7 @@ class NotebookController extends BaseApiController
             return response()->json(['message' => 'Esta actividad está bloqueada y no puede editarse.'], 422);
         }
 
-        $validated = $request->validate(array_merge(
-            $this->baseUpdateRules(),
-            $this->detailRules($activity->activity_type)
-        ));
+        $validated = $request->validated();
 
         $activity->update(array_intersect_key($validated, array_flip([
             'activity_date', 'phenological_stage', 'weather_conditions', 'temperature', 'notes',
@@ -189,10 +171,9 @@ class NotebookController extends BaseApiController
 
     // ─── DELETE /viticulturist/notebook/{id} ──────────────────────────────────
 
-    public function destroy(Request $request, int|string $id): JsonResponse
+    public function destroy(ViticulturistApiRequest $request, int|string $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
 
         $activity = AgriculturalActivity::forViticulturist($user->id)->findOrFail((int) $id);
 
@@ -207,24 +188,16 @@ class NotebookController extends BaseApiController
         return $this->deleted('Actividad eliminada correctamente.');
     }
 
-    public function indexOfType(Request $request, string $notebookType): JsonResponse
+    public function indexOfType(IndexTypedNotebookRequest $request, string $notebookType): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
-
         $type = self::TYPE_SLUG_MAP[$notebookType] ?? null;
         if (! $type) {
             return response()->json(['message' => 'Tipo de actividad no válido.'], 404);
         }
 
-        $request->validate([
-            'plot_id' => 'nullable|integer|min:1',
-            'per_page' => 'nullable|integer|min:1|max:100',
-        ]);
-
         $relations = self::MOBILE_RELATIONS[$type] ?? ['plot'];
 
-        $query = AgriculturalActivity::forViticulturist($user->id)
+        $query = AgriculturalActivity::forViticulturist($request->user()->id)
             ->ofType($type)
             ->with($relations);
 
@@ -239,27 +212,11 @@ class NotebookController extends BaseApiController
     }
 
     // ─── POST /viticulturist/notebook/{notebook_type} ─────────────────────────
-    // Creación por tipo: inyecta activity_type y normaliza alias de campos
-    // del cliente móvil ('date' → 'activity_date', 'buds_per_vine' → ...).
+    // Creación por tipo: prepareForValidation() en StoreNotebookRequest inyecta
+    // activity_type y normaliza aliases de campos del cliente móvil.
 
-    public function storeTyped(Request $request, string $notebookType): JsonResponse
+    public function storeTyped(StoreNotebookRequest $request, string $notebookType): JsonResponse
     {
-        $activityType = self::TYPE_SLUG_MAP[$notebookType] ?? $notebookType;
-
-        $extra = ['activity_type' => $activityType];
-
-        // Alias de fecha: el cliente móvil puede enviar 'date' en vez de 'activity_date'
-        if (! $request->has('activity_date') && $request->has('date')) {
-            $extra['activity_date'] = $request->input('date');
-        }
-
-        // Alias de campo poda: el cliente móvil envía 'buds_per_vine'
-        if (! $request->has('productive_buds_per_hectare') && $request->has('buds_per_vine')) {
-            $extra['productive_buds_per_hectare'] = $request->input('buds_per_vine');
-        }
-
-        $request->merge($extra);
-
         return $this->store($request);
     }
 
@@ -270,100 +227,6 @@ class NotebookController extends BaseApiController
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
-
-    private function baseRules(): array
-    {
-        return [
-            'activity_type' => 'required|string|in:phytosanitary,fertilization,irrigation,cultural,observation,harvest,pruning,phenology,post_harvest',
-            'plot_id' => 'required|integer',
-            'activity_date' => 'required|date',
-            'campaign_id' => 'nullable|integer',
-            'phenological_stage' => 'nullable|string|max:100',
-            'weather_conditions' => 'nullable|string|max:255',
-            'temperature' => 'nullable|numeric|between:-20,60',
-            'notes' => 'nullable|string|max:2000',
-        ];
-    }
-
-    private function baseUpdateRules(): array
-    {
-        return [
-            'activity_date' => 'sometimes|date',
-            'phenological_stage' => 'nullable|string|max:100',
-            'weather_conditions' => 'nullable|string|max:255',
-            'temperature' => 'nullable|numeric|between:-20,60',
-            'notes' => 'nullable|string|max:2000',
-        ];
-    }
-
-    private function detailRules(?string $type): array
-    {
-        return match ($type) {
-            'phytosanitary' => [
-                'product_id' => ['required', 'integer', \Illuminate\Validation\Rule::exists('phytosanitary_products', 'id')->where(fn ($q) => $q->where(fn ($q2) => $q2->whereNull('user_id')->orWhere('user_id', request()->user()?->id)))],
-                'pest_id' => 'nullable|integer|exists:pests,id',
-                'dose_per_hectare' => 'nullable|numeric|min:0',
-                'total_dose' => 'nullable|numeric|min:0',
-                'area_treated' => 'nullable|numeric|min:0',
-                'application_method' => 'nullable|string|max:100',
-                'treatment_justification' => 'nullable|string|max:500',
-                'applicator_ropo_number' => 'nullable|string|max:50',
-                'reentry_period_days' => 'nullable|integer|min:0',
-            ],
-            'fertilization' => [
-                'fertilizer_type' => 'nullable|string|max:100',
-                'fertilizer_name' => 'nullable|string|max:255',
-                'quantity' => 'nullable|numeric|min:0',
-                'application_method' => 'nullable|string|max:100',
-                'area_applied' => 'nullable|numeric|min:0',
-                'nitrogen_uf' => 'nullable|numeric|min:0',
-                'phosphorus_uf' => 'nullable|numeric|min:0',
-                'potassium_uf' => 'nullable|numeric|min:0',
-            ],
-            'irrigation' => [
-                'water_volume' => 'nullable|numeric|min:0',
-                'water_volume_unit' => 'nullable|string|in:L,m3',
-                'irrigation_method' => 'nullable|string|max:100',
-                'duration_minutes' => 'nullable|integer|min:0',
-                'is_fertirrigation' => 'boolean',
-                'fertilizer_product' => 'nullable|string|max:255',
-                'fertilizer_dose_per_ha' => 'nullable|numeric|min:0',
-            ],
-            'cultural' => [
-                'work_type' => 'nullable|string|max:100',
-                'hours_worked' => 'nullable|numeric|min:0',
-                'workers_count' => 'nullable|integer|min:0',
-                'residue_management' => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
-                'description' => 'nullable|string|max:1000',
-            ],
-            'pruning' => [
-                'pruning_type' => 'nullable|string|max:100',
-                'productive_buds_per_hectare' => 'nullable|integer|min:0',
-                'hours_worked' => 'nullable|numeric|min:0',
-                'workers_count' => 'nullable|integer|min:0',
-                'residue_management' => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
-            ],
-            'observation' => [
-                'pest_id' => 'nullable|integer|exists:pests,id',
-                'observation_type' => 'nullable|string|max:100',
-                'description' => 'nullable|string|max:2000',
-                'severity' => 'nullable|string|max:50',
-                'affected_area_percentage' => 'nullable|numeric|min:0|max:100',
-                'threshold_exceeded' => 'boolean',
-                'follow_up_date' => 'nullable|date',
-                'action_taken' => 'nullable|string|max:500',
-            ],
-            'post_harvest' => [
-                'application_type' => 'required|string|in:copper_treatment,sulfur_treatment,wound_sealing,foliar_application,trunk_treatment,other',
-                'product_id' => 'nullable|integer|exists:phytosanitary_products,id',
-                'treated_area_ha' => 'nullable|numeric|min:0',
-                'dose_per_hectare' => 'nullable|numeric|min:0',
-                'water_volume_liters' => 'nullable|numeric|min:0',
-                'reentry_interval_hours' => 'nullable|integer|min:0|max:168',
-            ],
-            default => [],
-        };
-    }
 
     private function createDetails(AgriculturalActivity $activity, array $data): void
     {

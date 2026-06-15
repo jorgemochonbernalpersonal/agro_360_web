@@ -3,18 +3,17 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\StoreContainerRoomRequest;
+use App\Http\Requests\Api\Winery\UpdateContainerRoomRequest;
+use App\Http\Requests\Api\Winery\WineryApiRequest;
 use App\Models\ContainerRoom;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ContainerRoomController extends BaseApiController
 {
-    public function index(Request $request): JsonResponse
+    public function index(WineryApiRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $rooms = ContainerRoom::where('user_id', $user->id)
+        $rooms = ContainerRoom::where('user_id', $request->user()->id)
             ->withCount('containers')
             ->orderBy('name')
             ->get();
@@ -31,30 +30,16 @@ class ContainerRoomController extends BaseApiController
         ]));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreContainerRoomRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'nullable|string|max:500',
-            'temperature' => 'nullable|numeric|between:-10,40',
-            'humidity' => 'nullable|numeric|between:0,100',
-            'capacity' => 'nullable|integer|min:1',
-        ]);
-
-        $room = ContainerRoom::create([...$validated, 'user_id' => $user->id]);
+        $room = ContainerRoom::create([...$request->validated(), 'user_id' => $request->user()->id]);
 
         return $this->created($room);
     }
 
-    public function show(Request $request, int $id): JsonResponse
+    public function show(WineryApiRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $room = ContainerRoom::where('user_id', $user->id)
+        $room = ContainerRoom::where('user_id', $request->user()->id)
             ->withCount('containers')
             ->findOrFail($id);
 
@@ -70,32 +55,18 @@ class ContainerRoomController extends BaseApiController
         ]);
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateContainerRoomRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
+        $room = ContainerRoom::where('user_id', $request->user()->id)->findOrFail($id);
 
-        $room = ContainerRoom::where('user_id', $user->id)->findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:100',
-            'description' => 'sometimes|nullable|string|max:500',
-            'temperature' => 'sometimes|nullable|numeric|between:-10,40',
-            'humidity' => 'sometimes|nullable|numeric|between:0,100',
-            'capacity' => 'sometimes|nullable|integer|min:1',
-        ]);
-
-        $room->update($validated);
+        $room->update($request->validated());
 
         return $this->success($room->fresh());
     }
 
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(WineryApiRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $room = ContainerRoom::where('user_id', $user->id)->findOrFail($id);
+        $room = ContainerRoom::where('user_id', $request->user()->id)->findOrFail($id);
         abort_if($room->containers()->exists(), 422, 'No se puede eliminar una sala con depósitos asignados.');
 
         $room->delete();

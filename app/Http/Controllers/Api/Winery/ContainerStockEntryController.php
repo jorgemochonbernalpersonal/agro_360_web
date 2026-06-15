@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\StoreContainerStockEntryRequest;
+use App\Http\Requests\Api\Winery\WineryApiRequest;
 use App\Http\Resources\Api\StockEntryResource;
 use App\Models\Container;
 use App\Models\Wine;
@@ -31,19 +33,10 @@ class ContainerStockEntryController extends BaseApiController
 
     // ─── POST /winery/container-stock-entries ─────────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreContainerStockEntryRequest $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $validated = $request->validate([
-            'wine_id' => 'required|integer|exists:wines,id',
-            'container_id' => 'required|integer|exists:containers,id',
-            'quantity_liters' => 'required|numeric|min:0.001',
-            'entry_date' => 'required|date',
-            'source' => 'nullable|string|in:initial_stock,adjustment,correction',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
         Container::where('user_id', $user->id)->findOrFail($validated['container_id']);
@@ -66,13 +59,10 @@ class ContainerStockEntryController extends BaseApiController
 
     // ─── DELETE /winery/container-stock-entries/{id} ──────────────────────────
 
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(WineryApiRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
         $entry = WineContainerStockEntry::whereHas(
-            'wine', fn ($q) => $q->where('user_id', $user->id)
+            'wine', fn ($q) => $q->where('user_id', $request->user()->id)
         )->findOrFail($id);
 
         DB::transaction(function () use ($entry) {

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\SilicieFiscalYearRequest;
+use App\Http\Requests\Api\Winery\SilicieVintageRequest;
+use App\Http\Requests\Api\Winery\WineryApiRequest;
 use App\Models\Wine;
 use App\Models\WineStockSnapshot;
 use App\Services\Exporters\SilicieCsvExporter;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SilicieController extends BaseApiController
@@ -15,14 +17,9 @@ class SilicieController extends BaseApiController
     // ─── GET /winery/silicie ──────────────────────────────────────────────────
     // Stats globales + añadas disponibles
 
-    public function index(Request $request): JsonResponse
+    public function index(SilicieVintageRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
-
-        $wineryId = $user->id;
+        $wineryId = $request->user()->id;
         $vintage = $request->integer('vintage', now()->year);
 
         $vintages = DB::table('harvests')
@@ -44,14 +41,9 @@ class SilicieController extends BaseApiController
 
     // ─── GET /winery/silicie/entradas ─────────────────────────────────────────
 
-    public function entries(Request $request): JsonResponse
+    public function entries(SilicieVintageRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
-
-        $wineryId = $user->id;
+        $wineryId = $request->user()->id;
         $vintage = $request->integer('vintage', now()->year);
 
         $recepciones = DB::table('harvests as h')
@@ -105,14 +97,9 @@ class SilicieController extends BaseApiController
 
     // ─── GET /winery/silicie/elaboracion ──────────────────────────────────────
 
-    public function elaboration(Request $request): JsonResponse
+    public function elaboration(SilicieVintageRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
-
-        $wineryId = $user->id;
+        $wineryId = $request->user()->id;
         $vintage = $request->integer('vintage', now()->year);
 
         $steps = DB::table('wine_process_details as wpd')
@@ -160,12 +147,9 @@ class SilicieController extends BaseApiController
 
     // ─── GET /winery/silicie/existencias ──────────────────────────────────────
 
-    public function inventory(Request $request): JsonResponse
+    public function inventory(WineryApiRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $wineryId = $user->id;
+        $wineryId = $request->user()->id;
 
         $stockHarvest = DB::table('containers as c')
             ->where('c.user_id', $wineryId)
@@ -235,14 +219,9 @@ class SilicieController extends BaseApiController
 
     // ─── GET /winery/silicie/salidas ──────────────────────────────────────────
 
-    public function outputs(Request $request): JsonResponse
+    public function outputs(SilicieVintageRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
-
-        $wineryId = $user->id;
+        $wineryId = $request->user()->id;
         $vintage = $request->integer('vintage', now()->year);
 
         $ventas = DB::table('invoices as i')
@@ -312,14 +291,9 @@ class SilicieController extends BaseApiController
 
     // ─── GET /winery/silicie/apertura ─────────────────────────────────────────
 
-    public function opening(Request $request): JsonResponse
+    public function opening(SilicieFiscalYearRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $request->validate(['fiscal_year' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
-
-        $wineryId = $user->id;
+        $wineryId = $request->user()->id;
         $fiscalYear = $request->integer('fiscal_year', now()->year);
         $openingDate = "{$fiscalYear}-01-01";
 
@@ -384,12 +358,9 @@ class SilicieController extends BaseApiController
 
     // ─── POST /winery/silicie/snapshot ───────────────────────────────────────
 
-    public function snapshot(Request $request): JsonResponse
+    public function snapshot(WineryApiRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $wineryId = $user->id;
+        $wineryId = $request->user()->id;
         $today = now()->toDateString();
 
         $rows = DB::table('container_current_states as ccs')
@@ -437,14 +408,9 @@ class SilicieController extends BaseApiController
 
     // ─── GET /winery/silicie/export ───────────────────────────────────────────
 
-    public function export(Request $request)
+    public function export(SilicieVintageRequest $request)
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $request->validate(['vintage' => 'nullable|integer|min:1990|max:'.(now()->year + 1)]);
-
-        $wineryId = $user->id;
+        $wineryId = $request->user()->id;
         $vintage = $request->integer('vintage', now()->year);
         $csv = (new SilicieCsvExporter)->export($wineryId, $vintage);
         $filename = "SILICIE_{$wineryId}_{$vintage}.csv";

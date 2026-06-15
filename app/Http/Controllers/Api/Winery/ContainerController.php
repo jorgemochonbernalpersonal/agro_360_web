@@ -3,28 +3,21 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\IndexContainerRequest;
+use App\Http\Requests\Api\Winery\StoreContainerRequest;
+use App\Http\Requests\Api\Winery\UpdateContainerRequest;
+use App\Http\Requests\Api\Winery\WineryApiRequest;
 use App\Http\Resources\Api\ContainerResource;
 use App\Models\Container;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ContainerController extends BaseApiController
 {
     // ─── GET /winery/containers ───────────────────────────────────────────────
 
-    public function index(Request $request): JsonResponse
+    public function index(IndexContainerRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $request->validate([
-            'room_id' => 'nullable|integer|min:1',
-            'status' => 'nullable|string|in:empty,full,critical',
-            'unit' => 'nullable|string|in:kg,litros',
-            'per_page' => 'nullable|string|max:10',
-        ]);
-
-        $base = Container::where('user_id', $user->id)
+        $base = Container::where('user_id', $request->user()->id)
             ->where('archived', false);
 
         if ($request->filled('room_id')) {
@@ -64,12 +57,9 @@ class ContainerController extends BaseApiController
 
     // ─── GET /winery/containers/{id} ──────────────────────────────────────────
 
-    public function show(Request $request, int $id): JsonResponse
+    public function show(WineryApiRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $container = Container::where('user_id', $user->id)
+        $container = Container::where('user_id', $request->user()->id)
             ->with(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine'])
             ->findOrFail($id);
 
@@ -78,26 +68,15 @@ class ContainerController extends BaseApiController
 
     // ─── POST /winery/containers ─────────────────────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreContainerRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'capacity' => 'required|numeric|min:0.1',
-            'type_id' => 'nullable|integer|exists:container_types,id',
-            'material_id' => 'nullable|integer|exists:container_materials,id',
-            'container_room_id' => 'nullable|integer|exists:container_rooms,id',
-            'serial_number' => 'nullable|string|max:100',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         // Strip nulls so DB column defaults (type_id, material_id) kick in
         $filtered = array_filter($validated, fn ($v) => ! is_null($v));
 
         $container = Container::create(array_merge($filtered, [
-            'user_id' => $user->id,
+            'user_id' => $request->user()->id,
             'used_capacity' => 0,
             'archived' => false,
         ]));
@@ -109,20 +88,11 @@ class ContainerController extends BaseApiController
 
     // ─── PUT /winery/containers/{id} ──────────────────────────────────────────
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateContainerRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
+        $container = Container::where('user_id', $request->user()->id)->findOrFail($id);
 
-        $container = Container::where('user_id', $user->id)->findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'notes' => 'nullable|string|max:1000',
-            'container_room_id' => 'nullable|integer|exists:container_rooms,id',
-        ]);
-
-        $container->update($validated);
+        $container->update($request->validated());
 
         $container->load(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine']);
 
@@ -131,12 +101,9 @@ class ContainerController extends BaseApiController
 
     // ─── DELETE /winery/containers/{id} — archive ─────────────────────────────
 
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(WineryApiRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $container = Container::where('user_id', $user->id)->findOrFail($id);
+        $container = Container::where('user_id', $request->user()->id)->findOrFail($id);
         $container->update(['archived' => true]);
 
         return $this->deleted(__('Depósito archivado correctamente.'));

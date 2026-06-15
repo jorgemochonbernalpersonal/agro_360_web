@@ -3,27 +3,19 @@
 namespace App\Http\Controllers\Api\Viticulturist;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Viticulturist\IndexContainerReturnRequest;
+use App\Http\Requests\Api\Viticulturist\StoreContainerReturnRequest;
 use App\Http\Resources\Api\ContainerReturnResource;
 use App\Models\PhytosanitaryContainerReturn;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ContainerReturnController extends BaseApiController
 {
     // ─── GET /viticulturist/container-returns ────────────────────────────────
 
-    public function index(Request $request): JsonResponse
+    public function index(IndexContainerReturnRequest $request): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
-
-        $request->validate([
-            'campaign_id' => 'nullable|integer',
-            'search' => 'nullable|string|max:100',
-            'per_page' => 'nullable|integer|min:1|max:100',
-        ]);
-
-        $query = PhytosanitaryContainerReturn::forViticulturist($user->id)
+        $query = PhytosanitaryContainerReturn::forViticulturist($request->user()->id)
             ->active()
             ->with('phytosanitaryProduct')
             ->orderByDesc('date');
@@ -48,26 +40,10 @@ class ContainerReturnController extends BaseApiController
 
     // ─── POST /viticulturist/container-returns ──────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreContainerReturnRequest $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
-
-        $validated = $request->validate([
-            'campaign_id' => 'nullable|integer|exists:campaigns,id',
-            'phytosanitary_product_id' => 'nullable|integer|exists:phytosanitary_products,id',
-            'date' => 'required|date',
-            'product_name' => 'required|string|max:255',
-            'registration_number' => 'nullable|string|max:100',
-            'container_type' => 'required|string|in:plastic,glass,metal,cardboard,flexible,other',
-            'container_size_liters' => 'nullable|numeric|min:0',
-            'containers_quantity' => 'required|integer|min:1',
-            'total_weight_kg' => 'nullable|numeric|min:0',
-            'collection_system' => 'nullable|string|in:sigfito,field,other',
-            'collection_point' => 'required|string|max:255',
-            'transport_document' => 'nullable|string|max:100',
-            'notes' => 'nullable|string|max:2000',
-        ]);
+        $validated = $request->validated();
 
         if (empty($validated['campaign_id'])) {
             $validated['campaign_id'] = \App\Models\Campaign::where('viticulturist_id', $user->id)

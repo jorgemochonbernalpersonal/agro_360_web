@@ -3,30 +3,26 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\CompleteMaintenanceRequest;
+use App\Http\Requests\Api\Winery\IndexContainerMaintenanceRequest;
+use App\Http\Requests\Api\Winery\StoreContainerMaintenanceRequest;
+use App\Http\Requests\Api\Winery\UpdateContainerMaintenanceRequest;
+use App\Http\Requests\Api\Winery\WineryApiRequest;
 use App\Http\Resources\Api\ContainerMaintenanceResource;
 use App\Models\Container;
 use App\Models\ContainerMaintenance;
 use App\Models\ContainerMaintenanceSupply;
 use App\Models\ContainerMaintenanceWaste;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ContainerMaintenanceController extends BaseApiController
 {
     // ─── GET /winery/maintenances ─────────────────────────────────────────────
 
-    public function index(Request $request): JsonResponse
+    public function index(IndexContainerMaintenanceRequest $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $request->validate([
-            'container_id' => 'nullable|integer',
-            'status' => 'nullable|string|in:'.implode(',', array_keys(ContainerMaintenance::STATUSES)),
-            'type' => 'nullable|string|in:'.implode(',', array_keys(ContainerMaintenance::TYPES)),
-            'per_page' => 'nullable|integer|min:1|max:100',
-        ]);
 
         $query = ContainerMaintenance::whereHas(
             'container', fn ($q) => $q->where('user_id', $user->id)
@@ -65,13 +61,10 @@ class ContainerMaintenanceController extends BaseApiController
 
     // ─── GET /winery/maintenances/{id} ───────────────────────────────────────
 
-    public function show(Request $request, int $id): JsonResponse
+    public function show(WineryApiRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
         $maintenance = ContainerMaintenance::whereHas(
-            'container', fn ($q) => $q->where('user_id', $user->id)
+            'container', fn ($q) => $q->where('user_id', $request->user()->id)
         )->with(['container', 'supplies', 'wastes'])->findOrFail($id);
 
         return $this->success(new ContainerMaintenanceResource($maintenance));
@@ -79,41 +72,10 @@ class ContainerMaintenanceController extends BaseApiController
 
     // ─── POST /winery/maintenances ────────────────────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreContainerMaintenanceRequest $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        $validated = $request->validate([
-            'container_id' => 'required|integer|exists:containers,id',
-            'maintenance_type' => 'required|string|in:'.implode(',', array_keys(ContainerMaintenance::TYPES)),
-            'maintenance_name' => 'required|string|max:255',
-            'scheduled_date' => 'nullable|date',
-            'performed_date' => 'nullable|date',
-            'next_maintenance_date' => 'nullable|date',
-            'status' => 'nullable|string|in:'.implode(',', array_keys(ContainerMaintenance::STATUSES)),
-            'cost' => 'nullable|numeric|min:0',
-            'performed_by' => 'nullable|string|max:255',
-            'notes' => 'nullable|string|max:2000',
-            // Insumos usados
-            'supplies' => 'nullable|array|max:20',
-            'supplies.*.winery_supply_id' => 'nullable|integer|exists:winery_supplies,id',
-            'supplies.*.supply_name' => 'nullable|string|max:255',
-            'supplies.*.quantity_used' => 'nullable|numeric|min:0',
-            'supplies.*.unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-            'supplies.*.cost' => 'nullable|numeric|min:0',
-            'supplies.*.notes' => 'nullable|string|max:500',
-            // Residuos generados
-            'wastes' => 'nullable|array|max:10',
-            'wastes.*.container_waste_type_id' => 'nullable|integer|exists:container_waste_types,id',
-            'wastes.*.custom_waste_type' => 'nullable|string|max:100',
-            'wastes.*.waste_date' => 'nullable|date',
-            'wastes.*.quantity' => 'nullable|numeric|min:0',
-            'wastes.*.unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-            'wastes.*.disposal_method' => 'nullable|string|max:255',
-            'wastes.*.cost' => 'nullable|numeric|min:0',
-            'wastes.*.notes' => 'nullable|string|max:500',
-        ]);
+        $validated = $request->validated();
 
         Container::where('user_id', $user->id)->findOrFail($validated['container_id']);
 
@@ -163,28 +125,13 @@ class ContainerMaintenanceController extends BaseApiController
 
     // ─── PUT /winery/maintenances/{id} ───────────────────────────────────────
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateContainerMaintenanceRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
         $maintenance = ContainerMaintenance::whereHas(
-            'container', fn ($q) => $q->where('user_id', $user->id)
+            'container', fn ($q) => $q->where('user_id', $request->user()->id)
         )->findOrFail($id);
 
-        $validated = $request->validate([
-            'maintenance_type' => 'sometimes|string|in:'.implode(',', array_keys(ContainerMaintenance::TYPES)),
-            'maintenance_name' => 'sometimes|string|max:255',
-            'scheduled_date' => 'sometimes|nullable|date',
-            'performed_date' => 'sometimes|nullable|date',
-            'next_maintenance_date' => 'sometimes|nullable|date',
-            'status' => 'sometimes|string|in:'.implode(',', array_keys(ContainerMaintenance::STATUSES)),
-            'cost' => 'sometimes|nullable|numeric|min:0',
-            'performed_by' => 'sometimes|nullable|string|max:255',
-            'notes' => 'sometimes|nullable|string|max:2000',
-        ]);
-
-        $maintenance->update($validated);
+        $maintenance->update($request->validated());
         $maintenance->load(['container', 'supplies', 'wastes']);
 
         return $this->success(new ContainerMaintenanceResource($maintenance));
@@ -192,13 +139,10 @@ class ContainerMaintenanceController extends BaseApiController
 
     // ─── DELETE /winery/maintenances/{id} ────────────────────────────────────
 
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(WineryApiRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
         $maintenance = ContainerMaintenance::whereHas(
-            'container', fn ($q) => $q->where('user_id', $user->id)
+            'container', fn ($q) => $q->where('user_id', $request->user()->id)
         )->findOrFail($id);
 
         DB::transaction(function () use ($maintenance) {
@@ -212,22 +156,13 @@ class ContainerMaintenanceController extends BaseApiController
 
     // ─── POST /winery/maintenances/{id}/complete ─────────────────────────────
 
-    public function complete(Request $request, int $id): JsonResponse
+    public function complete(CompleteMaintenanceRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
         $maintenance = ContainerMaintenance::whereHas(
-            'container', fn ($q) => $q->where('user_id', $user->id)
+            'container', fn ($q) => $q->where('user_id', $request->user()->id)
         )->findOrFail($id);
 
-        $validated = $request->validate([
-            'performed_date' => 'nullable|date',
-            'next_maintenance_date' => 'nullable|date',
-            'cost' => 'nullable|numeric|min:0',
-            'performed_by' => 'nullable|string|max:255',
-            'notes' => 'nullable|string|max:2000',
-        ]);
+        $validated = $request->validated();
 
         $maintenance->update([
             ...$validated,
@@ -242,12 +177,9 @@ class ContainerMaintenanceController extends BaseApiController
 
     // ─── GET /winery/containers/{id}/maintenances ─────────────────────────────
 
-    public function byContainer(Request $request, int $containerId): JsonResponse
+    public function byContainer(WineryApiRequest $request, int $containerId): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
-
-        Container::where('user_id', $user->id)->findOrFail($containerId);
+        Container::where('user_id', $request->user()->id)->findOrFail($containerId);
 
         $perPage = $this->resolvePerPage($request, 20, 100);
         $maintenances = ContainerMaintenance::where('container_id', $containerId)
