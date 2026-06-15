@@ -1,6 +1,6 @@
 # 📍 ESTADO — punto de retomada
 
-> Última actualización: **2026-06-15**. Rama: `staging` (todo pusheado a `origin/staging`). PR staging→main pendiente de merge.
+> Última actualización: **2026-06-15**. Rama: `staging`. Main actualizado con merge de 41 commits.
 > Este fichero es el índice vivo: resume qué está hecho y qué sigue. El detalle está en los
 > docs enlazados.
 
@@ -51,18 +51,18 @@
   **contenedor de metadatos fiscales** (INFOVI/SILICIE). `ViticulturistAssignment` era
   write-only (nadie la lee en producción) → se elimina el dual-write de
   `WineryViticulturistObserver` y el modelo/tabla. `UserObserver` se conserva (autocrea
-  Organization con metadatos al registrar winery/DO/producer).
+  Organization con metadatos al registrar winery/DO/producer). Commit `eb36cec1`.
+- **Limpieza abort_unless redundantes en API** (2026-06-15): 294 líneas eliminadas en 99
+  controllers (Supervisor ×5, Admin ×14, Viticulturist ×98, Winery ×177). Todos eran
+  chequeos de rol ya cubiertos por el middleware de grupo (`api.role:*`). Se conservan los
+  `abort_if(isReadOnlyAdmin)` de Admin (sub-rol no cubierto por middleware) y los
+  `abort_if` de validaciones de negocio en Winery (estado factura, integridad referencial).
 
 ## 🔜 Pendiente (por prioridad sugerida)
-1. **Reducir Organization a metadatos fiscales** *(en curso)*: eliminar dual-write en
-   `WineryViticulturistObserver`, borrar `ViticulturistAssignment` modelo + tabla (drop
-   migration), limpiar tests del observer, regenerar baseline PHPStan.
-2. **Policies en la API** — 40+ controllers aún usan `abort_unless` inline en vez de
-   `$this->authorize()`. Continuación directa de la migración Livewire ya hecha.
-3. **Clientes — afinar** (opcional, bajo riesgo): el listado compartido no expone metadata SEO
+1. **Clientes — afinar** (opcional, bajo riesgo): el listado compartido no expone metadata SEO
    (title/description) que sí tenía viticultor; valorar si se quiere recuperar.
-4. **UI Fase 3** — tarjetas y botones inline → componentes `<x-agro.*>`. Sin urgencia.
-5. **Deuda PHPStan legacy** — ir reduciendo los ~3096 errores del baseline poco a poco.
+2. **UI Fase 3** — tarjetas y botones inline → componentes `<x-agro.*>`. Sin urgencia.
+3. **Deuda PHPStan legacy** — ir reduciendo los ~3095 errores del baseline poco a poco.
 
 ## Convenciones del proyecto (recordatorio)
 - Verificar tests **en aislamiento** (flakiness de seeds en paralelo).
