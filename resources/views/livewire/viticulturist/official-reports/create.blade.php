@@ -30,11 +30,11 @@
                     <div
                         wire:click="$set('reportType', 'phytosanitary_treatments')"
                         class="cursor-pointer border-2 rounded-xl p-4 transition-all duration-200 hover:shadow-lg
-                               {{ $reportType === 'phytosanitary_treatments' ? 'border-green-500 bg-green-50' : 'border-zinc-300 hover:border-green-300' }}"
+                               {{ $reportType === 'phytosanitary_treatments' ? 'border-agro-500 bg-agro-50' : 'border-zinc-300 hover:border-agro-300' }}"
                     >
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                                <div class="w-12 h-12 rounded-full bg-agro-100 flex items-center justify-center">
                                     <span class="text-2xl">🧪</span>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                     <div
                         wire:click="$set('reportType', 'full_digital_notebook')"
                         class="cursor-pointer border-2 rounded-xl p-4 transition-all duration-200 hover:shadow-lg
-                               {{ $reportType === 'full_digital_notebook' ? 'border-green-500 bg-green-50' : 'border-zinc-300 hover:border-green-300' }}"
+                               {{ $reportType === 'full_digital_notebook' ? 'border-agro-500 bg-agro-50' : 'border-zinc-300 hover:border-agro-300' }}"
                     >
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
@@ -75,35 +75,35 @@
                         <button
                             type="button"
                             wire:click="setQuickPeriod('last_week')"
-                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
+                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-agro-500 transition-colors"
                         >
                             {{ __('Última semana') }}
                         </button>
                         <button
                             type="button"
                             wire:click="setQuickPeriod('this_month')"
-                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
+                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-agro-500 transition-colors"
                         >
                             {{ __('Este mes') }}
                         </button>
                         <button
                             type="button"
                             wire:click="setQuickPeriod('last_month')"
-                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
+                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-agro-500 transition-colors"
                         >
                             {{ __('Mes pasado') }}
                         </button>
                         <button
                             type="button"
                             wire:click="setQuickPeriod('last_quarter')"
-                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
+                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-agro-500 transition-colors"
                         >
                             {{ __('Últimos 3 meses') }}
                         </button>
                         <button
                             type="button"
                             wire:click="setQuickPeriod('this_year')"
-                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-green-500 transition-colors"
+                            class="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 hover:border-agro-500 transition-colors"
                         >
                             {{ __('Este año') }}
                         </button>
@@ -117,7 +117,7 @@
                         <input
                             type="date"
                             wire:model.live="startDate"
-                            class="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-agro-500 focus:border-transparent"
                         >
                         @error('startDate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
@@ -126,7 +126,7 @@
                         <input
                             type="date"
                             wire:model.live="endDate"
-                            class="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-agro-500 focus:border-transparent"
                         >
                         @error('endDate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
@@ -150,7 +150,7 @@
                     <label class="block text-sm font-semibold text-zinc-700 mb-2">{{ __('Campaña') }}</label>
                     <select
                         wire:model.live="campaignId"
-                        class="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-agro-500 focus:border-transparent"
                     >
                         <option value="">{{ __('Selecciona una campaña') }}</option>
                         @foreach($campaigns as $campaign)
@@ -212,8 +212,8 @@
             <div class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity"></div>
             <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 z-10">
                 <div class="text-center">
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
-                        <flux:icon icon="arrow-path" class="animate-spin size-10 text-green-600" />
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-agro-100 mb-4">
+                        <flux:icon icon="arrow-path" class="animate-spin size-10 text-agro-600" />
                     </div>
                     <h3 class="text-xl font-bold text-zinc-900 mb-2">{{ __('Generando Informe') }}</h3>
                     <p class="text-zinc-600 mb-4">

@@ -93,12 +93,12 @@
                 wire:click="selectPlan('monthly')"
                 class="relative border-2 rounded-xl p-6 text-left transition-all
                     {{ $selectedPlan === 'monthly'
-                        ? 'border-[var(--color-agro-green)] bg-green-50'
+                        ? 'border-agro-500 bg-agro-50'
                         : 'border-zinc-200 bg-white hover:border-zinc-300' }}"
             >
                 <div class="font-semibold text-zinc-900 mb-1">{{ __('Mensual') }}</div>
                 <div class="flex items-baseline gap-1">
-                    <span class="text-3xl font-bold text-[var(--color-agro-green-dark)]">{{ number_format($monthlyPrice, 0) }}€</span>
+                    <span class="text-3xl font-bold text-agro-700">{{ number_format($monthlyPrice, 0) }}€</span>
                     <span class="text-zinc-500 text-sm">/{{ __('mes') }}</span>
                 </div>
                 @if($isWineryLinked)
@@ -106,7 +106,7 @@
                 @endif
                 @if($selectedPlan === 'monthly')
                     <div class="absolute top-3 right-3">
-                        <flux:icon icon="check-circle" class="size-5 text-[var(--color-agro-green)]" />
+                        <flux:icon icon="check-circle" class="size-5 text-agro-500" />
                     </div>
                 @endif
             </button>
@@ -116,7 +116,7 @@
                 wire:click="selectPlan('yearly')"
                 class="relative border-2 rounded-xl p-6 text-left transition-all
                     {{ $selectedPlan === 'yearly'
-                        ? 'border-[var(--color-agro-green)] bg-green-50'
+                        ? 'border-agro-500 bg-agro-50'
                         : 'border-zinc-200 bg-white hover:border-zinc-300' }}"
             >
                 <div class="absolute top-3 right-3 bg-amber-400 text-amber-900 text-xs font-bold px-2 py-0.5 rounded">
@@ -124,7 +124,7 @@
                 </div>
                 <div class="font-semibold text-zinc-900 mb-1">{{ __('Anual') }}</div>
                 <div class="flex items-baseline gap-1">
-                    <span class="text-3xl font-bold text-[var(--color-agro-green-dark)]">{{ number_format($yearlyPrice, 0) }}€</span>
+                    <span class="text-3xl font-bold text-agro-700">{{ number_format($yearlyPrice, 0) }}€</span>
                     <span class="text-zinc-500 text-sm">/{{ __('año') }}</span>
                 </div>
                 <p class="text-xs text-zinc-500 mt-1">{{ number_format($yearlyPrice / 12, 2) }}€/{{ __('mes') }} · {{ __('ahorras :n€', ['n' => number_format($monthlyPrice * 12 - $yearlyPrice, 0)]) }}</p>
@@ -133,7 +133,7 @@
                 @endif
                 @if($selectedPlan === 'yearly')
                     <div class="absolute top-8 right-3">
-                        <flux:icon icon="check-circle" class="size-5 text-[var(--color-agro-green)]" />
+                        <flux:icon icon="check-circle" class="size-5 text-agro-500" />
                     </div>
                 @endif
             </button>
@@ -154,7 +154,7 @@
                     __('Informes oficiales'),
                 ] as $feature)
                     <div class="flex items-center gap-1.5">
-                        <flux:icon icon="check" class="size-4 text-green-500 flex-shrink-0" />
+                        <flux:icon icon="check" class="size-4 text-agro-500 flex-shrink-0" />
                         {{ $feature }}
                     </div>
                 @endforeach
