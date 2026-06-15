@@ -18,7 +18,6 @@ class PlotController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
             'per_page' => 'nullable|integer|min:1|max:100',
@@ -71,7 +70,6 @@ class PlotController extends BaseApiController
     public function allGeometries(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
             'bbox' => ['nullable', 'string', 'regex:/^-?\d{1,3}(\.\d+)?,-?\d{1,3}(\.\d+)?,-?\d{1,3}(\.\d+)?,-?\d{1,3}(\.\d+)?$/'],
@@ -150,7 +148,6 @@ class PlotController extends BaseApiController
     public function centroids(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)
@@ -188,7 +185,6 @@ class PlotController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)
@@ -210,7 +206,6 @@ class PlotController extends BaseApiController
     public function geometries(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)
@@ -248,7 +243,6 @@ class PlotController extends BaseApiController
     public function plantings(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)
@@ -284,7 +278,6 @@ class PlotController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $data = $request->validate([
             'viticulturist_id' => 'required|integer|exists:users,id',
@@ -326,7 +319,6 @@ class PlotController extends BaseApiController
     public function storePlanting(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->pluck('viticulturist_id');
@@ -369,7 +361,6 @@ class PlotController extends BaseApiController
     public function harvestQuality(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)
@@ -404,7 +395,6 @@ class PlotController extends BaseApiController
     public function notebook(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)

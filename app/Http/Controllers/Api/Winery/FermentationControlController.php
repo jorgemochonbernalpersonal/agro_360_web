@@ -17,7 +17,6 @@ class FermentationControlController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $perPage = $this->resolvePerPage($request, 30, 100);
         $controls = WineFermentationControl::whereHas(
@@ -35,7 +34,6 @@ class FermentationControlController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'wine_id' => 'required|integer|exists:wines,id',
@@ -72,7 +70,6 @@ class FermentationControlController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $control = WineFermentationControl::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
@@ -86,7 +83,6 @@ class FermentationControlController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $control = WineFermentationControl::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
@@ -119,7 +115,6 @@ class FermentationControlController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $control = WineFermentationControl::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)

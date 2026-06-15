@@ -16,7 +16,6 @@ class TraceabilityController extends BaseApiController
     public function receptionWines(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $harvest = Harvest::where('winery_id', $user->id)->findOrFail($id);
 
@@ -48,7 +47,6 @@ class TraceabilityController extends BaseApiController
     public function wineReceptions(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $wine = Wine::where('user_id', $user->id)->findOrFail($id);
 

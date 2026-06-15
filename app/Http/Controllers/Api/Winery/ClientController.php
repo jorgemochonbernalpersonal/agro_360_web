@@ -52,7 +52,6 @@ class ClientController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'client_type' => 'required|string|in:individual,company',
@@ -79,7 +78,6 @@ class ClientController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $client = Client::where('user_id', $user->id)->findOrFail($id);
 
@@ -107,7 +105,6 @@ class ClientController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $client = Client::where('user_id', $user->id)->findOrFail($id);
         $client->delete();

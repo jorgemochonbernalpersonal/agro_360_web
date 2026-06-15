@@ -16,7 +16,6 @@ class ProductLotController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
             'wine_id' => 'nullable|integer',
@@ -50,7 +49,6 @@ class ProductLotController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $lot = ProductLot::forUser($user->id)->with('wine')->findOrFail($id);
 
@@ -62,7 +60,6 @@ class ProductLotController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'wine_id' => 'nullable|integer|exists:wines,id',
@@ -137,7 +134,6 @@ class ProductLotController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $lot = ProductLot::forUser($user->id)->findOrFail($id);
 
@@ -195,7 +191,6 @@ class ProductLotController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $lot = ProductLot::forUser($user->id)->findOrFail($id);
         $lot->update(['archived' => true]);

@@ -38,7 +38,6 @@ class WineAnalysisController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'wine_id' => 'required|integer',
@@ -86,7 +85,6 @@ class WineAnalysisController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $analysis = WineAnalysis::where('user_id', $user->id)->findOrFail($id);
 
@@ -119,7 +117,6 @@ class WineAnalysisController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $analysis = WineAnalysis::where('user_id', $user->id)->findOrFail($id);
         $analysis->delete();

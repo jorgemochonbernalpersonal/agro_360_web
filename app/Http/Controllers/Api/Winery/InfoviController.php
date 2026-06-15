@@ -16,7 +16,6 @@ class InfoviController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate(['campaign' => 'nullable|integer|min:1990|max:'.now()->year]);
 
@@ -62,7 +61,6 @@ class InfoviController extends BaseApiController
     public function threshold(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         return $this->success($this->buildThreshold($user->id));
     }

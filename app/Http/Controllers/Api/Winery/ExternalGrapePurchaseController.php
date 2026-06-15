@@ -15,7 +15,6 @@ class ExternalGrapePurchaseController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = ExternalGrapePurchase::forUser($user->id)
             ->with(['supplier', 'destinationContainer', 'wine'])
@@ -46,7 +45,6 @@ class ExternalGrapePurchaseController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $purchase = ExternalGrapePurchase::forUser($user->id)
             ->with(['supplier', 'destinationContainer', 'wine'])
@@ -58,7 +56,6 @@ class ExternalGrapePurchaseController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'supplier_id' => 'nullable|integer|exists:suppliers,id',
@@ -113,7 +110,6 @@ class ExternalGrapePurchaseController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $purchase = ExternalGrapePurchase::forUser($user->id)->findOrFail($id);
 
@@ -160,7 +156,6 @@ class ExternalGrapePurchaseController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $purchase = ExternalGrapePurchase::forUser($user->id)->findOrFail($id);
         $purchase->delete();

@@ -22,7 +22,6 @@ class ViticulturistController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $winery = $request->user();
-        abort_unless($winery->hasWineryAccess(), 403);
 
         $query = WineryViticulturist::where('winery_id', $winery->id)
             ->with('viticulturist');
@@ -55,7 +54,6 @@ class ViticulturistController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $winery = $request->user();
-        abort_unless($winery->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -92,7 +90,6 @@ class ViticulturistController extends BaseApiController
     public function search(Request $request): JsonResponse
     {
         $winery = $request->user();
-        abort_unless($winery->hasWineryAccess(), 403);
 
         $request->validate(['q' => ['required', 'string', 'min:3', 'max:100']]);
 
@@ -120,7 +117,6 @@ class ViticulturistController extends BaseApiController
     public function link(Request $request): JsonResponse
     {
         $winery = $request->user();
-        abort_unless($winery->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'viticulturist_id' => ['required', 'integer', 'exists:users,id'],
@@ -183,7 +179,6 @@ class ViticulturistController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $winery = $request->user();
-        abort_unless($winery->hasWineryAccess(), 403);
 
         $rel = WineryViticulturist::where('winery_id', $winery->id)
             ->where('viticulturist_id', $id)
@@ -215,7 +210,6 @@ class ViticulturistController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $winery = $request->user();
-        abort_unless($winery->hasWineryAccess(), 403);
 
         $rel = WineryViticulturist::where('winery_id', $winery->id)
             ->where('viticulturist_id', $id)
@@ -251,7 +245,6 @@ class ViticulturistController extends BaseApiController
     public function invite(Request $request, int $id): JsonResponse
     {
         $winery = $request->user();
-        abort_unless($winery->hasWineryAccess(), 403);
 
         $rel = WineryViticulturist::where('winery_id', $winery->id)
             ->where('viticulturist_id', $id)
@@ -304,7 +297,6 @@ class ViticulturistController extends BaseApiController
     public function revokeInvite(Request $request, int $id): JsonResponse
     {
         $winery = $request->user();
-        abort_unless($winery->hasWineryAccess(), 403);
 
         $rel = WineryViticulturist::where('winery_id', $winery->id)
             ->where('viticulturist_id', $id)

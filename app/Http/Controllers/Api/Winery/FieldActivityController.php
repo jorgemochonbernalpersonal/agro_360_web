@@ -18,7 +18,6 @@ class FieldActivityController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)
@@ -67,7 +66,6 @@ class FieldActivityController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)

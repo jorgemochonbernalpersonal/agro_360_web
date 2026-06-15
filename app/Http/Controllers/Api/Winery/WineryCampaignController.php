@@ -16,7 +16,6 @@ class WineryCampaignController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->pluck('viticulturist_id');
@@ -45,7 +44,6 @@ class WineryCampaignController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->pluck('viticulturist_id');
@@ -60,7 +58,6 @@ class WineryCampaignController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)
@@ -85,7 +82,6 @@ class WineryCampaignController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)
@@ -111,7 +107,6 @@ class WineryCampaignController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)

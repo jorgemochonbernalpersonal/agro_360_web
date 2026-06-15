@@ -16,7 +16,6 @@ class DenominationOfOriginController extends BaseApiController
     public function qualifications(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = DoQualification::where('winery_id', $user->id)
             ->orderByDesc('qualification_date');
@@ -41,7 +40,6 @@ class DenominationOfOriginController extends BaseApiController
     public function showQualification(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $q = DoQualification::where('winery_id', $user->id)->findOrFail($id);
 
@@ -52,7 +50,6 @@ class DenominationOfOriginController extends BaseApiController
     public function labels(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = DoLabel::where('winery_id', $user->id)
             ->orderByDesc('requested_at');
@@ -76,7 +73,6 @@ class DenominationOfOriginController extends BaseApiController
     public function showLabel(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $l = DoLabel::where('winery_id', $user->id)->findOrFail($id);
 
@@ -87,7 +83,6 @@ class DenominationOfOriginController extends BaseApiController
     public function inspections(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = DoInspection::where('subject_id', $user->id)
             ->orderByDesc('inspection_date');
@@ -112,7 +107,6 @@ class DenominationOfOriginController extends BaseApiController
     public function documents(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = DoDocument::where('status', 'active')
             ->orderByDesc('effective_date');

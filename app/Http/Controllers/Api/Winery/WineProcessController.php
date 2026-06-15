@@ -66,7 +66,6 @@ class WineProcessController extends BaseApiController
     public function storeTransfer(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'wine_id' => 'required|integer|exists:wines,id',
@@ -108,7 +107,6 @@ class WineProcessController extends BaseApiController
     public function storeLoss(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'wine_id' => 'required|integer|exists:wines,id',
@@ -145,7 +143,6 @@ class WineProcessController extends BaseApiController
     public function updateTransfer(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $transfer = WineTransfer::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
@@ -184,7 +181,6 @@ class WineProcessController extends BaseApiController
     public function updateLoss(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $loss = WineLoss::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
@@ -221,7 +217,6 @@ class WineProcessController extends BaseApiController
     public function destroyTransfer(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $transfer = WineTransfer::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
@@ -240,7 +235,6 @@ class WineProcessController extends BaseApiController
     public function destroyLoss(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $loss = WineLoss::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)

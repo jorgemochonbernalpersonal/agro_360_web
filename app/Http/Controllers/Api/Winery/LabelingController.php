@@ -16,7 +16,6 @@ class LabelingController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = WineLabeling::forUser($user->id)
             ->with(['wine', 'bottling', 'labelBatch'])
@@ -35,7 +34,6 @@ class LabelingController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $labeling = WineLabeling::forUser($user->id)->with(['wine', 'bottling', 'labelBatch'])->findOrFail($id);
 
@@ -45,7 +43,6 @@ class LabelingController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'wine_id' => 'required|integer|exists:wines,id',
@@ -96,7 +93,6 @@ class LabelingController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $labeling = WineLabeling::forUser($user->id)->findOrFail($id);
 
@@ -135,7 +131,6 @@ class LabelingController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $labeling = WineLabeling::forUser($user->id)->findOrFail($id);
 

@@ -15,7 +15,6 @@ class DisputeController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = HarvestDelivery::whereHas('harvest', fn ($q) => $q->where('winery_id', $user->id))
             ->with(['viticulturist', 'harvest', 'plotPlanting.plot'])
@@ -39,7 +38,6 @@ class DisputeController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $delivery = HarvestDelivery::whereHas('harvest', fn ($q) => $q->where('winery_id', $user->id))
             ->with(['viticulturist', 'harvest', 'plotPlanting.plot'])
@@ -54,7 +52,6 @@ class DisputeController extends BaseApiController
     public function resolve(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $delivery = HarvestDelivery::whereHas('harvest', fn ($q) => $q->where('winery_id', $user->id))
             ->findOrFail($id);

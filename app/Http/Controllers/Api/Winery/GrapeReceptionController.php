@@ -22,7 +22,6 @@ class GrapeReceptionController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = Harvest::where('winery_id', $user->id)
             ->with(['batch.viticulturist', 'plotPlanting.grapeVariety', 'container']);
@@ -51,7 +50,6 @@ class GrapeReceptionController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $harvest = Harvest::where('winery_id', $user->id)
             ->with(['batch.viticulturist', 'plotPlanting.grapeVariety', 'container'])
@@ -65,7 +63,6 @@ class GrapeReceptionController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'viticulturist_id' => 'required|integer|exists:users,id',
@@ -151,7 +148,6 @@ class GrapeReceptionController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $harvest = Harvest::where('winery_id', $user->id)->findOrFail($id);
 
@@ -184,7 +180,6 @@ class GrapeReceptionController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $harvest = Harvest::where('winery_id', $user->id)->findOrFail($id);
 
@@ -204,7 +199,6 @@ class GrapeReceptionController extends BaseApiController
     public function viticulturists(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         // Solo viticultores con parcelas activas que tengan plantaciones activas
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)

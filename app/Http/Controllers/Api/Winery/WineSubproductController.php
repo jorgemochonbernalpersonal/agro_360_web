@@ -13,7 +13,6 @@ class WineSubproductController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = WineSubproduct::forUser($user->id)
             ->with(['wine', 'unit'])
@@ -38,7 +37,6 @@ class WineSubproductController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $subproduct = WineSubproduct::forUser($user->id)->with(['wine', 'unit'])->findOrFail($id);
 
@@ -48,7 +46,6 @@ class WineSubproductController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'wine_id' => 'nullable|integer|exists:wines,id',
@@ -75,7 +72,6 @@ class WineSubproductController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $subproduct = WineSubproduct::forUser($user->id)->findOrFail($id);
 
@@ -99,7 +95,6 @@ class WineSubproductController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $subproduct = WineSubproduct::forUser($user->id)->findOrFail($id);
         $subproduct->delete();

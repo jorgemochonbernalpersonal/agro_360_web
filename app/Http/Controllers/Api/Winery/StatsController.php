@@ -17,7 +17,6 @@ class StatsController extends BaseApiController
     public function __invoke(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $userId = $user->id;
         $year = $request->integer('year', now()->year);

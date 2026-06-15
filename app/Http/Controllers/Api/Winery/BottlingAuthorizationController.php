@@ -13,7 +13,6 @@ class BottlingAuthorizationController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = BottlingAuthorization::forUser($user->id)
             ->with('wine')
@@ -38,7 +37,6 @@ class BottlingAuthorizationController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $authorization = BottlingAuthorization::forUser($user->id)->with('wine')->findOrFail($id);
 
@@ -48,7 +46,6 @@ class BottlingAuthorizationController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'authorization_number' => 'required|string|max:100',
@@ -79,7 +76,6 @@ class BottlingAuthorizationController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $authorization = BottlingAuthorization::forUser($user->id)->findOrFail($id);
 
@@ -105,7 +101,6 @@ class BottlingAuthorizationController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $authorization = BottlingAuthorization::forUser($user->id)->findOrFail($id);
         $authorization->delete();

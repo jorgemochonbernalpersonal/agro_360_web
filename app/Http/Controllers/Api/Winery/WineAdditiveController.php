@@ -15,7 +15,6 @@ class WineAdditiveController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
             'wine_id' => 'nullable|integer',
@@ -38,7 +37,6 @@ class WineAdditiveController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $additive = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
             ->with(['wine', 'supply', 'oenologist', 'unitOfMeasurement'])
@@ -50,7 +48,6 @@ class WineAdditiveController extends BaseApiController
     public function byContainer(Request $request, int $containerId): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         Container::where('user_id', $user->id)->findOrFail($containerId);
 
@@ -69,7 +66,6 @@ class WineAdditiveController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'wine_id' => 'required|integer|exists:wines,id',
@@ -98,7 +94,6 @@ class WineAdditiveController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $additive = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))->findOrFail($id);
 
@@ -121,7 +116,6 @@ class WineAdditiveController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $additive = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))->findOrFail($id);
         $additive->delete();

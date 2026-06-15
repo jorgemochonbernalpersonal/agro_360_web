@@ -12,7 +12,6 @@ class OenologistController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = Oenologist::forUser($user->id);
 
@@ -39,7 +38,6 @@ class OenologistController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'name' => 'required|string|max:100',
@@ -59,7 +57,6 @@ class OenologistController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $oenologist = Oenologist::forUser($user->id)->findOrFail($id);
 
@@ -81,7 +78,6 @@ class OenologistController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $oenologist = Oenologist::forUser($user->id)->findOrFail($id);
         $oenologist->update(['active' => false]);

@@ -13,7 +13,6 @@ class HarvestSummaryController extends BaseApiController
     public function __invoke(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $year = $request->integer('year', now()->year);
 

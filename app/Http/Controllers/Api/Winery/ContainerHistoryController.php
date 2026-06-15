@@ -18,7 +18,6 @@ class ContainerHistoryController extends BaseApiController
     public function index(Request $request, int $containerId): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $container = Container::where('user_id', $user->id)->findOrFail($containerId);
 
@@ -67,7 +66,6 @@ class ContainerHistoryController extends BaseApiController
     public function analytics(Request $request, int $containerId): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $container = Container::where('user_id', $user->id)
             ->with(['currentStates.wine', 'containerType', 'containerRoom'])
@@ -151,7 +149,6 @@ class ContainerHistoryController extends BaseApiController
     public function fleetAnalytics(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $containers = Container::where('user_id', $user->id)
             ->where('archived', false)

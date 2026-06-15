@@ -14,7 +14,6 @@ class VerifactuController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = VerifactuRecord::forUser($user->id)
             ->with('invoice')
@@ -43,7 +42,6 @@ class VerifactuController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $record = VerifactuRecord::forUser($user->id)->with('invoice')->findOrFail($id);
 
@@ -54,7 +52,6 @@ class VerifactuController extends BaseApiController
     public function submit(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'invoice_id' => 'required|integer|exists:invoices,id',
@@ -79,7 +76,6 @@ class VerifactuController extends BaseApiController
     public function cancel(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $record = VerifactuRecord::forUser($user->id)->findOrFail($id);
 

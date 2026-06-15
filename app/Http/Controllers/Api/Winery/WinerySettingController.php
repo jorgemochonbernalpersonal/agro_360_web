@@ -12,7 +12,6 @@ class WinerySettingController extends BaseApiController
     public function show(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $settings = InvoicingSetting::getOrCreateForUser($user->id);
 
@@ -22,7 +21,6 @@ class WinerySettingController extends BaseApiController
     public function update(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'issuer_legal_name' => 'sometimes|nullable|string|max:255',

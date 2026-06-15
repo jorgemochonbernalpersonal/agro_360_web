@@ -12,7 +12,6 @@ class WineryAlertController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = WineryAlert::forUser($user->id)
             ->active()
@@ -43,7 +42,6 @@ class WineryAlertController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'alert_type' => 'required|string|in:'.implode(',', array_keys(WineryAlert::ALERT_TYPES)),
@@ -67,7 +65,6 @@ class WineryAlertController extends BaseApiController
     public function markRead(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $alert = WineryAlert::forUser($user->id)->findOrFail($id);
 
@@ -82,7 +79,6 @@ class WineryAlertController extends BaseApiController
     public function markAllRead(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         WineryAlert::forUser($user->id)
             ->unread()
@@ -94,7 +90,6 @@ class WineryAlertController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $alert = WineryAlert::forUser($user->id)->findOrFail($id);
         $alert->delete();

@@ -18,7 +18,6 @@ class DashboardController extends BaseApiController
     {
         $user = $request->user();
 
-        abort_unless($user->hasWineryAccess(), 403, 'Acceso denegado.');
 
         $userId = $user->id;
         $campaignYear = now()->year;

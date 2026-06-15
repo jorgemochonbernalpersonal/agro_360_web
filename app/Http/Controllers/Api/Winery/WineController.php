@@ -20,7 +20,6 @@ class WineController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
             'status' => 'nullable|string|in:'.implode(',', array_keys(Wine::STATUSES)),
@@ -65,7 +64,6 @@ class WineController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $wine = Wine::forUser($user->id)
             ->with(['fermentationControls' => fn ($q) => $q->latest('control_date')->take(10)])
@@ -79,7 +77,6 @@ class WineController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -109,7 +106,6 @@ class WineController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $wine = Wine::forUser($user->id)->findOrFail($id);
 
@@ -138,7 +134,6 @@ class WineController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $wine = Wine::forUser($user->id)->findOrFail($id);
         $wine->update(['status' => 'cancelled']);
@@ -151,7 +146,6 @@ class WineController extends BaseApiController
     public function fermentationControls(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $wine = Wine::forUser($user->id)->findOrFail($id);
 
@@ -175,7 +169,6 @@ class WineController extends BaseApiController
     public function technicalSheet(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $wine = Wine::forUser($user->id)
             ->with(['oenologist'])

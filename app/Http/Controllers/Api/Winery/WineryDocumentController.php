@@ -12,7 +12,6 @@ class WineryDocumentController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = WineryDocument::forUser($user->id)
             ->orderByDesc('issue_date');
@@ -35,7 +34,6 @@ class WineryDocumentController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $document = WineryDocument::forUser($user->id)->findOrFail($id);
 
@@ -45,7 +43,6 @@ class WineryDocumentController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -69,7 +66,6 @@ class WineryDocumentController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $document = WineryDocument::forUser($user->id)->findOrFail($id);
 
@@ -92,7 +88,6 @@ class WineryDocumentController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $document = WineryDocument::forUser($user->id)->findOrFail($id);
         $document->delete();

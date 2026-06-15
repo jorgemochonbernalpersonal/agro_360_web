@@ -13,7 +13,6 @@ class LabelBatchController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = LabelBatch::forUser($user->id)->with('wine')->orderByDesc('created_at');
 
@@ -35,7 +34,6 @@ class LabelBatchController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $batch = LabelBatch::forUser($user->id)->with('wine')->findOrFail($id);
 
@@ -45,7 +43,6 @@ class LabelBatchController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'wine_id' => 'nullable|integer|exists:wines,id',
@@ -75,7 +72,6 @@ class LabelBatchController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $batch = LabelBatch::forUser($user->id)->findOrFail($id);
 
@@ -98,7 +94,6 @@ class LabelBatchController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $batch = LabelBatch::forUser($user->id)->findOrFail($id);
         abort_unless($batch->canDelete(), 422, 'No se puede eliminar un lote con etiquetas ya usadas.');

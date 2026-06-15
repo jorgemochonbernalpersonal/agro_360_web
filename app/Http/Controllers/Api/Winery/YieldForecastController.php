@@ -12,7 +12,6 @@ class YieldForecastController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = WineryYieldForecast::forWinery($user->id)
             ->with(['viticulturist', 'plotPlanting', 'campaign'])
@@ -37,7 +36,6 @@ class YieldForecastController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $forecast = WineryYieldForecast::forWinery($user->id)
             ->with(['viticulturist', 'plotPlanting', 'campaign'])
@@ -49,7 +47,6 @@ class YieldForecastController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'viticulturist_id' => 'required|integer|exists:users,id',
@@ -74,7 +71,6 @@ class YieldForecastController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $forecast = WineryYieldForecast::forWinery($user->id)->findOrFail($id);
 
@@ -98,7 +94,6 @@ class YieldForecastController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $forecast = WineryYieldForecast::forWinery($user->id)->findOrFail($id);
         $forecast->delete();

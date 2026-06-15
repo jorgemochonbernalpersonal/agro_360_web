@@ -12,7 +12,6 @@ class CellarOperationController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $query = CellarOperation::forUser($user->id)
             ->with(['sourceContainer', 'targetContainer'])
@@ -44,7 +43,6 @@ class CellarOperationController extends BaseApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $operation = CellarOperation::forUser($user->id)
             ->with(['sourceContainer', 'targetContainer'])
@@ -56,7 +54,6 @@ class CellarOperationController extends BaseApiController
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
             'operation_type' => 'required|string|in:'.implode(',', array_keys(CellarOperation::OPERATION_TYPES)),
@@ -81,7 +78,6 @@ class CellarOperationController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $operation = CellarOperation::forUser($user->id)->findOrFail($id);
 
@@ -105,7 +101,6 @@ class CellarOperationController extends BaseApiController
     public function complete(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $operation = CellarOperation::forUser($user->id)->findOrFail($id);
 
@@ -127,7 +122,6 @@ class CellarOperationController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $operation = CellarOperation::forUser($user->id)->findOrFail($id);
         $operation->delete();

@@ -18,7 +18,6 @@ class WineProcessStepController extends BaseApiController
     public function index(Request $request, int $wineId): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $wine = Wine::forUser($user->id)->findOrFail($wineId);
 
@@ -42,7 +41,6 @@ class WineProcessStepController extends BaseApiController
     public function store(Request $request, int $wineId): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $wine = Wine::forUser($user->id)->findOrFail($wineId);
 
@@ -100,7 +98,6 @@ class WineProcessStepController extends BaseApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $step = WineProcessDetail::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
@@ -155,7 +152,6 @@ class WineProcessStepController extends BaseApiController
     public function destroy(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $step = WineProcessDetail::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
@@ -172,7 +168,6 @@ class WineProcessStepController extends BaseApiController
     public function complete(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasWineryAccess(), 403);
 
         $step = WineProcessDetail::whereHas(
             'wine', fn ($q) => $q->where('user_id', $user->id)
