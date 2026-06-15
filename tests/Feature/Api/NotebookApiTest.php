@@ -520,6 +520,148 @@ class NotebookApiTest extends TestCase
             ->assertStatus(403);
     }
 
+    // ─── GET /viticulturist/notebook/{notebook_type} (indexOfType) ───────────
+
+    public function test_index_of_type_returns_only_that_type(): void
+    {
+        AgriculturalActivity::factory()
+            ->count(2)
+            ->forViticulturist($this->user)
+            ->forPlot($this->plot)
+            ->create(['activity_type' => 'irrigation']);
+
+        AgriculturalActivity::factory()
+            ->forViticulturist($this->user)
+            ->forPlot($this->plot)
+            ->create(['activity_type' => 'fertilization']);
+
+        $this->actingAsUser()
+            ->getJson('/api/v1/viticulturist/notebook/irrigations')
+            ->assertStatus(200)
+            ->assertJsonPath('meta.total', 2);
+    }
+
+    public function test_index_of_type_excludes_other_users(): void
+    {
+        $other = User::factory()->viticulturist()->create(['can_login' => true]);
+        $otherPlot = Plot::factory()->forViticulturist($other)->create();
+
+        AgriculturalActivity::factory()
+            ->forViticulturist($this->user)
+            ->forPlot($this->plot)
+            ->create(['activity_type' => 'observation']);
+
+        AgriculturalActivity::factory()
+            ->forViticulturist($other)
+            ->forPlot($otherPlot)
+            ->create(['activity_type' => 'observation']);
+
+        $this->actingAsUser()
+            ->getJson('/api/v1/viticulturist/notebook/observations')
+            ->assertJsonPath('meta.total', 1);
+    }
+
+    // ─── POST /viticulturist/notebook/{notebook_type} (storeTyped) ───────────
+
+    public function test_store_typed_pruning_maps_slug_to_activity_type(): void
+    {
+        $this->actingAsUser()
+            ->postJson('/api/v1/viticulturist/notebook/pruning', [
+                'plot_id' => $this->plot->id,
+                'activity_date' => '2026-03-15',
+                'pruning_type' => 'vara',
+            ])
+            ->assertStatus(201)
+            ->assertJsonPath('data.activity_type', 'pruning');
+    }
+
+    public function test_store_typed_pruning_accepts_buds_per_vine_alias(): void
+    {
+        $this->actingAsUser()
+            ->postJson('/api/v1/viticulturist/notebook/pruning', [
+                'plot_id' => $this->plot->id,
+                'activity_date' => '2026-03-15',
+                'buds_per_vine' => 8,
+            ])
+            ->assertStatus(201);
+
+        $activity = AgriculturalActivity::where('viticulturist_id', $this->user->id)
+            ->where('activity_type', 'pruning')
+            ->first();
+
+        $this->assertDatabaseHas('cultural_works', [
+            'activity_id' => $activity->id,
+            'productive_buds_per_hectare' => 8,
+        ]);
+    }
+
+    public function test_store_typed_cultural_works_maps_slug_to_cultural(): void
+    {
+        $this->actingAsUser()
+            ->postJson('/api/v1/viticulturist/notebook/cultural-works', [
+                'plot_id' => $this->plot->id,
+                'activity_date' => '2026-03-15',
+                'work_type' => 'deshojado',
+            ])
+            ->assertStatus(201)
+            ->assertJsonPath('data.activity_type', 'cultural');
+    }
+
+    public function test_store_typed_post_harvest_requires_application_type(): void
+    {
+        $this->actingAsUser()
+            ->postJson('/api/v1/viticulturist/notebook/post-harvest-treatments', [
+                'plot_id' => $this->plot->id,
+                'activity_date' => '2026-03-15',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['application_type']);
+    }
+
+    public function test_store_typed_post_harvest_rejects_invalid_application_type(): void
+    {
+        $this->actingAsUser()
+            ->postJson('/api/v1/viticulturist/notebook/post-harvest-treatments', [
+                'plot_id' => $this->plot->id,
+                'activity_date' => '2026-03-15',
+                'application_type' => 'invalid_type',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['application_type']);
+    }
+
+    // ─── PUT — UpdateNotebookRequest carga tipo desde BD ─────────────────────
+
+    public function test_update_phytosanitary_requires_product_id(): void
+    {
+        $activity = AgriculturalActivity::factory()
+            ->forViticulturist($this->user)
+            ->forPlot($this->plot)
+            ->create(['activity_type' => 'phytosanitary']);
+
+        $this->actingAsUser()
+            ->putJson("/api/v1/viticulturist/notebook/{$activity->id}", [
+                'dose_per_hectare' => 2.0,
+                // sin product_id
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['product_id']);
+    }
+
+    public function test_update_irrigation_does_not_require_product_id(): void
+    {
+        $activity = AgriculturalActivity::factory()
+            ->forViticulturist($this->user)
+            ->forPlot($this->plot)
+            ->create(['activity_type' => 'irrigation']);
+
+        $this->actingAsUser()
+            ->putJson("/api/v1/viticulturist/notebook/{$activity->id}", [
+                'duration_minutes' => 45,
+            ])
+            ->assertStatus(200);
+    }
+
     private function base(array $override = []): array
     {
         return array_merge([
