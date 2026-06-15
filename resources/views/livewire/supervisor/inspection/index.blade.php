@@ -99,8 +99,8 @@
                                     :icon="$isWinery ? 'building-office' : 'user'"
                                     :title="$inspection->subject?->name ?? '—'"
                                     :subtitle="$isWinery ? 'Bodega' : 'Viticultor'"
-                                    :iconBg="$isWinery ? 'bg-blue-100' : 'bg-emerald-100'"
-                                    :iconColor="$isWinery ? 'text-blue-600' : 'text-emerald-600'"
+                                    :iconBg="$isWinery ? 'bg-blue-100' : 'bg-agro-50'"
+                                    :iconColor="$isWinery ? 'text-blue-600' : 'text-agro-600'"
                                     size="md"
                                     radius="xl"
                                 >

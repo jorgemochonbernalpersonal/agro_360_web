@@ -110,8 +110,8 @@
                                                     file:mr-4 file:py-2 file:px-4
                                                     file:rounded-lg file:border-0
                                                     file:text-sm file:font-semibold
-                                                    file:bg-green-50 file:text-agro-700
-                                                    hover:file:bg-green-100
+                                                    file:bg-agro-50 file:text-agro-700
+                                                    hover:file:bg-agro-100
                                                     cursor-pointer
                                                     @error('profile_image') border-red-300 @enderror"
                                             >

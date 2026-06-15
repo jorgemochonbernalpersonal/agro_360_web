@@ -19,8 +19,8 @@
             </div>
         </div>
     @elseif($container)
-        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
-            <p class="text-sm text-green-800">{{ __('Este contenedor no está asignado a ninguna cosecha. Puedes asignarlo cuando crees o edites una cosecha.') }}</p>
+        <div class="mb-6 p-4 bg-agro-50 border-l-4 border-agro-500 rounded-r-lg">
+            <p class="text-sm text-agro-800">{{ __('Este contenedor no está asignado a ninguna cosecha. Puedes asignarlo cuando crees o edites una cosecha.') }}</p>
         </div>
     @endif
 
