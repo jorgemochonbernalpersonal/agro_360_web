@@ -67,10 +67,10 @@
 
             <div class="flex items-center gap-2">
                 <input type="date" wire:model.live="filterFrom"
-                    class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+                    class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-agro-300" />
                 <span class="text-xs text-zinc-400">—</span>
                 <input type="date" wire:model.live="filterTo"
-                    class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+                    class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-agro-300" />
             </div>
 
             <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition px-2 py-1.5">{{ __('Limpiar') }}</button>

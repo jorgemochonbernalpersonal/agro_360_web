@@ -91,9 +91,9 @@
                     <div class="flex-1 space-y-4">
                         {{-- Metric boxes --}}
                         <div class="grid grid-cols-3 gap-2">
-                            <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Viticultores') }}</p>
-                                <p class="text-sm font-bold text-emerald-700">
+                            <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Viticultores') }}</p>
+                                <p class="text-sm font-bold text-agro-700">
                                     {{ $vitCountByWinery[$winery->id] ?? 0 }}
                                 </p>
                             </div>

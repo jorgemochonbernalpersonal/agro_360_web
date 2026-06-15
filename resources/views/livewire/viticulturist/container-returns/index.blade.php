@@ -133,9 +133,9 @@
 
                         <div class="flex-1 space-y-4">
                             <div class="grid grid-cols-2 gap-3">
-                                <div class="bg-green-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-green-400 uppercase tracking-widest mb-1">{{ __('Envases') }}</p>
-                                    <p class="text-2xl font-bold text-green-700 leading-none">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">{{ __('Envases') }}</p>
+                                    <p class="text-2xl font-bold text-agro-700 leading-none">
                                         {{ $entry->containers_quantity }}
                                         <span class="text-xs font-medium text-zinc-400 ml-0.5">{{ __('uds.') }}</span>
                                     </p>

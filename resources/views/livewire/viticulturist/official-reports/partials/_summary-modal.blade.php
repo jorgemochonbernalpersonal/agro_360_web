@@ -31,7 +31,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-zinc-600 mb-1">{{ __('Área Total Tratada') }}</p>
-                                <p class="text-lg font-bold text-green-900">{{ $reportSummary['total_area'] ?? 0 }} ha</p>
+                                <p class="text-lg font-bold text-agro-900">{{ $reportSummary['total_area'] ?? 0 }} ha</p>
                             </div>
                             <div>
                                 <p class="text-sm text-zinc-600 mb-1">{{ __('Tamaño Estimado') }}</p>
@@ -147,7 +147,7 @@
                 {{-- Campo de Contraseña en el Modal --}}
                 <div class="mb-6" x-data="{ showPassword: false }">
                     <label class="block text-sm font-semibold text-zinc-700 mb-2 flex items-center gap-2">
-                        <flux:icon icon="lock-closed" class="size-5 text-green-600" />
+                        <flux:icon icon="lock-closed" class="size-5 text-agro-600" />
                         {{ __('Contraseña de Firma Digital') }}
                     </label>
                     <div class="relative">
@@ -160,7 +160,7 @@
                                 disabled
                                 readonly
                             @endif
-                            class="w-full px-4 py-3 pr-12 border-2 border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition {{ $hasDigitalSignature ? '' : 'opacity-50 cursor-not-allowed bg-zinc-100' }}"
+                            class="w-full px-4 py-3 pr-12 border-2 border-zinc-300 rounded-lg focus:ring-2 focus:ring-agro-500 focus:border-agro-500 transition {{ $hasDigitalSignature ? '' : 'opacity-50 cursor-not-allowed bg-zinc-100' }}"
                             placeholder="{{ $hasDigitalSignature ? __('Introduce tu contraseña de firma digital') : __('Configura tu contraseña primero') }}"
                             @if($hasDigitalSignature) autofocus @endif
                         >
@@ -238,7 +238,7 @@
                                 disabled
                                 type="button"
                             @endif
-                            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            class="px-6 py-2 bg-agro-600 text-white rounded-lg hover:bg-agro-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                             <flux:icon wire:loading wire:target="confirmAndGenerateReport" icon="arrow-path" class="animate-spin size-4" />
                             <span wire:loading.remove wire:target="confirmAndGenerateReport">{{ __('Firmar y Generar') }}</span>
