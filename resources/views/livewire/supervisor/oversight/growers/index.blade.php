@@ -47,13 +47,13 @@
                 >
                     <x-slot:header>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-                                <flux:icon icon="user" class="size-5 text-emerald-600" />
+                            <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center shrink-0">
+                                <flux:icon icon="user" class="size-5 text-agro-600" />
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h3 class="font-bold text-zinc-900 truncate">
                                     <a href="{{ route('supervisor.oversight.growers.show', $grower) }}" wire:navigate
-                                       class="hover:text-emerald-700 transition">{{ $grower->name }}</a>
+                                       class="hover:text-agro-700 transition">{{ $grower->name }}</a>
                                 </h3>
                                 <p class="text-xs text-zinc-400 truncate">{{ $grower->email }}</p>
                             </div>
@@ -63,9 +63,9 @@
                     <div class="flex-1 space-y-4">
                         {{-- Metric boxes --}}
                         <div class="grid grid-cols-3 gap-2">
-                            <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                <p class="text-[9px] text-emerald-400 uppercase tracking-wide mb-0.5">{{ __('Parcelas') }}</p>
-                                <p class="text-sm font-bold text-emerald-700">{{ $grower->plots_count }}</p>
+                            <div class="bg-agro-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-agro-400 uppercase tracking-wide mb-0.5">{{ __('Parcelas') }}</p>
+                                <p class="text-sm font-bold text-agro-700">{{ $grower->plots_count }}</p>
                             </div>
                             <div class="bg-blue-50 rounded-lg p-2 text-center">
                                 <p class="text-[9px] text-blue-400 uppercase tracking-wide mb-0.5">{{ __('Plantaciones') }}</p>

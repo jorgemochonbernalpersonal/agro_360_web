@@ -1,6 +1,6 @@
 <div class="bg-white rounded-lg shadow-lg overflow-hidden">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-green-600 to-emerald-600 px-4 py-3">
+    <div class="bg-agro-700 px-4 py-3">
         <div class="flex items-center justify-between">
             <h3 class="text-white font-bold flex items-center gap-2">{{ __('🛰️ Teledetección') }}</h3>
             <a href="{{ route('remote-sensing.dashboard') }}" 
@@ -15,7 +15,7 @@
 
     @if($isLoading)
         <div class="p-4 text-center">
-            <svg class="w-6 h-6 animate-spin mx-auto text-green-600" fill="none" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 animate-spin mx-auto text-agro-600" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>

@@ -59,8 +59,8 @@
     @if($co2Total > 0)
         <x-agro.card>
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                    <flux:icon icon="globe-europe-africa" class="w-6 h-6 text-emerald-600" />
+                <div class="w-12 h-12 rounded-full bg-agro-50 flex items-center justify-center shrink-0">
+                    <flux:icon icon="globe-europe-africa" class="w-6 h-6 text-agro-600" />
                 </div>
                 <div>
                     <p class="text-sm text-zinc-500">{{ __('CO₂ total campaña seleccionada') }}</p>
@@ -104,8 +104,8 @@
                             icon="bolt"
                             :title="$entry->energy_type_label"
                             :subtitle="$entry->date->format('d/m/Y')"
-                            iconBg="bg-emerald-100"
-                            iconColor="text-emerald-600"
+                            iconBg="bg-agro-50"
+                            iconColor="text-agro-600"
                             size="md"
                             radius="xl"
                         />
@@ -124,9 +124,9 @@
                                 </p>
                             </div>
                             @if($entry->co2_kg_equivalent)
-                                <div class="bg-emerald-50 rounded-xl p-3">
+                                <div class="bg-agro-50 rounded-xl p-3">
                                     <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{{ __('CO₂') }}</p>
-                                    <p class="text-base font-bold text-emerald-700 leading-none">
+                                    <p class="text-base font-bold text-agro-700 leading-none">
                                         {{ number_format($entry->co2_kg_equivalent, 1, ',', '.') }}<span class="text-xs font-normal text-zinc-400 ml-0.5">kg</span>
                                     </p>
                                 </div>

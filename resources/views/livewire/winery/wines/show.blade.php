@@ -500,7 +500,7 @@
                     <x-agro.table-row>
                         <x-agro.table-cell>{{ $an->analysis_date->format('d/m/Y') }}</x-agro.table-cell>
                         <x-agro.table-cell>
-                            <x-agro.status-badge :label="$an->analysis_type_label" color="emerald" />
+                            <x-agro.status-badge :label="$an->analysis_type_label" color="agro" />
                         </x-agro.table-cell>
                         <x-agro.table-cell>{{ $an->oenologist?->full_name ?? '—' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ $an->alcohol !== null ? $an->alcohol . '%' : '—' }}</x-agro.table-cell>
@@ -1021,8 +1021,8 @@
         {{-- KPIs --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <x-agro.card class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
-                    <flux:icon icon="archive-box-arrow-down" class="size-4 text-emerald-600" />
+                <div class="w-9 h-9 rounded-lg bg-agro-50 flex items-center justify-center shrink-0">
+                    <flux:icon icon="archive-box-arrow-down" class="size-4 text-agro-600" />
                 </div>
                 <div>
                     <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Coste uva') }}</p>

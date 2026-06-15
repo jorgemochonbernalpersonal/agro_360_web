@@ -135,8 +135,8 @@
         </x-agro.card>
 
         <x-agro.card class="flex items-center gap-4">
-            <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
-                <flux:icon icon="calculator" class="size-5 text-emerald-600" />
+            <div class="w-11 h-11 rounded-xl bg-agro-50 flex items-center justify-center shrink-0">
+                <flux:icon icon="calculator" class="size-5 text-agro-600" />
             </div>
             <div>
                 <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">{{ __('Costes') }} {{ $vintageYear }}</p>
