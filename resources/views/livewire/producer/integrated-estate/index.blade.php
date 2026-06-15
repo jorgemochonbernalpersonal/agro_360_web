@@ -75,7 +75,7 @@
             <x-agro.card>
                 <x-slot:header>
                     <div class="flex items-center gap-2">
-                        <flux:icon icon="clock" class="size-4 text-green-600" />
+                        <flux:icon icon="clock" class="size-4 text-agro-600" />
                         <span class="text-sm font-semibold text-zinc-800">{{ __('Ciclo de vida') }}</span>
                     </div>
                 </x-slot:header>

@@ -43,7 +43,7 @@
                                 </div>
                             </div>
                             <a href="{{ route('remote-sensing.plot', $plotData['plot']) }}" 
-                               class="text-sm font-medium text-green-600 hover:text-green-700 whitespace-nowrap">
+                               class="text-sm font-medium text-agro-600 hover:text-agro-700 whitespace-nowrap">
                                 Ver parcela →
                             </a>
                         </div>
