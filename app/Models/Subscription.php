@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read mixed $total
+ * @property-read mixed $active
+ * @property-read mixed $month
+ * @property-read mixed $year
+ * @property-read mixed $cancelled
+ * @property-read mixed $expired
+ * @property-read mixed $revenue
+ */
 class Subscription extends Model
 {
     use HasFactory;

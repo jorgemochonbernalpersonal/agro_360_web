@@ -8,6 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+/**
+ * @property-read mixed $current_phase_label
+ * @property-read mixed $current_phase_type
+ * @property-read mixed $days_total
+ * @property-read mixed $days_in_phase
+ * @property-read mixed $vintage_year
+ * @property-read mixed $total
+ * @property-read mixed $in_progress
+ * @property-read mixed $bottled
+ * @property-read mixed $sold
+ * @property-read mixed $aged
+ */
 class Wine extends Model
 {
     const WINE_TYPES = [

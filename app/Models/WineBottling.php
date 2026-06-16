@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read mixed $last_bottling_date
+ */
 class WineBottling extends Model
 {
     const BOTTLE_FORMATS = [

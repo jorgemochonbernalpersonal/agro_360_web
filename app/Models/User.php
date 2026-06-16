@@ -19,6 +19,20 @@ use Laravel\Sanctum\HasApiTokens;
 /**
  * @property array<string, mixed>|null $notification_preferences
  * @property array<string, mixed>|null $preferences
+ * @property-read mixed $total
+ * @property-read mixed $role_admin
+ * @property-read mixed $role_supervisor
+ * @property-read mixed $role_winery
+ * @property-read mixed $role_viticulturist
+ * @property-read mixed $role_producer
+ * @property-read mixed $active
+ * @property-read mixed $inactive
+ * @property-read mixed $verified
+ * @property-read mixed $unverified
+ * @property-read mixed $beta_active
+ * @property-read mixed $beta_expired
+ * @property-read mixed $can_edit
+ * @property-read mixed $activeSubscription
  */
 class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {

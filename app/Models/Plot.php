@@ -12,6 +12,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property-read mixed $centroid_data
+ * @property-read mixed $has_geometry
+ * @property-read mixed $total_area
+ * @property-read mixed $organic_area
+ * @property-read mixed $sigpacCodesOld
+ */
 class Plot extends Model
 {
     use Auditable, HasFactory;

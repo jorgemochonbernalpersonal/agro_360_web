@@ -10,6 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property-read mixed $total
+ * @property-read mixed $total_capacity
+ * @property-read mixed $total_used
+ * @property-read mixed $pivot
+ */
 class Container extends Model
 {
     use Auditable;

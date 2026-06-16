@@ -8,6 +8,32 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property-read mixed $quantity_kg
+ * @property-read mixed $quality_rating
+ * @property-read mixed $quality_notes
+ * @property-read mixed $probable_alcohol
+ * @property-read mixed $total_acidity
+ * @property-read mixed $ph
+ * @property-read mixed $viticulturist_id
+ * @property-read mixed $viticulturist_name
+ * @property-read mixed $last_reception_date
+ * @property-read mixed $receptions
+ * @property-read mixed $total_kg
+ * @property-read mixed $avg_baume
+ * @property-read mixed $avg_brix
+ * @property-read mixed $avg_ph
+ * @property-read mixed $avg_acidity
+ * @property-read mixed $avg_price_per_kg
+ * @property-read mixed $avg_price
+ * @property-read mixed $week
+ * @property-read mixed $count
+ * @property-read mixed $available_qty
+ * @property-read mixed $reserved_qty
+ * @property-read mixed $sold_qty
+ * @property-read mixed $available_qty_computed
+ * @property-read mixed $pivot
+ */
 class Harvest extends Model
 {
     use HasFactory;

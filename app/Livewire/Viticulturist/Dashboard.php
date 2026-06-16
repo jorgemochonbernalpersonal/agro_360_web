@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $plots
+ * @property-read mixed $plotIds
+ * @property-read int $totalPlots
+ * @property-read int $totalActivities
+ * @property-read mixed $recentActivities
+ */
 class Dashboard extends Component
 {
     // ── Parcelas ──────────────────────────────────────────────────────────────

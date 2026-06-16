@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read mixed $total_kg
+ * @property-read mixed $available_kg
+ * @property-read mixed $partidas
+ */
 class ExternalGrape extends Model
 {
     const TYPES = [

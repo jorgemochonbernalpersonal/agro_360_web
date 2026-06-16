@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use RuntimeException;
 
+/**
+ * @property-read bool $isLocked
+ */
 class Edit extends Component
 {
     use WithInvoiceEditRules, WithInvoiceFormRules, WithRoleAwareRedirect, WithToastNotifications;

@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read mixed $nif_cif
+ */
 class UserProfile extends Model
 {
     protected $fillable = [

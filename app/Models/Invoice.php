@@ -8,6 +8,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property-read mixed $quarter
+ * @property-read mixed $amount
+ * @property-read mixed $count
+ * @property-read mixed $wine_type
+ * @property-read mixed $quantity
+ * @property-read mixed $total_count
+ * @property-read mixed $client_name
+ * @property-read mixed $invoice_count
+ * @property-read mixed $draft_count
+ * @property-read mixed $month
+ * @property-read mixed $unpaid_count
+ * @property-read mixed $total_paid_amount
+ */
 class Invoice extends Model
 {
     use HasFactory;

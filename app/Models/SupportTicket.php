@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property-read mixed $subject
+ * @property-read mixed $image
+ */
 class SupportTicket extends Model
 {
     protected $fillable = [

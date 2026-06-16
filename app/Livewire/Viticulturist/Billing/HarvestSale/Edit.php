@@ -18,6 +18,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
+/**
+ * @property-read bool $isLocked
+ */
+
 class Edit extends Component
 {
     use WithHarvestSaleFormRules, WithHarvestSaleStock, WithRoleAwareRedirect, WithToastNotifications;

@@ -43,124 +43,10 @@ parameters:
 			path: app/Helpers/NavigationHelper.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_baume\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/CampaignComparisonController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_brix\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/CampaignComparisonController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_ph\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/CampaignComparisonController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/CampaignComparisonController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$amount\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Producer/FinancialSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$client_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/FinancialSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$count\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Producer/FinancialSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$month\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/FinancialSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_baume\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Producer/IntegratedCampaignController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_brix\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Producer/IntegratedCampaignController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_ph\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/IntegratedCampaignController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$plant_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
-
-		-
 			message: '#^Anonymous function should return array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: mixed, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\} but returns array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: int, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\}\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\PlotPlanting\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$centroid_data\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$has_geometry\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$organic_area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$total_area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$planted_area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
 			message: '#^Anonymous function should return array\{plot_id\: int, plot_name\: string, area\: float, has_geometry\: true, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}\|null but returns array\{plot_id\: int, plot_name\: string, area\: float, has_geometry\: true, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}\.$#'
@@ -169,64 +55,16 @@ parameters:
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Container\:\:\$total\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ContainerController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Container\:\:\$total_capacity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ContainerController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Container\:\:\$total_used\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ContainerController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\ContainerHistory\:\:\$count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\ContainerHistory\:\:\$month\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\ContainerHistory\:\:\$net_volume\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\ContainerHistory\:\:\$operations\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Plot\:\:\$centroid_data is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 2
-			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
+			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\ContainerHistory\:\:\$total_volume\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Plot\:\:\$has_geometry is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 2
-			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$vintage_year\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\ContainerHistory\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 2
-			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
+			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\ContainerMaintenance\:\:\$completed\.$#'
@@ -247,232 +85,22 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/ContainerMaintenanceController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$amount\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/EconomicSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$client_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/EconomicSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/EconomicSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$invoice_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/EconomicSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/EconomicSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$quarter\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/EconomicSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$wine_type\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Controllers/Api/Winery/EconomicSummaryController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Invoice\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Winery/EconomicSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$draft_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/GrapePurchaseInvoiceController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$total_paid_amount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/GrapePurchaseInvoiceController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$unpaid_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/GrapePurchaseInvoiceController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_acidity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_baume\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_brix\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_ph\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_price_per_kg\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$receptions\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$total_kg\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$viticulturist_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$viticulturist_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$week\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Harvest\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$centroid_data\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Plot\:\:\$centroid_data is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 3
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$has_geometry\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Plot\:\:\$has_geometry is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 3
 			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$organic_area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$total_area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$planted_area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$amount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/StatsController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/StatsController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$total_count\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/StatsController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$bottled\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/StatsController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$in_progress\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/StatsController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$sold\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/StatsController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$total\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/StatsController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$pivot\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
 
 		-
 			message: '#^Call to an undefined method App\\Models\\Harvest\:\:wines\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$last_reception_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
 
 		-
 			message: '#^Cannot call method isAfter\(\) on string\.$#'
@@ -493,58 +121,10 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$aged\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$bottled\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$in_progress\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\WineBottling\:\:\$last_bottling_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/MunicipalityMapController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Controllers/PlotMapController.php
-
-		-
 			message: '#^Call to an undefined method App\\Http\\Controllers\\PlotMapController\:\:authorize\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/PlotMapController.php
-
-		-
-			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/ReportVerificationController.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between ''full_digital…'' and ''full_digital…'' will always evaluate to true\.$#'
@@ -601,54 +181,6 @@ parameters:
 			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\CrewMember\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Fertilization\:\:\$dose\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Fertilization\:\:\$dose_unit\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$quality_rating\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$quantity_kg\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Irrigation\:\:\$irrigation_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\PhytosanitaryTreatment\:\:\$dose\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\PhytosanitaryTreatment\:\:\$dose_unit\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\Admin\\AdminUserResource\:\:\$adminNotes\.$#'
 			identifier: property.notFound
 			count: 1
@@ -685,12 +217,6 @@ parameters:
 			path: app/Http/Resources/Api/ContainerResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\ContainerCurrentState\:\:\$volume_liters\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerResource.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -707,12 +233,6 @@ parameters:
 			identifier: argument.unresolvableType
 			count: 1
 			path: app/Http/Resources/Api/PestResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/PlotResource.php
 
 		-
 			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
@@ -739,12 +259,6 @@ parameters:
 			path: app/Http/Resources/Api/WarehouseStockResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Container\:\:\$pivot\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Resources/Api/WineProcessStepResource.php
-
-		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\>\.$#'
 			identifier: return.type
 			count: 1
@@ -755,12 +269,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/Api/WineResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$quantity_kg\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/InvoiceItemResource.php
 
 		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\InvoiceResource\:\:\$tax_total\.$#'
@@ -775,37 +283,13 @@ parameters:
 			path: app/Http/Resources/InvoiceResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Client\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/InvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Client\:\:\$nif_cif\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/InvoiceResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\PlotPlantingResource\:\:\$certification\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Resources/PlotPlantingResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\PlotPlantingResource\:\:\$plant_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/PlotPlantingResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\PlotPlantingResource\:\:\$plant_spacing\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/PlotPlantingResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\PlotPlantingResource\:\:\$planted_area\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/PlotPlantingResource.php
@@ -851,18 +335,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/RemoteSensingResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$activeSubscription\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/UserResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\UserProfile\:\:\$nif_cif\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/UserResource.php
 
 		-
 			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
@@ -913,34 +385,10 @@ parameters:
 			path: app/Listeners/GrantBetaAccessOnVerification.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\CannedResponse\:\:\$body\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/CannedResponses/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\CannedResponse\:\:\$sort_order\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/CannedResponses/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\CannedResponse\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/CannedResponses/Index.php
-
-		-
 			message: '#^Cannot call method format\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 2
 			path: app/Livewire/Admin/Dashboard.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\SupportTicket\:\:\$subject\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/GlobalSearch.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Admin\\Notifications\\Index\:\:\$recipientCount\.$#'
@@ -961,130 +409,10 @@ parameters:
 			path: app/Livewire/Admin/Plots/Index.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Subscription\:\:\$active\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Subscription\:\:\$cancelled\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Subscription\:\:\$expired\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Subscription\:\:\$month\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Subscription\:\:\$revenue\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Subscription\:\:\$total\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Subscription\:\:\$year\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
 			count: 2
 			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\CannedResponse\:\:\$body\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Support/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$active\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$beta_active\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$beta_expired\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$inactive\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$role_admin\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$role_producer\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$role_supervisor\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$role_viticulturist\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$role_winery\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$total\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$unverified\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$verified\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Users/Index.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Plots\\Index\:\:\$autonomousCommunities\.$#'
@@ -1105,12 +433,6 @@ parameters:
 			path: app/Livewire/Plots/Index.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Show.php
-
-		-
 			message: '#^Property App\\Livewire\\Plots\\Show\:\:\$env_campaign_id \(string\) does not accept int\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -1129,26 +451,14 @@ parameters:
 			path: app/Livewire/Producer/IntegratedEstate/Index.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty_computed\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Harvest\:\:\$available_qty_computed is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Producer/Invoices/Create.php
 
 		-
-			message: '#^Access to an undefined property App\\Livewire\\Producer\\Invoices\\Edit\:\:\$isInvoiced\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Producer\\Invoices\\Edit\:\:\$isLocked\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty_computed\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Harvest\:\:\$available_qty_computed is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Producer/Invoices/Edit.php
 
@@ -1159,15 +469,15 @@ parameters:
 			path: app/Livewire/Producer/OnboardingChecklist.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Sigpac/CodesIndex.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 3
+			path: app/Livewire/Sigpac/CodesIndex.php
+
+		-
+			message: '#^Property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id is not writable\.$#'
+			identifier: assign.propertyReadOnly
+			count: 2
 			path: app/Livewire/Sigpac/CodesIndex.php
 
 		-
@@ -1183,22 +493,10 @@ parameters:
 			path: app/Livewire/Sigpac/Edit.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
-			count: 5
-			path: app/Livewire/Sigpac/EditGeometry.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$sigpacCodesOld\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/EditGeometry.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$activeSubscription\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 2
-			path: app/Livewire/Subscription/Manage.php
+			path: app/Livewire/Sigpac/EditGeometry.php
 
 		-
 			message: '#^Variable \$vitCountByWinery on left side of \?\? always exists and is not nullable\.$#'
@@ -1237,24 +535,6 @@ parameters:
 			path: app/Livewire/Viticulturist/AbstractEdit.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$reserved_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$sold_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
 			message: '#^Parameter \#1 \$array \(list\<array\{harvest_id\: int, quantity\: string, unit_price\: string, tax_rate\: string, description\: string\}\>\) of array_values is already a list, call has no effect\.$#'
 			identifier: arrayValues.list
 			count: 2
@@ -1267,34 +547,28 @@ parameters:
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>total_weight" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
+			message: '#^Property App\\Models\\Harvest\:\:\$available_qty is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
 
 		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Billing\\HarvestSale\\Edit\:\:\$isLocked\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
+			message: '#^Property App\\Models\\Harvest\:\:\$reserved_qty is not writable\.$#'
+			identifier: assign.propertyReadOnly
+			count: 1
+			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Harvest\:\:\$sold_qty is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
+			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$reserved_qty\.$#'
-			identifier: property.notFound
+			message: '#^Using nullsafe property access "\?\-\>total_weight" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$sold_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
+			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
 
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
@@ -1306,6 +580,24 @@ parameters:
 			message: '#^Parameter \#1 \$array \(list\<array\{harvest_id\: int, quantity\: string, unit_price\: string, tax_rate\: string, description\: string\}\>\) of array_values is already a list, call has no effect\.$#'
 			identifier: arrayValues.list
 			count: 2
+			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
+
+		-
+			message: '#^Property App\\Models\\Harvest\:\:\$available_qty is not writable\.$#'
+			identifier: assign.propertyReadOnly
+			count: 1
+			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
+
+		-
+			message: '#^Property App\\Models\\Harvest\:\:\$reserved_qty is not writable\.$#'
+			identifier: assign.propertyReadOnly
+			count: 1
+			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
+
+		-
+			message: '#^Property App\\Models\\Harvest\:\:\$sold_qty is not writable\.$#'
+			identifier: assign.propertyReadOnly
+			count: 1
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
 
 		-
@@ -1325,36 +617,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Viticulturist/Calendar.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Dashboard\:\:\$plotIds\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Dashboard.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Dashboard\:\:\$plots\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Livewire/Viticulturist/Dashboard.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Dashboard\:\:\$recentActivities\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Dashboard.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Dashboard\:\:\$totalActivities\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Dashboard.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Dashboard\:\:\$totalPlots\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Dashboard.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\AbstractActivityForm\:\:\$campaign\.$#'
@@ -1423,14 +685,14 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditPostHarvest.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Client\:\:\$total_invoiced\.$#'
-			identifier: property.notFound
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TRelatedModel of Illuminate\\Database\\Eloquent\\Model\>\:\:forUser\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/FinancialStats.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TRelatedModel of Illuminate\\Database\\Eloquent\\Model\>\:\:forUser\(\)\.$#'
-			identifier: method.notFound
+			message: '#^Property App\\Models\\Client\:\:\$total_invoiced is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Viticulturist/FinancialStats.php
 
@@ -1441,20 +703,14 @@ parameters:
 			path: app/Livewire/Viticulturist/Harvests/Index.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty_computed\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Harvest\:\:\$available_qty_computed is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Viticulturist/Invoices/Create.php
 
 		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Invoices\\Edit\:\:\$isLocked\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty_computed\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Harvest\:\:\$available_qty_computed is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Viticulturist/Invoices/Edit.php
 
@@ -1499,12 +755,6 @@ parameters:
 			identifier: arguments.count
 			count: 1
 			path: app/Livewire/Viticulturist/Personal/UnifiedIndex.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$can_edit\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Personal/Workers/Index.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TRelatedModel of Illuminate\\Database\\Eloquent\\Model\>\:\:forUser\(\)\.$#'
@@ -1559,24 +809,6 @@ parameters:
 			identifier: method.nonObject
 			count: 1
 			path: app/Livewire/Viticulturist/Viticulturists/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\GrapePurchase\\Edit\:\:\$isLocked\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Edit\:\:\$isInvoiced\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Edit\:\:\$isLocked\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
 
 		-
 			message: '#^Property App\\Livewire\\Winery\\Billing\\ProductSale\\Index\:\:\$quickAvailableAddresses \(array\) does not accept Illuminate\\Support\\Collection\<\(int\|string\), mixed\>\.$#'
@@ -1709,30 +941,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Winery/Cellar/ProductLots/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\GrapeVariety\:\:\$pivot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Cellar/ProductLots/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\ExternalGrape\:\:\$available_kg\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/ExternalGrape/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\ExternalGrape\:\:\$partidas\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/ExternalGrape/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\ExternalGrape\:\:\$total_kg\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/ExternalGrape/Index.php
 
 		-
 			message: '#^Instanceof between Carbon\\Carbon and Carbon\\Carbon will always evaluate to true\.$#'
@@ -1963,26 +1171,26 @@ parameters:
 			path: app/Livewire/Winery/Wines/Show.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$current_phase_label\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Wine\:\:\$current_phase_label is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Winery/Wines/Timeline.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$current_phase_type\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Wine\:\:\$current_phase_type is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Winery/Wines/Timeline.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$days_in_phase\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Wine\:\:\$days_in_phase is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Winery/Wines/Timeline.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$days_total\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\Wine\:\:\$days_total is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Livewire/Winery/Wines/Timeline.php
 
@@ -2161,40 +1369,10 @@ parameters:
 			path: app/Models/WineryYieldForecast.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Payment\:\:\$plan_type\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/PaymentConfirmation.php
-
-		-
 			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
 			identifier: return.phpDocType
 			count: 1
 			path: app/Notifications/PaymentConfirmation.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$ph\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/QualityFeedbackNotification.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$probable_alcohol\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/QualityFeedbackNotification.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$quality_notes\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/QualityFeedbackNotification.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$total_acidity\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/QualityFeedbackNotification.php
 
 		-
 			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
@@ -2215,22 +1393,10 @@ parameters:
 			path: app/Notifications/SubscriptionExpiringSoon.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SupportTicket\:\:\$image\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/SupportTicketCreatedNotification.php
-
-		-
 			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
 			identifier: return.phpDocType
 			count: 1
 			path: app/Notifications/SupportTicketCreatedNotification.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\PhytosanitaryTreatment\:\:\$agricultural_activity_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/WithdrawalPeriodEnding.php
 
 		-
 			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
@@ -2249,12 +1415,6 @@ parameters:
 			identifier: property.notFound
 			count: 2
 			path: app/Observers/PhytosanitaryTreatmentObserver.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/CatastroGeometryService.php
 
 		-
 			message: '#^Method App\\Services\\CatastroGeometryService\:\:upsertGeometry\(\) should return int but returns string\|false\.$#'
@@ -2407,8 +1567,8 @@ parameters:
 			path: app/Services/SecurityLogger.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id is not writable\.$#'
+			identifier: assign.propertyReadOnly
 			count: 1
 			path: app/Services/SigpacGeometryService.php
 

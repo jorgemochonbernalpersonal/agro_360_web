@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
 
+/**
+ * @property-read mixed $pivot
+ */
 class GrapeVariety extends Model
 {
     use HasTranslations;

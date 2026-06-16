@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read mixed $plot_geometry_id
+ */
 class MultipartPlotSigpac extends Model
 {
     protected $table = 'multipart_plot_sigpac';

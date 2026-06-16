@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
+/**
+ * @property-read bool $isLocked
+ * @property-read bool $isInvoiced
+ */
 class Edit extends Component
 {
     use WithProductSaleFormRules, WithRoleAwareRedirect, WithToastNotifications;

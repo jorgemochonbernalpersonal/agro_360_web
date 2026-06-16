@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read mixed $body
+ * @property-read mixed $title
+ * @property-read mixed $sort_order
+ */
 class CannedResponse extends Model
 {
     protected $fillable = ['admin_id', 'title', 'body', 'category', 'sort_order'];
