@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\AgriculturalActivity;
 use App\Models\PostHarvestTreatment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -10,6 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * Flat-format resource for the mobile notebook list endpoints.
  * Returns the exact field structure expected by the Kotlin/KMP DTOs.
  */
+/** @mixin AgriculturalActivity */
 class MobileNotebookResource extends JsonResource
 {
     public function toArray(Request $request): array

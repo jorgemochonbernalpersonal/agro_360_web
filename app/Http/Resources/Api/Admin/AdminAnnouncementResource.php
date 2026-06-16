@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api\Admin;
 
+use App\Models\AdminAnnouncement;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin AdminAnnouncement */
 class AdminAnnouncementResource extends JsonResource
 {
     public function toArray(Request $request): array

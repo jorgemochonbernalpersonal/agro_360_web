@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\CampaignDocument;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin CampaignDocument */
 class CampaignDocumentResource extends JsonResource
 {
     public function toArray(Request $request): array

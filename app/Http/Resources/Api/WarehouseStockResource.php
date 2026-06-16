@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\ProductStock;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin ProductStock */
 class WarehouseStockResource extends JsonResource
 {
     public function toArray(Request $request): array

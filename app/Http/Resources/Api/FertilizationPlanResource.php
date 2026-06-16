@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\FertilizationPlan;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin FertilizationPlan */
 class FertilizationPlanResource extends JsonResource
 {
     public function toArray(Request $request): array

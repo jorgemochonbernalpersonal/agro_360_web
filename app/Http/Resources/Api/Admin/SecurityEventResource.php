@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api\Admin;
 
+use App\Models\SecurityEvent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin SecurityEvent */
 class SecurityEventResource extends JsonResource
 {
     public function toArray(Request $request): array

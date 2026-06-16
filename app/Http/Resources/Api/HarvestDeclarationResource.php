@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\HarvestDeclaration;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin HarvestDeclaration */
 class HarvestDeclarationResource extends JsonResource
 {
     public function toArray(Request $request): array

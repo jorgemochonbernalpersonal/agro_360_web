@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\ResidueAnalysis;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin ResidueAnalysis */
 class ResidueAnalysisResource extends JsonResource
 {
     public function toArray(Request $request): array

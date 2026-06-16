@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\PhytosanitaryProduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PhytosanitaryProduct */
 class PhytosanitaryProductResource extends JsonResource
 {
     public function toArray(Request $request): array

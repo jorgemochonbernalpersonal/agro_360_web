@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\ContainerMaintenance;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin ContainerMaintenance */
 class ContainerMaintenanceResource extends JsonResource
 {
     public function toArray(Request $request): array

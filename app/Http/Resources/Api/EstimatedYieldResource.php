@@ -6,6 +6,7 @@ use App\Models\EstimatedYield;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin EstimatedYield */
 class EstimatedYieldResource extends JsonResource
 {
     public function toArray(Request $request): array
