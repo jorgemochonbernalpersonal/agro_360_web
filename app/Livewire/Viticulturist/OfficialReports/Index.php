@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\OfficialReport;
 use Livewire\Component;
 use Livewire\WithPagination;
+use RuntimeException;
 
 class Index extends Component
 {

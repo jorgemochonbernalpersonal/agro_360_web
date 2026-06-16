@@ -11,6 +11,7 @@ use App\Models\UserTax;
 use App\Models\ViticulturistSetting;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use RuntimeException;
 
 class Settings extends Component
 {

@@ -25,30 +25,6 @@ parameters:
 			path: app/Console/Commands/UpdateEnrichedRemoteSensingData.php
 
 		-
-			message: '#^Call to method fetchAndStoreNdvi\(\) on an unknown class App\\Services\\RemoteSensing\\SentinelHubService\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Console/Commands/UpdateNdviCommand.php
-
-		-
-			message: '#^Class App\\Services\\RemoteSensing\\SentinelHubService not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Console/Commands/UpdateNdviCommand.php
-
-		-
-			message: '#^Parameter \$service of method App\\Console\\Commands\\UpdateNdviCommand\:\:handle\(\) has invalid type App\\Services\\RemoteSensing\\SentinelHubService\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Console/Commands/UpdateNdviCommand.php
-
-		-
-			message: '#^Parameter \$service of method App\\Console\\Commands\\UpdateNdviCommand\:\:updateSinglePlot\(\) has invalid type App\\Services\\RemoteSensing\\SentinelHubService\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Console/Commands/UpdateNdviCommand.php
-
-		-
 			message: '#^Relation ''multipartCoordinates'' is not found in App\\Models\\Plot model\.$#'
 			identifier: larastan.relationExistence
 			count: 1
@@ -1549,30 +1525,6 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditPostHarvest.php
 
 		-
-			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\RuntimeException\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Create.php
-
-		-
-			message: '#^Class App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\RuntimeException not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Create.php
-
-		-
-			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\RuntimeException\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Edit.php
-
-		-
-			message: '#^Class App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\RuntimeException not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Edit.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Client\:\:\$total_invoiced\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1597,18 +1549,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Invoices/Create.php
 
 		-
-			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\Invoices\\RuntimeException\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Create.php
-
-		-
-			message: '#^Class App\\Livewire\\Viticulturist\\Invoices\\RuntimeException not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Create.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Invoices\\Edit\:\:\$isLocked\.$#'
 			identifier: property.notFound
 			count: 2
@@ -1619,30 +1559,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\Invoices\\RuntimeException\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Class App\\Livewire\\Viticulturist\\Invoices\\RuntimeException not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\OfficialReports\\RuntimeException\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/OfficialReports/Create.php
-
-		-
-			message: '#^Class App\\Livewire\\Viticulturist\\OfficialReports\\RuntimeException not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/OfficialReports/Create.php
 
 		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
@@ -1667,18 +1583,6 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: app/Livewire/Viticulturist/OfficialReports/Create.php
-
-		-
-			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\OfficialReports\\RuntimeException\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/OfficialReports/Index.php
-
-		-
-			message: '#^Class App\\Livewire\\Viticulturist\\OfficialReports\\RuntimeException not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/OfficialReports/Index.php
 
 		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
@@ -1751,18 +1655,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: app/Livewire/Viticulturist/RemoteSensing/PlotNdviCard.php
-
-		-
-			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\RuntimeException\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Settings.php
-
-		-
-			message: '#^Class App\\Livewire\\Viticulturist\\RuntimeException not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Settings.php
 
 		-
 			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'

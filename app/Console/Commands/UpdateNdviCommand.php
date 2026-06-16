@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\UpdateAllPlotsNdviJob;
 use App\Jobs\UpdatePlotNdviJob;
 use App\Models\Plot;
-use App\Services\RemoteSensing\SentinelHubService;
+use App\Services\RemoteSensing\CopernicusSentinel2Service;
 use Illuminate\Console\Command;
 
 /**
@@ -29,7 +29,7 @@ class UpdateNdviCommand extends Command
     /**
      * Ejecutar el comando
      */
-    public function handle(SentinelHubService $service): int
+    public function handle(CopernicusSentinel2Service $service): int
     {
         $plotId = $this->option('plot');
         $all = $this->option('all');
@@ -56,7 +56,7 @@ class UpdateNdviCommand extends Command
     /**
      * Actualizar una sola parcela
      */
-    private function updateSinglePlot(int $plotId, SentinelHubService $service, bool $sync): int
+    private function updateSinglePlot(int $plotId, CopernicusSentinel2Service $service, bool $sync): int
     {
         /** @var Plot|null $plot */
         $plot = Plot::find($plotId);
@@ -70,7 +70,7 @@ class UpdateNdviCommand extends Command
         $this->info("Actualizando NDVI de: {$plot->name}");
 
         if ($sync) {
-            $data = $service->fetchAndStoreNdvi($plot);
+            $data = $service->fetchAndStore($plot);
 
             if ($data) {
                 $this->info("✅ NDVI actualizado: {$data->ndvi_mean} ({$data->health_text})");
@@ -109,13 +109,13 @@ class UpdateNdviCommand extends Command
             $bar = $this->output->createProgressBar($count);
             $bar->start();
 
-            $service = app(SentinelHubService::class);
+            $service = app(CopernicusSentinel2Service::class);
             $success = 0;
             $failed = 0;
 
             foreach ($plots as $plot) {
                 try {
-                    $data = $service->fetchAndStoreNdvi($plot);
+                    $data = $service->fetchAndStore($plot);
                     $data ? $success++ : $failed++;
                 } catch (\Exception $e) {
                     $failed++;
