@@ -80,6 +80,7 @@ class Index extends AbstractIndex
         ];
     }
 
+    /** @return \Illuminate\Database\Eloquent\Builder<\App\Models\Harvest> */
     protected function baseQuery(): Builder
     {
         $wineryId = $this->wineryId();
@@ -93,6 +94,7 @@ class Index extends AbstractIndex
         ])->where('winery_id', $wineryId);
     }
 
+    /** @param \Illuminate\Database\Eloquent\Builder<\App\Models\Harvest> $query */
     protected function applyFilters(Builder $query): void
     {
         if ($this->campaignFilter) {

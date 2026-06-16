@@ -91,12 +91,6 @@ parameters:
 			path: app/Http/Resources/Api/WineProcessStepResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\InvoiceResource\:\:\$total\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/InvoiceResource.php
-
-		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
 			identifier: arguments.count
 			count: 1
@@ -127,24 +121,6 @@ parameters:
 			path: app/Livewire/Producer/OnboardingChecklist.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Sigpac/CodesIndex.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Sigpac/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacUses\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Edit.php
-
-		-
 			message: '#^Variable \$vitCountByWinery on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.variable
 			count: 1
@@ -155,12 +131,6 @@ parameters:
 			identifier: greater.alwaysTrue
 			count: 1
 			path: app/Livewire/Supervisor/OnboardingChecklist.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/AbstractEdit.php
 
 		-
 			message: '#^Parameter \#1 \$array \(list\<array\{harvest_id\: int, quantity\: string, unit_price\: string, tax_rate\: string, description\: string\}\>\) of array_values is already a list, call has no effect\.$#'
@@ -203,18 +173,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Viticulturist/Calendar.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\AbstractActivityForm\:\:\$individualWorkers\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\AbstractActivityForm\:\:\$viticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
@@ -335,18 +293,6 @@ parameters:
 			identifier: nullCoalesce.expr
 			count: 1
 			path: app/Livewire/Winery/Harvest/Reception/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$batch\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Livewire/Winery/Harvest/Reception/Index.php
 
 		-
 			message: '#^Comparison operation "\>" between 5 and 0 is always true\.$#'

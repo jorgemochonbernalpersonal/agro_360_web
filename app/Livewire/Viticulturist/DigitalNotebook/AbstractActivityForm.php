@@ -19,22 +19,10 @@ use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 /**
- * @property-read mixed $viticulturists
- * @property-read mixed $individualWorkers
- */
-
-/**
  * Base class for all digital-notebook Create and Edit forms.
  *
- * Provides:
- *  - Common Livewire properties shared by every activity form
- *  - mountCreate() / mountEditGuards() / loadActivityFields() helpers
- *  - updatedPlotId() reactive handler
- *  - commonRules() – validation rules that every activity type shares
- *  - resolveCrewMemberId() – find-or-create the CrewMember row
- *  - activityData() – build the AgriculturalActivity create/update array
- *  - renderData() – assemble the common view data bag
- *
+ * @property-read mixed $viticulturists
+ * @property-read mixed $individualWorkers
  * @property-read mixed $plots
  * @property-read mixed $crews
  * @property-read mixed $machinery

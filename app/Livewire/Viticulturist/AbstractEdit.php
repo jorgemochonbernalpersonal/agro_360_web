@@ -25,7 +25,7 @@ abstract class AbstractEdit extends SharedAbstractEdit
 
     protected function authorizeOwnership(Model $model): void
     {
-        if ($model->viticulturist_id !== Auth::id()) {
+        if ($model->getAttribute('viticulturist_id') !== Auth::id()) {
             abort(403);
         }
     }

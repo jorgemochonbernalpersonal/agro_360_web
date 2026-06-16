@@ -34,6 +34,7 @@ class SigpacCode extends Model
     /**
      * Parcelas que usan este código SIGPAC (nueva estructura via multiple_plot_sigpac)
      */
+    /** @return BelongsToMany<Plot, $this> */
     public function plots(): BelongsToMany
     {
         return $this
