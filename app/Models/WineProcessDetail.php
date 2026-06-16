@@ -54,26 +54,31 @@ class WineProcessDetail extends Model
         return array_map(fn ($v) => __($v), static::PROCESS_TYPES);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
     }
 
+    /** @return BelongsTo<Oenologist, $this> */
     public function oenologist(): BelongsTo
     {
         return $this->belongsTo(Oenologist::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -82,6 +87,7 @@ class WineProcessDetail extends Model
     /**
      * Contenedores adicionales involucrados en este proceso (blending, trasvase, etc.)
      */
+    /** @return BelongsToMany<Container, $this> */
     public function containers(): BelongsToMany
     {
         return $this->belongsToMany(Container::class, 'wine_process_detail_containers')

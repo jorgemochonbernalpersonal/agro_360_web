@@ -9,6 +9,7 @@ class ContainerWasteType extends Model
 {
     protected $fillable = ['name', 'description'];
 
+    /** @return HasMany<ContainerMaintenanceWaste, $this> */
     public function maintenanceWastes(): HasMany
     {
         return $this->hasMany(ContainerMaintenanceWaste::class);

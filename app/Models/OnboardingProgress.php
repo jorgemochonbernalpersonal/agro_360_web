@@ -101,6 +101,7 @@ class OnboardingProgress extends Model
     /**
      * Usuario propietario del progreso
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

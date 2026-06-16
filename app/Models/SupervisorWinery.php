@@ -16,16 +16,19 @@ class SupervisorWinery extends Model
         'assigned_by',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');

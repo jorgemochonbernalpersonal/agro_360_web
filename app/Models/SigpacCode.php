@@ -25,6 +25,7 @@ class SigpacCode extends Model
     /**
      * Parcelas que usan este código SIGPAC (relación antigua via plot_sigpac_code)
      */
+    /** @return BelongsToMany<Plot, $this> */
     public function plotsOld(): BelongsToMany
     {
         return $this->belongsToMany(Plot::class, 'plot_sigpac_code', 'sigpac_code_id', 'plot_id');
@@ -44,6 +45,7 @@ class SigpacCode extends Model
     /**
      * Relaciones múltiples plot-sigpac
      */
+    /** @return HasMany<MultipartPlotSigpac, $this> */
     public function multiplePlotSigpacs(): HasMany
     {
         return $this->hasMany(MultipartPlotSigpac::class, 'sigpac_code_id');
@@ -52,6 +54,7 @@ class SigpacCode extends Model
     /**
      * Coordenadas multiparte (estructura antigua)
      */
+    /** @return HasMany<MultipartPlotSigpac, $this> */
     public function multipartCoordinates(): HasMany
     {
         return $this->hasMany(MultipartPlotSigpac::class, 'sigpac_code_id');

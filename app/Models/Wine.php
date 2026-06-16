@@ -75,27 +75,32 @@ class Wine extends Model
 
     // ─── Relaciones ────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Oenologist, $this> */
     public function oenologist(): BelongsTo
     {
         return $this->belongsTo(Oenologist::class);
     }
 
+    /** @return HasMany<WineProcessDetail, $this> */
     public function processDetails(): HasMany
     {
         return $this->hasMany(WineProcessDetail::class)->orderBy('start_date');
     }
 
     /** Recepciones de uva que componen este lote */
+    /** @return HasMany<WineHarvest, $this> */
     public function wineHarvests(): HasMany
     {
         return $this->hasMany(WineHarvest::class);
     }
 
+    /** @return BelongsToMany<Harvest, $this> */
     public function harvests(): BelongsToMany
     {
         return $this->belongsToMany(Harvest::class, 'wine_harvests')
@@ -103,56 +108,67 @@ class Wine extends Model
             ->withTimestamps();
     }
 
+    /** @return HasMany<WineTransfer, $this> */
     public function transfers(): HasMany
     {
         return $this->hasMany(WineTransfer::class)->orderByDesc('transfer_date');
     }
 
+    /** @return HasMany<WineLoss, $this> */
     public function losses(): HasMany
     {
         return $this->hasMany(WineLoss::class)->orderByDesc('loss_date');
     }
 
+    /** @return HasMany<WineFermentationControl, $this> */
     public function fermentationControls(): HasMany
     {
         return $this->hasMany(WineFermentationControl::class)->orderByDesc('control_date');
     }
 
+    /** @return HasMany<WineAnalysis, $this> */
     public function analyses(): HasMany
     {
         return $this->hasMany(WineAnalysis::class)->orderByDesc('analysis_date');
     }
 
+    /** @return HasMany<WineAdditive, $this> */
     public function additives(): HasMany
     {
         return $this->hasMany(WineAdditive::class)->orderByDesc('application_date');
     }
 
+    /** @return HasMany<WineBottling, $this> */
     public function bottlings(): HasMany
     {
         return $this->hasMany(WineBottling::class)->orderByDesc('bottling_date');
     }
 
+    /** @return HasMany<WineLabeling, $this> */
     public function labelings(): HasMany
     {
         return $this->hasMany(WineLabeling::class)->orderByDesc('labeling_date');
     }
 
+    /** @return HasMany<WineTastingNote, $this> */
     public function tastingNotes(): HasMany
     {
         return $this->hasMany(WineTastingNote::class)->orderByDesc('evaluation_date');
     }
 
+    /** @return HasMany<WineSubproduct, $this> */
     public function subproducts(): HasMany
     {
         return $this->hasMany(WineSubproduct::class)->orderByDesc('subproduct_date');
     }
 
+    /** @return HasMany<ProductLot, $this> */
     public function productLots(): HasMany
     {
         return $this->hasMany(ProductLot::class);
     }
 
+    /** @return HasMany<WineCost, $this> */
     public function costs(): HasMany
     {
         return $this->hasMany(WineCost::class)->orderByDesc('cost_date');

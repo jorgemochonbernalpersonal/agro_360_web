@@ -31,16 +31,19 @@ class SupplyPurchase extends Model
         'total_cost' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<Supply, $this> */
     public function supply(): BelongsTo
     {
         return $this->belongsTo(Supply::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);

@@ -70,16 +70,19 @@ class ExternalGrape extends Model
         return array_map(fn ($v) => __($v), static::STATUSES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<GrapeVariety, $this> */
     public function grapeVariety(): BelongsTo
     {
         return $this->belongsTo(GrapeVariety::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);

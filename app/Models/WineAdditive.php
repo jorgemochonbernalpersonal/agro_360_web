@@ -27,31 +27,37 @@ class WineAdditive extends Model
 
     // ── Relations ──────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<WineProcessDetail, $this> */
     public function processDetail(): BelongsTo
     {
         return $this->belongsTo(WineProcessDetail::class, 'wine_process_detail_id');
     }
 
+    /** @return BelongsTo<WinerySupply, $this> */
     public function supply(): BelongsTo
     {
         return $this->belongsTo(WinerySupply::class, 'winery_supply_id');
     }
 
+    /** @return BelongsTo<Oenologist, $this> */
     public function oenologist(): BelongsTo
     {
         return $this->belongsTo(Oenologist::class);
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

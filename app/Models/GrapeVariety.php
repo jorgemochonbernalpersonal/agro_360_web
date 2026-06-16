@@ -50,6 +50,7 @@ class GrapeVariety extends Model
     /**
      * Plantaciones de esta variedad
      */
+    /** @return HasMany<PlotPlanting, $this> */
     public function plantings(): HasMany
     {
         return $this->hasMany(PlotPlanting::class);

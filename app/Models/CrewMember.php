@@ -24,6 +24,7 @@ class CrewMember extends Model
     /**
      * Cuadrilla a la que pertenece (nullable para trabajadores individuales)
      */
+    /** @return BelongsTo<Crew, $this> */
     public function crew(): BelongsTo
     {
         return $this->belongsTo(Crew::class, 'crew_id');
@@ -63,6 +64,7 @@ class CrewMember extends Model
     /**
      * Viticultor miembro
      */
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -71,6 +73,7 @@ class CrewMember extends Model
     /**
      * Usuario que asignó este miembro
      */
+    /** @return BelongsTo<User, $this> */
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');

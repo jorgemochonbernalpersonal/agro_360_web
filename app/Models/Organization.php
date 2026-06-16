@@ -50,28 +50,33 @@ class Organization extends Model
 
     // ── Relationships ────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<Organization, $this> */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Organization::class, 'parent_id');
     }
 
+    /** @return HasMany<Organization, $this> */
     public function children(): HasMany
     {
         return $this->hasMany(Organization::class, 'parent_id');
     }
 
+    /** @return BelongsTo<Province, $this> */
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class);
     }
 
     /** Usuario principal que representa esta organización (el user con role winery/DO). */
+    /** @return BelongsTo<User, $this> */
     public function ownerUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_user_id');
     }
 
     /** Todos los usuarios miembros de esta organización. */
+    /** @return HasMany<User, $this> */
     public function members(): HasMany
     {
         return $this->hasMany(User::class, 'organization_id');

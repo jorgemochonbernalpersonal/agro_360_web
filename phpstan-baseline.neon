@@ -3,24 +3,18 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 2
 			path: app/Console/Commands/CalculateAdvancedMetricsCommand.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 2
 			path: app/Console/Commands/CalculateAdvancedMetricsCommand.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:remoteSensingData\(\)\.$#'
 			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/CalculateAdvancedMetricsCommand.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\PlotRemoteSensing\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
 			count: 1
 			path: app/Console/Commands/CalculateAdvancedMetricsCommand.php
 
@@ -31,46 +25,10 @@ parameters:
 			path: app/Console/Commands/CalculateAdvancedMetricsCommand.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/CheckAreaRequestTasks.php
-
-		-
 			message: '#^Call to private method getAuthToken\(\) of class App\\Services\\RemoteSensing\\NasaEarthdataService\.$#'
 			identifier: method.private
 			count: 1
 			path: app/Console/Commands/CheckAreaRequestTasks.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/CheckExpiredSubscriptionsCommand.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Console/Commands/CheckRemoteSensingAlerts.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/CheckRemoteSensingAlerts.php
-
-		-
-			message: '#^Parameter \#1 \$plot of class App\\Notifications\\RemoteSensingAlertNotification constructor expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/CheckRemoteSensingAlerts.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:getLatestData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/CheckRemoteSensingAlerts.php
 
 		-
 			message: '#^Parameter \#2 \$currentNdvi of class App\\Notifications\\RemoteSensingAlertNotification constructor expects float, string\|null given\.$#'
@@ -109,12 +67,6 @@ parameters:
 			path: app/Console/Commands/DeleteUnverifiedUsers.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Console/Commands/FixOrphanedWineryLinks.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 3
@@ -137,54 +89,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Console/Commands/RegenerateMockRemoteSensingDataCommand.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Console/Commands/SendDueDateRemindersCommand.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/SendDueDateRemindersCommand.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$can_login\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/SendNotebookAccessReminders.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Console/Commands/SendNotebookAccessReminders.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/SendNotebookAccessReminders.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$activity_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/SendWithdrawalPeriodAlertsCommand.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Console/Commands/SendWithdrawalPeriodAlertsCommand.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$withdrawal_period_days\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/SendWithdrawalPeriodAlertsCommand.php
 
 		-
 			message: '#^Parameter \#3 \$daysRemaining of class App\\Notifications\\WithdrawalPeriodEnding constructor expects int, float given\.$#'
@@ -313,40 +217,10 @@ parameters:
 			path: app/Helpers/NavigationHelper.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Admin/UserController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\AdminNote\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Admin/UserController.php
-
-		-
 			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
 			identifier: larastan.relationExistence
 			count: 3
 			path: app/Http/Controllers/Api/Admin/UserController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/MunicipalityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/MunicipalityController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Municipality\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/MunicipalityController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_baume\.$#'
@@ -368,18 +242,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/CampaignComparisonController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/CampaignComparisonController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Producer/CampaignComparisonController.php
@@ -407,36 +269,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Producer/FinancialSummaryController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/FullTraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/FullTraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/FullTraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/HarvestDeliveryController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Producer/HarvestDeliveryController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_baume\.$#'
@@ -484,12 +316,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plantings\.$#'
 			identifier: property.notFound
 			count: 3
-			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot_id\.$#'
-			identifier: property.notFound
-			count: 1
 			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
 
 		-
@@ -547,76 +373,10 @@ parameters:
 			path: app/Http/Controllers/Api/Viticulturist/AdvisoryMembershipController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/CampaignController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\AgriculturalActivity\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/CampaignController.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/CampaignController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/DashboardController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\AgriculturalActivity\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/DashboardController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/DenominationController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Controllers/Api/Viticulturist/DenominationController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Viticulturist/DenominationController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\WineryViticulturist\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/DenominationController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$activity_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/GrapeTraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/GrapeTraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plotPlanting\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/GrapeTraceabilityController.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -625,28 +385,10 @@ parameters:
 			path: app/Http/Controllers/Api/Viticulturist/GrapeTraceabilityController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/MarketedHarvestController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/MarketedHarvestController.php
-
-		-
 			message: '#^Offset ''cultural''\|''fertilization''\|''harvest''\|''irrigation''\|''observation''\|''phytosanitary''\|''post_harvest''\|''pruning'' on array\{phytosanitary\: array\{''plot'', ''phytosanitaryTreatm…''\}, fertilization\: array\{''plot'', ''fertilization''\}, irrigation\: array\{''plot'', ''irrigation''\}, observation\: array\{''plot'', ''observation''\}, harvest\: array\{''plot'', ''harvest'', ''plotPlanting…''\}, cultural\: array\{''plot'', ''culturalWork''\}, pruning\: array\{''plot'', ''culturalWork''\}, post_harvest\: array\{''plot'', ''postHarvestTreatmen…''\}\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/NotebookController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/PlantingController.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
@@ -727,12 +469,6 @@ parameters:
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/RemoteSensingController.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -761,36 +497,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/WeatherController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/WineryAccessController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\WineryViticulturist\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/WineryAccessController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/BottlingAuthorizationController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/CellarOperationController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/CellarOperationController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Container\:\:\$total\.$#'
@@ -841,19 +547,7 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 5
-			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$vintage_year\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wine_type\.$#'
+			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$vintage_year\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Winery/ContainerHistoryController.php
@@ -883,18 +577,6 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/ContainerMaintenanceController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/DashboardController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Container\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Winery/DashboardController.php
-
-		-
 			message: '#^Offset ''active''\|''archived''\|''draft'' on array\{draft\: ''Borrador'', active\: ''Vigente'', archived\: ''Archivado''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -917,12 +599,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Http/Controllers/Api/Winery/DenominationOfOriginController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/DisputeController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$amount\.$#'
@@ -973,18 +649,6 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/EconomicSummaryController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ExternalGrapePurchaseController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/ExternalGrapePurchaseController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$draft_count\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1003,9 +667,9 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/GrapePurchaseInvoiceController.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:recalculateTotal\(\)\.$#'
-			identifier: method.notFound
-			count: 2
+			message: '#^Relation ''plots'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
 			path: app/Http/Controllers/Api/Winery/GrapeReceptionController.php
 
 		-
@@ -1081,63 +745,15 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/LabelBatchController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$available_quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/LabelingController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/LabelingController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/LabelingController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$acidity_level\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$baume_degree\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$brix_degree\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$centroid_data\.$#'
 			identifier: property.notFound
 			count: 3
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
@@ -1165,37 +781,13 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$notes\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organic_area\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ph_level\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$potential_alcohol\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Winery/PlotController.php
@@ -1227,12 +819,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{plot_id\: mixed, plot_name\: mixed, viticulturist_name\: mixed, area\: float, has_geometry\: bool, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}, Closure\(mixed\)\: array\{plot_id\: mixed, plot_name\: mixed, viticulturist_name\: mixed, area\: float, has_geometry\: bool, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\} given\.$#'
 			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\AgriculturalActivity\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
 			count: 1
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
@@ -1279,75 +865,9 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/StatsController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TastingNoteController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TastingNoteController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TastingNoteController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$batch\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$brix_degree\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_start_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pivot\.$#'
+			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$pivot\.$#'
 			identifier: property.notFound
 			count: 4
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plotPlanting\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$price_per_kg\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$vintage\.$#'
-			identifier: property.notFound
-			count: 1
 			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
 
 		-
@@ -1357,28 +877,10 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$invoice_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/VerifactuController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$invoice_number\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/VerifactuController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_amount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/VerifactuController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$last_reception_date\.$#'
@@ -1387,14 +889,8 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$invitation_sent_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
+			message: '#^Cannot call method isAfter\(\) on string\.$#'
+			identifier: method.nonObject
 			count: 1
 			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
 
@@ -1411,28 +907,10 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
 
 		-
-			message: '#^Parameter \#1 \$vit of method App\\Http\\Controllers\\Api\\Winery\\ViticulturistController\:\:format\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 5
-			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
-			identifier: property.notFound
+			message: '#^Relation ''plots'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
 			count: 1
-			path: app/Http/Controllers/Api/Winery/WineAdditiveController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Controllers/Api/Winery/WineAdditiveController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Controllers/Api/Winery/WineAdditiveController.php
+			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -1465,12 +943,6 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/WineController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineController.php
-
-		-
 			message: '#^Offset ''aged''\|''bottled''\|''cancelled''\|''in_progress''\|''sold'' on array\{in_progress\: ''En elaboración'', aged\: ''En crianza'', bottled\: ''Embotellado'', sold\: ''Vendido'', cancelled\: ''Cancelado''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -1483,61 +955,13 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/WineController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineSubproductController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/WineSubproductController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineryCampaignController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WinerySupplyController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WinerySupplyController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/YieldForecastController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/MapController.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getWktCoordinates\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\MultipartPlotSigpac\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\MultipartPlotSigpac\>\:\:filter\(\) expects \(callable\(App\\Models\\MultipartPlotSigpac, int\)\: bool\)\|null, Closure\(mixed\)\: \(Illuminate\\Database\\Eloquent\\Model\|null\) given\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\MultipartPlotSigpac\>\:\:filter\(\) expects \(callable\(App\\Models\\MultipartPlotSigpac, int\)\: bool\)\|null, Closure\(mixed\)\: \(App\\Models\\PlotGeometry\|null\) given\.$#'
 			identifier: argument.type
 			count: 2
 			path: app/Http/Controllers/MapController.php
@@ -1552,18 +976,6 @@ parameters:
 			message: '#^Parameter \#1 \$plot of method App\\Http\\Controllers\\MapController\:\:renderMunicipalityMap\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Parameter \#1 \$value of function collect contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Parameter \#2 \$plot of method App\\Http\\Controllers\\MapController\:\:renderSingleSigpacMap\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 2
 			path: app/Http/Controllers/MapController.php
 
 		-
@@ -1585,6 +997,12 @@ parameters:
 			path: app/Http/Controllers/PlotMapController.php
 
 		-
+			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/ReportVerificationController.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between ''full_digital…'' and ''full_digital…'' will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
@@ -1597,22 +1015,22 @@ parameters:
 			path: app/Http/Controllers/Viticulturist/HarvestsPdfController.php
 
 		-
+			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Viticulturist/InvoicePdfController.php
+
+		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
 			identifier: arguments.count
 			count: 1
 			path: app/Http/Controllers/Viticulturist/OfficialReportController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
+			message: '#^Relation ''plotVariety'' is not found in App\\Models\\PlotPlanting model\.$#'
+			identifier: larastan.relationExistence
 			count: 1
-			path: app/Http/Controllers/Winery/HarvestQualityController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Winery/HarvestQualityController.php
+			path: app/Http/Controllers/WineTraceController.php
 
 		-
 			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\Harvest\>\:\:avg\(\) expects \(callable\(App\\Models\\Harvest\)\: float\)\|int\|string\|null, Closure\(mixed\)\: \(numeric\-string\|null\) given\.$#'
@@ -1625,6 +1043,12 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Winery/InfoviController.php
+
+		-
+			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Winery/InvoicePdfController.php
 
 		-
 			message: '#^Call to an undefined method Symfony\\Component\\HttpFoundation\\Response\:\:header\(\)\.$#'
@@ -1669,100 +1093,58 @@ parameters:
 			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area_treated\.$#'
+			message: '#^Access to an undefined property App\\Models\\CrewMember\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$dose\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$dose_unit\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fertilizer_name\.$#'
+			message: '#^Access to an undefined property App\\Models\\Fertilization\:\:\$dose\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 5
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$irrigation_type\.$#'
+			message: '#^Access to an undefined property App\\Models\\Fertilization\:\:\$dose_unit\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 5
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$product\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/AgriculturalActivityResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quality_rating\.$#'
+			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$quality_rating\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity_kg\.$#'
+			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$quantity_kg\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$water_volume\.$#'
+			message: '#^Access to an undefined property App\\Models\\Irrigation\:\:\$irrigation_type\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\PhytosanitaryTreatment\:\:\$dose\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Http/Resources/Api/ActivityResource.php
+			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Models\\PhytosanitaryTreatment\:\:\$dose_unit\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Http/Resources/Api/ActivityResource.php
+			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/ActivityResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/Admin/AdminAnnouncementResource.php
 
 		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\Admin\\AdminUserResource\:\:\$adminNotes\.$#'
@@ -1801,58 +1183,10 @@ parameters:
 			path: app/Http/Resources/Api/AnnouncementResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/AnnouncementResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/BiodiversityRecordResource.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/BiodiversityRecordResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 5
-			path: app/Http/Resources/Api/BottlingResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 6
-			path: app/Http/Resources/Api/BottlingResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/BottlingResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$supply_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/BottlingResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_of_measurement_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/BottlingResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$winery_supply_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/BottlingResource.php
 
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, quantity\: float\|null, unit_id\: mixed, winery_supply_id\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, quantity\: float\|null, unit_id\: mixed, winery_supply_id\: mixed\}\>\.$#'
@@ -1861,15 +1195,9 @@ parameters:
 			path: app/Http/Resources/Api/BottlingResource.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Resources/Api/BottlingResource.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
-			count: 1
+			count: 2
 			path: app/Http/Resources/Api/BottlingResource.php
 
 		-
@@ -1897,90 +1225,6 @@ parameters:
 			path: app/Http/Resources/Api/CommercialAuthorizationResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$container_waste_type_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cost\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$custom_waste_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$display_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$display_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$disposal_method\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$notes\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity_used\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_of_measurement_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$waste_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$winery_supply_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float\|null, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float\|null, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\>\.$#'
 			identifier: return.type
 			count: 1
@@ -1993,15 +1237,15 @@ parameters:
 			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 2
+			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
 			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
 
 		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
-			count: 2
+			count: 3
 			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
 
 		-
@@ -2011,46 +1255,10 @@ parameters:
 			path: app/Http/Resources/Api/ContainerResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Resources/Api/ContainerResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Resources/Api/ContainerResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$volume_liters\.$#'
+			message: '#^Access to an undefined property App\\Models\\ContainerCurrentState\:\:\$volume_liters\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/Api/ContainerResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wine\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wine_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/ContainerResource.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Resources/Api/ContainerResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ContainerReturnResource.php
 
 		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
@@ -2059,34 +1267,10 @@ parameters:
 			path: app/Http/Resources/Api/ContainerReturnResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/EnergyUsageResource.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/EnergyUsageResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/EstimatedYieldResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/EstimatedYieldResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/EstimatedYieldResource.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -2101,106 +1285,10 @@ parameters:
 			path: app/Http/Resources/Api/EstimatedYieldResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/FermentationControlResource.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/FermentationControlResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$description\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discount_amount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discount_percentage\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$subtotal\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_amount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_rate\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -2221,46 +1309,16 @@ parameters:
 			path: app/Http/Resources/Api/HarvestDeclarationResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/HarvestResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/HarvestResource.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/HarvestResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/InvoiceResource.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 4
 			path: app/Http/Resources/Api/InvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/LossResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/LossResource.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -2281,176 +1339,8 @@ parameters:
 			path: app/Http/Resources/Api/MarketedHarvestResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$affected_area_percentage\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_method\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area_applied\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$brix_degree\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$description\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$dose_unit\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fertilizer_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fertilizer_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$follow_up_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$irrigation_method\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nitrogen_uf\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$observation_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$phosphorus_uf\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$potassium_uf\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$product\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$productive_buds_per_hectare\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pruning_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$reentry_interval_hours\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$reentry_period_days\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$residue_management\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$target_pest\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$water_volume\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$water_volume_unit\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$work_type\.$#'
-			identifier: property.notFound
+			message: '#^Offset ''copper_treatment''\|''foliar_application''\|''other''\|''sulfur_treatment''\|''trunk_treatment''\|''wound_sealing'' on array\{copper_treatment\: ''Tratamiento con…'', sulfur_treatment\: ''Tratamiento con…'', wound_sealing\: ''Sellado de heridas…'', foliar_application\: ''Aplicación foliar'', trunk_treatment\: ''Tratamiento de…'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Http/Resources/Api/MobileNotebookResource.php
 
@@ -2485,12 +1375,6 @@ parameters:
 			path: app/Http/Resources/Api/PestResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/PhenologyObservationResource.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -2509,22 +1393,10 @@ parameters:
 			path: app/Http/Resources/Api/PhytosanitaryProductResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/PlannedWorkResource.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/PlannedWorkResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/PlotCostResource.php
 
 		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
@@ -2533,64 +1405,10 @@ parameters:
 			path: app/Http/Resources/Api/PlotCostResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/PlotEnvironmentResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
+			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$area\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/Api/PlotResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/PlotResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Resources/Api/PlotResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/PlotResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$planting_year\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/PlotResource.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Resources/Api/PlotResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ProductLotResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/ProductLotResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wine_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ProductLotResource.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -2599,28 +1417,10 @@ parameters:
 			path: app/Http/Resources/Api/ProductLotResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ResidueAnalysisResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ResidueAnalysisResource.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/ResidueAnalysisResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/ResidueManagementResource.php
 
 		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
@@ -2629,22 +1429,10 @@ parameters:
 			path: app/Http/Resources/Api/ResidueManagementResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/SoilAnalysisResource.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/SoilAnalysisResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/StockEntryResource.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -2657,12 +1445,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/StockEntryResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/SubcontractingResource.php
 
 		-
 			message: '#^Offset ''analysis''\|''fertilization''\|''harvesting''\|''irrigation''\|''other''\|''pruning''\|''soil_work''\|''transport''\|''treatment'' on array\{harvesting\: ''Vendimia'', pruning\: ''Poda'', treatment\: ''Tratamientos…'', fertilization\: ''Abonado /…'', irrigation\: ''Riego'', soil_work\: ''Laboreo del suelo'', transport\: ''Transporte'', analysis\: ''Análisis / Asesoría'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
@@ -2675,18 +1457,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/SubcontractingResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/TransferResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Resources/Api/TransferResource.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -2731,12 +1501,6 @@ parameters:
 			path: app/Http/Resources/Api/WarehouseStockResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/WarehouseStockResource.php
-
-		-
 			message: '#^Offset ''comunidad_regantes''\|''otro''\|''subterranea''\|''superficial'' on array\{superficial\: ''Aguas superficiales'', subterranea\: ''Aguas subterráneas'', comunidad_regantes\: ''Comunidad de…'', otro\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -2749,31 +1513,13 @@ parameters:
 			path: app/Http/Resources/Api/WaterConcessionResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/Api/WineAnalysisResource.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/WineAnalysisResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Http/Resources/Api/WineProcessStepResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Http/Resources/Api/WineProcessStepResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pivot\.$#'
+			message: '#^Access to an undefined property App\\Models\\Container\:\:\$pivot\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Http/Resources/Api/WineProcessStepResource.php
@@ -2781,12 +1527,6 @@ parameters:
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\>\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Http/Resources/Api/WineProcessStepResource.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
 			count: 1
 			path: app/Http/Resources/Api/WineProcessStepResource.php
 
@@ -2803,13 +1543,7 @@ parameters:
 			path: app/Http/Resources/Api/WineResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/InvoiceItemResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity_kg\.$#'
+			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$quantity_kg\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/InvoiceItemResource.php
@@ -2827,19 +1561,13 @@ parameters:
 			path: app/Http/Resources/InvoiceResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\Client\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/InvoiceResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/InvoiceResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nif_cif\.$#'
+			message: '#^Access to an undefined property App\\Models\\Client\:\:\$nif_cif\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/InvoiceResource.php
@@ -2869,18 +1597,6 @@ parameters:
 			path: app/Http/Resources/PlotPlantingResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/PlotPlantingResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/PlotPlantingResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\PlotResource\:\:\$latestRemoteSensing\.$#'
 			identifier: property.notFound
 			count: 2
@@ -2890,18 +1606,6 @@ parameters:
 			message: '#^Access to an undefined property App\\Http\\Resources\\PlotResource\:\:\$tenure_regime\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Http/Resources/PlotResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/PlotResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
 			path: app/Http/Resources/PlotResource.php
 
 		-
@@ -2965,18 +1669,6 @@ parameters:
 			path: app/Jobs/ExportDataJob.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Jobs/GenerateOfficialReportJob.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Jobs/GenerateOfficialReportJob.php
-
-		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
 			identifier: arguments.count
 			count: 1
@@ -3025,18 +1717,6 @@ parameters:
 			path: app/Listeners/CheckWithdrawalPeriodAlerts.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$product\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Listeners/CheckWithdrawalPeriodAlerts.php
-
-		-
-			message: '#^Parameter \#1 \$treatment of class App\\Notifications\\WithdrawalPeriodEnding constructor expects App\\Models\\PhytosanitaryTreatment, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Listeners/CheckWithdrawalPeriodAlerts.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Contracts\\Auth\\MustVerifyEmail\:\:grantBetaAccess\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -3053,18 +1733,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: app/Listeners/GrantBetaAccessOnVerification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Listeners/SendPaymentConfirmationEmail.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Listeners/SendPaymentConfirmationEmail.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\CannedResponse\:\:\$body\.$#'
@@ -3205,12 +1873,6 @@ parameters:
 			path: app/Livewire/Admin/Subscriptions/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
 			count: 2
@@ -3301,42 +1963,6 @@ parameters:
 			path: app/Livewire/Admin/Users/Show.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Auth/ClaimAccount.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$autonomous_community_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_default\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$municipality_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Clients/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$province_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Clients/Edit.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Plots\\Index\:\:\$autonomousCommunities\.$#'
 			identifier: property.notFound
 			count: 1
@@ -3391,6 +2017,12 @@ parameters:
 			path: app/Livewire/Plots/Index.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Plots/Show.php
+
+		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$code_parcel\.$#'
 			identifier: property.notFound
 			count: 1
@@ -3409,40 +2041,10 @@ parameters:
 			path: app/Livewire/Plots/Show.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plotGeometry\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Plots/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$source\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Show.php
-
-		-
 			message: '#^Property App\\Livewire\\Plots\\Show\:\:\$env_campaign_id \(string\) does not accept int\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: app/Livewire/Plots/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Livewire/Producer/Harvest/PromoteToReception.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Harvest/PromoteToReception.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Producer\\IntegratedEstate\\Index\:\:\$campaigns\.$#'
@@ -3475,24 +2077,6 @@ parameters:
 			path: app/Livewire/Producer/Invoices/Create.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Create.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\UnifiedStockService\:\:reserveOrSell\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Producer/Invoices/Create.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Producer\\Invoices\\Edit\:\:\$isInvoiced\.$#'
 			identifier: property.notFound
 			count: 1
@@ -3507,72 +2091,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty_computed\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discount_percentage\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wineLot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wine_lot_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\UnifiedStockService\:\:reserveOrSell\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Livewire/Producer/Invoices/Edit.php
 
@@ -3763,12 +2281,6 @@ parameters:
 			path: app/Livewire/Sigpac/EditGeometry.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getCoordinatesAsArray\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: app/Livewire/Sigpac/EditGeometry.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\User\:\:\$activeSubscription\.$#'
 			identifier: property.notFound
 			count: 2
@@ -3817,12 +2329,6 @@ parameters:
 			path: app/Livewire/Supervisor/Oversight/Growers/Show.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: app/Livewire/Supervisor/Requests/Index.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -3842,12 +2348,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$sold_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$campaign_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
@@ -3895,36 +2395,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$campaign_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_rate\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
 			count: 2
@@ -3937,28 +2407,10 @@ parameters:
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>total_weight" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Index.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>total_weight" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
@@ -4019,12 +2471,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/Dashboard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Viticulturist/Denomination/Index.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\AbstractActivityForm\:\:\$campaign\.$#'
@@ -4123,43 +2569,7 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/CreatePostHarvest.php
 
 		-
-			message: '#^Property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditCulturalWork\:\:\$culturalWork \(App\\Models\\CulturalWork\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditCulturalWork.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditFertilization\:\:\$fertilization \(App\\Models\\Fertilization\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditFertilization.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditHarvest\:\:\$viticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$activity_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$campaign_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$crew_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$crew_member_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
@@ -4171,12 +2581,6 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
 			message: '#^Call to an undefined method App\\Models\\Container\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Container\>\:\:isAvailable\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -4184,12 +2588,6 @@ parameters:
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:activeWithdrawalPeriods\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isLocked\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
@@ -4207,40 +2605,10 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
 
 		-
-			message: '#^Property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditIrrigation\:\:\$irrigation \(App\\Models\\Irrigation\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditIrrigation.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditObservation\:\:\$observation \(App\\Models\\Observation\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditObservation.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditPhytosanitaryTreatment\:\:\$treatment \(App\\Models\\PhytosanitaryTreatment\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditPhytosanitaryTreatment.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditPostHarvest\:\:\$products\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditPostHarvest.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditPostHarvest\:\:\$postHarvestTreatment \(App\\Models\\PostHarvestTreatment\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditPostHarvest.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditPruning\:\:\$culturalWork \(App\\Models\\CulturalWork\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditPruning.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
@@ -4279,12 +2647,6 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Edit.php
-
-		-
 			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\RuntimeException\.$#'
 			identifier: class.notFound
 			count: 1
@@ -4307,42 +2669,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$campaign_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/ShowHarvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_limit_kg\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/DigitalNotebook/ShowHarvest.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getHarvestLimitUsagePercentageForCampaign\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/ShowHarvest.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getRemainingHarvestLimitForCampaign\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/ShowHarvest.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getTotalActualYieldForCampaign\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/ShowHarvest.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasHarvestLimit\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/ShowHarvest.php
 
 		-
 			message: '#^Parameter \#1 \$campaignId of static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\EnergyUsage\>\:\:forCampaign\(\) expects int, string given\.$#'
@@ -4381,49 +2707,13 @@ parameters:
 			path: app/Livewire/Viticulturist/FinancialStats.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$winery\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: app/Livewire/Viticulturist/Harvests/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$winery\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Harvests/Show.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty_computed\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/Invoices/Create.php
@@ -4453,66 +2743,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Invoices/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$concept_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discount_percentage\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
 			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\Invoices\\RuntimeException\.$#'
 			identifier: class.notFound
 			count: 2
@@ -4523,156 +2753,6 @@ parameters:
 			identifier: class.notFound
 			count: 2
 			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Harvest/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Harvest/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$concept_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$description\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discount_amount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discount_percentage\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sku\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$subtotal\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_amount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_base\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_rate\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wine_lot_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:releaseFromInvoice\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$campaign_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/MarketedHarvests/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$campaign_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/MarketedHarvests/Edit.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
@@ -4831,13 +2911,7 @@ parameters:
 			path: app/Livewire/Viticulturist/Personal/UnifiedIndex.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$can_edit\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Personal/Workers/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$can_edit\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Livewire/Viticulturist/Personal/Workers/Index.php
@@ -4864,12 +2938,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Livewire/Viticulturist/Phenology/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
 			path: app/Livewire/Viticulturist/Phenology/Edit.php
 
 		-
@@ -4945,24 +3013,6 @@ parameters:
 			path: app/Livewire/Viticulturist/QuickEntry.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getCentroidAsArray\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getCoordinatesAsArray\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\MultipartPlotSigpac\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
-
-		-
 			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\Dashboard\:\:\$comparePlot \(App\\Models\\Plot\|null\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -4978,12 +3028,6 @@ parameters:
 			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\Dashboard\:\:\$lastYearNdvi \(float\|null\) does not accept string\|null\.$#'
 			identifier: assign.propertyType
 			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\Dashboard\:\:\$ndviData \(App\\Models\\PlotRemoteSensing\|null\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 2
 			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
 
 		-
@@ -5013,24 +3057,12 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
-			count: 6
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$image_date\.$#'
-			identifier: property.notFound
-			count: 1
+			count: 3
 			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
 
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\>\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
 			count: 1
 			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
 
@@ -5041,58 +3073,10 @@ parameters:
 			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
 
 		-
-			message: '#^Parameter \#1 \$data of method App\\Livewire\\Viticulturist\\RemoteSensing\\ExecutiveDashboard\:\:calculateAlerts\(\) expects App\\Models\\PlotRemoteSensing, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$data of method App\\Livewire\\Viticulturist\\RemoteSensing\\ExecutiveDashboard\:\:calculateHarvestSummary\(\) expects App\\Models\\PlotRemoteSensing, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$data of method App\\Livewire\\Viticulturist\\RemoteSensing\\ExecutiveDashboard\:\:calculateNutritionSummary\(\) expects App\\Models\\PlotRemoteSensing, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$data of method App\\Livewire\\Viticulturist\\RemoteSensing\\ExecutiveDashboard\:\:calculateTemperatureSummary\(\) expects App\\Models\\PlotRemoteSensing, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$data of method App\\Livewire\\Viticulturist\\RemoteSensing\\ExecutiveDashboard\:\:calculateVigorSummary\(\) expects App\\Models\\PlotRemoteSensing, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$data of method App\\Livewire\\Viticulturist\\RemoteSensing\\ExecutiveDashboard\:\:calculateWaterSummary\(\) expects App\\Models\\PlotRemoteSensing, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
 			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\ExecutiveDashboard\:\:\$selectedPlot \(App\\Models\\Plot\|null\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$image_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/OfficialLaiCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lai\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/OfficialLaiCard.php
 
 		-
 			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\PlotAnalysis\:\:\$lastYearNdvi \(float\|null\) does not accept string\|null\.$#'
@@ -5107,106 +3091,28 @@ parameters:
 			path: app/Livewire/Viticulturist/RemoteSensing/PlotNdviCard.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$image_date\.$#'
-			identifier: property.notFound
-			count: 1
+			message: '#^Parameter \#1 \$soilMoisture of method App\\Services\\RemoteSensing\\NasaSMAPService\:\:classifySoilMoisture\(\) expects float, string\|null given\.$#'
+			identifier: argument.type
+			count: 2
 			path: app/Livewire/Viticulturist/RemoteSensing/SmapSoilCard.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$soil_moisture_rootzone_smap\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SmapSoilCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$soil_moisture_surface_smap\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SmapSoilCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$gndvi\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SpectralBandsCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$green_band\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SpectralBandsCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$image_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SpectralBandsCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ndre\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SpectralBandsCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ndvi_mean\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SpectralBandsCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ndwi_mean\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SpectralBandsCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nir_band\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SpectralBandsCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$red_band\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/SpectralBandsCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cwsi\.$#'
-			identifier: property.notFound
+			message: '#^Parameter \#1 \$cwsi of method App\\Services\\RemoteSensing\\NasaLSTService\:\:classifyCWSI\(\) expects float, string given\.$#'
+			identifier: argument.type
 			count: 1
 			path: app/Livewire/Viticulturist/RemoteSensing/ThermalStressCard.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$image_date\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/RemoteSensing/ThermalStressCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lst_day\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/RemoteSensing/ThermalStressCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lst_diff\.$#'
-			identifier: property.notFound
+			message: '#^Parameter \#1 \$lstDay of method App\\Services\\RemoteSensing\\NasaLSTService\:\:detectHeatStress\(\) expects float, string given\.$#'
+			identifier: argument.type
 			count: 1
 			path: app/Livewire/Viticulturist/RemoteSensing/ThermalStressCard.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lst_night\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/RemoteSensing/ThermalStressCard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area_statistics\.$#'
-			identifier: property.notFound
+			message: '#^Parameter \#1 \$lstNight of method App\\Services\\RemoteSensing\\NasaLSTService\:\:detectFrostRisk\(\) expects float, string given\.$#'
+			identifier: argument.type
 			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/VigorMapCard.php
+			path: app/Livewire/Viticulturist/RemoteSensing/ThermalStressCard.php
 
 		-
 			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\RuntimeException\.$#'
@@ -5233,26 +3139,8 @@ parameters:
 			path: app/Livewire/Viticulturist/Viticulturists/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$can_login\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Viticulturists/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Viticulturists/Index.php
-
-		-
 			message: '#^Cannot call method isAfter\(\) on string\.$#'
 			identifier: method.nonObject
-			count: 1
-			path: app/Livewire/Viticulturist/Viticulturists/Index.php
-
-		-
-			message: '#^Parameter \#1 \$vit of method App\\Livewire\\Viticulturist\\Viticulturists\\Index\:\:hasRealEmail\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Livewire/Viticulturist/Viticulturists/Index.php
 
@@ -5263,40 +3151,10 @@ parameters:
 			path: app/Livewire/Viticulturist/Warehouse/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/WineryAccess/Index.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/WineryAccess/Index.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\SupervisorViticulturist\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Viticulturist/WineryAccess/Index.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\WineryViticulturist\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Viticulturist/WineryAccess/Index.php
-
-		-
 			message: '#^Parameter \#1 \$items of method Illuminate\\Support\\Collection\<int,object\{id\: mixed, type\: string, name\: mixed, granted_at\: mixed\}&stdClass\>\:\:merge\(\) expects Illuminate\\Contracts\\Support\\Arrayable\<int, object\{id\: mixed, type\: ''winery'', name\: mixed, granted_at\: mixed\}&stdClass\>\|iterable\<int, object\{id\: mixed, type\: ''winery'', name\: mixed, granted_at\: mixed\}&stdClass\>, Illuminate\\Support\\Collection\<int, object\{id\: mixed, type\: ''supervisor'', name\: mixed, granted_at\: mixed\}&stdClass\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Livewire/Viticulturist/WineryAccess/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/GrapePurchase/Create.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\GrapePurchase\\Edit\:\:\$isLocked\.$#'
@@ -5305,46 +3163,10 @@ parameters:
 			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\InvoiceItem\>\:\:filter\(\) expects \(callable\(App\\Models\\InvoiceItem, int\)\: bool\)\|null, Closure\(mixed\)\: \(int\<0, max\>\|null\) given\.$#'
+			identifier: argument.type
 			count: 1
 			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_rate\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/GrapePurchase/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Create.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\ProductSale\\Edit\:\:\$isInvoiced\.$#'
@@ -5357,162 +3179,6 @@ parameters:
 			identifier: property.notFound
 			count: 2
 			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wineLot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wine_lot_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Parameter \#2 \$item of static method App\\Services\\ProductStockService\:\:moveOnCreate\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$concept_type\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$description\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discount_amount\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discount_percentage\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sku\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$subtotal\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_amount\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_base\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tax_rate\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_price\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wine_lot_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
 
 		-
 			message: '#^Property App\\Livewire\\Winery\\Billing\\ProductSale\\Index\:\:\$quickAvailableAddresses \(array\) does not accept Illuminate\\Support\\Collection\<\(int\|string\), mixed\>\.$#'
@@ -5593,24 +3259,6 @@ parameters:
 			path: app/Livewire/Winery/Bottling/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Bottling/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$supply_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Bottling/Edit.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Winery/Bottling/Edit.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:empty\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -5623,28 +3271,10 @@ parameters:
 			path: app/Livewire/Winery/Cellar/Containers/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cost\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Cellar/Containers/Maintenance/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
+			message: '#^Relation ''grapeVariety'' is not found in App\\Models\\GrapeReceptionBatch model\.$#'
+			identifier: larastan.relationExistence
 			count: 1
-			path: app/Livewire/Winery/Cellar/Containers/Maintenance/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity_used\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Cellar/Containers/Maintenance/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$waste_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Cellar/Containers/Maintenance/Edit.php
+			path: app/Livewire/Winery/Cellar/Containers/Show.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -5689,28 +3319,10 @@ parameters:
 			path: app/Livewire/Winery/Cellar/ProductLots/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\GrapeVariety\:\:\$pivot\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Winery/Cellar/ProductLots/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pivot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Cellar/ProductLots/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Denomination/Index.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Livewire/Winery/Denomination/Requests/Index.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\ExternalGrape\:\:\$available_kg\.$#'
@@ -5743,67 +3355,19 @@ parameters:
 			path: app/Livewire/Winery/Harvest/Campaigns/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Forecasts/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_limit_kg\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Forecasts/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Forecasts/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Forecasts/Edit.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:effectiveHarvestLimitKg\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Forecasts/Edit.php
-
-		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
 			count: 1
 			path: app/Livewire/Winery/Harvest/Forecasts/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$vintage_year\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
-
-		-
-			message: '#^Anonymous function should return array\{name\: mixed, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\} but returns array\{name\: mixed, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\}\.$#'
+			message: '#^Anonymous function should return array\{name\: string, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\} but returns array\{name\: string, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\}\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Harvest\>\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Harvest\>, int\|string\)\: array\{name\: mixed, years\: Illuminate\\Support\\Collection\<int\|string, array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\}, Closure\(mixed\)\: array\{name\: mixed, years\: Illuminate\\Support\\Collection\<int\|string, array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\} given\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Harvest\>\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Harvest\>, int\|string\)\: array\{name\: string, years\: Illuminate\\Support\\Collection\<int\|string, array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\}, Closure\(mixed\)\: array\{name\: string, years\: Illuminate\\Support\\Collection\<int\|string, array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
@@ -5821,46 +3385,10 @@ parameters:
 			path: app/Livewire/Winery/Harvest/Reception/Create.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area_planted\.$#'
-			identifier: property.notFound
+			message: '#^Relation ''plots'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
 			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Edit.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getTotalWineryReceptionsForVintage\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Edit.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:recalculateTotal\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Edit.php
+			path: app/Livewire/Winery/Harvest/Reception/Create.php
 
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
@@ -5869,8 +3397,8 @@ parameters:
 			path: app/Livewire/Winery/Harvest/Reception/Edit.php
 
 		-
-			message: '#^Property App\\Livewire\\Winery\\Harvest\\Reception\\Edit\:\:\$selectedPlanting \(App\\Models\\PlotPlanting\|null\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
+			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
+			identifier: argument.type
 			count: 1
 			path: app/Livewire/Winery/Harvest/Reception/Edit.php
 
@@ -5881,94 +3409,10 @@ parameters:
 			path: app/Livewire/Winery/Harvest/Reception/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Index.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
 			identifier: property.notFound
 			count: 4
 			path: app/Livewire/Winery/Harvest/Reception/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Index.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:effectiveHarvestLimitKg\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Index.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasHarvestLimit\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Index.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:recalculateTotal\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Show.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasDisputeNote\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Show.php
-
-		-
-			message: '#^Parameter \#1 \$delivery of class App\\Notifications\\HarvestDeliveryResolvedNotification constructor expects App\\Models\\HarvestDelivery, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area_planted\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Summary/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Summary/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Summary/Index.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:effectiveHarvestLimitKg\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Summary/Index.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Winery\\LabelBatches\\Create\:\:\$totalPreview\.$#'
@@ -6169,12 +3613,6 @@ parameters:
 			path: app/Livewire/Winery/Viticulturists/Edit.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Livewire/Winery/Viticulturists/Index.php
-
-		-
 			message: '#^Parameter \#1 \$endsAt of method App\\Models\\User\:\:grantBetaAccess\(\) expects Carbon\\Carbon\|null, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -6211,12 +3649,6 @@ parameters:
 			path: app/Livewire/Winery/WineTransfers/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Wines/Process/Edit.php
-
-		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
 			count: 2
@@ -6225,6 +3657,12 @@ parameters:
 		-
 			message: '#^Method App\\Livewire\\Winery\\Wines\\Show\:\:resetCoForm\(\) is unused\.$#'
 			identifier: method.unused
+			count: 1
+			path: app/Livewire/Winery/Wines/Show.php
+
+		-
+			message: '#^Relation ''plotVariety'' is not found in App\\Models\\PlotPlanting model\.$#'
+			identifier: larastan.relationExistence
 			count: 1
 			path: app/Livewire/Winery/Wines/Show.php
 
@@ -6248,12 +3686,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$days_total\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Wines/Timeline.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$start_date\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Winery/Wines/Timeline.php
@@ -6325,40 +3757,16 @@ parameters:
 			path: app/Models/Certification.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Models/ClientAddress.php
-
-		-
 			message: '#^Offset ''do_registration''\|''integrated…''\|''organic…''\|''other''\|''planting_right''\|''replanting_right'' on array\{do_registration\: ''Inscripción…'', organic_certification\: ''Certificación…'', planting_right\: ''Derecho de…'', replanting_right\: ''Derecho de…'', integrated_production\: ''Producción Integrada'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/CommercialAuthorization.php
 
 		-
-			message: '#^Method App\\Models\\Container\:\:getCurrentHarvest\(\) should return App\\Models\\Harvest\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/Container.php
-
-		-
 			message: '#^Method App\\Models\\Container\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Models/Container.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:decrementUsedCapacity\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/ContainerCurrentState.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:incrementUsedCapacity\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/ContainerCurrentState.php
 
 		-
 			message: '#^Match arm comparison between ''maintenance'' and ''maintenance'' is always true\.$#'
@@ -6377,12 +3785,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/ContainerMaintenance.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/ContainerMaintenanceWaste.php
 
 		-
 			message: '#^Method App\\Models\\ContainerRoom\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
@@ -6419,12 +3821,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/EnergyUsage.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area_planted\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/EstimatedYield.php
 
 		-
 			message: '#^Offset ''bulk_wine''\|''grapes''\|''must'' on array\{grapes\: ''Uva'', must\: ''Mosto'', bulk_wine\: ''Vino a granel''\} on left side of \?\? always exists and is not nullable\.$#'
@@ -6469,50 +3865,8 @@ parameters:
 			path: app/Models/FieldEquipment.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:effectiveHarvestLimitKg\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Models/GrapeReceptionBatch.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$available_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Harvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$gifted_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Harvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lost_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Harvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity_after\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Harvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$reserved_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Harvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sold_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Harvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$used_capacity\.$#'
-			identifier: property.notFound
+			message: '#^Method App\\Models\\Harvest\:\:getContainerWeight\(\) should return float\|null but returns string\|null\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Models/Harvest.php
 
@@ -6571,12 +3925,6 @@ parameters:
 			path: app/Models/MarketedHarvest.php
 
 		-
-			message: '#^Method App\\Models\\NotebookAccessRequest\:\:requester\(\) should return App\\Models\\User\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/NotebookAccessRequest.php
-
-		-
 			message: '#^Offset ''denomination_of…''\|''winery'' on array\{winery\: ''Bodega'', denomination_of_origin\: ''Denominación de…''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -6619,36 +3967,6 @@ parameters:
 			path: app/Models/PhytosanitaryContainerReturn.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getAvailableQuantity\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/PhytosanitaryProduct.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$activity_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/PhytosanitaryTreatment.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$withdrawal_period_days\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/PhytosanitaryTreatment.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$activity_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Plot.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$phytosanitaryTreatment\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Plot.php
-
-		-
 			message: '#^Method App\\Models\\Plot\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
 			count: 1
@@ -6677,18 +3995,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/PostHarvestTreatment.php
-
-		-
-			message: '#^Method App\\Models\\ProductStock\:\:addStock\(\) should return App\\Models\\ProductStockMovement but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/ProductStock.php
-
-		-
-			message: '#^Method App\\Models\\ProductStock\:\:consume\(\) should return App\\Models\\ProductStockMovement but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/ProductStock.php
 
 		-
 			message: '#^Offset ''biogas''\|''burning''\|''composting''\|''incorporation''\|''other''\|''removal''\|''sale'' on array\{incorporation\: ''Triturado e…'', removal\: ''Retirada de la…'', burning\: ''Quema \(cuando…'', composting\: ''Compostaje'', biogas\: ''Biogás'', sale\: ''Venta'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
@@ -6811,12 +4117,6 @@ parameters:
 			path: app/Models/WaterConcession.php
 
 		-
-			message: '#^Method App\\Models\\Wine\:\:latestAnalysis\(\) should return App\\Models\\WineAnalysis\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/Wine.php
-
-		-
 			message: '#^Offset ''aged''\|''bottled''\|''cancelled''\|''in_progress''\|''sold'' on array\{in_progress\: ''En elaboración'', aged\: ''En crianza'', bottled\: ''Embotellado'', sold\: ''Vendido'', cancelled\: ''Cancelado''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -6857,18 +4157,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/WineProcessDetail.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/WineTastingNote.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$surname\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/WineTastingNote.php
 
 		-
 			message: '#^Offset ''blending''\|''other''\|''racking''\|''top_up'' on array\{racking\: ''Trasiego'', blending\: ''Mezcla / Coupage'', top_up\: ''Relleno'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
@@ -6919,132 +4207,6 @@ parameters:
 			path: app/Models/WineryYieldForecast.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/HarvestDeliveryAutoDisputedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryAutoDisputedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryAutoDisputedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$winery\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/HarvestDeliveryAutoDisputedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryCreatedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryCreatedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryDelinkedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryDelinkedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryDisputedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryDisputedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryDisputedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryDisputedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryDisputedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/HarvestDeliveryMatchedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryMatchedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryMatchedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$winery\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/HarvestDeliveryMatchedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/HarvestDeliveryResolvedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryResolvedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryResolvedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$winery\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/HarvestDeliveryResolvedNotification.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Payment\:\:\$plan_type\.$#'
 			identifier: property.notFound
 			count: 2
@@ -7081,18 +4243,6 @@ parameters:
 			path: app/Notifications/QualityFeedbackNotification.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/QualityFeedbackNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/QualityFeedbackNotification.php
-
-		-
 			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
 			identifier: return.phpDocType
 			count: 1
@@ -7111,45 +4261,9 @@ parameters:
 			path: app/Notifications/SubscriptionExpiringSoon.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Notifications/SupervisorRequestReceivedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Notifications/SupervisorRequestResolvedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Notifications/SupervisorRequestRespondedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Notifications/SupervisorRequestSentNotification.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\SupportTicket\:\:\$image\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Notifications/SupportTicketCreatedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/SupportTicketCreatedNotification.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
 			path: app/Notifications/SupportTicketCreatedNotification.php
 
 		-
@@ -7171,31 +4285,7 @@ parameters:
 			path: app/Notifications/SupportTicketCreatedNotification.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/WineryAnnouncementNotification.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\PhytosanitaryTreatment\:\:\$agricultural_activity_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/WithdrawalPeriodEnding.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$activity_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Notifications/WithdrawalPeriodEnding.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/WithdrawalPeriodEnding.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Notifications/WithdrawalPeriodEnding.php
@@ -7207,157 +4297,13 @@ parameters:
 			path: app/Notifications/WithdrawalPeriodEnding.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Observers/HarvestObserver.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Observers/HarvestObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$delivery_status\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/InvoiceItemObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Observers/InvoiceItemObserver.php
-
-		-
-			message: '#^Parameter \#1 \$harvest of method App\\Services\\ContainerStockService\:\:adjustItemQuantity\(\) expects App\\Models\\Harvest, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Observers/InvoiceItemObserver.php
-
-		-
-			message: '#^Parameter \#1 \$harvest of method App\\Services\\ContainerStockService\:\:directSale\(\) expects App\\Models\\Harvest, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Observers/InvoiceItemObserver.php
-
-		-
-			message: '#^Parameter \#1 \$harvest of method App\\Services\\ContainerStockService\:\:releaseFromInvoice\(\) expects App\\Models\\Harvest, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Observers/InvoiceItemObserver.php
-
-		-
-			message: '#^Parameter \#1 \$harvest of method App\\Services\\ContainerStockService\:\:reserveStock\(\) expects App\\Models\\Harvest, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Observers/InvoiceItemObserver.php
-
-		-
-			message: '#^Parameter \#1 \$harvest of method App\\Services\\ContainerStockService\:\:unreserveStock\(\) expects App\\Models\\Harvest, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Observers/InvoiceItemObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$company_document\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$company_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$first_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest\.$#'
-			identifier: property.notFound
-			count: 6
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 6
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$last_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$particular_document\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$phone\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:addresses\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: app/Observers/InvoiceObserver.php
 
 		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:confirmSale\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:releaseFromInvoice\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:reserveStock\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:revertSaleToReservation\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$municipality_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Observers/MultipartPlotSigpacObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			message: '#^Access to an undefined property App\\Models\\AgriculturalActivity\:\:\$user\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Observers/PhytosanitaryTreatmentObserver.php
@@ -7366,12 +4312,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Observers/PlotRemoteSensingObserver.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 1
 			path: app/Observers/PlotRemoteSensingObserver.php
 
 		-
@@ -7387,18 +4327,6 @@ parameters:
 			path: app/Observers/UserObserver.php
 
 		-
-			message: '#^Parameter \#1 \$user of method App\\Services\\Cache\\CampaignCacheService\:\:invalidateUserCampaigns\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/Cache/CampaignCacheService.php
-
-		-
-			message: '#^Parameter \#1 \$user of method App\\Services\\Cache\\PlotCacheService\:\:invalidateUserPlots\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/Cache/PlotCacheService.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -7409,36 +4337,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: app/Services/CatastroGeometryService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$available_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/ContainerStockService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$delivery_note_code\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/ContainerStockService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$reserved_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/ContainerStockService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sold_qty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/ContainerStockService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Services/ContainerStockService.php
 
 		-
 			message: '#^Parameter \#1 \$quantity of method App\\Models\\Container\:\:decrementUsedCapacity\(\) expects float, string given\.$#'
@@ -7465,12 +4363,6 @@ parameters:
 			path: app/Services/ContainerStockService.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/DashboardAlertsService.php
-
-		-
 			message: '#^Offset ''A08''\|''A28'' on array\{A02\: ''ALB'', A04\: ''ALB'', A06\: ''ALB'', A08\: ''FAC'', A09\: ''FAC'', A10\: ''FAC'', A11\: ''FAC'', A14\: ''OTR'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -7481,30 +4373,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 2
 			path: app/Services/Exporters/SilicieCsvExporter.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/InventoryAnalyticsService.php
-
-		-
-			message: '#^Parameter \#1 \$array of function usort contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Services/InventoryAnalyticsService.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\ProductStock\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Services/InventoryAnalyticsService.php
-
-		-
-			message: '#^Parameter \#2 \$callback of function usort contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Services/InventoryAnalyticsService.php
 
 		-
 			message: '#^Parameter \#3 \$second of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\ProductStock\>\:\:whereColumn\(\) expects string\|null, Illuminate\\Contracts\\Database\\Query\\Expression given\.$#'
@@ -7519,26 +4387,20 @@ parameters:
 			path: app/Services/OfficialReportService.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$concept_type\.$#'
-			identifier: property.notFound
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
 			count: 1
 			path: app/Services/ProductStockService.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
-			identifier: property.notFound
+			message: '#^Strict comparison using \!\=\= between ''harvest''\|''other''\|''product''\|''service'' and ''wine'' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Services/ProductStockService.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$wine_lot_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/ProductStockService.php
-
-		-
-			message: '#^Parameter \#2 \$item of static method App\\Services\\ProductStockService\:\:apply\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
 			count: 1
 			path: app/Services/ProductStockService.php
 
@@ -7633,18 +4495,6 @@ parameters:
 			path: app/Services/RemoteSensing/Calculators/MaturityCalculator.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/RemoteSensing/CoordinatesHelper.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plotGeometry\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/RemoteSensing/CoordinatesHelper.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\PlotRemoteSensing\:\:\$soil_moisture_mean\.$#'
 			identifier: property.notFound
 			count: 3
@@ -7679,12 +4529,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Services/RemoteSensing/ImageHistoryService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plotGeometry\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/RemoteSensing/NasaAreaRequestService.php
 
 		-
 			message: '#^Property App\\Services\\RemoteSensing\\NasaETService\:\:\$baseUrl is never read, only written\.$#'
@@ -7777,220 +4621,10 @@ parameters:
 			path: app/Services/SigpacGeometryService.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Services/UnifiedStockService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$harvest_id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Services/UnifiedStockService.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:confirmSale\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/UnifiedStockService.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:releaseFromInvoice\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Services/UnifiedStockService.php
-
-		-
-			message: '#^Parameter \#2 \$item of method App\\Services\\ContainerStockService\:\:unreserveStock\(\) expects App\\Models\\InvoiceItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/UnifiedStockService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$applicator_ropo_number\.$#'
-			identifier: property.notFound
+			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area_treated\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$burial_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$destination_rega_code\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$destination_type\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$dose_per_hectare\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$emission_reduction_method\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$flow_rate\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$manure_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nitrogen_uf\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$phosphorus_uf\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$potassium_uf\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$product\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$product_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$reentry_period_days\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacCodes\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacUses\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$spray_volume\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$transport_document_number\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$treatment_justification\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$water_concession\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$water_source\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$water_volume\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Parameter \#1 \$harvest of method App\\Services\\Validators\\WithdrawalPeriodValidator\:\:validateHarvest\(\) expects App\\Models\\Harvest, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$activity_date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/WithdrawalPeriodValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Validators/WithdrawalPeriodValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$product\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Validators/WithdrawalPeriodValidator.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Services/VerifactuService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$invoice_date\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/VerifactuService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$invoice_number\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/VerifactuService.php
 
 		-
 			message: '#^Method App\\ValueObjects\\DateRange\:\:durationInDays\(\) should return int but returns float\.$#'

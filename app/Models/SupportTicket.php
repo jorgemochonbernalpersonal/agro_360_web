@@ -32,6 +32,7 @@ class SupportTicket extends Model
     /**
      * Usuario que creó el ticket
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -40,6 +41,7 @@ class SupportTicket extends Model
     /**
      * Usuario asignado al ticket
      */
+    /** @return BelongsTo<User, $this> */
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
@@ -48,6 +50,7 @@ class SupportTicket extends Model
     /**
      * Comentarios del ticket
      */
+    /** @return HasMany<SupportTicketComment, $this> */
     public function comments(): HasMany
     {
         return $this->hasMany(SupportTicketComment::class, 'ticket_id');

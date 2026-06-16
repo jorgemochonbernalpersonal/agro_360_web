@@ -24,6 +24,7 @@ class UserTax extends Model
     /**
      * Usuario
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -32,6 +33,7 @@ class UserTax extends Model
     /**
      * Impuesto
      */
+    /** @return BelongsTo<Tax, $this> */
     public function tax(): BelongsTo
     {
         return $this->belongsTo(Tax::class);

@@ -64,6 +64,7 @@ class AgriculturalActivity extends Model
     /**
      * Parcela donde se realizó la actividad
      */
+    /** @return BelongsTo<Plot, $this> */
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);
@@ -72,6 +73,7 @@ class AgriculturalActivity extends Model
     /**
      * Plantación donde se realizó la actividad
      */
+    /** @return BelongsTo<PlotPlanting, $this> */
     public function plotPlanting(): BelongsTo
     {
         return $this->belongsTo(PlotPlanting::class, 'plot_planting_id');
@@ -80,6 +82,7 @@ class AgriculturalActivity extends Model
     /**
      * Viticultor que realizó la actividad
      */
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -88,6 +91,7 @@ class AgriculturalActivity extends Model
     /**
      * Relación con bodega (si fue creado por viticultor invitado)
      */
+    /** @return BelongsTo<WineryViticulturist, $this> */
     public function wineryRelation(): BelongsTo
     {
         return $this->belongsTo(WineryViticulturist::class, 'winery_viticulturist_id');
@@ -96,6 +100,7 @@ class AgriculturalActivity extends Model
     /**
      * Campaña a la que pertenece la actividad
      */
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
@@ -104,6 +109,7 @@ class AgriculturalActivity extends Model
     /**
      * Cuadrilla que realizó la actividad
      */
+    /** @return BelongsTo<Crew, $this> */
     public function crew(): BelongsTo
     {
         return $this->belongsTo(Crew::class);
@@ -112,6 +118,7 @@ class AgriculturalActivity extends Model
     /**
      * Trabajador individual que realizó la actividad (opcional)
      */
+    /** @return BelongsTo<CrewMember, $this> */
     public function crewMember(): BelongsTo
     {
         return $this->belongsTo(CrewMember::class, 'crew_member_id');
@@ -120,6 +127,7 @@ class AgriculturalActivity extends Model
     /**
      * Tratamiento fitosanitario (si activity_type es 'phytosanitary')
      */
+    /** @return HasOne<PhytosanitaryTreatment, $this> */
     public function phytosanitaryTreatment(): HasOne
     {
         return $this->hasOne(PhytosanitaryTreatment::class, 'activity_id');
@@ -128,6 +136,7 @@ class AgriculturalActivity extends Model
     /**
      * Fertilización (si activity_type es 'fertilization')
      */
+    /** @return HasOne<Fertilization, $this> */
     public function fertilization(): HasOne
     {
         return $this->hasOne(Fertilization::class, 'activity_id');
@@ -136,6 +145,7 @@ class AgriculturalActivity extends Model
     /**
      * Riego (si activity_type es 'irrigation')
      */
+    /** @return HasOne<Irrigation, $this> */
     public function irrigation(): HasOne
     {
         return $this->hasOne(Irrigation::class, 'activity_id');
@@ -144,6 +154,7 @@ class AgriculturalActivity extends Model
     /**
      * Labor cultural (si activity_type es 'cultural')
      */
+    /** @return HasOne<CulturalWork, $this> */
     public function culturalWork(): HasOne
     {
         return $this->hasOne(CulturalWork::class, 'activity_id');
@@ -152,6 +163,7 @@ class AgriculturalActivity extends Model
     /**
      * Observación (si activity_type es 'observation')
      */
+    /** @return HasOne<Observation, $this> */
     public function observation(): HasOne
     {
         return $this->hasOne(Observation::class, 'activity_id');
@@ -160,6 +172,7 @@ class AgriculturalActivity extends Model
     /**
      * Cosecha (si activity_type es 'harvest')
      */
+    /** @return HasOne<Harvest, $this> */
     public function harvest(): HasOne
     {
         return $this->hasOne(Harvest::class, 'activity_id');
@@ -168,6 +181,7 @@ class AgriculturalActivity extends Model
     /**
      * Tratamiento post-vendimia (si activity_type es 'post_harvest')
      */
+    /** @return HasOne<PostHarvestTreatment, $this> */
     public function postHarvestTreatment(): HasOne
     {
         return $this->hasOne(PostHarvestTreatment::class, 'activity_id');
@@ -176,6 +190,7 @@ class AgriculturalActivity extends Model
     /**
      * Maquinaria utilizada en la actividad
      */
+    /** @return BelongsTo<Machinery, $this> */
     public function machinery(): BelongsTo
     {
         return $this->belongsTo(Machinery::class, 'machinery_id');
@@ -192,6 +207,7 @@ class AgriculturalActivity extends Model
     /**
      * Usuario que bloqueó la actividad
      */
+    /** @return BelongsTo<User, $this> */
     public function lockedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'locked_by');

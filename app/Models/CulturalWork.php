@@ -30,6 +30,7 @@ class CulturalWork extends Model
     /**
      * Actividad agrícola asociada
      */
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');

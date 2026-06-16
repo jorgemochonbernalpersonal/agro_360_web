@@ -56,16 +56,19 @@ class ContainerMaintenance extends Model
         return array_map(fn ($v) => __($v), static::STATUSES);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
     }
 
+    /** @return HasMany<ContainerMaintenanceSupply, $this> */
     public function supplies(): HasMany
     {
         return $this->hasMany(ContainerMaintenanceSupply::class, 'container_maintenance_id');
     }
 
+    /** @return HasMany<ContainerMaintenanceWaste, $this> */
     public function wastes(): HasMany
     {
         return $this->hasMany(ContainerMaintenanceWaste::class, 'container_maintenance_id');

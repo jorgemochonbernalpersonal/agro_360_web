@@ -53,16 +53,19 @@ class CellarOperation extends Model
 
     // ── Relations ──────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function sourceContainer(): BelongsTo
     {
         return $this->belongsTo(Container::class, 'source_container_id');
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function targetContainer(): BelongsTo
     {
         return $this->belongsTo(Container::class, 'target_container_id');

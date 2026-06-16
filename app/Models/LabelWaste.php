@@ -25,16 +25,19 @@ class LabelWaste extends Model
         'to_number' => 'integer',
     ];
 
+    /** @return BelongsTo<LabelBatch, $this> */
     public function labelBatch(): BelongsTo
     {
         return $this->belongsTo(LabelBatch::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

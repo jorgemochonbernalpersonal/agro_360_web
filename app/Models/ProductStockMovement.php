@@ -27,16 +27,19 @@ class ProductStockMovement extends Model
         'unit_price' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<ProductStock, $this> */
     public function stock(): BelongsTo
     {
         return $this->belongsTo(ProductStock::class, 'stock_id');
     }
 
+    /** @return BelongsTo<PhytosanitaryTreatment, $this> */
     public function treatment(): BelongsTo
     {
         return $this->belongsTo(PhytosanitaryTreatment::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

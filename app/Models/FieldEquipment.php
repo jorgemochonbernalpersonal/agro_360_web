@@ -43,6 +43,7 @@ class FieldEquipment extends Model
         return array_map(fn ($v) => __($v), static::TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');

@@ -49,11 +49,13 @@ class PacDeclaration extends Model
         return array_map(fn ($v) => __($v), static::ECO_SCHEMES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return HasMany<PacDeclarationItem, $this> */
     public function items(): HasMany
     {
         return $this->hasMany(PacDeclarationItem::class, 'declaration_id');

@@ -55,11 +55,13 @@ class SupervisorWineryNote extends Model
         return array_map(fn ($v) => __($v), static::TYPE_LABELS);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');

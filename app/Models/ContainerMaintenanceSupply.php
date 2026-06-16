@@ -22,16 +22,19 @@ class ContainerMaintenanceSupply extends Model
         'cost' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<ContainerMaintenance, $this> */
     public function maintenance(): BelongsTo
     {
         return $this->belongsTo(ContainerMaintenance::class, 'container_maintenance_id');
     }
 
+    /** @return BelongsTo<WinerySupply, $this> */
     public function winerySupply(): BelongsTo
     {
         return $this->belongsTo(WinerySupply::class);
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);

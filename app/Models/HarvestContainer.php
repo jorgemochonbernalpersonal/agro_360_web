@@ -36,6 +36,7 @@ class HarvestContainer extends Model
     /**
      * Cosecha a la que pertenece este contenedor (opcional)
      */
+    /** @return BelongsTo<Harvest, $this> */
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class);
@@ -44,6 +45,7 @@ class HarvestContainer extends Model
     /**
      * Cosechas que usan este contenedor (relación inversa)
      */
+    /** @return HasMany<Harvest, $this> */
     public function harvests(): HasMany
     {
         return $this->hasMany(Harvest::class, 'container_id');

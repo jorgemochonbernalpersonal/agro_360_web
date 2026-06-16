@@ -46,6 +46,7 @@ class AuditLog extends Model
     /**
      * Get the user who performed the action
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

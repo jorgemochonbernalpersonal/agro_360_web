@@ -44,31 +44,37 @@ class WineTransfer extends Model
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function sourceWine(): BelongsTo
     {
         return $this->belongsTo(Wine::class, 'source_wine_id');
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function fromContainer(): BelongsTo
     {
         return $this->belongsTo(Container::class, 'from_container_id');
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function toContainer(): BelongsTo
     {
         return $this->belongsTo(Container::class, 'to_container_id');
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
     }
 
+    /** @return BelongsTo<Oenologist, $this> */
     public function oenologist(): BelongsTo
     {
         return $this->belongsTo(Oenologist::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

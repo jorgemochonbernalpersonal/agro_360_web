@@ -66,6 +66,7 @@ class Subscription extends Model
     /**
      * Relación con el usuario
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -74,6 +75,7 @@ class Subscription extends Model
     /**
      * Relación con los pagos
      */
+    /** @return HasMany<Payment, $this> */
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);

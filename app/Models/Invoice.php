@@ -101,6 +101,7 @@ class Invoice extends Model
     /**
      * Usuario (viticultor) propietario de la factura
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -109,6 +110,7 @@ class Invoice extends Model
     /**
      * Cliente
      */
+    /** @return BelongsTo<Client, $this> */
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
@@ -117,6 +119,7 @@ class Invoice extends Model
     /**
      * Dirección del cliente (snapshot)
      */
+    /** @return BelongsTo<ClientAddress, $this> */
     public function clientAddress(): BelongsTo
     {
         return $this->belongsTo(ClientAddress::class);
@@ -125,6 +128,7 @@ class Invoice extends Model
     /**
      * Grupo de facturas
      */
+    /** @return BelongsTo<InvoiceGroup, $this> */
     public function invoiceGroup(): BelongsTo
     {
         return $this->belongsTo(InvoiceGroup::class);
@@ -133,11 +137,13 @@ class Invoice extends Model
     /**
      * Items de la factura
      */
+    /** @return HasMany<InvoiceItem, $this> */
     public function items(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
     }
 
+    /** @return HasOne<VerifactuRecord, $this> */
     public function verifactuRecord(): HasOne
     {
         return $this->hasOne(VerifactuRecord::class);
@@ -146,6 +152,7 @@ class Invoice extends Model
     /**
      * Logs de auditoría de la factura
      */
+    /** @return HasMany<InvoiceAuditLog, $this> */
     public function auditLogs(): HasMany
     {
         return $this->hasMany(InvoiceAuditLog::class)->orderBy('created_at', 'desc');
@@ -196,6 +203,7 @@ class Invoice extends Model
     /**
      * La factura original que esta rectificativa corrige
      */
+    /** @return BelongsTo<Invoice, $this> */
     public function correctedInvoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class, 'corrected_invoice_id');
@@ -204,6 +212,7 @@ class Invoice extends Model
     /**
      * Facturas rectificativas emitidas contra esta factura
      */
+    /** @return HasMany<Invoice, $this> */
     public function correctives(): HasMany
     {
         return $this->hasMany(Invoice::class, 'corrected_invoice_id');
@@ -220,6 +229,7 @@ class Invoice extends Model
     /**
      * Registros de envío a Verifactu/AEAT
      */
+    /** @return HasMany<SifRecord, $this> */
     public function sifRecords(): HasMany
     {
         return $this->hasMany(SifRecord::class)->orderByDesc('created_at');
@@ -228,6 +238,7 @@ class Invoice extends Model
     /**
      * Viticultor destinatario (factura de vendimia)
      */
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');

@@ -104,21 +104,25 @@ class WineTastingNote extends Model
         return array_map(fn ($v) => __($v), static::PALATE_FINISH);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<Oenologist, $this> */
     public function oenologist(): BelongsTo
     {
         return $this->belongsTo(Oenologist::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

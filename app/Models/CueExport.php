@@ -59,11 +59,13 @@ class CueExport extends Model
         return array_map(fn ($v) => __($v), static::STATUSES);
     }
 
+    /** @return BelongsTo<Exploitation, $this> */
     public function exploitation(): BelongsTo
     {
         return $this->belongsTo(Exploitation::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');

@@ -74,26 +74,31 @@ class ExternalGrapePurchase extends Model
 
     // ── Relations ──────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Supplier, $this> */
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function destinationContainer(): BelongsTo
     {
         return $this->belongsTo(Container::class, 'destination_container_id');
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

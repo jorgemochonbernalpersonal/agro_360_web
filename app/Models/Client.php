@@ -42,6 +42,7 @@ class Client extends Model
     /**
      * Usuario (viticultor) propietario del cliente
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -50,6 +51,7 @@ class Client extends Model
     /**
      * Direcciones del cliente
      */
+    /** @return HasMany<ClientAddress, $this> */
     public function addresses(): HasMany
     {
         return $this->hasMany(ClientAddress::class);
@@ -66,6 +68,7 @@ class Client extends Model
     /**
      * Facturas del cliente
      */
+    /** @return HasMany<Invoice, $this> */
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);

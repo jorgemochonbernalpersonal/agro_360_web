@@ -32,6 +32,7 @@ class ContainerHistory extends Model
     /**
      * Contenedor
      */
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
@@ -40,6 +41,7 @@ class ContainerHistory extends Model
     /**
      * Cosecha
      */
+    /** @return BelongsTo<Harvest, $this> */
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class);
@@ -48,6 +50,7 @@ class ContainerHistory extends Model
     /**
      * Vino
      */
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
@@ -56,6 +59,7 @@ class ContainerHistory extends Model
     /**
      * Usuario que creó el movimiento
      */
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -64,6 +68,7 @@ class ContainerHistory extends Model
     /**
      * Actividad de campo relacionada
      */
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function fieldActivity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'field_activity_id');

@@ -21,6 +21,7 @@ class UnitOfMeasurement extends Model
     /**
      * Contenedores que usan esta unidad
      */
+    /** @return HasMany<Container, $this> */
     public function containers(): HasMany
     {
         return $this->hasMany(Container::class);

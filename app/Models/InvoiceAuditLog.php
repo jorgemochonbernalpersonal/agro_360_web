@@ -27,6 +27,7 @@ class InvoiceAuditLog extends Model
     /**
      * Invoice relacionada
      */
+    /** @return BelongsTo<Invoice, $this> */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
@@ -35,6 +36,7 @@ class InvoiceAuditLog extends Model
     /**
      * Usuario que realizó la acción
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

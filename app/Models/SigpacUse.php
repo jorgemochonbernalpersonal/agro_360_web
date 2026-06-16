@@ -14,6 +14,7 @@ class SigpacUse extends Model
         'description',
     ];
 
+    /** @return BelongsToMany<Plot, $this> */
     public function plots(): BelongsToMany
     {
         return $this->belongsToMany(Plot::class, 'plot_sigpac_use', 'sigpac_use_id', 'plot_id');

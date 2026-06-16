@@ -74,21 +74,25 @@ class EnergyUsage extends Model
         return array_map(fn ($v) => __($v), static::UNITS);
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');
     }
 
+    /** @return BelongsTo<Machinery, $this> */
     public function machinery(): BelongsTo
     {
         return $this->belongsTo(Machinery::class);

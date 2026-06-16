@@ -14,6 +14,7 @@ class DeviceToken extends Model
         'device_name',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

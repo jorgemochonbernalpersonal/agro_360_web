@@ -26,6 +26,7 @@ class TrainingSystem extends Model
     /**
      * Plantaciones que usan este sistema de conducción.
      */
+    /** @return HasMany<PlotPlanting, $this> */
     public function plantings(): HasMany
     {
         return $this->hasMany(PlotPlanting::class, 'training_system_id');

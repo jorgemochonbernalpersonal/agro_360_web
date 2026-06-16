@@ -25,16 +25,19 @@ class ContainerMaintenanceWaste extends Model
         'waste_date' => 'date',
     ];
 
+    /** @return BelongsTo<ContainerMaintenance, $this> */
     public function maintenance(): BelongsTo
     {
         return $this->belongsTo(ContainerMaintenance::class, 'container_maintenance_id');
     }
 
+    /** @return BelongsTo<ContainerWasteType, $this> */
     public function wasteType(): BelongsTo
     {
         return $this->belongsTo(ContainerWasteType::class, 'container_waste_type_id');
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);

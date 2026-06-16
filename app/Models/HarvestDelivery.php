@@ -57,11 +57,13 @@ class HarvestDelivery extends Model
 
     // ── Relations ────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<PlotPlanting, $this> */
     public function plotPlanting(): BelongsTo
     {
         return $this->belongsTo(PlotPlanting::class, 'plot_planting_id');
@@ -70,6 +72,7 @@ class HarvestDelivery extends Model
     /**
      * Recepción de bodega que confirmó esta entrega (null = aún pendiente).
      */
+    /** @return BelongsTo<Harvest, $this> */
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class, 'harvest_id');

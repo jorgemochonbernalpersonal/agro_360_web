@@ -47,46 +47,55 @@ class WineBottling extends Model
         return array_map(fn ($v) => __($v), static::BOTTLE_FORMATS);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
     }
 
+    /** @return BelongsTo<WineProcessDetail, $this> */
     public function processDetail(): BelongsTo
     {
         return $this->belongsTo(WineProcessDetail::class, 'wine_process_detail_id');
     }
 
+    /** @return BelongsTo<ProductLot, $this> */
     public function productLot(): BelongsTo
     {
         return $this->belongsTo(ProductLot::class, 'product_lot_id');
     }
 
+    /** @return BelongsTo<Oenologist, $this> */
     public function oenologist(): BelongsTo
     {
         return $this->belongsTo(Oenologist::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /** @return HasMany<WineBottlingSupply, $this> */
     public function supplies(): HasMany
     {
         return $this->hasMany(WineBottlingSupply::class);
     }
 
+    /** @return HasMany<WineLabeling, $this> */
     public function labelings(): HasMany
     {
         return $this->hasMany(WineLabeling::class);

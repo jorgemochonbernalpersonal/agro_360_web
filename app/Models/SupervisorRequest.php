@@ -102,11 +102,13 @@ class SupervisorRequest extends Model
 
     // ── Relaciones ────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');

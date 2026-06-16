@@ -37,11 +37,13 @@ class PacPayment extends Model
         return array_map(fn ($v) => __($v), static::PAYMENT_TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<PacDeclaration, $this> */
     public function declaration(): BelongsTo
     {
         return $this->belongsTo(PacDeclaration::class, 'declaration_id');

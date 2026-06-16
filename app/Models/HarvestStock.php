@@ -37,6 +37,7 @@ class HarvestStock extends Model
     /**
      * Cosecha origen
      */
+    /** @return BelongsTo<Harvest, $this> */
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class);
@@ -45,6 +46,7 @@ class HarvestStock extends Model
     /**
      * Contenedor afectado
      */
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class, 'container_id');
@@ -53,6 +55,7 @@ class HarvestStock extends Model
     /**
      * Usuario que realizó el movimiento
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -61,6 +64,7 @@ class HarvestStock extends Model
     /**
      * Item de factura relacionado
      */
+    /** @return BelongsTo<InvoiceItem, $this> */
     public function invoiceItem(): BelongsTo
     {
         return $this->belongsTo(InvoiceItem::class);

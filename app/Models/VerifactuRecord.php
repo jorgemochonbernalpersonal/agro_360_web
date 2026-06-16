@@ -40,11 +40,13 @@ class VerifactuRecord extends Model
 
     // ── Relations ──────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Invoice, $this> */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);

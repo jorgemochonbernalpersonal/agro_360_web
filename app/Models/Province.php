@@ -17,6 +17,7 @@ class Province extends Model
     /**
      * Comunidad autónoma a la que pertenece
      */
+    /** @return BelongsTo<AutonomousCommunity, $this> */
     public function autonomousCommunity(): BelongsTo
     {
         return $this->belongsTo(AutonomousCommunity::class, 'autonomous_community_id');
@@ -25,6 +26,7 @@ class Province extends Model
     /**
      * Municipios de esta provincia
      */
+    /** @return HasMany<Municipality, $this> */
     public function municipalities(): HasMany
     {
         return $this->hasMany(Municipality::class, 'province_id');
@@ -33,6 +35,7 @@ class Province extends Model
     /**
      * Parcelas en esta provincia
      */
+    /** @return HasMany<Plot, $this> */
     public function plots(): HasMany
     {
         return $this->hasMany(Plot::class, 'province_id');

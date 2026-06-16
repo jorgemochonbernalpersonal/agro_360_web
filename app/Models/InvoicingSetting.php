@@ -38,6 +38,7 @@ class InvoicingSetting extends Model
     /**
      * Usuario propietario de la configuración
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

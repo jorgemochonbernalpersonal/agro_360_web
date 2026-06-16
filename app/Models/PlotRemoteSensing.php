@@ -150,6 +150,7 @@ class PlotRemoteSensing extends Model
     /**
      * Relación con la parcela
      */
+    /** @return BelongsTo<Plot, $this> */
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);

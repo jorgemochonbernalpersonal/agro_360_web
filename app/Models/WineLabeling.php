@@ -27,26 +27,31 @@ class WineLabeling extends Model
         'to_number' => 'integer',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<WineBottling, $this> */
     public function bottling(): BelongsTo
     {
         return $this->belongsTo(WineBottling::class, 'wine_bottling_id');
     }
 
+    /** @return BelongsTo<LabelBatch, $this> */
     public function labelBatch(): BelongsTo
     {
         return $this->belongsTo(LabelBatch::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

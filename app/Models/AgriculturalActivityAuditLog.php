@@ -27,6 +27,7 @@ class AgriculturalActivityAuditLog extends Model
     /**
      * Actividad auditada
      */
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');
@@ -35,6 +36,7 @@ class AgriculturalActivityAuditLog extends Model
     /**
      * Usuario que realizó la acción
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

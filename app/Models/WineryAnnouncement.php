@@ -53,11 +53,13 @@ class WineryAnnouncement extends Model
 
     // ── Relationships ────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
     }
 
+    /** @return BelongsToMany<User, $this> */
     public function viticulturists(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'winery_announcement_viticulturist', 'announcement_id', 'viticulturist_id')

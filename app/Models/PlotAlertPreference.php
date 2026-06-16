@@ -19,11 +19,13 @@ class PlotAlertPreference extends Model
         'email_enabled' => 'boolean',
     ];
 
+    /** @return BelongsTo<Plot, $this> */
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -75,16 +75,19 @@ class DoQualification extends Model
         return array_map(fn ($v) => __($v), static::COLOR_LABELS);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function qualifiedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'qualified_by');

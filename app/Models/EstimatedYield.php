@@ -82,6 +82,7 @@ class EstimatedYield extends Model
     /**
      * Plantación asociada
      */
+    /** @return BelongsTo<PlotPlanting, $this> */
     public function plotPlanting(): BelongsTo
     {
         return $this->belongsTo(PlotPlanting::class);
@@ -90,6 +91,7 @@ class EstimatedYield extends Model
     /**
      * Campaña asociada
      */
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
@@ -98,6 +100,7 @@ class EstimatedYield extends Model
     /**
      * Usuario que realizó la estimación
      */
+    /** @return BelongsTo<User, $this> */
     public function estimator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'estimated_by');

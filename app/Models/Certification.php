@@ -45,6 +45,7 @@ class Certification extends Model
         return array_map(fn ($v) => __($v), static::CERTIFICATION_TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');

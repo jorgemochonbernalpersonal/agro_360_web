@@ -31,6 +31,7 @@ class ClientAddress extends Model
     /**
      * Cliente al que pertenece esta dirección
      */
+    /** @return BelongsTo<Client, $this> */
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
@@ -39,6 +40,7 @@ class ClientAddress extends Model
     /**
      * Comunidad autónoma
      */
+    /** @return BelongsTo<AutonomousCommunity, $this> */
     public function autonomousCommunity(): BelongsTo
     {
         return $this->belongsTo(AutonomousCommunity::class);
@@ -47,6 +49,7 @@ class ClientAddress extends Model
     /**
      * Provincia
      */
+    /** @return BelongsTo<Province, $this> */
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class);
@@ -55,6 +58,7 @@ class ClientAddress extends Model
     /**
      * Municipio
      */
+    /** @return BelongsTo<Municipality, $this> */
     public function municipality(): BelongsTo
     {
         return $this->belongsTo(Municipality::class);
@@ -63,6 +67,7 @@ class ClientAddress extends Model
     /**
      * Facturas que usan esta dirección
      */
+    /** @return HasMany<Invoice, $this> */
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class, 'client_address_id');

@@ -28,6 +28,7 @@ class PhytosanitaryProduct extends Model
         'active' => 'boolean',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -77,6 +78,7 @@ class PhytosanitaryProduct extends Model
     /**
      * Tratamientos que usan este producto
      */
+    /** @return HasMany<PhytosanitaryTreatment, $this> */
     public function treatments(): HasMany
     {
         return $this->hasMany(PhytosanitaryTreatment::class, 'product_id');
@@ -85,6 +87,7 @@ class PhytosanitaryProduct extends Model
     /**
      * Stocks de este producto
      */
+    /** @return HasMany<ProductStock, $this> */
     public function stocks(): HasMany
     {
         return $this->hasMany(ProductStock::class, 'product_id');

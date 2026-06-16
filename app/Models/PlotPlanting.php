@@ -62,6 +62,7 @@ class PlotPlanting extends Model
     /**
      * Observaciones fenológicas de la plantación
      */
+    /** @return HasMany<PhenologyObservation, $this> */
     public function phenologyObservations(): HasMany
     {
         return $this->hasMany(PhenologyObservation::class);
@@ -86,6 +87,7 @@ class PlotPlanting extends Model
     /**
      * Relación con la variedad de uva
      */
+    /** @return BelongsTo<GrapeVariety, $this> */
     public function grapeVariety(): BelongsTo
     {
         return $this->belongsTo(GrapeVariety::class);
@@ -94,6 +96,7 @@ class PlotPlanting extends Model
     /**
      * Sistema de conducción (catálogo).
      */
+    /** @return BelongsTo<TrainingSystem, $this> */
     public function trainingSystem(): BelongsTo
     {
         return $this->belongsTo(TrainingSystem::class, 'training_system_id');

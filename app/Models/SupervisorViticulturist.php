@@ -28,6 +28,7 @@ class SupervisorViticulturist extends Model
     /**
      * Supervisor que tiene este viticultor
      */
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
@@ -36,6 +37,7 @@ class SupervisorViticulturist extends Model
     /**
      * Viticultor asignado al supervisor
      */
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -44,6 +46,7 @@ class SupervisorViticulturist extends Model
     /**
      * Usuario que asignó esta relación
      */
+    /** @return BelongsTo<User, $this> */
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');

@@ -49,31 +49,37 @@ class WinerySupply extends Model
         return array_map(fn ($v) => __($v), static::SUPPLY_TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
     }
 
+    /** @return HasMany<WineAdditive, $this> */
     public function wineAdditives(): HasMany
     {
         return $this->hasMany(WineAdditive::class, 'winery_supply_id');
     }
 
+    /** @return HasMany<ContainerMaintenanceSupply, $this> */
     public function maintenanceSupplies(): HasMany
     {
         return $this->hasMany(ContainerMaintenanceSupply::class);
     }
 
+    /** @return HasMany<ContainerAdditiveSupply, $this> */
     public function additiveSupplies(): HasMany
     {
         return $this->hasMany(ContainerAdditiveSupply::class);
     }
 
+    /** @return HasMany<WineBottlingSupply, $this> */
     public function bottlingSupplies(): HasMany
     {
         return $this->hasMany(WineBottlingSupply::class);

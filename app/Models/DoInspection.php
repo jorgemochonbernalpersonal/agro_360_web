@@ -68,11 +68,13 @@ class DoInspection extends Model
         return array_map(fn ($v) => __($v), static::RESULT_LABELS);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function subject(): BelongsTo
     {
         return $this->belongsTo(User::class, 'subject_id');

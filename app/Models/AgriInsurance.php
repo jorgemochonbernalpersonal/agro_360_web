@@ -60,6 +60,7 @@ class AgriInsurance extends Model
         'subsidy_amount' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');

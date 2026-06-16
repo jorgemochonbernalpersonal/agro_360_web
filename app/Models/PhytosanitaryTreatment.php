@@ -61,6 +61,7 @@ class PhytosanitaryTreatment extends Model
     /**
      * Actividad agrícola asociada
      */
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');
@@ -69,6 +70,7 @@ class PhytosanitaryTreatment extends Model
     /**
      * Producto fitosanitario utilizado
      */
+    /** @return BelongsTo<PhytosanitaryProduct, $this> */
     public function product(): BelongsTo
     {
         return $this->belongsTo(PhytosanitaryProduct::class, 'product_id');
@@ -77,6 +79,7 @@ class PhytosanitaryTreatment extends Model
     /**
      * Plaga objetivo del tratamiento
      */
+    /** @return BelongsTo<Pest, $this> */
     public function pest(): BelongsTo
     {
         return $this->belongsTo(Pest::class, 'pest_id');
@@ -85,6 +88,7 @@ class PhytosanitaryTreatment extends Model
     /**
      * Aplicador ROPO vinculado (FieldApplicator registrado)
      */
+    /** @return BelongsTo<FieldApplicator, $this> */
     public function fieldApplicator(): BelongsTo
     {
         return $this->belongsTo(FieldApplicator::class, 'field_applicator_id');

@@ -13,6 +13,7 @@ class CannedResponse extends Model
         'sort_order' => 'integer',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id');

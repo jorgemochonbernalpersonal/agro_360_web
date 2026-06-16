@@ -21,6 +21,7 @@ class PlotGeometry extends Model
     /**
      * Relaciones con múltiples plot-sigpac
      */
+    /** @return HasMany<MultipartPlotSigpac, $this> */
     public function multiplePlotSigpacs(): HasMany
     {
         return $this->hasMany(MultipartPlotSigpac::class, 'plot_geometry_id');

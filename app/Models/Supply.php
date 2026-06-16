@@ -47,16 +47,19 @@ class Supply extends Model
         return array_map(fn ($v) => __($v), static::SUPPLY_TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Warehouse, $this> */
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
     }
 
+    /** @return HasMany<SupplyPurchase, $this> */
     public function purchases(): HasMany
     {
         return $this->hasMany(SupplyPurchase::class);

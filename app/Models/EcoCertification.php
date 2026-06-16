@@ -50,6 +50,7 @@ class EcoCertification extends Model
         return array_map(fn ($v) => __($v), static::STATUSES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

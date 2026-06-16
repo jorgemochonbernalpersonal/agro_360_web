@@ -17,6 +17,7 @@ class InvoiceGroup extends Model
     /**
      * Usuario propietario del grupo
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -25,6 +26,7 @@ class InvoiceGroup extends Model
     /**
      * Facturas del grupo
      */
+    /** @return HasMany<Invoice, $this> */
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);

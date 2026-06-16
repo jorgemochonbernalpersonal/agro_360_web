@@ -47,6 +47,7 @@ class Machinery extends Model
     /**
      * Viticultor propietario de la maquinaria
      */
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -55,6 +56,7 @@ class Machinery extends Model
     /**
      * Tipo de maquinaria (catálogo).
      */
+    /** @return BelongsTo<MachineryType, $this> */
     public function machineryType(): BelongsTo
     {
         return $this->belongsTo(MachineryType::class, 'machinery_type_id');
@@ -63,6 +65,7 @@ class Machinery extends Model
     /**
      * Actividades agrícolas donde se usó esta maquinaria
      */
+    /** @return HasMany<AgriculturalActivity, $this> */
     public function activities(): HasMany
     {
         return $this->hasMany(AgriculturalActivity::class, 'machinery_id');

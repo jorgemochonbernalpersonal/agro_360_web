@@ -40,6 +40,7 @@ class WineryViticulturist extends Model
     /**
      * Bodega que tiene este viticultor
      */
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
@@ -48,6 +49,7 @@ class WineryViticulturist extends Model
     /**
      * Viticultor asignado a la bodega
      */
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -56,6 +58,7 @@ class WineryViticulturist extends Model
     /**
      * Usuario que asignó esta relación
      */
+    /** @return BelongsTo<User, $this> */
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');
@@ -64,6 +67,7 @@ class WineryViticulturist extends Model
     /**
      * Supervisor de origen (si viene del pool del supervisor)
      */
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
@@ -72,6 +76,7 @@ class WineryViticulturist extends Model
     /**
      * Viticultor padre que creó este viticultor
      */
+    /** @return BelongsTo<User, $this> */
     public function parentViticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'parent_viticulturist_id');

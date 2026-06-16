@@ -38,6 +38,7 @@ class Supplier extends Model
         return array_map(fn ($v) => __($v), static::CATEGORIES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

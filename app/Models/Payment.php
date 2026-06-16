@@ -37,6 +37,7 @@ class Payment extends Model
     /**
      * Relación con el usuario
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -45,6 +46,7 @@ class Payment extends Model
     /**
      * Relación con la suscripción
      */
+    /** @return BelongsTo<Subscription, $this> */
     public function subscription(): BelongsTo
     {
         return $this->belongsTo(Subscription::class);

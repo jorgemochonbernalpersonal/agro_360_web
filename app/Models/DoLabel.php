@@ -58,21 +58,25 @@ class DoLabel extends Model
         return array_map(fn ($v) => __($v), static::STATUS_LABELS);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function issuedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'issued_by');
     }
 
+    /** @return BelongsTo<SupervisorRequest, $this> */
     public function supervisorRequest(): BelongsTo
     {
         return $this->belongsTo(SupervisorRequest::class, 'supervisor_request_id');

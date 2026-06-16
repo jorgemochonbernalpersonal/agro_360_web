@@ -18,6 +18,7 @@ class Crew extends Model
     /**
      * Líder de la cuadrilla
      */
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -26,6 +27,7 @@ class Crew extends Model
     /**
      * Bodega contexto
      */
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
@@ -34,6 +36,7 @@ class Crew extends Model
     /**
      * Miembros de la cuadrilla
      */
+    /** @return HasMany<CrewMember, $this> */
     public function members(): HasMany
     {
         return $this->hasMany(CrewMember::class, 'crew_id');
@@ -42,6 +45,7 @@ class Crew extends Model
     /**
      * Actividades agrícolas realizadas por esta cuadrilla
      */
+    /** @return HasMany<AgriculturalActivity, $this> */
     public function activities(): HasMany
     {
         return $this->hasMany(AgriculturalActivity::class, 'crew_id');

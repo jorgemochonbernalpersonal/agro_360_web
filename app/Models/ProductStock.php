@@ -34,21 +34,25 @@ class ProductStock extends Model
         'active' => 'boolean',
     ];
 
+    /** @return BelongsTo<PhytosanitaryProduct, $this> */
     public function product(): BelongsTo
     {
         return $this->belongsTo(PhytosanitaryProduct::class, 'product_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Warehouse, $this> */
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
     }
 
+    /** @return HasMany<ProductStockMovement, $this> */
     public function movements(): HasMany
     {
         return $this->hasMany(ProductStockMovement::class, 'stock_id');

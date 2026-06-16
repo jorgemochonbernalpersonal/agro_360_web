@@ -21,6 +21,7 @@ class UserProfile extends Model
     /**
      * Relación con el usuario
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -29,6 +30,7 @@ class UserProfile extends Model
     /**
      * Relación con la provincia
      */
+    /** @return BelongsTo<Province, $this> */
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class);
