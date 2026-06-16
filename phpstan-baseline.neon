@@ -19,18 +19,6 @@ parameters:
 			path: app/Console/Commands/CleanStaleInvitations.php
 
 		-
-			message: '#^Relation ''plotGeometries'' is not found in App\\Models\\Plot model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Console/Commands/UpdateEnrichedRemoteSensingData.php
-
-		-
-			message: '#^Relation ''multipartCoordinates'' is not found in App\\Models\\Plot model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Console/Commands/UpdateNdviCommand.php
-
-		-
 			message: '#^Array has 2 duplicate keys with value ''font'' \(''font'', ''font''\)\.$#'
 			identifier: array.duplicateKey
 			count: 1
@@ -53,12 +41,6 @@ parameters:
 			identifier: staticClassAccess.privateMethod
 			count: 1
 			path: app/Helpers/NavigationHelper.php
-
-		-
-			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
-			identifier: larastan.relationExistence
-			count: 3
-			path: app/Http/Controllers/Api/Admin/UserController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_baume\.$#'
@@ -149,12 +131,6 @@ parameters:
 			identifier: argument.unresolvableType
 			count: 1
 			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
-
-		-
-			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
-			identifier: larastan.relationExistence
-			count: 4
-			path: app/Http/Controllers/Api/Supervisor/OversightController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$centroid_data\.$#'
@@ -337,12 +313,6 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/GrapePurchaseInvoiceController.php
 
 		-
-			message: '#^Relation ''plots'' is not found in App\\Models\\User model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Api/Winery/GrapeReceptionController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$avg_acidity\.$#'
 			identifier: property.notFound
 			count: 1
@@ -523,12 +493,6 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
 
 		-
-			message: '#^Relation ''plots'' is not found in App\\Models\\User model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$aged\.$#'
 			identifier: property.notFound
 			count: 1
@@ -595,34 +559,10 @@ parameters:
 			path: app/Http/Controllers/Viticulturist/HarvestsPdfController.php
 
 		-
-			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Viticulturist/InvoicePdfController.php
-
-		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
 			identifier: arguments.count
 			count: 1
 			path: app/Http/Controllers/Viticulturist/OfficialReportController.php
-
-		-
-			message: '#^Relation ''plotVariety'' is not found in App\\Models\\PlotPlanting model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/WineTraceController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$organization\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Winery/InfoviController.php
-
-		-
-			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Winery/InvoicePdfController.php
 
 		-
 			message: '#^Call to an undefined method Symfony\\Component\\HttpFoundation\\Response\:\:header\(\)\.$#'
@@ -715,12 +655,6 @@ parameters:
 			path: app/Http/Resources/Api/Admin/AdminUserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\Admin\\AdminUserResource\:\:\$profile\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/Admin/AdminUserResource.php
-
-		-
 			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 3
@@ -779,12 +713,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/Api/PlotResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\UserResource\:\:\$profile\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/UserResource.php
 
 		-
 			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
@@ -883,12 +811,6 @@ parameters:
 			path: app/Http/Resources/PlotPlantingResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\PlotResource\:\:\$latestRemoteSensing\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/PlotResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\PlotResource\:\:\$tenure_regime\.$#'
 			identifier: property.notFound
 			count: 1
@@ -937,9 +859,9 @@ parameters:
 			path: app/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$profile\.$#'
+			message: '#^Access to an undefined property App\\Models\\UserProfile\:\:\$nif_cif\.$#'
 			identifier: property.notFound
-			count: 6
+			count: 1
 			path: app/Http/Resources/UserResource.php
 
 		-
@@ -965,12 +887,6 @@ parameters:
 			identifier: property.notFound
 			count: 4
 			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Relation ''multipartCoordinates'' is not found in App\\Models\\Plot model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Jobs/UpdateAllPlotsNdviJob.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\AgriculturalActivity\:\:\$user\.$#'
@@ -1171,12 +1087,6 @@ parameters:
 			path: app/Livewire/Admin/Users/Index.php
 
 		-
-			message: '#^Relation ''organization'' is not found in App\\Models\\User model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Livewire/Admin/Users/Show.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Plots\\Index\:\:\$autonomousCommunities\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1219,12 +1129,6 @@ parameters:
 			path: app/Livewire/Producer/IntegratedEstate/Index.php
 
 		-
-			message: '#^Relation ''latestRemoteSensing'' is not found in App\\Models\\Plot model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Livewire/Producer/IntegratedEstate/PlotTable.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$available_qty_computed\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1253,12 +1157,6 @@ parameters:
 			identifier: greater.alwaysTrue
 			count: 1
 			path: app/Livewire/Producer/OnboardingChecklist.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$profile\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Profile/Edit.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
@@ -1423,8 +1321,8 @@ parameters:
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Index.php
 
 		-
-			message: '#^Relation ''plot'' is not found in App\\Models\\ResidueAnalysis model\.$#'
-			identifier: larastan.relationExistence
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Viticulturist/Calendar.php
 
@@ -1609,20 +1507,8 @@ parameters:
 			path: app/Livewire/Viticulturist/Personal/Workers/Index.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$certifications\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Livewire/Viticulturist/PlantingsDashboard.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TRelatedModel of Illuminate\\Database\\Eloquent\\Model\>\:\:forUser\(\)\.$#'
 			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/PlantingsDashboard.php
-
-		-
-			message: '#^Relation ''certifications'' is not found in App\\Models\\PlotPlanting model\.$#'
-			identifier: larastan.relationExistence
 			count: 1
 			path: app/Livewire/Viticulturist/PlantingsDashboard.php
 
@@ -1783,12 +1669,6 @@ parameters:
 			path: app/Livewire/Winery/Cellar/Containers/Index.php
 
 		-
-			message: '#^Relation ''grapeVariety'' is not found in App\\Models\\GrapeReceptionBatch model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Livewire/Winery/Cellar/Containers/Show.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -1885,12 +1765,6 @@ parameters:
 			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
 
 		-
-			message: '#^Relation ''plots'' is not found in App\\Models\\User model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Create.php
-
-		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
 			count: 1
@@ -1981,18 +1855,6 @@ parameters:
 			path: app/Livewire/Winery/OnboardingChecklist.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$organization\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Livewire/Winery/Settings.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$organization\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Silicie/Infovi.php
-
-		-
 			message: '#^Method App\\Livewire\\Winery\\Silicie\\Infovi\:\:categoryBucket\(\) is unused\.$#'
 			identifier: method.unused
 			count: 1
@@ -2059,18 +1921,6 @@ parameters:
 			path: app/Livewire/Winery/TastingNotes/Edit.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$profile\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Viticulturists/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$plots\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Viticulturists/Show.php
-
-		-
 			message: '#^Cannot call method isAfter\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -2107,8 +1957,8 @@ parameters:
 			path: app/Livewire/Winery/Wines/Show.php
 
 		-
-			message: '#^Relation ''plotVariety'' is not found in App\\Models\\PlotPlanting model\.$#'
-			identifier: larastan.relationExistence
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Winery/Wines/Show.php
 
@@ -2401,12 +2251,6 @@ parameters:
 			path: app/Observers/PhytosanitaryTreatmentObserver.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$organization\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/UserObserver.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -2555,12 +2399,6 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: app/Services/RemoteSensing/NasaVIIRSService.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$profile\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Reports/ReportPdfGenerator.php
 
 		-
 			message: '#^Unsafe call to private method App\\Services\\SecurityLogger\:\:persist\(\) through static\:\:\.$#'

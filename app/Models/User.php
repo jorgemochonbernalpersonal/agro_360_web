@@ -9,6 +9,9 @@ use App\Models\Traits\HasSubscriptions;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -155,8 +158,10 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
 
     /**
      * Organización a la que pertenece este usuario (winery/DO).
+     *
+     * @return BelongsTo<Organization, $this>
      */
-    public function organization()
+    public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
     }
@@ -192,8 +197,10 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
 
     /**
      * Perfil del usuario
+     *
+     * @return HasOne<UserProfile, $this>
      */
-    public function profile()
+    public function profile(): HasOne
     {
         return $this->hasOne(UserProfile::class);
     }
@@ -216,8 +223,10 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
 
     /**
      * Parcelas donde el usuario es viticultor
+     *
+     * @return HasMany<Plot, $this>
      */
-    public function plots()
+    public function plots(): HasMany
     {
         return $this->hasMany(Plot::class, 'viticulturist_id');
     }

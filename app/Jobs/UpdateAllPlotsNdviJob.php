@@ -33,7 +33,7 @@ class UpdateAllPlotsNdviJob implements ShouldQueue
 
         // Obtener todas las parcelas activas
         $plots = Plot::where('active', true)
-            ->whereHas('multipartCoordinates', function ($query) {
+            ->whereHas('multiplePlotSigpacs', function ($query) {
                 $query->whereNotNull('plot_geometry_id');
             })
             ->get();

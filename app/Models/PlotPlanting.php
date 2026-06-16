@@ -78,8 +78,10 @@ class PlotPlanting extends Model
 
     /**
      * Certificaciones de la plantación
+     *
+     * @return HasMany<PlantingCertification, $this>
      */
-    public function certifications()
+    public function certifications(): HasMany
     {
         return $this->hasMany(PlantingCertification::class);
     }

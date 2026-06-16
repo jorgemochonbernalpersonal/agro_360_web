@@ -91,7 +91,7 @@ class UpdateNdviCommand extends Command
     private function updateAllPlots(bool $sync): int
     {
         $plots = Plot::where('active', true)
-            ->whereHas('multipartCoordinates', function ($query) {
+            ->whereHas('multiplePlotSigpacs', function ($query) {
                 $query->whereNotNull('plot_geometry_id');
             })
             ->get();

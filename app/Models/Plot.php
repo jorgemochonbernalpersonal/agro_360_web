@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Plot extends Model
 {
@@ -199,8 +201,10 @@ class Plot extends Model
 
     /**
      * Geometrías de la parcela (via multiple_plot_sigpac)
+     *
+     * @return HasManyThrough<PlotGeometry, MultipartPlotSigpac, $this>
      */
-    public function plotGeometries()
+    public function plotGeometries(): HasManyThrough
     {
         return $this->hasManyThrough(
             PlotGeometry::class,
@@ -284,8 +288,10 @@ class Plot extends Model
 
     /**
      * Último dato de teledetección
+     *
+     * @return HasOne<PlotRemoteSensing, $this>
      */
-    public function latestRemoteSensing()
+    public function latestRemoteSensing(): HasOne
     {
         return $this->hasOne(PlotRemoteSensing::class)->latestOfMany('image_date');
     }

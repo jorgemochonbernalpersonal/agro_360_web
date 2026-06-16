@@ -497,7 +497,7 @@ class Show extends Component
         // Composición: recepciones vinculadas
         $composition = $this->wine->wineHarvests()
             ->with([
-                'harvest.plotPlanting.plotVariety.grapeVariety',
+                'harvest.plotPlanting.grapeVariety',
                 'harvest.plotPlanting.plot',
             ])
             ->get();
@@ -563,7 +563,7 @@ class Show extends Component
 
         // ── Inputs: recepciones de uva ────────────────────────────────────────
         foreach ($composition as $i => $entry) {
-            $variety = $entry->harvest->plotPlanting?->plotVariety?->grapeVariety->name ?? 'Uva';
+            $variety = $entry->harvest->plotPlanting?->grapeVariety?->name ?? 'Uva';
             $kg = number_format($entry->quantity_kg ?? 0, 0);
             $nodeId = 'grape_'.$i;
             $label = addslashes("{$variety}\n{$kg} kg");

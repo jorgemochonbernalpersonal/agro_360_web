@@ -77,7 +77,7 @@ class Show extends Component
                 'containerType',
                 'containerMaterial',
                 'containerRoom',
-                'currentState.harvest.batch.grapeVariety',
+                'currentState.harvest.batch.plotPlanting.grapeVariety',
                 'currentState.wine',
             ])
             ->firstOrFail();

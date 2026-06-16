@@ -232,14 +232,14 @@ class Calendar extends Component
         try {
             ResidueAnalysis::forViticulturist($userId)
                 ->whereBetween('analysis_date', [$start, $end])
-                ->with('plot')
+                ->with('plotPlanting.plot')
                 ->get()
                 ->each(function ($item) use (&$events) {
                     $events->push([
                         'date' => Carbon::parse($item->analysis_date)->format('Y-m-d'),
                         'type' => 'residue_analysis',
                         'label' => __('Análisis residuos'),
-                        'description' => $item->plot->name ?? '',
+                        'description' => $item->plotPlanting?->plot?->name ?? '',
                         'urgency' => 'normal',
                     ]);
                 });
