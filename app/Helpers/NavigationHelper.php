@@ -50,7 +50,7 @@ class NavigationHelper
         };
     }
 
-    private static function buildAdminMenu(): array
+    protected static function buildAdminMenu(): array
     {
         return [
             'main' => [

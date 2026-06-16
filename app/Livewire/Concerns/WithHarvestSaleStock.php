@@ -21,7 +21,7 @@ trait WithHarvestSaleStock
 
         if (! $latest) {
             $harvest = Harvest::find($harvestId);
-            $total = (float) ($harvest?->total_weight ?? 0);
+            $total = (float) ($harvest->total_weight ?? 0);
 
             return [
                 'available' => $total,

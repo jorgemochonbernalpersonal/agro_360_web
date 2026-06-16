@@ -108,7 +108,6 @@ class Edit extends Component
 
         if ($existing !== false) {
             array_splice($this->lines, $existing, 1);
-            $this->lines = array_values($this->lines);
 
             return;
         }
@@ -134,7 +133,6 @@ class Edit extends Component
     public function removeLine(int $index): void
     {
         array_splice($this->lines, $index, 1);
-        $this->lines = array_values($this->lines);
     }
 
     // ── Save ───────────────────────────────────────────────────────────────────

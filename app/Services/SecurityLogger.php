@@ -187,7 +187,7 @@ class SecurityLogger
 
     // ─── DB persistence ──────────────────────────────────────────────────────
 
-    private static function persist(string $level, string $event, string $message, array $context): void
+    protected static function persist(string $level, string $event, string $message, array $context): void
     {
         try {
             SecurityEvent::create([

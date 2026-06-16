@@ -209,7 +209,7 @@ class PlotGeometry extends Model
      *
      * @param mixed $geometry
      */
-    private static function invalidatePlotGeometryCache($geometry)
+    protected static function invalidatePlotGeometryCache($geometry)
     {
         // Obtener IDs de parcelas que usan esta geometría
         $plotIds = DB::table('multipart_plot_sigpac')

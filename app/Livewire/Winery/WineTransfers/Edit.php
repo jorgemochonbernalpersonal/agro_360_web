@@ -59,9 +59,7 @@ class Edit extends Component
         $this->quantity = (string) $transfer->quantity;
         $this->unit_of_measurement_id = (string) $transfer->unit_of_measurement_id;
         $this->transfer_type = $transfer->transfer_type;
-        $this->transfer_date = $transfer->transfer_date instanceof \Carbon\Carbon
-            ? $transfer->transfer_date->format('Y-m-d')
-            : $transfer->transfer_date;
+        $this->transfer_date = $transfer->transfer_date->format('Y-m-d');
         $this->oenologist_id = $transfer->oenologist_id ? (string) $transfer->oenologist_id : '';
         $this->notes = $transfer->notes ?? '';
     }

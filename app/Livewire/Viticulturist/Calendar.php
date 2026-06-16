@@ -239,7 +239,7 @@ class Calendar extends Component
                         'date' => Carbon::parse($item->analysis_date)->format('Y-m-d'),
                         'type' => 'residue_analysis',
                         'label' => __('Análisis residuos'),
-                        'description' => $item->plotPlanting?->plot?->name ?? '',
+                        'description' => $item->plotPlanting?->plot->name ?? '',
                         'urgency' => 'normal',
                     ]);
                 });

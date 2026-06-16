@@ -57,9 +57,7 @@ class Edit extends Component
         $this->regulatory_reference = $loss->regulatory_reference ?? '';
         $this->quantity = (string) $loss->quantity;
         $this->unit_of_measurement_id = (string) $loss->unit_of_measurement_id;
-        $this->loss_date = $loss->loss_date instanceof \Carbon\Carbon
-            ? $loss->loss_date->toDateString()
-            : $loss->loss_date;
+        $this->loss_date = $loss->loss_date->toDateString();
         $this->notes = $loss->notes ?? '';
     }
 

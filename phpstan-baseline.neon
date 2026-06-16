@@ -25,12 +25,6 @@ parameters:
 			path: app/Helpers/Navigation/ViticulturistMenu.php
 
 		-
-			message: '#^Unsafe call to private method App\\Helpers\\NavigationHelper\:\:buildAdminMenu\(\) through static\:\:\.$#'
-			identifier: staticClassAccess.privateMethod
-			count: 1
-			path: app/Helpers/NavigationHelper.php
-
-		-
 			message: '#^Anonymous function should return array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: mixed, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\} but returns array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: int, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\}\.$#'
 			identifier: return.type
 			count: 1
@@ -121,42 +115,6 @@ parameters:
 			path: app/Livewire/Supervisor/OnboardingChecklist.php
 
 		-
-			message: '#^Parameter \#1 \$array \(list\<array\{harvest_id\: int, quantity\: string, unit_price\: string, tax_rate\: string, description\: string\}\>\) of array_values is already a list, call has no effect\.$#'
-			identifier: arrayValues.list
-			count: 2
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>total_weight" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
-			message: '#^Parameter \#1 \$array \(list\<array\{harvest_id\: int, quantity\: string, unit_price\: string, tax_rate\: string, description\: string\}\>\) of array_values is already a list, call has no effect\.$#'
-			identifier: arrayValues.list
-			count: 2
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>total_weight" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>total_weight" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Index.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Viticulturist/Calendar.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -217,12 +175,6 @@ parameters:
 			path: app/Livewire/Winery/Cellar/ProductLots/Audit.php
 
 		-
-			message: '#^Instanceof between Carbon\\Carbon and Carbon\\Carbon will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: app/Livewire/Winery/FermentationControls/Edit.php
-
-		-
 			message: '#^Anonymous function should return array\{name\: string, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\} but returns array\{name\: string, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\}\.$#'
 			identifier: return.type
 			count: 1
@@ -247,26 +199,8 @@ parameters:
 			path: app/Livewire/Winery/Silicie/Infovi.php
 
 		-
-			message: '#^Instanceof between Carbon\\Carbon and Carbon\\Carbon will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: app/Livewire/Winery/WineLosses/Edit.php
-
-		-
-			message: '#^Instanceof between Carbon\\Carbon and Carbon\\Carbon will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: app/Livewire/Winery/WineTransfers/Edit.php
-
-		-
 			message: '#^Method App\\Livewire\\Winery\\Wines\\Show\:\:resetCoForm\(\) is unused\.$#'
 			identifier: method.unused
-			count: 1
-			path: app/Livewire/Winery/Wines/Show.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Winery/Wines/Show.php
 
@@ -311,12 +245,6 @@ parameters:
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/HarvestDelivery.php
-
-		-
-			message: '#^Unsafe call to private method App\\Models\\PlotGeometry\:\:invalidatePlotGeometryCache\(\) through static\:\:\.$#'
-			identifier: staticClassAccess.privateMethod
-			count: 2
-			path: app/Models/PlotGeometry.php
 
 		-
 			message: '#^Offset ''approved''\|''archived''\|''draft''\|''in_review''\|''pending''\|''rejected'' on array\{draft\: ''zinc'', pending\: ''yellow'', in_review\: ''blue'', approved\: ''green'', rejected\: ''red'', archived\: ''zinc''\} on left side of \?\? always exists and is not nullable\.$#'
@@ -395,12 +323,6 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Services/RemoteSensing/NasaLSTService.php
-
-		-
-			message: '#^Unsafe call to private method App\\Services\\SecurityLogger\:\:persist\(\) through static\:\:\.$#'
-			identifier: staticClassAccess.privateMethod
-			count: 11
-			path: app/Services/SecurityLogger.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'
