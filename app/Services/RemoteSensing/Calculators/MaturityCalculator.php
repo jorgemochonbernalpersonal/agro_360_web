@@ -16,13 +16,6 @@ use Carbon\Carbon;
  */
 class MaturityCalculator
 {
-    private PhenologyCalculator $phenologyCalculator;
-
-    public function __construct(PhenologyCalculator $phenologyCalculator)
-    {
-        $this->phenologyCalculator = $phenologyCalculator;
-    }
-
     /**
      * Calculate maturity index (0-100)
      * Based on multiple factors

@@ -46,9 +46,6 @@ class Create extends Component
 
     protected InvoiceService $invoiceService;
 
-    /** Cached default IRPF (not a Livewire property) */
-    private float $_defaultIrpf = 0;
-
     public function boot(InvoiceService $invoiceService): void
     {
         $this->invoiceService = $invoiceService;
@@ -59,8 +56,6 @@ class Create extends Component
         $this->invoice_date = now()->toDateString();
         $this->delivery_date = now()->toDateString();
 
-        $setting = ViticulturistSetting::forUser(Auth::id());
-        $this->_defaultIrpf = $setting ? (float) ($setting->default_irpf_rate ?? 0) : 0;
     }
 
     // ── Harvest toggle ─────────────────────────────────────────────────────────

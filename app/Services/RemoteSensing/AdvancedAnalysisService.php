@@ -8,7 +8,6 @@ use App\Repositories\PlotRemoteSensingRepository;
 use App\Services\RemoteSensing\Calculators\ChlorophyllCalculator;
 use App\Services\RemoteSensing\Calculators\LAICalculator;
 use App\Services\RemoteSensing\Calculators\MaturityCalculator;
-use App\Services\RemoteSensing\Calculators\PhenologyCalculator;
 use App\Services\RemoteSensing\Detectors\AnomalyDetector;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -29,7 +28,6 @@ class AdvancedAnalysisService
         private LAICalculator $laiCalculator,
         private ChlorophyllCalculator $chlorophyllCalculator,
         private MaturityCalculator $maturityCalculator,
-        private PhenologyCalculator $phenologyCalculator,
         private AnomalyDetector $anomalyDetector,
         private RemoteSensingCacheService $cacheService
     ) {}

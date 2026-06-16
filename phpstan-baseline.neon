@@ -169,12 +169,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
 
 		-
-			message: '#^Property App\\Livewire\\Viticulturist\\Billing\\HarvestSale\\Create\:\:\$_defaultIrpf is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>total_weight" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -409,28 +403,10 @@ parameters:
 			path: app/Models/AuditLog.php
 
 		-
-			message: '#^Method App\\Models\\Container\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/Container.php
-
-		-
 			message: '#^Match arm comparison between ''maintenance'' and ''maintenance'' is always true\.$#'
 			identifier: match.alwaysTrue
 			count: 1
 			path: app/Models/ContainerHistory.php
-
-		-
-			message: '#^Method App\\Models\\ContainerRoom\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/ContainerRoom.php
-
-		-
-			message: '#^Method App\\Models\\Harvest\:\:getContainerWeight\(\) should return float\|null but returns string\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/Harvest.php
 
 		-
 			message: '#^Offset ''bodega''\|''compostaje''\|''cooperativa''\|''destileria''\|''otro''\|''vertedero_autorizado'' on array\{cooperative\: ''Cooperativa vinícola'', winery\: ''Bodega'', distillery\: ''Destilería /…'', composting\: ''Planta de compostaje'', authorized_landfill\: ''Vertedero autorizado'', other\: ''Otro destino''\} on left side of \?\? does not exist\.$#'
@@ -467,12 +443,6 @@ parameters:
 			identifier: match.alwaysTrue
 			count: 2
 			path: app/Models/PacDeclaration.php
-
-		-
-			message: '#^Method App\\Models\\Plot\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/Plot.php
 
 		-
 			message: '#^Unsafe call to private method App\\Models\\PlotGeometry\:\:invalidatePlotGeometryCache\(\) through static\:\:\.$#'
@@ -601,12 +571,6 @@ parameters:
 			path: app/Observers/InvoiceObserver.php
 
 		-
-			message: '#^Method App\\Services\\CatastroGeometryService\:\:upsertGeometry\(\) should return int but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/CatastroGeometryService.php
-
-		-
 			message: '#^Match expression does not handle remaining value\: string$#'
 			identifier: match.unhandled
 			count: 1
@@ -631,12 +595,6 @@ parameters:
 			path: app/Services/ProductStockService.php
 
 		-
-			message: '#^Property App\\Services\\RemoteSensing\\AdvancedAnalysisService\:\:\$phenologyCalculator is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Services/RemoteSensing/AdvancedAnalysisService.php
-
-		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$baseDoLitersPerHa$#'
 			identifier: parameter.notFound
 			count: 1
@@ -649,22 +607,10 @@ parameters:
 			path: app/Services/RemoteSensing/Calculators/MaturityCalculator.php
 
 		-
-			message: '#^Property App\\Services\\RemoteSensing\\Calculators\\MaturityCalculator\:\:\$phenologyCalculator is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Services/RemoteSensing/Calculators/MaturityCalculator.php
-
-		-
 			message: '#^Constant App\\Services\\RemoteSensing\\Detectors\\AnomalyDetector\:\:RAPID_CHANGE_DAYS is unused\.$#'
 			identifier: classConstant.unused
 			count: 1
 			path: app/Services/RemoteSensing/Detectors/AnomalyDetector.php
-
-		-
-			message: '#^Property App\\Services\\RemoteSensing\\NasaETService\:\:\$baseUrl is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Services/RemoteSensing/NasaETService.php
 
 		-
 			message: '#^Method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:fetchNdviData\(\) never returns null so it can be removed from the return type\.$#'
@@ -679,46 +625,10 @@ parameters:
 			path: app/Services/RemoteSensing/NasaEarthdataService.php
 
 		-
-			message: '#^Property App\\Services\\RemoteSensing\\NasaLAIService\:\:\$baseUrl is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Services/RemoteSensing/NasaLAIService.php
-
-		-
-			message: '#^Property App\\Services\\RemoteSensing\\NasaLSTService\:\:\$baseUrl is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Services/RemoteSensing/NasaLSTService.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between array and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Services/RemoteSensing/NasaLSTService.php
-
-		-
-			message: '#^Property App\\Services\\RemoteSensing\\NasaSMAPService\:\:\$baseUrl is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Services/RemoteSensing/NasaSMAPService.php
-
-		-
-			message: '#^Property App\\Services\\RemoteSensing\\NasaSMAPService\:\:\$rateLimitService is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Services/RemoteSensing/NasaSMAPService.php
-
-		-
-			message: '#^Property App\\Services\\RemoteSensing\\NasaSpectralBandsService\:\:\$baseUrl is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Services/RemoteSensing/NasaSpectralBandsService.php
-
-		-
-			message: '#^Property App\\Services\\RemoteSensing\\NasaVIIRSService\:\:\$baseUrl is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Services/RemoteSensing/NasaVIIRSService.php
 
 		-
 			message: '#^Unsafe call to private method App\\Services\\SecurityLogger\:\:persist\(\) through static\:\:\.$#'
@@ -731,9 +641,3 @@ parameters:
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Services/Validators/PacComplianceValidator.php
-
-		-
-			message: '#^Method App\\ValueObjects\\DateRange\:\:durationInDays\(\) should return int but returns float\.$#'
-			identifier: return.type
-			count: 1
-			path: app/ValueObjects/DateRange.php
