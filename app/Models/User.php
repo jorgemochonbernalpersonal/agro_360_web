@@ -33,6 +33,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property mixed $beta_expired
  * @property mixed $can_edit
  * @property mixed $activeSubscription
+ * @property mixed $adminNotes
  */
 class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {

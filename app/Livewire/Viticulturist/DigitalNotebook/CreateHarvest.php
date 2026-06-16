@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $viticulturists
+ */
 #[Layout('layouts.app')]
 class CreateHarvest extends Component
 {

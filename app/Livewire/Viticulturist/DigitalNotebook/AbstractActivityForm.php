@@ -29,6 +29,11 @@ use Livewire\Component;
  *  - resolveCrewMemberId() – find-or-create the CrewMember row
  *  - activityData() – build the AgriculturalActivity create/update array
  *  - renderData() – assemble the common view data bag
+ *
+ * @property-read mixed $plots
+ * @property-read mixed $crews
+ * @property-read mixed $machinery
+ * @property-read mixed $campaign
  */
 abstract class AbstractActivityForm extends Component
 {

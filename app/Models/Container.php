@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property mixed $total_capacity
  * @property mixed $total_used
  * @property mixed $pivot
+ * @property mixed $notes
  */
 class Container extends Model
 {

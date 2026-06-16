@@ -19,6 +19,14 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $wines
+ * @property-read mixed $bottlingProcessDetails
+ * @property-read mixed $oenologists
+ * @property-read mixed $winerySupplies
+ * @property-read mixed $units
+ * @property-read mixed $containers
+ */
 class Create extends Component
 {
     use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;

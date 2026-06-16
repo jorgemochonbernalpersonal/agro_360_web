@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property mixed $planted_area
  * @property mixed $area
  * @property mixed $plant_count
+ * @property mixed $plant_spacing
+ * @property mixed $certification
  */
 class PlotPlanting extends Model
 {

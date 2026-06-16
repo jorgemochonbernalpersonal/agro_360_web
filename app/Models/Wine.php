@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
  * @property mixed $bottled
  * @property mixed $sold
  * @property mixed $aged
+ * @property mixed $currentStates
  */
 class Wine extends Model
 {

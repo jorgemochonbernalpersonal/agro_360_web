@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $autonomousCommunities
+ * @property-read mixed $provinces
+ * @property-read mixed $municipalities
+ */
 class Index extends Component
 {
     use GeneratesCatastroGeometry, WithListing, WithToastNotifications, WithUserPreferences;

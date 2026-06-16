@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property mixed $month
  * @property mixed $unpaid_count
  * @property mixed $total_paid_amount
+ * @property mixed $tax_total
  */
 class Invoice extends Model
 {

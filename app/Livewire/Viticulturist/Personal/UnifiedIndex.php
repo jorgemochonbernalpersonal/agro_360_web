@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * @property-read mixed $viticulturists
+ */
 class UnifiedIndex extends Component
 {
     use WithPagination, WithToastNotifications, WithUserFilters;

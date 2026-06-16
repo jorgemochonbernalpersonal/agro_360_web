@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 
+/**
+ * @property-read mixed $products
+ */
 class CreatePostHarvest extends AbstractActivityForm
 {
     // ─── Type-specific properties ─────────────────────────────────────────────

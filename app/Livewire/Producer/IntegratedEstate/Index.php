@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $campaigns
+ * @property-read mixed $plots
+ */
 class Index extends Component
 {
     public string $filterCampaign = '';

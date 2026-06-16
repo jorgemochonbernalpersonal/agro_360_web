@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property mixed $total_area
  * @property mixed $organic_area
  * @property mixed $sigpacCodesOld
+ * @property mixed $tenure_regime
  */
 class Plot extends Model
 {

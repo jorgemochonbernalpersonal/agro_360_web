@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property mixed $ndvi
+ * @property mixed $evi
+ * @property mixed $savi
+ * @property mixed $ndwi
+ * @property mixed $image_url
+ * @property mixed $thumbnail_url
+ * @property mixed $soil_moisture_mean
+ * @property mixed $temperature_mean
+ */
 class PlotRemoteSensing extends Model
 {
     use HasFactory;

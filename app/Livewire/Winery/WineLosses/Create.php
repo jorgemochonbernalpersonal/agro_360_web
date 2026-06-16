@@ -13,6 +13,9 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $containers
+ */
 class Create extends Component
 {
     use WithToastNotifications;

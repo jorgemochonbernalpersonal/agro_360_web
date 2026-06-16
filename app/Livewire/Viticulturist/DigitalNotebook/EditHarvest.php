@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $viticulturists
+ */
 class EditHarvest extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications, WithUserFilters, WithViticulturistValidation;
