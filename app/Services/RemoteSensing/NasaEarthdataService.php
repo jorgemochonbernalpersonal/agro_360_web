@@ -352,8 +352,8 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             // MOD13Q1 is a 16-day composite with 2-3 week publication lag,
             // so we look back 35 days to ensure the latest composite is included.
             $startDate = now()->subDays(35);
-            $startJulian = 'A'.$startDate->format('Y').str_pad($startDate->dayOfYear, 3, '0', STR_PAD_LEFT);
-            $endJulian = 'A'.now()->format('Y').str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $startJulian = 'A'.$startDate->format('Y').str_pad((string) $startDate->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian = 'A'.now()->format('Y').str_pad((string) now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             $response = Http::timeout(30)
                 ->get("{$this->ornlBaseUrl}/MOD13Q1/subset", [

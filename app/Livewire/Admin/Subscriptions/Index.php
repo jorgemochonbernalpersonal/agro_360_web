@@ -86,7 +86,7 @@ class Index extends Component
                     $s->user?->email ?? '',
                     $s->plan_type === 'monthly' ? 'Mensual' : 'Anual',
                     $s->status,
-                    number_format($s->amount, 2),
+                    number_format((float) $s->amount, 2),
                     $s->starts_at?->format('d/m/Y') ?? '',
                     $s->ends_at?->format('d/m/Y') ?? '',
                     $s->cancelled_at?->format('d/m/Y') ?? '',

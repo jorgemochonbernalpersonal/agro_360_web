@@ -33,7 +33,7 @@ class QualityFeedbackNotification extends Notification implements ShouldQueue
             ->greeting('Datos de calidad de tu entrega')
             ->line("**Bodega:** {$this->wineryName}")
             ->line("**Variedad:** {$variety}".($plot ? " · Parcela: {$plot}" : ''))
-            ->line('**Peso recibido:** '.number_format($h->total_weight, 0).' kg')
+            ->line('**Peso recibido:** '.number_format((float) $h->total_weight, 0).' kg')
             ->line('**Fecha:** '.$h->harvest_start_date?->format('d/m/Y'));
 
         if ($h->baume_degree !== null) {

@@ -7837,12 +7837,6 @@ parameters:
 			path: app/Livewire/Admin/Subscriptions/Index.php
 
 		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 2
@@ -8855,12 +8849,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Viticulturist/ContainerReturns/Index.php
-
-		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/Containers/Edit.php
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Dashboard\:\:\$plotIds\.$#'
@@ -10849,12 +10837,6 @@ parameters:
 			path: app/Livewire/Winery/Bottling/Create.php
 
 		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Winery/Bottling/Create.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Winery\\Bottling\\Edit\:\:\$bottlingProcessDetails\.$#'
 			identifier: property.notFound
 			count: 1
@@ -11235,12 +11217,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Create.php
-
-		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Livewire/Winery/Harvest/Reception/Create.php
 
@@ -11773,12 +11749,6 @@ parameters:
 			path: app/Livewire/Winery/WineLosses/Create.php
 
 		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Winery/WineLosses/Create.php
-
-		-
 			message: '#^Instanceof between Carbon\\Carbon and Carbon\\Carbon will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -12241,12 +12211,6 @@ parameters:
 			path: app/Models/HarvestStock.php
 
 		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 4
-			path: app/Models/InvoicingSetting.php
-
-		-
 			message: '#^Offset ''do_assigned''\|''other''\|''own'' on array\{own\: ''Propio'', do_assigned\: ''Asignado por DO'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -12437,12 +12401,6 @@ parameters:
 			identifier: match.alwaysTrue
 			count: 1
 			path: app/Models/SupportTicket.php
-
-		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Models/Tax.php
 
 		-
 			message: '#^Cannot call method isPast\(\) on string\.$#'
@@ -12835,12 +12793,6 @@ parameters:
 			path: app/Notifications/PaymentConfirmation.php
 
 		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Notifications/PaymentConfirmation.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$ph\.$#'
 			identifier: property.notFound
 			count: 2
@@ -12873,12 +12825,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Notifications/QualityFeedbackNotification.php
-
-		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Notifications/QualityFeedbackNotification.php
 
@@ -13735,27 +13681,9 @@ parameters:
 			path: app/Services/RemoteSensing/Detectors/AnomalyDetector.php
 
 		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
-			count: 5
-			path: app/Services/RemoteSensing/ExportService.php
-
-		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string\|null given\.$#'
-			identifier: argument.type
-			count: 3
-			path: app/Services/RemoteSensing/ExportService.php
-
-		-
 			message: '#^Parameter \#1 \$ndvi of method App\\Services\\RemoteSensing\\ImageHistoryService\:\:getNdviColor\(\) expects float\|null, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
-			path: app/Services/RemoteSensing/ImageHistoryService.php
-
-		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
 			path: app/Services/RemoteSensing/ImageHistoryService.php
 
 		-
@@ -13763,12 +13691,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Services/RemoteSensing/NasaAreaRequestService.php
-
-		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Services/RemoteSensing/NasaETService.php
 
 		-
 			message: '#^Property App\\Services\\RemoteSensing\\NasaETService\:\:\$baseUrl is never read, only written\.$#'
@@ -13780,12 +13702,6 @@ parameters:
 			message: '#^Method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:fetchNdviData\(\) never returns null so it can be removed from the return type\.$#'
 			identifier: return.unusedType
 			count: 1
-			path: app/Services/RemoteSensing/NasaEarthdataService.php
-
-		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 2
 			path: app/Services/RemoteSensing/NasaEarthdataService.php
 
 		-
@@ -13807,22 +13723,10 @@ parameters:
 			path: app/Services/RemoteSensing/NasaEarthdataService.php
 
 		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Services/RemoteSensing/NasaLAIService.php
-
-		-
 			message: '#^Property App\\Services\\RemoteSensing\\NasaLAIService\:\:\$baseUrl is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: app/Services/RemoteSensing/NasaLAIService.php
-
-		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Services/RemoteSensing/NasaLSTService.php
 
 		-
 			message: '#^Property App\\Services\\RemoteSensing\\NasaLSTService\:\:\$baseUrl is never read, only written\.$#'
@@ -13849,22 +13753,10 @@ parameters:
 			path: app/Services/RemoteSensing/NasaSMAPService.php
 
 		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Services/RemoteSensing/NasaSpectralBandsService.php
-
-		-
 			message: '#^Property App\\Services\\RemoteSensing\\NasaSpectralBandsService\:\:\$baseUrl is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: app/Services/RemoteSensing/NasaSpectralBandsService.php
-
-		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Services/RemoteSensing/NasaVIIRSService.php
 
 		-
 			message: '#^Property App\\Services\\RemoteSensing\\NasaVIIRSService\:\:\$baseUrl is never read, only written\.$#'

@@ -43,8 +43,8 @@ class NasaSpectralBandsService
 
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $plotSigpacId);
-            $startJulian = 'A'.now()->subDays(8)->format('Y').str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
-            $endJulian = 'A'.now()->format('Y').str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $startJulian = 'A'.now()->subDays(8)->format('Y').str_pad((string) now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian = 'A'.now()->format('Y').str_pad((string) now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             $response = Http::timeout(30)
                 ->get('https://modis.ornl.gov/rst/api/v1/VNP09A1/subset', [

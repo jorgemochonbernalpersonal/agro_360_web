@@ -185,7 +185,7 @@ class Create extends Component
         if (! empty($data['container_id'])) {
             $container = Container::where('user_id', Auth::id())->find($data['container_id']);
             if ($container && $container->wine_volume_liters < (float) $data['quantity_liters']) {
-                $this->addError('quantity_liters', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format($container->wine_volume_liters, 1)]));
+                $this->addError('quantity_liters', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format((float) $container->wine_volume_liters, 1)]));
 
                 return;
             }

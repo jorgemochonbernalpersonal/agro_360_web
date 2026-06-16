@@ -63,16 +63,16 @@ class ExportService
             ->map(function ($record) {
                 return [
                     'Fecha' => $record->image_date->format('d/m/Y'),
-                    'NDVI' => number_format($record->ndvi_mean, 4),
-                    'NDVI Mín' => number_format($record->ndvi_min, 4),
-                    'NDVI Máx' => number_format($record->ndvi_max, 4),
-                    'NDWI' => $record->ndwi_mean ? number_format($record->ndwi_mean, 4) : 'N/A',
+                    'NDVI' => number_format((float) $record->ndvi_mean, 4),
+                    'NDVI Mín' => number_format((float) $record->ndvi_min, 4),
+                    'NDVI Máx' => number_format((float) $record->ndvi_max, 4),
+                    'NDWI' => $record->ndwi_mean ? number_format((float) $record->ndwi_mean, 4) : 'N/A',
                     'Estado' => $record->health_text,
                     'Tendencia' => $record->trend ?? 'N/A',
-                    'Temperatura (°C)' => $record->temperature ? number_format($record->temperature, 1) : 'N/A',
-                    'Precipitación (mm)' => $record->precipitation ? number_format($record->precipitation, 1) : 'N/A',
-                    'Humedad (%)' => $record->humidity ? number_format($record->humidity, 0) : 'N/A',
-                    'Humedad Suelo (%)' => $record->soil_moisture ? number_format($record->soil_moisture, 0) : 'N/A',
+                    'Temperatura (°C)' => $record->temperature ? number_format((float) $record->temperature, 1) : 'N/A',
+                    'Precipitación (mm)' => $record->precipitation ? number_format((float) $record->precipitation, 1) : 'N/A',
+                    'Humedad (%)' => $record->humidity ? number_format((float) $record->humidity, 0) : 'N/A',
+                    'Humedad Suelo (%)' => $record->soil_moisture ? number_format((float) $record->soil_moisture, 0) : 'N/A',
                 ];
             });
     }
