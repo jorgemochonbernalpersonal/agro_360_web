@@ -89,7 +89,7 @@ class StringMacros
             $frontChars = ceil($charsToShow / 2);
             $backChars = floor($charsToShow / 2);
 
-            return substr($string, 0, $frontChars).$separator.substr($string, -$backChars);
+            return substr($string, 0, (int) $frontChars).$separator.substr($string, -(int) $backChars);
         });
     }
 

@@ -57,7 +57,7 @@ class ContainerStockService
             if ($harvest->container_id) {
                 $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
-                    if (! $container->hasAvailableCapacity($harvest->total_weight)) {
+                    if (! $container->hasAvailableCapacity((float) $harvest->total_weight)) {
                         throw new \Exception(
                             "El contenedor '{$container->name}' no tiene capacidad suficiente. ".
                             "Disponible: {$container->getAvailableCapacity()} kg, ".
@@ -65,7 +65,7 @@ class ContainerStockService
                         );
                     }
 
-                    $container->incrementUsedCapacity($harvest->total_weight);
+                    $container->incrementUsedCapacity((float) $harvest->total_weight);
 
                     ContainerCurrentState::updateOrCreate(
                         ['container_id' => $container->id, 'harvest_id' => $harvest->id],
@@ -78,7 +78,7 @@ class ContainerStockService
                         ]
                     );
 
-                    $this->recordHistory($container, $harvest, 'fill', $harvest->total_weight);
+                    $this->recordHistory($container, $harvest, 'fill', (float) $harvest->total_weight);
                 }
             }
 
@@ -187,7 +187,7 @@ class ContainerStockService
             if ($oldContainerId) {
                 $oldContainer = Container::lockForUpdate()->find($oldContainerId);
                 if ($oldContainer) {
-                    $oldContainer->decrementUsedCapacity($harvest->total_weight);
+                    $oldContainer->decrementUsedCapacity((float) $harvest->total_weight);
 
                     $oldState = ContainerCurrentState::where('container_id', $oldContainer->id)
                         ->where('harvest_id', $harvest->id)
@@ -205,7 +205,7 @@ class ContainerStockService
                         }
                     }
 
-                    $this->recordHistory($oldContainer, $harvest, 'transfer', -$harvest->total_weight);
+                    $this->recordHistory($oldContainer, $harvest, 'transfer', -(float) $harvest->total_weight);
                 }
             }
 
@@ -213,7 +213,7 @@ class ContainerStockService
             if ($newContainerId) {
                 $newContainer = Container::lockForUpdate()->find($newContainerId);
                 if ($newContainer) {
-                    if (! $newContainer->hasAvailableCapacity($harvest->total_weight)) {
+                    if (! $newContainer->hasAvailableCapacity((float) $harvest->total_weight)) {
                         throw new \Exception(
                             "El contenedor '{$newContainer->name}' no tiene capacidad suficiente. ".
                             "Disponible: {$newContainer->getAvailableCapacity()} kg, ".
@@ -221,7 +221,7 @@ class ContainerStockService
                         );
                     }
 
-                    $newContainer->incrementUsedCapacity($harvest->total_weight);
+                    $newContainer->incrementUsedCapacity((float) $harvest->total_weight);
 
                     // Obtener valores de stock actuales para propagar al nuevo estado
                     $lastStock = $harvest->stockMovements()->latest()->first();
@@ -242,7 +242,7 @@ class ContainerStockService
                         ]
                     );
 
-                    $this->recordHistory($newContainer, $harvest, 'transfer', $harvest->total_weight);
+                    $this->recordHistory($newContainer, $harvest, 'transfer', (float) $harvest->total_weight);
                 }
             }
 
@@ -373,7 +373,7 @@ class ContainerStockService
                 return;
             }
 
-            $container->decrementUsedCapacity($harvest->total_weight);
+            $container->decrementUsedCapacity((float) $harvest->total_weight);
 
             $state = ContainerCurrentState::where('container_id', $container->id)
                 ->where('harvest_id', $harvest->id)
@@ -580,7 +580,7 @@ class ContainerStockService
             if ($harvest->container_id) {
                 $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
-                    $container->decrementUsedCapacity($item->quantity);
+                    $container->decrementUsedCapacity((float) $item->quantity);
 
                     $state = ContainerCurrentState::where('container_id', $container->id)
                         ->where('harvest_id', $harvest->id)
@@ -595,7 +595,7 @@ class ContainerStockService
                         ]);
                     }
 
-                    $this->recordHistory($container, $harvest, 'sale', -$item->quantity);
+                    $this->recordHistory($container, $harvest, 'sale', -(float) $item->quantity);
                 }
             }
 
@@ -643,7 +643,7 @@ class ContainerStockService
             if ($harvest->container_id) {
                 $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
-                    $container->incrementUsedCapacity($item->quantity);
+                    $container->incrementUsedCapacity((float) $item->quantity);
 
                     $state = ContainerCurrentState::where('container_id', $container->id)
                         ->where('harvest_id', $harvest->id)
@@ -658,7 +658,7 @@ class ContainerStockService
                         ]);
                     }
 
-                    $this->recordHistory($container, $harvest, 'adjustment', $item->quantity);
+                    $this->recordHistory($container, $harvest, 'adjustment', (float) $item->quantity);
                 }
             }
 
@@ -730,7 +730,7 @@ class ContainerStockService
                         }
                     } else {
                         // Las uvas habían salido → restaurar físicamente
-                        $container->incrementUsedCapacity($item->quantity);
+                        $container->incrementUsedCapacity((float) $item->quantity);
                         if ($state) {
                             $state->update([
                                 'current_quantity' => $state->current_quantity + $item->quantity,
@@ -740,7 +740,7 @@ class ContainerStockService
                                 'last_movement_by' => Auth::id(),
                             ]);
                         }
-                        $this->recordHistory($container, $harvest, 'adjustment', $item->quantity);
+                        $this->recordHistory($container, $harvest, 'adjustment', (float) $item->quantity);
                     }
                 }
             }
@@ -798,7 +798,7 @@ class ContainerStockService
             if ($harvest->container_id) {
                 $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
-                    $container->decrementUsedCapacity($item->quantity);
+                    $container->decrementUsedCapacity((float) $item->quantity);
 
                     $state = ContainerCurrentState::where('container_id', $container->id)
                         ->where('harvest_id', $harvest->id)
@@ -813,7 +813,7 @@ class ContainerStockService
                         ]);
                     }
 
-                    $this->recordHistory($container, $harvest, 'sale', -$item->quantity);
+                    $this->recordHistory($container, $harvest, 'sale', -(float) $item->quantity);
                 }
             }
 

@@ -38,6 +38,7 @@ class PlotsDashboard extends Component
         $validator = new PacEligibilityValidator;
 
         foreach ($plots as $plot) {
+            /** @var \App\Models\Plot $plot */
             // Alertas de superficie
             if (! $plot->pac_eligible_area) {
                 $alerts[] = [

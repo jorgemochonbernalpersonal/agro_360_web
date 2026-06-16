@@ -55,13 +55,13 @@ class GenerateReportJob implements ShouldQueue
         try {
             $report = match ($this->reportData->type) {
                 'phytosanitary' => $reportService->generatePhytosanitaryReport(
-                    $this->user,
+                    $this->user->id,
                     $this->reportData->periodStart,
                     $this->reportData->periodEnd,
                     $this->password
                 ),
                 'full_notebook' => $reportService->generateFullNotebookReport(
-                    $this->user,
+                    $this->user->id,
                     $this->reportData->campaignId,
                     $this->password
                 ),

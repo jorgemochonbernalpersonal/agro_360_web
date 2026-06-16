@@ -40,6 +40,7 @@ class UpdateEnrichedRemoteSensingData extends Command
 
         // Get plots
         if ($plotId = $this->option('plot-id')) {
+            /** @var \Illuminate\Database\Eloquent\Collection<int, Plot> $plots */
             $plots = Plot::where('id', $plotId)->get();
 
             if ($plots->isEmpty()) {
@@ -49,6 +50,7 @@ class UpdateEnrichedRemoteSensingData extends Command
             }
         } else {
             // Get plots that have at least one geometry
+            /** @var \Illuminate\Database\Eloquent\Collection<int, Plot> $plots */
             $plots = Plot::whereHas('plotGeometries')->get();
         }
 

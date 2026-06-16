@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -120,7 +121,7 @@ class Invite extends Component
         // Inherit beta from winery if active (same end date)
         $winery = Auth::user();
         if ($winery->isBetaUser() && ! $winery->betaExpired() && ! $user->is_beta_user) {
-            $user->grantBetaAccess($winery->beta_ends_at);
+            $user->grantBetaAccess($winery->beta_ends_at ? Carbon::parse($winery->beta_ends_at) : null);
         }
 
         $this->toastSuccess("{$user->name} ha sido vinculado a tu bodega.");

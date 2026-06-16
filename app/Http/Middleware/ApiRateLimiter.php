@@ -25,9 +25,9 @@ class ApiRateLimiter
                 'message' => 'Too many requests. Please try again later.',
                 'retry_after' => $seconds,
             ], 429)
-                ->header('Retry-After', $seconds)
+                ->header('Retry-After', (string) $seconds)
                 ->header('X-RateLimit-Limit', $maxAttempts)
-                ->header('X-RateLimit-Remaining', 0);
+                ->header('X-RateLimit-Remaining', '0');
         }
 
         RateLimiter::hit($key, (int) $decayMinutes * 60);

@@ -1,46 +1,10 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Console/Commands/CalculateAdvancedMetricsCommand.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Console/Commands/CalculateAdvancedMetricsCommand.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:remoteSensingData\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/CalculateAdvancedMetricsCommand.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\AdvancedAnalysisService\:\:analyzeAdvanced\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/CalculateAdvancedMetricsCommand.php
-
-		-
 			message: '#^Call to private method getAuthToken\(\) of class App\\Services\\RemoteSensing\\NasaEarthdataService\.$#'
 			identifier: method.private
 			count: 1
 			path: app/Console/Commands/CheckAreaRequestTasks.php
-
-		-
-			message: '#^Parameter \#2 \$currentNdvi of class App\\Notifications\\RemoteSensingAlertNotification constructor expects float, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/CheckRemoteSensingAlerts.php
-
-		-
-			message: '#^Parameter \#1 \$value of method Carbon\\Carbon\:\:subDays\(\) expects float\|int, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/CleanOldReportsCommand.php
 
 		-
 			message: '#^Cannot call method format\(\) on string\.$#'
@@ -55,100 +19,10 @@ parameters:
 			path: app/Console/Commands/CleanStaleInvitations.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\OfficialReport\>\:\:filter\(\) expects \(callable\(App\\Models\\OfficialReport, int\)\: bool\)\|null, Closure\(mixed\)\: \(string\|null\) given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/CleanupAllOfficialReports.php
-
-		-
-			message: '#^Parameter \#1 \$value of method Carbon\\Carbon\:\:subHours\(\) expects float\|int, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/DeleteUnverifiedUsers.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Console/Commands/RegenerateMockRemoteSensingDataCommand.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/RegenerateMockRemoteSensingDataCommand.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:getHistoricalData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/RegenerateMockRemoteSensingDataCommand.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:getLatestData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/RegenerateMockRemoteSensingDataCommand.php
-
-		-
-			message: '#^Parameter \#3 \$daysRemaining of class App\\Notifications\\WithdrawalPeriodEnding constructor expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/SendWithdrawalPeriodAlertsCommand.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/TestNasaCredentials.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/TestNasaCredentials.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:getLatestData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/TestNasaCredentials.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Console/Commands/UpdateEnrichedRemoteSensingData.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:remoteSensingData\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/UpdateEnrichedRemoteSensingData.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:fetchEnrichedData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/UpdateEnrichedRemoteSensingData.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:fetchUltraEnrichedData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/UpdateEnrichedRemoteSensingData.php
-
-		-
 			message: '#^Relation ''plotGeometries'' is not found in App\\Models\\Plot model\.$#'
 			identifier: larastan.relationExistence
 			count: 1
 			path: app/Console/Commands/UpdateEnrichedRemoteSensingData.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/UpdateNdviCommand.php
 
 		-
 			message: '#^Call to method fetchAndStoreNdvi\(\) on an unknown class App\\Services\\RemoteSensing\\SentinelHubService\.$#'
@@ -159,12 +33,6 @@ parameters:
 		-
 			message: '#^Class App\\Services\\RemoteSensing\\SentinelHubService not found\.$#'
 			identifier: class.notFound
-			count: 1
-			path: app/Console/Commands/UpdateNdviCommand.php
-
-		-
-			message: '#^Parameter \#1 \$plot of job class App\\Jobs\\UpdatePlotNdviJob constructor expects App\\Models\\Plot in App\\Jobs\\UpdatePlotNdviJob\:\:dispatch\(\), Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Console/Commands/UpdateNdviCommand.php
 
@@ -283,37 +151,25 @@ parameters:
 			path: app/Http/Controllers/Api/Producer/IntegratedCampaignController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$active\.$#'
+			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$area\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
+			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$plant_count\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
+			message: '#^Anonymous function should return array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: mixed, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\} but returns array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: int, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\}\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plantings\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\PlotPlanting\>\:\:map\(\) contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
 			count: 1
 			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
@@ -323,36 +179,6 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Http/Controllers/Api/Producer/InvoiceController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/RemoteSensingController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/RemoteSensingController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/RemoteSensingController.php
-
-		-
-			message: '#^Parameter \#1 \$ndvi of method App\\Http\\Controllers\\Api\\RemoteSensingController\:\:getNdviColor\(\) expects float, string\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Http/Controllers/Api/RemoteSensingController.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:getLatestData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/RemoteSensingController.php
 
 		-
 			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
@@ -367,112 +193,46 @@ parameters:
 			path: app/Http/Controllers/Api/Viticulturist/GrapeTraceabilityController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
+			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$centroid_data\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$centroid_data\.$#'
+			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$has_geometry\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$has_geometry\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 7
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$municipality\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organic_area\.$#'
+			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$organic_area\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_area\.$#'
+			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$total_area\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Anonymous function should return array\{plot_id\: int, plot_name\: mixed, area\: float, has_geometry\: true, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}\|null but returns array\{plot_id\: int, plot_name\: mixed, area\: float, has_geometry\: true, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}\.$#'
+			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$planted_area\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
+
+		-
+			message: '#^Anonymous function should return array\{plot_id\: int, plot_name\: string, area\: float, has_geometry\: true, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}\|null but returns array\{plot_id\: int, plot_name\: string, area\: float, has_geometry\: true, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:plantings\(\)\.$#'
-			identifier: method.notFound
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Municipality\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Support\\Collection\<int, mixed\>\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),array\<string, mixed\>\>\:\:sortBy\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/WeatherController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/WeatherController.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getCurrentWeather\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/WeatherController.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getForecast\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/WeatherController.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getSoilData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/WeatherController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Container\:\:\$total\.$#'
@@ -697,80 +457,38 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/HarvestSummaryController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$centroid_data\.$#'
+			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$centroid_data\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$has_geometry\.$#'
+			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$has_geometry\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 11
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$municipality\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organic_area\.$#'
+			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$organic_area\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_area\.$#'
+			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$total_area\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist\.$#'
+			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$planted_area\.$#'
 			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Anonymous function should return array\{plot_id\: mixed, plot_name\: mixed, viticulturist_name\: mixed, area\: float, has_geometry\: bool, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\} but returns array\{plot_id\: mixed, plot_name\: mixed, viticulturist_name\: mixed, area\: float, has_geometry\: bool, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}\.$#'
-			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:plantings\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 2
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{plot_id\: mixed, plot_name\: mixed, viticulturist_name\: mixed, area\: float, has_geometry\: bool, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}, Closure\(mixed\)\: array\{plot_id\: mixed, plot_name\: mixed, viticulturist_name\: mixed, area\: float, has_geometry\: bool, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\} given\.$#'
-			identifier: argument.type
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Municipality\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
@@ -895,24 +613,6 @@ parameters:
 			path: app/Http/Controllers/MapController.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\MultipartPlotSigpac\>\:\:filter\(\) expects \(callable\(App\\Models\\MultipartPlotSigpac, int\)\: bool\)\|null, Closure\(mixed\)\: \(App\\Models\\PlotGeometry\|null\) given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Http\\Controllers\\MapController\:\:renderMap\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Http\\Controllers\\MapController\:\:renderMunicipalityMap\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/MapController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -967,12 +667,6 @@ parameters:
 			path: app/Http/Controllers/WineTraceController.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\Harvest\>\:\:avg\(\) expects \(callable\(App\\Models\\Harvest\)\: float\)\|int\|string\|null, Closure\(mixed\)\: \(numeric\-string\|null\) given\.$#'
-			identifier: argument.type
-			count: 15
-			path: app/Http/Controllers/Winery/HarvestQualityController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\User\:\:\$organization\.$#'
 			identifier: property.notFound
 			count: 1
@@ -988,12 +682,6 @@ parameters:
 			message: '#^Call to an undefined method Symfony\\Component\\HttpFoundation\\Response\:\:header\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: app/Http/Middleware/ApiRateLimiter.php
-
-		-
-			message: '#^Parameter \#2 \$values of method Illuminate\\Http\\JsonResponse\:\:header\(\) expects array\|string, int given\.$#'
-			identifier: argument.type
-			count: 2
 			path: app/Http/Middleware/ApiRateLimiter.php
 
 		-
@@ -1417,34 +1105,10 @@ parameters:
 			path: app/Jobs/GenerateReportJob.php
 
 		-
-			message: '#^Parameter \#1 \$userId of method App\\Services\\OfficialReportService\:\:generateFullNotebookReport\(\) expects int, App\\Models\\User given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Parameter \#1 \$userId of method App\\Services\\OfficialReportService\:\:generatePhytosanitaryReport\(\) expects int, App\\Models\\User given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Parameter \#1 \$plot of job class App\\Jobs\\UpdatePlotNdviJob constructor expects App\\Models\\Plot in App\\Jobs\\UpdatePlotNdviJob\:\:dispatch\(\), Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Jobs/UpdateAllPlotsNdviJob.php
-
-		-
 			message: '#^Relation ''multipartCoordinates'' is not found in App\\Models\\Plot model\.$#'
 			identifier: larastan.relationExistence
 			count: 1
 			path: app/Jobs/UpdateAllPlotsNdviJob.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\CopernicusSentinel2Service\:\:fetchAndStore\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Jobs/UpdatePlotSentinel2Job.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\AgriculturalActivity\:\:\$user\.$#'
@@ -1501,12 +1165,6 @@ parameters:
 			path: app/Livewire/Admin/GlobalSearch.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/GlobalSearch.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Admin\\Notifications\\Index\:\:\$recipientCount\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1519,50 +1177,8 @@ parameters:
 			path: app/Livewire/Admin/Notifications/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Admin/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Admin/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$active\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
+			message: '#^Parameter \#1 \$num of function number_format expects float, string\|null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: app/Livewire/Admin/Plots/Index.php
 
@@ -1717,61 +1333,7 @@ parameters:
 			path: app/Livewire/Plots/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$active\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$code_parcel\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacCodes\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Plots/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacCodes\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Index.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$code_parcel\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Plots/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacCodes\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Plots/Show.php
@@ -1793,12 +1355,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Producer/IntegratedEstate/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Support\\HigherOrderCollectionProxy\<string, Illuminate\\Database\\Eloquent\\Model, Illuminate\\Support\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\>\:\:\$plantings\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Producer/IntegratedEstate/PlotTable.php
 
 		-
 			message: '#^Relation ''latestRemoteSensing'' is not found in App\\Models\\Plot model\.$#'
@@ -1831,42 +1387,6 @@ parameters:
 			path: app/Livewire/Producer/Invoices/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 6
-			path: app/Livewire/Producer/Meteorology/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Producer/Meteorology/Index.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getCurrentWeather\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Livewire/Producer/Meteorology/Index.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getForecast\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Producer/Meteorology/Index.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getSoilData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Producer/Meteorology/Index.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getSolarData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Producer/Meteorology/Index.php
-
-		-
 			message: '#^Comparison operation "\>" between 5 and 0 is always true\.$#'
 			identifier: greater.alwaysTrue
 			count: 1
@@ -1885,82 +1405,10 @@ parameters:
 			path: app/Livewire/Sigpac/CodesIndex.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacCodes\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/CodesIndex.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Livewire/Sigpac/CodesIndex.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$autonomousCommunity\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Sigpac/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$municipality\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Sigpac/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$province\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Sigpac/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacUses\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Create.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:sigpacCodes\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Create.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:sigpacUses\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$autonomousCommunity\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$municipality\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$province\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacUses\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Edit.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
@@ -1975,43 +1423,13 @@ parameters:
 			path: app/Livewire/Sigpac/Edit.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:sigpacCodes\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Edit.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:sigpacUses\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Sigpac/Edit.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
 			identifier: property.notFound
 			count: 5
 			path: app/Livewire/Sigpac/EditGeometry.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Sigpac/EditGeometry.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacCodes\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/EditGeometry.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacCodes\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Sigpac/EditGeometry.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sigpacCodesOld\.$#'
+			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$sigpacCodesOld\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Sigpac/EditGeometry.php
@@ -2051,18 +1469,6 @@ parameters:
 			identifier: greater.alwaysTrue
 			count: 1
 			path: app/Livewire/Supervisor/OnboardingChecklist.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_locked\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Supervisor/Oversight/Growers/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pac_eligible_area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Supervisor/Oversight/Growers/Show.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
@@ -2161,24 +1567,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Calendar.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/CampaignDocuments/Index.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\CampaignDocuments\\Index\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/CampaignDocuments/Index.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\CampaignDocuments\\Index\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/CampaignDocuments/Index.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Dashboard\:\:\$plotIds\.$#'
 			identifier: property.notFound
 			count: 2
@@ -2245,56 +1633,8 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:plantings\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\AbstractActivityForm\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\AbstractActivityForm\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\CreateHarvest\:\:\$viticulturists\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/CreateHarvest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/DigitalNotebook/CreateHarvest.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:activeWithdrawalPeriods\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/CreateHarvest.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\CreateHarvest\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/CreateHarvest.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\CreateHarvest\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/CreateHarvest.php
 
@@ -2311,32 +1651,8 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
 			message: '#^Call to an undefined method App\\Models\\Container\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Container\>\:\:isAvailable\(\)\.$#'
 			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:activeWithdrawalPeriods\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\EditHarvest\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\EditHarvest\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
 
@@ -2347,12 +1663,6 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditPostHarvest.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Create.php
-
-		-
 			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\RuntimeException\.$#'
 			identifier: class.notFound
 			count: 1
@@ -2365,24 +1675,6 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Create.php
 
 		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\Create\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Create.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\Create\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Edit.php
-
-		-
 			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\RuntimeException\.$#'
 			identifier: class.notFound
 			count: 1
@@ -2393,42 +1685,6 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Edit.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\Edit\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Edit.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\DigitalNotebook\\EstimatedYields\\Edit\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/Edit.php
-
-		-
-			message: '#^Parameter \#1 \$campaignId of static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\EnergyUsage\>\:\:forCampaign\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/EnergyUsages/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Exploitations/Index.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Exploitations\\Index\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Exploitations/Index.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Exploitations\\Index\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Exploitations/Index.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Client\:\:\$total_invoiced\.$#'
@@ -2491,12 +1747,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Invoices/Edit.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/OfficialReports/Create.php
-
-		-
 			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\OfficialReports\\RuntimeException\.$#'
 			identifier: class.notFound
 			count: 2
@@ -2527,18 +1777,6 @@ parameters:
 			path: app/Livewire/Viticulturist/OfficialReports/Create.php
 
 		-
-			message: '#^Method App\\Livewire\\Viticulturist\\OfficialReports\\Create\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/OfficialReports/Create.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\OfficialReports\\Create\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/OfficialReports/Create.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -2563,78 +1801,6 @@ parameters:
 			path: app/Livewire/Viticulturist/OfficialReports/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Pac/Declarations/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Pac/Declarations/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_organic\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Pac/Declarations/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Viticulturist/Pac/Declarations/Create.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Pac\\Declarations\\Create\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Pac/Declarations/Create.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Pac\\Declarations\\Create\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Pac/Declarations/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Pac/Declarations/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Pac/Declarations/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_organic\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Pac/Declarations/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Viticulturist/Pac/Declarations/Edit.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Pac\\Declarations\\Edit\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Pac/Declarations/Edit.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Pac\\Declarations\\Edit\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Pac/Declarations/Edit.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Personal\\UnifiedIndex\:\:\$viticulturists\.$#'
 			identifier: property.notFound
 			count: 1
@@ -2651,42 +1817,6 @@ parameters:
 			identifier: property.notFound
 			count: 2
 			path: app/Livewire/Viticulturist/Personal/Workers/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Phenology/Create.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Phenology\\Create\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Phenology/Create.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Phenology\\Create\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Phenology/Create.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Phenology/Edit.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Phenology\\Edit\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Phenology/Edit.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\Phenology\\Edit\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/Phenology/Edit.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$certifications\.$#'
@@ -2707,54 +1837,6 @@ parameters:
 			path: app/Livewire/Viticulturist/PlantingsDashboard.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Viticulturist/PlotsDashboard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pac_eligible_area\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/PlotsDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\Validators\\PacEligibilityValidator\:\:validate\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/PlotsDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$value of function collect contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Viticulturist/PlotsDashboard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/QuickEntry.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\QuickEntry\:\:authorizeCreateActivityForPlot\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/QuickEntry.php
-
-		-
-			message: '#^Method App\\Livewire\\Viticulturist\\QuickEntry\:\:validatePlotOwnership\(\) should return App\\Models\\Plot but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/QuickEntry.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\Dashboard\:\:\$comparePlot \(App\\Models\\Plot\|null\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
-
-		-
 			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\Dashboard\:\:\$historyDays \(int\) does not accept float\.$#'
 			identifier: assign.propertyType
 			count: 3
@@ -2767,50 +1849,8 @@ parameters:
 			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
 
 		-
-			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\Dashboard\:\:\$selectedPlot \(App\\Models\\Plot\|null\) does not accept Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/DashboardWidget.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/DashboardWidget.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:getLatestData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/DashboardWidget.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\>\.$#'
+			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: int, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\>\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:flatMap\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: \(array\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\>\|Illuminate\\Support\\Collection\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\>\), Closure\(App\\Models\\Plot\)\: Illuminate\\Support\\Collection\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\ExecutiveDashboard\:\:\$selectedPlot \(App\\Models\\Plot\|null\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
 
@@ -2825,30 +1865,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: app/Livewire/Viticulturist/RemoteSensing/PlotNdviCard.php
-
-		-
-			message: '#^Parameter \#1 \$soilMoisture of method App\\Services\\RemoteSensing\\NasaSMAPService\:\:classifySoilMoisture\(\) expects float, string\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Livewire/Viticulturist/RemoteSensing/SmapSoilCard.php
-
-		-
-			message: '#^Parameter \#1 \$cwsi of method App\\Services\\RemoteSensing\\NasaLSTService\:\:classifyCWSI\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ThermalStressCard.php
-
-		-
-			message: '#^Parameter \#1 \$lstDay of method App\\Services\\RemoteSensing\\NasaLSTService\:\:detectHeatStress\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ThermalStressCard.php
-
-		-
-			message: '#^Parameter \#1 \$lstNight of method App\\Services\\RemoteSensing\\NasaLSTService\:\:detectFrostRisk\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/ThermalStressCard.php
 
 		-
 			message: '#^Call to method getMessage\(\) on an unknown class App\\Livewire\\Viticulturist\\RuntimeException\.$#'
@@ -2881,27 +1897,9 @@ parameters:
 			path: app/Livewire/Viticulturist/Viticulturists/Index.php
 
 		-
-			message: '#^Parameter \#3 \$second of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\ProductStock\>\:\:whereColumn\(\) expects string\|null, Illuminate\\Contracts\\Database\\Query\\Expression given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Livewire/Viticulturist/Warehouse/Index.php
-
-		-
-			message: '#^Parameter \#1 \$items of method Illuminate\\Support\\Collection\<int,object\{id\: mixed, type\: string, name\: mixed, granted_at\: mixed\}&stdClass\>\:\:merge\(\) expects Illuminate\\Contracts\\Support\\Arrayable\<int, object\{id\: mixed, type\: ''winery'', name\: mixed, granted_at\: mixed\}&stdClass\>\|iterable\<int, object\{id\: mixed, type\: ''winery'', name\: mixed, granted_at\: mixed\}&stdClass\>, Illuminate\\Support\\Collection\<int, object\{id\: mixed, type\: ''supervisor'', name\: mixed, granted_at\: mixed\}&stdClass\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Viticulturist/WineryAccess/Index.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Winery\\Billing\\GrapePurchase\\Edit\:\:\$isLocked\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\InvoiceItem\>\:\:filter\(\) expects \(callable\(App\\Models\\InvoiceItem, int\)\: bool\)\|null, Closure\(mixed\)\: \(int\<0, max\>\|null\) given\.$#'
-			identifier: argument.type
-			count: 1
 			path: app/Livewire/Winery/Billing/GrapePurchase/Edit.php
 
 		-
@@ -3109,18 +2107,6 @@ parameters:
 			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\Harvest\>\:\:avg\(\) expects \(callable\(App\\Models\\Harvest\)\: float\)\|int\|string\|null, Closure\(mixed\)\: \(numeric\-string\|null\) given\.$#'
-			identifier: argument.type
-			count: 6
-			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Create.php
-
-		-
 			message: '#^Relation ''plots'' is not found in App\\Models\\User model\.$#'
 			identifier: larastan.relationExistence
 			count: 1
@@ -3129,12 +2115,6 @@ parameters:
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Edit.php
-
-		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Livewire/Winery/Harvest/Reception/Edit.php
 
@@ -3215,42 +2195,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Winery/Labeling/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 6
-			path: app/Livewire/Winery/Meteorology/Index.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Meteorology/Index.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getCurrentWeather\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Livewire/Winery/Meteorology/Index.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getForecast\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Winery/Meteorology/Index.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getSoilData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Winery/Meteorology/Index.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\WeatherService\:\:getSolarData\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Winery/Meteorology/Index.php
 
 		-
 			message: '#^Comparison operation "\>" between 5 and 0 is always true\.$#'
@@ -3337,22 +2281,10 @@ parameters:
 			path: app/Livewire/Winery/TastingNotes/Edit.php
 
 		-
-			message: '#^Parameter \#1 \$endsAt of method App\\Models\\User\:\:grantBetaAccess\(\) expects Carbon\\Carbon\|null, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Winery/Viticulturists/Create.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\User\:\:\$profile\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Winery/Viticulturists/Edit.php
-
-		-
-			message: '#^Parameter \#1 \$endsAt of method App\\Models\\User\:\:grantBetaAccess\(\) expects Carbon\\Carbon\|null, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Winery/Viticulturists/Invite.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\User\:\:\$plots\.$#'
@@ -3425,18 +2357,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Winery/Wines/Timeline.php
-
-		-
-			message: '#^Parameter \#2 \$offset of function substr expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Macros/StringMacros.php
-
-		-
-			message: '#^Parameter \#3 \$length of function substr expects int\|null, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Macros/StringMacros.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -3533,18 +2453,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/SupervisorRequest.php
-
-		-
-			message: '#^Parameter \#2 \$amount of method Illuminate\\Database\\Eloquent\\Model\:\:decrement\(\) expects float\|int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Models/SupplyPurchase.php
-
-		-
-			message: '#^Parameter \#2 \$amount of method Illuminate\\Database\\Eloquent\\Model\:\:increment\(\) expects float\|int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Models/SupplyPurchase.php
 
 		-
 			message: '#^Match arm comparison between ''closed'' and ''closed'' is always true\.$#'
@@ -3715,18 +2623,6 @@ parameters:
 			path: app/Observers/PhytosanitaryTreatmentObserver.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Observers/PlotRemoteSensingObserver.php
-
-		-
-			message: '#^Parameter \#1 \$plot of class App\\Notifications\\RemoteSensingAlertNotification constructor expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Observers/PlotRemoteSensingObserver.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\User\:\:\$organization\.$#'
 			identifier: property.notFound
 			count: 1
@@ -3743,36 +2639,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: app/Services/CatastroGeometryService.php
-
-		-
-			message: '#^Parameter \#1 \$quantity of method App\\Models\\Container\:\:decrementUsedCapacity\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: app/Services/ContainerStockService.php
-
-		-
-			message: '#^Parameter \#1 \$quantity of method App\\Models\\Container\:\:hasAvailableCapacity\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Services/ContainerStockService.php
-
-		-
-			message: '#^Parameter \#1 \$quantity of method App\\Models\\Container\:\:incrementUsedCapacity\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: app/Services/ContainerStockService.php
-
-		-
-			message: '#^Parameter \#4 \$quantity of method App\\Services\\ContainerStockService\:\:recordHistory\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: app/Services/ContainerStockService.php
-
-		-
-			message: '#^Parameter \#3 \$second of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\ProductStock\>\:\:whereColumn\(\) expects string\|null, Illuminate\\Contracts\\Database\\Query\\Expression given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/InventoryAnalyticsService.php
 
 		-
 			message: '#^Match expression does not handle remaining value\: string$#'
@@ -3799,63 +2665,15 @@ parameters:
 			path: app/Services/ProductStockService.php
 
 		-
-			message: '#^Parameter \#1 \$ndvi of method App\\Services\\RemoteSensing\\Calculators\\LAICalculator\:\:calculateFromNDVI\(\) expects float, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/AdvancedAnalysisService.php
-
-		-
-			message: '#^Parameter \#2 \$ndvi of method App\\Services\\RemoteSensing\\Calculators\\ChlorophyllCalculator\:\:diagnoseNutritionalStatus\(\) expects float, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/AdvancedAnalysisService.php
-
-		-
-			message: '#^Parameter \#3 \$avgNDVI of method App\\Services\\RemoteSensing\\Calculators\\MaturityCalculator\:\:calculateQualityPotential\(\) expects float, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/AdvancedAnalysisService.php
-
-		-
 			message: '#^Property App\\Services\\RemoteSensing\\AdvancedAnalysisService\:\:\$phenologyCalculator is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: app/Services/RemoteSensing/AdvancedAnalysisService.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/RemoteSensing/AlertService.php
-
-		-
-			message: '#^Parameter \#1 \$num of function abs expects float\|int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/AlertService.php
-
-		-
-			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\AlertService\:\:checkPlotAlerts\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/AlertService.php
-
-		-
-			message: '#^Parameter \$litersPerHa of class App\\DataTransferObjects\\RemoteSensing\\IrrigationNeedDTO constructor expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/Calculators/IrrigationCalculator.php
-
-		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$baseDoLitersPerHa$#'
 			identifier: parameter.notFound
 			count: 1
-			path: app/Services/RemoteSensing/Calculators/LAICalculator.php
-
-		-
-			message: '#^Parameter \#1 \$ndvi of method App\\Services\\RemoteSensing\\Calculators\\LAICalculator\:\:calculateFromNDVI\(\) expects float, string\|null given\.$#'
-			identifier: argument.type
-			count: 2
 			path: app/Services/RemoteSensing/Calculators/LAICalculator.php
 
 		-
@@ -3901,24 +2719,6 @@ parameters:
 			path: app/Services/RemoteSensing/Detectors/AnomalyDetector.php
 
 		-
-			message: '#^Parameter \#1 \$num of function round expects float\|int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/Detectors/AnomalyDetector.php
-
-		-
-			message: '#^Parameter \#1 \$num of function round expects float\|int, string\|null given\.$#'
-			identifier: argument.type
-			count: 3
-			path: app/Services/RemoteSensing/Detectors/AnomalyDetector.php
-
-		-
-			message: '#^Parameter \#1 \$ndvi of method App\\Services\\RemoteSensing\\ImageHistoryService\:\:getNdviColor\(\) expects float\|null, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/ImageHistoryService.php
-
-		-
 			message: '#^Property App\\Services\\RemoteSensing\\NasaETService\:\:\$baseUrl is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
@@ -3927,18 +2727,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:fetchNdviData\(\) never returns null so it can be removed from the return type\.$#'
 			identifier: return.unusedType
-			count: 1
-			path: app/Services/RemoteSensing/NasaEarthdataService.php
-
-		-
-			message: '#^Parameter \#2 \$airTemp of method App\\Services\\RemoteSensing\\NasaLSTService\:\:calculateCWSI\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/NasaEarthdataService.php
-
-		-
-			message: '#^Parameter \#3 \$humidity of method App\\Services\\RemoteSensing\\NasaLSTService\:\:calculateCWSI\(\) expects float, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Services/RemoteSensing/NasaEarthdataService.php
 

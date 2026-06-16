@@ -130,7 +130,7 @@ class InventoryAnalyticsService
         $lowStockCount = ProductStock::where('user_id', $userId)
             ->where('active', true)
             ->where(function ($q) {
-                $q->whereColumn('quantity', '<', DB::raw('COALESCE(minimum_stock, 5)'));
+                $q->whereRaw('quantity < COALESCE(minimum_stock, 5)');
             })
             ->count();
 

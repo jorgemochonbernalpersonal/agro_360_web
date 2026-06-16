@@ -40,7 +40,7 @@ class ImageHistoryService
                     'image_source' => $record->image_source ?? 'MODIS',
                     'tile_path' => $record->tile_path,
                     // Generate NDVI color for visualization
-                    'ndvi_color' => $this->getNdviColor($record->ndvi_mean),
+                    'ndvi_color' => $this->getNdviColor($record->ndvi_mean !== null ? (float) $record->ndvi_mean : null),
                 ];
             });
     }

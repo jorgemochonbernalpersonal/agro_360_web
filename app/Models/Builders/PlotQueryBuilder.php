@@ -2,9 +2,13 @@
 
 namespace App\Models\Builders;
 
+use App\Models\Plot;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @extends Builder<Plot>
+ */
 class PlotQueryBuilder extends Builder
 {
     /**

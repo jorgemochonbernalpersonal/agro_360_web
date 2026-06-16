@@ -61,7 +61,7 @@ class CheckRemoteSensingAlerts extends Command
 
                 $pref->user->notify(new RemoteSensingAlertNotification(
                     $pref->plot,
-                    $data->ndvi_mean,
+                    (float) $data->ndvi_mean,
                     $pref->ndvi_threshold,
                     $pref->email_enabled
                 ));

@@ -99,16 +99,16 @@ class ThermalStressCard extends Component
             $lstService = app(\App\Services\RemoteSensing\NasaLSTService::class);
 
             if ($remoteSensing->cwsi !== null) {
-                $this->cwsiData = $lstService->classifyCWSI($remoteSensing->cwsi);
+                $this->cwsiData = $lstService->classifyCWSI((float) $remoteSensing->cwsi);
                 $this->cwsiData['value'] = $remoteSensing->cwsi;
             }
 
             if ($remoteSensing->lst_day) {
-                $this->heatStress = $lstService->detectHeatStress($remoteSensing->lst_day, $recordMonth);
+                $this->heatStress = $lstService->detectHeatStress((float) $remoteSensing->lst_day, $recordMonth);
             }
 
             if ($remoteSensing->lst_night) {
-                $this->frostRisk = $lstService->detectFrostRisk($remoteSensing->lst_night, $recordMonth);
+                $this->frostRisk = $lstService->detectFrostRisk((float) $remoteSensing->lst_night, $recordMonth);
             }
 
         } catch (\Exception $e) {

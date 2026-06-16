@@ -41,7 +41,7 @@ class RemoteSensingController extends BaseApiController
             ->get();
 
         // Generar colores basados en NDVI
-        $ndviColor = $this->getNdviColor($data->ndvi_mean);
+        $ndviColor = $this->getNdviColor((float) $data->ndvi_mean);
 
         $polygons = $multiparts->map(function ($multipart) use ($ndviColor, $data) {
             return [
@@ -77,6 +77,7 @@ class RemoteSensingController extends BaseApiController
         $plots = Plot::forUser($user)->get();
 
         $data = $plots->map(function ($plot) use ($service) {
+            /** @var Plot $plot */
             $sensing = $service->getLatestData($plot);
 
             if (! $sensing) {
@@ -88,7 +89,7 @@ class RemoteSensingController extends BaseApiController
                 'plot_name' => $plot->name,
                 'ndvi' => $sensing->ndvi_mean,
                 'health_status' => $sensing->health_status,
-                'color' => $this->getNdviColor($sensing->ndvi_mean),
+                'color' => $this->getNdviColor((float) $sensing->ndvi_mean),
             ];
         })->filter()->values();
 

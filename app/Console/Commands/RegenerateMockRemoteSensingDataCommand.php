@@ -40,6 +40,7 @@ class RegenerateMockRemoteSensingDataCommand extends Command
         $plotId = $this->option('plot-id');
         $clear = $this->option('clear');
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, Plot> $plots */
         $plots = $plotId
             ? Plot::where('id', $plotId)->get()
             : Plot::all();

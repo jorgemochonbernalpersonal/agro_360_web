@@ -162,8 +162,8 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 if ($lstData['lst_day'] && $result->temperature && $result->humidity) {
                     $cwsi = $this->lstService->calculateCWSI(
                         $lstData['lst_day'],
-                        $result->temperature,
-                        $result->humidity
+                        (float) $result->temperature,
+                        (float) $result->humidity
                     );
                     $lstData['cwsi'] = $cwsi;
                 }

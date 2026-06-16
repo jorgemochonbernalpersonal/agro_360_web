@@ -135,7 +135,7 @@ class AdvancedAnalysisService
      */
     private function analyzeLAI(Plot $plot, PlotRemoteSensing $current, $historical): array
     {
-        $lai = $this->laiCalculator->calculateFromNDVI($current->ndvi_mean);
+        $lai = $this->laiCalculator->calculateFromNDVI((float) ($current->ndvi_mean ?? 0));
         $classification = $this->laiCalculator->classifyLAI($lai);
 
         // Get last year data if available
@@ -187,7 +187,7 @@ class AdvancedAnalysisService
         $chlorophyllPercent = $this->chlorophyllCalculator->estimateChlorophyllContent($gndvi);
         $diagnosis = $this->chlorophyllCalculator->diagnoseNutritionalStatus(
             $gndvi,
-            $current->ndvi_mean
+            (float) ($current->ndvi_mean ?? 0)
         );
 
         $nitrogenNeed = $this->chlorophyllCalculator->calculateNitrogenNeed($gndvi);
@@ -242,7 +242,7 @@ class AdvancedAnalysisService
         $qualityPotential = $this->maturityCalculator->calculateQualityPotential(
             $maturityAnalysis['maturity_index'],
             $weatherHistory,
-            $current->ndvi_mean
+            (float) ($current->ndvi_mean ?? 0)
         );
 
         return array_merge($maturityAnalysis, [

@@ -43,6 +43,7 @@ class MapController extends Controller
         }
 
         // Intentar primero como Plot
+        /** @var Plot|null $plot */
         $plot = Plot::find($id);
 
         if ($plot) {
@@ -206,7 +207,7 @@ class MapController extends Controller
             ->where('plot_id', $plot->id)
             ->whereNotNull('plot_geometry_id')
             ->get()
-            ->filter(fn ($rel) => $rel->plotGeometry)
+            ->filter(fn ($rel) => $rel->plotGeometry !== null)
             ->map(function ($rel, $index) use ($highlightSigpacId) {
                 $wkt = $rel->plotGeometry->getWktCoordinates();
 
@@ -290,7 +291,7 @@ class MapController extends Controller
             ->whereIn('plot_id', $plotIds)
             ->whereNotNull('plot_geometry_id')
             ->get()
-            ->filter(fn ($rel) => $rel->plotGeometry)
+            ->filter(fn ($rel) => $rel->plotGeometry !== null)
             ->map(function ($rel, $index) {
                 $wkt = $rel->plotGeometry->getWktCoordinates();
                 if (! $wkt) {

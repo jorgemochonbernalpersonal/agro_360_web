@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Viticulturists;
 use App\Livewire\Winery\AbstractCreate;
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use Carbon\Carbon;
 use App\Notifications\ViticulturistInvitationNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -69,7 +70,7 @@ class Create extends AbstractCreate
         // Inherit beta from winery if active (same end date)
         $winery = User::find($this->wineryId());
         if ($winery?->isBetaUser() && ! $winery->betaExpired() && ! $user->is_beta_user) {
-            $user->grantBetaAccess($winery->beta_ends_at);
+            $user->grantBetaAccess($winery->beta_ends_at ? Carbon::parse($winery->beta_ends_at) : null);
         }
 
         // Auto-send invitation if a real email was provided

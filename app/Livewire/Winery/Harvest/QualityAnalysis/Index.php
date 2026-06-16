@@ -92,9 +92,9 @@ class Index extends Component
         $globalStats = [
             'total_kg' => $harvests->sum(fn ($h) => (float) $h->total_weight),
             'total_entries' => $harvests->count(),
-            'avg_alcohol' => $withAlcohol->count() ? round($withAlcohol->avg(fn ($h) => $h->potential_alcohol), 2) : null,
-            'avg_baume' => $withBaume->count() ? round($withBaume->avg(fn ($h) => $h->baume_degree), 2) : null,
-            'avg_acidity' => $withAcidity->count() ? round($withAcidity->avg(fn ($h) => $h->acidity_level), 2) : null,
+            'avg_alcohol' => $withAlcohol->count() ? round($withAlcohol->avg(fn ($h) => $h->potential_alcohol !== null ? (float) $h->potential_alcohol : null), 2) : null,
+            'avg_baume' => $withBaume->count() ? round($withBaume->avg(fn ($h) => $h->baume_degree !== null ? (float) $h->baume_degree : null), 2) : null,
+            'avg_acidity' => $withAcidity->count() ? round($withAcidity->avg(fn ($h) => $h->acidity_level !== null ? (float) $h->acidity_level : null), 2) : null,
         ];
 
         // ── Comparativa multi-añada ───────────────────────────────────────────
@@ -126,13 +126,13 @@ class Index extends Component
                         'years' => $compYears->mapWithKeys(fn ($y) => [
                             $y => [
                                 'alcohol' => $byYear->has($y)
-                                    ? round($byYear->get($y)->avg(fn ($h) => $h->potential_alcohol), 2)
+                                    ? round($byYear->get($y)->avg(fn ($h) => (float) $h->potential_alcohol), 2)
                                     : null,
                                 'baume' => $byYear->has($y)
-                                    ? round($byYear->get($y)->whereNotNull('baume_degree')->avg(fn ($h) => $h->baume_degree), 2)
+                                    ? round($byYear->get($y)->whereNotNull('baume_degree')->avg(fn ($h) => (float) $h->baume_degree), 2)
                                     : null,
                                 'acidity' => $byYear->has($y)
-                                    ? round($byYear->get($y)->whereNotNull('acidity_level')->avg(fn ($h) => $h->acidity_level), 2)
+                                    ? round($byYear->get($y)->whereNotNull('acidity_level')->avg(fn ($h) => (float) $h->acidity_level), 2)
                                     : null,
                                 'kg' => round($byYear->get($y)?->sum(fn ($h) => (float) $h->total_weight) ?? 0, 0),
                             ],

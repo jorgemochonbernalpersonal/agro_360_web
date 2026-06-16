@@ -58,6 +58,7 @@ class UpdateNdviCommand extends Command
      */
     private function updateSinglePlot(int $plotId, SentinelHubService $service, bool $sync): int
     {
+        /** @var Plot|null $plot */
         $plot = Plot::find($plotId);
 
         if (! $plot) {

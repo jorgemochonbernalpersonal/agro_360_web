@@ -43,7 +43,7 @@ class IrrigationCalculator
         $irrigationNeed = max(0, $weeklyNeed - $effectivePrecip - $soilReserve);
 
         // Convert to liters per hectare (1mm = 10,000 L/ha)
-        $litersPerHa = round($irrigationNeed * 10000);
+        $litersPerHa = (int) round($irrigationNeed * 10000);
 
         // Generate recommendation
         [$text, $color, $bg] = $this->getRecommendation($irrigationNeed);

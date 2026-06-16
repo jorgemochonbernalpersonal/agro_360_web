@@ -24,6 +24,7 @@ class WeatherController extends BaseApiController
             'plot_id' => 'required|integer|exists:plots,id',
         ]);
 
+        /** @var Plot $plot */
         $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($request->plot_id);
 
         $current = $this->weatherService->getCurrentWeather($plot);

@@ -27,6 +27,7 @@ class AlertService
         $plots = Plot::forUser($user)->with(['latestRemoteSensing'])->get();
 
         foreach ($plots as $plot) {
+            /** @var \App\Models\Plot $plot */
             $plotAlerts = $this->checkPlotAlerts($plot, $user);
             if (! empty($plotAlerts)) {
                 $alerts[$plot->id] = [
@@ -84,7 +85,7 @@ class AlertService
         }
 
         // Check declining trend
-        if ($latestData->trend === 'decreasing' && $latestData->ndvi_change !== null && abs($latestData->ndvi_change) > 0.1) {
+        if ($latestData->trend === 'decreasing' && $latestData->ndvi_change !== null && abs((float) $latestData->ndvi_change) > 0.1) {
             $alerts[] = [
                 'type' => 'trend_declining',
                 'severity' => 'warning',

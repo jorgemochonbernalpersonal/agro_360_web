@@ -53,12 +53,12 @@ class SupplyPurchase extends Model
     {
         // Al crear una compra, incrementar el stock del insumo
         static::created(function (SupplyPurchase $purchase) {
-            $purchase->supply->increment('current_stock', $purchase->quantity);
+            $purchase->supply->increment('current_stock', (float) $purchase->quantity);
         });
 
         // Al eliminar una compra, decrementar el stock
         static::deleted(function (SupplyPurchase $purchase) {
-            $purchase->supply->decrement('current_stock', $purchase->quantity);
+            $purchase->supply->decrement('current_stock', (float) $purchase->quantity);
         });
     }
 }

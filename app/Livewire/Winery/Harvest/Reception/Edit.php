@@ -111,7 +111,7 @@ class Edit extends Component
         $this->viticulturistName = $harvest->batch?->viticulturist->name ?? '—';
         $this->plotName = $planting?->plot->name ?? '—';
         $this->plantingLabel = ($planting?->grapeVariety->name ?? $planting->name ?? 'Sin variedad')
-            .($planting?->area_planted ? ' — '.number_format($planting->area_planted, 2).' ha' : '');
+            .($planting?->area_planted ? ' — '.number_format((float) $planting->area_planted, 2).' ha' : '');
         $this->vintageYear = $harvest->vintage ?? $harvest->batch->vintage_year ?? now()->year;
 
         // Pre-fill fields

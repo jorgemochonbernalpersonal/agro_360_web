@@ -32,6 +32,7 @@ class UpdatePlotSentinel2Job implements ShouldQueue
 
     public function handle(CopernicusSentinel2Service $service): void
     {
+        /** @var Plot|null $plot */
         $plot = Plot::find($this->plotId);
 
         if (! $plot) {

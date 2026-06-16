@@ -49,7 +49,7 @@ class Edit extends Component
         $this->payment_type = $this->invoice->payment_type ?? '';
 
         $this->lines = $this->invoice->items
-            ->filter(fn ($item) => $item->harvest_id)
+            ->filter(fn ($item) => (bool) $item->harvest_id)
             ->map(fn ($item) => [
                 'harvest_id' => (int) $item->harvest_id,
                 'quantity' => (string) $item->quantity,

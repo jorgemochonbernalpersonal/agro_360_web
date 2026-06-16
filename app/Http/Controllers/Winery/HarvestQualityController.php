@@ -44,11 +44,11 @@ class HarvestQualityController extends Controller
         $globalStats = [
             'total_kg' => $harvests->sum(fn ($h) => (float) $h->total_weight),
             'total_entries' => $harvests->count(),
-            'avg_alcohol' => $withAlcohol->count() ? round($withAlcohol->avg(fn ($h) => $h->potential_alcohol), 2) : null,
-            'avg_baume' => $withBaume->count() ? round($withBaume->avg(fn ($h) => $h->baume_degree), 2) : null,
-            'avg_brix' => $withBrix->count() ? round($withBrix->avg(fn ($h) => $h->brix_degree), 2) : null,
-            'avg_acidity' => $withAcidity->count() ? round($withAcidity->avg(fn ($h) => $h->acidity_level), 2) : null,
-            'avg_ph' => $withPh->count() ? round($withPh->avg(fn ($h) => $h->ph_level), 2) : null,
+            'avg_alcohol' => $withAlcohol->count() ? round($withAlcohol->avg(fn ($h) => (float) $h->potential_alcohol), 2) : null,
+            'avg_baume' => $withBaume->count() ? round($withBaume->avg(fn ($h) => (float) $h->baume_degree), 2) : null,
+            'avg_brix' => $withBrix->count() ? round($withBrix->avg(fn ($h) => (float) $h->brix_degree), 2) : null,
+            'avg_acidity' => $withAcidity->count() ? round($withAcidity->avg(fn ($h) => (float) $h->acidity_level), 2) : null,
+            'avg_ph' => $withPh->count() ? round($withPh->avg(fn ($h) => (float) $h->ph_level), 2) : null,
         ];
 
         // By viticulturist
@@ -66,11 +66,11 @@ class HarvestQualityController extends Controller
                     'label' => $group->first()->batch?->viticulturist->name ?? '—',
                     'total_kg' => $group->sum(fn ($h) => (float) $h->total_weight),
                     'count' => $group->count(),
-                    'avg_alcohol' => $wa->count() ? round($wa->avg(fn ($h) => $h->potential_alcohol), 2) : null,
-                    'avg_baume' => $wb->count() ? round($wb->avg(fn ($h) => $h->baume_degree), 2) : null,
-                    'avg_brix' => $wx->count() ? round($wx->avg(fn ($h) => $h->brix_degree), 2) : null,
-                    'avg_acidity' => $wc->count() ? round($wc->avg(fn ($h) => $h->acidity_level), 2) : null,
-                    'avg_ph' => $wp->count() ? round($wp->avg(fn ($h) => $h->ph_level), 2) : null,
+                    'avg_alcohol' => $wa->count() ? round($wa->avg(fn ($h) => (float) $h->potential_alcohol), 2) : null,
+                    'avg_baume' => $wb->count() ? round($wb->avg(fn ($h) => (float) $h->baume_degree), 2) : null,
+                    'avg_brix' => $wx->count() ? round($wx->avg(fn ($h) => (float) $h->brix_degree), 2) : null,
+                    'avg_acidity' => $wc->count() ? round($wc->avg(fn ($h) => (float) $h->acidity_level), 2) : null,
+                    'avg_ph' => $wp->count() ? round($wp->avg(fn ($h) => (float) $h->ph_level), 2) : null,
                     'health_dist' => $hd,
                 ];
             })
@@ -91,11 +91,11 @@ class HarvestQualityController extends Controller
                     'label' => $variety,
                     'total_kg' => $group->sum(fn ($h) => (float) $h->total_weight),
                     'count' => $group->count(),
-                    'avg_alcohol' => $wa->count() ? round($wa->avg(fn ($h) => $h->potential_alcohol), 2) : null,
-                    'avg_baume' => $wb->count() ? round($wb->avg(fn ($h) => $h->baume_degree), 2) : null,
-                    'avg_brix' => $wx->count() ? round($wx->avg(fn ($h) => $h->brix_degree), 2) : null,
-                    'avg_acidity' => $wc->count() ? round($wc->avg(fn ($h) => $h->acidity_level), 2) : null,
-                    'avg_ph' => $wp->count() ? round($wp->avg(fn ($h) => $h->ph_level), 2) : null,
+                    'avg_alcohol' => $wa->count() ? round($wa->avg(fn ($h) => (float) $h->potential_alcohol), 2) : null,
+                    'avg_baume' => $wb->count() ? round($wb->avg(fn ($h) => (float) $h->baume_degree), 2) : null,
+                    'avg_brix' => $wx->count() ? round($wx->avg(fn ($h) => (float) $h->brix_degree), 2) : null,
+                    'avg_acidity' => $wc->count() ? round($wc->avg(fn ($h) => (float) $h->acidity_level), 2) : null,
+                    'avg_ph' => $wp->count() ? round($wp->avg(fn ($h) => (float) $h->ph_level), 2) : null,
                 ];
             })
             ->sortByDesc('total_kg')
