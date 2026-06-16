@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property mixed $organic_area
  * @property mixed $sigpacCodesOld
  * @property mixed $tenure_regime
+ * @method static \Illuminate\Database\Eloquent\Builder<static> forUser(\App\Models\User $user)
  */
 class Plot extends Model
 {
@@ -407,6 +408,11 @@ class Plot extends Model
 
                 return $safeDate->isFuture();
             });
+    }
+
+    public function scopeForUser($query, User $user): void
+    {
+        $query->where('viticulturist_id', $user->id);
     }
 
     protected static function booted(): void

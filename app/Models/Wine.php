@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
  * @property mixed $sold
  * @property mixed $aged
  * @property mixed $currentStates
+ * @property mixed $pivot
  */
 class Wine extends Model
 {

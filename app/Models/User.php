@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\AgriculturalActivity;
 use App\Models\Traits\HasBetaAccess;
 use App\Models\Traits\HasHierarchy;
 use App\Models\Traits\HasInvoicing;
@@ -19,6 +20,13 @@ use Laravel\Sanctum\HasApiTokens;
 /**
  * @property array<string, mixed>|null $notification_preferences
  * @property array<string, mixed>|null $preferences
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property \Illuminate\Support\Carbon|null $invitation_sent_at
+ * @property \Illuminate\Support\Carbon|null $invitation_expires_at
+ * @property \Illuminate\Support\Carbon|null $beta_ends_at
+ * @property \Illuminate\Support\Carbon|null $last_login_at
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
  * @property mixed $total
  * @property mixed $role_admin
  * @property mixed $role_supervisor
@@ -244,6 +252,12 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     public function plots(): HasMany
     {
         return $this->hasMany(Plot::class, 'viticulturist_id');
+    }
+
+    /** @return HasMany<AgriculturalActivity, $this> */
+    public function agriculturalActivities(): HasMany
+    {
+        return $this->hasMany(AgriculturalActivity::class, 'viticulturist_id');
     }
 
     /**

@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PlotMapController extends Controller
 {
+    use AuthorizesRequests;
+
     public function show(Plot $plot, Request $request)
     {
         $this->authorize('view', $plot);

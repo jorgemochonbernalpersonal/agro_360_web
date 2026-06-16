@@ -120,6 +120,7 @@ class Index extends AbstractIndex
         ];
     }
 
+    /** @return \Illuminate\Database\Eloquent\Builder<\App\Models\Container> */
     protected function baseQuery(): Builder
     {
         return Container::where('user_id', $this->wineryId())
@@ -127,6 +128,7 @@ class Index extends AbstractIndex
             ->with(['containerType', 'containerMaterial', 'containerRoom']);
     }
 
+    /** @param \Illuminate\Database\Eloquent\Builder<\App\Models\Container> $query */
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {

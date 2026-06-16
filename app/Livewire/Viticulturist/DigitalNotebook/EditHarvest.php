@@ -343,7 +343,7 @@ class EditHarvest extends Component
         // Validar que el contenedor existe y está disponible (o es el actual)
         $container = null;
         if ($this->container_id) {
-            $container = Container::where('user_id', $user->id)->find($this->container_id);
+            $container = Container::where('user_id', $user->id)->where('id', $this->container_id)->first();
             if (! $container) {
                 $this->addError('container_id', __('El contenedor seleccionado no existe.'));
 

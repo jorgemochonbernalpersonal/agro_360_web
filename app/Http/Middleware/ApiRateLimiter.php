@@ -60,8 +60,9 @@ class ApiRateLimiter
      */
     protected function addRateLimitHeaders(Response $response, int $maxAttempts, int $remaining): Response
     {
-        return $response
-            ->header('X-RateLimit-Limit', $maxAttempts)
-            ->header('X-RateLimit-Remaining', max(0, $remaining));
+        $response->headers->set('X-RateLimit-Limit', (string) $maxAttempts);
+        $response->headers->set('X-RateLimit-Remaining', (string) max(0, $remaining));
+
+        return $response;
     }
 }

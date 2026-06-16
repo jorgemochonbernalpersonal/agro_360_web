@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property mixed $total_used
  * @property mixed $pivot
  * @property mixed $notes
+ * @method static \Illuminate\Database\Eloquent\Builder<static> empty()
+ * @method static \Illuminate\Database\Eloquent\Builder<static> full()
  */
 class Container extends Model
 {
@@ -316,6 +318,11 @@ class Container extends Model
     public function scopeFull($query)
     {
         return $query->whereRaw('(used_capacity + wine_volume_liters) >= capacity');
+    }
+
+    public function isAvailable(): bool
+    {
+        return ((float) $this->used_capacity + (float) $this->wine_volume_liters) <= 0;
     }
 
     /**

@@ -7,18 +7,6 @@ parameters:
 			path: app/Console/Commands/CheckAreaRequestTasks.php
 
 		-
-			message: '#^Cannot call method format\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Console/Commands/CleanStaleInvitations.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\User\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Console/Commands/CleanStaleInvitations.php
-
-		-
 			message: '#^Array has 2 duplicate keys with value ''font'' \(''font'', ''font''\)\.$#'
 			identifier: array.duplicateKey
 			count: 1
@@ -55,36 +43,6 @@ parameters:
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Harvest\:\:wines\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
-			message: '#^Cannot call method isAfter\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
-
-		-
-			message: '#^Cannot call method isFuture\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
-
-		-
-			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
-
-		-
-			message: '#^Call to an undefined method App\\Http\\Controllers\\PlotMapController\:\:authorize\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Http/Controllers/PlotMapController.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between ''full_digital…'' and ''full_digital…'' will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
@@ -103,12 +61,6 @@ parameters:
 			path: app/Http/Controllers/Viticulturist/OfficialReportController.php
 
 		-
-			message: '#^Call to an undefined method Symfony\\Component\\HttpFoundation\\Response\:\:header\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Http/Middleware/ApiRateLimiter.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -119,18 +71,6 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Http/Middleware/ApiRole.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:withAccessToken\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Http/Middleware/AuthWithRefreshGrace.php
-
-		-
-			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: app/Http/Resources/Api/Admin/AdminUserResource.php
 
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\>\.$#'
@@ -145,12 +85,6 @@ parameters:
 			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
 
 		-
-			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Resources/Api/UserResource.php
-
-		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\>\.$#'
 			identifier: return.type
 			count: 1
@@ -163,46 +97,10 @@ parameters:
 			path: app/Http/Resources/InvoiceResource.php
 
 		-
-			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Http/Resources/UserResource.php
-
-		-
-			message: '#^Call to an undefined method App\\Models\\User\:\:agriculturalActivities\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Jobs/ExportDataJob.php
-
-		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
 			identifier: arguments.count
 			count: 1
 			path: app/Jobs/GenerateOfficialReportJob.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Contracts\\Auth\\MustVerifyEmail\:\:grantBetaAccess\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Listeners/GrantBetaAccessOnVerification.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Contracts\\Auth\\MustVerifyEmail\:\:isBetaUser\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Listeners/GrantBetaAccessOnVerification.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Contracts\\Auth\\MustVerifyEmail\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Listeners/GrantBetaAccessOnVerification.php
-
-		-
-			message: '#^Cannot call method format\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Livewire/Admin/Dashboard.php
 
 		-
 			message: '#^Parameter \#1 \$num of function number_format expects float, string\|null given\.$#'
@@ -251,24 +149,6 @@ parameters:
 			identifier: nullCoalesce.variable
 			count: 1
 			path: app/Livewire/Supervisor/Census/Index.php
-
-		-
-			message: '#^Cannot call method isAfter\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Livewire/Supervisor/Growers/Index.php
-
-		-
-			message: '#^Cannot call method isFuture\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Livewire/Supervisor/Growers/Index.php
-
-		-
-			message: '#^Cannot call method isPast\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Livewire/Supervisor/Growers/Index.php
 
 		-
 			message: '#^Comparison operation "\>" between 3 and 0 is always true\.$#'
@@ -343,18 +223,6 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Container\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Container\>\:\:isAvailable\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TRelatedModel of Illuminate\\Database\\Eloquent\\Model\>\:\:forUser\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/FinancialStats.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -397,12 +265,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Personal/UnifiedIndex.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TRelatedModel of Illuminate\\Database\\Eloquent\\Model\>\:\:forUser\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/PlantingsDashboard.php
-
-		-
 			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\Dashboard\:\:\$historyDays \(int\) does not accept float\.$#'
 			identifier: assign.propertyType
 			count: 3
@@ -439,28 +301,10 @@ parameters:
 			path: app/Livewire/Viticulturist/Support/CreateTicket.php
 
 		-
-			message: '#^Cannot call method isAfter\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Livewire/Viticulturist/Viticulturists/Index.php
-
-		-
 			message: '#^Property App\\Livewire\\Winery\\Billing\\ProductSale\\Index\:\:\$quickAvailableAddresses \(array\) does not accept Illuminate\\Support\\Collection\<\(int\|string\), mixed\>\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: app/Livewire/Winery/Billing/ProductSale/Index.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:empty\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Cellar/Containers/Index.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:full\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Cellar/Containers/Index.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -473,12 +317,6 @@ parameters:
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: app/Livewire/Winery/FermentationControls/Edit.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:forYear\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Winery/Harvest/Campaigns/Index.php
 
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
@@ -527,12 +365,6 @@ parameters:
 			identifier: method.unused
 			count: 1
 			path: app/Livewire/Winery/Silicie/Infovi.php
-
-		-
-			message: '#^Cannot call method isAfter\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Livewire/Winery/Viticulturists/Show.php
 
 		-
 			message: '#^Instanceof between Carbon\\Carbon and Carbon\\Carbon will always evaluate to true\.$#'
@@ -671,12 +503,6 @@ parameters:
 			identifier: match.alwaysTrue
 			count: 1
 			path: app/Models/SupportTicket.php
-
-		-
-			message: '#^Cannot call method isPast\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Models/User.php
 
 		-
 			message: '#^Cannot unset property App\\Models\\User\:\:\$_has_supervisor_cache because it might have hooks in a subclass\.$#'

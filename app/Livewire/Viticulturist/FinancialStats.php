@@ -116,7 +116,7 @@ class FinancialStats extends Component
 
         // Distribución de ventas por variedad
         $salesByVariety = InvoiceItem::whereHas('invoice', function ($q) use ($user) {
-            $q->forUser($user->id)
+            $q->where('user_id', $user->id)
                 ->whereYear('invoice_date', $this->selectedYear)
                 ->where('status', '!=', 'cancelled');
         })

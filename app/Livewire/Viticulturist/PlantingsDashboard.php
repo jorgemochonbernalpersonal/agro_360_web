@@ -13,7 +13,7 @@ class PlantingsDashboard extends Component
     {
         // ✅ OPTIMIZACIÓN: Eager loading con constraints para certificaciones
         $plantings = PlotPlanting::whereHas('plot', function ($query) {
-            $query->forUser(Auth::user());
+            $query->where('viticulturist_id', Auth::id());
         })
             ->with([
                 'plot:id,name',

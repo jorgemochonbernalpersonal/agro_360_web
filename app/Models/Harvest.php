@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -134,6 +135,12 @@ class Harvest extends Model
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');
+    }
+
+    /** @return BelongsToMany<Wine, $this> */
+    public function wines(): BelongsToMany
+    {
+        return $this->belongsToMany(Wine::class, 'wine_harvests');
     }
 
     /**

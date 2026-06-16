@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder<static> forYear(int $year)
+ */
 class Campaign extends Model
 {
     use HasFactory;
