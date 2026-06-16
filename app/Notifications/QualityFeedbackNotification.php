@@ -25,8 +25,8 @@ class QualityFeedbackNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $h = $this->harvest;
-        $variety = $h->plotPlanting?->grapeVariety?->name ?? 'Uva';
-        $plot = $h->plotPlanting?->plot?->name ?? '';
+        $variety = $h->plotPlanting?->grapeVariety->name ?? 'Uva';
+        $plot = $h->plotPlanting?->plot->name ?? '';
 
         $mail = (new MailMessage)
             ->subject("Informe de calidad — {$variety} ({$this->wineryName})")
@@ -34,7 +34,7 @@ class QualityFeedbackNotification extends Notification implements ShouldQueue
             ->line("**Bodega:** {$this->wineryName}")
             ->line("**Variedad:** {$variety}".($plot ? " · Parcela: {$plot}" : ''))
             ->line('**Peso recibido:** '.number_format((float) $h->total_weight, 0).' kg')
-            ->line('**Fecha:** '.$h->harvest_start_date?->format('d/m/Y'));
+            ->line('**Fecha:** '.$h->harvest_start_date->format('d/m/Y'));
 
         if ($h->baume_degree !== null) {
             $mail->line("**Grado Baumé:** {$h->baume_degree}°");

@@ -153,7 +153,7 @@ class Create extends Component
                 $description = $line['description'] ?: sprintf(
                     'Cosecha #%d — %s',
                     $harvest->id,
-                    $harvest->harvest_start_date?->format('d/m/Y') ?? '—'
+                    $harvest->harvest_start_date->format('d/m/Y')
                 );
 
                 // Reserve stock (available → reserved)

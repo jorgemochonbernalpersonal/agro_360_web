@@ -49,11 +49,11 @@ class ViticulturistExport implements FromCollection, WithHeadings, WithMapping, 
         ];
 
         return [
-            $v?->name ?? '—',
-            $v?->email ?? '—',
+            $v->name ?? '—',
+            $v->email ?? '—',
             $sourceMap[$relation->source] ?? $relation->source,
             $v?->can_login ? 'Sí' : 'No',
-            $v?->plots_count ?? 0,
+            $v->plots_count ?? 0,
             $relation->created_at?->format('d/m/Y') ?? '—',
         ];
     }

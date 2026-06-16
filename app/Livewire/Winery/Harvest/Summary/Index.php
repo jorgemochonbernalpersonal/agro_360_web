@@ -261,10 +261,10 @@ class Index extends Component
                 $byYear = $batches->keyBy('vintage_year');
 
                 return [
-                    'viticulturist_name' => $first->viticulturist?->name ?? '—',
-                    'variety' => $first->plotPlanting?->grapeVariety?->name ?? '—',
+                    'viticulturist_name' => $first->viticulturist->name ?? '—',
+                    'variety' => $first->plotPlanting?->grapeVariety->name ?? '—',
                     'years' => $historicalYears->mapWithKeys(
-                        fn ($y) => [$y => (float) ($byYear->get($y)?->total_weight_kg ?? 0)]
+                        fn ($y) => [$y => (float) ($byYear->get($y)->total_weight_kg ?? 0)]
                     ),
                 ];
             })

@@ -105,12 +105,12 @@ class PromoteToReception extends Component
         ]);
 
         // Pre-rellenar desde cuaderno
-        $this->harvest_start_date = $notebookHarvest->harvest_start_date?->format('Y-m-d') ?? '';
+        $this->harvest_start_date = $notebookHarvest->harvest_start_date->format('Y-m-d');
         $this->total_weight = (string) ($notebookHarvest->total_weight ?? '');
         $this->harvest_ticket_number = $notebookHarvest->harvest_ticket_number ?? '';
         $this->price_per_kg = (string) ($notebookHarvest->price_per_kg ?? '');
         $this->vintage_year = $notebookHarvest->vintage
-            ?? ($notebookHarvest->harvest_start_date?->year ?? now()->year);
+            ?? ($notebookHarvest->harvest_start_date->year ?? now()->year);
 
         $this->baume_degree = (string) ($notebookHarvest->baume_degree ?? '');
         $this->brix_degree = (string) ($notebookHarvest->brix_degree ?? '');

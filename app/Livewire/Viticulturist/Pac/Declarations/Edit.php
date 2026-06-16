@@ -159,9 +159,9 @@ class Edit extends Component
             $existing = $existingItems->get($plot->id);
             $this->items[$plot->id] = [
                 'selected' => $existing !== null,
-                'declared_area' => $existing?->declared_area ?? $plot->pac_eligible_area ?? $plot->area ?? '',
-                'eligible_area' => $existing?->eligible_area ?? $plot->pac_eligible_area ?? '',
-                'eco_schemes' => $existing?->eco_schemes ?? ($plot->is_organic ? ['organic'] : []),
+                'declared_area' => $existing->declared_area ?? $plot->pac_eligible_area ?? $plot->area ?? '',
+                'eligible_area' => $existing->eligible_area ?? $plot->pac_eligible_area ?? '',
+                'eco_schemes' => $existing->eco_schemes ?? ($plot->is_organic ? ['organic'] : []),
                 'name' => $plot->name,
                 'area' => $plot->area,
             ];

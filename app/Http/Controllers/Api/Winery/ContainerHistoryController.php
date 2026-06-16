@@ -171,7 +171,7 @@ class ContainerHistoryController extends BaseApiController
 
                 return [
                     'room_id' => $first->container_room_id,
-                    'room_name' => $first->containerRoom?->name ?? 'Sin sala',
+                    'room_name' => $first->containerRoom->name ?? 'Sin sala',
                     'count' => $group->count(),
                     'capacity' => $capacity,
                     'used' => $used,
@@ -186,7 +186,7 @@ class ContainerHistoryController extends BaseApiController
 
                 return [
                     'type_id' => $first->type_id,
-                    'type_name' => $first->containerType?->name ?? 'Sin tipo',
+                    'type_name' => $first->containerType->name ?? 'Sin tipo',
                     'count' => $group->count(),
                     'capacity' => $group->sum(fn ($c) => (float) $c->capacity),
                 ];
@@ -202,7 +202,7 @@ class ContainerHistoryController extends BaseApiController
             ->map(fn ($c) => [
                 'id' => $c->id,
                 'name' => $c->name,
-                'next_maintenance' => $c->next_maintenance_date?->toDateString(),
+                'next_maintenance' => $c->next_maintenance_date->toDateString(),
                 'days_until' => (int) now()->diffInDays($c->next_maintenance_date, false),
             ]);
 

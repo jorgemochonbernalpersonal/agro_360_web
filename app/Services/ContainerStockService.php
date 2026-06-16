@@ -42,7 +42,7 @@ class ContainerStockService
             HarvestStock::create([
                 'harvest_id' => $harvest->id,
                 'container_id' => $harvest->container_id,
-                'user_id' => $harvest->activity?->user_id ?? Auth::id(),
+                'user_id' => $harvest->activity->user_id ?? Auth::id(),
                 'movement_type' => 'initial',
                 'quantity_change' => $harvest->total_weight,
                 'quantity_after' => $harvest->total_weight,
@@ -336,8 +336,8 @@ class ContainerStockService
                         [
                             'current_quantity' => $newWeight,
                             'available_qty' => $available,
-                            'reserved_qty' => $lastStock?->reserved_qty ?? 0,
-                            'sold_qty' => $lastStock?->sold_qty ?? 0,
+                            'reserved_qty' => $lastStock->reserved_qty ?? 0,
+                            'sold_qty' => $lastStock->sold_qty ?? 0,
                             'has_subproducts' => false,
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),

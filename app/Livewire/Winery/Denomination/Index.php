@@ -63,8 +63,8 @@ class Index extends Component
             $doViticulturists = $relations->map(function ($rel) use ($plotStats, $lastActivity) {
                 return (object) [
                     'viticulturist' => $rel->viticulturist,
-                    'plot_count' => $plotStats[$rel->viticulturist_id]?->plot_count ?? 0,
-                    'total_area' => $plotStats[$rel->viticulturist_id]?->total_area ?? 0,
+                    'plot_count' => $plotStats[$rel->viticulturist_id]->plot_count ?? 0,
+                    'total_area' => $plotStats[$rel->viticulturist_id]->total_area ?? 0,
                     'last_activity' => $lastActivity[$rel->viticulturist_id] ?? null,
                 ];
             });

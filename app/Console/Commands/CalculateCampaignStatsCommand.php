@@ -95,7 +95,7 @@ class CalculateCampaignStatsCommand extends Command
             ->with('phytosanitaryTreatment.product')
             ->get();
 
-        $totalArea = $treatments->sum(fn ($a) => $a->phytosanitaryTreatment?->area_treated ?? 0);
+        $totalArea = $treatments->sum(fn ($a) => $a->phytosanitaryTreatment->area_treated ?? 0);
 
         return [
             'total_treatments' => $treatments->count(),
@@ -114,7 +114,7 @@ class CalculateCampaignStatsCommand extends Command
             ->with('harvest')
             ->get();
 
-        $totalKg = $harvests->sum(fn ($a) => $a->harvest?->quantity_kg ?? 0);
+        $totalKg = $harvests->sum(fn ($a) => $a->harvest->quantity_kg ?? 0);
 
         return [
             'total_harvests' => $harvests->count(),

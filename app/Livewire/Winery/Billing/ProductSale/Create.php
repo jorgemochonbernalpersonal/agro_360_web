@@ -69,7 +69,7 @@ class Create extends Component
         }
 
         $defaultTax = $user->defaultTax()->first() ?? $this->availableTaxes->first();
-        $this->defaultTaxId = (string) ($defaultTax?->id ?? '');
+        $this->defaultTaxId = (string) ($defaultTax->id ?? '');
 
         $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
         $this->delivery_note_code = $settings->getDeliveryNotePreview();
@@ -250,7 +250,7 @@ class Create extends Component
                     'concept_type' => $item['concept_type'] ?? ($lot ? 'wine' : 'other'),
                     'name' => $item['name'],
                     'description' => $item['description'] ?: null,
-                    'sku' => $item['sku'] ?: ($lot?->sku ?? null),
+                    'sku' => $item['sku'] ?: ($lot->sku ?? null),
                     'quantity' => $qty,
                     'unit_price' => $line['unit_price'],
                     'discount_percentage' => $line['discount_percentage'],
