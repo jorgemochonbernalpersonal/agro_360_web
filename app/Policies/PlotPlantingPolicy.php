@@ -52,4 +52,13 @@ class PlotPlantingPolicy
     {
         return $this->update($user, $planting);
     }
+
+    public function viewHarvestSummary(User $user, PlotPlanting $planting): bool
+    {
+        if ($user->role === 'admin') {
+            return true;
+        }
+
+        return $planting->plot->viticulturist_id === $user->id;
+    }
 }

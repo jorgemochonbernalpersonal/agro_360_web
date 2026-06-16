@@ -25,10 +25,7 @@ class Show extends Component
 
     public function mount(PlotPlanting $planting): void
     {
-        abort_unless(
-            $planting->plot->viticulturist_id === Auth::id(),
-            403
-        );
+        $this->authorize('viewHarvestSummary', $planting);
 
         $this->planting = $planting;
         $this->vintageYear = (int) request('vintage', now()->year);
