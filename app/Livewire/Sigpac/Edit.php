@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Sigpac;
 
+use App\Livewire\Concerns\WithSigpacFormRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Plot;
 use App\Models\SigpacCode;
@@ -14,7 +15,7 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithSigpacFormRules, WithToastNotifications;
 
     public SigpacCode $sigpacCode;
 
@@ -250,26 +251,8 @@ class Edit extends Component
 
     protected function rules(): array
     {
-        $rules = [
-            'plot_id' => 'required|exists:plots,id',
-            'sigpac_use' => 'nullable|array',
-            'sigpac_use.*' => 'exists:sigpac_use,id',
-            'sigpacCodes' => 'required|array|min:1',
-        ];
-
-        // Validar el código SIGPAC (solo uno en edición)
         $index = 0;
-        $code = $this->sigpacCodes[$index] ?? [];
-
-        // Validar campos individuales
-        $rules["sigpacCodes.{$index}.code_autonomous_community"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
-        $rules["sigpacCodes.{$index}.code_province"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
-        $rules["sigpacCodes.{$index}.code_municipality"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
-        $rules["sigpacCodes.{$index}.code_aggregate"] = ['nullable', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
-        $rules["sigpacCodes.{$index}.code_zone"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
-        $rules["sigpacCodes.{$index}.code_polygon"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
-        $rules["sigpacCodes.{$index}.code_plot"] = ['required', 'string', 'size:5', 'regex:/^\d{5}$/'];
-        $rules["sigpacCodes.{$index}.code_enclosure"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
+        $rules = array_merge($this->sigpacBaseRules(), $this->sigpacCodeFieldRules($index));
 
         // Validar que el código completo no exista ya en la base de datos (excepto el actual)
         $rules["sigpacCodes.{$index}"] = [
