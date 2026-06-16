@@ -38,6 +38,7 @@ class WineTransfer extends Model
         return array_map(fn ($v) => __($v), static::TRANSFER_TYPES);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);

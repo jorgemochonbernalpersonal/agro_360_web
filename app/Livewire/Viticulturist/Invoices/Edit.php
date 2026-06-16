@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Invoices;
 
+use App\Livewire\Concerns\WithInvoiceEditRules;
 use App\Livewire\Concerns\WithInvoiceFormRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
@@ -17,7 +18,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithInvoiceFormRules, WithRoleAwareRedirect, WithToastNotifications;
+    use WithInvoiceEditRules, WithInvoiceFormRules, WithRoleAwareRedirect, WithToastNotifications;
 
     public Invoice $invoice;
 

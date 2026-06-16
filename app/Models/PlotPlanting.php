@@ -51,6 +51,8 @@ class PlotPlanting extends Model
 
     /**
      * Relación con la parcela
+     *
+     * @return BelongsTo<Plot, $this>
      */
     public function plot(): BelongsTo
     {

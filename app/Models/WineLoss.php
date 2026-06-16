@@ -50,6 +50,7 @@ class WineLoss extends Model
         return array_map(fn ($v) => __($v), static::LOSS_AUTHORIZATIONS);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);

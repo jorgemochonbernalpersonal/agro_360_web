@@ -31,6 +31,7 @@ class WineFermentationControl extends Model
         'volatile_acidity' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);

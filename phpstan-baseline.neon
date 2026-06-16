@@ -831,7 +831,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/PlantingController.php
 
 		-
@@ -2001,7 +2001,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 1
 			path: app/Http/Controllers/Viticulturist/HarvestsPdfController.php
 
 		-
@@ -9423,7 +9423,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 1
 			path: app/Livewire/Viticulturist/Harvests/Index.php
 
 		-
@@ -9458,12 +9458,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Harvests/Show.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/Harvests/Show.php
@@ -10033,26 +10027,8 @@ parameters:
 			path: app/Livewire/Viticulturist/PlantingsDashboard.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Livewire/Viticulturist/PlantingsDashboard.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TRelatedModel of Illuminate\\Database\\Eloquent\\Model\>\:\:forUser\(\)\.$#'
 			identifier: method.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/PlantingsDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:sortByDesc\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/Viticulturist/PlantingsDashboard.php
-
-		-
-			message: '#^Parameter \#1 \$value of function collect contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
 			count: 1
 			path: app/Livewire/Viticulturist/PlantingsDashboard.php
 
@@ -11119,12 +11095,6 @@ parameters:
 			path: app/Livewire/Winery/ExternalGrape/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/FermentationControls/Edit.php
-
-		-
 			message: '#^Instanceof between Carbon\\Carbon and Carbon\\Carbon will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -11821,22 +11791,10 @@ parameters:
 			path: app/Livewire/Winery/WineLosses/Create.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/WineLosses/Edit.php
-
-		-
 			message: '#^Instanceof between Carbon\\Carbon and Carbon\\Carbon will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: app/Livewire/Winery/WineLosses/Edit.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Winery/WineTransfers/Edit.php
 
 		-
 			message: '#^Instanceof between Carbon\\Carbon and Carbon\\Carbon will always evaluate to true\.$#'
@@ -13625,18 +13583,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Observers/UserObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Observers/WineLossObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$volume_liters\.$#'
-			identifier: property.notFound
-			count: 6
-			path: app/Observers/WineLossObserver.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Producer\Invoices;
 
+use App\Livewire\Concerns\WithInvoiceEditRules;
 use App\Livewire\Concerns\WithInvoiceFormRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
@@ -22,7 +23,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithInvoiceFormRules, WithToastNotifications;
+    use WithInvoiceEditRules, WithInvoiceFormRules, WithToastNotifications;
 
     public Invoice $invoice;
 
