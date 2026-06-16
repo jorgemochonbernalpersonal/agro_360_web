@@ -86,9 +86,7 @@ class NasaLSTService
         }
 
         $fallback = $this->fetchFromOpenMeteo($coords, $plot->id);
-        if ($fallback !== null) {
-            \Illuminate\Support\Facades\Cache::put($cacheKey, $fallback, now()->addHour());
-        }
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $fallback, now()->addHour());
 
         return $fallback;
     }

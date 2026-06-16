@@ -110,16 +110,6 @@ class Infovi extends Component
         ));
     }
 
-    // Map wines.category values → INFOVI bucket
-    private function categoryBucket(?string $cat): string
-    {
-        return match ($cat) {
-            'DO', 'DOCa', 'vino_de_pago' => 'DO',
-            'IGP' => 'IGP',
-            default => 'VdM',
-        };
-    }
-
     // ── Threshold detection ───────────────────────────────────────────────
 
     /**

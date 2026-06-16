@@ -1,8 +1,8 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Call to private method getAuthToken\(\) of class App\\Services\\RemoteSensing\\NasaEarthdataService\.$#'
-			identifier: method.private
+			message: '#^Call to protected method getAuthToken\(\) of class App\\Services\\RemoteSensing\\NasaEarthdataService\.$#'
+			identifier: method.protected
 			count: 1
 			path: app/Console/Commands/CheckAreaRequestTasks.php
 
@@ -19,12 +19,6 @@ parameters:
 			path: app/Exports/MovementsExport.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: app/Helpers/Navigation/ViticulturistMenu.php
-
-		-
 			message: '#^Anonymous function should return array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: mixed, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\} but returns array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: int, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\}\.$#'
 			identifier: return.type
 			count: 1
@@ -37,34 +31,16 @@ parameters:
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between ''full_digital…'' and ''full_digital…'' will always evaluate to true\.$#'
-			identifier: identical.alwaysTrue
+			message: '#^Strict comparison using \!\=\= between ''full_digital…'' and ''full_digital…'' will always evaluate to false\.$#'
+			identifier: notIdentical.alwaysFalse
 			count: 1
 			path: app/Http/Controllers/ReportVerificationController.php
-
-		-
-			message: '#^Undefined variable\: \$vintageYear$#'
-			identifier: variable.undefined
-			count: 1
-			path: app/Http/Controllers/Viticulturist/HarvestsPdfController.php
 
 		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
 			identifier: arguments.count
 			count: 1
 			path: app/Http/Controllers/Viticulturist/OfficialReportController.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: app/Http/Middleware/ApiRole.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between Laravel\\Sanctum\\PersonalAccessToken and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Middleware/ApiRole.php
 
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\>\.$#'
@@ -97,24 +73,6 @@ parameters:
 			path: app/Livewire/Admin/Plots/Index.php
 
 		-
-			message: '#^Comparison operation "\>" between 5 and 0 is always true\.$#'
-			identifier: greater.alwaysTrue
-			count: 1
-			path: app/Livewire/Producer/OnboardingChecklist.php
-
-		-
-			message: '#^Variable \$vitCountByWinery on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.variable
-			count: 1
-			path: app/Livewire/Supervisor/Census/Index.php
-
-		-
-			message: '#^Comparison operation "\>" between 3 and 0 is always true\.$#'
-			identifier: greater.alwaysTrue
-			count: 1
-			path: app/Livewire/Supervisor/OnboardingChecklist.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -123,24 +81,6 @@ parameters:
 		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
 			identifier: arguments.count
-			count: 1
-			path: app/Livewire/Viticulturist/OfficialReports/Create.php
-
-		-
-			message: '#^Comparison operation "\>" between int\<155, 900\> and 1024 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 1
-			path: app/Livewire/Viticulturist/OfficialReports/Create.php
-
-		-
-			message: '#^Comparison operation "\>" between int\<204, 1000\> and 1024 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 1
-			path: app/Livewire/Viticulturist/OfficialReports/Create.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: app/Livewire/Viticulturist/OfficialReports/Create.php
 
@@ -163,18 +103,6 @@ parameters:
 			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
 
 		-
-			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
-			identifier: larastan.noEnvCallsOutsideOfConfig
-			count: 4
-			path: app/Livewire/Viticulturist/Support/CreateTicket.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: app/Livewire/Winery/Cellar/ProductLots/Audit.php
-
-		-
 			message: '#^Anonymous function should return array\{name\: string, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\} but returns array\{name\: string, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\}\.$#'
 			identifier: return.type
 			count: 1
@@ -187,70 +115,16 @@ parameters:
 			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
 
 		-
-			message: '#^Comparison operation "\>" between 5 and 0 is always true\.$#'
-			identifier: greater.alwaysTrue
-			count: 1
-			path: app/Livewire/Winery/OnboardingChecklist.php
-
-		-
-			message: '#^Method App\\Livewire\\Winery\\Silicie\\Infovi\:\:categoryBucket\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: app/Livewire/Winery/Silicie/Infovi.php
-
-		-
-			message: '#^Method App\\Livewire\\Winery\\Wines\\Show\:\:resetCoForm\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: app/Livewire/Winery/Wines/Show.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
 			path: app/Models/AgriculturalActivityAuditLog.php
 
 		-
-			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\AuditLog\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: app/Models/AuditLog.php
-
-		-
-			message: '#^Match arm comparison between ''maintenance'' and ''bottling'' is always false\.$#'
-			identifier: match.alwaysFalse
-			count: 1
-			path: app/Models/ContainerHistory.php
-
-		-
-			message: '#^Offset ''bodega''\|''compostaje''\|''cooperativa''\|''destileria''\|''otro''\|''vertedero_autorizado'' on array\{cooperative\: ''Cooperativa vinícola'', winery\: ''Bodega'', distillery\: ''Destilería /…'', composting\: ''Planta de compostaje'', authorized_landfill\: ''Vertedero autorizado'', other\: ''Otro destino''\} on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/HarvestByproduct.php
-
-		-
-			message: '#^Offset ''lia''\|''orujo''\|''otro''\|''raspon'' on array\{pomace\: ''Orujo / Hollejo'', stem\: ''Raspón / Escobajo'', lees\: ''Lías'', other\: ''Otro''\} on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/HarvestByproduct.php
-
-		-
-			message: '#^Call to function is_null\(\) with int\<0, max\> will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 2
-			path: app/Models/HarvestContainer.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between ''disputed''\|''matched''\|''pending'' and ''resolved'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/HarvestDelivery.php
-
-		-
-			message: '#^Offset ''approved''\|''archived''\|''draft''\|''in_review''\|''pending''\|''rejected'' on array\{draft\: ''zinc'', pending\: ''yellow'', in_review\: ''blue'', approved\: ''green'', rejected\: ''red'', archived\: ''zinc''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/SupervisorRequest.php
 
 		-
 			message: '#^Offset ''external''\|''own'' does not exist on array\{standard\: ''Estándar'', complete\: ''Completo'', organic\: ''Ecológico'', custom\: ''Personalizado''\}\.$#'
@@ -289,40 +163,10 @@ parameters:
 			path: app/Services/ProductStockService.php
 
 		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$baseDoLitersPerHa$#'
-			identifier: parameter.notFound
-			count: 1
-			path: app/Services/RemoteSensing/Calculators/LAICalculator.php
-
-		-
-			message: '#^Method App\\Services\\RemoteSensing\\Calculators\\MaturityCalculator\:\:estimateDaysToHarvest\(\) never returns null so it can be removed from the return type\.$#'
-			identifier: return.unusedType
+			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Services/RemoteSensing/Calculators/MaturityCalculator.php
-
-		-
-			message: '#^Constant App\\Services\\RemoteSensing\\Detectors\\AnomalyDetector\:\:RAPID_CHANGE_DAYS is unused\.$#'
-			identifier: classConstant.unused
-			count: 1
-			path: app/Services/RemoteSensing/Detectors/AnomalyDetector.php
-
-		-
-			message: '#^Method App\\Services\\RemoteSensing\\NasaEarthdataService\:\:fetchNdviData\(\) never returns null so it can be removed from the return type\.$#'
-			identifier: return.unusedType
-			count: 1
-			path: app/Services/RemoteSensing/NasaEarthdataService.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: app/Services/RemoteSensing/NasaEarthdataService.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between array and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Services/RemoteSensing/NasaLSTService.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'

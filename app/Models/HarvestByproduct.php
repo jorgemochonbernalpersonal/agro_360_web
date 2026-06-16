@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $byproduct_type
+ * @property string $destination_type
+ */
 class HarvestByproduct extends Model
 {
     const BYPRODUCT_TYPES = [

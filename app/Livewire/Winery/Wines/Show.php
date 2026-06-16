@@ -696,12 +696,6 @@ class Show extends Component
         $this->ad_date = now()->format('Y-m-d');
     }
 
-    private function resetCoForm(): void
-    {
-        $this->co_harvest_id = '';
-        $this->co_quantity_kg = '';
-    }
-
     private function resetAnForm(): void
     {
         $this->an_container_id = $this->an_oenologist_id = $this->an_laboratory = '';

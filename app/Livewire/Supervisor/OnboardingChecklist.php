@@ -56,9 +56,7 @@ class OnboardingChecklist extends Component
         })->toArray();
 
         $total = count(OnboardingProgress::SUPERVISOR_STEPS);
-        $this->progressPercentage = $total > 0
-            ? (int) (($completedSteps / $total) * 100)
-            : 0;
+        $this->progressPercentage = (int) (($completedSteps / $total) * 100);
     }
 
     public function skipAll(): void

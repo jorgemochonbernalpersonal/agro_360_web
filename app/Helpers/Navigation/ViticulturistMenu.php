@@ -329,9 +329,6 @@ class ViticulturistMenu
         $items = [];
         foreach ($pendingSteps as $step) {
             $cfg = $stepMap[$step];
-            if (! $cfg) {
-                continue;
-            }
             $items[] = [
                 'icon' => $cfg['icon'],
                 'label' => $cfg['label'],

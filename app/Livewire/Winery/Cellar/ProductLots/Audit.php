@@ -171,15 +171,15 @@ class Audit extends Component
             ];
         });
 
-        if ($this->onlyDrifted) {
-            $rows = $rows->filter(fn ($r) => $r['hasDrift']);
-        }
-
         $stats = [
             'total' => $lots->count(),
             'drifted' => $rows->filter(fn ($r) => $r['hasDrift'])->count(),
             'ok' => $rows->filter(fn ($r) => ! $r['hasDrift'])->count(),
         ];
+
+        if ($this->onlyDrifted) {
+            $rows = $rows->filter(fn ($r) => $r['hasDrift']);
+        }
 
         return view('livewire.winery.cellar.product-lots.audit', [
             'rows' => $rows->values(),

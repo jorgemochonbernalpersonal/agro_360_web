@@ -257,7 +257,7 @@ class Harvest extends Model
      */
     public function getContainerWeight(): ?float
     {
-        return $this->container ? $this->container->used_capacity : null;
+        return $this->container ? (float) $this->container->used_capacity : null;
     }
 
     /**

@@ -83,7 +83,7 @@ class DateRange
      */
     public function durationInDays(): int
     {
-        return $this->start->diffInDays($this->end);
+        return (int) $this->start->diffInDays($this->end);
     }
 
     /**

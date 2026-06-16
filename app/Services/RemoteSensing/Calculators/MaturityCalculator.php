@@ -275,7 +275,7 @@ class MaturityCalculator
     /**
      * Estimate days to optimal harvest
      */
-    private function estimateDaysToHarvest(float $maturityIndex): ?int
+    private function estimateDaysToHarvest(float $maturityIndex): int
     {
         return match (true) {
             $maturityIndex >= 85 => 0,       // Harvest now!

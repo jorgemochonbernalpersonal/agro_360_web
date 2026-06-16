@@ -53,7 +53,7 @@ class HarvestsPdfController extends Controller
 
         // Construir filas por planting
         $rows = $plantingIds->map(function ($plantingId) use (
-            $plantings, $harvestsByPlanting, $batchesByPlanting, $deliveriesByPlanting
+            $plantings, $harvestsByPlanting, $batchesByPlanting, $deliveriesByPlanting, $vintageYear
         ) {
             $planting = $plantings->get($plantingId);
             $harvestKg = (float) $harvestsByPlanting->get($plantingId, collect())->sum('total_weight');

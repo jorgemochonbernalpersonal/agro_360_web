@@ -20,8 +20,6 @@ class AnomalyDetector
     // Thresholds for anomaly detection
     private const NDVI_DROP_THRESHOLD = 15;        // % drop to trigger alert
 
-    private const RAPID_CHANGE_DAYS = 7;            // Days to consider "rapid"
-
     private const STATISTICAL_SIGMA = 2.0;          // Standard deviations for outlier
 
     private const MIN_HISTORICAL_POINTS = 10;       // Minimum data points needed

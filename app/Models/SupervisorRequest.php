@@ -147,7 +147,7 @@ class SupervisorRequest extends Model
 
     public function statusColor(): string
     {
-        return self::STATUS_COLORS[$this->status] ?? 'zinc';
+        return self::STATUS_COLORS[$this->status];
     }
 
     public function isOverdue(): bool

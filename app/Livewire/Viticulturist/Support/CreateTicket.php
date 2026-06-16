@@ -56,7 +56,7 @@ class CreateTicket extends Component
 
         // Enviar notificación por email a la dirección configurada
         try {
-            $supportEmail = env('SUPPORT_EMAIL', env('MAIL_FROM_ADDRESS', 'info@agro365.es'));
+            $supportEmail = config('support.email', config('mail.from.address', 'info@agro365.es'));
 
             // Crear un usuario temporal para la notificación (solo necesita email y name)
             $supportUser = new \App\Models\User;
@@ -66,7 +66,7 @@ class CreateTicket extends Component
             $supportUser->notify(new SupportTicketCreatedNotification($ticket));
         } catch (\Exception $e) {
             // Log del error pero no fallar la creación del ticket
-            $supportEmail = env('SUPPORT_EMAIL', env('MAIL_FROM_ADDRESS', 'info@agro365.es'));
+            $supportEmail = config('support.email', config('mail.from.address', 'info@agro365.es'));
             \Log::error('Error al enviar notificación de ticket de soporte: '.$e->getMessage(), [
                 'ticket_id' => $ticket->id,
                 'support_email' => $supportEmail,

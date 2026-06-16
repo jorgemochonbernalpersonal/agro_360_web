@@ -174,7 +174,11 @@ class ReportVerificationController extends Controller
                     $signatureData['signature_version'] = $metadata['signature_version'];
                 }
 
-            } elseif ($report->report_type === 'full_digital_notebook') {
+            } else {
+                if ($report->report_type !== 'full_digital_notebook') {
+                    return true; // Tipo no soportado: asumir válido
+                }
+
                 $campaignId = $report->report_metadata['campaign_id'] ?? null;
 
                 if (! $campaignId) {
@@ -228,9 +232,6 @@ class ReportVerificationController extends Controller
                 if (isset($metadata['signature_version'])) {
                     $signatureData['signature_version'] = $metadata['signature_version'];
                 }
-            } else {
-                // Tipo de informe no soportado para verificación de integridad
-                return true; // Asumir válido si no podemos verificar
             }
 
             // Verificar el hash

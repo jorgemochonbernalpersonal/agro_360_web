@@ -277,7 +277,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             $result = $this->repository->createOrUpdate($plot, $imageDate, $data);
 
             // Area request (async) if requested
-            if ($includeArea && $result) {
+            if ($includeArea) {
                 $areaStats = $this->areaService->requestAreaData($plot, $token);
 
                 if ($areaStats && isset($areaStats['task_id'])) {
@@ -321,7 +321,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
      *
      * @param array|null $coordinates Override for the selected sigpac parcel ['lat','lng'|'lon']
      */
-    private function fetchNdviData(Plot $plot, ?array $coordinates = null): ?array
+    private function fetchNdviData(Plot $plot, ?array $coordinates = null): array
     {
         if ($this->useMockData) {
             return $this->generateMockData($plot);
@@ -401,7 +401,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     /**
      * Get authentication token
      */
-    private function getAuthToken(): ?string
+    protected function getAuthToken(): ?string
     {
         if ($this->token) {
             return $this->token;
