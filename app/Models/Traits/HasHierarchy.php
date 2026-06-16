@@ -8,6 +8,7 @@ use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasHierarchy
 {
@@ -30,12 +31,14 @@ trait HasHierarchy
 
     // ======== RELACIONES COMO SUPERVISOR ========
 
-    public function supervisedWineries()
+    /** @return HasMany<SupervisorWinery, $this> */
+    public function supervisedWineries(): HasMany
     {
         return $this->hasMany(SupervisorWinery::class, 'supervisor_id');
     }
 
-    public function supervisedViticulturists()
+    /** @return HasMany<SupervisorViticulturist, $this> */
+    public function supervisedViticulturists(): HasMany
     {
         return $this->hasMany(SupervisorViticulturist::class, 'supervisor_id');
     }

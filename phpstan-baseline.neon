@@ -1789,36 +1789,6 @@ parameters:
 			path: app/Http/Controllers/MapController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$code\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$code_enclosure\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$code_polygon\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$formatted_code\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/MapController.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getWktCoordinates\(\)\.$#'
 			identifier: method.notFound
 			count: 3
@@ -1858,36 +1828,6 @@ parameters:
 			message: '#^Parameter \#2 \$plot of method App\\Http\\Controllers\\MapController\:\:renderSingleSigpacMap\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>code" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>code_enclosure" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>code_polygon" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>formatted_code" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Http/Controllers/MapController.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
 			path: app/Http/Controllers/MapController.php
 
 		-
@@ -4909,42 +4849,6 @@ parameters:
 			path: app/Http/Resources/Api/MobileNotebookResource.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>description" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>dose_per_hectare" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>duration_minutes" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>is_fertirrigation" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>threshold_exceeded" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\OfficialReportResource\:\:\$completed_at\.$#'
 			identifier: property.notFound
 			count: 1
@@ -7939,30 +7843,6 @@ parameters:
 			path: app/Livewire/Clients/Edit.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedViticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Create.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Create.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedViticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Edit.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Plots/Edit.php
-
-		-
 			message: '#^Access to an undefined property App\\Livewire\\Plots\\Index\:\:\$autonomousCommunities\.$#'
 			identifier: property.notFound
 			count: 1
@@ -8473,30 +8353,6 @@ parameters:
 			path: app/Livewire/Subscription/Manage.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>active_count" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Supervisor/Campaigns/Index.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>campaign_count" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Supervisor/Campaigns/Index.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>reception_count" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Supervisor/Campaigns/Index.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>total_kg" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Supervisor/Campaigns/Index.php
-
-		-
 			message: '#^Variable \$vitCountByWinery on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.variable
 			count: 1
@@ -8606,12 +8462,6 @@ parameters:
 
 		-
 			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>default_irpf_rate" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
@@ -8839,18 +8689,6 @@ parameters:
 			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedViticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/AbstractActivityForm.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 2
@@ -8888,18 +8726,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\CreateHarvest\:\:\$viticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/CreateHarvest.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedViticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/CreateHarvest.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/CreateHarvest.php
@@ -8954,18 +8780,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\DigitalNotebook\\EditHarvest\:\:\$viticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedViticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/DigitalNotebook/EditHarvest.php
@@ -9271,19 +9085,7 @@ parameters:
 			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
@@ -9292,18 +9094,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$winery\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 4
-			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>plot_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
 			path: app/Livewire/Viticulturist/Harvests/EditDelivery.php
 
 		-
@@ -9334,12 +9124,6 @@ parameters:
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 4
-			path: app/Livewire/Viticulturist/Harvests/Index.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>year" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
 			path: app/Livewire/Viticulturist/Harvests/Index.php
 
 		-
@@ -9835,18 +9619,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Personal/UnifiedIndex.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedViticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Personal/UnifiedIndex.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Personal/UnifiedIndex.php
-
-		-
 			message: '#^Class App\\Notifications\\ViticulturistInvitationNotification constructor invoked with 1 parameter, 2 required\.$#'
 			identifier: arguments.count
 			count: 1
@@ -10316,18 +10088,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Livewire\\Viticulturist\\Viticulturists\\Index\:\:\$viticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Viticulturists/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedViticulturists\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Viticulturist/Viticulturists/Index.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/Viticulturists/Index.php
@@ -11023,12 +10783,6 @@ parameters:
 			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$viticulturist_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
-
-		-
 			message: '#^Anonymous function should return array\{name\: mixed, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\} but returns array\{name\: mixed, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\}\.$#'
 			identifier: return.type
 			count: 1
@@ -11044,18 +10798,6 @@ parameters:
 			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\Harvest\>\:\:avg\(\) expects \(callable\(App\\Models\\Harvest\)\: float\)\|int\|string\|null, Closure\(mixed\)\: \(numeric\-string\|null\) given\.$#'
 			identifier: argument.type
 			count: 6
-			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 3
-			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>viticulturist_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
 			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
 
 		-
@@ -11371,30 +11113,6 @@ parameters:
 			path: app/Livewire/Winery/Settings.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>address" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Winery/Settings.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>city" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Winery/Settings.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>phone" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Winery/Settings.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>postal_code" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Winery/Settings.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\User\:\:\$organization\.$#'
 			identifier: property.notFound
 			count: 1
@@ -11554,18 +11272,6 @@ parameters:
 			message: '#^Method App\\Livewire\\Winery\\Wines\\Show\:\:resetCoForm\(\) is unused\.$#'
 			identifier: method.unused
 			count: 1
-			path: app/Livewire/Winery/Wines/Show.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>abbreviation" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Livewire/Winery/Wines/Show.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 3
 			path: app/Livewire/Winery/Wines/Show.php
 
 		-
@@ -12391,21 +12097,9 @@ parameters:
 			path: app/Notifications/HarvestDeliveryCreatedNotification.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Notifications/HarvestDeliveryCreatedNotification.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Notifications/HarvestDeliveryCreatedNotification.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 5
 			path: app/Notifications/HarvestDeliveryCreatedNotification.php
 
 		-
@@ -12415,21 +12109,9 @@ parameters:
 			path: app/Notifications/HarvestDeliveryDelinkedNotification.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Notifications/HarvestDeliveryDelinkedNotification.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Notifications/HarvestDeliveryDelinkedNotification.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 4
 			path: app/Notifications/HarvestDeliveryDelinkedNotification.php
 
 		-
@@ -12447,7 +12129,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 1
 			path: app/Notifications/HarvestDeliveryDisputedNotification.php
 
 		-
@@ -12460,12 +12142,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_weight\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Notifications/HarvestDeliveryDisputedNotification.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 4
 			path: app/Notifications/HarvestDeliveryDisputedNotification.php
 
 		-
@@ -12899,18 +12575,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Observers/UserObserver.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Policies/HarvestPolicy.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\User\:\:\$supervisedWineries\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Policies/PlotPolicy.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'

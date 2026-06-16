@@ -64,9 +64,9 @@ class Index extends Component
         // ── Por viticultor ────────────────────────────────────────────────────
 
         $byViticulturist = $harvests
-            ->groupBy(fn ($h) => $h->batch?->viticulturist_id ?? 'unknown')
+            ->groupBy(fn ($h) => $h->batch->viticulturist_id ?? 'unknown')
             ->map(function ($group) {
-                $name = $group->first()->batch?->viticulturist?->name ?? '—';
+                $name = $group->first()->batch?->viticulturist->name ?? '—';
 
                 return $this->buildQualityStats($name, $group);
             })
@@ -76,7 +76,7 @@ class Index extends Component
         // ── Por variedad ──────────────────────────────────────────────────────
 
         $byVariety = $harvests
-            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety?->name ?? '—')
+            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety->name ?? '—')
             ->map(function ($group, $variety) {
                 return $this->buildQualityStats($variety, $group);
             })
@@ -116,9 +116,9 @@ class Index extends Component
         $comparison = collect();
         if ($compYears->count() >= 2) {
             $comparison = $allForComparison
-                ->groupBy(fn ($h) => $h->batch?->viticulturist_id ?? 'unknown')
+                ->groupBy(fn ($h) => $h->batch->viticulturist_id ?? 'unknown')
                 ->map(function ($group) use ($compYears) {
-                    $name = $group->first()->batch?->viticulturist?->name ?? '—';
+                    $name = $group->first()->batch?->viticulturist->name ?? '—';
                     $byYear = $group->groupBy(fn ($h) => $h->batch?->vintage_year);
 
                     return [

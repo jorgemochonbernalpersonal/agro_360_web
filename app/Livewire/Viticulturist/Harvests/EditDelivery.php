@@ -65,7 +65,7 @@ class EditDelivery extends Component
 
         $this->delivery = $delivery;
         $this->plot_planting_id = (string) ($delivery->plot_planting_id ?? '');
-        $this->plot_id = (string) ($delivery->plotPlanting?->plot_id ?? '');
+        $this->plot_id = (string) ($delivery->plotPlanting->plot_id ?? '');
         $this->vintage_year = (string) $delivery->vintage_year;
         $this->buyer_name = $delivery->buyer_name;
         $this->delivered_kg = (string) $delivery->delivered_kg;
@@ -189,11 +189,11 @@ class EditDelivery extends Component
             }
         }
 
-        $viticulturistName = $this->delivery->viticulturist?->name ?? '—';
-        $variety = $this->delivery->plotPlanting?->grapeVariety?->name
-                  ?? $this->delivery->plotPlanting?->name
+        $viticulturistName = $this->delivery->viticulturist->name ?? '—';
+        $variety = $this->delivery->plotPlanting?->grapeVariety->name
+                  ?? $this->delivery->plotPlanting->name
                   ?? '—';
-        $plot = $this->delivery->plotPlanting?->plot?->name ?? '—';
+        $plot = $this->delivery->plotPlanting?->plot->name ?? '—';
         $vintageYear = $this->delivery->vintage_year;
         $declaredKg = (float) $this->delivery->delivered_kg;
 

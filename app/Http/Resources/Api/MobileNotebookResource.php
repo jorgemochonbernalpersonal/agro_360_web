@@ -47,8 +47,8 @@ class MobileNotebookResource extends JsonResource
         $t = $this->phytosanitaryTreatment;
 
         return array_merge($this->base(), [
-            'product' => $t?->product?->name ?? '',
-            'dose' => (string) ($t?->dose_per_hectare ?? '0'),
+            'product' => $t?->product->name ?? '',
+            'dose' => (string) ($t->dose_per_hectare ?? '0'),
             'dose_unit' => 'kg/ha',
             'pest' => $t?->target_pest,
             'application_method' => $t?->application_method,
@@ -61,11 +61,11 @@ class MobileNotebookResource extends JsonResource
         $i = $this->irrigation;
 
         return array_merge($this->base(), [
-            'duration_minutes' => $i?->duration_minutes ?? 0,
+            'duration_minutes' => $i->duration_minutes ?? 0,
             'water_volume' => $i?->water_volume !== null ? (float) $i->water_volume : null,
             'water_volume_unit' => $i?->water_volume_unit,
             'irrigation_type' => $i?->irrigation_method,
-            'is_fertirrigation' => (bool) ($i?->is_fertirrigation ?? false),
+            'is_fertirrigation' => (bool) ($i->is_fertirrigation ?? false),
         ]);
     }
 
@@ -75,10 +75,10 @@ class MobileNotebookResource extends JsonResource
 
         return array_merge($this->base(), [
             'type' => $o?->observation_type,
-            'description' => $o?->description ?? '',
+            'description' => $o->description ?? '',
             'affected_area_percentage' => $o?->affected_area_percentage !== null
                 ? (float) $o->affected_area_percentage : null,
-            'threshold_exceeded' => (bool) ($o?->threshold_exceeded ?? false),
+            'threshold_exceeded' => (bool) ($o->threshold_exceeded ?? false),
             'follow_up_date' => $o?->follow_up_date?->toDateString(),
         ]);
     }
@@ -135,14 +135,14 @@ class MobileNotebookResource extends JsonResource
     private function postHarvestArray(): array
     {
         $p = $this->postHarvestTreatment;
-        $productName = $p?->product?->name
+        $productName = $p?->product->name
             ?? (isset($p->application_type)
                 ? (PostHarvestTreatment::APPLICATION_TYPES[$p->application_type] ?? '')
                 : '');
 
         return array_merge($this->base(), [
             'product' => $productName,
-            'dose' => (string) ($p?->dose_per_hectare ?? '0'),
+            'dose' => (string) ($p->dose_per_hectare ?? '0'),
             'dose_unit' => $p?->dose_unit,
             'application_method' => $p?->application_type,
             'reentry_interval_hours' => $p?->reentry_interval_hours,

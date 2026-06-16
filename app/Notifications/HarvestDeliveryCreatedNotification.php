@@ -35,8 +35,8 @@ class HarvestDeliveryCreatedNotification extends Notification implements ShouldQ
         $planting = $delivery->plotPlanting;
         $viticulturist = $delivery->viticulturist;
 
-        $variety = $planting?->grapeVariety?->name ?? $planting?->name ?? '—';
-        $plot = $planting?->plot?->name ?? '—';
+        $variety = $planting?->grapeVariety->name ?? $planting->name ?? '—';
+        $plot = $planting?->plot->name ?? '—';
         $showUrl = AppLink::url(route('winery.grape-reception.index'), 'agro365://home');
 
         if (app()->environment('production')) {
@@ -46,10 +46,10 @@ class HarvestDeliveryCreatedNotification extends Notification implements ShouldQ
         return (new MailMessage)
             ->subject(__('Nueva entrega declarada — :variety · :year', ['variety' => $variety, 'year' => $delivery->vintage_year]))
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line(__('El viticultor **:name** ha registrado una nueva entrega de uva.', ['name' => $viticulturist?->name ?? '—']))
+            ->line(__('El viticultor **:name** ha registrado una nueva entrega de uva.', ['name' => $viticulturist->name ?? '—']))
             ->line(new HtmlString(
                 '<div style="background-color:#eff6ff;border:1px solid #bfdbfe;padding:16px;border-radius:8px;margin:16px 0;">
-                    <p style="margin:0 0 8px 0;"><strong>Viticultor:</strong> '.e($viticulturist?->name ?? '—').'</p>
+                    <p style="margin:0 0 8px 0;"><strong>Viticultor:</strong> '.e($viticulturist->name ?? '—').'</p>
                     <p style="margin:0 0 8px 0;"><strong>Variedad:</strong> '.e($variety).'</p>
                     <p style="margin:0 0 8px 0;"><strong>Parcela:</strong> '.e($plot).'</p>
                     <p style="margin:0 0 8px 0;"><strong>Añada:</strong> '.e($delivery->vintage_year).'</p>

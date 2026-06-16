@@ -563,7 +563,7 @@ class Show extends Component
 
         // ── Inputs: recepciones de uva ────────────────────────────────────────
         foreach ($composition as $i => $entry) {
-            $variety = $entry->harvest->plotPlanting?->plotVariety?->grapeVariety?->name ?? 'Uva';
+            $variety = $entry->harvest->plotPlanting?->plotVariety?->grapeVariety->name ?? 'Uva';
             $kg = number_format($entry->quantity_kg ?? 0, 0);
             $nodeId = 'grape_'.$i;
             $label = addslashes("{$variety}\n{$kg} kg");
@@ -608,8 +608,8 @@ class Show extends Component
 
         // ── Trasvases ─────────────────────────────────────────────────────────
         foreach ($transfers as $i => $tr) {
-            $from = $tr->fromContainer?->name ?? '?';
-            $to = $tr->toContainer?->name ?? '?';
+            $from = $tr->fromContainer->name ?? '?';
+            $to = $tr->toContainer->name ?? '?';
             $nodeId = 'tr_'.$i;
             $label = addslashes("Trasvase\n{$from} → {$to}");
             $lines[] = "    {$nodeId}[\"↔️ {$label}\"]";
@@ -621,7 +621,7 @@ class Show extends Component
         foreach ($losses as $i => $lo) {
             $nodeId = 'loss_'.$i;
             $qty = number_format($lo->quantity ?? 0, 1);
-            $unit = $lo->unitOfMeasurement?->abbreviation ?? '';
+            $unit = $lo->unitOfMeasurement->abbreviation ?? '';
             $label = addslashes("Merma\n{$qty} {$unit}");
             $lines[] = "    {$nodeId}([\"⚠️ {$label}\"])";
             $lines[] = "    style {$nodeId} fill:#fee2e2,stroke:#dc2626,color:#7f1d1d";

@@ -223,10 +223,10 @@ class Settings extends Component
 
         $this->fiscal_nif = $user->dni ?? $org->vat_number ?? '';
         $this->fiscal_legal_name = $inv->issuer_legal_name ?? '';
-        $this->fiscal_address = $profile?->address ?? $org->address ?? '';
-        $this->fiscal_city = $profile?->city ?? $org->city ?? '';
-        $this->fiscal_postal_code = $profile?->postal_code ?? $org->postal_code ?? '';
-        $this->fiscal_phone = $profile?->phone ?? $org->phone ?? '';
+        $this->fiscal_address = $profile->address ?? $org->address ?? '';
+        $this->fiscal_city = $profile->city ?? $org->city ?? '';
+        $this->fiscal_postal_code = $profile->postal_code ?? $org->postal_code ?? '';
+        $this->fiscal_phone = $profile->phone ?? $org->phone ?? '';
     }
 
     public function saveFiscal(): void

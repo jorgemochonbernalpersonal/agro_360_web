@@ -37,7 +37,7 @@ class Index extends Component
             $campaign = Campaign::forViticulturist(Auth::id())
                 ->orderByDesc('year')
                 ->first();
-            $this->vintageFilter = (string) ($campaign?->year ?? now()->year);
+            $this->vintageFilter = (string) ($campaign->year ?? now()->year);
         }
     }
 
