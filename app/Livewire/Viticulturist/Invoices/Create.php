@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Invoices;
 
+use App\Livewire\Concerns\WithInvoiceFormRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
@@ -17,7 +18,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    use WithInvoiceFormRules, WithRoleAwareRedirect, WithToastNotifications;
 
     public $client_id = '';
 
@@ -448,40 +449,7 @@ class Create extends Component
 
     protected function rules(): array
     {
-        $rules = [
-            'client_id' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    if ($value && ! \App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
-                        $fail(__('El cliente seleccionado no es válido.'));
-                    }
-                },
-            ],
-            'client_address_id' => 'required|exists:client_addresses,id', // AHORA OBLIGATORIO
-            'invoice_date' => 'required|date',
-            'delivery_note_date' => 'required|date|before_or_equal:today',
-            'items' => 'required|array|min:1', // Mínimo 1 item
-            'items.*.name' => 'required|string|max:255',
-            'items.*.description' => 'nullable|string',
-            'items.*.sku' => 'nullable|string|max:255',
-            'items.*.quantity' => 'required|numeric|min:0.001',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.discount_percentage' => 'nullable|numeric|min:0|max:100',
-            'items.*.tax_id' => 'nullable|exists:taxes,id',
-            'items.*.unit' => 'nullable|string|max:20',
-            'items.*.concept_type' => 'nullable|in:harvest,service,product,other',
-            'payment_type' => 'nullable|in:cash,transfer,check,other',
-            'observations' => 'nullable|string',
-            'observations_invoice' => 'nullable|string',
-            'delivery_note_code' => 'required|string|max:255',
-        ];
-
-        // Si viene desde la ruta de facturar cosecha, validar que haya al menos una cosecha
-        if ($this->fromHarvestRoute) {
-            $rules['items'] = 'required|array|min:1';
-        }
-
-        return $rules;
+        return $this->invoiceCreateRules('harvest,service,product,other');
     }
 
     protected function messages(): array

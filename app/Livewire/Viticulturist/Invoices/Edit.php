@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Invoices;
 
+use App\Livewire\Concerns\WithInvoiceFormRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
@@ -16,7 +17,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    use WithInvoiceFormRules, WithRoleAwareRedirect, WithToastNotifications;
 
     public Invoice $invoice;
 
@@ -630,65 +631,11 @@ class Edit extends Component
 
     protected function rules(): array
     {
-        // Si está bloqueada (entregada o cancelada), solo validar payment_status
         if ($this->isLocked) {
-            return [
-                'payment_status' => [
-                    'required',
-                    'in:unpaid,paid,overdue,refunded',
-                    new \App\Rules\InvoiceStateCoherence(
-                        $this->invoice->status,
-                        request()->input('payment_status'),
-                        $this->delivery_status
-                    ),
-                ],
-            ];
+            return $this->invoiceLockedRules();
         }
 
-        // Validación normal para facturas no bloqueadas
-        return [
-            'client_id' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    if ($value && ! \App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
-                        $fail(__('El cliente seleccionado no es válido.'));
-                    }
-                },
-            ],
-            'client_address_id' => 'required|exists:client_addresses,id', // AHORA OBLIGATORIO
-            'invoice_date' => 'nullable|date', // Solo requerido cuando se factura, no en borrador
-            'delivery_status' => [
-                'required',
-                'in:pending,in_transit,delivered,cancelled',
-                new \App\Rules\InvoiceStateCoherence(
-                    $this->invoice->status,
-                    $this->payment_status,
-                    request()->input('delivery_status')
-                ),
-            ],
-            'payment_status' => [
-                'required',
-                'in:unpaid,paid,overdue,refunded',
-                new \App\Rules\InvoiceStateCoherence(
-                    $this->invoice->status,
-                    request()->input('payment_status'),
-                    $this->delivery_status
-                ),
-            ],
-            'items' => 'required|array|min:1', // Mínimo 1 item
-            'items.*.name' => 'required|string|max:255',
-            'items.*.description' => 'nullable|string',
-            'items.*.sku' => 'nullable|string|max:255',
-            'items.*.quantity' => 'required|numeric|min:0.001',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.discount_percentage' => 'nullable|numeric|min:0|max:100',
-            'items.*.tax_id' => 'nullable|exists:taxes,id',
-            'items.*.unit' => 'nullable|string|max:20',
-            'items.*.concept_type' => 'nullable|in:harvest,service,product,other',
-            'delivery_note_date' => 'nullable|date',
-            'observations' => 'nullable|string',
-            'observations_invoice' => 'nullable|string',
-        ];
+        return $this->invoiceUnlockedBaseRules('harvest,service,product,other');
     }
 
     /**
