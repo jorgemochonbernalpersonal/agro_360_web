@@ -13,7 +13,7 @@ class HarvestResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'harvest_start_date' => $this->harvest_start_date?->toDateString(),
+            'harvest_start_date' => $this->harvest_start_date->toDateString(),
             'vintage' => $this->vintage,
             'total_weight' => (float) $this->total_weight,
             'status' => $this->status,

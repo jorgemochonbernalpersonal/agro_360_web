@@ -14,7 +14,7 @@ class ContainerReturnResource extends JsonResource
         return [
             'id' => $this->id,
             'campaign_id' => $this->campaign_id,
-            'date' => $this->date?->toDateString(),
+            'date' => $this->date->toDateString(),
             'product_name' => $this->product_name,
             'registration_number' => $this->registration_number,
             'container_type' => $this->container_type,

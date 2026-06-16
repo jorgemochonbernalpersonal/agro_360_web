@@ -15,7 +15,7 @@ class SoilAnalysisResource extends JsonResource
             'id' => $this->id,
             'plot_id' => $this->plot_id,
             'campaign_id' => $this->campaign_id,
-            'analysis_date' => $this->analysis_date?->toDateString(),
+            'analysis_date' => $this->analysis_date->toDateString(),
             'laboratory' => $this->laboratory,
             'sample_depth_cm' => $this->sample_depth_cm !== null ? (int) $this->sample_depth_cm : null,
             'ph' => $this->ph !== null ? (float) $this->ph : null,

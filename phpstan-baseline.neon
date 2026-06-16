@@ -373,12 +373,6 @@ parameters:
 			path: app/Http/Controllers/Api/Viticulturist/AdvisoryMembershipController.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/CampaignController.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
@@ -877,12 +871,6 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Controllers/Api/Winery/TraceabilityController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Harvest\:\:\$last_reception_date\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1141,12 +1129,6 @@ parameters:
 			path: app/Http/Resources/AgriculturalActivityResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/ActivityResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\Admin\\AdminUserResource\:\:\$adminNotes\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1165,28 +1147,10 @@ parameters:
 			path: app/Http/Resources/Api/Admin/AdminUserResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/Admin/SecurityEventResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Http/Resources/Api/AgriInsuranceResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\AnnouncementResource\:\:\$pivot\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/Api/AnnouncementResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/BiodiversityRecordResource.php
 
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, quantity\: float\|null, unit_id\: mixed, winery_supply_id\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, quantity\: float\|null, unit_id\: mixed, winery_supply_id\: mixed\}\>\.$#'
@@ -1201,28 +1165,10 @@ parameters:
 			path: app/Http/Resources/Api/BottlingResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/BottlingResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/CertificationResource.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 2
 			path: app/Http/Resources/Api/ClientResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/CommercialAuthorizationResource.php
 
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float\|null, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float\|null, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\>\.$#'
@@ -1243,12 +1189,6 @@ parameters:
 			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 3
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\ContainerResource\:\:\$notes\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1261,58 +1201,16 @@ parameters:
 			path: app/Http/Resources/Api/ContainerResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/ContainerReturnResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/EnergyUsageResource.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 2
 			path: app/Http/Resources/Api/EstimatedYieldResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/EstimatedYieldResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/FermentationControlResource.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 4
 			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/HarvestByproductResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/HarvestDeclarationResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/HarvestResource.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -1327,34 +1225,10 @@ parameters:
 			path: app/Http/Resources/Api/LossResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/LossResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/MarketedHarvestResource.php
-
-		-
 			message: '#^Offset ''copper_treatment''\|''foliar_application''\|''other''\|''sulfur_treatment''\|''trunk_treatment''\|''wound_sealing'' on array\{copper_treatment\: ''Tratamiento con…'', sulfur_treatment\: ''Tratamiento con…'', wound_sealing\: ''Sellado de heridas…'', foliar_application\: ''Aplicación foliar'', trunk_treatment\: ''Tratamiento de…'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 3
-			path: app/Http/Resources/Api/OfficialReportResource.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
@@ -1375,34 +1249,10 @@ parameters:
 			path: app/Http/Resources/Api/PestResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/PhenologyObservationResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/PhytosanitaryAlertResource.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between int and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Http/Resources/Api/PhytosanitaryProductResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/PlannedWorkResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/PlotCostResource.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$area\.$#'
@@ -1415,24 +1265,6 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Http/Resources/Api/ProductLotResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/ResidueAnalysisResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/ResidueManagementResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/SoilAnalysisResource.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -1453,20 +1285,8 @@ parameters:
 			path: app/Http/Resources/Api/SubcontractingResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/SubcontractingResource.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Resources/Api/TransferResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/Api/TransferResource.php
 
@@ -1513,12 +1333,6 @@ parameters:
 			path: app/Http/Resources/Api/WaterConcessionResource.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/WineAnalysisResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Container\:\:\$pivot\.$#'
 			identifier: property.notFound
 			count: 3
@@ -1528,12 +1342,6 @@ parameters:
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\>\.$#'
 			identifier: return.type
 			count: 1
-			path: app/Http/Resources/Api/WineProcessStepResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
 			path: app/Http/Resources/Api/WineProcessStepResource.php
 
 		-
@@ -4443,12 +4251,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$plot of method App\\Services\\RemoteSensing\\AlertService\:\:checkPlotAlerts\(\) expects App\\Models\\Plot, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
-			count: 1
-			path: app/Services/RemoteSensing/AlertService.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>ndvi_threshold" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Services/RemoteSensing/AlertService.php
 

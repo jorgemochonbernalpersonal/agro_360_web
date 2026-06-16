@@ -15,7 +15,7 @@ class MarketedHarvestResource extends JsonResource
             'id' => $this->id,
             'harvest_id' => $this->harvest_id,
             'campaign_id' => $this->campaign_id,
-            'delivery_date' => $this->delivery_date?->toDateString(),
+            'delivery_date' => $this->delivery_date->toDateString(),
             'quantity_kg' => (float) $this->quantity_kg,
             'destination_type' => $this->destination_type,
             'destination_label' => $this->destination_type_label,

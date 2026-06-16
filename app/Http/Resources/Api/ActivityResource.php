@@ -14,7 +14,7 @@ class ActivityResource extends JsonResource
         return [
             'id' => $this->id,
             'activity_type' => $this->activity_type,
-            'activity_date' => $this->activity_date?->toDateString(),
+            'activity_date' => $this->activity_date->toDateString(),
             'phenological_stage' => $this->phenological_stage,
             'weather_conditions' => $this->weather_conditions,
             'temperature' => $this->temperature !== null ? (float) $this->temperature : null,

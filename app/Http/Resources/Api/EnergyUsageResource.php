@@ -16,7 +16,7 @@ class EnergyUsageResource extends JsonResource
             'campaign_id' => $this->campaign_id,
             'activity_id' => $this->activity_id,
             'machinery_id' => $this->machinery_id,
-            'date' => $this->date?->toDateString(),
+            'date' => $this->date->toDateString(),
             'energy_type' => $this->energy_type,
             'unit' => $this->unit,
             'quantity' => (float) $this->quantity,

@@ -18,7 +18,7 @@ class CommercialAuthorizationResource extends JsonResource
             'authorization_code' => $this->authorization_code,
             'description' => $this->description,
             'issuing_body' => $this->issuing_body,
-            'issue_date' => $this->issue_date?->toDateString(),
+            'issue_date' => $this->issue_date->toDateString(),
             'expiry_date' => $this->expiry_date?->toDateString(),
             'is_expired' => $this->isExpired(),
             'is_expiring_soon' => $this->isExpiringSoon(),

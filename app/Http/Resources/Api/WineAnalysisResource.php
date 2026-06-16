@@ -17,7 +17,7 @@ class WineAnalysisResource extends JsonResource
             'wine_name' => $this->wine?->name,
             'container_id' => $this->container_id,
             'container_name' => $this->container?->name,
-            'analysis_date' => $this->analysis_date?->toDateString(),
+            'analysis_date' => $this->analysis_date->toDateString(),
             'analysis_type' => $this->analysis_type,
             'laboratory' => (bool) $this->laboratory,
             'laboratory_name' => $this->laboratory_name,

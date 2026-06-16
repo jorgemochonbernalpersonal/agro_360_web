@@ -56,7 +56,7 @@ class TraceabilityController extends BaseApiController
             ->get()
             ->map(fn ($harvest) => [
                 'id' => $harvest->id,
-                'date' => $harvest->harvest_start_date?->toDateString(),
+                'date' => $harvest->harvest_start_date->toDateString(),
                 'vintage' => $harvest->vintage,
                 'total_weight' => (float) $harvest->total_weight,
                 'brix_degree' => $harvest->brix_degree !== null ? (float) $harvest->brix_degree : null,

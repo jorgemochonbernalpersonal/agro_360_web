@@ -14,7 +14,7 @@ class HarvestByproductResource extends JsonResource
         return [
             'id' => $this->id,
             'campaign_id' => $this->campaign_id,
-            'date' => $this->date?->toDateString(),
+            'date' => $this->date->toDateString(),
             'byproduct_type' => $this->byproduct_type,
             'byproduct_label' => $this->byproduct_type_label,
             'quantity_kg' => (float) $this->quantity_kg,

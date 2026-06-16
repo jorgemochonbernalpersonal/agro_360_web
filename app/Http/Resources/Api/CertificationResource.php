@@ -17,7 +17,7 @@ class CertificationResource extends JsonResource
             'certification_label' => $this->certification_type_label,
             'certifying_body' => $this->certifying_body,
             'certificate_number' => $this->certificate_number,
-            'issue_date' => $this->issue_date?->toDateString(),
+            'issue_date' => $this->issue_date->toDateString(),
             'expiry_date' => $this->expiry_date?->toDateString(),
             'scope' => $this->scope,
             'audit_date' => $this->audit_date?->toDateString(),

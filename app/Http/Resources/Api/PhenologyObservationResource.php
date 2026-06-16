@@ -16,7 +16,7 @@ class PhenologyObservationResource extends JsonResource
             'plot_planting_id' => $this->plot_planting_id,
             'campaign_id' => $this->campaign_id,
             'event' => $this->event,
-            'obs_date' => $this->obs_date?->toDateString(),
+            'obs_date' => $this->obs_date->toDateString(),
             'source' => $this->source,
             'confidence' => $this->confidence,
             'degree_days_accumulated' => $this->degree_days_accumulated !== null ? (float) $this->degree_days_accumulated : null,

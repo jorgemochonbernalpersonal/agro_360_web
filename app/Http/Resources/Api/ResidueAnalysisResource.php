@@ -14,7 +14,7 @@ class ResidueAnalysisResource extends JsonResource
         return [
             'id' => $this->id,
             'campaign_id' => $this->campaign_id,
-            'analysis_date' => $this->analysis_date?->toDateString(),
+            'analysis_date' => $this->analysis_date->toDateString(),
             'sample_date' => $this->sample_date?->toDateString(),
             'laboratory_name' => $this->laboratory_name,
             'laboratory_accreditation' => $this->laboratory_accreditation,

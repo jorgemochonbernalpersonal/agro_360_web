@@ -22,7 +22,7 @@ class EstimatedYieldResource extends JsonResource
             ]),
             'campaign_id' => $this->campaign_id,
             'campaign_year' => $this->whenLoaded('campaign', fn () => $this->campaign->year ?? null),
-            'estimation_date' => $this->estimation_date?->toDateString(),
+            'estimation_date' => $this->estimation_date->toDateString(),
             'estimation_round' => $this->estimation_round,
             'estimation_round_label' => EstimatedYield::ROUNDS[$this->estimation_round] ?? null,
             'estimation_method' => $this->estimation_method,

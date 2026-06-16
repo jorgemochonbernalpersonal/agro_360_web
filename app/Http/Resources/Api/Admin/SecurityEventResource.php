@@ -21,7 +21,7 @@ class SecurityEventResource extends JsonResource
             'user_id' => $this->user_id,
             'admin_id' => $this->admin_id,
             'context' => $this->context ?? [],
-            'created_at' => $this->created_at?->toIso8601String(),
+            'created_at' => $this->created_at->toIso8601String(),
         ];
     }
 }

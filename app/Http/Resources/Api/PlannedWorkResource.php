@@ -18,7 +18,7 @@ class PlannedWorkResource extends JsonResource
             'category' => $this->category,
             'title' => $this->title,
             'description' => $this->description,
-            'planned_date' => $this->planned_date?->toDateString(),
+            'planned_date' => $this->planned_date->toDateString(),
             'planned_end_date' => $this->planned_end_date?->toDateString(),
             'priority' => $this->priority,
             'status' => $this->status,

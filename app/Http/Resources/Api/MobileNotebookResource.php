@@ -37,7 +37,7 @@ class MobileNotebookResource extends JsonResource
             'id' => $this->id,
             'plot_id' => $this->plot_id,
             'plot_name' => $this->plot?->name,
-            'date' => $this->activity_date?->toDateString(),
+            'date' => $this->activity_date->toDateString(),
             'notes' => $this->notes,
         ];
     }

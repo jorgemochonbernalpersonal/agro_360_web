@@ -19,7 +19,7 @@ class BiodiversityRecordResource extends JsonResource
             'description' => $this->description,
             'area_m2' => $this->area_m2 !== null ? (float) $this->area_m2 : null,
             'species' => $this->species,
-            'record_date' => $this->record_date?->toDateString(),
+            'record_date' => $this->record_date->toDateString(),
             'notes' => $this->notes,
             'plot_name' => $this->whenLoaded('plot', fn () => $this->plot->name),
         ];

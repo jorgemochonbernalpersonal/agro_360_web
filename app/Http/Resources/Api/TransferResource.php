@@ -27,7 +27,7 @@ class TransferResource extends JsonResource
                 'symbol' => $this->unitOfMeasurement->symbol ?? null,
             ] : null,
             'transfer_type' => $this->transfer_type,
-            'transfer_date' => $this->transfer_date?->toDateString(),
+            'transfer_date' => $this->transfer_date->toDateString(),
             'notes' => $this->notes,
             'created_at' => $this->created_at->toIso8601String(),
         ];

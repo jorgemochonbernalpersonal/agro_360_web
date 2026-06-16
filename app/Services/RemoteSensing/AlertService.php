@@ -158,7 +158,7 @@ class AlertService
             ->first();
 
         return [
-            'ndvi' => $pref?->ndvi_threshold ?? self::DEFAULT_NDVI_THRESHOLD,
+            'ndvi' => $pref->ndvi_threshold ?? self::DEFAULT_NDVI_THRESHOLD,
             'ndwi' => self::DEFAULT_NDWI_THRESHOLD,
             'temp' => self::DEFAULT_TEMP_THRESHOLD,
         ];

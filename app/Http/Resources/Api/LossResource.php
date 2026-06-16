@@ -26,7 +26,7 @@ class LossResource extends JsonResource
                 'name' => $this->unitOfMeasurement->name,
                 'symbol' => $this->unitOfMeasurement->symbol ?? null,
             ] : null,
-            'loss_date' => $this->loss_date?->toDateString(),
+            'loss_date' => $this->loss_date->toDateString(),
             'regulatory_reference' => $this->regulatory_reference,
             'notes' => $this->notes,
             'created_at' => $this->created_at->toIso8601String(),

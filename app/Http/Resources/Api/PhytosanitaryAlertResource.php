@@ -20,7 +20,7 @@ class PhytosanitaryAlertResource extends JsonResource
             'affected_area' => $this->affected_area,
             'description' => $this->description,
             'recommendations' => $this->recommendations,
-            'alert_date' => $this->alert_date?->toDateString(),
+            'alert_date' => $this->alert_date->toDateString(),
             'expiry_date' => $this->expiry_date?->toDateString(),
             'is_expired' => (bool) $this->is_expired,
         ];

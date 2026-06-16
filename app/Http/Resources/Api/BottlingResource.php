@@ -33,7 +33,7 @@ class BottlingResource extends JsonResource
                 'id' => $this->oenologist->id,
                 'name' => $this->oenologist->name,
             ] : null),
-            'bottling_date' => $this->bottling_date?->toDateString(),
+            'bottling_date' => $this->bottling_date->toDateString(),
             'bottle_format' => $this->bottle_format,
             'bottle_format_label' => $this->format_label,
             'quantity_bottles' => $this->quantity_bottles,
