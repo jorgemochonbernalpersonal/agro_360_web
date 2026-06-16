@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Billing\GrapePurchase;
 
+use App\Livewire\Concerns\WithGrapePurchaseFormRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
@@ -15,7 +16,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    use WithGrapePurchaseFormRules, WithRoleAwareRedirect, WithToastNotifications;
 
     public Invoice $invoice;
 
@@ -219,11 +220,7 @@ class Edit extends Component
 
     protected function rules(): array
     {
-        return [
-            'invoice_date' => 'required|date',
-            'payment_type' => 'nullable|in:cash,transfer,check,other',
-            'observations' => 'nullable|string',
-            'lines' => 'required|array|min:1',
+        return array_merge($this->grapePurchaseBaseRules(), [
             'lines.*.harvest_id' => [
                 'required',
                 function ($attribute, $value, $fail) {
@@ -237,11 +234,7 @@ class Edit extends Component
                     }
                 },
             ],
-            'lines.*.quantity' => 'required|numeric|min:0.001',
-            'lines.*.unit_price' => 'required|numeric|min:0',
-            'lines.*.tax_rate' => 'required|numeric|min:0|max:100',
-            'lines.*.description' => 'nullable|string|max:255',
-        ];
+        ]);
     }
 
     protected function validationAttributes(): array
