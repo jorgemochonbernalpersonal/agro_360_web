@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Billing\ProductSale;
 
+use App\Livewire\Concerns\WithProductSaleFormRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
@@ -18,7 +19,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    use WithProductSaleFormRules, WithRoleAwareRedirect, WithToastNotifications;
 
     public Invoice $invoice;
 
@@ -432,36 +433,9 @@ class Edit extends Component
 
     protected function rules(): array
     {
-        return [
-            'client_id' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    if ($value && ! \App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
-                        $fail(__('El cliente seleccionado no es válido.'));
-                    }
-                },
-            ],
-            'payment_type' => 'nullable|in:cash,transfer,check,other',
+        return array_merge($this->productSaleBaseRules(allowArchivedLots: true), [
             'payment_status' => 'required|in:unpaid,partial,paid',
-            'observations' => 'nullable|string',
-            'observations_invoice' => 'nullable|string',
-            'items' => 'required|array|min:1',
-            'items.*.name' => 'required|string|max:255',
-            'items.*.wine_lot_id' => [
-                'nullable',
-                function ($attribute, $value, $fail) {
-                    if ($value && ! \App\Models\ProductLot::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
-                        $fail(__('El lote de vino seleccionado no es válido.'));
-                    }
-                },
-            ],
-            'items.*.quantity' => 'required|numeric|min:0.001',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.tax_id' => 'nullable|exists:taxes,id',
-            'items.*.discount_percentage' => 'nullable|numeric|min:0|max:100',
-            'items.*.description' => 'nullable|string',
-            'items.*.sku' => 'nullable|string|max:100',
-        ];
+        ]);
     }
 
     protected function validationAttributes(): array
