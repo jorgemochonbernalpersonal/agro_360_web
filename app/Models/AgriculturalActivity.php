@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 /**
  * @property mixed $humidity
  * @property mixed $wind_speed
+ * @property mixed $user
  */
 class AgriculturalActivity extends Model
 {

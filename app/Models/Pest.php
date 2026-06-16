@@ -62,6 +62,8 @@ class Pest extends Model
 
     /**
      * Productos fitosanitarios eficaces contra esta plaga
+     *
+     * @return BelongsToMany<PhytosanitaryProduct, $this>
      */
     public function products(): BelongsToMany
     {

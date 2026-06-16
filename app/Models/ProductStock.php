@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @property mixed $product_name
+ * @property mixed $product_type
+ * @property mixed $min_stock
+ */
 class ProductStock extends Model
 {
     protected $fillable = [

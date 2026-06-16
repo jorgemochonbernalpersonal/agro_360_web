@@ -133,12 +133,6 @@ parameters:
 			path: app/Http/Resources/Api/Admin/AdminUserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\AnnouncementResource\:\:\$pivot\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/AnnouncementResource.php
-
-		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\>\.$#'
 			identifier: return.type
 			count: 1
@@ -151,46 +145,10 @@ parameters:
 			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/PestResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/PestResource.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Resources/Api/PestResource.php
-
-		-
 			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: app/Http/Resources/Api/UserResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\WarehouseStockResource\:\:\$min_stock\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/WarehouseStockResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\WarehouseStockResource\:\:\$product_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/WarehouseStockResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\WarehouseStockResource\:\:\$product_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/Api/WarehouseStockResource.php
 
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, name\: mixed, quantity\: float\|null, unit_id\: mixed\}\>\.$#'
@@ -221,18 +179,6 @@ parameters:
 			identifier: arguments.count
 			count: 1
 			path: app/Jobs/GenerateOfficialReportJob.php
-
-		-
-			message: '#^Access to an undefined property App\\DataTransferObjects\\ReportGenerationData\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\AgriculturalActivity\:\:\$user\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Listeners/CheckWithdrawalPeriodAlerts.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Contracts\\Auth\\MustVerifyEmail\:\:grantBetaAccess\(\)\.$#'
@@ -697,12 +643,6 @@ parameters:
 			path: app/Models/Plot.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\PlotGeometry\:\:\$_pending_wkt\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/PlotGeometry.php
-
-		-
 			message: '#^Unsafe call to private method App\\Models\\PlotGeometry\:\:invalidatePlotGeometryCache\(\) through static\:\:\.$#'
 			identifier: staticClassAccess.privateMethod
 			count: 2
@@ -833,12 +773,6 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\AgriculturalActivity\:\:\$user\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Observers/PhytosanitaryTreatmentObserver.php
 
 		-
 			message: '#^Method App\\Services\\CatastroGeometryService\:\:upsertGeometry\(\) should return int but returns string\|false\.$#'

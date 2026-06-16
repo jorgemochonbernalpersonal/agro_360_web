@@ -19,6 +19,11 @@ use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 /**
+ * @property-read mixed $viticulturists
+ * @property-read mixed $individualWorkers
+ */
+
+/**
  * Base class for all digital-notebook Create and Edit forms.
  *
  * Provides:
