@@ -81,8 +81,8 @@ class HarvestsPdfController extends Controller
 
             return [
                 'planting' => $planting,
-                'variety' => $planting?->grapeVariety?->name ?? $planting?->name ?? '—',
-                'plot' => $planting?->plot?->name ?? '—',
+                'variety' => $planting?->grapeVariety->name ?? $planting?->name ?? '—',
+                'plot' => $planting?->plot->name ?? '—',
                 'area' => $planting?->area_planted ? (float) $planting->area_planted : null,
                 'harvest_kg' => $harvestKg,
                 'winery_kg' => $wineryKg,

@@ -105,7 +105,7 @@ class Index extends Component
         $plotCosts = DB::table('plot_costs')
             ->where('viticulturist_id', $userId)
             ->where('campaign_id', $campaignId)
-            ->sum('amount') ?? 0;
+            ->sum('amount');
 
         // ═══════════════════════════════════════════════════════════
         // BODEGA

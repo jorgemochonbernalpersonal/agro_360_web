@@ -186,7 +186,7 @@ class Index extends Component
         $stats = [
             'total' => $realBase->count(),
             'active' => (clone $realBase)->where('active', true)->count(),
-            'total_area' => (clone $realBase)->sum('area') ?? 0,
+            'total_area' => (clone $realBase)->sum('area'),
             'by_role' => [
                 'viticulturist' => (clone $realBase)->whereHas('viticulturist', fn ($q) => $q->where('role', 'viticulturist'))->count(),
                 'winery' => (clone $realBase)->whereHas('viticulturist', fn ($q) => $q->where('role', 'winery'))->count(),

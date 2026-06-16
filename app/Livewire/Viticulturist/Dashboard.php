@@ -37,7 +37,7 @@ class Dashboard extends Component
     #[Computed]
     public function totalArea(): float
     {
-        return (float) ($this->plots->sum('area') ?? 0);
+        return (float) $this->plots->sum('area');
     }
 
     // ── Actividades ───────────────────────────────────────────────────────────

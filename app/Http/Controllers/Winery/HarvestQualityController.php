@@ -53,7 +53,7 @@ class HarvestQualityController extends Controller
 
         // By viticulturist
         $byViticulturist = $harvests
-            ->groupBy(fn ($h) => $h->batch?->viticulturist_id ?? 'unknown')
+            ->groupBy(fn ($h) => $h->batch->viticulturist_id ?? 'unknown')
             ->map(function ($group) {
                 $wa = $group->whereNotNull('potential_alcohol');
                 $wb = $group->whereNotNull('baume_degree');
@@ -63,7 +63,7 @@ class HarvestQualityController extends Controller
                 $hd = $group->whereNotNull('health_status')->groupBy('health_status')->map->count()->sortDesc();
 
                 return [
-                    'label' => $group->first()->batch?->viticulturist?->name ?? '—',
+                    'label' => $group->first()->batch?->viticulturist->name ?? '—',
                     'total_kg' => $group->sum(fn ($h) => (float) $h->total_weight),
                     'count' => $group->count(),
                     'avg_alcohol' => $wa->count() ? round($wa->avg(fn ($h) => $h->potential_alcohol), 2) : null,
@@ -79,7 +79,7 @@ class HarvestQualityController extends Controller
 
         // By variety
         $byVariety = $harvests
-            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety?->name ?? '—')
+            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety->name ?? '—')
             ->map(function ($group, $variety) {
                 $wa = $group->whereNotNull('potential_alcohol');
                 $wb = $group->whereNotNull('baume_degree');

@@ -171,8 +171,8 @@ class Index extends Component
                 'key' => 'planting_'.$plantingId,
                 'planting_id' => $plantingId,
                 'planting' => $planting,
-                'variety' => $planting?->grapeVariety?->name ?? $planting?->name ?? '—',
-                'plot' => $planting?->plot?->name ?? '—',
+                'variety' => $planting?->grapeVariety->name ?? $planting->name ?? '—',
+                'plot' => $planting?->plot->name ?? '—',
                 'area' => $planting?->area_planted ? (float) $planting->area_planted : null,
                 'harvest_kg' => $harvestKg,
                 'harvest_count' => $harvestCount,
@@ -222,7 +222,7 @@ class Index extends Component
                 if (str_contains(strtolower($row['plot']), $s)) {
                     return true;
                 }
-                if ($row['winery_batches']->contains(fn ($b) => str_contains(strtolower($b->winery?->name ?? ''), $s))) {
+                if ($row['winery_batches']->contains(fn ($b) => str_contains(strtolower($b->winery->name ?? ''), $s))) {
                     return true;
                 }
                 if ($row['manual_deliveries']->contains(fn ($d) => str_contains(strtolower($d->buyer_name), $s))) {

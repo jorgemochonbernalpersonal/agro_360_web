@@ -49,9 +49,9 @@ class InvoiceController extends BaseApiController
         $userId = $request->user()->id;
 
         $base = Invoice::where('user_id', $userId);
-        $total = (float) ($base->clone()->sum('total_amount') ?? 0);
-        $pending = (float) (Invoice::where('user_id', $userId)->whereIn('status', ['draft', 'sent'])->sum('total_amount') ?? 0);
-        $paid = (float) (Invoice::where('user_id', $userId)->where('status', 'paid')->sum('total_amount') ?? 0);
+        $total = (float) $base->clone()->sum('total_amount');
+        $pending = (float) Invoice::where('user_id', $userId)->whereIn('status', ['draft', 'sent'])->sum('total_amount');
+        $paid = (float) Invoice::where('user_id', $userId)->where('status', 'paid')->sum('total_amount');
 
         return response()->json([
             'total_invoices' => $base->count(),

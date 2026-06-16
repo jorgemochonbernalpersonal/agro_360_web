@@ -147,7 +147,7 @@ class Index extends Component
             'total' => (clone $baseQuery)->count(),
             'active' => (clone $baseQuery)->where('active', true)->count(),
             'inactive' => (clone $baseQuery)->where('active', false)->count(),
-            'total_area' => (clone $baseQuery)->sum('area') ?? 0,
+            'total_area' => (clone $baseQuery)->sum('area'),
             'with_sigpac' => (clone $baseQuery)->whereHas('sigpacCodes')->count(),
             'with_geometry' => (clone $baseQuery)->whereHas('multiplePlotSigpacs', fn ($q) => $q->whereNotNull('plot_geometry_id'))->count(),
         ];
