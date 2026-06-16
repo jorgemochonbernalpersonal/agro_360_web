@@ -55,18 +55,6 @@ parameters:
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
 		-
-			message: '#^Property App\\Models\\Plot\:\:\$centroid_data is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 2
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Property App\\Models\\Plot\:\:\$has_geometry is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 2
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\ContainerMaintenance\:\:\$completed\.$#'
 			identifier: property.notFound
 			count: 1
@@ -83,18 +71,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Winery/ContainerMaintenanceController.php
-
-		-
-			message: '#^Property App\\Models\\Plot\:\:\$centroid_data is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 3
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
-			message: '#^Property App\\Models\\Plot\:\:\$has_geometry is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 3
-			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
 			message: '#^Call to an undefined method App\\Models\\Harvest\:\:wines\(\)\.$#'
@@ -451,18 +427,6 @@ parameters:
 			path: app/Livewire/Producer/IntegratedEstate/Index.php
 
 		-
-			message: '#^Property App\\Models\\Harvest\:\:\$available_qty_computed is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Producer/Invoices/Create.php
-
-		-
-			message: '#^Property App\\Models\\Harvest\:\:\$available_qty_computed is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Producer/Invoices/Edit.php
-
-		-
 			message: '#^Comparison operation "\>" between 5 and 0 is always true\.$#'
 			identifier: greater.alwaysTrue
 			count: 1
@@ -472,12 +436,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 3
-			path: app/Livewire/Sigpac/CodesIndex.php
-
-		-
-			message: '#^Property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 2
 			path: app/Livewire/Sigpac/CodesIndex.php
 
 		-
@@ -491,12 +449,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Sigpac/Edit.php
-
-		-
-			message: '#^Property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 2
-			path: app/Livewire/Sigpac/EditGeometry.php
 
 		-
 			message: '#^Variable \$vitCountByWinery on left side of \?\? always exists and is not nullable\.$#'
@@ -547,24 +499,6 @@ parameters:
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
 
 		-
-			message: '#^Property App\\Models\\Harvest\:\:\$available_qty is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
-			message: '#^Property App\\Models\\Harvest\:\:\$reserved_qty is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
-			message: '#^Property App\\Models\\Harvest\:\:\$sold_qty is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>total_weight" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -580,24 +514,6 @@ parameters:
 			message: '#^Parameter \#1 \$array \(list\<array\{harvest_id\: int, quantity\: string, unit_price\: string, tax_rate\: string, description\: string\}\>\) of array_values is already a list, call has no effect\.$#'
 			identifier: arrayValues.list
 			count: 2
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Property App\\Models\\Harvest\:\:\$available_qty is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Property App\\Models\\Harvest\:\:\$reserved_qty is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
-
-		-
-			message: '#^Property App\\Models\\Harvest\:\:\$sold_qty is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
 
 		-
@@ -691,28 +607,10 @@ parameters:
 			path: app/Livewire/Viticulturist/FinancialStats.php
 
 		-
-			message: '#^Property App\\Models\\Client\:\:\$total_invoiced is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Viticulturist/FinancialStats.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: app/Livewire/Viticulturist/Harvests/Index.php
-
-		-
-			message: '#^Property App\\Models\\Harvest\:\:\$available_qty_computed is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Create.php
-
-		-
-			message: '#^Property App\\Models\\Harvest\:\:\$available_qty_computed is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Viticulturist/Invoices/Edit.php
 
 		-
 			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
@@ -1171,30 +1069,6 @@ parameters:
 			path: app/Livewire/Winery/Wines/Show.php
 
 		-
-			message: '#^Property App\\Models\\Wine\:\:\$current_phase_label is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Winery/Wines/Timeline.php
-
-		-
-			message: '#^Property App\\Models\\Wine\:\:\$current_phase_type is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Winery/Wines/Timeline.php
-
-		-
-			message: '#^Property App\\Models\\Wine\:\:\$days_in_phase is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Winery/Wines/Timeline.php
-
-		-
-			message: '#^Property App\\Models\\Wine\:\:\$days_total is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Livewire/Winery/Wines/Timeline.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -1565,12 +1439,6 @@ parameters:
 			identifier: staticClassAccess.privateMethod
 			count: 11
 			path: app/Services/SecurityLogger.php
-
-		-
-			message: '#^Property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id is not writable\.$#'
-			identifier: assign.propertyReadOnly
-			count: 1
-			path: app/Services/SigpacGeometryService.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'

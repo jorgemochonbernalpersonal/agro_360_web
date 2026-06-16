@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read mixed $irrigation_type
+ * @property mixed $irrigation_type
  */
 class Irrigation extends Model
 {

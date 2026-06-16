@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read mixed $total
- * @property-read mixed $active
- * @property-read mixed $month
- * @property-read mixed $year
- * @property-read mixed $cancelled
- * @property-read mixed $expired
- * @property-read mixed $revenue
+ * @property mixed $total
+ * @property mixed $active
+ * @property mixed $month
+ * @property mixed $year
+ * @property mixed $cancelled
+ * @property mixed $expired
+ * @property mixed $revenue
  */
 class Subscription extends Model
 {

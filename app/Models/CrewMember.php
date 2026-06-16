@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read mixed $name
+ * @property mixed $name
  */
 class CrewMember extends Model
 {

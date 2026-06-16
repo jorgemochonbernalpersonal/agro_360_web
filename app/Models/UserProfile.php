@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read mixed $nif_cif
+ * @property mixed $nif_cif
  */
 class UserProfile extends Model
 {

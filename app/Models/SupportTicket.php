@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * @property-read mixed $subject
- * @property-read mixed $image
+ * @property mixed $subject
+ * @property mixed $image
  */
 class SupportTicket extends Model
 {

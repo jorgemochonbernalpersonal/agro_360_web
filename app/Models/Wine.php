@@ -9,16 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 /**
- * @property-read mixed $current_phase_label
- * @property-read mixed $current_phase_type
- * @property-read mixed $days_total
- * @property-read mixed $days_in_phase
- * @property-read mixed $vintage_year
- * @property-read mixed $total
- * @property-read mixed $in_progress
- * @property-read mixed $bottled
- * @property-read mixed $sold
- * @property-read mixed $aged
+ * @property mixed $current_phase_label
+ * @property mixed $current_phase_type
+ * @property mixed $days_total
+ * @property mixed $days_in_phase
+ * @property mixed $vintage_year
+ * @property mixed $total
+ * @property mixed $in_progress
+ * @property mixed $bottled
+ * @property mixed $sold
+ * @property mixed $aged
  */
 class Wine extends Model
 {

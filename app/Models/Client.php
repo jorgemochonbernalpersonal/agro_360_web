@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read mixed $name
- * @property-read mixed $nif_cif
- * @property-read mixed $total_invoiced
+ * @property mixed $name
+ * @property mixed $nif_cif
+ * @property mixed $total_invoiced
  */
 class Client extends Model
 {

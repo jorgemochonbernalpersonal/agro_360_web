@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read mixed $planted_area
- * @property-read mixed $area
- * @property-read mixed $plant_count
+ * @property mixed $planted_area
+ * @property mixed $area
+ * @property mixed $plant_count
  */
 class PlotPlanting extends Model
 {

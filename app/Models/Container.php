@@ -11,10 +11,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property-read mixed $total
- * @property-read mixed $total_capacity
- * @property-read mixed $total_used
- * @property-read mixed $pivot
+ * @property mixed $total
+ * @property mixed $total_capacity
+ * @property mixed $total_used
+ * @property mixed $pivot
  */
 class Container extends Model
 {

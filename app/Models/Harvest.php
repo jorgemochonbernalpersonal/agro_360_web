@@ -9,30 +9,30 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property-read mixed $quantity_kg
- * @property-read mixed $quality_rating
- * @property-read mixed $quality_notes
- * @property-read mixed $probable_alcohol
- * @property-read mixed $total_acidity
- * @property-read mixed $ph
- * @property-read mixed $viticulturist_id
- * @property-read mixed $viticulturist_name
- * @property-read mixed $last_reception_date
- * @property-read mixed $receptions
- * @property-read mixed $total_kg
- * @property-read mixed $avg_baume
- * @property-read mixed $avg_brix
- * @property-read mixed $avg_ph
- * @property-read mixed $avg_acidity
- * @property-read mixed $avg_price_per_kg
- * @property-read mixed $avg_price
- * @property-read mixed $week
- * @property-read mixed $count
- * @property-read mixed $available_qty
- * @property-read mixed $reserved_qty
- * @property-read mixed $sold_qty
- * @property-read mixed $available_qty_computed
- * @property-read mixed $pivot
+ * @property mixed $quantity_kg
+ * @property mixed $quality_rating
+ * @property mixed $quality_notes
+ * @property mixed $probable_alcohol
+ * @property mixed $total_acidity
+ * @property mixed $ph
+ * @property mixed $viticulturist_id
+ * @property mixed $viticulturist_name
+ * @property mixed $last_reception_date
+ * @property mixed $receptions
+ * @property mixed $total_kg
+ * @property mixed $avg_baume
+ * @property mixed $avg_brix
+ * @property mixed $avg_ph
+ * @property mixed $avg_acidity
+ * @property mixed $avg_price_per_kg
+ * @property mixed $avg_price
+ * @property mixed $week
+ * @property mixed $count
+ * @property mixed $available_qty
+ * @property mixed $reserved_qty
+ * @property mixed $sold_qty
+ * @property mixed $available_qty_computed
+ * @property mixed $pivot
  */
 class Harvest extends Model
 {

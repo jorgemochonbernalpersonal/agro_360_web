@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read mixed $dose
- * @property-read mixed $dose_unit
- * @property-read mixed $agricultural_activity_id
+ * @property mixed $dose
+ * @property mixed $dose_unit
+ * @property mixed $agricultural_activity_id
  */
 class PhytosanitaryTreatment extends Model
 {

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read mixed $last_bottling_date
+ * @property mixed $last_bottling_date
  */
 class WineBottling extends Model
 {

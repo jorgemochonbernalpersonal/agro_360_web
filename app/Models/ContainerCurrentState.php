@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read mixed $volume_liters
+ * @property mixed $volume_liters
  */
 class ContainerCurrentState extends Model
 {

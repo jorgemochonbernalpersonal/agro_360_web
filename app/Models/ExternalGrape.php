@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read mixed $total_kg
- * @property-read mixed $available_kg
- * @property-read mixed $partidas
+ * @property mixed $total_kg
+ * @property mixed $available_kg
+ * @property mixed $partidas
  */
 class ExternalGrape extends Model
 {

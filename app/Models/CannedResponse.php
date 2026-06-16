@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read mixed $body
- * @property-read mixed $title
- * @property-read mixed $sort_order
+ * @property mixed $body
+ * @property mixed $title
+ * @property mixed $sort_order
  */
 class CannedResponse extends Model
 {
