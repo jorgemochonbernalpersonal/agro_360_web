@@ -175,22 +175,10 @@ parameters:
 			path: app/Http/Controllers/Api/Producer/IntegratedEstateController.php
 
 		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Controllers/Api/Producer/InvoiceController.php
-
-		-
 			message: '#^Relation ''profile'' is not found in App\\Models\\User model\.$#'
 			identifier: larastan.relationExistence
 			count: 4
 			path: app/Http/Controllers/Api/Supervisor/OversightController.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/GrapeTraceabilityController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Plot\:\:\$centroid_data\.$#'
@@ -225,12 +213,6 @@ parameters:
 		-
 			message: '#^Anonymous function should return array\{plot_id\: int, plot_name\: string, area\: float, has_geometry\: true, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}\|null but returns array\{plot_id\: int, plot_name\: string, area\: float, has_geometry\: true, geometries\: Illuminate\\Support\\Collection\<int, array\{sigpac_code\: mixed, centroid\: array\|null, coordinates\: array\}\>\}\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Municipality\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
 
@@ -487,12 +469,6 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/PlotController.php
 
 		-
-			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Municipality\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Controllers/Api/Winery/PlotController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$amount\.$#'
 			identifier: property.notFound
 			count: 1
@@ -575,12 +551,6 @@ parameters:
 			identifier: larastan.relationExistence
 			count: 1
 			path: app/Http/Controllers/Api/Winery/ViticulturistController.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineAdditiveController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Wine\:\:\$aged\.$#'
@@ -787,25 +757,7 @@ parameters:
 			path: app/Http/Resources/Api/AnnouncementResource.php
 
 		-
-			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, quantity\: float\|null, unit_id\: mixed, winery_supply_id\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, quantity\: float\|null, unit_id\: mixed, winery_supply_id\: mixed\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Http/Resources/Api/BottlingResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 2
-			path: app/Http/Resources/Api/BottlingResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 2
-			path: app/Http/Resources/Api/ClientResource.php
-
-		-
-			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float\|null, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float\|null, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\>\.$#'
+			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\>\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
@@ -813,12 +765,6 @@ parameters:
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, waste_type\: mixed, container_waste_type_id\: mixed, custom_waste_type\: mixed, waste_date\: mixed, quantity\: float\|null, unit_of_measurement_id\: mixed, disposal_method\: mixed, \.\.\.\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, waste_type\: mixed, container_waste_type_id\: mixed, custom_waste_type\: mixed, waste_date\: mixed, quantity\: float\|null, unit_of_measurement_id\: mixed, disposal_method\: mixed, \.\.\.\}\>\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Http/Resources/Api/ContainerMaintenanceResource.php
 
@@ -833,30 +779,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/Api/ContainerResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 2
-			path: app/Http/Resources/Api/EstimatedYieldResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 4
-			path: app/Http/Resources/Api/GrapePurchaseInvoiceResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 4
-			path: app/Http/Resources/Api/InvoiceResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Resources/Api/LossResource.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
@@ -877,40 +799,10 @@ parameters:
 			path: app/Http/Resources/Api/PestResource.php
 
 		-
-			message: '#^Strict comparison using \!\=\= between int and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Resources/Api/PhytosanitaryProductResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\PlotPlanting\:\:\$area\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/Api/PlotResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Resources/Api/ProductLotResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Resources/Api/StockEntryResource.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Resources/Api/StockEntryResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Resources/Api/TransferResource.php
 
 		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\Api\\UserResource\:\:\$profile\.$#'
@@ -941,12 +833,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/Api/WarehouseStockResource.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Http/Resources/Api/WaterConcessionResource.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Container\:\:\$pivot\.$#'

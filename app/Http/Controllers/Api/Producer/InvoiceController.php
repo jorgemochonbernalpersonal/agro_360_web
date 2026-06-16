@@ -30,7 +30,7 @@ class InvoiceController extends BaseApiController
             'invoice_number' => $inv->invoice_number,
             'invoice_date' => $inv->invoice_date,
             'status' => $inv->status,
-            'total_amount' => $inv->total_amount !== null ? (float) $inv->total_amount : null,
+            'total_amount' => (float) $inv->total_amount,
             'client_name' => $inv->client->name ?? $inv->company_name ?? null,
             'notes' => $inv->observations,
         ]);

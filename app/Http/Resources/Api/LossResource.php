@@ -19,7 +19,7 @@ class LossResource extends JsonResource
             'container_name' => $this->container?->name,
             'loss_type' => $this->loss_type,
             'loss_authorization' => $this->loss_authorization,
-            'quantity' => $this->quantity !== null ? (float) $this->quantity : null,
+            'quantity' => (float) $this->quantity,
             'unit_of_measurement_id' => $this->unit_of_measurement_id,
             'unit' => $this->unitOfMeasurement ? [
                 'id' => $this->unitOfMeasurement->id,

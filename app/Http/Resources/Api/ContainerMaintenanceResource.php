@@ -37,7 +37,7 @@ class ContainerMaintenanceResource extends JsonResource
                 'id' => $s->id,
                 'supply_name' => $s->display_name,
                 'winery_supply_id' => $s->winery_supply_id,
-                'quantity_used' => $s->quantity_used !== null ? (float) $s->quantity_used : null,
+                'quantity_used' => (float) $s->quantity_used,
                 'unit_of_measurement_id' => $s->unit_of_measurement_id,
                 'cost' => $s->cost !== null ? (float) $s->cost : null,
                 'notes' => $s->notes,

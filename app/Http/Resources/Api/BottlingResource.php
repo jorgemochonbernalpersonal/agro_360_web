@@ -37,13 +37,13 @@ class BottlingResource extends JsonResource
             'bottle_format' => $this->bottle_format,
             'bottle_format_label' => $this->format_label,
             'quantity_bottles' => $this->quantity_bottles,
-            'quantity_liters' => $this->quantity_liters !== null ? (float) $this->quantity_liters : null,
+            'quantity_liters' => (float) $this->quantity_liters,
             'lot_number' => $this->lot_number,
             'notes' => $this->notes,
             'supplies' => $this->whenLoaded('supplies', fn () => $this->supplies->map(fn ($s) => [
                 'id' => $s->id,
                 'supply_name' => $s->supply_name,
-                'quantity' => $s->quantity !== null ? (float) $s->quantity : null,
+                'quantity' => (float) $s->quantity,
                 'unit_id' => $s->unit_of_measurement_id,
                 'winery_supply_id' => $s->winery_supply_id,
             ])

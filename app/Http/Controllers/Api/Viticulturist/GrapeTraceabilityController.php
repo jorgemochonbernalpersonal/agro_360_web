@@ -63,7 +63,7 @@ class GrapeTraceabilityController extends BaseApiController
 
         $data = $items->getCollection()->map(fn ($h) => [
             'id' => $h->id,
-            'total_weight' => $h->total_weight !== null ? (float) $h->total_weight : null,
+            'total_weight' => (float) $h->total_weight,
             'destination' => $h->destination,
             'buyer_name' => $h->buyer_name,
             'transport_document_number' => $h->transport_document_number,

@@ -19,7 +19,7 @@ class TransferResource extends JsonResource
             'from_container_name' => $this->fromContainer?->name,
             'to_container_id' => $this->to_container_id,
             'to_container_name' => $this->toContainer?->name,
-            'quantity' => $this->quantity !== null ? (float) $this->quantity : null,
+            'quantity' => (float) $this->quantity,
             'unit_of_measurement_id' => $this->unit_of_measurement_id,
             'unit' => $this->unitOfMeasurement ? [
                 'id' => $this->unitOfMeasurement->id,

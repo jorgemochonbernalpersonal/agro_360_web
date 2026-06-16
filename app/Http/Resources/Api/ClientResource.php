@@ -21,8 +21,8 @@ class ClientResource extends JsonResource
                 ? $this->company_document
                 : $this->particular_document,
             'active' => (bool) $this->active,
-            'balance' => $this->balance !== null ? (float) $this->balance : 0.0,
-            'default_discount' => $this->default_discount !== null ? (float) $this->default_discount : 0.0,
+            'balance' => (float) $this->balance,
+            'default_discount' => (float) $this->default_discount,
             'payment_method' => $this->payment_method,
             'notes' => $this->notes,
             'created_at' => $this->created_at->toIso8601String(),
