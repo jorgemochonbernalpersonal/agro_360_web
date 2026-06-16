@@ -22,7 +22,7 @@ class SupportTicketCreatedNotification extends Notification implements ShouldQue
     /**
      * Get the notification's delivery channels.
      *
-     * @return array<int, string>
+     * @return string
      */
     public function notificationCategory(): string
     {

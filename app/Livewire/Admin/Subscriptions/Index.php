@@ -87,8 +87,8 @@ class Index extends Component
                     $s->plan_type === 'monthly' ? 'Mensual' : 'Anual',
                     $s->status,
                     number_format((float) $s->amount, 2),
-                    $s->starts_at->format('d/m/Y') ?? '',
-                    $s->ends_at->format('d/m/Y') ?? '',
+                    $s->starts_at->format('d/m/Y'),
+                    $s->ends_at->format('d/m/Y'),
                     $s->cancelled_at?->format('d/m/Y') ?? '',
                     $s->paypal_subscription_id ?? '',
                 ]);

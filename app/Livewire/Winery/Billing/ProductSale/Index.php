@@ -546,7 +546,7 @@ class Index extends AbstractIndex
     {
         if ($value) {
             $client = Client::with('addresses')->find($value);
-            $this->quickAvailableAddresses = $client->addresses ?? collect();
+            $this->quickAvailableAddresses = ($client->addresses ?? collect())->all();
             $primary = $client?->addresses->firstWhere('is_default', true) ?? $client?->addresses->first();
             $this->quickClientAddressId = $primary ? (string) $primary->id : '';
         } else {

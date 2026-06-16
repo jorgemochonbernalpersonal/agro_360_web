@@ -64,7 +64,7 @@ class Edit extends Component
         $this->vintageYear = $forecast->vintage_year;
 
         $this->estimated_kg = (string) $forecast->estimated_kg;
-        $this->estimation_date = $forecast->estimation_date->format('Y-m-d') ?? '';
+        $this->estimation_date = $forecast->estimation_date->format('Y-m-d');
         $this->status = $forecast->status;
         $this->notes = $forecast->notes ?? '';
 

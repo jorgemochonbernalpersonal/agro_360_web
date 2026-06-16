@@ -115,7 +115,7 @@ class Edit extends Component
         $this->vintageYear = $harvest->vintage ?? $harvest->batch->vintage_year ?? now()->year;
 
         // Pre-fill fields
-        $this->harvest_start_date = $harvest->harvest_start_date->format('Y-m-d') ?? '';
+        $this->harvest_start_date = $harvest->harvest_start_date->format('Y-m-d');
         $this->harvest_time = $harvest->harvest_time ?? '';
         $this->harvest_ticket_number = $harvest->harvest_ticket_number ?? '';
         $this->total_weight = (string) ($harvest->total_weight ?? '');

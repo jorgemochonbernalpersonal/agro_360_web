@@ -103,18 +103,6 @@ parameters:
 			path: app/Livewire/Admin/Plots/Index.php
 
 		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 2
-			path: app/Livewire/Admin/Subscriptions/Index.php
-
-		-
-			message: '#^Property App\\Livewire\\Plots\\Show\:\:\$env_campaign_id \(string\) does not accept int\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Plots/Show.php
-
-		-
 			message: '#^Comparison operation "\>" between 5 and 0 is always true\.$#'
 			identifier: greater.alwaysTrue
 			count: 1
@@ -143,12 +131,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Viticulturist/Billing/HarvestSale/Create.php
-
-		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 2
-			path: app/Livewire/Viticulturist/Billing/HarvestSale/Edit.php
 
 		-
 			message: '#^Parameter \#1 \$array \(list\<array\{harvest_id\: int, quantity\: string, unit_price\: string, tax_rate\: string, description\: string\}\>\) of array_values is already a list, call has no effect\.$#'
@@ -217,46 +199,16 @@ parameters:
 			path: app/Livewire/Viticulturist/Personal/UnifiedIndex.php
 
 		-
-			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\Dashboard\:\:\$historyDays \(int\) does not accept float\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\Dashboard\:\:\$lastYearNdvi \(float\|null\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/Dashboard.php
-
-		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: int, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\>\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Livewire/Viticulturist/RemoteSensing/ExecutiveDashboard.php
 
 		-
-			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\PlotAnalysis\:\:\$lastYearNdvi \(float\|null\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/PlotAnalysis.php
-
-		-
-			message: '#^Property App\\Livewire\\Viticulturist\\RemoteSensing\\PlotNdviCard\:\:\$lastYearNdvi \(float\|null\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Viticulturist/RemoteSensing/PlotNdviCard.php
-
-		-
 			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
 			identifier: larastan.noEnvCallsOutsideOfConfig
 			count: 4
 			path: app/Livewire/Viticulturist/Support/CreateTicket.php
-
-		-
-			message: '#^Property App\\Livewire\\Winery\\Billing\\ProductSale\\Index\:\:\$quickAvailableAddresses \(array\) does not accept Illuminate\\Support\\Collection\<\(int\|string\), mixed\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Livewire/Winery/Billing/ProductSale/Index.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -271,12 +223,6 @@ parameters:
 			path: app/Livewire/Winery/FermentationControls/Edit.php
 
 		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 1
-			path: app/Livewire/Winery/Harvest/Forecasts/Edit.php
-
-		-
 			message: '#^Anonymous function should return array\{name\: string, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\} but returns array\{name\: string, years\: Illuminate\\Support\\Collection\<\(int\|string\), array\{alcohol\: float\|null, baume\: float\|null, acidity\: float\|null, kg\: float\}\>\}\.$#'
 			identifier: return.type
 			count: 1
@@ -287,12 +233,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
-
-		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 1
-			path: app/Livewire/Winery/Harvest/Reception/Edit.php
 
 		-
 			message: '#^Comparison operation "\>" between 5 and 0 is always true\.$#'
@@ -317,12 +257,6 @@ parameters:
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: app/Livewire/Winery/WineTransfers/Edit.php
-
-		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 2
-			path: app/Livewire/Winery/Wines/Process/Edit.php
 
 		-
 			message: '#^Method App\\Livewire\\Winery\\Wines\\Show\:\:resetCoForm\(\) is unused\.$#'
@@ -395,42 +329,6 @@ parameters:
 			identifier: offsetAccess.notFound
 			count: 1
 			path: app/Models/WineAnalysis.php
-
-		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 1
-			path: app/Models/WineryYieldForecast.php
-
-		-
-			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Notifications/PaymentConfirmation.php
-
-		-
-			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Notifications/RemoteSensingAlertNotification.php
-
-		-
-			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Notifications/SubscriptionExpiringSoon.php
-
-		-
-			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Notifications/SupportTicketCreatedNotification.php
-
-		-
-			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Notifications/WithdrawalPeriodEnding.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'

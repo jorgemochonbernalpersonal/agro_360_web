@@ -75,7 +75,7 @@ class Edit extends Component
             $this->destination_type = $firstMh->destination_type ?? 'third_party';
             $this->transport_document = $firstMh->transport_document ?? '';
             $this->vehicle_plate = $firstMh->vehicle_plate ?? '';
-            $this->delivery_date = $firstMh->delivery_date->format('Y-m-d') ?? now()->toDateString();
+            $this->delivery_date = $firstMh->delivery_date->format('Y-m-d');
         } else {
             $this->buyer_name = $this->invoice->billing_company_name ?? '';
             $this->delivery_date = now()->toDateString();
@@ -203,7 +203,7 @@ class Edit extends Component
                     $description = $line['description'] ?: sprintf(
                         'Cosecha #%d — %s',
                         $harvest->id,
-                        $harvest->harvest_start_date->format('d/m/Y') ?? '—'
+                        $harvest->harvest_start_date->format('d/m/Y')
                     );
 
                     $item = InvoiceItem::create([

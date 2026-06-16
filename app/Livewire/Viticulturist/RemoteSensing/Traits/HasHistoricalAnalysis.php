@@ -145,13 +145,13 @@ trait HasHistoricalAnalysis
                 if (now()->month < 4) {
                     $startDate = \Carbon\Carbon::create($currentYear - 1, 4, 1);
                 }
-                $this->historyDays = $startDate->diffInDays($endDate);
+                $this->historyDays = (int) $startDate->diffInDays($endDate);
                 break;
             case 'last_season':
                 $currentYear = now()->year;
                 $startDate = \Carbon\Carbon::create($currentYear - 1, 4, 1);
                 $endDate = \Carbon\Carbon::create($currentYear - 1, 10, 31);
-                $this->historyDays = $startDate->diffInDays($endDate);
+                $this->historyDays = (int) $startDate->diffInDays($endDate);
                 break;
             case '1_year':
                 $this->historyDays = 365;
@@ -160,7 +160,7 @@ trait HasHistoricalAnalysis
                 if ($this->customStartDate && $this->customEndDate) {
                     $startDate = \Carbon\Carbon::parse($this->customStartDate);
                     $endDate = \Carbon\Carbon::parse($this->customEndDate);
-                    $this->historyDays = $startDate->diffInDays($endDate);
+                    $this->historyDays = (int) $startDate->diffInDays($endDate);
                 } else {
                     $this->historyDays = 90;
                 }

@@ -27,7 +27,7 @@ class WithdrawalPeriodEnding extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @return array<int, string>
+     * @return string
      */
     public function notificationCategory(): string
     {
