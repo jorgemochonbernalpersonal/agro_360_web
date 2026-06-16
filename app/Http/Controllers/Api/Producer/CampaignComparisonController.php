@@ -72,7 +72,7 @@ class CampaignComparisonController extends BaseApiController
 
                 return [
                     'plot_id' => $plotId,
-                    'plot_name' => $first->plotPlanting?->plot?->name ?? '—',
+                    'plot_name' => $first->plotPlanting?->plot->name ?? '—',
                     'total_kg' => round((float) $group->sum('total_weight'), 2),
                     'avg_baume' => $group->avg('baume_degree') !== null ? round($group->avg('baume_degree'), 2) : null,
                     'entries' => $group->count(),

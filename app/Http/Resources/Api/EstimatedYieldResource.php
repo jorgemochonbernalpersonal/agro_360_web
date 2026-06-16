@@ -17,7 +17,7 @@ class EstimatedYieldResource extends JsonResource
                 'id' => $this->plotPlanting->id,
                 'plot_id' => $this->plotPlanting->plot_id,
                 'plot_name' => $this->plotPlanting->plot?->name,
-                'variety' => $this->plotPlanting->grapeVariety?->name ?? null,
+                'variety' => $this->plotPlanting->grapeVariety->name ?? null,
             ]),
             'campaign_id' => $this->campaign_id,
             'campaign_year' => $this->whenLoaded('campaign', fn () => $this->campaign->year ?? null),

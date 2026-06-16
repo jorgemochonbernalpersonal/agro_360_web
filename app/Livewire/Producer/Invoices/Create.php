@@ -84,7 +84,7 @@ class Create extends Component
         }
 
         $defaultTax = $user->defaultTax()->first() ?? $this->availableTaxes->first();
-        $this->defaultTaxId = (string) ($defaultTax?->id ?? '');
+        $this->defaultTaxId = (string) ($defaultTax->id ?? '');
 
         $settings = InvoicingSetting::getOrCreateForUser($user->id);
         $this->delivery_note_code_auto = $settings->getDeliveryNotePreview();

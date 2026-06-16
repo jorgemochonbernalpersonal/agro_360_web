@@ -110,7 +110,7 @@ class WineSubproductController extends BaseApiController
             'wine_name' => $s->wine?->name,
             'type' => $s->type,
             'type_label' => $s->type_label,
-            'subproduct_date' => $s->subproduct_date?->toDateString(),
+            'subproduct_date' => $s->subproduct_date->toDateString(),
             'quantity' => (float) $s->quantity,
             'unit' => $s->unit ? ['id' => $s->unit->id, 'name' => $s->unit->name] : null,
             'destination' => $s->destination,

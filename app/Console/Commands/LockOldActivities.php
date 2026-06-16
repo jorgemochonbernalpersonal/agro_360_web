@@ -59,7 +59,7 @@ class LockOldActivities extends Command
                 'ID' => $activity->id,
                 'Fecha' => $activity->activity_date->format('d/m/Y'),
                 'Tipo' => $activity->activity_type,
-                'Parcela' => $activity->plot?->name ?? 'N/A',
+                'Parcela' => $activity->plot->name ?? 'N/A',
                 'Días' => $activity->activity_date->diffInDays(now()),
             ];
         }

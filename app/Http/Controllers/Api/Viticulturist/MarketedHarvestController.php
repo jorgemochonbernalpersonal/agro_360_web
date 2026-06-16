@@ -25,7 +25,7 @@ class MarketedHarvestController extends BaseApiController
 
         return $this->success($harvests->map(fn ($h) => [
             'id' => $h->id,
-            'harvest_start_date' => $h->harvest_start_date?->toDateString(),
+            'harvest_start_date' => $h->harvest_start_date->toDateString(),
             'plot_name' => $h->activity?->plot?->name,
             'variety' => $h->plotPlanting?->grapeVariety?->name,
             'total_weight' => $h->total_weight ? (float) $h->total_weight : null,

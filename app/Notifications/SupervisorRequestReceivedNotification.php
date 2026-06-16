@@ -66,7 +66,7 @@ class SupervisorRequestReceivedNotification extends Notification implements Shou
             'winery_id' => $req->winery_id,
             'winery_name' => $req->winery?->name,
             'icon' => '📩',
-            'message' => ($req->winery?->name ?? 'Bodega').' — '.$typeLabel,
+            'message' => ($req->winery->name ?? 'Bodega').' — '.$typeLabel,
             'action_url' => route('supervisor.requests.index'),
             'action_text' => __('Ver solicitudes'),
         ];

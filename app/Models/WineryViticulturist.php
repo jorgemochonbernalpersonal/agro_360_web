@@ -139,7 +139,7 @@ class WineryViticulturist extends Model
 
         // Usar atributo cacheado del supervisor (optimizado)
         $supervisor = $viticulturist->supervisor;
-        $supervisorId = $supervisor?->id
+        $supervisorId = $supervisor->id
             ?? self::where('viticulturist_id', $viticulturist->id)
                 ->where('source', self::SOURCE_SUPERVISOR)
                 ->whereNotNull('supervisor_id')
@@ -226,7 +226,7 @@ class WineryViticulturist extends Model
 
         // Verificar si tiene supervisor y este viticultor viene de su pool
         $supervisor = $viticulturist->supervisor;
-        $supervisorId = $supervisor?->id
+        $supervisorId = $supervisor->id
             ?? self::where('viticulturist_id', $viticulturist->id)
                 ->where('source', self::SOURCE_SUPERVISOR)
                 ->whereNotNull('supervisor_id')

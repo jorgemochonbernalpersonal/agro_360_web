@@ -20,7 +20,7 @@ class Index extends AbstractIndex
     public function mount(): void
     {
         $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
-        $this->filterCampaign = (string) ($campaign?->id ?? '');
+        $this->filterCampaign = (string) ($campaign->id ?? '');
     }
 
     public function updatingFilterCampaign(): void

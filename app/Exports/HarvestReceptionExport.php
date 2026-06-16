@@ -115,7 +115,7 @@ class HarvestReceptionExport implements FromCollection, WithHeadings, WithMappin
             $sanitaryLabels[$harvest->health_status] ?? '—',
             $harvest->vehicle_plate ?? '—',
             $harvest->transport_document_number ?? '—',
-            $harvest->container?->name ?? '—',
+            $harvest->container->name ?? '—',
             $harvest->disqualified ? 'Sí' : 'No',
             $harvest->disqualified_reason ?? '—',
             $harvest->status === 'cancelled' ? 'Anulada' : 'Activa',

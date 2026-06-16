@@ -64,7 +64,7 @@ class Map extends Component
             'global_pct' => round(($totalUsed / $totalCapacity) * 100, 1),
         ];
 
-        $grouped = $containers->groupBy(fn ($c) => $c->containerRoom?->name ?? 'Sin sala asignada');
+        $grouped = $containers->groupBy(fn ($c) => $c->containerRoom->name ?? 'Sin sala asignada');
 
         return view('livewire.winery.cellar.containers.map', compact('grouped', 'rooms', 'stats'));
     }

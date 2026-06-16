@@ -547,7 +547,7 @@ class CreateHarvest extends Component
         // Año de vendimia: preferir harvest_start_date, sino campaña
         $vintage = $this->harvest_start_date
             ? (int) \Carbon\Carbon::parse($this->harvest_start_date)->year
-            : (Campaign::find($this->campaign_id)?->year ?? now()->year);
+            : (Campaign::find($this->campaign_id)->year ?? now()->year);
 
         // Solo cosechas del cuaderno del viticultor (excluye recepciones de bodega)
         $this->totalHarvestedInCampaign = $this->selectedPlanting->getTotalViticulturistYieldForVintage($vintage, Auth::id());

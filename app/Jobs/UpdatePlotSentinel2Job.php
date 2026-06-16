@@ -50,7 +50,7 @@ class UpdatePlotSentinel2Job implements ShouldQueue
                 'plot_sigpac_id' => $this->plotSigpacId,
                 'ndvi' => $result->ndvi_mean,
                 'gndvi' => $result->gndvi,
-                'image_date' => $result->image_date?->toDateString(),
+                'image_date' => $result->image_date->toDateString(),
             ]);
         } else {
             Log::warning('UpdatePlotSentinel2Job: no data returned', [

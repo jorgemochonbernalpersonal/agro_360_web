@@ -41,8 +41,8 @@ class Index extends Component
     {
         $user = Auth::user();
         $campaign = Campaign::getOrCreateActiveForYear($user->id);
-        $this->filterCampaign = $campaign?->id ?? '';
-        $this->campaign_id = $campaign?->id ?? '';
+        $this->filterCampaign = $campaign->id ?? '';
+        $this->campaign_id = $campaign->id ?? '';
     }
 
     public function openCreate()

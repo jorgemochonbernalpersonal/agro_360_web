@@ -25,7 +25,7 @@ class Index extends AbstractIndex
     {
         if ($this->filterCampaign === '') {
             $campaign = Campaign::getOrCreateActiveForYear($this->viticulturistId());
-            $this->filterCampaign = (string) ($campaign?->id ?? '');
+            $this->filterCampaign = (string) ($campaign->id ?? '');
         }
     }
 

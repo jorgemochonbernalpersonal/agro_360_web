@@ -185,7 +185,7 @@ abstract class AbstractActivityForm extends Component
             $this->crew_id = $activity->crew_id;
         } elseif ($activity->crew_member_id) {
             $this->workType = 'individual';
-            $this->crew_member_id = $activity->crewMember?->viticulturist_id ?? '';
+            $this->crew_member_id = $activity->crewMember->viticulturist_id ?? '';
         }
     }
 

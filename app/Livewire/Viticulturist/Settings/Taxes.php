@@ -110,6 +110,6 @@ class Taxes extends Component
     {
         $userTaxes = UserTax::where('user_id', Auth::id())->get();
         $this->enabledTaxIds = $userTaxes->pluck('tax_id')->map(fn ($id) => (int) $id)->toArray();
-        $this->defaultTaxId = (int) ($userTaxes->firstWhere('is_default', true)?->tax_id ?? 0) ?: null;
+        $this->defaultTaxId = (int) ($userTaxes->firstWhere('is_default', true)->tax_id ?? 0) ?: null;
     }
 }

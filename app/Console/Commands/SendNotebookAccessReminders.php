@@ -34,7 +34,7 @@ class SendNotebookAccessReminders extends Command
             }
 
             $requestorNames = $requests->map(function ($r) {
-                return $r->winery?->name ?? $r->supervisor?->name ?? '—';
+                return $r->winery->name ?? $r->supervisor->name ?? '—';
             })->implode(', ');
 
             $count = $requests->count();

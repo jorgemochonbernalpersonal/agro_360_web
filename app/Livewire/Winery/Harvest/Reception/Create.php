@@ -169,7 +169,7 @@ class Create extends Component
             ->get()
             ->map(fn ($p) => [
                 'id' => $p->id,
-                'label' => ($p->grapeVariety?->name ?? $p->name ?? 'Sin variedad')
+                'label' => ($p->grapeVariety->name ?? $p->name ?? 'Sin variedad')
                     .($p->area_planted ? ' — '.number_format((float) $p->area_planted, 2).' ha' : ''),
                 'area' => $p->area_planted,
                 'limit_kg' => $p->harvest_limit_kg,

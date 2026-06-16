@@ -112,7 +112,7 @@ class YieldForecastController extends BaseApiController
             'campaign_name' => $f->campaign?->name,
             'vintage_year' => $f->vintage_year,
             'estimated_kg' => (float) $f->estimated_kg,
-            'estimation_date' => $f->estimation_date?->toDateString(),
+            'estimation_date' => $f->estimation_date->toDateString(),
             'status' => $f->status,
             'is_confirmed' => $f->isConfirmed(),
             'received_kg' => $f->receivedKg(),

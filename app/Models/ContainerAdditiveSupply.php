@@ -51,6 +51,6 @@ class ContainerAdditiveSupply extends Model
 
     public function getDisplayNameAttribute(): string
     {
-        return $this->winerySupply?->name ?? $this->additive_name ?? '—';
+        return $this->winerySupply->name ?? $this->additive_name ?? '—';
     }
 }

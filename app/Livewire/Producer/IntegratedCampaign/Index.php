@@ -22,7 +22,7 @@ class Index extends Component
             ->orderByDesc('year')
             ->first();
 
-        $this->filterCampaign = (string) ($active?->id ?? '');
+        $this->filterCampaign = (string) ($active->id ?? '');
     }
 
     public function render()

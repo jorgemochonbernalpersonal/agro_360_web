@@ -113,7 +113,7 @@ class ExternalGrapePurchase extends Model
 
     public function getSupplierDisplayAttribute(): string
     {
-        return $this->supplier?->name ?? $this->supplier_name ?? '—';
+        return $this->supplier->name ?? $this->supplier_name ?? '—';
     }
 
     // ── Scopes ─────────────────────────────────────────────────────────────────

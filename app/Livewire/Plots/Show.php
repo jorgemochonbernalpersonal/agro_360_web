@@ -230,7 +230,7 @@ class Show extends Component
         $plotGeometries = $geometryRows
             ->map(fn ($mps) => [
                 'wkt' => $mps->plotGeometry->getWktCoordinates(),
-                'sigpac_code' => $mps->sigpacCode?->code ?? null,
+                'sigpac_code' => $mps->sigpacCode->code ?? null,
             ])
             ->filter(fn ($g) => $g['wkt'])
             ->values()

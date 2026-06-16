@@ -37,7 +37,7 @@ class Edit extends AbstractEdit
         $this->dni = $user->dni ?? '';
         $rawEmail = $user->email ?? '';
         $this->email = str_starts_with($rawEmail, 'viticultores.') ? '' : $rawEmail;
-        $this->phone = $user->profile?->phone ?? '';
+        $this->phone = $user->profile->phone ?? '';
         $this->notes = $relation->notes ?? '';
     }
 

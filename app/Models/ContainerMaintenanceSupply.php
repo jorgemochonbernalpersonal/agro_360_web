@@ -42,6 +42,6 @@ class ContainerMaintenanceSupply extends Model
      */
     public function getDisplayNameAttribute(): string
     {
-        return $this->winerySupply?->name ?? $this->supply_name ?? '—';
+        return $this->winerySupply->name ?? $this->supply_name ?? '—';
     }
 }

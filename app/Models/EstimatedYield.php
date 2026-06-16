@@ -128,7 +128,7 @@ class EstimatedYield extends Model
     public function updateActualYield(): void
     {
         // Usar vintage si está definido, sino deducirlo del año de la campaña
-        $vintage = $this->vintage ?? $this->campaign?->year ?? now()->year;
+        $vintage = $this->vintage ?? $this->campaign->year ?? now()->year;
 
         // Fuente primaria: registros del cuaderno del viticultor
         $totalWeight = (float) Harvest::where('plot_planting_id', $this->plot_planting_id)

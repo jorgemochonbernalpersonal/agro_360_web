@@ -72,7 +72,7 @@ class SupervisorRequestSentNotification extends Notification implements ShouldQu
             'supervisor_id' => $req->supervisor_id,
             'supervisor_name' => $req->supervisor?->name,
             'icon' => $req->type === SupervisorRequest::TYPE_NONCONFORMITY ? '⚠️' : '📋',
-            'message' => ($req->supervisor?->name ?? 'Tu DO').' — '.$typeLabel,
+            'message' => ($req->supervisor->name ?? 'Tu DO').' — '.$typeLabel,
             'action_url' => route('winery.denomination.requests.index'),
             'action_text' => __('Ver solicitud'),
         ];

@@ -94,7 +94,7 @@ class AuditLog extends Model
      */
     public function getDescription(): string
     {
-        $userName = $this->user?->name ?? 'Sistema';
+        $userName = $this->user->name ?? 'Sistema';
         $modelName = class_basename($this->auditable_type);
 
         return match ($this->event) {

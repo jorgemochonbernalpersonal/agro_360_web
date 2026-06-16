@@ -134,7 +134,7 @@ class Show extends Component
             'cupoPct' => $cupoPct,
             'cupoExceeded' => $cupoExceeded,
         ])->layout('layouts.app', [
-            'title' => __('Detalle de cosecha — ').($this->planting->grapeVariety?->name ?? $this->planting->name).' · '.$this->vintageYear,
+            'title' => __('Detalle de cosecha — ').($this->planting->grapeVariety->name ?? $this->planting->name).' · '.$this->vintageYear,
             'description' => __('Detalle de registros de cosecha, recepciones de bodega y entregas declaradas.'),
         ]);
     }

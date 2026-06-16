@@ -141,7 +141,7 @@ class Create extends Component
                 $qty = $amounts['quantity'];
                 $unitPrice = $amounts['unit_price'];
 
-                $variety = $harvest->plotPlanting?->grapeVariety?->name ?? 'uva';
+                $variety = $harvest->plotPlanting?->grapeVariety->name ?? 'uva';
                 $description = $line['description'] ?: "Vendimia #{$harvest->id} - {$variety}";
 
                 InvoiceItem::create([

@@ -78,7 +78,7 @@ class Show extends Component
         $this->showResolveForm = false;
         $this->resolutionNote = '';
 
-        $name = $viticulturist?->name ?? 'el viticultor';
+        $name = $viticulturist->name ?? 'el viticultor';
         $this->toastSuccess("Respuesta enviada a {$name}. Recibirá una notificación por email.");
     }
 

@@ -121,7 +121,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                 // OPTIMIZACIÓN: Calcular estadísticas de forma más eficiente
                 $stats = [
                     'total_treatments' => $treatments->count(),
-                    'total_area_treated' => $treatments->sum(fn ($t) => $t->phytosanitaryTreatment?->area_treated ?? 0),
+                    'total_area_treated' => $treatments->sum(fn ($t) => $t->phytosanitaryTreatment->area_treated ?? 0),
                     'products_used' => $treatments
                         ->pluck('phytosanitaryTreatment.product.name')
                         ->filter()

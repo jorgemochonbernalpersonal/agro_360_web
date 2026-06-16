@@ -135,7 +135,7 @@ class CellarOperationController extends BaseApiController
             'id' => $op->id,
             'operation_type' => $op->operation_type,
             'type_label' => $op->type_label,
-            'operation_date' => $op->operation_date?->toDateString(),
+            'operation_date' => $op->operation_date->toDateString(),
             'source_container' => $op->sourceContainer ? ['id' => $op->sourceContainer->id, 'name' => $op->sourceContainer->name] : null,
             'target_container' => $op->targetContainer ? ['id' => $op->targetContainer->id, 'name' => $op->targetContainer->name] : null,
             'volume_liters' => $op->volume_liters !== null ? (float) $op->volume_liters : null,

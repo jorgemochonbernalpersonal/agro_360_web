@@ -196,7 +196,7 @@ class Edit extends Component
         }
 
         $defaultTax = $user->defaultTax()->first() ?? $this->availableTaxes->first();
-        $this->defaultTaxId = (string) ($defaultTax?->id ?? '');
+        $this->defaultTaxId = (string) ($defaultTax->id ?? '');
 
         $this->loadHarvests();
         $this->loadLots();

@@ -81,7 +81,7 @@ class PlotObserver
 
         try {
             $name = trim(explode('/', $municipality->name)[0]);
-            $province = trim(explode('/', $municipality->province?->name ?? '')[0]);
+            $province = trim(explode('/', $municipality->province->name ?? '')[0]);
 
             $http = Http::withHeaders(['User-Agent' => 'Agro365/1.0 (info@agro365.es)']);
 

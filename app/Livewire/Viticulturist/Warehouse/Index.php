@@ -91,7 +91,7 @@ class Index extends Component
         }
 
         $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
-        $this->p_campaign_id = (string) ($campaign?->id ?? '');
+        $this->p_campaign_id = (string) ($campaign->id ?? '');
         $this->p_invoice_date = now()->format('Y-m-d');
     }
 

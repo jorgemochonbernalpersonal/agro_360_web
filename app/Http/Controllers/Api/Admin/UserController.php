@@ -87,7 +87,7 @@ class UserController extends BaseApiController
                 'id' => $note->id,
                 'note' => $note->note,
                 'admin_name' => $note->admin?->name,
-                'created_at' => $note->created_at?->toIso8601String(),
+                'created_at' => $note->created_at->toIso8601String(),
             ])->values(),
         ]);
     }

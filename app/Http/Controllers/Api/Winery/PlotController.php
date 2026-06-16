@@ -378,7 +378,7 @@ class PlotController extends BaseApiController
 
         return $this->paginated($activities, $activities->map(fn ($a) => [
             'id' => $a->id,
-            'activity_date' => $a->activity_date?->format('Y-m-d'),
+            'activity_date' => $a->activity_date->format('Y-m-d'),
             'grape_variety' => $a->plotPlanting?->grapeVariety?->name,
             'baume_degree' => $a->harvest?->baume_degree,
             'brix_degree' => $a->harvest?->brix_degree,
@@ -411,7 +411,7 @@ class PlotController extends BaseApiController
         return $this->paginated($activities, $activities->map(fn ($a) => [
             'id' => $a->id,
             'activity_type' => $a->activity_type,
-            'activity_date' => $a->activity_date?->format('Y-m-d'),
+            'activity_date' => $a->activity_date->format('Y-m-d'),
             'notes' => $a->notes,
         ]));
     }

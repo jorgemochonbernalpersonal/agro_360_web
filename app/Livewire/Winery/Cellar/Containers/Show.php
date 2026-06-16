@@ -47,7 +47,7 @@ class Show extends Component
     public function openAdjustModal(): void
     {
         $this->adjustLiters = (string) $this->container->wine_volume_liters;
-        $this->adjustWineId = (string) ($this->container->currentState?->wine_id ?? '');
+        $this->adjustWineId = (string) ($this->container->currentState->wine_id ?? '');
         $this->showAdjustModal = true;
     }
 

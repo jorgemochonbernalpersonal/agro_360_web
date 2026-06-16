@@ -62,7 +62,7 @@ class Dashboard extends Component
     #[Computed]
     public function vintageYear(): int
     {
-        return $this->activeCampaign?->year ?? now()->year;
+        return $this->activeCampaign->year ?? now()->year;
     }
 
     // ── Viticultores ──────────────────────────────────────────────────────────
