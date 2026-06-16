@@ -42,7 +42,7 @@ trait RespectsPreferences
 
         $prefs = $notifiable->notification_preferences;
 
-        if (empty($prefs) || ! isset($prefs['channels'])) {
+        if (! is_array($prefs) || ! array_key_exists('channels', $prefs)) {
             return $defaultChannels;
         }
 

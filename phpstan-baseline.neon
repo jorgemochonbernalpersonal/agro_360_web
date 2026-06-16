@@ -199,18 +199,6 @@ parameters:
 			path: app/Console/Commands/RegenerateMockRemoteSensingDataCommand.php
 
 		-
-			message: '#^Offset ''delivery'' on string\|null on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Console/Commands/SendDailyDigestCommand.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between ''instant'' and ''digest'' will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Console/Commands/SendDailyDigestCommand.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
 			identifier: property.notFound
 			count: 2
@@ -12631,45 +12619,9 @@ parameters:
 			path: app/Models/WineryYieldForecast.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/ContainerMaintenanceAlertNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/ContainerMaintenanceAlertNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/ExportReadyNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/ExportReadyNotification.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Notifications/GrapePurchaseInvoiceIssuedNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/GrapePurchaseInvoiceIssuedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
 			path: app/Notifications/GrapePurchaseInvoiceIssuedNotification.php
 
 		-
@@ -12709,18 +12661,6 @@ parameters:
 			path: app/Notifications/HarvestDeliveryAutoDisputedNotification.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/HarvestDeliveryAutoDisputedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/HarvestDeliveryAutoDisputedNotification.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 7
@@ -12745,34 +12685,10 @@ parameters:
 			path: app/Notifications/HarvestDeliveryCreatedNotification.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/HarvestDeliveryCreatedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/HarvestDeliveryCreatedNotification.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 5
 			path: app/Notifications/HarvestDeliveryCreatedNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/HarvestDeliveryDeletedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/HarvestDeliveryDeletedNotification.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grapeVariety\.$#'
@@ -12789,18 +12705,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plot\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Notifications/HarvestDeliveryDelinkedNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/HarvestDeliveryDelinkedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
 			count: 1
 			path: app/Notifications/HarvestDeliveryDelinkedNotification.php
 
@@ -12841,18 +12745,6 @@ parameters:
 			path: app/Notifications/HarvestDeliveryDisputedNotification.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/HarvestDeliveryDisputedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/HarvestDeliveryDisputedNotification.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 4
@@ -12889,18 +12781,6 @@ parameters:
 			path: app/Notifications/HarvestDeliveryMatchedNotification.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/HarvestDeliveryMatchedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/HarvestDeliveryMatchedNotification.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 7
@@ -12937,57 +12817,15 @@ parameters:
 			path: app/Notifications/HarvestDeliveryResolvedNotification.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/HarvestDeliveryResolvedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/HarvestDeliveryResolvedNotification.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 7
 			path: app/Notifications/HarvestDeliveryResolvedNotification.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/NotebookAccessRequestedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/NotebookAccessRequestedNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/NotebookAccessRespondedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/NotebookAccessRespondedNotification.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Payment\:\:\$plan_type\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Notifications/PaymentConfirmation.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
 			path: app/Notifications/PaymentConfirmation.php
 
 		-
@@ -12999,12 +12837,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
 			identifier: argument.type
-			count: 1
-			path: app/Notifications/PaymentConfirmation.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
 			count: 1
 			path: app/Notifications/PaymentConfirmation.php
 
@@ -13063,46 +12895,10 @@ parameters:
 			path: app/Notifications/QualityFeedbackNotification.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/RegulatoryDeadlineNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/RegulatoryDeadlineNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/RemoteSensingAlertNotification.php
-
-		-
 			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
 			identifier: return.phpDocType
 			count: 1
 			path: app/Notifications/RemoteSensingAlertNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/RemoteSensingAlertNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/ReportFailedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/ReportFailedNotification.php
 
 		-
 			message: '#^Match arm comparison between ''full_digital…'' and ''full_digital…'' is always true\.$#'
@@ -13111,63 +12907,15 @@ parameters:
 			path: app/Notifications/ReportGenerated.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/ReportGeneratedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/ReportGeneratedNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/SubscriptionExpiringSoon.php
-
-		-
 			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
 			identifier: return.phpDocType
 			count: 1
 			path: app/Notifications/SubscriptionExpiringSoon.php
 
 		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/SubscriptionExpiringSoon.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/SupervisorRequestDueSoonNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/SupervisorRequestDueSoonNotification.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 4
-			path: app/Notifications/SupervisorRequestReceivedNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/SupervisorRequestReceivedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
 			path: app/Notifications/SupervisorRequestReceivedNotification.php
 
 		-
@@ -13183,33 +12931,9 @@ parameters:
 			path: app/Notifications/SupervisorRequestResolvedNotification.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/SupervisorRequestResolvedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/SupervisorRequestResolvedNotification.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 4
-			path: app/Notifications/SupervisorRequestRespondedNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/SupervisorRequestRespondedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
 			path: app/Notifications/SupervisorRequestRespondedNotification.php
 
 		-
@@ -13222,18 +12946,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 4
-			path: app/Notifications/SupervisorRequestSentNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/SupervisorRequestSentNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
 			path: app/Notifications/SupervisorRequestSentNotification.php
 
 		-
@@ -13267,12 +12979,6 @@ parameters:
 			path: app/Notifications/SupportTicketCreatedNotification.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/SupportTicketCreatedNotification.php
-
-		-
 			message: '#^Offset ''high''\|''low''\|''medium''\|''urgent'' on array\{low\: ''⚪ Baja'', medium\: ''🟡 Media'', high\: ''🟠 Alta'', urgent\: ''🔴 Urgente''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -13285,64 +12991,10 @@ parameters:
 			path: app/Notifications/SupportTicketCreatedNotification.php
 
 		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/SupportTicketCreatedNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/ViticulturistAssignedToWineryNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/ViticulturistAssignedToWineryNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/WineryAbilityChangedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/WineryAbilityChangedNotification.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Notifications/WineryAnnouncementNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/WineryJoinRequestedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/WineryJoinRequestedNotification.php
-
-		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/WineryJoinRespondedNotification.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Notifications/WineryJoinRespondedNotification.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\PhytosanitaryTreatment\:\:\$agricultural_activity_id\.$#'
@@ -13369,26 +13021,8 @@ parameters:
 			path: app/Notifications/WithdrawalPeriodEnding.php
 
 		-
-			message: '#^Offset ''channels'' on non\-falsy\-string in isset\(\) does not exist\.$#'
-			identifier: isset.offset
-			count: 1
-			path: app/Notifications/WithdrawalPeriodEnding.php
-
-		-
 			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'
 			identifier: return.phpDocType
-			count: 1
-			path: app/Notifications/WithdrawalPeriodEnding.php
-
-		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
-			count: 1
-			path: app/Notifications/WithdrawalPeriodEnding.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
 			count: 1
 			path: app/Notifications/WithdrawalPeriodEnding.php
 
@@ -13931,24 +13565,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Services/InventoryAnalyticsService.php
-
-		-
-			message: '#^Offset ''channels'' on array\{\}\|string on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Services/NotificationPreferencesService.php
-
-		-
-			message: '#^Offset ''container…''\|''export''\|''harvest_alerts''\|''harvest_delivery''\|''invoice''\|''notebook_access''\|''payment''\|''regulatory''\|''remote_sensing''\|''report''\|''subscription''\|''support''\|''withdrawal_period'' on array\{\} on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Services/NotificationPreferencesService.php
-
-		-
-			message: '#^Offset ''delivery'' on array\{\}\|string on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Services/NotificationPreferencesService.php
 
 		-
 			message: '#^Match expression does not handle remaining value\: string$#'
