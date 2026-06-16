@@ -80,8 +80,7 @@ class PacDeclaration extends Model
             self::STATUS_DRAFT => 'Borrador',
             self::STATUS_SUBMITTED => 'Presentada',
             self::STATUS_APPROVED => 'Aprobada',
-            self::STATUS_REJECTED => 'Rechazada',
-            default => $this->status,
+            default => 'Rechazada',
         });
     }
 
@@ -91,8 +90,7 @@ class PacDeclaration extends Model
             self::STATUS_DRAFT => 'amber',
             self::STATUS_SUBMITTED => 'blue',
             self::STATUS_APPROVED => 'green',
-            self::STATUS_REJECTED => 'red',
-            default => 'zinc',
+            default => 'red',
         };
     }
 

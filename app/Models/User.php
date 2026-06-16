@@ -315,10 +315,10 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     {
         // Limpiar propiedades de cache antes de guardar
         static::saving(function ($user) {
-            unset($user->_wineries_cache);
-            unset($user->_supervisor_cache);
-            unset($user->_was_created_by_another_cache);
-            unset($user->_needs_password_change_cache);
+            $user->_wineries_cache = null;
+            $user->_supervisor_cache = null;
+            $user->_was_created_by_another_cache = null;
+            $user->_needs_password_change_cache = null;
         });
 
         static::saved(function ($user) {

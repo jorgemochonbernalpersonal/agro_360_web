@@ -308,13 +308,13 @@ trait HasHierarchy
      */
     public function clearAttributeCache(): void
     {
-        unset($this->_wineries_cache);
-        unset($this->_supervisor_cache);
-        unset($this->_has_winery_cache);
-        unset($this->_has_supervisor_cache);
-        unset($this->_has_winery_supervisor_cache);
-        unset($this->_was_created_by_another_cache);
-        unset($this->_needs_password_change_cache);
+        $this->_wineries_cache = null;
+        $this->_supervisor_cache = null;
+        $this->_has_winery_cache = null;
+        $this->_has_supervisor_cache = null;
+        $this->_has_winery_supervisor_cache = null;
+        $this->_was_created_by_another_cache = null;
+        $this->_needs_password_change_cache = null;
 
         \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_supervisor");
         \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_wineries");

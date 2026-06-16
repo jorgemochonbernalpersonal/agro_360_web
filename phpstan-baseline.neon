@@ -349,8 +349,8 @@ parameters:
 			path: app/Models/AuditLog.php
 
 		-
-			message: '#^Match arm comparison between ''maintenance'' and ''maintenance'' is always true\.$#'
-			identifier: match.alwaysTrue
+			message: '#^Match arm comparison between ''maintenance'' and ''bottling'' is always false\.$#'
+			identifier: match.alwaysFalse
 			count: 1
 			path: app/Models/ContainerHistory.php
 
@@ -379,18 +379,6 @@ parameters:
 			path: app/Models/HarvestDelivery.php
 
 		-
-			message: '#^Match arm comparison between ''return'' and ''return'' is always true\.$#'
-			identifier: match.alwaysTrue
-			count: 1
-			path: app/Models/HarvestStock.php
-
-		-
-			message: '#^Match arm comparison between ''rejected'' and ''rejected'' is always true\.$#'
-			identifier: match.alwaysTrue
-			count: 2
-			path: app/Models/PacDeclaration.php
-
-		-
 			message: '#^Unsafe call to private method App\\Models\\PlotGeometry\:\:invalidatePlotGeometryCache\(\) through static\:\:\.$#'
 			identifier: staticClassAccess.privateMethod
 			count: 2
@@ -401,66 +389,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/SupervisorRequest.php
-
-		-
-			message: '#^Match arm comparison between ''closed'' and ''closed'' is always true\.$#'
-			identifier: match.alwaysTrue
-			count: 2
-			path: app/Models/SupportTicket.php
-
-		-
-			message: '#^Match arm comparison between ''low'' and ''low'' is always true\.$#'
-			identifier: match.alwaysTrue
-			count: 2
-			path: app/Models/SupportTicket.php
-
-		-
-			message: '#^Match arm comparison between ''question'' and ''question'' is always true\.$#'
-			identifier: match.alwaysTrue
-			count: 1
-			path: app/Models/SupportTicket.php
-
-		-
-			message: '#^Cannot unset property App\\Models\\User\:\:\$_has_supervisor_cache because it might have hooks in a subclass\.$#'
-			identifier: unset.possiblyHookedProperty
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Cannot unset property App\\Models\\User\:\:\$_has_winery_cache because it might have hooks in a subclass\.$#'
-			identifier: unset.possiblyHookedProperty
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Cannot unset property App\\Models\\User\:\:\$_has_winery_supervisor_cache because it might have hooks in a subclass\.$#'
-			identifier: unset.possiblyHookedProperty
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Cannot unset property App\\Models\\User\:\:\$_needs_password_change_cache because it might have hooks in a subclass\.$#'
-			identifier: unset.possiblyHookedProperty
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Cannot unset property App\\Models\\User\:\:\$_supervisor_cache because it might have hooks in a subclass\.$#'
-			identifier: unset.possiblyHookedProperty
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Cannot unset property App\\Models\\User\:\:\$_was_created_by_another_cache because it might have hooks in a subclass\.$#'
-			identifier: unset.possiblyHookedProperty
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Cannot unset property App\\Models\\User\:\:\$_wineries_cache because it might have hooks in a subclass\.$#'
-			identifier: unset.possiblyHookedProperty
-			count: 1
-			path: app/Models/User.php
 
 		-
 			message: '#^Offset ''external''\|''own'' does not exist on array\{standard\: ''Estándar'', complete\: ''Completo'', organic\: ''Ecológico'', custom\: ''Personalizado''\}\.$#'
@@ -485,12 +413,6 @@ parameters:
 			identifier: return.phpDocType
 			count: 1
 			path: app/Notifications/RemoteSensingAlertNotification.php
-
-		-
-			message: '#^Match arm comparison between ''full_digital…'' and ''full_digital…'' is always true\.$#'
-			identifier: match.alwaysTrue
-			count: 1
-			path: app/Notifications/ReportGenerated.php
 
 		-
 			message: '#^PHPDoc tag @return with type array\<int, string\> is incompatible with native type string\.$#'

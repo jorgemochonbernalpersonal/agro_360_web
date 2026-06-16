@@ -160,8 +160,7 @@ class HarvestStock extends Model
             'unreserve' => 'Reserva cancelada',
             'gift' => 'Donación/Regalo',
             'loss' => 'Pérdida/Merma',
-            'return' => 'Devolución',
-            default => 'Movimiento desconocido',
+            default => 'Devolución',
         };
     }
 }

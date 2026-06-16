@@ -170,7 +170,6 @@ class SupportTicket extends Model
             'urgent' => 'red',
             'high' => 'orange',
             'medium' => 'yellow',
-            'low' => 'gray',
             default => 'gray',
         };
     }
@@ -184,7 +183,6 @@ class SupportTicket extends Model
             'open' => 'blue',
             'in_progress' => 'yellow',
             'resolved' => 'green',
-            'closed' => 'gray',
             default => 'gray',
         };
     }
@@ -198,8 +196,7 @@ class SupportTicket extends Model
             'bug' => '🐛 Bug',
             'feature' => '✨ Nueva Funcionalidad',
             'improvement' => '🚀 Mejora',
-            'question' => '❓ Pregunta',
-            default => $this->type,
+            default => '❓ Pregunta',
         };
     }
 
@@ -212,8 +209,7 @@ class SupportTicket extends Model
             'open' => 'Abierto',
             'in_progress' => 'En Progreso',
             'resolved' => 'Resuelto',
-            'closed' => 'Cerrado',
-            default => $this->status,
+            default => 'Cerrado',
         };
     }
 
@@ -226,8 +222,7 @@ class SupportTicket extends Model
             'urgent' => '🔴 Urgente',
             'high' => '🟠 Alta',
             'medium' => '🟡 Media',
-            'low' => '⚪ Baja',
-            default => $this->priority,
+            default => '⚪ Baja',
         };
     }
 
