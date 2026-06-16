@@ -22,7 +22,9 @@ use App\Models\PlotPlanting;
 use App\Models\PlotRemoteSensing;
 use App\Models\User;
 use App\Models\Wine;
+use App\Models\WineFermentationControl;
 use App\Models\WineLoss;
+use App\Models\WineTransfer;
 use App\Models\WineryViticulturist;
 use App\Observers\AgriculturalActivityObserver;
 use App\Observers\CampaignObserver;
@@ -51,7 +53,10 @@ use App\Policies\InvoicePolicy;
 use App\Policies\MachineryPolicy;
 use App\Policies\PlotPlantingPolicy;
 use App\Policies\PlotPolicy;
+use App\Policies\WineFermentationControlPolicy;
+use App\Policies\WineLossPolicy;
 use App\Policies\WinePolicy;
+use App\Policies\WineTransferPolicy;
 use App\Services\ContainerStockService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
@@ -78,6 +83,9 @@ class AppServiceProvider extends ServiceProvider
         Client::class => ClientPolicy::class,
         Harvest::class => HarvestPolicy::class,
         Wine::class => WinePolicy::class,
+        WineTransfer::class => WineTransferPolicy::class,
+        WineLoss::class => WineLossPolicy::class,
+        WineFermentationControl::class => WineFermentationControlPolicy::class,
         Container::class => ContainerPolicy::class,
         Invoice::class => InvoicePolicy::class,
         DoLabel::class => DoLabelPolicy::class,

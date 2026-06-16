@@ -40,7 +40,7 @@ class Edit extends Component
 
     public function mount(WineLoss $loss): void
     {
-        abort_if($loss->wine?->user_id !== Auth::id(), 403);
+        $this->authorize('update', $loss);
 
         $this->loss = $loss;
 

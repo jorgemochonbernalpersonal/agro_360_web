@@ -42,7 +42,7 @@ class Edit extends Component
 
     public function mount(WineTransfer $transfer): void
     {
-        abort_if($transfer->wine?->user_id !== Auth::id(), 403);
+        $this->authorize('update', $transfer);
 
         $this->transfer = $transfer;
 
