@@ -32,19 +32,19 @@ class FinancialStats extends Component
         $totalInvoiced = Invoice::forUser($user->id)
             ->whereYear('invoice_date', $this->selectedYear)
             ->where('status', '!=', 'cancelled')
-            ->sum('total_amount') ?? 0;
+            ->sum('total_amount');
 
         // Pendiente de cobro
         $pendingAmount = Invoice::forUser($user->id)
             ->where('payment_status', 'unpaid')
             ->where('status', '!=', 'cancelled')
-            ->sum('total_amount') ?? 0;
+            ->sum('total_amount');
 
         // Facturas vencidas (solo las marcadas como overdue)
         $overdueAmount = Invoice::forUser($user->id)
             ->where('payment_status', 'overdue')
             ->where('status', '!=', 'cancelled')
-            ->sum('total_amount') ?? 0;
+            ->sum('total_amount');
 
         $overdueCount = Invoice::forUser($user->id)
             ->where('payment_status', 'overdue')
@@ -55,7 +55,7 @@ class FinancialStats extends Component
         $paidAmount = Invoice::forUser($user->id)
             ->whereYear('invoice_date', $this->selectedYear)
             ->where('payment_status', 'paid')
-            ->sum('total_amount') ?? 0;
+            ->sum('total_amount');
 
         $collectionRate = $totalInvoiced > 0 ? ($paidAmount / $totalInvoiced) * 100 : 0;
 
@@ -87,7 +87,7 @@ class FinancialStats extends Component
                 ->whereYear('invoice_date', $month->year)
                 ->whereMonth('invoice_date', $month->month)
                 ->where('status', '!=', 'cancelled')
-                ->sum('total_amount') ?? 0;
+                ->sum('total_amount');
 
             $monthlyIncome[] = [
                 'month' => $month->format('M Y'),
@@ -103,7 +103,7 @@ class FinancialStats extends Component
                 $client->total_invoiced = $client->invoices()
                     ->whereYear('invoice_date', $this->selectedYear)
                     ->where('status', '!=', 'cancelled')
-                    ->sum('total_amount') ?? 0;
+                    ->sum('total_amount');
 
                 return $client;
             })
@@ -177,7 +177,7 @@ class FinancialStats extends Component
         $previousYearIncome = Invoice::forUser($user->id)
             ->whereYear('invoice_date', $this->selectedYear - 1)
             ->where('status', '!=', 'cancelled')
-            ->sum('total_amount') ?? 0;
+            ->sum('total_amount');
 
         $growthPercentage = $previousYearIncome > 0
             ? (($totalInvoiced - $previousYearIncome) / $previousYearIncome) * 100

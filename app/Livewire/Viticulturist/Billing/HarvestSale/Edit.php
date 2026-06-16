@@ -122,7 +122,7 @@ class Edit extends Component
             'harvest_id' => $harvestId,
             'quantity' => (string) round($state['available'], 3),
             'unit_price' => (string) ($harvest->price_per_kg ?? ''),
-            'tax_rate' => (string) ($setting?->default_irpf_rate ?? '0'),
+            'tax_rate' => (string) ($setting->default_irpf_rate ?? '0'),
             'description' => '',
         ];
     }

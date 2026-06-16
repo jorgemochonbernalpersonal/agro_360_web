@@ -117,7 +117,7 @@ class Index extends Component
         })
             ->with('plotPlanting.grapeVariety')
             ->get()
-            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety?->name ?? 'Sin variedad')
+            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety->name ?? 'Sin variedad')
             ->map(function ($harvests, $variety) {
                 $total = $harvests->sum('total_weight');
                 $invoiced = $harvests->filter(fn ($h) => $h->invoiceItems()->exists())->sum('total_weight');

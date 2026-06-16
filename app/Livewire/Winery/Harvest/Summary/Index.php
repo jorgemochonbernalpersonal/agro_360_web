@@ -87,7 +87,7 @@ class Index extends Component
         }
 
         $campaign = $this->campaignFilter ? $campaigns->firstWhere('id', $this->campaignFilter) : null;
-        $vintageYear = $campaign?->year ?? now()->year;
+        $vintageYear = $campaign->year ?? now()->year;
 
         // ── Fuentes de datos ──────────────────────────────────────────────
 
@@ -183,8 +183,8 @@ class Index extends Component
                 'key' => $key,
                 'viticulturist' => $viticulturist,
                 'planting' => $planting,
-                'variety' => $planting->grapeVariety?->name ?? $planting->name ?? '—',
-                'plot' => $planting->plot?->name ?? '—',
+                'variety' => $planting->grapeVariety->name ?? $planting->name ?? '—',
+                'plot' => $planting->plot->name ?? '—',
                 'area' => $planting->area_planted ? (float) $planting->area_planted : null,
                 'pac_limit' => $pacLimit,
                 'vitic_estimate' => $viticEstimate,
@@ -209,7 +209,7 @@ class Index extends Component
 
         if ($this->search) {
             $term = mb_strtolower($this->search);
-            $rows = $rows->filter(fn ($r) => str_contains(mb_strtolower($r['viticulturist']?->name ?? ''), $term) ||
+            $rows = $rows->filter(fn ($r) => str_contains(mb_strtolower($r['viticulturist']->name ?? ''), $term) ||
                 str_contains(mb_strtolower($r['variety']), $term) ||
                 str_contains(mb_strtolower($r['plot']), $term)
             )->values();

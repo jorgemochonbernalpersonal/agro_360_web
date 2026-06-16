@@ -169,13 +169,13 @@ class Index extends AbstractIndex
         ];
 
         $byViticulturist = $allForStats
-            ->groupBy(fn ($h) => $h->batch?->viticulturist?->name ?? '—')
+            ->groupBy(fn ($h) => $h->batch?->viticulturist->name ?? '—')
             ->map(fn ($group) => round($group->sum(fn ($h) => (float) $h->total_weight), 0))
             ->sortDesc()
             ->take(10);
 
         $byVariety = $allForStats
-            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety?->name ?? '—')
+            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety->name ?? '—')
             ->map(fn ($group) => round($group->sum(fn ($h) => (float) $h->total_weight), 0))
             ->sortDesc();
 
@@ -205,10 +205,10 @@ class Index extends AbstractIndex
                     $pct = $limit > 0 ? round(($received / $limit) * 100, 1) : null;
 
                     return [
-                        'viticulturist' => $first->batch?->viticulturist?->name ?? '—',
-                        'plot' => $planting?->plot?->name ?? '—',
-                        'variety' => $planting?->grapeVariety?->name ?? '—',
-                        'planting' => $planting?->name ?? '—',
+                        'viticulturist' => $first->batch?->viticulturist->name ?? '—',
+                        'plot' => $planting?->plot->name ?? '—',
+                        'variety' => $planting?->grapeVariety->name ?? '—',
+                        'planting' => $planting->name ?? '—',
                         'received' => $received,
                         'limit' => $limit,
                         'pct' => $pct,

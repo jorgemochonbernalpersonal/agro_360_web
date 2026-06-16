@@ -78,9 +78,9 @@ class SiexXmlExporter
 
             // Ubicación
             $ubicacion = $xml->createElement('Ubicacion');
-            $this->addElement($xml, $ubicacion, 'Parcela', $treatment->plot?->name ?? '');
-            $this->addElement($xml, $ubicacion, 'Plantacion', $treatment->plotPlanting?->name ?? '');
-            $this->addElement($xml, $ubicacion, 'Variedad', $treatment->plotPlanting?->grapeVariety?->name ?? '');
+            $this->addElement($xml, $ubicacion, 'Parcela', $treatment->plot->name ?? '');
+            $this->addElement($xml, $ubicacion, 'Plantacion', $treatment->plotPlanting->name ?? '');
+            $this->addElement($xml, $ubicacion, 'Variedad', $treatment->plotPlanting?->grapeVariety->name ?? '');
 
             // Datos SIGPAC
             $plot = $treatment->plot;
@@ -96,8 +96,8 @@ class SiexXmlExporter
                 $this->addElement($xml, $sigpacNode, 'Poligono', $sigpacCode->code_polygon ?? '');
                 $this->addElement($xml, $sigpacNode, 'Parcela', $sigpacCode->code_plot ?? '');
                 $this->addElement($xml, $sigpacNode, 'Recinto', $sigpacCode->code_enclosure ?? '');
-                $this->addElement($xml, $sigpacNode, 'SuperficieTotal', (string) ($plot?->area ?? ''));
-                $this->addElement($xml, $sigpacNode, 'UsoSIGPAC', $sigpacUse?->description ?? '');
+                $this->addElement($xml, $sigpacNode, 'SuperficieTotal', (string) ($plot->area ?? ''));
+                $this->addElement($xml, $sigpacNode, 'UsoSIGPAC', $sigpacUse->description ?? '');
                 $ubicacion->appendChild($sigpacNode);
             }
 
@@ -212,9 +212,9 @@ class SiexXmlExporter
 
             // Ubicación
             $ubicacion = $xml->createElement('Ubicacion');
-            $this->addElement($xml, $ubicacion, 'Parcela', $activity->plot?->name ?? '');
-            $this->addElement($xml, $ubicacion, 'Plantacion', $activity->plotPlanting?->name ?? '');
-            $this->addElement($xml, $ubicacion, 'Variedad', $activity->plotPlanting?->grapeVariety?->name ?? '');
+            $this->addElement($xml, $ubicacion, 'Parcela', $activity->plot->name ?? '');
+            $this->addElement($xml, $ubicacion, 'Plantacion', $activity->plotPlanting->name ?? '');
+            $this->addElement($xml, $ubicacion, 'Variedad', $activity->plotPlanting?->grapeVariety->name ?? '');
 
             // Datos SIGPAC
             $plot = $activity->plot;
@@ -230,8 +230,8 @@ class SiexXmlExporter
                 $this->addElement($xml, $sigpacNode, 'Poligono', $sigpacCode->code_polygon ?? '');
                 $this->addElement($xml, $sigpacNode, 'Parcela', $sigpacCode->code_plot ?? '');
                 $this->addElement($xml, $sigpacNode, 'Recinto', $sigpacCode->code_enclosure ?? '');
-                $this->addElement($xml, $sigpacNode, 'SuperficieTotal', (string) ($plot?->area ?? ''));
-                $this->addElement($xml, $sigpacNode, 'UsoSIGPAC', $sigpacUse?->description ?? '');
+                $this->addElement($xml, $sigpacNode, 'SuperficieTotal', (string) ($plot->area ?? ''));
+                $this->addElement($xml, $sigpacNode, 'UsoSIGPAC', $sigpacUse->description ?? '');
                 $ubicacion->appendChild($sigpacNode);
             }
 

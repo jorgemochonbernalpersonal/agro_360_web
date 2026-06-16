@@ -178,8 +178,8 @@ class MapController extends Controller
         $plotGeometries = collect([[
             'id' => $multipart->id,
             'index' => 1,
-            'sigpac_code' => $multipart->sigpacCode?->code ?? 'N/A',
-            'sigpac_formatted' => $multipart->sigpacCode?->formatted_code ?? 'Sin código',
+            'sigpac_code' => $multipart->sigpacCode->code ?? 'N/A',
+            'sigpac_formatted' => $multipart->sigpacCode->formatted_code ?? 'Sin código',
             'sigpac_id' => $multipart->sigpac_code_id,
             'wkt' => $wkt,
             'color' => $this->getColorForIndex(0), // Use the first color for a single item

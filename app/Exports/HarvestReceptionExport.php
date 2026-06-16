@@ -96,11 +96,11 @@ class HarvestReceptionExport implements FromCollection, WithHeadings, WithMappin
 
         return [
             $harvest->id,
-            $harvest->activity?->campaign?->year ?? '—',
-            $harvest->activity?->viticulturist?->name ?? '—',
-            $harvest->plotPlanting?->plot?->name ?? '—',
-            $harvest->plotPlanting?->grapeVariety?->name ?? '—',
-            $harvest->harvest_start_date?->format('d/m/Y') ?? '—',
+            $harvest->activity?->campaign->year ?? '—',
+            $harvest->activity?->viticulturist->name ?? '—',
+            $harvest->plotPlanting?->plot->name ?? '—',
+            $harvest->plotPlanting?->grapeVariety->name ?? '—',
+            $harvest->harvest_start_date->format('d/m/Y') ?? '—',
             $harvest->harvest_time ?? '—',
             $harvest->harvest_ticket_number ?? '—',
             (float) $harvest->total_weight,

@@ -35,9 +35,9 @@ class HarvestDeliveryAutoDisputedNotification extends Notification implements Sh
         $planting = $delivery->plotPlanting;
         $harvest = $delivery->harvest;
 
-        $variety = $planting?->grapeVariety?->name ?? $planting?->name ?? '—';
-        $plot = $planting?->plot?->name ?? '—';
-        $winery = $harvest?->winery?->name ?? '—';
+        $variety = $planting?->grapeVariety->name ?? $planting->name ?? '—';
+        $plot = $planting?->plot->name ?? '—';
+        $winery = $harvest?->winery->name ?? '—';
         $discPct = $delivery->discrepancyPercentage();
         $showUrl = AppLink::url(
             route('viticulturist.harvests.show', [
@@ -73,8 +73,8 @@ class HarvestDeliveryAutoDisputedNotification extends Notification implements Sh
     public function toArray(object $notifiable): array
     {
         $delivery = $this->delivery;
-        $variety = $delivery->plotPlanting?->grapeVariety?->name ?? $delivery->plotPlanting?->name ?? '—';
-        $winery = $delivery->harvest?->winery?->name ?? '—';
+        $variety = $delivery->plotPlanting?->grapeVariety->name ?? $delivery->plotPlanting->name ?? '—';
+        $winery = $delivery->harvest?->winery->name ?? '—';
 
         return [
             'type' => 'delivery_disputed',
