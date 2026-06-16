@@ -21,6 +21,7 @@ use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\PlotRemoteSensing;
 use App\Models\User;
+use App\Models\HarvestDelivery;
 use App\Models\Wine;
 use App\Models\WineFermentationControl;
 use App\Models\WineLoss;
@@ -48,6 +49,7 @@ use App\Policies\CrewPolicy;
 use App\Policies\DoInspectionPolicy;
 use App\Policies\DoLabelPolicy;
 use App\Policies\DoQualificationPolicy;
+use App\Policies\HarvestDeliveryPolicy;
 use App\Policies\HarvestPolicy;
 use App\Policies\InvoicePolicy;
 use App\Policies\MachineryPolicy;
@@ -82,6 +84,7 @@ class AppServiceProvider extends ServiceProvider
         Machinery::class => MachineryPolicy::class,
         Client::class => ClientPolicy::class,
         Harvest::class => HarvestPolicy::class,
+        HarvestDelivery::class => HarvestDeliveryPolicy::class,
         Wine::class => WinePolicy::class,
         WineTransfer::class => WineTransferPolicy::class,
         WineLoss::class => WineLossPolicy::class,

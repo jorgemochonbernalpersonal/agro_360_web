@@ -61,7 +61,7 @@ class EditDelivery extends Component
 
     public function mount(HarvestDelivery $delivery): void
     {
-        abort_unless($delivery->viticulturist_id === Auth::id(), 403);
+        $this->authorize('update', $delivery);
 
         $this->delivery = $delivery;
         $this->plot_planting_id = (string) ($delivery->plot_planting_id ?? '');
@@ -168,7 +168,7 @@ class EditDelivery extends Component
 
     public function delete(): mixed
     {
-        abort_unless($this->delivery->viticulturist_id === Auth::id(), 403);
+        $this->authorize('delete', $this->delivery);
 
         // Capture data needed for notification before deletion
         $wasLinked = $this->delivery->harvest_id !== null;
