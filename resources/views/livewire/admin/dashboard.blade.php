@@ -406,174 +406,19 @@
     <div>
         <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">{{ __('Accesos rápidos') }}</h2>
         <div class="grid grid-cols-2 gap-4">
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.security-log.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0 group-hover:bg-orange-100 transition-colors">
-                        <flux:icon icon="shield-exclamation" class="size-5 text-orange-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-orange-600 transition-colors text-sm">{{ __('Log de Seguridad') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Eventos y alertas') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-orange-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.health.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center flex-shrink-0 group-hover:bg-agro-100 transition-colors">
-                        <flux:icon icon="heart" class="size-5 text-agro-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-agro-600 transition-colors text-sm">{{ __('Salud del Sistema') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Servicios y métricas') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-agro-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.notifications.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
-                        <flux:icon icon="paper-airplane" class="size-5 text-blue-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors text-sm">{{ __('Notificaciones') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Email masivo a usuarios') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-blue-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.users.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 transition-colors">
-                        <flux:icon icon="users" class="size-5 text-purple-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-purple-600 transition-colors text-sm">{{ __('Usuarios') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Gestión por roles') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-purple-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.support.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-colors">
-                        <flux:icon icon="question-mark-circle" class="size-5 text-red-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-red-600 transition-colors text-sm">{{ __('Soporte') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Tickets del sistema') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-red-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.plots.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center flex-shrink-0 group-hover:bg-agro-100 transition-colors">
-                        <flux:icon icon="map" class="size-5 text-agro-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-agro-600 transition-colors text-sm">{{ __('Parcelas') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Todas las parcelas') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-agro-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.sigpac.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
-                        <flux:icon icon="document-text" class="size-5 text-blue-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors text-sm">{{ __('SIGPACs') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Códigos SIGPAC') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-blue-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.subscriptions.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center flex-shrink-0 group-hover:bg-agro-100 transition-colors">
-                        <flux:icon icon="credit-card" class="size-5 text-agro-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-agro-600 transition-colors text-sm">{{ __('Suscripciones') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Pagos y planes') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-agro-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.failed-jobs.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-colors">
-                        <flux:icon icon="x-circle" class="size-5 text-red-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-red-600 transition-colors text-sm">{{ __('Jobs Fallidos') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Cola de trabajos') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-red-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.scheduler.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center flex-shrink-0 group-hover:bg-teal-100 transition-colors">
-                        <flux:icon icon="clock" class="size-5 text-teal-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-teal-600 transition-colors text-sm">{{ __('Scheduler') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Tareas programadas') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-teal-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-100 transition-colors">
-                        <flux:icon icon="megaphone" class="size-5 text-amber-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-amber-600 transition-colors text-sm">{{ __('Anuncios') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Banners para usuarios') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-amber-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.users.duplicates') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-violet-50 flex items-center justify-center flex-shrink-0 group-hover:bg-violet-100 transition-colors">
-                        <flux:icon icon="user-group" class="size-5 text-violet-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-violet-600 transition-colors text-sm">{{ __('Duplicados') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Detectar cuentas dobles') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-violet-400 transition-colors" />
-                </a>
-            </x-agro.card>
-
-            <x-agro.card class="hover-lift transition-all duration-200">
-                <a href="{{ route('admin.users.approvals') }}" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-100 transition-colors">
-                        <flux:icon icon="user-plus" class="size-5 text-indigo-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-zinc-900 group-hover:text-indigo-600 transition-colors text-sm">{{ __('Aprobaciones') }}</p>
-                        <p class="text-xs text-zinc-500 truncate">{{ __('Activar nuevos registros') }}</p>
-                    </div>
-                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-indigo-400 transition-colors" />
-                </a>
-            </x-agro.card>
+            <x-agro.admin-quick-link href="{{ route('admin.security-log.index') }}" icon="shield-exclamation" color="orange" :label="__('Log de Seguridad')" :description="__('Eventos y alertas')" />
+            <x-agro.admin-quick-link href="{{ route('admin.health.index') }}" icon="heart" color="agro" :label="__('Salud del Sistema')" :description="__('Servicios y métricas')" />
+            <x-agro.admin-quick-link href="{{ route('admin.notifications.index') }}" icon="paper-airplane" color="blue" :label="__('Notificaciones')" :description="__('Email masivo a usuarios')" />
+            <x-agro.admin-quick-link href="{{ route('admin.users.index') }}" icon="users" color="purple" :label="__('Usuarios')" :description="__('Gestión por roles')" />
+            <x-agro.admin-quick-link href="{{ route('admin.support.index') }}" icon="question-mark-circle" color="red" :label="__('Soporte')" :description="__('Tickets del sistema')" />
+            <x-agro.admin-quick-link href="{{ route('admin.plots.index') }}" icon="map" color="agro" :label="__('Parcelas')" :description="__('Todas las parcelas')" />
+            <x-agro.admin-quick-link href="{{ route('admin.sigpac.index') }}" icon="document-text" color="blue" :label="__('SIGPACs')" :description="__('Códigos SIGPAC')" />
+            <x-agro.admin-quick-link href="{{ route('admin.subscriptions.index') }}" icon="credit-card" color="agro" :label="__('Suscripciones')" :description="__('Pagos y planes')" />
+            <x-agro.admin-quick-link href="{{ route('admin.failed-jobs.index') }}" icon="x-circle" color="red" :label="__('Jobs Fallidos')" :description="__('Cola de trabajos')" />
+            <x-agro.admin-quick-link href="{{ route('admin.scheduler.index') }}" icon="clock" color="teal" :label="__('Scheduler')" :description="__('Tareas programadas')" />
+            <x-agro.admin-quick-link href="{{ route('admin.announcements.index') }}" icon="megaphone" color="amber" :label="__('Anuncios')" :description="__('Banners para usuarios')" />
+            <x-agro.admin-quick-link href="{{ route('admin.users.duplicates') }}" icon="user-group" color="violet" :label="__('Duplicados')" :description="__('Detectar cuentas dobles')" />
+            <x-agro.admin-quick-link href="{{ route('admin.users.approvals') }}" icon="user-plus" color="indigo" :label="__('Aprobaciones')" :description="__('Activar nuevos registros')" />
         </div>
     </div>
 </div>

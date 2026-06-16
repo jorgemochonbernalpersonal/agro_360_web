@@ -449,71 +449,12 @@
         <x-agro.field-label>{{ __('Accesos rápidos') }}</x-agro.field-label>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
 
-            <a href="{{ route('producer.digital-notebook') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-purple-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center group-hover:bg-purple-100 transition-colors">
-                    <flux:icon icon="book-open" class="size-5 text-purple-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Cuaderno campo') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Registrar actividades') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ route('producer.harvests.index') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
-                    <flux:icon icon="truck" class="size-5 text-agro-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Mis entregas') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Vendimia campo') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ route('producer.grape-reception.create') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
-                    <flux:icon icon="plus-circle" class="size-5 text-agro-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Nueva recepción') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Entrada de uva bodega') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ route('producer.harvest-summary.index') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                    <flux:icon icon="chart-bar" class="size-5 text-amber-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Cuadro de mando') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Vendimia bodega') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ route('producer.fermentation-controls.create') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-orange-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                    <flux:icon icon="fire" class="size-5 text-orange-500" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Control fermentación') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Registro de parámetros') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ route('producer.wine-transfers.create') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-violet-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center group-hover:bg-violet-100 transition-colors">
-                    <flux:icon icon="arrows-right-left" class="size-5 text-violet-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Nuevo trasvase') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Trasiego / Coupage') }}</p>
-                </div>
-            </a>
+            <x-agro.quick-link href="{{ route('producer.digital-notebook') }}" wire:navigate icon="book-open" color="purple" :label="__('Cuaderno campo')" :description="__('Registrar actividades')" />
+            <x-agro.quick-link href="{{ route('producer.harvests.index') }}" wire:navigate icon="truck" color="agro" :label="__('Mis entregas')" :description="__('Vendimia campo')" />
+            <x-agro.quick-link href="{{ route('producer.grape-reception.create') }}" wire:navigate icon="plus-circle" color="agro" :label="__('Nueva recepción')" :description="__('Entrada de uva bodega')" />
+            <x-agro.quick-link href="{{ route('producer.harvest-summary.index') }}" wire:navigate icon="chart-bar" color="amber" :label="__('Cuadro de mando')" :description="__('Vendimia bodega')" />
+            <x-agro.quick-link href="{{ route('producer.fermentation-controls.create') }}" wire:navigate icon="fire" color="orange" :label="__('Control fermentación')" :description="__('Registro de parámetros')" />
+            <x-agro.quick-link href="{{ route('producer.wine-transfers.create') }}" wire:navigate icon="arrows-right-left" color="violet" :label="__('Nuevo trasvase')" :description="__('Trasiego / Coupage')" />
 
         </div>
     </div>

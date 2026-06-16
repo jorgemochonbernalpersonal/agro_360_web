@@ -303,49 +303,10 @@
 
 {{-- ── Acciones rápidas ─────────────────────────────────────────────── --}}
 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-    <a href="{{ roleRoute('invoices.products.index') }}" wire:navigate
-        class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-        <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
-            <flux:icon icon="arrow-up-tray" class="size-5 text-agro-600" />
-        </div>
-        <div>
-            <p class="text-sm font-semibold text-zinc-900">{{ __('Venta de productos') }}</p>
-            <p class="text-xs text-zinc-400">{{ __('Facturas de vino') }}</p>
-        </div>
-    </a>
-
-    <a href="{{ roleRoute('invoices.grape-purchase.index') }}" wire:navigate
-        class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-        <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
-            <flux:icon icon="arrow-down-tray" class="size-5 text-agro-600" />
-        </div>
-        <div>
-            <p class="text-sm font-semibold text-zinc-900">{{ __('Compra de uva') }}</p>
-            <p class="text-xs text-zinc-400">{{ __('Liquidaciones') }}</p>
-        </div>
-    </a>
-
-    <a href="{{ roleRoute('clients.index') }}" wire:navigate
-        class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-blue-300 transition-all group">
-        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-            <flux:icon icon="users" class="size-5 text-blue-600" />
-        </div>
-        <div>
-            <p class="text-sm font-semibold text-zinc-900">{{ __('Clientes') }}</p>
-            <p class="text-xs text-zinc-400">{{ __('Gestión de clientes') }}</p>
-        </div>
-    </a>
-
-    <a href="{{ roleRoute('financial-stats.index') }}" wire:navigate
-        class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-indigo-300 transition-all group">
-        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-            <flux:icon icon="presentation-chart-line" class="size-5 text-indigo-600" />
-        </div>
-        <div>
-            <p class="text-sm font-semibold text-zinc-900">{{ __('Estadísticas') }}</p>
-            <p class="text-xs text-zinc-400">{{ __('KPIs y tendencias') }}</p>
-        </div>
-    </a>
+    <x-agro.quick-link href="{{ roleRoute('invoices.products.index') }}" wire:navigate icon="arrow-up-tray" color="agro" :label="__('Venta de productos')" :description="__('Facturas de vino')" />
+    <x-agro.quick-link href="{{ roleRoute('invoices.grape-purchase.index') }}" wire:navigate icon="arrow-down-tray" color="agro" :label="__('Compra de uva')" :description="__('Liquidaciones')" />
+    <x-agro.quick-link href="{{ roleRoute('clients.index') }}" wire:navigate icon="users" color="blue" :label="__('Clientes')" :description="__('Gestión de clientes')" />
+    <x-agro.quick-link href="{{ roleRoute('financial-stats.index') }}" wire:navigate icon="presentation-chart-line" color="indigo" :label="__('Estadísticas')" :description="__('KPIs y tendencias')" />
 </div>
 
 </div>

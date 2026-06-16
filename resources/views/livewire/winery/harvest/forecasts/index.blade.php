@@ -103,29 +103,7 @@
     @endif
 
     {{-- Skeleton --}}
-    <div wire:loading wire:target="search, campaignFilter, viticulturistFilter, statusFilter, gotoPage, previousPage, nextPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for($i = 0; $i < 6; $i++)
-                <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5 space-y-4 animate-pulse">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-zinc-100 rounded-xl"></div>
-                            <div class="space-y-1.5">
-                                <div class="h-4 w-28 bg-zinc-100 rounded"></div>
-                                <div class="h-3 w-20 bg-zinc-100 rounded"></div>
-                            </div>
-                        </div>
-                        <div class="h-5 w-16 bg-zinc-100 rounded-full"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="h-14 bg-zinc-50 rounded-lg"></div>
-                        <div class="h-14 bg-zinc-50 rounded-lg"></div>
-                    </div>
-                    <div class="h-2 bg-zinc-100 rounded-full"></div>
-                </div>
-            @endfor
-        </div>
-    </div>
+    <x-agro.loading-grid target="search, campaignFilter, viticulturistFilter, statusFilter, gotoPage, previousPage, nextPage" :count="6" />
 
     {{-- Contenido --}}
     <div wire:loading.remove wire:target="search, campaignFilter, viticulturistFilter, statusFilter, gotoPage, previousPage, nextPage">

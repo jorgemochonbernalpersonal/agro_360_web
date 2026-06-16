@@ -53,17 +53,8 @@
                         {{ __('Registra tu primera actividad en el cuaderno y empieza a llevar el control de tu explotación. El cuaderno de campo es obligatorio para el cumplimiento PAC.') }}
                     </p>
                     <div class="flex gap-3 mt-3">
-                        <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-agro-700 hover:bg-agro-600 text-white text-sm font-semibold rounded-lg transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            {{ __('Registrar actividad') }}
-                        </a>
-                        <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-agro-50 text-agro-700 text-sm font-semibold rounded-lg border border-agro-300 transition-colors">
-                            {{ __('Ver cuaderno') }}
-                        </a>
+                        <flux:button href="{{ route('viticulturist.quick-entry') }}" wire:navigate variant="primary" size="sm" icon="plus">{{ __('Registrar actividad') }}</flux:button>
+                        <flux:button href="{{ route('viticulturist.digital-notebook') }}" wire:navigate variant="outline" size="sm">{{ __('Ver cuaderno') }}</flux:button>
                     </div>
                 </div>
             </div>
@@ -227,10 +218,7 @@
                 </div>
             @else
                 <x-agro.empty-state icon="map" :title="__('Sin plantaciones')" :description="__('Aún no tienes plantaciones registradas')">
-                    <a href="{{ route('plots.index') }}" wire:navigate
-                       class="inline-flex items-center gap-2 px-4 py-2 bg-agro-700 hover:bg-agro-600 text-white text-sm font-semibold rounded-lg transition-colors">
-                        {{ __('Añadir plantaciones a tus parcelas') }}
-                    </a>
+                    <flux:button href="{{ route('plots.index') }}" wire:navigate variant="primary" size="sm">{{ __('Añadir plantaciones a tus parcelas') }}</flux:button>
                 </x-agro.empty-state>
             @endif
         </x-agro.card>
@@ -307,95 +295,14 @@
                 </div>
             </a>
 
-            <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-purple-300 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                    </svg>
-                </div>
-                <div>
-                    <p class="font-semibold text-zinc-900">{{ __('Cuaderno Digital') }}</p>
-                    <p class="text-xs text-zinc-500">{{ __('Tu cuaderno de campo') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ route('plots.index') }}" wire:navigate class="bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-agro-300 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-agro-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-agro-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                    </svg>
-                </div>
-                <div>
-                    <p class="font-semibold text-zinc-900">{{ __('Parcelas') }}</p>
-                    <p class="text-xs text-zinc-500">{{ __('Gestionar terrenos') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ route('viticulturist.pac.dashboard') }}" wire:navigate class="relative bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-amber-300 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-zinc-900">{{ __('PAC') }}</p>
-                    <p class="text-xs text-zinc-500">{{ __('Cumplimiento normativo') }}</p>
-                </div>
-                @if(!$this->hasActiveAccess)
-                    <svg class="w-3.5 h-3.5 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                @endif
-            </a>
+            <x-agro.quick-link href="{{ route('viticulturist.digital-notebook') }}" wire:navigate icon="book-open" color="purple" :label="__('Cuaderno Digital')" :description="__('Tu cuaderno de campo')" />
+            <x-agro.quick-link href="{{ route('plots.index') }}" wire:navigate icon="map" color="agro" :label="__('Parcelas')" :description="__('Gestionar terrenos')" />
+            <x-agro.quick-link href="{{ route('viticulturist.pac.dashboard') }}" wire:navigate icon="shield-check" color="amber" :label="__('PAC')" :description="__('Cumplimiento normativo')" :locked="!$this->hasActiveAccess" />
         @else
-            <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate class="bg-white rounded-xl shadow border border-agro-200 p-4 hover:shadow-lg hover:border-agro-400 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-agro-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-agro-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                </div>
-                <div>
-                    <p class="font-semibold text-zinc-900">{{ __('Entrada rápida') }}</p>
-                    <p class="text-xs text-zinc-500">{{ __('Actividad en 2 pasos') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-purple-300 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                    </svg>
-                </div>
-                <div>
-                    <p class="font-semibold text-zinc-900">{{ __('Cuaderno Digital') }}</p>
-                    <p class="text-xs text-zinc-500">{{ __('Registrar actividades') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ route('viticulturist.invoices.harvest-sale.index') }}" wire:navigate class="relative bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-indigo-300 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-zinc-900">{{ __('Facturación') }}</p>
-                    <p class="text-xs text-zinc-500">{{ __('Ver estadísticas') }}</p>
-                </div>
-                @if(!$this->hasActiveAccess)
-                    <svg class="w-3.5 h-3.5 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                @endif
-            </a>
-
-            <a href="{{ route('plots.index') }}" wire:navigate class="bg-white rounded-xl shadow border border-zinc-200 p-4 hover:shadow-lg hover:border-agro-300 transition-all flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-agro-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-agro-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                    </svg>
-                </div>
-                <div>
-                    <p class="font-semibold text-zinc-900">{{ __('Parcelas') }}</p>
-                    <p class="text-xs text-zinc-500">{{ __('Gestionar terrenos') }}</p>
-                </div>
-            </a>
+            <x-agro.quick-link href="{{ route('viticulturist.quick-entry') }}" wire:navigate icon="bolt" color="agro" :label="__('Entrada rápida')" :description="__('Actividad en 2 pasos')" />
+            <x-agro.quick-link href="{{ route('viticulturist.digital-notebook') }}" wire:navigate icon="book-open" color="purple" :label="__('Cuaderno Digital')" :description="__('Registrar actividades')" />
+            <x-agro.quick-link href="{{ route('viticulturist.invoices.harvest-sale.index') }}" wire:navigate icon="document-text" color="indigo" :label="__('Facturación')" :description="__('Ver estadísticas')" :locked="!$this->hasActiveAccess" />
+            <x-agro.quick-link href="{{ route('plots.index') }}" wire:navigate icon="map" color="agro" :label="__('Parcelas')" :description="__('Gestionar terrenos')" />
         @endif
     </div>
 

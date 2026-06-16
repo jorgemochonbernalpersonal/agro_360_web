@@ -321,79 +321,13 @@
     <div>
         <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">{{ __('Accesos rápidos') }}</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <a href="{{ roleRoute('harvest-summary.index') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
-                    <flux:icon icon="chart-bar" class="size-5 text-agro-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Cuadro de mando') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Vendimia en tiempo real') }}</p>
-                </div>
-            </a>
-            <a href="{{ roleRoute('grape-reception.create') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
-                    <flux:icon icon="plus-circle" class="size-5 text-agro-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Nueva recepción') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Registrar entrada de uva') }}</p>
-                </div>
-            </a>
-            <a href="{{ roleRoute('product-lots.index') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
-                    <flux:icon icon="beaker" class="size-5 text-agro-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Lotes de vino') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Control de bodega') }}</p>
-                </div>
-            </a>
-            <a href="{{ roleRoute('invoices.grape-purchase.index') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
-                    <flux:icon icon="document-text" class="size-5 text-agro-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Facturación') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Liquidaciones y ventas') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ roleRoute('fermentation-controls.create') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-orange-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                    <flux:icon icon="fire" class="size-5 text-orange-500" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Control fermentación') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Registrar parámetros') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ roleRoute('wine-transfers.create') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-violet-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center group-hover:bg-violet-100 transition-colors">
-                    <flux:icon icon="arrows-right-left" class="size-5 text-violet-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Nuevo trasvase') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Trasiego / Coupage') }}</p>
-                </div>
-            </a>
-
-            <a href="{{ roleRoute('financial-summary.index') }}" wire:navigate
-                class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
-                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
-                    <flux:icon icon="chart-bar-square" class="size-5 text-agro-600" />
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-zinc-900">{{ __('Resumen económico') }}</p>
-                    <p class="text-xs text-zinc-400">{{ __('Ingresos y márgenes') }}</p>
-                </div>
-            </a>
+            <x-agro.quick-link href="{{ roleRoute('harvest-summary.index') }}" wire:navigate icon="chart-bar" color="agro" :label="__('Cuadro de mando')" :description="__('Vendimia en tiempo real')" />
+            <x-agro.quick-link href="{{ roleRoute('grape-reception.create') }}" wire:navigate icon="plus-circle" color="agro" :label="__('Nueva recepción')" :description="__('Registrar entrada de uva')" />
+            <x-agro.quick-link href="{{ roleRoute('product-lots.index') }}" wire:navigate icon="beaker" color="agro" :label="__('Lotes de vino')" :description="__('Control de bodega')" />
+            <x-agro.quick-link href="{{ roleRoute('invoices.grape-purchase.index') }}" wire:navigate icon="document-text" color="agro" :label="__('Facturación')" :description="__('Liquidaciones y ventas')" />
+            <x-agro.quick-link href="{{ roleRoute('fermentation-controls.create') }}" wire:navigate icon="fire" color="orange" :label="__('Control fermentación')" :description="__('Registrar parámetros')" />
+            <x-agro.quick-link href="{{ roleRoute('wine-transfers.create') }}" wire:navigate icon="arrows-right-left" color="violet" :label="__('Nuevo trasvase')" :description="__('Trasiego / Coupage')" />
+            <x-agro.quick-link href="{{ roleRoute('financial-summary.index') }}" wire:navigate icon="chart-bar-square" color="agro" :label="__('Resumen económico')" :description="__('Ingresos y márgenes')" />
 
         </div>
     </div>
