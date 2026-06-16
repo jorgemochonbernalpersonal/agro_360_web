@@ -88,12 +88,12 @@ class PhenologyObservation extends Model
 
     public function getEventLabelAttribute(): string
     {
-        return __(self::EVENTS[$this->event] ?? $this->event);
+        return __(self::EVENTS[$this->event]);
     }
 
     public function getSourceLabelAttribute(): string
     {
-        return __(self::SOURCES[$this->source] ?? $this->source);
+        return __(self::SOURCES[$this->source]);
     }
 
     public function scopeActive($query)

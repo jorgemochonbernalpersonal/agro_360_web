@@ -55,7 +55,7 @@ class CampaignDocument extends Model
 
     public function getDocumentTypeLabelAttribute(): string
     {
-        return __(self::DOCUMENT_TYPES[$this->document_type] ?? $this->document_type);
+        return __(self::DOCUMENT_TYPES[$this->document_type]);
     }
 
     public function getFileSizeFormattedAttribute(): string

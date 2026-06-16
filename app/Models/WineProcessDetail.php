@@ -97,7 +97,7 @@ class WineProcessDetail extends Model
 
     public function getProcessTypeLabelAttribute(): string
     {
-        return self::PROCESS_TYPES[$this->process_type] ?? $this->process_type;
+        return self::PROCESS_TYPES[$this->process_type];
     }
 
     public function isCompleted(): bool

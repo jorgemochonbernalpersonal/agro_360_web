@@ -51,7 +51,7 @@ class FieldEquipment extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return __(self::TYPES[$this->equipment_type] ?? $this->equipment_type);
+        return __(self::TYPES[$this->equipment_type]);
     }
 
     public function isInspectionDue(int $days = 30): bool

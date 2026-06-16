@@ -139,7 +139,7 @@ class MobileNotebookResource extends JsonResource
         $p = $this->postHarvestTreatment;
         $productName = $p?->product->name
             ?? (isset($p->application_type)
-                ? (PostHarvestTreatment::APPLICATION_TYPES[$p->application_type] ?? '')
+                ? PostHarvestTreatment::APPLICATION_TYPES[$p->application_type]
                 : '');
 
         return array_merge($this->base(), [

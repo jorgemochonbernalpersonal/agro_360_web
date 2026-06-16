@@ -45,7 +45,7 @@ class WaterConcession extends Model
 
     public function getConcessionTypeLabelAttribute(): string
     {
-        return self::CONCESSION_TYPES[$this->concession_type] ?? $this->concession_type;
+        return self::CONCESSION_TYPES[$this->concession_type];
     }
 
     public function getIsExpiredAttribute(): bool

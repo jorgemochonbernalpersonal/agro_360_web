@@ -78,12 +78,12 @@ class PhytosanitaryContainerReturn extends Model
 
     public function getContainerTypeLabelAttribute(): string
     {
-        return __(self::CONTAINER_TYPES[$this->container_type] ?? $this->container_type);
+        return __(self::CONTAINER_TYPES[$this->container_type]);
     }
 
     public function getCollectionSystemLabelAttribute(): string
     {
-        return __(self::COLLECTION_SYSTEMS[$this->collection_system] ?? $this->collection_system);
+        return __(self::COLLECTION_SYSTEMS[$this->collection_system]);
     }
 
     public function scopeForViticulturist($query, int $id)

@@ -66,6 +66,6 @@ class PlotCost extends Model
 
     public function getCategoryLabelAttribute(): string
     {
-        return __(self::CATEGORIES[$this->category] ?? $this->category);
+        return __(self::CATEGORIES[$this->category]);
     }
 }

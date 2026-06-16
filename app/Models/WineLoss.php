@@ -76,11 +76,11 @@ class WineLoss extends Model
 
     public function getLossTypeLabelAttribute(): string
     {
-        return self::LOSS_TYPES[$this->loss_type] ?? $this->loss_type;
+        return self::LOSS_TYPES[$this->loss_type];
     }
 
     public function getLossAuthorizationLabelAttribute(): string
     {
-        return self::LOSS_AUTHORIZATIONS[$this->loss_authorization] ?? ($this->loss_authorization ?? '—');
+        return self::LOSS_AUTHORIZATIONS[$this->loss_authorization];
     }
 }

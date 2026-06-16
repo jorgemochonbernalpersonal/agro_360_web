@@ -58,7 +58,7 @@ class CommercialAuthorization extends Model
 
     public function getAuthorizationTypeLabelAttribute(): string
     {
-        return __(self::AUTHORIZATION_TYPES[$this->authorization_type] ?? $this->authorization_type);
+        return __(self::AUTHORIZATION_TYPES[$this->authorization_type]);
     }
 
     public function isExpired(): bool

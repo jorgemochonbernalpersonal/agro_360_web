@@ -56,7 +56,7 @@ class VerifactuRecord extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->submission_status] ?? $this->submission_status;
+        return self::STATUSES[$this->submission_status];
     }
 
     public function isAccepted(): bool

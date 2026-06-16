@@ -87,7 +87,7 @@ class WinerySupply extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return __(self::SUPPLY_TYPES[$this->supply_type] ?? $this->supply_type);
+        return __(self::SUPPLY_TYPES[$this->supply_type]);
     }
 
     public function isLowStock(): bool

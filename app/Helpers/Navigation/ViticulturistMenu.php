@@ -328,7 +328,7 @@ class ViticulturistMenu
 
         $items = [];
         foreach ($pendingSteps as $step) {
-            $cfg = $stepMap[$step] ?? null;
+            $cfg = $stepMap[$step];
             if (! $cfg) {
                 continue;
             }

@@ -137,12 +137,12 @@ class SupervisorRequest extends Model
 
     public function typeLabel(): string
     {
-        return __(self::TYPE_LABELS[$this->type] ?? $this->type);
+        return __(self::TYPE_LABELS[$this->type]);
     }
 
     public function statusLabel(): string
     {
-        return __(self::STATUS_LABELS[$this->status] ?? $this->status);
+        return __(self::STATUS_LABELS[$this->status]);
     }
 
     public function statusColor(): string

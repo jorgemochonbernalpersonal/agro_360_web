@@ -108,12 +108,12 @@ class ExternalGrapePurchase extends Model
 
     public function getProductTypeLabelAttribute(): string
     {
-        return self::PRODUCT_TYPES[$this->product_type] ?? $this->product_type;
+        return self::PRODUCT_TYPES[$this->product_type];
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return self::STATUSES[$this->status];
     }
 
     public function getSupplierDisplayAttribute(): string

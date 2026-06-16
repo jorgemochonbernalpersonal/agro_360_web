@@ -50,7 +50,7 @@ class AdvisoryMembershipController extends BaseApiController
             'advisor_name' => $m->advisor_name,
             'license_number' => $m->license_number,
             'specialty' => $m->specialty,
-            'specialty_label' => AdvisoryMembership::SPECIALTIES[$m->specialty] ?? $m->specialty,
+            'specialty_label' => AdvisoryMembership::SPECIALTIES[$m->specialty],
             'company_name' => $m->company_name,
             'phone' => $m->phone,
             'email' => $m->email,

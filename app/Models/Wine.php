@@ -286,12 +286,12 @@ class Wine extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return __(self::WINE_TYPES[$this->wine_type] ?? $this->wine_type);
+        return __(self::WINE_TYPES[$this->wine_type]);
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return __(self::STATUSES[$this->status] ?? $this->status);
+        return __(self::STATUSES[$this->status]);
     }
 
     public function getAgingTypeLabelAttribute(): ?string

@@ -82,6 +82,6 @@ class WineTransfer extends Model
 
     public function getTransferTypeLabelAttribute(): string
     {
-        return self::TRANSFER_TYPES[$this->transfer_type] ?? $this->transfer_type;
+        return self::TRANSFER_TYPES[$this->transfer_type];
     }
 }

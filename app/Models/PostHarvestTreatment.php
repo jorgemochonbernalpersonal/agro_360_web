@@ -57,6 +57,6 @@ class PostHarvestTreatment extends Model
 
     public function getApplicationTypeLabelAttribute(): string
     {
-        return __(self::APPLICATION_TYPES[$this->application_type] ?? $this->application_type);
+        return __(self::APPLICATION_TYPES[$this->application_type]);
     }
 }

@@ -82,7 +82,7 @@ class LabelBatch extends Model
 
     public function getSourceLabelAttribute(): string
     {
-        return __(self::SOURCES[$this->source] ?? $this->source ?? 'Propio');
+        return __(self::SOURCES[$this->source]);
     }
 
     public function isEmpty(): bool

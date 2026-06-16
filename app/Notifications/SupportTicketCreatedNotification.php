@@ -68,8 +68,8 @@ class SupportTicketCreatedNotification extends Notification implements ShouldQue
             'urgent' => '🔴 Urgente',
         ];
 
-        $typeLabel = $typeLabels[$this->ticket->type] ?? $this->ticket->type;
-        $priorityLabel = $priorityLabels[$this->ticket->priority] ?? $this->ticket->priority;
+        $typeLabel = $typeLabels[$this->ticket->type];
+        $priorityLabel = $priorityLabels[$this->ticket->priority];
 
         return (new MailMessage)
             ->subject(__('Nuevo Ticket de Soporte - ').$this->ticket->title)

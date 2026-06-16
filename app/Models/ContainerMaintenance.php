@@ -76,11 +76,11 @@ class ContainerMaintenance extends Model
 
     public function getTypeLabel(): string
     {
-        return self::TYPES[$this->maintenance_type] ?? $this->maintenance_type;
+        return self::TYPES[$this->maintenance_type];
     }
 
     public function getStatusLabel(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return self::STATUSES[$this->status];
     }
 }

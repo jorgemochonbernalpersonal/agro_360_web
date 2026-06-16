@@ -118,7 +118,7 @@ class WineAnalysis extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return self::ANALYSIS_TYPES[$this->analysis_type] ?? $this->analysis_type;
+        return self::ANALYSIS_TYPES[$this->analysis_type];
     }
 
     public function getResultLabelAttribute(): string

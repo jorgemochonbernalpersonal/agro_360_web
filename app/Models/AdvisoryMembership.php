@@ -53,7 +53,7 @@ class AdvisoryMembership extends Model
 
     public function getSpecialtyLabelAttribute(): string
     {
-        return __(self::SPECIALTIES[$this->specialty] ?? $this->specialty);
+        return __(self::SPECIALTIES[$this->specialty]);
     }
 
     public function scopeActive($query)

@@ -71,6 +71,6 @@ class Subcontracting extends Model
 
     public function getServiceTypeLabelAttribute(): string
     {
-        return __(self::SERVICE_TYPES[$this->service_type] ?? $this->service_type);
+        return __(self::SERVICE_TYPES[$this->service_type]);
     }
 }

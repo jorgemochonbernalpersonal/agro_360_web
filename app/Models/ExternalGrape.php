@@ -95,7 +95,7 @@ class ExternalGrape extends Model
 
     public function getTypeLabel(): string
     {
-        return self::TYPES[$this->grape_type] ?? $this->grape_type;
+        return self::TYPES[$this->grape_type];
     }
 
     public function getColorLabel(): string

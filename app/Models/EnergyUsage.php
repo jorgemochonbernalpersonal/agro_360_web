@@ -100,12 +100,12 @@ class EnergyUsage extends Model
 
     public function getEnergyTypeLabelAttribute(): string
     {
-        return __(self::ENERGY_TYPES[$this->energy_type] ?? $this->energy_type);
+        return __(self::ENERGY_TYPES[$this->energy_type]);
     }
 
     public function getUnitLabelAttribute(): string
     {
-        return __(self::UNITS[$this->unit] ?? $this->unit);
+        return __(self::UNITS[$this->unit]);
     }
 
     public function scopeActive($query)
@@ -127,7 +127,7 @@ class EnergyUsage extends Model
     {
         static::saving(function (EnergyUsage $usage) {
             // Auto-calcular CO₂ equivalente
-            $factor = self::CO2_FACTORS[$usage->energy_type] ?? 0;
+            $factor = self::CO2_FACTORS[$usage->energy_type];
             $usage->co2_kg_equivalent = round($usage->quantity * $factor, 3);
 
             // Auto-calcular coste total

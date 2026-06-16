@@ -113,6 +113,6 @@ class Organization extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return __(self::TYPES[$this->type] ?? $this->type);
+        return __(self::TYPES[$this->type]);
     }
 }

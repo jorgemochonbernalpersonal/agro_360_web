@@ -75,12 +75,12 @@ class WineryAlert extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return __(self::ALERT_TYPES[$this->alert_type] ?? $this->alert_type);
+        return __(self::ALERT_TYPES[$this->alert_type]);
     }
 
     public function getSeverityLabelAttribute(): string
     {
-        return __(self::SEVERITIES[$this->severity] ?? $this->severity);
+        return __(self::SEVERITIES[$this->severity]);
     }
 
     public function isExpired(): bool

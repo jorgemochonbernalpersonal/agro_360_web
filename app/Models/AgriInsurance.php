@@ -78,17 +78,17 @@ class AgriInsurance extends Model
 
     public function getCoverageTypeLabelAttribute(): string
     {
-        return __(self::COVERAGE_TYPES[$this->coverage_type] ?? $this->coverage_type);
+        return __(self::COVERAGE_TYPES[$this->coverage_type]);
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return __(self::STATUSES[$this->status] ?? $this->status);
+        return __(self::STATUSES[$this->status]);
     }
 
     public function getStatusColorAttribute(): string
     {
-        return self::STATUS_COLORS[$this->status] ?? 'zinc';
+        return self::STATUS_COLORS[$this->status];
     }
 
     public function isExpiringSoon(): bool

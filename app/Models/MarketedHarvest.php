@@ -74,7 +74,7 @@ class MarketedHarvest extends Model
 
     public function getDestinationTypeLabelAttribute(): string
     {
-        return __(self::DESTINATION_TYPES[$this->destination_type] ?? $this->destination_type);
+        return __(self::DESTINATION_TYPES[$this->destination_type]);
     }
 
     public function scopeActive($query)

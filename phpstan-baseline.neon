@@ -205,12 +205,6 @@ parameters:
 			path: app/Helpers/Navigation/ViticulturistMenu.php
 
 		-
-			message: '#^Offset ''add_products''\|''create_plot''\|''register_activity''\|''review_campaign'' on array\{review_campaign\: array\{icon\: ''calendar\-days'', label\: \(array\|string\), route\: ''viticulturist…''\}, create_plot\: array\{icon\: ''map'', label\: \(array\|string\), route\: ''plots\.create''\}, register_activity\: array\{icon\: ''bolt'', label\: \(array\|string\), route\: ''viticulturist\.quick…''\}, add_products\: array\{icon\: ''beaker'', label\: \(array\|string\), route\: ''viticulturist…''\}\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Helpers/Navigation/ViticulturistMenu.php
-
-		-
 			message: '#^Unsafe call to private method App\\Helpers\\NavigationHelper\:\:buildAdminMenu\(\) through static\:\:\.$#'
 			identifier: staticClassAccess.privateMethod
 			count: 1
@@ -367,22 +361,10 @@ parameters:
 			path: app/Http/Controllers/Api/Supervisor/OversightController.php
 
 		-
-			message: '#^Offset ''agronomy''\|''oenology''\|''other''\|''phytosanitary''\|''sustainability'' on array\{phytosanitary\: ''Asesor…'', agronomy\: ''Agronomía general'', oenology\: ''Enología'', sustainability\: ''Sostenibilidad /…'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/AdvisoryMembershipController.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/GrapeTraceabilityController.php
-
-		-
-			message: '#^Offset ''cultural''\|''fertilization''\|''harvest''\|''irrigation''\|''observation''\|''phytosanitary''\|''post_harvest''\|''pruning'' on array\{phytosanitary\: array\{''plot'', ''phytosanitaryTreatm…''\}, fertilization\: array\{''plot'', ''fertilization''\}, irrigation\: array\{''plot'', ''irrigation''\}, observation\: array\{''plot'', ''observation''\}, harvest\: array\{''plot'', ''harvest'', ''plotPlanting…''\}, cultural\: array\{''plot'', ''culturalWork''\}, pruning\: array\{''plot'', ''culturalWork''\}, post_harvest\: array\{''plot'', ''postHarvestTreatmen…''\}\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/Api/Viticulturist/NotebookController.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$area\.$#'
@@ -569,30 +551,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/Winery/ContainerMaintenanceController.php
-
-		-
-			message: '#^Offset ''active''\|''archived''\|''draft'' on array\{draft\: ''Borrador'', active\: ''Vigente'', archived\: ''Archivado''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/Api/Winery/DenominationOfOriginController.php
-
-		-
-			message: '#^Offset ''approved''\|''cancelled''\|''issued''\|''pending'' on array\{pending\: ''Pendiente'', approved\: ''Aprobada'', issued\: ''Emitida'', cancelled\: ''Cancelada''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/Api/Winery/DenominationOfOriginController.php
-
-		-
-			message: '#^Offset ''cancelled''\|''completed''\|''in_progress''\|''scheduled'' on array\{scheduled\: ''Programada'', in_progress\: ''En curso'', completed\: ''Completada'', cancelled\: ''Cancelada''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/Api/Winery/DenominationOfOriginController.php
-
-		-
-			message: '#^Offset ''disqualified''\|''pending''\|''qualified'' on array\{qualified\: ''Calificado'', disqualified\: ''Descalificado'', pending\: ''Pendiente''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/Api/Winery/DenominationOfOriginController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$amount\.$#'
@@ -931,18 +889,6 @@ parameters:
 			path: app/Http/Controllers/Api/Winery/WineController.php
 
 		-
-			message: '#^Offset ''aged''\|''bottled''\|''cancelled''\|''in_progress''\|''sold'' on array\{in_progress\: ''En elaboración'', aged\: ''En crianza'', bottled\: ''Embotellado'', sold\: ''Vendido'', cancelled\: ''Cancelado''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineController.php
-
-		-
-			message: '#^Offset ''fortified''\|''other''\|''red''\|''rose''\|''semi_sweet''\|''sparkling''\|''sweet''\|''white'' on array\{red\: ''Tinto'', white\: ''Blanco'', rose\: ''Rosado'', sparkling\: ''Espumoso'', fortified\: ''Generoso /…'', sweet\: ''Dulce'', semi_sweet\: ''Semidulce'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/Api/Winery/WineController.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\MultipartPlotSigpac\:\:\$plot_geometry_id\.$#'
 			identifier: property.notFound
 			count: 2
@@ -1225,12 +1171,6 @@ parameters:
 			path: app/Http/Resources/Api/LossResource.php
 
 		-
-			message: '#^Offset ''copper_treatment''\|''foliar_application''\|''other''\|''sulfur_treatment''\|''trunk_treatment''\|''wound_sealing'' on array\{copper_treatment\: ''Tratamiento con…'', sulfur_treatment\: ''Tratamiento con…'', wound_sealing\: ''Sellado de heridas…'', foliar_application\: ''Aplicación foliar'', trunk_treatment\: ''Tratamiento de…'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Resources/Api/MobileNotebookResource.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1279,12 +1219,6 @@ parameters:
 			path: app/Http/Resources/Api/StockEntryResource.php
 
 		-
-			message: '#^Offset ''analysis''\|''fertilization''\|''harvesting''\|''irrigation''\|''other''\|''pruning''\|''soil_work''\|''transport''\|''treatment'' on array\{harvesting\: ''Vendimia'', pruning\: ''Poda'', treatment\: ''Tratamientos…'', fertilization\: ''Abonado /…'', irrigation\: ''Riego'', soil_work\: ''Laboreo del suelo'', transport\: ''Transporte'', analysis\: ''Análisis / Asesoría'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Resources/Api/SubcontractingResource.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
@@ -1319,12 +1253,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/Api/WarehouseStockResource.php
-
-		-
-			message: '#^Offset ''comunidad_regantes''\|''otro''\|''subterranea''\|''superficial'' on array\{superficial\: ''Aguas superficiales'', subterranea\: ''Aguas subterráneas'', comunidad_regantes\: ''Comunidad de…'', otro\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Resources/Api/WaterConcessionResource.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between numeric\-string and null will always evaluate to true\.$#'
@@ -3511,30 +3439,6 @@ parameters:
 			path: app/Macros/StringMacros.php
 
 		-
-			message: '#^Offset ''agronomy''\|''oenology''\|''other''\|''phytosanitary''\|''sustainability'' on array\{phytosanitary\: ''Asesor…'', agronomy\: ''Agronomía general'', oenology\: ''Enología'', sustainability\: ''Sostenibilidad /…'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/AdvisoryMembership.php
-
-		-
-			message: '#^Offset ''active''\|''cancelled''\|''expired''\|''pending'' on array\{pending\: ''Pendiente'', active\: ''Activo'', expired\: ''Vencido'', cancelled\: ''Cancelado''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/AgriInsurance.php
-
-		-
-			message: '#^Offset ''active''\|''cancelled''\|''expired''\|''pending'' on array\{pending\: ''amber'', active\: ''green'', expired\: ''zinc'', cancelled\: ''red''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/AgriInsurance.php
-
-		-
-			message: '#^Offset ''comprehensive''\|''drought''\|''fire''\|''flood''\|''frost''\|''hail''\|''other''\|''pest'' on array\{frost\: ''Heladas'', hail\: ''Pedrisco'', drought\: ''Sequía'', flood\: ''Inundación'', fire\: ''Incendio'', pest\: ''Plagas'', comprehensive\: ''Seguro integral …'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/AgriInsurance.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -3545,30 +3449,6 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/AuditLog.php
-
-		-
-			message: '#^Offset ''analysis''\|''authorization''\|''certificate''\|''invoice''\|''lab_report''\|''map''\|''other'' on array\{invoice\: ''Factura de insumos'', certificate\: ''Certificado …'', lab_report\: ''Informe de…'', authorization\: ''Autorización'', map\: ''Mapa / croquis'', analysis\: ''Análisis \(suelo,…'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/CampaignDocument.php
-
-		-
-			message: '#^Offset ''denominacion_origen''\|''ecologico''\|''globalgap''\|''indicacion…''\|''otro''\|''produccion_integrada''\|''rainforest'' on array\{ecologico\: ''Agricultura…'', produccion_integrada\: ''Producción Integrada'', globalgap\: ''GlobalG\.A\.P\.'', rainforest\: ''Rainforest Alliance'', denominacion_origen\: ''Denominación de…'', indicacion_geografica\: ''Indicación…'', otro\: ''Otra certificación''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/Certification.php
-
-		-
-			message: '#^Offset ''denominacion_origen''\|''ecologico''\|''globalgap''\|''indicacion…''\|''otro''\|''produccion_integrada''\|''rainforest'' on array\{ecologico\: ''green'', produccion_integrada\: ''teal'', globalgap\: ''blue'', rainforest\: ''emerald'', denominacion_origen\: ''agro'', indicacion_geografica\: ''violet'', otro\: ''zinc''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/Certification.php
-
-		-
-			message: '#^Offset ''do_registration''\|''integrated…''\|''organic…''\|''other''\|''planting_right''\|''replanting_right'' on array\{do_registration\: ''Inscripción…'', organic_certification\: ''Certificación…'', planting_right\: ''Derecho de…'', replanting_right\: ''Derecho de…'', integrated_production\: ''Producción Integrada'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/CommercialAuthorization.php
 
 		-
 			message: '#^Method App\\Models\\Container\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
@@ -3583,94 +3463,10 @@ parameters:
 			path: app/Models/ContainerHistory.php
 
 		-
-			message: '#^Offset ''cancelled''\|''completed''\|''scheduled'' on array\{scheduled\: ''Programado'', in_progress\: ''En curso'', in_review\: ''En revisión'', approved\: ''Aprobado'', completed\: ''Completado'', cancelled\: ''Cancelado''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/ContainerMaintenance.php
-
-		-
-			message: '#^Offset ''cleaning''\|''inspection''\|''other''\|''repair''\|''sulfuring''\|''tartrate_removal'' on array\{cleaning\: ''Limpieza'', sulfuring\: ''Sulfitado'', inspection\: ''Inspección'', repair\: ''Reparación'', tartrate_removal\: ''Desconfitado …'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/ContainerMaintenance.php
-
-		-
 			message: '#^Method App\\Models\\ContainerRoom\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Models/ContainerRoom.php
-
-		-
-			message: '#^Offset ''accepted''\|''draft''\|''generated''\|''rejected''\|''sent'' on array\{draft\: ''Borrador'', generated\: ''Generado'', sent\: ''Enviado'', accepted\: ''Aceptado'', rejected\: ''Rechazado''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/CueExport.php
-
-		-
-			message: '#^Offset ''accepted''\|''draft''\|''generated''\|''rejected''\|''sent'' on array\{draft\: ''zinc'', generated\: ''blue'', sent\: ''amber'', accepted\: ''green'', rejected\: ''red''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/CueExport.php
-
-		-
-			message: '#^Offset ''diesel''\|''electricity''\|''gasoline''\|''lpg''\|''natural_gas''\|''other''\|''water_pump'' on array\{diesel\: ''Gasóleo agrícola'', gasoline\: ''Gasolina'', electricity\: ''Electricidad'', lpg\: ''GLP \(Gas licuado…'', natural_gas\: ''Gas natural'', water_pump\: ''Bombeo de agua'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/EnergyUsage.php
-
-		-
-			message: '#^Offset ''diesel''\|''electricity''\|''gasoline''\|''lpg''\|''natural_gas''\|''other''\|''water_pump'' on array\{diesel\: 2\.64, gasoline\: 2\.392, electricity\: 0\.25, lpg\: 1\.512, natural_gas\: 2\.02, water_pump\: 0\.25, other\: 0\.0\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/EnergyUsage.php
-
-		-
-			message: '#^Offset ''kg''\|''kwh''\|''liters''\|''m3'' on array\{liters\: ''Litros \(L\)'', kwh\: ''kWh'', m3\: ''m³'', kg\: ''kg''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/EnergyUsage.php
-
-		-
-			message: '#^Offset ''bulk_wine''\|''grapes''\|''must'' on array\{grapes\: ''Uva'', must\: ''Mosto'', bulk_wine\: ''Vino a granel''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/ExternalGrape.php
-
-		-
-			message: '#^Offset ''concentrated_must''\|''grape''\|''must''\|''rectified_must'' on array\{grape\: ''Uva'', must\: ''Mosto'', concentrated_must\: ''Mosto concentrado'', rectified_must\: ''Mosto concentrado…''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/ExternalGrapePurchase.php
-
-		-
-			message: '#^Offset ''pending''\|''processed''\|''received''\|''rejected'' on array\{pending\: ''Pendiente'', received\: ''Recibido'', processed\: ''Procesado'', rejected\: ''Rechazado''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/ExternalGrapePurchase.php
-
-		-
-			message: '#^Offset ''active''\|''archived''\|''draft'' on array\{draft\: ''Borrador'', active\: ''Activo'', archived\: ''Archivado''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/FertilizationPlan.php
-
-		-
-			message: '#^Offset ''active''\|''archived''\|''draft'' on array\{draft\: ''zinc'', active\: ''green'', archived\: ''amber''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/FertilizationPlan.php
-
-		-
-			message: '#^Offset ''basic''\|''fumigator''\|''pilot''\|''qualified'' on array\{basic\: ''Básico'', qualified\: ''Cualificado'', fumigator\: ''Fumigador'', pilot\: ''Piloto''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/FieldApplicator.php
-
-		-
-			message: '#^Offset ''harvester''\|''irrigation''\|''mower''\|''other''\|''pruner''\|''sprayer''\|''spreader''\|''tractor'' on array\{sprayer\: ''Pulverizador'', spreader\: ''Abonadora…'', irrigation\: ''Equipo de riego'', tractor\: ''Tractor'', harvester\: ''Vendimidora'', pruner\: ''Podadora'', mower\: ''Segadora/Trituradora'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/FieldEquipment.php
 
 		-
 			message: '#^Method App\\Models\\Harvest\:\:getContainerWeight\(\) should return float\|null but returns string\|null\.$#'
@@ -3697,18 +3493,6 @@ parameters:
 			path: app/Models/HarvestContainer.php
 
 		-
-			message: '#^Offset ''accepted''\|''draft''\|''rejected''\|''submitted'' on array\{draft\: ''Borrador'', submitted\: ''Presentada'', accepted\: ''Aceptada'', rejected\: ''Rechazada''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/HarvestDeclaration.php
-
-		-
-			message: '#^Offset ''accepted''\|''draft''\|''rejected''\|''submitted'' on array\{draft\: ''zinc'', submitted\: ''blue'', accepted\: ''green'', rejected\: ''red''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/HarvestDeclaration.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between ''disputed''\|''matched''\|''pending'' and ''resolved'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -3721,70 +3505,16 @@ parameters:
 			path: app/Models/HarvestStock.php
 
 		-
-			message: '#^Offset ''do_assigned''\|''other''\|''own'' on array\{own\: ''Propio'', do_assigned\: ''Asignado por DO'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/LabelBatch.php
-
-		-
-			message: '#^Offset ''cooperative''\|''other''\|''own_winery''\|''third_party'' on array\{own_winery\: ''Bodega propia'', cooperative\: ''Cooperativa'', third_party\: ''Terceros'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/MarketedHarvest.php
-
-		-
-			message: '#^Offset ''denomination_of…''\|''winery'' on array\{winery\: ''Bodega'', denomination_of_origin\: ''Denominación de…''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/Organization.php
-
-		-
 			message: '#^Match arm comparison between ''rejected'' and ''rejected'' is always true\.$#'
 			identifier: match.alwaysTrue
 			count: 2
 			path: app/Models/PacDeclaration.php
 
 		-
-			message: '#^Offset ''associated_aid''\|''basic_payment''\|''eco_scheme''\|''other''\|''transitional'' on array\{basic_payment\: ''Pago básico'', eco_scheme\: ''Eco\-régimen'', associated_aid\: ''Ayuda asociada…'', transitional\: ''Pago transitorio'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/PacPayment.php
-
-		-
-			message: '#^Offset ''auto''\|''manual''\|''model''\|''sensor'' on array\{manual\: ''Observación en campo'', sensor\: ''Sensor IoT'', model\: ''Modelo predictivo'', auto\: ''Detección automática''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/PhenologyObservation.php
-
-		-
-			message: '#^Offset ''budbreak''\|''flowering''\|''fruit_set''\|''harvest''\|''pre_harvest''\|''shoot_growth''\|''veraison'' on array\{budbreak\: ''Desborre'', shoot_growth\: ''Crecimiento del…'', flowering\: ''Floración'', fruit_set\: ''Cuajado'', veraison\: ''Envero'', pre_harvest\: ''Pre\-vendimia'', harvest\: ''Vendimia''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/PhenologyObservation.php
-
-		-
-			message: '#^Offset ''cardboard''\|''flexible''\|''glass''\|''metal''\|''other''\|''plastic'' on array\{plastic\: ''Plástico \(HDPE/PET\)'', glass\: ''Vidrio'', metal\: ''Metal / Chapa'', cardboard\: ''Cartón / Papel'', flexible\: ''Flexible / Bolsa'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/PhytosanitaryContainerReturn.php
-
-		-
-			message: '#^Offset ''field''\|''other''\|''sigfito'' on array\{sigfito\: ''SIGFITO'', field\: ''FIELD'', other\: ''Otro sistema''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/PhytosanitaryContainerReturn.php
-
-		-
 			message: '#^Method App\\Models\\Plot\:\:latestAudit\(\) should return App\\Models\\AuditLog\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Models/Plot.php
-
-		-
-			message: '#^Offset ''fertilizer''\|''insurance''\|''labor''\|''machinery''\|''materials''\|''other''\|''phytosanitary''\|''subcontracting''\|''transport''\|''water'' on array\{labor\: ''Mano de obra'', machinery\: ''Maquinaria'', materials\: ''Materiales'', phytosanitary\: ''Fitosanitarios'', fertilizer\: ''Abonos y…'', water\: ''Agua / Riego'', insurance\: ''Seguros'', transport\: ''Transporte'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/PlotCost.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\PlotGeometry\:\:\$_pending_wkt\.$#'
@@ -3797,36 +3527,6 @@ parameters:
 			identifier: staticClassAccess.privateMethod
 			count: 2
 			path: app/Models/PlotGeometry.php
-
-		-
-			message: '#^Offset ''copper_treatment''\|''foliar_application''\|''other''\|''sulfur_treatment''\|''trunk_treatment''\|''wound_sealing'' on array\{copper_treatment\: ''Tratamiento con…'', sulfur_treatment\: ''Tratamiento con…'', wound_sealing\: ''Sellado de heridas…'', foliar_application\: ''Aplicación foliar'', trunk_treatment\: ''Tratamiento de…'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/PostHarvestTreatment.php
-
-		-
-			message: '#^Offset ''biogas''\|''burning''\|''composting''\|''incorporation''\|''other''\|''removal''\|''sale'' on array\{incorporation\: ''Triturado e…'', removal\: ''Retirada de la…'', burning\: ''Quema \(cuando…'', composting\: ''Compostaje'', biogas\: ''Biogás'', sale\: ''Venta'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/ResidueManagement.php
-
-		-
-			message: '#^Offset ''grape_marc''\|''grass''\|''other''\|''pruning_wood''\|''vine_leaves'' on array\{pruning_wood\: ''Madera/leña de poda'', grape_marc\: ''Orujo'', vine_leaves\: ''Hojas de vid'', grass\: ''Cubierta vegetal'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/ResidueManagement.php
-
-		-
-			message: '#^Offset ''analysis''\|''fertilization''\|''harvesting''\|''irrigation''\|''other''\|''pruning''\|''soil_work''\|''transport''\|''treatment'' on array\{harvesting\: ''Vendimia'', pruning\: ''Poda'', treatment\: ''Tratamientos…'', fertilization\: ''Abonado /…'', irrigation\: ''Riego'', soil_work\: ''Laboreo del suelo'', transport\: ''Transporte'', analysis\: ''Análisis / Asesoría'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/Subcontracting.php
-
-		-
-			message: '#^Offset ''approved''\|''archived''\|''draft''\|''in_review''\|''pending''\|''rejected'' on array\{draft\: ''Borrador'', pending\: ''Pendiente'', in_review\: ''En revisión'', approved\: ''Aprobada'', rejected\: ''Rechazada'', archived\: ''Archivada''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/SupervisorRequest.php
 
 		-
 			message: '#^Offset ''approved''\|''archived''\|''draft''\|''in_review''\|''pending''\|''rejected'' on array\{draft\: ''zinc'', pending\: ''yellow'', in_review\: ''blue'', approved\: ''green'', rejected\: ''red'', archived\: ''zinc''\} on left side of \?\? always exists and is not nullable\.$#'
@@ -3913,100 +3613,10 @@ parameters:
 			path: app/Models/User.php
 
 		-
-			message: '#^Offset ''accepted''\|''cancelled''\|''pending''\|''queued''\|''rejected''\|''submitted'' on array\{pending\: ''Pendiente'', queued\: ''En cola'', submitted\: ''Enviada'', accepted\: ''Aceptada'', rejected\: ''Rechazada'', cancelled\: ''Cancelada''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/VerifactuRecord.php
-
-		-
-			message: '#^Offset ''comunidad_regantes''\|''otro''\|''subterranea''\|''superficial'' on array\{superficial\: ''Aguas superficiales'', subterranea\: ''Aguas subterráneas'', comunidad_regantes\: ''Comunidad de…'', otro\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WaterConcession.php
-
-		-
-			message: '#^Offset ''aged''\|''bottled''\|''cancelled''\|''in_progress''\|''sold'' on array\{in_progress\: ''En elaboración'', aged\: ''En crianza'', bottled\: ''Embotellado'', sold\: ''Vendido'', cancelled\: ''Cancelado''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/Wine.php
-
-		-
-			message: '#^Offset ''fortified''\|''other''\|''red''\|''rose''\|''semi_sweet''\|''sparkling''\|''sweet''\|''white'' on array\{red\: ''Tinto'', white\: ''Blanco'', rose\: ''Rosado'', sparkling\: ''Espumoso'', fortified\: ''Generoso /…'', sweet\: ''Dulce'', semi_sweet\: ''Semidulce'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/Wine.php
-
-		-
-			message: '#^Offset ''external''\|''own'' on array\{standard\: ''Estándar'', complete\: ''Completo'', organic\: ''Ecológico'', custom\: ''Personalizado''\} on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
+			message: '#^Offset ''external''\|''own'' does not exist on array\{standard\: ''Estándar'', complete\: ''Completo'', organic\: ''Ecológico'', custom\: ''Personalizado''\}\.$#'
+			identifier: offsetAccess.notFound
 			count: 1
 			path: app/Models/WineAnalysis.php
-
-		-
-			message: '#^Offset ''adjustment''\|''correction''\|''initial_stock'' on array\{initial_stock\: ''Stock inicial'', adjustment\: ''Ajuste de inventario'', correction\: ''Corrección''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineContainerStockEntry.php
-
-		-
-			message: '#^Offset ''authorized''\|''extraordinary''\|''processing''\|''quality'' on array\{authorized\: ''Pérdida autorizada'', processing\: ''Pérdida por proceso'', extraordinary\: ''Pérdida…'', quality\: ''Rechazo por calidad''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineLoss.php
-
-		-
-			message: '#^Offset ''evaporation''\|''filtration''\|''other''\|''sampling''\|''spillage'' on array\{evaporation\: ''Evaporación / Merma…'', filtration\: ''Filtración'', sampling\: ''Muestreo / Analítica'', spillage\: ''Derrame accidental'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineLoss.php
-
-		-
-			message: '#^Offset ''aging''\|''blending''\|''bottling''\|''cold_stabilization''\|''destemming_crushing''\|''fermentation''\|''filtration''\|''fining''\|''maceration''\|''malolactic''\|''other''\|''pressing''\|''racking''\|''settling'' on array\{destemming_crushing\: ''Despalillado /…'', pressing\: ''Prensado'', settling\: ''Desfangado'', fermentation\: ''Fermentación…'', maceration\: ''Maceración'', malolactic\: ''Fermentación…'', aging\: ''Crianza'', racking\: ''Trasiego'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineProcessDetail.php
-
-		-
-			message: '#^Offset ''blending''\|''other''\|''racking''\|''top_up'' on array\{racking\: ''Trasiego'', blending\: ''Mezcla / Coupage'', top_up\: ''Relleno'', other\: ''Otro''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineTransfer.php
-
-		-
-			message: '#^Offset ''certification''\|''custom''\|''dispute''\|''expiry''\|''fermentation''\|''label''\|''maintenance''\|''stock'' on array\{maintenance\: ''Mantenimiento'', expiry\: ''Caducidad'', stock\: ''Stock'', fermentation\: ''Fermentación'', dispute\: ''Disputa'', label\: ''Etiquetado'', certification\: ''Certificación'', custom\: ''Personalizada''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineryAlert.php
-
-		-
-			message: '#^Offset ''critical''\|''info''\|''warning'' on array\{info\: ''Informativa'', warning\: ''Aviso'', critical\: ''Crítica''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineryAlert.php
-
-		-
-			message: '#^Offset ''action_required''\|''harvest_alert''\|''info'' on array\{info\: ''Informativo'', action_required\: ''Acción requerida'', harvest_alert\: ''Alerta de vendimia''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineryAnnouncement.php
-
-		-
-			message: '#^Offset ''action_required''\|''harvest_alert''\|''info'' on array\{info\: ''blue'', action_required\: ''amber'', harvest_alert\: ''red''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineryAnnouncement.php
-
-		-
-			message: '#^Offset ''action_required''\|''harvest_alert''\|''info'' on array\{info\: ''information\-circle'', action_required\: ''exclamation\-triangle'', harvest_alert\: ''bell\-alert''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WineryAnnouncement.php
-
-		-
-			message: '#^Offset ''acid''\|''analysis''\|''cleaning''\|''enzyme''\|''filtration''\|''fining''\|''nutrient''\|''other''\|''packaging''\|''sugar''\|''sulfiting''\|''tannin''\|''yeast'' on array\{cleaning\: ''Limpieza'', sulfiting\: ''Sulfitado / SO₂'', fining\: ''Clarificación /…'', filtration\: ''Filtración'', yeast\: ''Levaduras'', nutrient\: ''Nutrientes de…'', enzyme\: ''Enzimas'', tannin\: ''Taninos enológicos'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/WinerySupply.php
 
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
@@ -4071,18 +3681,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\SupportTicket\:\:\$image\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Notifications/SupportTicketCreatedNotification.php
-
-		-
-			message: '#^Offset ''bug''\|''feature''\|''improvement''\|''question'' on array\{bug\: ''🐛 Bug'', feature\: ''✨ Nueva…'', improvement\: ''🚀 Mejora'', question\: ''❓ Pregunta''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Notifications/SupportTicketCreatedNotification.php
-
-		-
-			message: '#^Offset ''high''\|''low''\|''medium''\|''urgent'' on array\{low\: ''⚪ Baja'', medium\: ''🟡 Media'', high\: ''🟠 Alta'', urgent\: ''🔴 Urgente''\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Notifications/SupportTicketCreatedNotification.php
 
@@ -4169,18 +3767,6 @@ parameters:
 			identifier: argument.type
 			count: 4
 			path: app/Services/ContainerStockService.php
-
-		-
-			message: '#^Offset ''A08''\|''A28'' on array\{A02\: ''ALB'', A04\: ''ALB'', A06\: ''ALB'', A08\: ''FAC'', A09\: ''FAC'', A10\: ''FAC'', A11\: ''FAC'', A14\: ''OTR'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Services/Exporters/SilicieCsvExporter.php
-
-		-
-			message: '#^Offset ''FECHA_OPERACION'' on array\{TIPO_MOVIMIENTO\: ''A02'', FECHA_OPERACION\: string, TIPO_DOCUMENTO\: ''ALB'', PERIODO_FISCAL\: string, CODIGO_NC\: ''0806''\|''22041000''\|''22042199''\|''22043096''\|''2307''\|''2308'', DESCRIPCION_PRODUCTO\: non\-falsy\-string, CANTIDAD\: string, UNIDAD_MEDIDA\: ''KG'', \.\.\.\}\|array\{TIPO_MOVIMIENTO\: ''A08''\|''A15''\|''A28''\|''A29''\|''A32'', FECHA_OPERACION\: string, TIPO_DOCUMENTO\: ''FAC''\|''OTR'', PERIODO_FISCAL\: string, CODIGO_NC\: string, DESCRIPCION_PRODUCTO\: non\-falsy\-string, CANTIDAD\: string, UNIDAD_MEDIDA\: ''HL''\|''KG'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 2
-			path: app/Services/Exporters/SilicieCsvExporter.php
 
 		-
 			message: '#^Parameter \#3 \$second of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\ProductStock\>\:\:whereColumn\(\) expects string\|null, Illuminate\\Contracts\\Database\\Query\\Expression given\.$#'

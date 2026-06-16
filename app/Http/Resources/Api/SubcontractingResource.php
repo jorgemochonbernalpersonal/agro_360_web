@@ -15,7 +15,7 @@ class SubcontractingResource extends JsonResource
             'id' => $this->id,
             'plot_id' => $this->plot_id,
             'campaign_id' => $this->campaign_id,
-            'service_type' => \App\Models\Subcontracting::SERVICE_TYPES[$this->service_type] ?? $this->service_type,
+            'service_type' => \App\Models\Subcontracting::SERVICE_TYPES[$this->service_type],
             'company_name' => $this->company_name,
             'contact_person' => $this->contact_person,
             'contact_phone' => $this->contact_phone,

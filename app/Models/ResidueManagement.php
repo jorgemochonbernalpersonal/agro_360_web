@@ -87,12 +87,12 @@ class ResidueManagement extends Model
 
     public function getPracticeLabelAttribute(): string
     {
-        return __(self::PRACTICE_TYPES[$this->practice_type] ?? $this->practice_type);
+        return __(self::PRACTICE_TYPES[$this->practice_type]);
     }
 
     public function getMaterialLabelAttribute(): string
     {
-        return __(self::MATERIAL_TYPES[$this->material_type] ?? $this->material_type);
+        return __(self::MATERIAL_TYPES[$this->material_type]);
     }
 
     public function scopeActive($query)

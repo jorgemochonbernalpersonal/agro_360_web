@@ -53,6 +53,6 @@ class WineContainerStockEntry extends Model
 
     public function getSourceLabelAttribute(): string
     {
-        return self::SOURCES[$this->source] ?? $this->source;
+        return self::SOURCES[$this->source];
     }
 }

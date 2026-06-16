@@ -274,7 +274,7 @@ class SilicieCsvExporter
             $rows[] = [
                 'TIPO_MOVIMIENTO' => $type,
                 'FECHA_OPERACION' => $this->formatDate($s->subproduct_date),
-                'TIPO_DOCUMENTO' => self::DOCUMENT_TYPE_MAP[$type] ?? 'OTR',
+                'TIPO_DOCUMENTO' => self::DOCUMENT_TYPE_MAP[$type],
                 'PERIODO_FISCAL' => $this->fiscalPeriod($s->subproduct_date),
                 'CODIGO_NC' => $ncCode,
                 'DESCRIPCION_PRODUCTO' => 'Subproducto - '.$s->type,
@@ -290,7 +290,7 @@ class SilicieCsvExporter
 
         // ── Generar CSV ───────────────────────────────────────────────────
         // Ordenar por fecha
-        usort($rows, fn ($a, $b) => strcmp($a['FECHA_OPERACION'] ?? '', $b['FECHA_OPERACION'] ?? ''));
+        usort($rows, fn ($a, $b) => strcmp($a['FECHA_OPERACION'], $b['FECHA_OPERACION']));
 
         return $this->buildCsvContent($rows);
     }

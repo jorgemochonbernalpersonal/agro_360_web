@@ -51,7 +51,7 @@ class PacPayment extends Model
 
     public function typeLabel(): string
     {
-        return __(self::PAYMENT_TYPES[$this->payment_type] ?? $this->payment_type);
+        return __(self::PAYMENT_TYPES[$this->payment_type]);
     }
 
     public function scopeForViticulturist($query, int $id)

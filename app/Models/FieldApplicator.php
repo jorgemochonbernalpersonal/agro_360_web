@@ -65,7 +65,7 @@ class FieldApplicator extends Model
 
     public function getCategoryLabelAttribute(): string
     {
-        return __(self::CATEGORIES[$this->ropo_category] ?? $this->ropo_category);
+        return __(self::CATEGORIES[$this->ropo_category]);
     }
 
     public function scopeActive($query)

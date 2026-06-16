@@ -199,7 +199,7 @@ class WineController extends BaseApiController
                     'internal_code' => $wine->internal_code,
                     'vintage' => $wine->vintage,
                     'wine_type' => $wine->wine_type,
-                    'wine_type_label' => __(Wine::WINE_TYPES[$wine->wine_type] ?? $wine->wine_type),
+                    'wine_type_label' => __(Wine::WINE_TYPES[$wine->wine_type]),
                     'aging_type' => $wine->aging_type,
                     'aging_type_label' => __(Wine::AGING_TYPES[$wine->aging_type] ?? $wine->aging_type),
                     'category' => $wine->category,
@@ -210,7 +210,7 @@ class WineController extends BaseApiController
                     'is_must' => $wine->is_must,
                     'is_organic' => $wine->is_organic,
                     'status' => $wine->status,
-                    'status_label' => __(Wine::STATUSES[$wine->status] ?? $wine->status),
+                    'status_label' => __(Wine::STATUSES[$wine->status]),
                     'trace_token' => $wine->trace_token,
                     'notes' => $wine->notes,
                     'oenologist' => $wine->oenologist ? [

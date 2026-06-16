@@ -195,7 +195,7 @@ class NotebookController extends BaseApiController
             return response()->json(['message' => 'Tipo de actividad no válido.'], 404);
         }
 
-        $relations = self::MOBILE_RELATIONS[$type] ?? ['plot'];
+        $relations = self::MOBILE_RELATIONS[$type];
 
         $query = AgriculturalActivity::forViticulturist($request->user()->id)
             ->ofType($type)

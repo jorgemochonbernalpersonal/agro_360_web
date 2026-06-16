@@ -73,12 +73,12 @@ class CueExport extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return self::STATUSES[$this->status];
     }
 
     public function getStatusColorAttribute(): string
     {
-        return self::STATUS_COLORS[$this->status] ?? 'zinc';
+        return self::STATUS_COLORS[$this->status];
     }
 
     public function scopeForViticulturist($query, int $viticulturistId)

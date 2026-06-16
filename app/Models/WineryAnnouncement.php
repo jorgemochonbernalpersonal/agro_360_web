@@ -115,16 +115,16 @@ class WineryAnnouncement extends Model
 
     public function typeLabel(): string
     {
-        return __(self::TYPE_LABELS[$this->type] ?? $this->type);
+        return __(self::TYPE_LABELS[$this->type]);
     }
 
     public function typeColor(): string
     {
-        return self::TYPE_COLORS[$this->type] ?? 'zinc';
+        return self::TYPE_COLORS[$this->type];
     }
 
     public function typeIcon(): string
     {
-        return self::TYPE_ICONS[$this->type] ?? 'information-circle';
+        return self::TYPE_ICONS[$this->type];
     }
 }
