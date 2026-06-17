@@ -30,8 +30,8 @@ class InvoiceController extends BaseApiController
             'invoice_number' => $inv->invoice_number,
             'invoice_date' => $inv->invoice_date,
             'status' => $inv->status,
-            'total_amount' => $inv->total_amount !== null ? (float) $inv->total_amount : null,
-            'client_name' => $inv->client?->name ?? $inv->company_name ?? null,
+            'total_amount' => (float) $inv->total_amount,
+            'client_name' => $inv->client->name ?? $inv->company_name ?? null,
             'notes' => $inv->observations,
         ]);
 
@@ -49,9 +49,9 @@ class InvoiceController extends BaseApiController
         $userId = $request->user()->id;
 
         $base = Invoice::where('user_id', $userId);
-        $total = (float) ($base->clone()->sum('total_amount') ?? 0);
-        $pending = (float) (Invoice::where('user_id', $userId)->whereIn('status', ['draft', 'sent'])->sum('total_amount') ?? 0);
-        $paid = (float) (Invoice::where('user_id', $userId)->where('status', 'paid')->sum('total_amount') ?? 0);
+        $total = (float) $base->clone()->sum('total_amount');
+        $pending = (float) Invoice::where('user_id', $userId)->whereIn('status', ['draft', 'sent'])->sum('total_amount');
+        $paid = (float) Invoice::where('user_id', $userId)->where('status', 'paid')->sum('total_amount');
 
         return response()->json([
             'total_invoices' => $base->count(),

@@ -5,6 +5,7 @@ namespace Tests\Feature\Winery\LabelBatches;
 use App\Livewire\Winery\LabelBatches\Create;
 use App\Livewire\Winery\LabelBatches\Edit;
 use App\Livewire\Winery\LabelBatches\Waste\Create as WasteCreate;
+use App\Livewire\Winery\LabelBatches\Waste\Index as WasteIndex;
 use App\Models\LabelBatch;
 use App\Models\User;
 use App\Models\Wine;
@@ -175,5 +176,41 @@ class LabelBatchesTest extends WineryTestCase
             'label_batch_id' => $batch->id,
             'quantity' => 10,
         ]);
+    }
+
+    public function test_other_winery_cannot_access_waste_index(): void
+    {
+        $batch = LabelBatch::create([
+            'user_id' => $this->winery->id,
+            'name' => 'Owned Batch',
+            'source' => 'own',
+            'start_number' => 1,
+            'end_number' => 500,
+            'total_quantity' => 500,
+            'used_quantity' => 0,
+            'wasted_quantity' => 0,
+        ]);
+
+        $this->actingAs($this->makeOtherWinery())
+            ->get(route('winery.label-batches.waste.index', $batch))
+            ->assertForbidden();
+    }
+
+    public function test_other_winery_cannot_create_waste(): void
+    {
+        $batch = LabelBatch::create([
+            'user_id' => $this->winery->id,
+            'name' => 'Owned Batch',
+            'source' => 'own',
+            'start_number' => 1,
+            'end_number' => 500,
+            'total_quantity' => 500,
+            'used_quantity' => 0,
+            'wasted_quantity' => 0,
+        ]);
+
+        $this->actingAs($this->makeOtherWinery())
+            ->get(route('winery.label-batches.waste.create', $batch))
+            ->assertForbidden();
     }
 }

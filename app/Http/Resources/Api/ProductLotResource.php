@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\ProductLot;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin ProductLot */
 class ProductLotResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -36,7 +38,7 @@ class ProductLotResource extends JsonResource
             'sold_quantity' => (float) $this->sold_quantity,
             'fill_percent' => $this->fill_percent,
             // Precios
-            'price_per_unit' => $this->price_per_unit !== null ? (float) $this->price_per_unit : null,
+            'price_per_unit' => (float) $this->price_per_unit,
             'cost_price' => $this->cost_price !== null ? (float) $this->cost_price : null,
             // Formato / comercial
             'bottle_format' => $this->bottle_format,

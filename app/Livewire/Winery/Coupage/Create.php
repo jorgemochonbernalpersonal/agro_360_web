@@ -103,8 +103,8 @@ class Create extends Component
 
         return view('livewire.winery.coupage.create', [
             'wines' => Wine::where('user_id', $userId)->whereNotIn('status', ['cancelled'])->orderByDesc('vintage')->orderBy('name')->get(['id', 'name', 'vintage', 'wine_type']),
-            'containers' => Container::where('user_id', $userId)->where('archived', false)->orderBy('name')->get(['id', 'name', 'type']),
-            'units' => UnitOfMeasurement::where('category', 'volume')->orderBy('name')->get(['id', 'name', 'symbol']),
+            'containers' => Container::where('user_id', $userId)->where('archived', false)->orderBy('name')->get(['id', 'name']),
+            'units' => UnitOfMeasurement::where('type', 'volume')->orderBy('name')->get(['id', 'name', 'symbol']),
             'oenologists' => Oenologist::where('user_id', $userId)->orderBy('name')->get(['id', 'name']),
         ]);
     }

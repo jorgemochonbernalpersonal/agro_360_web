@@ -34,7 +34,7 @@
             </button>
 
             {{-- Separador --}}
-            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+            <x-agro.divider-vertical />
 
             {{-- Nueva --}}
             <flux:button variant="primary" icon="plus" href="{{ roleRoute('harvest-forecasts.create') }}" wire:navigate>

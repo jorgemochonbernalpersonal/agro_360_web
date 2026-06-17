@@ -111,26 +111,31 @@ class ProductLot extends Model
         'ecological' => 'boolean',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return HasMany<InvoiceItem, $this> */
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class, 'wine_lot_id');
     }
 
+    /** @return HasMany<InvoiceStockMovement, $this> */
     public function stockMovements(): HasMany
     {
         return $this->hasMany(InvoiceStockMovement::class, 'wine_lot_id');
     }
 
+    /** @return BelongsToMany<GrapeVariety, $this> */
     public function grapeVarieties(): BelongsToMany
     {
         return $this->belongsToMany(GrapeVariety::class, 'wine_lot_grape_varieties', 'wine_lot_id', 'grape_variety_id')
@@ -138,6 +143,7 @@ class ProductLot extends Model
             ->withTimestamps();
     }
 
+    /** @return BelongsToMany<Tax, $this> */
     public function taxes(): BelongsToMany
     {
         return $this->belongsToMany(Tax::class, 'wine_lot_taxes')

@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\WineAnalysis;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin WineAnalysis */
 class WineAnalysisResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -15,7 +17,7 @@ class WineAnalysisResource extends JsonResource
             'wine_name' => $this->wine?->name,
             'container_id' => $this->container_id,
             'container_name' => $this->container?->name,
-            'analysis_date' => $this->analysis_date?->toDateString(),
+            'analysis_date' => $this->analysis_date->toDateString(),
             'analysis_type' => $this->analysis_type,
             'laboratory' => (bool) $this->laboratory,
             'laboratory_name' => $this->laboratory_name,

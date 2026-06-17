@@ -237,8 +237,8 @@ class ExecutiveDashboard extends Component
                     'id' => $mps->id,
                     'plot_id' => $plot->id,
                     'plot_name' => $plot->name,
-                    'sigpac_code' => $mps->sigpacCode?->formatted_code ?? 'Recinto '.$mps->id,
-                    'display_name' => $plot->name.' — '.($mps->sigpacCode?->formatted_code ?? 'Recinto '.$mps->id),
+                    'sigpac_code' => $mps->sigpacCode->formatted_code ?? 'Recinto '.$mps->id,
+                    'display_name' => $plot->name.' — '.($mps->sigpacCode->formatted_code ?? 'Recinto '.$mps->id),
                 ]);
         });
 
@@ -293,7 +293,7 @@ class ExecutiveDashboard extends Component
                     'plot_id' => $plot->id,
                     'plot_name' => $plot->name,
                     'ndvi' => $ndvi !== null ? round($ndvi, 3) : null,
-                    'health_status' => $latest?->health_status ?? 'no_data',
+                    'health_status' => $latest->health_status ?? 'no_data',
                     'fill' => $color['fill'],
                     'line' => $color['line'],
                     'wkts' => $plotGeoms->pluck('wkt')->filter()->values()->toArray(),

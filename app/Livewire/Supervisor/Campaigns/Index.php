@@ -78,10 +78,10 @@ class Index extends Component
 
             return (object) [
                 'year' => $year,
-                'campaign_count' => $campaigns?->campaign_count ?? 0,
-                'active_count' => $campaigns?->active_count ?? 0,
-                'total_kg' => $harvests?->total_kg ?? 0,
-                'reception_count' => $harvests?->reception_count ?? 0,
+                'campaign_count' => $campaigns->campaign_count ?? 0,
+                'active_count' => $campaigns->active_count ?? 0,
+                'total_kg' => $harvests->total_kg ?? 0,
+                'reception_count' => $harvests->reception_count ?? 0,
             ];
         });
 

@@ -105,7 +105,7 @@
             </button>
 
             {{-- Separador --}}
-            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+            <x-agro.divider-vertical />
 
             {{-- Nueva Plantación --}}
             @can('create', App\Models\PlotPlanting::class)

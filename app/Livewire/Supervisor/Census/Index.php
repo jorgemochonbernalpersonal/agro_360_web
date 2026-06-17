@@ -157,7 +157,7 @@ class Index extends Component
             'items' => $items,
             'wineryCount' => $wineryCount,
             'viticulturistCount' => $viticulturistCount,
-            'vitCountByWinery' => $vitCountByWinery ?? collect(),
+            'vitCountByWinery' => $vitCountByWinery,
             'availableWineries' => $availableWineries,
         ]);
     }

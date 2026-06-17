@@ -5,9 +5,36 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property mixed $quantity_kg
+ * @property mixed $quality_rating
+ * @property mixed $quality_notes
+ * @property mixed $probable_alcohol
+ * @property mixed $total_acidity
+ * @property mixed $ph
+ * @property mixed $viticulturist_id
+ * @property mixed $viticulturist_name
+ * @property mixed $last_reception_date
+ * @property mixed $receptions
+ * @property mixed $total_kg
+ * @property mixed $avg_baume
+ * @property mixed $avg_brix
+ * @property mixed $avg_ph
+ * @property mixed $avg_acidity
+ * @property mixed $avg_price_per_kg
+ * @property mixed $avg_price
+ * @property mixed $week
+ * @property mixed $count
+ * @property mixed $available_qty
+ * @property mixed $reserved_qty
+ * @property mixed $sold_qty
+ * @property mixed $available_qty_computed
+ * @property mixed $pivot
+ */
 class Harvest extends Model
 {
     use HasFactory;
@@ -85,6 +112,7 @@ class Harvest extends Model
      * Cosecha del cuaderno de campo que originó esta recepción (solo producer, flujo "Promover").
      * Null en recepciones winery puras o en registros del cuaderno.
      */
+    /** @return BelongsTo<Harvest, $this> */
     public function notebookHarvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class, 'notebook_harvest_id');
@@ -94,6 +122,7 @@ class Harvest extends Model
      * Recepción de bodega generada a partir de esta cosecha del cuaderno (flujo "Promover").
      * Null hasta que el producer la promueva.
      */
+    /** @return HasOne<Harvest, $this> */
     public function grapeReception(): HasOne
     {
         return $this->hasOne(Harvest::class, 'notebook_harvest_id');
@@ -102,14 +131,22 @@ class Harvest extends Model
     /**
      * Actividad agrícola base (solo registros del viticultor; null en recepciones de bodega)
      */
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');
     }
 
+    /** @return BelongsToMany<Wine, $this> */
+    public function wines(): BelongsToMany
+    {
+        return $this->belongsToMany(Wine::class, 'wine_harvests');
+    }
+
     /**
      * Bodega propietaria de la recepción (solo registros de bodega)
      */
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
@@ -118,6 +155,7 @@ class Harvest extends Model
     /**
      * Lote acumulador de recepciones de bodega
      */
+    /** @return BelongsTo<GrapeReceptionBatch, $this> */
     public function batch(): BelongsTo
     {
         return $this->belongsTo(GrapeReceptionBatch::class, 'batch_id');
@@ -142,6 +180,7 @@ class Harvest extends Model
     /**
      * Plantación cosechada
      */
+    /** @return BelongsTo<PlotPlanting, $this> */
     public function plotPlanting(): BelongsTo
     {
         return $this->belongsTo(PlotPlanting::class, 'plot_planting_id');
@@ -150,6 +189,7 @@ class Harvest extends Model
     /**
      * Usuario que editó la cosecha
      */
+    /** @return BelongsTo<User, $this> */
     public function editor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'edited_by');
@@ -158,6 +198,7 @@ class Harvest extends Model
     /**
      * Contenedor asignado a esta cosecha
      */
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class, 'container_id');
@@ -216,7 +257,7 @@ class Harvest extends Model
      */
     public function getContainerWeight(): ?float
     {
-        return $this->container ? $this->container->used_capacity : null;
+        return $this->container ? (float) $this->container->used_capacity : null;
     }
 
     /**
@@ -230,6 +271,7 @@ class Harvest extends Model
     /**
      * Entrega declarada por el viticultor que se enlazó con esta recepción de bodega.
      */
+    /** @return HasOne<HarvestDelivery, $this> */
     public function delivery(): HasOne
     {
         return $this->hasOne(HarvestDelivery::class, 'harvest_id');
@@ -238,6 +280,7 @@ class Harvest extends Model
     /**
      * Items de factura relacionados con esta cosecha
      */
+    /** @return HasMany<InvoiceItem, $this> */
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
@@ -254,6 +297,7 @@ class Harvest extends Model
     /**
      * Movimientos de stock de esta cosecha
      */
+    /** @return HasMany<HarvestStock, $this> */
     public function stockMovements(): HasMany
     {
         return $this->hasMany(HarvestStock::class);

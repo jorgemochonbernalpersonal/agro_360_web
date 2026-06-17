@@ -72,8 +72,8 @@ class FullTraceabilityController extends BaseApiController
 
                 return [
                     'plot_id' => $plotId,
-                    'plot_name' => $first->plotPlanting?->plot?->name ?? '—',
-                    'variety' => $first->plotPlanting?->grapeVariety?->name ?? '—',
+                    'plot_name' => $first->plotPlanting?->plot->name ?? '—',
+                    'variety' => $first->plotPlanting?->grapeVariety->name ?? '—',
                     'total_kg' => round((float) $group->sum('total_weight'), 2),
                     'entries' => $group->count(),
                 ];

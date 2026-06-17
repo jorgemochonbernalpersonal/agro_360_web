@@ -150,7 +150,7 @@ class AuditService
         foreach ($logs as $log) {
             $csv[] = [
                 $log->created_at->format('Y-m-d H:i:s'),
-                $log->user?->name ?? 'Sistema',
+                $log->user->name ?? 'Sistema',
                 $log->event,
                 class_basename($log->auditable_type),
                 $log->auditable_id,

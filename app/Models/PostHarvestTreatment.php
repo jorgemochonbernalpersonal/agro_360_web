@@ -43,11 +43,13 @@ class PostHarvestTreatment extends Model
         return array_map(fn ($v) => __($v), static::APPLICATION_TYPES);
     }
 
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');
     }
 
+    /** @return BelongsTo<PhytosanitaryProduct, $this> */
     public function product(): BelongsTo
     {
         return $this->belongsTo(PhytosanitaryProduct::class, 'product_id');
@@ -55,6 +57,6 @@ class PostHarvestTreatment extends Model
 
     public function getApplicationTypeLabelAttribute(): string
     {
-        return __(self::APPLICATION_TYPES[$this->application_type] ?? $this->application_type);
+        return __(self::APPLICATION_TYPES[$this->application_type]);
     }
 }

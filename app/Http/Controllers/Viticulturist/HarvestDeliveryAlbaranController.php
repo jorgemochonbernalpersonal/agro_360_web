@@ -30,7 +30,7 @@ class HarvestDeliveryAlbaranController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isRemoteEnabled', false);
 
-        $date = $delivery->delivery_date?->format('d-m-Y') ?? now()->format('d-m-Y');
+        $date = $delivery->delivery_date->format('d-m-Y');
         $ticket = $delivery->ticket_number ? '_'.str_replace(['/', ' '], '-', $delivery->ticket_number) : '';
         $filename = 'albaran_entrega'.$ticket.'_'.$date.'.pdf';
 

@@ -44,11 +44,13 @@ class CommercialAuthorization extends Model
         return array_map(fn ($v) => __($v), static::AUTHORIZATION_TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Exploitation, $this> */
     public function exploitation(): BelongsTo
     {
         return $this->belongsTo(Exploitation::class);
@@ -56,7 +58,7 @@ class CommercialAuthorization extends Model
 
     public function getAuthorizationTypeLabelAttribute(): string
     {
-        return __(self::AUTHORIZATION_TYPES[$this->authorization_type] ?? $this->authorization_type);
+        return __(self::AUTHORIZATION_TYPES[$this->authorization_type]);
     }
 
     public function isExpired(): bool

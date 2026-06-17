@@ -19,6 +19,7 @@ class Municipality extends Model
     /**
      * Provincia a la que pertenece
      */
+    /** @return BelongsTo<Province, $this> */
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class, 'province_id');
@@ -27,6 +28,7 @@ class Municipality extends Model
     /**
      * Parcelas en este municipio
      */
+    /** @return HasMany<Plot, $this> */
     public function plots(): HasMany
     {
         return $this->hasMany(Plot::class, 'municipality_id');

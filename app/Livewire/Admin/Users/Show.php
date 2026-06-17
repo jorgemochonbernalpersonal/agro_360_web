@@ -469,7 +469,7 @@ class Show extends Component
         return [
             'plots' => [
                 'total' => Plot::forUser($user)->count(),
-                'total_area' => Plot::forUser($user)->sum('area') ?? 0,
+                'total_area' => Plot::forUser($user)->sum('area'),
             ],
             'clients' => [
                 'total' => Client::forUser($user->id)->count(),
@@ -480,8 +480,8 @@ class Show extends Component
             'invoices' => [
                 'total' => Invoice::forUser($user->id)->count(),
                 'this_year' => Invoice::forUser($user->id)->whereYear('invoice_date', now()->year)->count(),
-                'total_amount' => Invoice::forUser($user->id)->sum('total_amount') ?? 0,
-                'this_year_amount' => Invoice::forUser($user->id)->whereYear('invoice_date', now()->year)->sum('total_amount') ?? 0,
+                'total_amount' => Invoice::forUser($user->id)->sum('total_amount'),
+                'this_year_amount' => Invoice::forUser($user->id)->whereYear('invoice_date', now()->year)->sum('total_amount'),
             ],
             'activities' => [
                 'total' => AgriculturalActivity::forUser($user->id)->count(),

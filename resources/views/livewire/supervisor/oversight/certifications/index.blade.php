@@ -14,9 +14,8 @@
 
     {{-- Alerta si hay caducadas o próximas a vencer --}}
     @if($totalExpired > 0 || $totalExpiring > 0)
-        <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start gap-3">
-            <flux:icon icon="exclamation-triangle" class="size-5 text-amber-500 mt-0.5 shrink-0" />
-            <div class="text-sm text-amber-700">
+        <flux:callout variant="warning" icon="exclamation-triangle">
+            <flux:callout.text>
                 @if($totalExpired > 0)
                     <strong>{{ $totalExpired }} certificación{{ $totalExpired !== 1 ? 'es' : '' }} caducada{{ $totalExpired !== 1 ? 's' : '' }}.</strong>
                 @endif
@@ -24,8 +23,8 @@
                     {{ $totalExpiring }} vence{{ $totalExpiring !== 1 ? 'n' : '' }} en los próximos 60 días.
                 @endif
                 Revisa el estado con los viticultores afectados.
-            </div>
-        </div>
+            </flux:callout.text>
+        </flux:callout>
     @endif
 
     {{-- Filtros --}}

@@ -49,23 +49,23 @@ class GenerateReportJob implements ShouldQueue
     {
         Log::info('Starting report generation job', [
             'user_id' => $this->user->id,
-            'report_type' => $this->reportData->type,
+            'report_type' => $this->reportData->reportType,
         ]);
 
         try {
-            $report = match ($this->reportData->type) {
+            $report = match ($this->reportData->reportType) {
                 'phytosanitary' => $reportService->generatePhytosanitaryReport(
-                    $this->user,
+                    $this->user->id,
                     $this->reportData->periodStart,
                     $this->reportData->periodEnd,
                     $this->password
                 ),
                 'full_notebook' => $reportService->generateFullNotebookReport(
-                    $this->user,
+                    $this->user->id,
                     $this->reportData->campaignId,
                     $this->password
                 ),
-                default => throw new \InvalidArgumentException("Invalid report type: {$this->reportData->type}")
+                default => throw new \InvalidArgumentException("Invalid report type: {$this->reportData->reportType}")
             };
 
             // Disparar evento de reporte generado
@@ -93,12 +93,12 @@ class GenerateReportJob implements ShouldQueue
     {
         Log::error('Report generation job failed permanently', [
             'user_id' => $this->user->id,
-            'report_type' => $this->reportData->type,
+            'report_type' => $this->reportData->reportType,
             'error' => $exception->getMessage(),
         ]);
 
         $report = OfficialReport::where('user_id', $this->user->id)
-            ->where('report_type', $this->reportData->type)
+            ->where('report_type', $this->reportData->reportType)
             ->latest()
             ->first();
 

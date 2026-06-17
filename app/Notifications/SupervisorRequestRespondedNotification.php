@@ -67,7 +67,7 @@ class SupervisorRequestRespondedNotification extends Notification implements Sho
             'winery_name' => $req->winery?->name,
             'response' => $req->response_notes,
             'icon' => '💬',
-            'message' => ($req->winery?->name ?? 'Bodega').' respondió — '.$typeLabel,
+            'message' => ($req->winery->name ?? 'Bodega').' respondió — '.$typeLabel,
             'action_url' => route('supervisor.requests.index'),
             'action_text' => __('Revisar respuesta'),
         ];

@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property mixed $total_volume
+ * @property mixed $operations
+ * @property mixed $count
+ * @property mixed $month
+ * @property mixed $net_volume
+ * @property string $operation_type
+ */
 class ContainerHistory extends Model
 {
     protected $fillable = [
@@ -32,6 +40,7 @@ class ContainerHistory extends Model
     /**
      * Contenedor
      */
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
@@ -40,6 +49,7 @@ class ContainerHistory extends Model
     /**
      * Cosecha
      */
+    /** @return BelongsTo<Harvest, $this> */
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class);
@@ -48,6 +58,7 @@ class ContainerHistory extends Model
     /**
      * Vino
      */
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
@@ -56,6 +67,7 @@ class ContainerHistory extends Model
     /**
      * Usuario que creó el movimiento
      */
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -64,6 +76,7 @@ class ContainerHistory extends Model
     /**
      * Actividad de campo relacionada
      */
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function fieldActivity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'field_activity_id');
@@ -96,9 +109,8 @@ class ContainerHistory extends Model
             'transfer' => 'Transferencia',
             'sale' => 'Venta',
             'adjustment' => 'Ajuste',
-            'maintenance' => 'Mantenimiento',
             'bottling' => 'Embotellado',
-            default => 'Operación desconocida',
+            default => 'Mantenimiento',
         };
     }
 }

@@ -66,7 +66,7 @@ class CleanupAllOfficialReports extends Command
         }
 
         // Contar PDFs
-        $pdfsCount = $reports->filter(fn ($r) => $r->pdf_path)->count();
+        $pdfsCount = $reports->filter(fn ($r) => $r->pdf_path !== null)->count();
         $this->info("📎 PDFs asociados: {$pdfsCount}");
         $this->info('═══════════════════════════════════════');
         $this->info('');

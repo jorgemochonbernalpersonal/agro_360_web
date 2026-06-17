@@ -17,17 +17,11 @@ use Illuminate\Support\Facades\Log;
  */
 class NasaSMAPService
 {
-    private string $baseUrl;
-
     private bool $useMockData;
 
-    private RateLimitService $rateLimitService;
-
-    public function __construct(RateLimitService $rateLimitService)
+    public function __construct()
     {
-        $this->baseUrl = config('services.nasa_earthdata.api_url');
         $this->useMockData = config('services.nasa_earthdata.mock', true);
-        $this->rateLimitService = $rateLimitService;
     }
 
     /**

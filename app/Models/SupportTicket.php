@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property mixed $subject
+ * @property mixed $image
+ */
 class SupportTicket extends Model
 {
     protected $fillable = [
@@ -32,6 +36,7 @@ class SupportTicket extends Model
     /**
      * Usuario que creó el ticket
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -40,6 +45,7 @@ class SupportTicket extends Model
     /**
      * Usuario asignado al ticket
      */
+    /** @return BelongsTo<User, $this> */
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
@@ -48,6 +54,7 @@ class SupportTicket extends Model
     /**
      * Comentarios del ticket
      */
+    /** @return HasMany<SupportTicketComment, $this> */
     public function comments(): HasMany
     {
         return $this->hasMany(SupportTicketComment::class, 'ticket_id');
@@ -163,7 +170,6 @@ class SupportTicket extends Model
             'urgent' => 'red',
             'high' => 'orange',
             'medium' => 'yellow',
-            'low' => 'gray',
             default => 'gray',
         };
     }
@@ -177,7 +183,6 @@ class SupportTicket extends Model
             'open' => 'blue',
             'in_progress' => 'yellow',
             'resolved' => 'green',
-            'closed' => 'gray',
             default => 'gray',
         };
     }
@@ -191,8 +196,7 @@ class SupportTicket extends Model
             'bug' => '🐛 Bug',
             'feature' => '✨ Nueva Funcionalidad',
             'improvement' => '🚀 Mejora',
-            'question' => '❓ Pregunta',
-            default => $this->type,
+            default => '❓ Pregunta',
         };
     }
 
@@ -205,8 +209,7 @@ class SupportTicket extends Model
             'open' => 'Abierto',
             'in_progress' => 'En Progreso',
             'resolved' => 'Resuelto',
-            'closed' => 'Cerrado',
-            default => $this->status,
+            default => 'Cerrado',
         };
     }
 
@@ -219,8 +222,7 @@ class SupportTicket extends Model
             'urgent' => '🔴 Urgente',
             'high' => '🟠 Alta',
             'medium' => '🟡 Media',
-            'low' => '⚪ Baja',
-            default => $this->priority,
+            default => '⚪ Baja',
         };
     }
 

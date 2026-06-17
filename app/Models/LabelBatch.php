@@ -40,21 +40,25 @@ class LabelBatch extends Model
         return array_map(fn ($v) => __($v), static::SOURCES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return HasMany<WineLabeling, $this> */
     public function labelings(): HasMany
     {
         return $this->hasMany(WineLabeling::class);
     }
 
+    /** @return HasMany<LabelWaste, $this> */
     public function wastes(): HasMany
     {
         return $this->hasMany(LabelWaste::class)->orderByDesc('waste_date');
@@ -78,7 +82,7 @@ class LabelBatch extends Model
 
     public function getSourceLabelAttribute(): string
     {
-        return __(self::SOURCES[$this->source] ?? $this->source ?? 'Propio');
+        return __(self::SOURCES[$this->source]);
     }
 
     public function isEmpty(): bool

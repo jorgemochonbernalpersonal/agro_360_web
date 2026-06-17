@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property mixed $volume_liters
+ */
 class ContainerCurrentState extends Model
 {
     protected $fillable = [
@@ -36,6 +39,7 @@ class ContainerCurrentState extends Model
     /**
      * Contenedor
      */
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
@@ -44,6 +48,7 @@ class ContainerCurrentState extends Model
     /**
      * Cosecha actual
      */
+    /** @return BelongsTo<Harvest, $this> */
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class);
@@ -52,6 +57,7 @@ class ContainerCurrentState extends Model
     /**
      * Aditivos aplicados mientras este estado estaba activo
      */
+    /** @return HasMany<ContainerAdditiveSupply, $this> */
     public function additiveSupplies(): HasMany
     {
         return $this->hasMany(ContainerAdditiveSupply::class, 'container_current_state_id');
@@ -60,6 +66,7 @@ class ContainerCurrentState extends Model
     /**
      * Usuario que realizó el último movimiento
      */
+    /** @return BelongsTo<User, $this> */
     public function lastMovedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'last_movement_by');
@@ -68,6 +75,7 @@ class ContainerCurrentState extends Model
     /**
      * Vino actual (si aplica)
      */
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);

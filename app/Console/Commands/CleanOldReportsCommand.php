@@ -28,7 +28,7 @@ class CleanOldReportsCommand extends Command
     public function handle(): int
     {
         $days = $this->option('days');
-        $cutoffDate = now()->subDays($days);
+        $cutoffDate = now()->subDays((int) $days);
 
         $this->info("Cleaning reports older than {$days} days (before {$cutoffDate->toDateString()})...");
 

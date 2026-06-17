@@ -162,8 +162,8 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 if ($lstData['lst_day'] && $result->temperature && $result->humidity) {
                     $cwsi = $this->lstService->calculateCWSI(
                         $lstData['lst_day'],
-                        $result->temperature,
-                        $result->humidity
+                        (float) $result->temperature,
+                        (float) $result->humidity
                     );
                     $lstData['cwsi'] = $cwsi;
                 }
@@ -277,7 +277,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             $result = $this->repository->createOrUpdate($plot, $imageDate, $data);
 
             // Area request (async) if requested
-            if ($includeArea && $result) {
+            if ($includeArea) {
                 $areaStats = $this->areaService->requestAreaData($plot, $token);
 
                 if ($areaStats && isset($areaStats['task_id'])) {
@@ -321,7 +321,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
      *
      * @param array|null $coordinates Override for the selected sigpac parcel ['lat','lng'|'lon']
      */
-    private function fetchNdviData(Plot $plot, ?array $coordinates = null): ?array
+    private function fetchNdviData(Plot $plot, ?array $coordinates = null): array
     {
         if ($this->useMockData) {
             return $this->generateMockData($plot);
@@ -352,8 +352,8 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             // MOD13Q1 is a 16-day composite with 2-3 week publication lag,
             // so we look back 35 days to ensure the latest composite is included.
             $startDate = now()->subDays(35);
-            $startJulian = 'A'.$startDate->format('Y').str_pad($startDate->dayOfYear, 3, '0', STR_PAD_LEFT);
-            $endJulian = 'A'.now()->format('Y').str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $startJulian = 'A'.$startDate->format('Y').str_pad((string) $startDate->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian = 'A'.now()->format('Y').str_pad((string) now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             $response = Http::timeout(30)
                 ->get("{$this->ornlBaseUrl}/MOD13Q1/subset", [
@@ -401,7 +401,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     /**
      * Get authentication token
      */
-    private function getAuthToken(): ?string
+    public function getAuthToken(): ?string
     {
         if ($this->token) {
             return $this->token;

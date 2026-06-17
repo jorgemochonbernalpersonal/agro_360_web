@@ -37,8 +37,8 @@ class Analytics extends Component
 
             $csv .= implode(',', [
                 '"'.$c->name.'"',
-                '"'.($c->containerType?->name ?? '').'"',
-                '"'.($c->containerRoom?->name ?? 'Sin sala').'"',
+                '"'.($c->containerType->name ?? '').'"',
+                '"'.($c->containerRoom->name ?? 'Sin sala').'"',
                 $c->capacity,
                 $c->used_capacity,
                 $c->wine_volume_liters,

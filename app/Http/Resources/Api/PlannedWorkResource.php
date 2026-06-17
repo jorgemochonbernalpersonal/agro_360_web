@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\PlannedWork;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PlannedWork */
 class PlannedWorkResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -16,7 +18,7 @@ class PlannedWorkResource extends JsonResource
             'category' => $this->category,
             'title' => $this->title,
             'description' => $this->description,
-            'planned_date' => $this->planned_date?->toDateString(),
+            'planned_date' => $this->planned_date->toDateString(),
             'planned_end_date' => $this->planned_end_date?->toDateString(),
             'priority' => $this->priority,
             'status' => $this->status,

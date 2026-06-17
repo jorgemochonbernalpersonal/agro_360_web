@@ -48,21 +48,25 @@ class MarketedHarvest extends Model
         return array_map(fn ($v) => __($v), static::DESTINATION_TYPES);
     }
 
+    /** @return BelongsTo<Harvest, $this> */
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class);
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Invoice, $this> */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
@@ -70,7 +74,7 @@ class MarketedHarvest extends Model
 
     public function getDestinationTypeLabelAttribute(): string
     {
-        return __(self::DESTINATION_TYPES[$this->destination_type] ?? $this->destination_type);
+        return __(self::DESTINATION_TYPES[$this->destination_type]);
     }
 
     public function scopeActive($query)

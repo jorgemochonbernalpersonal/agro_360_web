@@ -32,7 +32,7 @@ class GrapePurchaseInvoiceIssuedNotification extends Notification implements Sho
     public function toMail(object $notifiable): MailMessage
     {
         $invoice = $this->invoice;
-        $winery = $invoice->user?->name ?? '—';
+        $winery = $invoice->user->name ?? '—';
 
         return (new MailMessage)
             ->subject(__('Nueva liquidación de vendimia — :number', ['number' => $invoice->invoice_number]))
@@ -55,7 +55,7 @@ class GrapePurchaseInvoiceIssuedNotification extends Notification implements Sho
     public function toArray(object $notifiable): array
     {
         $invoice = $this->invoice;
-        $winery = $invoice->user?->name ?? '—';
+        $winery = $invoice->user->name ?? '—';
 
         return [
             'type' => 'invoice_issued',

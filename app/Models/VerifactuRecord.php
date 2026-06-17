@@ -40,11 +40,13 @@ class VerifactuRecord extends Model
 
     // ── Relations ──────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Invoice, $this> */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
@@ -54,7 +56,7 @@ class VerifactuRecord extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->submission_status] ?? $this->submission_status;
+        return self::STATUSES[$this->submission_status];
     }
 
     public function isAccepted(): bool

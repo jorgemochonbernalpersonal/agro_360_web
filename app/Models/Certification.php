@@ -45,6 +45,7 @@ class Certification extends Model
         return array_map(fn ($v) => __($v), static::CERTIFICATION_TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -52,7 +53,7 @@ class Certification extends Model
 
     public function getCertificationTypeLabelAttribute(): string
     {
-        return __(self::CERTIFICATION_TYPES[$this->certification_type] ?? $this->certification_type);
+        return __(self::CERTIFICATION_TYPES[$this->certification_type]);
     }
 
     public function getIsExpiredAttribute(): bool
@@ -69,6 +70,6 @@ class Certification extends Model
 
     public function getTypeColorAttribute(): string
     {
-        return self::TYPE_COLORS[$this->certification_type] ?? 'zinc';
+        return self::TYPE_COLORS[$this->certification_type];
     }
 }

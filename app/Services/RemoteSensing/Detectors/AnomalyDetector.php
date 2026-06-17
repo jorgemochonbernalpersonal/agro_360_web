@@ -20,8 +20,6 @@ class AnomalyDetector
     // Thresholds for anomaly detection
     private const NDVI_DROP_THRESHOLD = 15;        // % drop to trigger alert
 
-    private const RAPID_CHANGE_DAYS = 7;            // Days to consider "rapid"
-
     private const STATISTICAL_SIGMA = 2.0;          // Standard deviations for outlier
 
     private const MIN_HISTORICAL_POINTS = 10;       // Minimum data points needed
@@ -119,7 +117,7 @@ class AnomalyDetector
             return null;
         }
 
-        $currentNDVI = $current->ndvi_mean;
+        $currentNDVI = (float) ($current->ndvi_mean ?? 0);
         $drop = $recentBaseline - $currentNDVI;
         $dropPercent = ($drop / $recentBaseline) * 100;
 
@@ -287,7 +285,7 @@ class AnomalyDetector
             ->take(5)
             ->avg('ndwi_mean');
 
-        $currentNDWI = $current->ndwi_mean;
+        $currentNDWI = (float) ($current->ndwi_mean ?? 0);
         $drop = $recentNDWI - $currentNDWI;
 
         // NDWI drop + low soil moisture = water stress
@@ -394,10 +392,10 @@ class AnomalyDetector
                 ),
                 'detected_at' => now()->toIso8601String(),
                 'metrics' => [
-                    'ndvi_mean' => round($data->ndvi_mean, 3),
-                    'ndvi_stddev' => round($data->ndvi_stddev, 3),
+                    'ndvi_mean' => round((float) ($data->ndvi_mean ?? 0), 3),
+                    'ndvi_stddev' => round((float) $data->ndvi_stddev, 3),
                     'coefficient_variation' => round(
-                        ($data->ndvi_stddev / max(0.001, $data->ndvi_mean)) * 100,
+                        ((float) $data->ndvi_stddev / max(0.001, (float) ($data->ndvi_mean ?? 0))) * 100,
                         1
                     ),
                 ],

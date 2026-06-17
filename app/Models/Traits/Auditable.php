@@ -10,6 +10,7 @@ trait Auditable
     /**
      * Get audit logs for this model
      */
+    /** @return MorphMany<AuditLog, $this> */
     public function auditLogs(): MorphMany
     {
         return $this->morphMany(AuditLog::class, 'auditable')->latest();

@@ -13,6 +13,11 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $wines
+ * @property-read mixed $grapeVarieties
+ * @property-read float $grapeTotal
+ */
 class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;

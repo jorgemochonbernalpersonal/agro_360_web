@@ -51,7 +51,7 @@ class SendWithdrawalPeriodAlertsCommand extends Command
             }
 
             $safeDate = $activity->activity_date->copy()->addDays($product->withdrawal_period_days);
-            $daysRemaining = now()->diffInDays($safeDate, false);
+            $daysRemaining = (int) now()->diffInDays($safeDate, false);
 
             // Notificar si está dentro del rango de alerta
             if ($daysRemaining > 0 && $daysRemaining <= $alertDays) {

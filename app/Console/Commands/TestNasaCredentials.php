@@ -34,6 +34,7 @@ class TestNasaCredentials extends Command
         }
 
         // Get first plot
+        /** @var Plot|null $plot */
         $plot = Plot::first();
 
         if (! $plot) {

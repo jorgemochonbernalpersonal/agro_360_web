@@ -75,6 +75,7 @@ class PhytosanitaryAlert extends Model
 
     // ── Relaciones ───────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');

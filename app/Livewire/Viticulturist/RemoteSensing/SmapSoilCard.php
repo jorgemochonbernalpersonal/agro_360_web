@@ -91,8 +91,8 @@ class SmapSoilCard extends Component
                 'surface' => $surfaceMoisture,
                 'rootzone' => $rootzoneMoisture,
                 'date' => $remoteSensing->image_date->format('d/m/Y'),
-                'surface_status' => $smapService->classifySoilMoisture($surfaceMoisture),
-                'rootzone_status' => $smapService->classifySoilMoisture($rootzoneMoisture),
+                'surface_status' => $smapService->classifySoilMoisture((float) $surfaceMoisture),
+                'rootzone_status' => $smapService->classifySoilMoisture((float) $rootzoneMoisture),
             ];
 
         } catch (\Exception $e) {

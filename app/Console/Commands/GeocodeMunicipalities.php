@@ -68,7 +68,7 @@ class GeocodeMunicipalities extends Command
 
         // Limpia nombres bilingües: "Ayala/Aiara" → "Ayala", "Araba/Álava" → "Araba"
         $municipalityName = $this->cleanName($municipality->name);
-        $provinceName = $this->cleanName($municipality->province?->name ?? '');
+        $provinceName = $this->cleanName($municipality->province->name ?? '');
 
         // Intento 1: municipio + provincia
         $results = $http->get('https://nominatim.openstreetmap.org/search', [

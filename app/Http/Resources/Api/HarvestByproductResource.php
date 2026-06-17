@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\HarvestByproduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin HarvestByproduct */
 class HarvestByproductResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -12,7 +14,7 @@ class HarvestByproductResource extends JsonResource
         return [
             'id' => $this->id,
             'campaign_id' => $this->campaign_id,
-            'date' => $this->date?->toDateString(),
+            'date' => $this->date->toDateString(),
             'byproduct_type' => $this->byproduct_type,
             'byproduct_label' => $this->byproduct_type_label,
             'quantity_kg' => (float) $this->quantity_kg,

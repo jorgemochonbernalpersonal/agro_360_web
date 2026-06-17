@@ -82,7 +82,7 @@ class DashboardController extends BaseApiController
                     'message' => $e->message,
                     'ip' => $e->ip,
                     'email' => $e->email,
-                    'created_at' => $e->created_at?->toIso8601String(),
+                    'created_at' => $e->created_at->toIso8601String(),
                 ])->values(),
             ],
         ]);

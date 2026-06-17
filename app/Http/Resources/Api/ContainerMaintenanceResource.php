@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\ContainerMaintenance;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin ContainerMaintenance */
 class ContainerMaintenanceResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -13,7 +15,7 @@ class ContainerMaintenanceResource extends JsonResource
             'id' => $this->id,
             'container_id' => $this->container_id,
             'container_name' => $this->container?->name,
-            'maintenance_date' => $this->scheduled_date?->toDateString(),
+            'maintenance_date' => $this->scheduled_date->toDateString(),
             'description' => $this->notes,
             'completed_at' => $this->status === 'completed' ? $this->updated_at?->toIso8601String() : null,
             'container' => $this->whenLoaded('container', fn () => [
@@ -25,7 +27,7 @@ class ContainerMaintenanceResource extends JsonResource
             'maintenance_name' => $this->maintenance_name,
             'status' => $this->status,
             'status_label' => $this->getStatusLabel(),
-            'scheduled_date' => $this->scheduled_date?->toDateString(),
+            'scheduled_date' => $this->scheduled_date->toDateString(),
             'performed_date' => $this->performed_date?->toDateString(),
             'next_maintenance_date' => $this->next_maintenance_date?->toDateString(),
             'cost' => $this->cost !== null ? (float) $this->cost : null,
@@ -35,7 +37,7 @@ class ContainerMaintenanceResource extends JsonResource
                 'id' => $s->id,
                 'supply_name' => $s->display_name,
                 'winery_supply_id' => $s->winery_supply_id,
-                'quantity_used' => $s->quantity_used !== null ? (float) $s->quantity_used : null,
+                'quantity_used' => (float) $s->quantity_used,
                 'unit_of_measurement_id' => $s->unit_of_measurement_id,
                 'cost' => $s->cost !== null ? (float) $s->cost : null,
                 'notes' => $s->notes,
@@ -46,7 +48,7 @@ class ContainerMaintenanceResource extends JsonResource
                 'waste_type' => $w->display_type,
                 'container_waste_type_id' => $w->container_waste_type_id,
                 'custom_waste_type' => $w->custom_waste_type,
-                'waste_date' => $w->waste_date?->toDateString(),
+                'waste_date' => $w->waste_date->toDateString(),
                 'quantity' => $w->quantity !== null ? (float) $w->quantity : null,
                 'unit_of_measurement_id' => $w->unit_of_measurement_id,
                 'disposal_method' => $w->disposal_method,

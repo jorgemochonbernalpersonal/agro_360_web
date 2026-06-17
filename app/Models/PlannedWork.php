@@ -102,16 +102,19 @@ class PlannedWork extends Model
 
     // ── Relaciones ───────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
     }
 
+    /** @return BelongsTo<Plot, $this> */
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);

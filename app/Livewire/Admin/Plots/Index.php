@@ -119,12 +119,12 @@ class Index extends Component
                 fputcsv($handle, [
                     $plot->id,
                     $plot->name,
-                    $plot->viticulturist?->name ?? '',
-                    $plot->viticulturist?->email ?? '',
-                    $plot->viticulturist?->role ?? '',
-                    $plot->municipality?->name ?? '',
-                    $plot->municipality?->province?->name ?? '',
-                    number_format($plot->area, 2),
+                    $plot->viticulturist->name ?? '',
+                    $plot->viticulturist->email ?? '',
+                    $plot->viticulturist->role ?? '',
+                    $plot->municipality->name ?? '',
+                    $plot->municipality?->province->name ?? '',
+                    number_format((float) ($plot->area ?? 0), 2),
                     $plot->active ? 'Activa' : 'Inactiva',
                     $plot->created_at->format('d/m/Y'),
                 ]);
@@ -186,7 +186,7 @@ class Index extends Component
         $stats = [
             'total' => $realBase->count(),
             'active' => (clone $realBase)->where('active', true)->count(),
-            'total_area' => (clone $realBase)->sum('area') ?? 0,
+            'total_area' => (clone $realBase)->sum('area'),
             'by_role' => [
                 'viticulturist' => (clone $realBase)->whereHas('viticulturist', fn ($q) => $q->where('role', 'viticulturist'))->count(),
                 'winery' => (clone $realBase)->whereHas('viticulturist', fn ($q) => $q->where('role', 'winery'))->count(),

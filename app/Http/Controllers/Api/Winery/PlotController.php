@@ -122,20 +122,20 @@ class PlotController extends BaseApiController
         $rows = DB::select($sql, $params);
         $geometriesByPlot = collect($rows)->groupBy('plot_id');
 
-        $result = $plots->map(function ($plot) use ($geometriesByPlot) {
+        $result = $plots->map(function (\App\Models\Plot $plot) use ($geometriesByPlot) {
             $geos = $geometriesByPlot->get($plot->id, collect());
             $geometries = $geos->map(fn ($row) => [
                 'sigpac_code' => $row->code,
                 'centroid' => $this->parseCentroidWkt($row->centroid_wkt),
                 'coordinates' => $this->parsePolygonWkt($row->coordinates_wkt),
-            ])->values();
+            ])->values()->all();
 
             return [
                 'plot_id' => $plot->id,
                 'plot_name' => $plot->name,
                 'viticulturist_name' => $plot->viticulturist?->name,
                 'area' => (float) $plot->area,
-                'has_geometry' => $geometries->isNotEmpty(),
+                'has_geometry' => count($geometries) > 0,
                 'geometries' => $geometries,
             ];
         })->filter(fn ($p) => $p['has_geometry'])->values();
@@ -163,7 +163,7 @@ class PlotController extends BaseApiController
 
         $result = $plots
             ->filter(fn ($p) => isset($centroids[$p->id]) ||
-                ($p->municipality?->lat && $p->municipality?->lng)
+                ($p->municipality->lat && $p->municipality->lng)
             )
             ->map(fn ($p) => [
                 'plot_id' => $p->id,
@@ -378,7 +378,7 @@ class PlotController extends BaseApiController
 
         return $this->paginated($activities, $activities->map(fn ($a) => [
             'id' => $a->id,
-            'activity_date' => $a->activity_date?->format('Y-m-d'),
+            'activity_date' => $a->activity_date->format('Y-m-d'),
             'grape_variety' => $a->plotPlanting?->grapeVariety?->name,
             'baume_degree' => $a->harvest?->baume_degree,
             'brix_degree' => $a->harvest?->brix_degree,
@@ -411,7 +411,7 @@ class PlotController extends BaseApiController
         return $this->paginated($activities, $activities->map(fn ($a) => [
             'id' => $a->id,
             'activity_type' => $a->activity_type,
-            'activity_date' => $a->activity_date?->format('Y-m-d'),
+            'activity_date' => $a->activity_date->format('Y-m-d'),
             'notes' => $a->notes,
         ]));
     }

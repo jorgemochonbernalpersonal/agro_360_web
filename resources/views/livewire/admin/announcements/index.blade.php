@@ -11,10 +11,9 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 flex items-center gap-2">
-        <flux:icon icon="megaphone" class="size-4 flex-shrink-0" />
-        <span>{{ __('Los anuncios activos aparecen como banner en el panel de todos los usuarios (excluye admins). Se ocultan automáticamente al expirar.') }}</span>
-    </div>
+    <flux:callout variant="warning" icon="megaphone">
+        <flux:callout.text>{{ __('Los anuncios activos aparecen como banner en el panel de todos los usuarios (excluye admins). Se ocultan automáticamente al expirar.') }}</flux:callout.text>
+    </flux:callout>
 
     @if($announcements->isEmpty())
         <x-agro.empty-state icon="megaphone" :message="__('Sin anuncios')" :description="__('Crea el primer anuncio para comunicarte con tus usuarios')" />

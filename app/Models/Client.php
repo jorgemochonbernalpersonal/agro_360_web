@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property mixed $name
+ * @property mixed $nif_cif
+ * @property mixed $total_invoiced
+ */
 class Client extends Model
 {
     use HasFactory;
@@ -42,6 +47,7 @@ class Client extends Model
     /**
      * Usuario (viticultor) propietario del cliente
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -50,6 +56,7 @@ class Client extends Model
     /**
      * Direcciones del cliente
      */
+    /** @return HasMany<ClientAddress, $this> */
     public function addresses(): HasMany
     {
         return $this->hasMany(ClientAddress::class);
@@ -66,6 +73,7 @@ class Client extends Model
     /**
      * Facturas del cliente
      */
+    /** @return HasMany<Invoice, $this> */
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);

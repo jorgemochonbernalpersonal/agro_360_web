@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $viticulturists
+ */
 class EditHarvest extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications, WithUserFilters, WithViticulturistValidation;
@@ -340,7 +343,7 @@ class EditHarvest extends Component
         // Validar que el contenedor existe y está disponible (o es el actual)
         $container = null;
         if ($this->container_id) {
-            $container = Container::where('user_id', $user->id)->find($this->container_id);
+            $container = Container::where('user_id', $user->id)->where('id', $this->container_id)->first();
             if (! $container) {
                 $this->addError('container_id', __('El contenedor seleccionado no existe.'));
 
@@ -628,7 +631,7 @@ class EditHarvest extends Component
         // Año de vendimia: preferir harvest_start_date, sino campaña
         $vintage = $this->harvest_start_date
             ? (int) \Carbon\Carbon::parse($this->harvest_start_date)->year
-            : (Campaign::find($this->campaign_id)?->year ?? now()->year);
+            : (Campaign::find($this->campaign_id)->year ?? now()->year);
 
         // Solo cosechas del cuaderno del viticultor (excluye recepciones de bodega), excluyendo la actual
         $this->totalHarvestedInCampaign = $this->selectedPlanting->getTotalViticulturistYieldForVintage($vintage, Auth::id());

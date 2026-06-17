@@ -20,6 +20,7 @@ class SifRecord extends Model
         'error_message',
     ];
 
+    /** @return BelongsTo<Invoice, $this> */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);

@@ -102,11 +102,13 @@ class SupervisorRequest extends Model
 
     // ── Relaciones ────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
@@ -135,17 +137,17 @@ class SupervisorRequest extends Model
 
     public function typeLabel(): string
     {
-        return __(self::TYPE_LABELS[$this->type] ?? $this->type);
+        return __(self::TYPE_LABELS[$this->type]);
     }
 
     public function statusLabel(): string
     {
-        return __(self::STATUS_LABELS[$this->status] ?? $this->status);
+        return __(self::STATUS_LABELS[$this->status]);
     }
 
     public function statusColor(): string
     {
-        return self::STATUS_COLORS[$this->status] ?? 'zinc';
+        return self::STATUS_COLORS[$this->status];
     }
 
     public function isOverdue(): bool

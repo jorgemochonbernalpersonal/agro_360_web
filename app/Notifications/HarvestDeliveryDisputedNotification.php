@@ -36,8 +36,8 @@ class HarvestDeliveryDisputedNotification extends Notification implements Should
         $planting = $delivery->plotPlanting;
         $harvest = $delivery->harvest;
 
-        $variety = $planting?->grapeVariety?->name ?? $planting?->name ?? '—';
-        $plot = $planting?->plot?->name ?? '—';
+        $variety = $planting?->grapeVariety->name ?? $planting->name ?? '—';
+        $plot = $planting?->plot->name ?? '—';
         $showUrl = AppLink::url(
             $harvest
                 ? route('winery.grape-reception.show', $harvest->id)
@@ -50,9 +50,9 @@ class HarvestDeliveryDisputedNotification extends Notification implements Should
         }
 
         return (new MailMessage)
-            ->subject(__('Reclamación de entrega — ').$viticulturist?->name.' · '.$variety)
+            ->subject(__('Reclamación de entrega — ').$viticulturist->name.' · '.$variety)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line(__('El viticultor **').($viticulturist?->name ?? '—').'** ha enviado una reclamación sobre una diferencia en la entrega de uva.')
+            ->line(__('El viticultor **').($viticulturist->name ?? '—').'** ha enviado una reclamación sobre una diferencia en la entrega de uva.')
             ->line(new HtmlString(
                 '<div style="background-color:#fefce8;border:1px solid #fde68a;padding:16px;border-radius:8px;margin:16px 0;">
                     <p style="margin:0 0 8px 0;"><strong>Variedad:</strong> '.e($variety).'</p>

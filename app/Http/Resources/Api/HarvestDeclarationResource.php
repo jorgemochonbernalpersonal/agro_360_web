@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\HarvestDeclaration;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin HarvestDeclaration */
 class HarvestDeclarationResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -13,7 +15,7 @@ class HarvestDeclarationResource extends JsonResource
             'id' => $this->id,
             'campaign_id' => $this->campaign_id,
             'declaration_year' => $this->declaration_year,
-            'declaration_date' => $this->declaration_date?->toDateString(),
+            'declaration_date' => $this->declaration_date->toDateString(),
             'submission_date' => $this->submission_date?->toDateString(),
             'authority' => $this->authority,
             'reference_number' => $this->reference_number,

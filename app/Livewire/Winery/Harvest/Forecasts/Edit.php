@@ -57,14 +57,14 @@ class Edit extends Component
 
         $planting = $forecast->plotPlanting;
 
-        $this->viticulturistName = $forecast->viticulturist?->name ?? '—';
-        $this->plantingLabel = ($planting?->grapeVariety?->name ?? $planting?->name ?? '—')
+        $this->viticulturistName = $forecast->viticulturist->name ?? '—';
+        $this->plantingLabel = ($planting?->grapeVariety->name ?? $planting->name ?? '—')
             .($planting?->plot ? ' — '.$planting->plot->name : '');
-        $this->campaignLabel = $forecast->campaign?->year ?? '—';
+        $this->campaignLabel = $forecast->campaign->year ?? '—';
         $this->vintageYear = $forecast->vintage_year;
 
         $this->estimated_kg = (string) $forecast->estimated_kg;
-        $this->estimation_date = $forecast->estimation_date?->format('Y-m-d') ?? '';
+        $this->estimation_date = $forecast->estimation_date->format('Y-m-d');
         $this->status = $forecast->status;
         $this->notes = $forecast->notes ?? '';
 

@@ -13,6 +13,9 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $containers
+ */
 class Create extends Component
 {
     use WithToastNotifications;
@@ -82,7 +85,7 @@ class Create extends Component
         if ($this->container_id) {
             $container = Container::where('user_id', Auth::id())->find($this->container_id);
             if ($container && $container->wine_volume_liters < (float) $this->quantity) {
-                $this->addError('quantity', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format($container->wine_volume_liters, 1)]));
+                $this->addError('quantity', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format((float) $container->wine_volume_liters, 1)]));
 
                 return;
             }

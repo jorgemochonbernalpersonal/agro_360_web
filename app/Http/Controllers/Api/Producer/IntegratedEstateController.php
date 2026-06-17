@@ -72,7 +72,7 @@ class IntegratedEstateController extends BaseApiController
         $varietyCounts = [];
         foreach ($plots as $plot) {
             foreach ($plot->plantings as $p) {
-                $name = $p->grapeVariety?->name ?? 'Desconocida';
+                $name = $p->grapeVariety->name ?? 'Desconocida';
                 $varietyCounts[$name] = ($varietyCounts[$name] ?? 0) + 1;
             }
         }

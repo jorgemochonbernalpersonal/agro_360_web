@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $wines
+ * @property-read mixed $oenologists
+ * @property-read mixed $selectedWine
+ */
 class Edit extends Component
 {
     use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;

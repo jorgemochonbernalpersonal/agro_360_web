@@ -11,6 +11,7 @@ class Orientation extends Model
 
     protected $casts = ['active' => 'boolean'];
 
+    /** @return HasMany<Plot, $this> */
     public function plots(): HasMany
     {
         return $this->hasMany(Plot::class);

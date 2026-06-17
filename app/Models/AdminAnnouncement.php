@@ -17,6 +17,7 @@ class AdminAnnouncement extends Model
         'expires_at' => 'datetime',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id');

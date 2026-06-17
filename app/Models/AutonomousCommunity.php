@@ -15,6 +15,7 @@ class AutonomousCommunity extends Model
     /**
      * Provincias de esta comunidad autónoma
      */
+    /** @return HasMany<Province, $this> */
     public function provinces(): HasMany
     {
         return $this->hasMany(Province::class, 'autonomous_community_id');
@@ -23,6 +24,7 @@ class AutonomousCommunity extends Model
     /**
      * Parcelas en esta comunidad autónoma
      */
+    /** @return HasMany<Plot, $this> */
     public function plots(): HasMany
     {
         return $this->hasMany(Plot::class, 'autonomous_community_id');

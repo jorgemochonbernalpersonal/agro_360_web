@@ -175,7 +175,7 @@ class Index extends Component
                 'granted_at' => $r->notebook_granted_at,
             ])->toBase();
 
-        $granted = $grantedWineries->merge($grantedSupervisors)
+        $granted = $grantedWineries->concat($grantedSupervisors)
             ->sortByDesc('granted_at')
             ->values();
 

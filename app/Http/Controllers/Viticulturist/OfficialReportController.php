@@ -15,7 +15,7 @@ class OfficialReportController extends Controller
             abort(403, __('No tienes permiso para descargar este informe.'));
         }
 
-        $service = new OfficialReportService;
+        $service = app(OfficialReportService::class);
 
         return $service->downloadReport($report);
     }

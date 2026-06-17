@@ -51,11 +51,13 @@ class BottlingAuthorization extends Model
         return array_map(fn ($v) => __($v), static::STATUSES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);

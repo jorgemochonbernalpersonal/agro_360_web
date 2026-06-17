@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\WineLoss;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin WineLoss */
 class LossResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -17,14 +19,14 @@ class LossResource extends JsonResource
             'container_name' => $this->container?->name,
             'loss_type' => $this->loss_type,
             'loss_authorization' => $this->loss_authorization,
-            'quantity' => $this->quantity !== null ? (float) $this->quantity : null,
+            'quantity' => (float) $this->quantity,
             'unit_of_measurement_id' => $this->unit_of_measurement_id,
             'unit' => $this->unitOfMeasurement ? [
                 'id' => $this->unitOfMeasurement->id,
                 'name' => $this->unitOfMeasurement->name,
                 'symbol' => $this->unitOfMeasurement->symbol ?? null,
             ] : null,
-            'loss_date' => $this->loss_date?->toDateString(),
+            'loss_date' => $this->loss_date->toDateString(),
             'regulatory_reference' => $this->regulatory_reference,
             'notes' => $this->notes,
             'created_at' => $this->created_at->toIso8601String(),

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder<static> forYear(int $year)
+ */
 class Campaign extends Model
 {
     use HasFactory;
@@ -47,6 +50,7 @@ class Campaign extends Model
     /**
      * Viticultor propietario de la campaña
      */
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -55,6 +59,7 @@ class Campaign extends Model
     /**
      * Relación con bodega (si fue creado por viticultor invitado)
      */
+    /** @return BelongsTo<WineryViticulturist, $this> */
     public function wineryRelation(): BelongsTo
     {
         return $this->belongsTo(WineryViticulturist::class, 'winery_viticulturist_id');
@@ -63,6 +68,7 @@ class Campaign extends Model
     /**
      * Actividades agrícolas de esta campaña
      */
+    /** @return HasMany<AgriculturalActivity, $this> */
     public function activities(): HasMany
     {
         return $this->hasMany(AgriculturalActivity::class, 'campaign_id');

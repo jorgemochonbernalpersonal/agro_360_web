@@ -73,7 +73,7 @@ class DashboardController extends BaseApiController
                 'recent_activities' => $recentActivities->map(fn ($a) => [
                     'id' => $a->id,
                     'type' => $a->activity_type,
-                    'date' => $a->activity_date?->toDateString(),
+                    'date' => $a->activity_date->toDateString(),
                     'plot_name' => $a->plot?->name,
                     'notes' => $a->notes,
                 ])->all(),

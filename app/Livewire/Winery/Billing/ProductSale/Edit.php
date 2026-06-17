@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
+/**
+ * @property-read bool $isLocked
+ * @property-read bool $isInvoiced
+ */
 class Edit extends Component
 {
     use WithProductSaleFormRules, WithRoleAwareRedirect, WithToastNotifications;
@@ -85,7 +89,7 @@ class Edit extends Component
         }
 
         $defaultTax = $user->defaultTax()->first() ?? $this->availableTaxes->first();
-        $this->defaultTaxId = (string) ($defaultTax?->id ?? '');
+        $this->defaultTaxId = (string) ($defaultTax->id ?? '');
 
         $this->items = $this->invoice->items->map(fn ($item) => [
             'wine_lot_id' => $item->wine_lot_id ? (int) $item->wine_lot_id : null,
@@ -374,7 +378,7 @@ class Edit extends Component
                             'concept_type' => $item['concept_type'] ?? ($lot ? 'wine' : 'other'),
                             'name' => $item['name'],
                             'description' => $item['description'] ?: null,
-                            'sku' => $item['sku'] ?: ($lot?->sku ?? null),
+                            'sku' => $item['sku'] ?: ($lot->sku ?? null),
                             'quantity' => $qty,
                             'unit_price' => $line['unit_price'],
                             'discount_percentage' => $line['discount_percentage'],

@@ -6,6 +6,7 @@ use App\Models\EstimatedYield;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin EstimatedYield */
 class EstimatedYieldResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -17,17 +18,17 @@ class EstimatedYieldResource extends JsonResource
                 'id' => $this->plotPlanting->id,
                 'plot_id' => $this->plotPlanting->plot_id,
                 'plot_name' => $this->plotPlanting->plot?->name,
-                'variety' => $this->plotPlanting->grapeVariety?->name ?? null,
+                'variety' => $this->plotPlanting->grapeVariety->name ?? null,
             ]),
             'campaign_id' => $this->campaign_id,
             'campaign_year' => $this->whenLoaded('campaign', fn () => $this->campaign->year ?? null),
-            'estimation_date' => $this->estimation_date?->toDateString(),
+            'estimation_date' => $this->estimation_date->toDateString(),
             'estimation_round' => $this->estimation_round,
             'estimation_round_label' => EstimatedYield::ROUNDS[$this->estimation_round] ?? null,
             'estimation_method' => $this->estimation_method,
             'status' => $this->status,
-            'estimated_yield_per_hectare' => $this->estimated_yield_per_hectare !== null ? (float) $this->estimated_yield_per_hectare : null,
-            'estimated_total_yield' => $this->estimated_total_yield !== null ? (float) $this->estimated_total_yield : null,
+            'estimated_yield_per_hectare' => (float) $this->estimated_yield_per_hectare,
+            'estimated_total_yield' => (float) $this->estimated_total_yield,
             'auto_calculated_yield' => $this->auto_calculated_yield !== null ? (float) $this->auto_calculated_yield : null,
             'actual_total_yield' => $this->actual_total_yield !== null ? (float) $this->actual_total_yield : null,
             'variance_percentage' => $this->variance_percentage !== null ? (float) $this->variance_percentage : null,

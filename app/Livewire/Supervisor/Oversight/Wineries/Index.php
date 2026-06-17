@@ -119,7 +119,7 @@ class Index extends Component
         $winery = User::find($wineryId);
         $relation->delete();
 
-        $this->toastSuccess(__(':name desvinculada de la denominación.', ['name' => $winery?->name ?? __('La bodega')]));
+        $this->toastSuccess(__(':name desvinculada de la denominación.', ['name' => $winery->name ?? __('La bodega')]));
     }
 
     #[Layout('layouts.app')]

@@ -68,16 +68,19 @@ class PhenologyObservation extends Model
         return array_map(fn ($v) => __($v), static::SOURCES);
     }
 
+    /** @return BelongsTo<PlotPlanting, $this> */
     public function plotPlanting(): BelongsTo
     {
         return $this->belongsTo(PlotPlanting::class);
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -85,12 +88,12 @@ class PhenologyObservation extends Model
 
     public function getEventLabelAttribute(): string
     {
-        return __(self::EVENTS[$this->event] ?? $this->event);
+        return __(self::EVENTS[$this->event]);
     }
 
     public function getSourceLabelAttribute(): string
     {
-        return __(self::SOURCES[$this->source] ?? $this->source);
+        return __(self::SOURCES[$this->source]);
     }
 
     public function scopeActive($query)

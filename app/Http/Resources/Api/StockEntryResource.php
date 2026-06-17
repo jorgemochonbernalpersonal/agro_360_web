@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\WineContainerStockEntry;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin WineContainerStockEntry */
 class StockEntryResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -15,8 +17,8 @@ class StockEntryResource extends JsonResource
             'wine_name' => $this->wine?->name,
             'container_id' => $this->container_id,
             'container_name' => $this->container?->name,
-            'quantity_liters' => $this->quantity_liters !== null ? (float) $this->quantity_liters : null,
-            'entry_date' => $this->entry_date?->toDateString(),
+            'quantity_liters' => (float) $this->quantity_liters,
+            'entry_date' => $this->entry_date->toDateString(),
             'source' => $this->source,
             'source_label' => $this->source_label,
             'notes' => $this->notes,

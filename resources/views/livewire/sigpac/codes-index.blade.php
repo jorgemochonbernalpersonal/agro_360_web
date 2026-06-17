@@ -39,7 +39,7 @@
                 @endif
             </button>
 
-            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+            <x-agro.divider-vertical />
 
             <flux:button href="{{ route('sigpac.codes.create') }}" variant="primary" icon="plus">
                 Crear Código SIGPAC

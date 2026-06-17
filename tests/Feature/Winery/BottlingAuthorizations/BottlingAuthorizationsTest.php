@@ -7,6 +7,7 @@ use App\Livewire\Winery\BottlingAuthorizations\Edit;
 use App\Livewire\Winery\BottlingAuthorizations\Index;
 use App\Models\BottlingAuthorization;
 use App\Models\User;
+use App\Models\Wine;
 use Livewire\Livewire;
 use Tests\Feature\WineryTestCase;
 
@@ -84,6 +85,27 @@ class BottlingAuthorizationsTest extends WineryTestCase
             'id' => $authorization->id,
             'authorization_number' => 'AUTH-NEW',
         ]);
+    }
+
+    public function test_create_rejects_wine_from_other_winery(): void
+    {
+        $otherWine = Wine::create([
+            'user_id'   => $this->makeOtherWinery()->id,
+            'name'      => 'Other Wine',
+            'wine_type' => 'red',
+            'status'    => 'in_progress',
+        ]);
+
+        $firstType = array_key_first(BottlingAuthorization::AUTHORIZATION_TYPES);
+        $firstStatus = array_key_first(BottlingAuthorization::STATUSES);
+
+        Livewire::test(Create::class)
+            ->set('wine_id', (string) $otherWine->id)
+            ->set('authorization_number', 'AUTH-IDOR-TEST')
+            ->set('authorization_type', $firstType)
+            ->set('status', $firstStatus)
+            ->call('save')
+            ->assertHasErrors(['wine_id']);
     }
 
     public function test_winery_cannot_edit_other_winery_bottling_authorization(): void

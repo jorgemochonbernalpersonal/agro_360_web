@@ -11,6 +11,7 @@ use App\Models\PlotPlanting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use RuntimeException;
 
 class Edit extends Component
 {

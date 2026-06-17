@@ -25,7 +25,7 @@
             <flux:button wire:click="resetFilters" variant="ghost" icon="x-mark" size="sm">{{ __('Limpiar') }}</flux:button>
         @endif
 
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         <flux:button href="{{ roleRoute('viticulturist.official-reports.create') }}" wire:navigate variant="primary" icon="plus">
             {{ __('Generar Informe') }}

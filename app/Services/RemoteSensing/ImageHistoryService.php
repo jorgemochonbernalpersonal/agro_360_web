@@ -25,9 +25,9 @@ class ImageHistoryService
                     'month' => $record->image_date->locale('es')->monthName,
                     'year' => $record->image_date->year,
                     'ndvi' => $record->ndvi_mean,
-                    'ndvi_formatted' => $record->ndvi_mean !== null ? number_format($record->ndvi_mean, 3) : 'N/A',
+                    'ndvi_formatted' => $record->ndvi_mean !== null ? number_format((float) $record->ndvi_mean, 3) : 'N/A',
                     'ndwi' => $record->ndwi_mean,
-                    'ndwi_formatted' => $record->ndwi_mean !== null ? number_format($record->ndwi_mean, 3) : 'N/A',
+                    'ndwi_formatted' => $record->ndwi_mean !== null ? number_format((float) $record->ndwi_mean, 3) : 'N/A',
                     'health_status' => $record->health_status,
                     'health_text' => $record->health_text,
                     'health_color' => $record->health_color,
@@ -40,7 +40,7 @@ class ImageHistoryService
                     'image_source' => $record->image_source ?? 'MODIS',
                     'tile_path' => $record->tile_path,
                     // Generate NDVI color for visualization
-                    'ndvi_color' => $this->getNdviColor($record->ndvi_mean),
+                    'ndvi_color' => $this->getNdviColor($record->ndvi_mean !== null ? (float) $record->ndvi_mean : null),
                 ];
             });
     }

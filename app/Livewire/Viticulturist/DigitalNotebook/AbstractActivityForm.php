@@ -21,14 +21,12 @@ use Livewire\Component;
 /**
  * Base class for all digital-notebook Create and Edit forms.
  *
- * Provides:
- *  - Common Livewire properties shared by every activity form
- *  - mountCreate() / mountEditGuards() / loadActivityFields() helpers
- *  - updatedPlotId() reactive handler
- *  - commonRules() – validation rules that every activity type shares
- *  - resolveCrewMemberId() – find-or-create the CrewMember row
- *  - activityData() – build the AgriculturalActivity create/update array
- *  - renderData() – assemble the common view data bag
+ * @property-read mixed $viticulturists
+ * @property-read mixed $individualWorkers
+ * @property-read mixed $plots
+ * @property-read mixed $crews
+ * @property-read mixed $machinery
+ * @property-read mixed $campaign
  */
 abstract class AbstractActivityForm extends Component
 {
@@ -185,7 +183,7 @@ abstract class AbstractActivityForm extends Component
             $this->crew_id = $activity->crew_id;
         } elseif ($activity->crew_member_id) {
             $this->workType = 'individual';
-            $this->crew_member_id = $activity->crewMember?->viticulturist_id ?? '';
+            $this->crew_member_id = $activity->crewMember->viticulturist_id ?? '';
         }
     }
 

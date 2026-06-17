@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $wines
+ * @property-read mixed $wastes
+ */
 class Edit extends Component
 {
     use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;

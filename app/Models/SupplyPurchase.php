@@ -31,16 +31,19 @@ class SupplyPurchase extends Model
         'total_cost' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<Supply, $this> */
     public function supply(): BelongsTo
     {
         return $this->belongsTo(Supply::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
@@ -50,12 +53,12 @@ class SupplyPurchase extends Model
     {
         // Al crear una compra, incrementar el stock del insumo
         static::created(function (SupplyPurchase $purchase) {
-            $purchase->supply->increment('current_stock', $purchase->quantity);
+            $purchase->supply->increment('current_stock', (float) $purchase->quantity);
         });
 
         // Al eliminar una compra, decrementar el stock
         static::deleted(function (SupplyPurchase $purchase) {
-            $purchase->supply->decrement('current_stock', $purchase->quantity);
+            $purchase->supply->decrement('current_stock', (float) $purchase->quantity);
         });
     }
 }

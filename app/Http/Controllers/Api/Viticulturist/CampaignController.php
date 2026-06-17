@@ -59,7 +59,7 @@ class CampaignController extends BaseApiController
         return $this->paginated($activities, collect($activities->items())->map(fn ($a) => [
             'id' => $a->id,
             'type' => $a->activity_type,
-            'date' => $a->activity_date?->toDateString(),
+            'date' => $a->activity_date->toDateString(),
             'plot_name' => $a->plot?->name,
             'notes' => $a->notes,
         ]));
@@ -84,8 +84,8 @@ class CampaignController extends BaseApiController
                 'year' => $campaign->year,
                 'active' => (bool) $campaign->active,
                 'locked' => $campaign->locked_at !== null,
-                'start_date' => $campaign->start_date?->toDateString(),
-                'end_date' => $campaign->end_date?->toDateString(),
+                'start_date' => $campaign->start_date->toDateString(),
+                'end_date' => $campaign->end_date->toDateString(),
                 'total_activities' => (clone $activities)->count(),
                 'treatments' => (clone $activities)->where('activity_type', 'phytosanitary')->count(),
                 'irrigations' => (clone $activities)->where('activity_type', 'irrigation')->count(),

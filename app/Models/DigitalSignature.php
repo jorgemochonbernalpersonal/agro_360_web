@@ -25,6 +25,7 @@ class DigitalSignature extends Model
     /**
      * Relación con el usuario
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

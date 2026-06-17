@@ -11,6 +11,10 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $wines
+ * @property-read mixed $totalPreview
+ */
 class Create extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;

@@ -147,7 +147,7 @@ class ClaimAccount extends Component
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required', 'email', 'max:255',
-                'unique:users,email,'.($this->pendingUser?->id ?? 0),
+                'unique:users,email,'.($this->pendingUser->id ?? 0),
             ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];

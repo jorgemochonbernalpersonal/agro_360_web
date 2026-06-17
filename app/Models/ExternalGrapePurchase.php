@@ -74,26 +74,31 @@ class ExternalGrapePurchase extends Model
 
     // ── Relations ──────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Supplier, $this> */
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function destinationContainer(): BelongsTo
     {
         return $this->belongsTo(Container::class, 'destination_container_id');
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -103,17 +108,17 @@ class ExternalGrapePurchase extends Model
 
     public function getProductTypeLabelAttribute(): string
     {
-        return self::PRODUCT_TYPES[$this->product_type] ?? $this->product_type;
+        return self::PRODUCT_TYPES[$this->product_type];
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return self::STATUSES[$this->status];
     }
 
     public function getSupplierDisplayAttribute(): string
     {
-        return $this->supplier?->name ?? $this->supplier_name ?? '—';
+        return $this->supplier->name ?? $this->supplier_name ?? '—';
     }
 
     // ── Scopes ─────────────────────────────────────────────────────────────────

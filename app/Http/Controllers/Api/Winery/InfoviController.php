@@ -257,9 +257,9 @@ class InfoviController extends BaseApiController
 
         return [
             'kg_propia' => $kgPropia,
-            'kg_comprada' => (float) ($externas->firstWhere('grape_type', 'grapes')?->total_kg ?? 0),
-            'hl_mosto' => round((float) ($externas->firstWhere('grape_type', 'must')?->total_kg ?? 0) / 100, 3),
-            'hl_vino_granel' => round((float) ($externas->firstWhere('grape_type', 'bulk_wine')?->total_kg ?? 0) / 100, 3),
+            'kg_comprada' => (float) ($externas->firstWhere('grape_type', 'grapes')->total_kg ?? 0),
+            'hl_mosto' => round((float) ($externas->firstWhere('grape_type', 'must')->total_kg ?? 0) / 100, 3),
+            'hl_vino_granel' => round((float) ($externas->firstWhere('grape_type', 'bulk_wine')->total_kg ?? 0) / 100, 3),
         ];
     }
 

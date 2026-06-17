@@ -20,16 +20,19 @@ class WineBottlingSupply extends Model
         'quantity' => 'decimal:3',
     ];
 
+    /** @return BelongsTo<WineBottling, $this> */
     public function bottling(): BelongsTo
     {
         return $this->belongsTo(WineBottling::class, 'wine_bottling_id');
     }
 
+    /** @return BelongsTo<WinerySupply, $this> */
     public function winerySupply(): BelongsTo
     {
         return $this->belongsTo(WinerySupply::class);
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);

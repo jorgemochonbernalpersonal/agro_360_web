@@ -59,11 +59,13 @@ class CueExport extends Model
         return array_map(fn ($v) => __($v), static::STATUSES);
     }
 
+    /** @return BelongsTo<Exploitation, $this> */
     public function exploitation(): BelongsTo
     {
         return $this->belongsTo(Exploitation::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -71,12 +73,12 @@ class CueExport extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return self::STATUSES[$this->status];
     }
 
     public function getStatusColorAttribute(): string
     {
-        return self::STATUS_COLORS[$this->status] ?? 'zinc';
+        return self::STATUS_COLORS[$this->status];
     }
 
     public function scopeForViticulturist($query, int $viticulturistId)

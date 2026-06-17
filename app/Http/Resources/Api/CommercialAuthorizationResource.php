@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\CommercialAuthorization;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin CommercialAuthorization */
 class CommercialAuthorizationResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -16,7 +18,7 @@ class CommercialAuthorizationResource extends JsonResource
             'authorization_code' => $this->authorization_code,
             'description' => $this->description,
             'issuing_body' => $this->issuing_body,
-            'issue_date' => $this->issue_date?->toDateString(),
+            'issue_date' => $this->issue_date->toDateString(),
             'expiry_date' => $this->expiry_date?->toDateString(),
             'is_expired' => $this->isExpired(),
             'is_expiring_soon' => $this->isExpiringSoon(),

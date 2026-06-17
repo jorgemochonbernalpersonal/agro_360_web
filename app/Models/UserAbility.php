@@ -13,16 +13,19 @@ class UserAbility extends Model
 
     protected $casts = ['granted_at' => 'datetime'];
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Ability, $this> */
     public function ability(): BelongsTo
     {
         return $this->belongsTo(Ability::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function grantedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'granted_by');

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/** @property string $analysis_type */
 class WineAnalysis extends Model
 {
     // ─── Constants ─────────────────────────────────────────────────────────────
@@ -84,26 +85,31 @@ class WineAnalysis extends Model
 
     // ─── Relations ─────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
     }
 
+    /** @return BelongsTo<Oenologist, $this> */
     public function oenologist(): BelongsTo
     {
         return $this->belongsTo(Oenologist::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -113,7 +119,7 @@ class WineAnalysis extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return self::ANALYSIS_TYPES[$this->analysis_type] ?? $this->analysis_type;
+        return self::ANALYSIS_TYPES[$this->analysis_type];
     }
 
     public function getResultLabelAttribute(): string

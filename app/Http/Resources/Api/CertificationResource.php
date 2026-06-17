@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\Certification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin Certification */
 class CertificationResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -15,7 +17,7 @@ class CertificationResource extends JsonResource
             'certification_label' => $this->certification_type_label,
             'certifying_body' => $this->certifying_body,
             'certificate_number' => $this->certificate_number,
-            'issue_date' => $this->issue_date?->toDateString(),
+            'issue_date' => $this->issue_date->toDateString(),
             'expiry_date' => $this->expiry_date?->toDateString(),
             'scope' => $this->scope,
             'audit_date' => $this->audit_date?->toDateString(),

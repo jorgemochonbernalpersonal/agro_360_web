@@ -33,7 +33,7 @@ class UpdateAllPlotsNdviJob implements ShouldQueue
 
         // Obtener todas las parcelas activas
         $plots = Plot::where('active', true)
-            ->whereHas('multipartCoordinates', function ($query) {
+            ->whereHas('multiplePlotSigpacs', function ($query) {
                 $query->whereNotNull('plot_geometry_id');
             })
             ->get();
@@ -45,6 +45,7 @@ class UpdateAllPlotsNdviJob implements ShouldQueue
         $delaySeconds = 0;
 
         foreach ($plots as $plot) {
+            /** @var Plot $plot */
             // Espaciar los jobs para no saturar la API
             // 5 segundos entre cada petición = 720 parcelas/hora
             UpdatePlotNdviJob::dispatch($plot)

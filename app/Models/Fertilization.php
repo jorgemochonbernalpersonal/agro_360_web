@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property mixed $dose
+ * @property mixed $dose_unit
+ */
 class Fertilization extends Model
 {
     protected $fillable = [
@@ -36,6 +40,7 @@ class Fertilization extends Model
     /**
      * Actividad agrícola asociada
      */
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');

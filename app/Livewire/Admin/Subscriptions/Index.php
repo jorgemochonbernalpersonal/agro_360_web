@@ -82,13 +82,13 @@ class Index extends Component
             foreach ($subscriptions as $s) {
                 fputcsv($handle, [
                     $s->id,
-                    $s->user?->name ?? '',
-                    $s->user?->email ?? '',
+                    $s->user->name ?? '',
+                    $s->user->email ?? '',
                     $s->plan_type === 'monthly' ? 'Mensual' : 'Anual',
                     $s->status,
-                    number_format($s->amount, 2),
-                    $s->starts_at?->format('d/m/Y') ?? '',
-                    $s->ends_at?->format('d/m/Y') ?? '',
+                    number_format((float) $s->amount, 2),
+                    $s->starts_at->format('d/m/Y'),
+                    $s->ends_at->format('d/m/Y'),
                     $s->cancelled_at?->format('d/m/Y') ?? '',
                     $s->paypal_subscription_id ?? '',
                 ]);

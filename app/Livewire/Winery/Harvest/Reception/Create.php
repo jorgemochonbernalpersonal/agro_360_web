@@ -169,8 +169,8 @@ class Create extends Component
             ->get()
             ->map(fn ($p) => [
                 'id' => $p->id,
-                'label' => ($p->grapeVariety?->name ?? $p->name ?? 'Sin variedad')
-                    .($p->area_planted ? ' — '.number_format($p->area_planted, 2).' ha' : ''),
+                'label' => ($p->grapeVariety->name ?? $p->name ?? 'Sin variedad')
+                    .($p->area_planted ? ' — '.number_format((float) $p->area_planted, 2).' ha' : ''),
                 'area' => $p->area_planted,
                 'limit_kg' => $p->harvest_limit_kg,
                 'planting_year' => $p->planting_year,
@@ -248,7 +248,7 @@ class Create extends Component
         // Pre-check rápido (la validación real con lock se hace dentro del transaction)
         if (! $container->hasAvailableCapacity($weight)) {
             $this->addError('container_id',
-                __('El contenedor «:name» no tiene capacidad suficiente. Disponible: :available kg.', ['name' => $container->name, 'available' => number_format($container->getAvailableCapacity(), 0)])
+                __('El contenedor «:name» no tiene capacidad suficiente. Disponible: :available kg.', ['name' => $container->name, 'available' => number_format((float) $container->getAvailableCapacity(), 0)])
             );
 
             return null;

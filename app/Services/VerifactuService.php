@@ -43,9 +43,9 @@ class VerifactuService
 
             // 5. Parse response
             $linea = $response->RespuestaLinea[0] ?? null;
-            $csv = $linea?->CSV ?? null;
-            $errorCode = $linea?->CodigoErrorRegistro ?? null;
-            $errorDesc = $linea?->DescripcionErrorRegistro ?? null;
+            $csv = $linea->CSV ?? null;
+            $errorCode = $linea->CodigoErrorRegistro ?? null;
+            $errorDesc = $linea->DescripcionErrorRegistro ?? null;
             $isOk = ($response->EstadoEnvio ?? '') === 'Correcto' && ! $errorCode;
 
             // 6. Log in sif_records (store huella for chaining)
@@ -116,9 +116,9 @@ class VerifactuService
             $response = $this->sendToAeat($signedXml, $invoice);
 
             $linea = $response->RespuestaLinea[0] ?? null;
-            $csv = $linea?->CSV ?? null;
-            $errorCode = $linea?->CodigoErrorRegistro ?? null;
-            $errorDesc = $linea?->DescripcionErrorRegistro ?? null;
+            $csv = $linea->CSV ?? null;
+            $errorCode = $linea->CodigoErrorRegistro ?? null;
+            $errorDesc = $linea->DescripcionErrorRegistro ?? null;
             $isOk = ($response->EstadoEnvio ?? '') === 'Correcto' && ! $errorCode;
 
             SifRecord::create([
@@ -179,7 +179,7 @@ class VerifactuService
         $fecha = $invoice->invoice_date ?? null;
         $issuerNif = trim($invoice->user->dni ?? '');
         $invSettings = InvoicingSetting::forUser($invoice->user->id)->first();
-        $issuerName = trim($invSettings?->issuer_legal_name ?? $invoice->user->name ?? '');
+        $issuerName = trim($invSettings->issuer_legal_name ?? $invoice->user->name ?? '');
 
         if (empty($numSerie)) {
             $errors[] = 'El número de factura es obligatorio para Verifactu.';
@@ -228,8 +228,8 @@ class VerifactuService
 
         // ── Recipient ────────────────────────────────────────────────────────
         $recipientNif = $invoice->billing_company_document
-            ?? $invoice->client?->company_document
-            ?? $invoice->client?->particular_document
+            ?? $invoice->client->company_document
+            ?? $invoice->client->particular_document
             ?? null;
         $recipientName = $invoice->billing_company_name
             ?? trim(($invoice->billing_first_name ?? '').' '.($invoice->billing_last_name ?? ''))
@@ -494,7 +494,7 @@ class VerifactuService
      */
     public function sendVerifiedEmail(Invoice $invoice): void
     {
-        $email = $invoice->billing_email ?? $invoice->client?->email ?? null;
+        $email = $invoice->billing_email ?? $invoice->client->email ?? null;
 
         if (! $email) {
             return;
@@ -568,7 +568,7 @@ class VerifactuService
     {
         $issuerNif = $invoice->user->dni ?? '';
         $invSettings = InvoicingSetting::forUser($invoice->user->id)->first();
-        $issuerName = trim($invSettings?->issuer_legal_name ?? $invoice->user->name ?? '');
+        $issuerName = trim($invSettings->issuer_legal_name ?? $invoice->user->name ?? '');
         $numSerie = $invoice->invoice_number ?? '';
         $fechaAEAT = $invoice->invoice_date?->format('d-m-Y') ?? '';
         $huellaAnterior = $chain['huella'] ?? '';

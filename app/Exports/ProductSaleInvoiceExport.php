@@ -64,7 +64,7 @@ class ProductSaleInvoiceExport implements FromCollection, WithHeadings, WithMapp
             $invoice->invoice_number ?? '—',
             $invoice->delivery_note_code ?? '—',
             $invoice->invoice_date?->format('d/m/Y') ?? '—',
-            $invoice->client?->full_name ?? '—',
+            $invoice->client->full_name ?? '—',
             $statusMap[$invoice->status] ?? $invoice->status,
             $delivMap[$invoice->delivery_status] ?? $invoice->delivery_status,
             $payMap[$invoice->payment_status] ?? $invoice->payment_status,

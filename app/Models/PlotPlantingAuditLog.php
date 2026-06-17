@@ -27,6 +27,7 @@ class PlotPlantingAuditLog extends Model
     /**
      * Plantación auditada
      */
+    /** @return BelongsTo<PlotPlanting, $this> */
     public function plotPlanting(): BelongsTo
     {
         return $this->belongsTo(PlotPlanting::class);
@@ -35,6 +36,7 @@ class PlotPlantingAuditLog extends Model
     /**
      * Usuario que realizó la acción
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

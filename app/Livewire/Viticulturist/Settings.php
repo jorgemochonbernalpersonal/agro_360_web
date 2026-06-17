@@ -11,6 +11,7 @@ use App\Models\UserTax;
 use App\Models\ViticulturistSetting;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use RuntimeException;
 
 class Settings extends Component
 {
@@ -234,11 +235,11 @@ class Settings extends Component
         $inv = InvoicingSetting::forUser($user->id)->first();
 
         $this->fiscal_nif = $user->dni ?? '';
-        $this->fiscal_legal_name = $inv?->issuer_legal_name ?? '';
-        $this->fiscal_address = $profile?->address ?? '';
-        $this->fiscal_city = $profile?->city ?? '';
-        $this->fiscal_postal_code = $profile?->postal_code ?? '';
-        $this->fiscal_phone = $profile?->phone ?? '';
+        $this->fiscal_legal_name = $inv->issuer_legal_name ?? '';
+        $this->fiscal_address = $profile->address ?? '';
+        $this->fiscal_city = $profile->city ?? '';
+        $this->fiscal_postal_code = $profile->postal_code ?? '';
+        $this->fiscal_phone = $profile->phone ?? '';
     }
 
     public function saveFiscal(): void

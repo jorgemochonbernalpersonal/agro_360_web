@@ -31,11 +31,13 @@ class WaterConcession extends Model
         'active' => 'boolean',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
@@ -43,7 +45,7 @@ class WaterConcession extends Model
 
     public function getConcessionTypeLabelAttribute(): string
     {
-        return self::CONCESSION_TYPES[$this->concession_type] ?? $this->concession_type;
+        return self::CONCESSION_TYPES[$this->concession_type];
     }
 
     public function getIsExpiredAttribute(): bool

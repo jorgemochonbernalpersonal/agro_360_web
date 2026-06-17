@@ -27,6 +27,7 @@ class Tax extends Model
     /**
      * Usuarios que tienen este impuesto disponible
      */
+    /** @return BelongsToMany<User, $this> */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_taxes')
@@ -37,6 +38,7 @@ class Tax extends Model
     /**
      * Items de factura que usan este impuesto
      */
+    /** @return HasMany<InvoiceItem, $this> */
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
@@ -77,6 +79,6 @@ class Tax extends Model
      */
     public function getFormattedRateAttribute(): string
     {
-        return number_format($this->rate, 2).'%';
+        return number_format((float) $this->rate, 2).'%';
     }
 }

@@ -20,16 +20,19 @@ class Warehouse extends Model
         'active' => 'boolean',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return HasMany<ProductStock, $this> */
     public function stocks(): HasMany
     {
         return $this->hasMany(ProductStock::class);
     }
 
+    /** @return HasMany<Supply, $this> */
     public function supplies(): HasMany
     {
         return $this->hasMany(Supply::class);

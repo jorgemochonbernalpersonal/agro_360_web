@@ -44,6 +44,7 @@ class DoDocument extends Model
         return array_map(fn ($v) => __($v), static::STATUS_LABELS);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');

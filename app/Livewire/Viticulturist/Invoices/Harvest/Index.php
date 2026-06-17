@@ -94,7 +94,7 @@ class Index extends Component
         $totalHarvested = Harvest::whereHas('activity', function ($q) use ($user, $year) {
             $q->where('viticulturist_id', $user->id)
                 ->whereYear('activity_date', $year);
-        })->sum('total_weight') ?? 0;
+        })->sum('total_weight');
 
         // Total facturado de cosechas
         $totalInvoiced = Harvest::whereHas('activity', function ($q) use ($user, $year) {
@@ -102,7 +102,7 @@ class Index extends Component
                 ->whereYear('activity_date', $year);
         })
             ->whereHas('invoiceItems')
-            ->sum('total_weight') ?? 0;
+            ->sum('total_weight');
 
         // Pendiente de facturar
         $pendingToInvoice = $totalHarvested - $totalInvoiced;
@@ -117,7 +117,7 @@ class Index extends Component
         })
             ->with('plotPlanting.grapeVariety')
             ->get()
-            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety?->name ?? 'Sin variedad')
+            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety->name ?? 'Sin variedad')
             ->map(function ($harvests, $variety) {
                 $total = $harvests->sum('total_weight');
                 $invoiced = $harvests->filter(fn ($h) => $h->invoiceItems()->exists())->sum('total_weight');
@@ -138,7 +138,7 @@ class Index extends Component
         $harvestRevenue = Invoice::whereHas('items.harvest.activity', function ($q) use ($user, $year) {
             $q->where('viticulturist_id', $user->id)
                 ->whereYear('activity_date', $year);
-        })->sum('total_amount') ?? 0;
+        })->sum('total_amount');
 
         // Precio medio por kg
         $avgPricePerKg = $totalInvoiced > 0 ? $harvestRevenue / $totalInvoiced : 0;
@@ -150,7 +150,7 @@ class Index extends Component
                 $q->where('viticulturist_id', $user->id)
                     ->whereYear('activity_date', $date->year)
                     ->whereMonth('activity_date', $date->month);
-            })->sum('total_weight') ?? 0;
+            })->sum('total_weight');
 
             return [
                 'month' => $date->format('M'),
@@ -165,7 +165,7 @@ class Index extends Component
         })
             ->with('activity.plot')
             ->get()
-            ->groupBy(fn ($h) => $h->activity?->plot?->name ?? 'Sin parcela')
+            ->groupBy(fn ($h) => $h->activity?->plot->name ?? 'Sin parcela')
             ->map(function ($harvests, $plotName) {
                 return [
                     'plot' => $plotName,

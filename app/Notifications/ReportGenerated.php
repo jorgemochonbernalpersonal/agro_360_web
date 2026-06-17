@@ -37,8 +37,7 @@ class ReportGenerated extends Notification implements ShouldQueue
     {
         $reportType = match ($this->report->report_type) {
             'phytosanitary_treatments' => __('Tratamientos Fitosanitarios'),
-            'full_digital_notebook' => __('Cuaderno de Campo Completo'),
-            default => __('Informe')
+            default => __('Cuaderno de Campo Completo')
         };
 
         return (new MailMessage)

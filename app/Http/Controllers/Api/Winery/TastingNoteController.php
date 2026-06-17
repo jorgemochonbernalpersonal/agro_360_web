@@ -128,7 +128,7 @@ class TastingNoteController extends BaseApiController
             'wine_id' => $n->wine_id,
             'wine_name' => $n->wine?->name,
             'oenologist' => $n->oenologist ? ['id' => $n->oenologist->id, 'name' => $n->oenologist->full_name] : null,
-            'evaluation_date' => $n->evaluation_date?->toDateString(),
+            'evaluation_date' => $n->evaluation_date->toDateString(),
             'evaluator_display' => $n->evaluator_display,
             'visual_color' => $n->visual_color,
             'visual_clarity' => $n->visual_clarity,

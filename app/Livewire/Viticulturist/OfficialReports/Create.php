@@ -9,6 +9,7 @@ use App\Models\Campaign;
 use App\Services\OfficialReportService;
 use Carbon\Carbon;
 use Livewire\Component;
+use RuntimeException;
 
 class Create extends Component
 {
@@ -273,7 +274,7 @@ class Create extends Component
                     'plots_count' => $plots->count(),
                     'products_count' => $products->count(),
                     'total_area' => round($totalArea, 2),
-                    'estimated_size' => $estimatedSizeKb > 1024 ? round($estimatedSizeKb / 1024, 1).' MB' : $estimatedSizeKb.' KB',
+                    'estimated_size' => $estimatedSizeKb.' KB',
                     'estimated_time' => $totalTreatments < 20 ? '5-10' : ($totalTreatments < 50 ? '10-15' : '15-30'),
                     'pac_warnings' => $validation['has_warnings'] ? count($validation['warnings']) : 0,
                     'pac_compliance' => round($validator->getCompliancePercentage($validation), 1),
@@ -305,7 +306,7 @@ class Create extends Component
                         'type' => 'full_digital_notebook',
                         'campaign' => $campaign->name.' ('.$campaign->year.')',
                         'total_activities' => $totalActivities,
-                        'estimated_size' => $estimatedSizeKb > 1024 ? round($estimatedSizeKb / 1024, 1).' MB' : $estimatedSizeKb.' KB',
+                        'estimated_size' => $estimatedSizeKb.' KB',
                         'estimated_time' => '5-10 min por lote',
                         'batch_mode' => true,
                     ];
@@ -317,7 +318,7 @@ class Create extends Component
                         'type' => 'full_digital_notebook',
                         'campaign' => $campaign->name.' ('.$campaign->year.')',
                         'total_activities' => $totalActivities,
-                        'estimated_size' => $estimatedSizeKb > 1024 ? round($estimatedSizeKb / 1024, 1).' MB' : $estimatedSizeKb.' KB',
+                        'estimated_size' => $estimatedSizeKb.' KB',
                         'estimated_time' => $totalActivities < 30 ? '10-15' : ($totalActivities < 80 ? '15-25' : '25-40'),
                     ];
                 }
@@ -595,7 +596,7 @@ class Create extends Component
         $this->validate($rules, $messages);
 
         try {
-            $service = new OfficialReportService;
+            $service = app(OfficialReportService::class);
 
             if ($this->reportType === 'phytosanitary_treatments') {
                 // Informe de tratamientos fitosanitarios
@@ -615,7 +616,7 @@ class Create extends Component
             }
 
             // Verificar que el informe se creó correctamente
-            if (! $this->generatedReport || ! $this->generatedReport->id) {
+            if (! $this->generatedReport->id) {
                 throw new \Exception(__('El informe se generó pero no se pudo recuperar correctamente.'));
             }
 

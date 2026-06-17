@@ -36,6 +36,7 @@ class CalculateAdvancedMetricsCommand extends Command
         $force = $this->option('force');
 
         // Get plots to analyze
+        /** @var \Illuminate\Database\Eloquent\Collection<int, Plot> $plots */
         $plots = $plotId
             ? Plot::where('id', $plotId)->get()
             : Plot::with('remoteSensingData')->get();

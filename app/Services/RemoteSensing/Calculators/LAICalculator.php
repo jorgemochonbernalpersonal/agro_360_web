@@ -150,7 +150,7 @@ class LAICalculator
         PlotRemoteSensing $current,
         ?PlotRemoteSensing $lastYear = null
     ): array {
-        $currentLAI = $this->calculateFromNDVI($current->ndvi_mean);
+        $currentLAI = $this->calculateFromNDVI((float) ($current->ndvi_mean ?? 0));
         $classification = $this->classifyLAI($currentLAI);
 
         $result = [
@@ -161,7 +161,7 @@ class LAICalculator
 
         // Compare with last year if available
         if ($lastYear) {
-            $lastYearLAI = $this->calculateFromNDVI($lastYear->ndvi_mean);
+            $lastYearLAI = $this->calculateFromNDVI((float) ($lastYear->ndvi_mean ?? 0));
             $change = $currentLAI - $lastYearLAI;
             $changePercent = $lastYearLAI > 0
                 ? (($change / $lastYearLAI) * 100)
@@ -255,7 +255,7 @@ class LAICalculator
      * Higher LAI = more leaf area = more product needed
      *
      * @param float $lai               Current LAI
-     * @param float $baseDoLitersPerHa Base dose (L/ha)
+     * @param float $baseDoseLitersPerHa Base dose (L/ha)
      *
      * @return float Adjusted dose
      */

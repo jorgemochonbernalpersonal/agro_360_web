@@ -35,7 +35,7 @@ class DeleteUnverifiedUsers extends Command
 
         // Buscar usuarios no verificados creados hace más de X horas
         $unverifiedUsers = User::whereNull('email_verified_at')
-            ->where('created_at', '<', now()->subHours($hours))
+            ->where('created_at', '<', now()->subHours((int) $hours))
             ->get();
 
         if ($unverifiedUsers->isEmpty()) {

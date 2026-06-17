@@ -37,8 +37,8 @@ class HarvestDeliveryDelinkedNotification extends Notification implements Should
         $planting = $delivery->plotPlanting;
         $viticulturist = $delivery->viticulturist;
 
-        $variety = $planting?->grapeVariety?->name ?? $planting?->name ?? '—';
-        $plot = $planting?->plot?->name ?? '—';
+        $variety = $planting?->grapeVariety->name ?? $planting->name ?? '—';
+        $plot = $planting?->plot->name ?? '—';
         $showUrl = AppLink::url(route('winery.grape-reception.index'), 'agro365://home');
 
         if (app()->environment('production')) {
@@ -48,7 +48,7 @@ class HarvestDeliveryDelinkedNotification extends Notification implements Should
         return (new MailMessage)
             ->subject(__('Entrega modificada por el viticultor — ').$variety.' · '.$delivery->vintage_year)
             ->greeting(__('Hola :name', ['name' => $notifiable->name ?: '']))
-            ->line(__('El viticultor **').($viticulturist?->name ?? '—').'** ha modificado los kg declarados en una entrega que ya estaba confirmada. La confirmación ha quedado **desvinculada** y la entrega vuelve a estado pendiente.')
+            ->line(__('El viticultor **').($viticulturist->name ?? '—').'** ha modificado los kg declarados en una entrega que ya estaba confirmada. La confirmación ha quedado **desvinculada** y la entrega vuelve a estado pendiente.')
             ->line(new HtmlString(
                 '<div style="background-color:#fffbeb;border:1px solid #fde68a;padding:16px;border-radius:8px;margin:16px 0;">
                     <p style="margin:0 0 8px 0;"><strong>Variedad:</strong> '.e($variety).'</p>

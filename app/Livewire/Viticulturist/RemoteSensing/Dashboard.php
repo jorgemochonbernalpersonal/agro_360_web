@@ -481,8 +481,8 @@ class Dashboard extends Component
                     'id' => $mps->id,
                     'plot_id' => $mps->plot_id,
                     'plot_name' => $mps->plot->name ?? 'Sin parcela',
-                    'sigpac_code' => $mps->sigpacCode?->code ?? 'Sin código',
-                    'display_name' => ($mps->plot->name ?? 'Parcela').' · '.($mps->sigpacCode?->code ?? 'Recinto '.$mps->id),
+                    'sigpac_code' => $mps->sigpacCode->code ?? 'Sin código',
+                    'display_name' => ($mps->plot->name ?? 'Parcela').' · '.($mps->sigpacCode->code ?? 'Recinto '.$mps->id),
                     'area_ha' => $area ? round($area, 2) : 0,
                     'centroid' => $centroid,
                 ];

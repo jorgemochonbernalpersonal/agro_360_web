@@ -33,16 +33,19 @@ class WineContainerStockEntry extends Model
         return array_map(fn ($v) => __($v), static::SOURCES);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -50,6 +53,6 @@ class WineContainerStockEntry extends Model
 
     public function getSourceLabelAttribute(): string
     {
-        return self::SOURCES[$this->source] ?? $this->source;
+        return self::SOURCES[$this->source];
     }
 }

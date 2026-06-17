@@ -22,10 +22,17 @@ Muchas vistas escriben HTML/Tailwind inline en lugar de usar los componentes exi
   Balance: −830 líneas netas. Labels crudos → `agro/field-label`.
   Normalización: header `agro-50/700`, footer plano, icono unificado a verde.
 
+### ✅ Hecho (2026-06-17) — Fase 3, lotes 7–12
+
+- **Nuevos componentes**: `<x-agro.alert-chip>` (7 colores, href opcional), `<x-agro.kpi-tile>` (7 colores, prop `active`), `<x-agro.divider-vertical>` (35 instancias en 31 vistas), `<x-agro.list-row>` (19 instancias en 9 vistas).
+- **Migración export buttons**: `<a class="inline-flex...">` → `<flux:button>` en harvest/reception y quality-analysis.
+- **Migración callouts**: 4 callouts inline → `<flux:callout>` en admin y supervisor.
+- **Patrones descartados** (ROI insuficiente o incompatibles): avatar circles (heterogéneos), badges con interpolación dinámica `bg-{{ $color }}-100` (rompen Tailwind purge), mini empty-states dentro de `@empty` (padding variable, `<td>` incompatible).
+
 ### ⏳ Pendiente
 
 - **Fase 2** — migrar inline styles de dashboards (ver abajo).
-- **Fase 3** — limpiar componentes huérfanos (ver abajo).
+- **Fase 3** — completada (ver lotes 1–12 arriba).
 
 ---
 

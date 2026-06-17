@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
@@ -58,6 +59,10 @@ class AuthWithRefreshGrace
         if (! $user) {
             $token->delete();
 
+            return response()->json(['message' => __('No autenticado.')], 401);
+        }
+
+        if (! $user instanceof User) {
             return response()->json(['message' => __('No autenticado.')], 401);
         }
 

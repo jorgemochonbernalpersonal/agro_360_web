@@ -39,6 +39,7 @@ class WineryDocument extends Model
         return array_map(fn ($v) => __($v), static::DOCUMENT_TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -18,6 +18,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
+/**
+ * @property-read bool $isLocked
+ */
+
 class Edit extends Component
 {
     use WithHarvestSaleFormRules, WithHarvestSaleStock, WithRoleAwareRedirect, WithToastNotifications;
@@ -71,7 +75,7 @@ class Edit extends Component
             $this->destination_type = $firstMh->destination_type ?? 'third_party';
             $this->transport_document = $firstMh->transport_document ?? '';
             $this->vehicle_plate = $firstMh->vehicle_plate ?? '';
-            $this->delivery_date = $firstMh->delivery_date?->format('Y-m-d') ?? now()->toDateString();
+            $this->delivery_date = $firstMh->delivery_date->format('Y-m-d');
         } else {
             $this->buyer_name = $this->invoice->billing_company_name ?? '';
             $this->delivery_date = now()->toDateString();
@@ -104,7 +108,6 @@ class Edit extends Component
 
         if ($existing !== false) {
             array_splice($this->lines, $existing, 1);
-            $this->lines = array_values($this->lines);
 
             return;
         }
@@ -122,7 +125,7 @@ class Edit extends Component
             'harvest_id' => $harvestId,
             'quantity' => (string) round($state['available'], 3),
             'unit_price' => (string) ($harvest->price_per_kg ?? ''),
-            'tax_rate' => (string) ($setting?->default_irpf_rate ?? '0'),
+            'tax_rate' => (string) ($setting->default_irpf_rate ?? '0'),
             'description' => '',
         ];
     }
@@ -130,7 +133,6 @@ class Edit extends Component
     public function removeLine(int $index): void
     {
         array_splice($this->lines, $index, 1);
-        $this->lines = array_values($this->lines);
     }
 
     // ── Save ───────────────────────────────────────────────────────────────────
@@ -199,7 +201,7 @@ class Edit extends Component
                     $description = $line['description'] ?: sprintf(
                         'Cosecha #%d — %s',
                         $harvest->id,
-                        $harvest->harvest_start_date?->format('d/m/Y') ?? '—'
+                        $harvest->harvest_start_date->format('d/m/Y')
                     );
 
                     $item = InvoiceItem::create([

@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\WineBottling;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin WineBottling */
 class BottlingResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -31,17 +33,17 @@ class BottlingResource extends JsonResource
                 'id' => $this->oenologist->id,
                 'name' => $this->oenologist->name,
             ] : null),
-            'bottling_date' => $this->bottling_date?->toDateString(),
+            'bottling_date' => $this->bottling_date->toDateString(),
             'bottle_format' => $this->bottle_format,
             'bottle_format_label' => $this->format_label,
             'quantity_bottles' => $this->quantity_bottles,
-            'quantity_liters' => $this->quantity_liters !== null ? (float) $this->quantity_liters : null,
+            'quantity_liters' => (float) $this->quantity_liters,
             'lot_number' => $this->lot_number,
             'notes' => $this->notes,
             'supplies' => $this->whenLoaded('supplies', fn () => $this->supplies->map(fn ($s) => [
                 'id' => $s->id,
                 'supply_name' => $s->supply_name,
-                'quantity' => $s->quantity !== null ? (float) $s->quantity : null,
+                'quantity' => (float) $s->quantity,
                 'unit_id' => $s->unit_of_measurement_id,
                 'winery_supply_id' => $s->winery_supply_id,
             ])

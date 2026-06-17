@@ -15,15 +15,12 @@ use Illuminate\Support\Facades\Log;
  */
 class NasaSpectralBandsService
 {
-    private string $baseUrl;
-
     private bool $useMockData;
 
     private RateLimitService $rateLimitService;
 
     public function __construct(RateLimitService $rateLimitService)
     {
-        $this->baseUrl = config('services.nasa_earthdata.api_url');
         $this->useMockData = config('services.nasa_earthdata.mock', true);
         $this->rateLimitService = $rateLimitService;
     }
@@ -43,8 +40,8 @@ class NasaSpectralBandsService
 
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $plotSigpacId);
-            $startJulian = 'A'.now()->subDays(8)->format('Y').str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
-            $endJulian = 'A'.now()->format('Y').str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $startJulian = 'A'.now()->subDays(8)->format('Y').str_pad((string) now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian = 'A'.now()->format('Y').str_pad((string) now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             $response = Http::timeout(30)
                 ->get('https://modis.ornl.gov/rst/api/v1/VNP09A1/subset', [

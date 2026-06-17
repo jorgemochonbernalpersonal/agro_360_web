@@ -16,7 +16,7 @@ class AuditLog extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'user_id',
@@ -46,6 +46,7 @@ class AuditLog extends Model
     /**
      * Get the user who performed the action
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -94,7 +95,7 @@ class AuditLog extends Model
      */
     public function getDescription(): string
     {
-        $userName = $this->user?->name ?? 'Sistema';
+        $userName = $this->user->name ?? 'Sistema';
         $modelName = class_basename($this->auditable_type);
 
         return match ($this->event) {

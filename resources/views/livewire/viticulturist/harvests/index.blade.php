@@ -57,7 +57,7 @@
 
         <x-agro.filter-button modal="vendimia-filters" :count="$filterCount" />
 
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         <a href="{{ roleRoute('viticulturist.harvests.export-pdf', ['vintage' => $vintageYear]) }}"
            target="_blank"
@@ -66,7 +66,7 @@
             {{ __('Resumen PDF') }}
         </a>
 
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         <flux:button href="{{ roleRoute('viticulturist.digital-notebook.harvest.create') }}" variant="primary" icon="plus">
             {{ __('Añadir al cuaderno') }}

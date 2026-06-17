@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property mixed $pivot
+ */
 class WineryAnnouncement extends Model
 {
     use HasFactory;
@@ -53,11 +56,13 @@ class WineryAnnouncement extends Model
 
     // ── Relationships ────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
     }
 
+    /** @return BelongsToMany<User, $this> */
     public function viticulturists(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'winery_announcement_viticulturist', 'announcement_id', 'viticulturist_id')
@@ -113,16 +118,16 @@ class WineryAnnouncement extends Model
 
     public function typeLabel(): string
     {
-        return __(self::TYPE_LABELS[$this->type] ?? $this->type);
+        return __(self::TYPE_LABELS[$this->type]);
     }
 
     public function typeColor(): string
     {
-        return self::TYPE_COLORS[$this->type] ?? 'zinc';
+        return self::TYPE_COLORS[$this->type];
     }
 
     public function typeIcon(): string
     {
-        return self::TYPE_ICONS[$this->type] ?? 'information-circle';
+        return self::TYPE_ICONS[$this->type];
     }
 }

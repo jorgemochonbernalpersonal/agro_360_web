@@ -25,7 +25,7 @@ class Index extends AbstractIndex
     {
         if ($this->filterCampaign === '') {
             $campaign = Campaign::getOrCreateActiveForYear($this->viticulturistId());
-            $this->filterCampaign = (string) ($campaign?->id ?? '');
+            $this->filterCampaign = (string) ($campaign->id ?? '');
         }
     }
 
@@ -99,7 +99,7 @@ class Index extends AbstractIndex
         ];
 
         $co2Total = $this->filterCampaign
-            ? EnergyUsage::forCampaign($this->filterCampaign)
+            ? EnergyUsage::forCampaign((int) $this->filterCampaign)
                 ->where('viticulturist_id', $userId)
                 ->where('active', true)
                 ->sum('co2_kg_equivalent')

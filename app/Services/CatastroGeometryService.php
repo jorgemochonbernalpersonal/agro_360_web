@@ -99,7 +99,7 @@ class CatastroGeometryService
             'plot_geometry_id' => $geometryId,
         ]);
 
-        return $geometryId;
+        return (int) $geometryId;
     }
 
     /**

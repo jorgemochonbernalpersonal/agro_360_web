@@ -58,16 +58,19 @@ class PhytosanitaryContainerReturn extends Model
         return array_map(fn ($v) => __($v), static::COLLECTION_SYSTEMS);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
     }
 
+    /** @return BelongsTo<PhytosanitaryProduct, $this> */
     public function phytosanitaryProduct(): BelongsTo
     {
         return $this->belongsTo(PhytosanitaryProduct::class);
@@ -75,12 +78,12 @@ class PhytosanitaryContainerReturn extends Model
 
     public function getContainerTypeLabelAttribute(): string
     {
-        return __(self::CONTAINER_TYPES[$this->container_type] ?? $this->container_type);
+        return __(self::CONTAINER_TYPES[$this->container_type]);
     }
 
     public function getCollectionSystemLabelAttribute(): string
     {
-        return __(self::COLLECTION_SYSTEMS[$this->collection_system] ?? $this->collection_system);
+        return __(self::COLLECTION_SYSTEMS[$this->collection_system]);
     }
 
     public function scopeForViticulturist($query, int $id)

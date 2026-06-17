@@ -230,7 +230,7 @@ class Show extends Component
         $plotGeometries = $geometryRows
             ->map(fn ($mps) => [
                 'wkt' => $mps->plotGeometry->getWktCoordinates(),
-                'sigpac_code' => $mps->sigpacCode?->code ?? null,
+                'sigpac_code' => $mps->sigpacCode->code ?? null,
             ])
             ->filter(fn ($g) => $g['wkt'])
             ->values()
@@ -254,7 +254,7 @@ class Show extends Component
             return;
         }
 
-        $this->env_campaign_id = $campaign->id;
+        $this->env_campaign_id = (string) $campaign->id;
 
         $env = PlotEnvironment::where('viticulturist_id', Auth::id())
             ->where('plot_id', $this->plot->id)

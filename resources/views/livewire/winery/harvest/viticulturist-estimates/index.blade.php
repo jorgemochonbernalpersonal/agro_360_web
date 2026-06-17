@@ -19,7 +19,7 @@
         <x-agro.filter-button modal="vitic-estimates-filters" :count="$filterCount" />
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         {{-- Navegación --}}
         <flux:button variant="ghost" icon="chart-bar" href="{{ roleRoute('harvest-summary.index') }}" wire:navigate size="sm">

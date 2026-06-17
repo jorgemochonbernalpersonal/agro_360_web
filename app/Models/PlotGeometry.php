@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @property mixed $_pending_wkt
+ */
 class PlotGeometry extends Model
 {
     protected $table = 'plot_geometry';
@@ -21,6 +24,7 @@ class PlotGeometry extends Model
     /**
      * Relaciones con múltiples plot-sigpac
      */
+    /** @return HasMany<MultipartPlotSigpac, $this> */
     public function multiplePlotSigpacs(): HasMany
     {
         return $this->hasMany(MultipartPlotSigpac::class, 'plot_geometry_id');
@@ -205,7 +209,7 @@ class PlotGeometry extends Model
      *
      * @param mixed $geometry
      */
-    private static function invalidatePlotGeometryCache($geometry)
+    protected static function invalidatePlotGeometryCache($geometry)
     {
         // Obtener IDs de parcelas que usan esta geometría
         $plotIds = DB::table('multipart_plot_sigpac')

@@ -19,6 +19,7 @@ class ContainerType extends Model
         return true;
     }
 
+    /** @return HasMany<Container, $this> */
     public function containers(): HasMany
     {
         return $this->hasMany(Container::class, 'type_id');

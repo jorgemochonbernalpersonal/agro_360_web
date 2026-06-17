@@ -43,9 +43,7 @@ class Edit extends Component
         $this->control = $control;
         $this->wine_id = (string) $control->wine_id;
         $this->container_id = (string) $control->container_id;
-        $this->control_date = $control->control_date instanceof \Carbon\Carbon
-            ? $control->control_date->format('Y-m-d\TH:i')
-            : $control->control_date;
+        $this->control_date = $control->control_date->format('Y-m-d\TH:i');
         $this->temperature = $control->temperature !== null ? (string) $control->temperature : '';
         $this->brix_degree = $control->brix_degree !== null ? (string) $control->brix_degree : '';
         $this->baume_degree = $control->baume_degree !== null ? (string) $control->baume_degree : '';

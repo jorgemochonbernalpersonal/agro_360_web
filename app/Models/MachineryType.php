@@ -32,6 +32,7 @@ class MachineryType extends Model
     /**
      * Maquinaria asociada a este tipo.
      */
+    /** @return HasMany<Machinery, $this> */
     public function machinery(): HasMany
     {
         return $this->hasMany(Machinery::class, 'machinery_type_id');

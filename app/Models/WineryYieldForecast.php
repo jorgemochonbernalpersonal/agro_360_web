@@ -27,21 +27,25 @@ class WineryYieldForecast extends Model
 
     // ─── Relaciones ─────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<PlotPlanting, $this> */
     public function plotPlanting(): BelongsTo
     {
         return $this->belongsTo(PlotPlanting::class);
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
@@ -64,10 +68,10 @@ class WineryYieldForecast extends Model
      */
     public function receivedKg(): float
     {
-        return (float) GrapeReceptionBatch::where('winery_id', $this->winery_id)
+        return (float) (GrapeReceptionBatch::where('winery_id', $this->winery_id)
             ->where('plot_planting_id', $this->plot_planting_id)
             ->where('campaign_id', $this->campaign_id)
-            ->value('total_weight_kg') ?? 0;
+            ->value('total_weight_kg') ?? 0);
     }
 
     /**

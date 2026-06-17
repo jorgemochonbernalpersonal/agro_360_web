@@ -132,9 +132,9 @@ class WineAdditiveController extends BaseApiController
             'additive_name' => $a->additive_name,
             'supply' => $a->supply ? ['id' => $a->supply->id, 'name' => $a->supply->name] : null,
             'oenologist' => $a->oenologist ? ['id' => $a->oenologist->id, 'name' => $a->oenologist->full_name] : null,
-            'quantity' => $a->quantity !== null ? (float) $a->quantity : null,
+            'quantity' => (float) $a->quantity,
             'unit' => $a->unitOfMeasurement ? ['id' => $a->unitOfMeasurement->id, 'symbol' => $a->unitOfMeasurement->symbol ?? $a->unitOfMeasurement->name] : null,
-            'application_date' => $a->application_date?->toDateString(),
+            'application_date' => $a->application_date->toDateString(),
             'notes' => $a->notes,
             'created_at' => $a->created_at->toIso8601String(),
         ];

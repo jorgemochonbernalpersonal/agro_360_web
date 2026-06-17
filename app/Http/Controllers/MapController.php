@@ -43,6 +43,7 @@ class MapController extends Controller
         }
 
         // Intentar primero como Plot
+        /** @var Plot|null $plot */
         $plot = Plot::find($id);
 
         if ($plot) {
@@ -178,8 +179,8 @@ class MapController extends Controller
         $plotGeometries = collect([[
             'id' => $multipart->id,
             'index' => 1,
-            'sigpac_code' => $multipart->sigpacCode?->code ?? 'N/A',
-            'sigpac_formatted' => $multipart->sigpacCode?->formatted_code ?? 'Sin código',
+            'sigpac_code' => $multipart->sigpacCode->code ?? 'N/A',
+            'sigpac_formatted' => $multipart->sigpacCode->formatted_code ?? 'Sin código',
             'sigpac_id' => $multipart->sigpac_code_id,
             'wkt' => $wkt,
             'color' => $this->getColorForIndex(0), // Use the first color for a single item
@@ -206,7 +207,7 @@ class MapController extends Controller
             ->where('plot_id', $plot->id)
             ->whereNotNull('plot_geometry_id')
             ->get()
-            ->filter(fn ($rel) => $rel->plotGeometry)
+            ->filter(fn ($rel) => $rel->plotGeometry !== null)
             ->map(function ($rel, $index) use ($highlightSigpacId) {
                 $wkt = $rel->plotGeometry->getWktCoordinates();
 
@@ -222,11 +223,11 @@ class MapController extends Controller
                 return [
                     'id' => $rel->id,
                     'index' => $index + 1,
-                    'sigpac_code' => $rel->sigpacCode?->code ?? 'N/A',
-                    'sigpac_formatted' => $rel->sigpacCode?->formatted_code ?? 'Sin código',
+                    'sigpac_code' => $rel->sigpacCode->code ?? 'N/A',
+                    'sigpac_formatted' => $rel->sigpacCode->formatted_code ?? 'Sin código',
                     'sigpac_id' => $rel->sigpac_code_id,
-                    'polygon' => $rel->sigpacCode?->code_polygon ?? '',
-                    'enclosure' => $rel->sigpacCode?->code_enclosure ?? '',
+                    'polygon' => $rel->sigpacCode->code_polygon ?? '',
+                    'enclosure' => $rel->sigpacCode->code_enclosure ?? '',
                     'wkt' => $wkt,
                     'color' => $this->getColorForIndex($index),
                     'highlight' => $highlightSigpacId && $rel->sigpac_code_id == $highlightSigpacId,
@@ -290,7 +291,7 @@ class MapController extends Controller
             ->whereIn('plot_id', $plotIds)
             ->whereNotNull('plot_geometry_id')
             ->get()
-            ->filter(fn ($rel) => $rel->plotGeometry)
+            ->filter(fn ($rel) => $rel->plotGeometry !== null)
             ->map(function ($rel, $index) {
                 $wkt = $rel->plotGeometry->getWktCoordinates();
                 if (! $wkt) {
@@ -302,11 +303,11 @@ class MapController extends Controller
                     'id' => $rel->id,
                     'index' => $index + 1,
                     'source' => $rel->source ?? 'sigpac',
-                    'sigpac_code' => $rel->sigpacCode?->code ?? null,
-                    'sigpac_formatted' => $rel->sigpacCode?->formatted_code ?? null,
-                    'polygon' => $rel->sigpacCode?->code_polygon ?? null,
-                    'enclosure' => $rel->sigpacCode?->code_enclosure ?? null,
-                    'plot_name' => $rel->plot?->name ?? '',
+                    'sigpac_code' => $rel->sigpacCode->code ?? null,
+                    'sigpac_formatted' => $rel->sigpacCode->formatted_code ?? null,
+                    'polygon' => $rel->sigpacCode->code_polygon ?? null,
+                    'enclosure' => $rel->sigpacCode->code_enclosure ?? null,
+                    'plot_name' => $rel->plot->name ?? '',
                     'wkt' => $wkt,
                     'color' => [
                         'fill' => "hsla({$hue}, 70%, 50%, 0.3)",

@@ -22,6 +22,7 @@ class PlotRemoteSensingObserver
             return;
         }
 
+        /** @var \App\Models\Plot|null $plot */
         $plot = $record->plot()->first();
 
         if (! $plot) {

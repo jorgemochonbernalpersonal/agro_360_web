@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\WineTransfer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin WineTransfer */
 class TransferResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -17,7 +19,7 @@ class TransferResource extends JsonResource
             'from_container_name' => $this->fromContainer?->name,
             'to_container_id' => $this->to_container_id,
             'to_container_name' => $this->toContainer?->name,
-            'quantity' => $this->quantity !== null ? (float) $this->quantity : null,
+            'quantity' => (float) $this->quantity,
             'unit_of_measurement_id' => $this->unit_of_measurement_id,
             'unit' => $this->unitOfMeasurement ? [
                 'id' => $this->unitOfMeasurement->id,
@@ -25,7 +27,7 @@ class TransferResource extends JsonResource
                 'symbol' => $this->unitOfMeasurement->symbol ?? null,
             ] : null,
             'transfer_type' => $this->transfer_type,
-            'transfer_date' => $this->transfer_date?->toDateString(),
+            'transfer_date' => $this->transfer_date->toDateString(),
             'notes' => $this->notes,
             'created_at' => $this->created_at->toIso8601String(),
         ];

@@ -22,11 +22,13 @@ class PacDeclarationItem extends Model
         'eco_schemes' => 'array',
     ];
 
+    /** @return BelongsTo<PacDeclaration, $this> */
     public function declaration(): BelongsTo
     {
         return $this->belongsTo(PacDeclaration::class, 'declaration_id');
     }
 
+    /** @return BelongsTo<Plot, $this> */
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);

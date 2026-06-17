@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
+/**
+ * @property-read bool $isLocked
+ */
 class Edit extends Component
 {
     use WithGrapePurchaseFormRules, WithRoleAwareRedirect, WithToastNotifications;
@@ -49,7 +52,7 @@ class Edit extends Component
         $this->payment_type = $this->invoice->payment_type ?? '';
 
         $this->lines = $this->invoice->items
-            ->filter(fn ($item) => $item->harvest_id)
+            ->filter(fn ($item) => (bool) $item->harvest_id)
             ->map(fn ($item) => [
                 'harvest_id' => (int) $item->harvest_id,
                 'quantity' => (string) $item->quantity,
@@ -153,7 +156,7 @@ class Edit extends Component
                     $qty = $amounts['quantity'];
                     $unitPrice = $amounts['unit_price'];
 
-                    $variety = $harvest->plotPlanting?->grapeVariety?->name ?? 'uva';
+                    $variety = $harvest->plotPlanting?->grapeVariety->name ?? 'uva';
                     $description = $line['description'] ?: "Vendimia #{$harvest->id} - {$variety}";
 
                     InvoiceItem::create([

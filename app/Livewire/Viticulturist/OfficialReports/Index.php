@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\OfficialReport;
 use Livewire\Component;
 use Livewire\WithPagination;
+use RuntimeException;
 
 class Index extends Component
 {
@@ -254,7 +255,7 @@ class Index extends Component
                 return;
             }
 
-            $service = new \App\Services\OfficialReportService;
+            $service = app(\App\Services\OfficialReportService::class);
 
             return $service->downloadReportInFormat($report, $format);
 

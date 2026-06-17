@@ -110,7 +110,7 @@ class PlotNdviCard extends Component
             ->first();
 
         if ($lastYearData) {
-            $this->lastYearNdvi = $lastYearData->ndvi_mean;
+            $this->lastYearNdvi = $lastYearData->ndvi_mean !== null ? (float) $lastYearData->ndvi_mean : null;
             $currentNdvi = $this->latestData->ndvi_mean ?? 0;
 
             if ($this->lastYearNdvi > 0) {

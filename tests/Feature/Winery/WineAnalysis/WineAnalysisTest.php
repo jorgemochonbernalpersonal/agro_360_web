@@ -6,6 +6,7 @@ use App\Livewire\Winery\WineAnalysis\Create;
 use App\Livewire\Winery\WineAnalysis\Edit;
 use App\Livewire\Winery\WineAnalysis\Index;
 use App\Models\User;
+use App\Models\Wine;
 use App\Models\WineAnalysis;
 use Livewire\Livewire;
 use Tests\Feature\WineryTestCase;
@@ -85,6 +86,27 @@ class WineAnalysisTest extends WineryTestCase
             'id' => $analysis->id,
             'analysis_type' => $secondType,
         ]);
+    }
+
+    public function test_create_rejects_wine_from_other_winery(): void
+    {
+        $otherWine = Wine::create([
+            'user_id'   => $this->makeOtherWinery()->id,
+            'name'      => 'Other Wine',
+            'wine_type' => 'red',
+            'status'    => 'in_progress',
+        ]);
+
+        $firstType = array_key_first(WineAnalysis::ANALYSIS_TYPES);
+        $firstResult = array_key_first(WineAnalysis::RESULTS);
+
+        Livewire::test(Create::class)
+            ->set('wine_id', (string) $otherWine->id)
+            ->set('analysis_type', $firstType)
+            ->set('analysis_date', '2026-01-15')
+            ->set('result', $firstResult)
+            ->call('save')
+            ->assertHasErrors(['wine_id']);
     }
 
     public function test_winery_cannot_edit_other_winery_wine_analysis(): void

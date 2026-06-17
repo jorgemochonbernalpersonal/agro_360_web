@@ -51,16 +51,19 @@ class Subcontracting extends Model
         return array_map(fn ($v) => __($v), static::SERVICE_TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Plot, $this> */
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
@@ -68,6 +71,6 @@ class Subcontracting extends Model
 
     public function getServiceTypeLabelAttribute(): string
     {
-        return __(self::SERVICE_TYPES[$this->service_type] ?? $this->service_type);
+        return __(self::SERVICE_TYPES[$this->service_type]);
     }
 }

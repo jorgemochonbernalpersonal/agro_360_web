@@ -34,9 +34,7 @@ class InvoiceObserver
                 });
             }
 
-            if (! $invoice->order_date) {
-                $invoice->updateQuietly(['order_date' => now()]);
-            }
+            $invoice->updateQuietly(['order_date' => now()]);
 
             $this->populateBillingSnapshot($invoice);
         } catch (\Exception $e) {

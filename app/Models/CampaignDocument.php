@@ -41,11 +41,13 @@ class CampaignDocument extends Model
         return array_map(fn ($v) => __($v), static::DOCUMENT_TYPES);
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -53,7 +55,7 @@ class CampaignDocument extends Model
 
     public function getDocumentTypeLabelAttribute(): string
     {
-        return __(self::DOCUMENT_TYPES[$this->document_type] ?? $this->document_type);
+        return __(self::DOCUMENT_TYPES[$this->document_type]);
     }
 
     public function getFileSizeFormattedAttribute(): string

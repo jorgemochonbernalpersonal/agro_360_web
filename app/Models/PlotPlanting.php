@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property mixed $planted_area
+ * @property mixed $area
+ * @property mixed $plant_count
+ * @property mixed $plant_spacing
+ * @property mixed $certification
+ */
 class PlotPlanting extends Model
 {
     use HasFactory;
@@ -51,6 +58,8 @@ class PlotPlanting extends Model
 
     /**
      * Relación con la parcela
+     *
+     * @return BelongsTo<Plot, $this>
      */
     public function plot(): BelongsTo
     {
@@ -60,6 +69,7 @@ class PlotPlanting extends Model
     /**
      * Observaciones fenológicas de la plantación
      */
+    /** @return HasMany<PhenologyObservation, $this> */
     public function phenologyObservations(): HasMany
     {
         return $this->hasMany(PhenologyObservation::class);
@@ -75,8 +85,10 @@ class PlotPlanting extends Model
 
     /**
      * Certificaciones de la plantación
+     *
+     * @return HasMany<PlantingCertification, $this>
      */
-    public function certifications()
+    public function certifications(): HasMany
     {
         return $this->hasMany(PlantingCertification::class);
     }
@@ -84,6 +96,7 @@ class PlotPlanting extends Model
     /**
      * Relación con la variedad de uva
      */
+    /** @return BelongsTo<GrapeVariety, $this> */
     public function grapeVariety(): BelongsTo
     {
         return $this->belongsTo(GrapeVariety::class);
@@ -92,6 +105,7 @@ class PlotPlanting extends Model
     /**
      * Sistema de conducción (catálogo).
      */
+    /** @return BelongsTo<TrainingSystem, $this> */
     public function trainingSystem(): BelongsTo
     {
         return $this->belongsTo(TrainingSystem::class, 'training_system_id');

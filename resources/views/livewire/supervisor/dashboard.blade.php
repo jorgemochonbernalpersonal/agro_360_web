@@ -32,84 +32,45 @@
 
     {{-- KPI stat cards --}}
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <a href="{{ route('supervisor.oversight.wineries.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-indigo-300 transition-colors group">
-            <flux:icon icon="building-office-2" class="size-5 text-indigo-400 mb-2 group-hover:text-indigo-500" />
-            <p class="text-2xl font-bold text-indigo-600 leading-none">{{ $wineryCount }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Bodegas') }}</p>
-        </a>
-        <a href="{{ route('supervisor.growers.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-emerald-300 transition-colors group">
-            <flux:icon icon="users" class="size-5 text-emerald-400 mb-2 group-hover:text-emerald-500" />
-            <p class="text-2xl font-bold text-emerald-600 leading-none">{{ $viticulturistCount }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Viticultores') }}</p>
-        </a>
-        <a href="{{ route('supervisor.qualification.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-amber-300 transition-colors group">
-            <flux:icon icon="star" class="size-5 text-amber-400 mb-2 group-hover:text-amber-500" />
-            <p class="text-2xl font-bold text-amber-600 leading-none">{{ $pendingQualifications }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Calificaciones') }}</p>
-        </a>
-        <a href="{{ route('supervisor.labels.index', ['tab' => 'issued']) }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-rose-300 transition-colors group">
-            <flux:icon icon="tag" class="size-5 text-rose-400 mb-2 group-hover:text-rose-500" />
-            <p class="text-2xl font-bold text-rose-600 leading-none">{{ number_format($issuedLabelsThisYear) }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Emitidas') }} {{ now()->year }}</p>
+        <x-agro.kpi-tile color="indigo" icon="building-office-2" :value="$wineryCount" :label="__('Bodegas')" href="{{ route('supervisor.oversight.wineries.index') }}" />
+        <x-agro.kpi-tile color="emerald" icon="users" :value="$viticulturistCount" :label="__('Viticultores')" href="{{ route('supervisor.growers.index') }}" />
+        <x-agro.kpi-tile color="amber" icon="star" :value="$pendingQualifications" :label="__('Calificaciones')" href="{{ route('supervisor.qualification.index') }}" />
+        <x-agro.kpi-tile color="rose" icon="tag" :value="number_format($issuedLabelsThisYear)" :label="__('Emitidas') . ' ' . now()->year" href="{{ route('supervisor.labels.index', ['tab' => 'issued']) }}">
             @if($pendingLabels > 0)
                 <p class="text-[10px] text-rose-500 mt-0.5 font-medium">{{ $pendingLabels }} {{ $pendingLabels !== 1 ? __('pendientes') : __('pendiente') }}</p>
             @endif
-        </a>
-        <a href="{{ route('supervisor.requests.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-blue-300 transition-colors group">
-            <flux:icon icon="inbox" class="size-5 text-blue-400 mb-2 group-hover:text-blue-500" />
-            <p class="text-2xl font-bold text-blue-600 leading-none">{{ $pendingRequests }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Solicitudes') }}</p>
-        </a>
-        <a href="{{ route('supervisor.requests.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm {{ $overdueRequests > 0 ? 'border-red-300 bg-red-50/30' : '' }} hover:border-red-300 transition-colors group">
-            <flux:icon icon="clock" class="size-5 {{ $overdueRequests > 0 ? 'text-red-400' : 'text-zinc-300' }} mb-2" />
-            <p class="text-2xl font-bold {{ $overdueRequests > 0 ? 'text-red-600' : 'text-zinc-400' }} leading-none">{{ $overdueRequests }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Vencidas') }}</p>
-        </a>
+        </x-agro.kpi-tile>
+        <x-agro.kpi-tile color="blue" icon="inbox" :value="$pendingRequests" :label="__('Solicitudes')" href="{{ route('supervisor.requests.index') }}" />
+        <x-agro.kpi-tile color="red" icon="clock" :value="$overdueRequests" :label="__('Vencidas')" href="{{ route('supervisor.requests.index') }}" :active="$overdueRequests > 0" />
     </div>
 
     {{-- Alerts row --}}
     @if($overdueRequests > 0 || $pendingNotebookCount > 0 || $expiringCertifications->count() > 0 || $pendingLabels > 0 || $nonCompliantInspections > 0)
         <div class="flex flex-wrap gap-3">
             @if($overdueRequests > 0)
-                <a href="{{ route('supervisor.requests.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 hover:bg-red-100 transition">
-                    <flux:icon icon="exclamation-circle" class="size-4" />
+                <x-agro.alert-chip color="red" icon="exclamation-circle" href="{{ route('supervisor.requests.index') }}" wire:navigate>
                     {{ $overdueRequests }} {{ $overdueRequests !== 1 ? __('solicitudes vencidas') : __('solicitud vencida') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
             @if($nonCompliantInspections > 0)
-                <a href="{{ route('supervisor.inspection.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 hover:bg-red-100 transition">
-                    <flux:icon icon="shield-exclamation" class="size-4" />
+                <x-agro.alert-chip color="red" icon="shield-exclamation" href="{{ route('supervisor.inspection.index') }}" wire:navigate>
                     {{ $nonCompliantInspections }} {{ $nonCompliantInspections !== 1 ? __('inspecciones no conformes') : __('inspección no conforme') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
             @if($pendingLabels > 0)
-                <a href="{{ route('supervisor.labels.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-rose-50 border border-rose-200 text-sm text-rose-700 hover:bg-rose-100 transition">
-                    <flux:icon icon="tag" class="size-4" />
+                <x-agro.alert-chip color="rose" icon="tag" href="{{ route('supervisor.labels.index') }}" wire:navigate>
                     {{ $pendingLabels }} {{ $pendingLabels !== 1 ? __('contraetiquetas pendientes') : __('contraetiqueta pendiente') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
             @if($pendingNotebookCount > 0)
-                <a href="{{ route('supervisor.notebook.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700 hover:bg-amber-100 transition">
-                    <flux:icon icon="book-open" class="size-4" />
+                <x-agro.alert-chip color="amber" icon="book-open" href="{{ route('supervisor.notebook.index') }}" wire:navigate>
                     {{ $pendingNotebookCount }} {{ $pendingNotebookCount !== 1 ? __('solicitudes de cuaderno pendientes') : __('solicitud de cuaderno pendiente') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
             @if($expiringCertifications->count() > 0)
-                <a href="{{ route('supervisor.oversight.certifications.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 border border-orange-200 text-sm text-orange-700 hover:bg-orange-100 transition">
-                    <flux:icon icon="check-badge" class="size-4" />
+                <x-agro.alert-chip color="orange" icon="check-badge" href="{{ route('supervisor.oversight.certifications.index') }}" wire:navigate>
                     {{ $expiringCertifications->count() }} {{ $expiringCertifications->count() !== 1 ? __('certificaciones por vencer') : __('certificación por vencer') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
         </div>
     @endif
@@ -135,7 +96,7 @@
                 </x-slot:header>
 
                 @forelse($upcomingInspections as $insp)
-                    <div class="flex items-center gap-3 py-2.5 border-b border-zinc-100 last:border-0">
+                    <x-agro.list-row class="flex items-center gap-3 py-2.5">
                         @php
                             $daysLeft = today()->diffInDays($insp->inspection_date, false);
                             $urgency  = $daysLeft <= 3 ? 'bg-red-50 text-red-700 border-red-200'
@@ -159,7 +120,7 @@
                             </p>
                         </div>
                         <x-agro.status-badge :status="$insp->status" />
-                    </div>
+                    </x-agro.list-row>
                 @empty
                     <div class="py-6 text-center text-sm text-zinc-400">
                         <flux:icon icon="calendar" class="size-8 mx-auto mb-2 text-zinc-300" />
@@ -183,7 +144,7 @@
                     </x-slot:header>
 
                     @foreach($recentRequests as $req)
-                        <div class="flex items-center gap-3 py-2.5 border-b border-zinc-100 last:border-0">
+                        <x-agro.list-row class="flex items-center gap-3 py-2.5">
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-zinc-800 truncate">{{ $req->title }}</p>
                                 <p class="text-xs text-zinc-400">
@@ -196,7 +157,7 @@
                                 </p>
                             </div>
                             <x-agro.status-badge :status="$req->status" />
-                        </div>
+                        </x-agro.list-row>
                     @endforeach
                 </x-agro.card>
             @endif
@@ -217,7 +178,7 @@
                     </x-slot:header>
 
                     @foreach($pendingNotebookRequests as $req)
-                        <div class="flex items-center gap-3 py-2.5 border-b border-zinc-100 last:border-0">
+                        <x-agro.list-row class="flex items-center gap-3 py-2.5">
                             <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
                                 <flux:icon icon="user" class="size-4 text-amber-600" />
                             </div>
@@ -225,7 +186,7 @@
                                 <p class="text-sm font-medium text-zinc-800 truncate">{{ $req->viticulturist?->name }}</p>
                                 <p class="text-xs text-zinc-400">{{ __('Solicitado') }} {{ $req->requested_at->diffForHumans() }}</p>
                             </div>
-                        </div>
+                        </x-agro.list-row>
                     @endforeach
 
                     <div class="pt-2">
@@ -252,7 +213,7 @@
                             $daysLeft = today()->diffInDays($cert->expiry_date, false);
                             $color = $daysLeft <= 15 ? 'text-red-600' : 'text-orange-600';
                         @endphp
-                        <div class="flex items-center gap-3 py-2.5 border-b border-zinc-100 last:border-0">
+                        <x-agro.list-row class="flex items-center gap-3 py-2.5">
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-zinc-800 truncate">{{ $cert->viticulturist?->name }}</p>
                                 <p class="text-xs text-zinc-500 truncate">{{ $cert->certification_type_label }}</p>
@@ -260,7 +221,7 @@
                             <span class="text-xs font-semibold {{ $color }} shrink-0">
                                 {{ $daysLeft === 0 ? __('Hoy') : __('En :nd', ['n' => $daysLeft]) }}
                             </span>
-                        </div>
+                        </x-agro.list-row>
                     @endforeach
                 </x-agro.card>
             @endif

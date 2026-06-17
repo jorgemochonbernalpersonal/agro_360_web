@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property mixed $total
+ * @property mixed $active
+ * @property mixed $month
+ * @property mixed $year
+ * @property mixed $cancelled
+ * @property mixed $expired
+ * @property mixed $revenue
+ */
 class Subscription extends Model
 {
     use HasFactory;
@@ -66,6 +75,7 @@ class Subscription extends Model
     /**
      * Relación con el usuario
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -74,6 +84,7 @@ class Subscription extends Model
     /**
      * Relación con los pagos
      */
+    /** @return HasMany<Payment, $this> */
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);

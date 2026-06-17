@@ -19,6 +19,9 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * @property-read mixed $viticulturists
+ */
 class Index extends Component
 {
     use WithPagination, WithToastNotifications, WithUserFilters;

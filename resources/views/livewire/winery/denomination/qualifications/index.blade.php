@@ -45,7 +45,7 @@
             @php
                 $rc = $resultColors[$q->result] ?? 'zinc';
             @endphp
-            <div class="flex items-center gap-4 py-3 border-b border-zinc-100 last:border-0">
+            <x-agro.list-row class="flex items-center gap-4 py-3">
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium text-zinc-800">{{ $q->wine_name }}</p>
                     <p class="text-xs text-zinc-400 mt-0.5">
@@ -67,7 +67,7 @@
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $rc }}-100 text-{{ $rc }}-700">
                     {{ $resultLabels[$q->result] ?? $q->result }}
                 </span>
-            </div>
+            </x-agro.list-row>
         @empty
             <x-agro.empty-state
                 icon="star"

@@ -35,9 +35,9 @@ class HarvestDeliveryResolvedNotification extends Notification implements Should
         $planting = $delivery->plotPlanting;
         $harvest = $delivery->harvest;
 
-        $variety = $planting?->grapeVariety?->name ?? $planting?->name ?? '—';
-        $plot = $planting?->plot?->name ?? '—';
-        $winery = $harvest?->winery?->name ?? '—';
+        $variety = $planting?->grapeVariety->name ?? $planting->name ?? '—';
+        $plot = $planting?->plot->name ?? '—';
+        $winery = $harvest?->winery->name ?? '—';
         $showUrl = AppLink::url(
             route('viticulturist.harvests.show', [
                 'planting' => $delivery->plot_planting_id,
@@ -75,8 +75,8 @@ class HarvestDeliveryResolvedNotification extends Notification implements Should
     public function toArray(object $notifiable): array
     {
         $delivery = $this->delivery;
-        $variety = $delivery->plotPlanting?->grapeVariety?->name ?? $delivery->plotPlanting?->name ?? '—';
-        $winery = $delivery->harvest?->winery?->name ?? '—';
+        $variety = $delivery->plotPlanting?->grapeVariety->name ?? $delivery->plotPlanting->name ?? '—';
+        $winery = $delivery->harvest?->winery->name ?? '—';
 
         return [
             'type' => 'delivery_resolved',

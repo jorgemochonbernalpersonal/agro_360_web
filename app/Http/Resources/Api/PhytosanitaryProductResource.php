@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\PhytosanitaryProduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PhytosanitaryProduct */
 class PhytosanitaryProductResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -19,7 +21,7 @@ class PhytosanitaryProductResource extends JsonResource
             'manufacturer' => $this->manufacturer,
             'type' => $this->type,
             'toxicity_class' => $this->toxicity_class,
-            'withdrawal_period_days' => $this->withdrawal_period_days !== null ? (int) $this->withdrawal_period_days : null,
+            'withdrawal_period_days' => (int) $this->withdrawal_period_days,
             'description' => $this->description,
         ];
     }

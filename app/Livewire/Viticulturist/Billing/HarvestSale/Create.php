@@ -46,9 +46,6 @@ class Create extends Component
 
     protected InvoiceService $invoiceService;
 
-    /** Cached default IRPF (not a Livewire property) */
-    private float $_defaultIrpf = 0;
-
     public function boot(InvoiceService $invoiceService): void
     {
         $this->invoiceService = $invoiceService;
@@ -59,8 +56,6 @@ class Create extends Component
         $this->invoice_date = now()->toDateString();
         $this->delivery_date = now()->toDateString();
 
-        $setting = ViticulturistSetting::forUser(Auth::id());
-        $this->_defaultIrpf = $setting ? (float) ($setting->default_irpf_rate ?? 0) : 0;
     }
 
     // ── Harvest toggle ─────────────────────────────────────────────────────────
@@ -71,7 +66,6 @@ class Create extends Component
 
         if ($existing !== false) {
             array_splice($this->lines, $existing, 1);
-            $this->lines = array_values($this->lines);
 
             return;
         }
@@ -89,7 +83,7 @@ class Create extends Component
             'harvest_id' => $harvestId,
             'quantity' => (string) round($state['available'], 3),
             'unit_price' => (string) ($harvest->price_per_kg ?? ''),
-            'tax_rate' => (string) ($setting?->default_irpf_rate ?? '0'),
+            'tax_rate' => (string) ($setting->default_irpf_rate ?? '0'),
             'description' => '',
         ];
     }
@@ -97,7 +91,6 @@ class Create extends Component
     public function removeLine(int $index): void
     {
         array_splice($this->lines, $index, 1);
-        $this->lines = array_values($this->lines);
     }
 
     // ── Save ───────────────────────────────────────────────────────────────────
@@ -153,7 +146,7 @@ class Create extends Component
                 $description = $line['description'] ?: sprintf(
                     'Cosecha #%d — %s',
                     $harvest->id,
-                    $harvest->harvest_start_date?->format('d/m/Y') ?? '—'
+                    $harvest->harvest_start_date->format('d/m/Y')
                 );
 
                 // Reserve stock (available → reserved)

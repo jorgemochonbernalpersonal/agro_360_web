@@ -34,7 +34,7 @@ class GeocodePlotMunicipalities extends Command
         $updated = 0;
 
         foreach ($municipalities as $municipality) {
-            $province = $municipality->province?->name ?? '';
+            $province = $municipality->province->name ?? '';
             $search = "{$municipality->name}, {$province}, España";
 
             $http = Http::withHeaders([

@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\PlotCost;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PlotCost */
 class PlotCostResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -16,7 +18,7 @@ class PlotCostResource extends JsonResource
             'category' => $this->category,
             'description' => $this->description,
             'amount' => (float) $this->amount,
-            'cost_date' => $this->cost_date?->toDateString(),
+            'cost_date' => $this->cost_date->toDateString(),
             'supplier' => $this->supplier,
             'invoice_reference' => $this->invoice_reference,
             'notes' => $this->notes,

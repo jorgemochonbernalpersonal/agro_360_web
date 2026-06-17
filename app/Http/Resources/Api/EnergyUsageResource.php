@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\EnergyUsage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin EnergyUsage */
 class EnergyUsageResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -14,7 +16,7 @@ class EnergyUsageResource extends JsonResource
             'campaign_id' => $this->campaign_id,
             'activity_id' => $this->activity_id,
             'machinery_id' => $this->machinery_id,
-            'date' => $this->date?->toDateString(),
+            'date' => $this->date->toDateString(),
             'energy_type' => $this->energy_type,
             'unit' => $this->unit,
             'quantity' => (float) $this->quantity,

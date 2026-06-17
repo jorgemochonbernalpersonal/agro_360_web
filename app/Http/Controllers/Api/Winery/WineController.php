@@ -199,7 +199,7 @@ class WineController extends BaseApiController
                     'internal_code' => $wine->internal_code,
                     'vintage' => $wine->vintage,
                     'wine_type' => $wine->wine_type,
-                    'wine_type_label' => __(Wine::WINE_TYPES[$wine->wine_type] ?? $wine->wine_type),
+                    'wine_type_label' => __(Wine::WINE_TYPES[$wine->wine_type]),
                     'aging_type' => $wine->aging_type,
                     'aging_type_label' => __(Wine::AGING_TYPES[$wine->aging_type] ?? $wine->aging_type),
                     'category' => $wine->category,
@@ -210,7 +210,7 @@ class WineController extends BaseApiController
                     'is_must' => $wine->is_must,
                     'is_organic' => $wine->is_organic,
                     'status' => $wine->status,
-                    'status_label' => __(Wine::STATUSES[$wine->status] ?? $wine->status),
+                    'status_label' => __(Wine::STATUSES[$wine->status]),
                     'trace_token' => $wine->trace_token,
                     'notes' => $wine->notes,
                     'oenologist' => $wine->oenologist ? [
@@ -219,7 +219,7 @@ class WineController extends BaseApiController
                     ] : null,
                 ],
                 'analysis' => $latestAnalysis ? [
-                    'analysis_date' => $latestAnalysis->analysis_date?->toDateString(),
+                    'analysis_date' => $latestAnalysis->analysis_date->toDateString(),
                     'analysis_type' => $latestAnalysis->analysis_type,
                     'laboratory' => $latestAnalysis->laboratory_name ?? $latestAnalysis->laboratory,
                     'alcoholic_strength' => $latestAnalysis->alcoholic_strength !== null ? (float) $latestAnalysis->alcoholic_strength : null,
@@ -235,7 +235,7 @@ class WineController extends BaseApiController
                     'result_label' => $latestAnalysis->result_label,
                 ] : null,
                 'tasting' => $latestTasting ? [
-                    'evaluation_date' => $latestTasting->evaluation_date?->toDateString(),
+                    'evaluation_date' => $latestTasting->evaluation_date->toDateString(),
                     'evaluator' => $latestTasting->evaluator_display,
                     'visual_color' => $latestTasting->visual_color,
                     'visual_clarity' => $latestTasting->visual_clarity,

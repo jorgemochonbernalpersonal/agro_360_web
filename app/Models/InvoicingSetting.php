@@ -38,6 +38,7 @@ class InvoicingSetting extends Model
     /**
      * Usuario propietario de la configuración
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -61,7 +62,7 @@ class InvoicingSetting extends Model
         $this->checkYearReset('invoice');
 
         $code = $this->replaceVariables($this->invoice_prefix).
-                str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
+                str_pad((string) $this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
 
         return $code;
     }
@@ -74,7 +75,7 @@ class InvoicingSetting extends Model
         $this->checkYearReset('delivery_note');
 
         $code = $this->replaceVariables($this->delivery_note_prefix).
-                str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
+                str_pad((string) $this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
 
         return $code;
     }
@@ -165,7 +166,7 @@ class InvoicingSetting extends Model
     public function getInvoicePreview(): string
     {
         return $this->replaceVariables($this->invoice_prefix).
-               str_pad($this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
+               str_pad((string) $this->invoice_counter, $this->invoice_padding, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -174,7 +175,7 @@ class InvoicingSetting extends Model
     public function getDeliveryNotePreview(): string
     {
         return $this->replaceVariables($this->delivery_note_prefix).
-               str_pad($this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
+               str_pad((string) $this->delivery_note_counter, $this->delivery_note_padding, '0', STR_PAD_LEFT);
     }
 
     /**

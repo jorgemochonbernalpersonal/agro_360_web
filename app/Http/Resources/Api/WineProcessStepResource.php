@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\WineProcessDetail;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin WineProcessDetail */
 class WineProcessStepResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -14,7 +16,7 @@ class WineProcessStepResource extends JsonResource
             'wine_id' => $this->wine_id,
             'process_type' => $this->process_type,
             'process_type_label' => $this->process_type_label,
-            'start_date' => $this->start_date?->toDateString(),
+            'start_date' => $this->start_date->toDateString(),
             'end_date' => $this->end_date?->toDateString(),
             'is_completed' => $this->isCompleted(),
             'quantity' => $this->quantity !== null ? (float) $this->quantity : null,
@@ -40,7 +42,7 @@ class WineProcessStepResource extends JsonResource
             ] : null),
             'observations' => $this->observations,
             'step_type' => $this->process_type,
-            'step_date' => $this->start_date?->toDateString(),
+            'step_date' => $this->start_date->toDateString(),
             'description' => $this->observations,
             'notes' => $this->observations,
             'completed_at' => $this->isCompleted() ? $this->updated_at?->toIso8601String() : null,

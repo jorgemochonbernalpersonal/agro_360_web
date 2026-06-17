@@ -91,7 +91,7 @@ class Index extends Component
         }
 
         $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
-        $this->p_campaign_id = (string) ($campaign?->id ?? '');
+        $this->p_campaign_id = (string) ($campaign->id ?? '');
         $this->p_invoice_date = now()->format('Y-m-d');
     }
 
@@ -294,7 +294,7 @@ class Index extends Component
             } elseif ($this->inv_status === 'expired') {
                 $query->whereNotNull('expiry_date')->where('expiry_date', '<=', now());
             } elseif ($this->inv_status === 'low_stock') {
-                $query->where(fn ($q) => $q->whereColumn('quantity', '<', DB::raw('COALESCE(minimum_stock, 5)')));
+                $query->where(fn ($q) => $q->whereRaw('quantity < COALESCE(minimum_stock, 5)'));
             }
 
             $stocks = $query->orderBy('expiry_date')->orderBy('product_id')->paginate(20);
@@ -303,7 +303,7 @@ class Index extends Component
             $stats = [
                 'total_products' => $base()->distinct('product_id')->count('product_id'),
                 'total_value' => $base()->sum(DB::raw('quantity * COALESCE(unit_price, 0)')),
-                'low_stock_count' => $base()->where(fn ($q) => $q->whereColumn('quantity', '<', DB::raw('COALESCE(minimum_stock, 5)')))->count(),
+                'low_stock_count' => $base()->where(fn ($q) => $q->whereRaw('quantity < COALESCE(minimum_stock, 5)'))->count(),
                 'expiring_soon_count' => $base()->whereNotNull('expiry_date')->where('expiry_date', '>', now())->where('expiry_date', '<=', now()->addDays(30))->count(),
             ];
 

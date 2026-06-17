@@ -77,12 +77,11 @@ class InventoryExport implements FromCollection, WithHeadings, WithMapping, With
     {
         return [
             1 => [
-                'font' => ['bold' => true],
+                'font' => ['color' => ['rgb' => 'FFFFFF'], 'bold' => true],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '4CAF50'],
                 ],
-                'font' => ['color' => ['rgb' => 'FFFFFF'], 'bold' => true],
             ],
         ];
     }

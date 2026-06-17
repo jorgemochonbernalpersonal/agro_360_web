@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\WineFermentationControl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin WineFermentationControl */
 class FermentationControlResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -15,7 +17,7 @@ class FermentationControlResource extends JsonResource
             'wine_name' => $this->wine?->name,
             'container_id' => $this->container_id,
             'container_name' => $this->container?->name,
-            'control_date' => $this->control_date?->toIso8601String(),
+            'control_date' => $this->control_date->toIso8601String(),
             'temperature' => $this->temperature !== null ? (float) $this->temperature : null,
             'brix_degree' => $this->brix_degree !== null ? (float) $this->brix_degree : null,
             'baume_degree' => $this->baume_degree !== null ? (float) $this->baume_degree : null,

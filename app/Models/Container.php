@@ -10,6 +10,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property mixed $total
+ * @property mixed $total_capacity
+ * @property mixed $total_used
+ * @property mixed $pivot
+ * @property mixed $notes
+ * @method static \Illuminate\Database\Eloquent\Builder<static> empty()
+ * @method static \Illuminate\Database\Eloquent\Builder<static> full()
+ */
 class Container extends Model
 {
     use Auditable;
@@ -68,6 +77,7 @@ class Container extends Model
     /**
      * Usuario propietario
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -76,6 +86,7 @@ class Container extends Model
     /**
      * Tipo de contenedor
      */
+    /** @return BelongsTo<ContainerType, $this> */
     public function containerType(): BelongsTo
     {
         return $this->belongsTo(ContainerType::class, 'type_id');
@@ -84,6 +95,7 @@ class Container extends Model
     /**
      * Material del contenedor
      */
+    /** @return BelongsTo<ContainerMaterial, $this> */
     public function containerMaterial(): BelongsTo
     {
         return $this->belongsTo(ContainerMaterial::class, 'material_id');
@@ -92,6 +104,7 @@ class Container extends Model
     /**
      * Unidad de medida
      */
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
@@ -100,6 +113,7 @@ class Container extends Model
     /**
      * Sala/Bodega donde está ubicado
      */
+    /** @return BelongsTo<ContainerRoom, $this> */
     public function containerRoom(): BelongsTo
     {
         return $this->belongsTo(ContainerRoom::class);
@@ -108,6 +122,7 @@ class Container extends Model
     /**
      * Todos los estados activos del contenedor (uno por cosecha).
      */
+    /** @return HasMany<ContainerCurrentState, $this> */
     public function currentStates(): HasMany
     {
         return $this->hasMany(ContainerCurrentState::class);
@@ -117,6 +132,7 @@ class Container extends Model
      * Estado más reciente del contenedor (para compatibilidad con vistas legacy).
      * Para multi-cosecha usa currentStates().
      */
+    /** @return HasOne<ContainerCurrentState, $this> */
     public function currentState(): HasOne
     {
         return $this->hasOne(ContainerCurrentState::class)->latestOfMany();
@@ -125,6 +141,7 @@ class Container extends Model
     /**
      * Historial de movimientos
      */
+    /** @return HasMany<ContainerHistory, $this> */
     public function histories(): HasMany
     {
         return $this->hasMany(ContainerHistory::class)->orderBy('start_date', 'desc');
@@ -133,6 +150,7 @@ class Container extends Model
     /**
      * Cosechas que usan este contenedor
      */
+    /** @return HasMany<Harvest, $this> */
     public function harvests(): HasMany
     {
         return $this->hasMany(Harvest::class, 'container_id');
@@ -141,6 +159,7 @@ class Container extends Model
     /**
      * Mantenimientos del contenedor
      */
+    /** @return HasMany<ContainerMaintenance, $this> */
     public function maintenances(): HasMany
     {
         return $this->hasMany(ContainerMaintenance::class)->orderByDesc('scheduled_date');
@@ -149,6 +168,7 @@ class Container extends Model
     /**
      * Aditivos enológicos aplicados al contenido activo
      */
+    /** @return HasMany<ContainerAdditiveSupply, $this> */
     public function additiveSupplies(): HasMany
     {
         return $this->hasMany(ContainerAdditiveSupply::class)->orderByDesc('additive_date');
@@ -157,6 +177,7 @@ class Container extends Model
     /**
      * Procesos de vinificación en los que participa este contenedor
      */
+    /** @return BelongsToMany<WineProcessDetail, $this> */
     public function wineProcessDetails(): BelongsToMany
     {
         return $this->belongsToMany(WineProcessDetail::class, 'wine_process_detail_containers')
@@ -297,6 +318,11 @@ class Container extends Model
     public function scopeFull($query)
     {
         return $query->whereRaw('(used_capacity + wine_volume_liters) >= capacity');
+    }
+
+    public function isAvailable(): bool
+    {
+        return ((float) $this->used_capacity + (float) $this->wine_volume_liters) <= 0;
     }
 
     /**

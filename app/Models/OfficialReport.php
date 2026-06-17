@@ -57,6 +57,7 @@ class OfficialReport extends Model
     /**
      * Usuario que generó el informe
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -65,6 +66,7 @@ class OfficialReport extends Model
     /**
      * Usuario que invalidó el informe (si aplica)
      */
+    /** @return BelongsTo<User, $this> */
     public function invalidator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'invalidated_by');

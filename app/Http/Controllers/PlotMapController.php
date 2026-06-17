@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PlotMapController extends Controller
 {
+    use AuthorizesRequests;
+
     public function show(Plot $plot, Request $request)
     {
         $this->authorize('view', $plot);
@@ -116,10 +119,10 @@ class PlotMapController extends Controller
                     'id' => $rel->id,
                     'index' => $index + 1,
                     'source' => $rel->source ?? 'sigpac',
-                    'sigpac_code' => $rel->sigpacCode?->code ?? null,
-                    'sigpac_formatted' => $rel->sigpacCode?->formatted_code ?? null,
-                    'polygon' => $rel->sigpacCode?->code_polygon ?? null,
-                    'enclosure' => $rel->sigpacCode?->code_enclosure ?? null,
+                    'sigpac_code' => $rel->sigpacCode->code ?? null,
+                    'sigpac_formatted' => $rel->sigpacCode->formatted_code ?? null,
+                    'polygon' => $rel->sigpacCode->code_polygon ?? null,
+                    'enclosure' => $rel->sigpacCode->code_enclosure ?? null,
                     'code_parcel' => $isCatastro ? $codeParcel : null,
                     'wkt' => $wkt,
                     'color' => $this->getColorForIndex($index),

@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api\Admin;
 
+use App\Models\SecurityEvent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin SecurityEvent */
 class SecurityEventResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -19,7 +21,7 @@ class SecurityEventResource extends JsonResource
             'user_id' => $this->user_id,
             'admin_id' => $this->admin_id,
             'context' => $this->context ?? [],
-            'created_at' => $this->created_at?->toIso8601String(),
+            'created_at' => $this->created_at->toIso8601String(),
         ];
     }
 }

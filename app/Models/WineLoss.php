@@ -50,21 +50,25 @@ class WineLoss extends Model
         return array_map(fn ($v) => __($v), static::LOSS_AUTHORIZATIONS);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -72,11 +76,11 @@ class WineLoss extends Model
 
     public function getLossTypeLabelAttribute(): string
     {
-        return self::LOSS_TYPES[$this->loss_type] ?? $this->loss_type;
+        return self::LOSS_TYPES[$this->loss_type];
     }
 
     public function getLossAuthorizationLabelAttribute(): string
     {
-        return self::LOSS_AUTHORIZATIONS[$this->loss_authorization] ?? ($this->loss_authorization ?? '—');
+        return self::LOSS_AUTHORIZATIONS[$this->loss_authorization];
     }
 }

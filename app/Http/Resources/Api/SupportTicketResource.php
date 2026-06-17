@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\SupportTicket;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin SupportTicket */
 class SupportTicketResource extends JsonResource
 {
     public function toArray(Request $request): array

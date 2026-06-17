@@ -108,14 +108,14 @@ class Edit extends Component
         $planting = $harvest->plotPlanting;
 
         // Context labels (ahora via batch, no via activity)
-        $this->viticulturistName = $harvest->batch?->viticulturist?->name ?? '—';
-        $this->plotName = $planting?->plot?->name ?? '—';
-        $this->plantingLabel = ($planting?->grapeVariety?->name ?? $planting?->name ?? 'Sin variedad')
-            .($planting?->area_planted ? ' — '.number_format($planting->area_planted, 2).' ha' : '');
-        $this->vintageYear = $harvest->vintage ?? $harvest->batch?->vintage_year ?? now()->year;
+        $this->viticulturistName = $harvest->batch?->viticulturist->name ?? '—';
+        $this->plotName = $planting?->plot->name ?? '—';
+        $this->plantingLabel = ($planting?->grapeVariety->name ?? $planting->name ?? 'Sin variedad')
+            .($planting?->area_planted ? ' — '.number_format((float) $planting->area_planted, 2).' ha' : '');
+        $this->vintageYear = $harvest->vintage ?? $harvest->batch->vintage_year ?? now()->year;
 
         // Pre-fill fields
-        $this->harvest_start_date = $harvest->harvest_start_date?->format('Y-m-d') ?? '';
+        $this->harvest_start_date = $harvest->harvest_start_date->format('Y-m-d');
         $this->harvest_time = $harvest->harvest_time ?? '';
         $this->harvest_ticket_number = $harvest->harvest_ticket_number ?? '';
         $this->total_weight = (string) ($harvest->total_weight ?? '');

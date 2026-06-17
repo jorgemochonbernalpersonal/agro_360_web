@@ -27,6 +27,7 @@ class ViticulturistSetting extends Model
         'default_irpf_rate' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');

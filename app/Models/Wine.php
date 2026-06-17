@@ -8,6 +8,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+/**
+ * @property mixed $current_phase_label
+ * @property mixed $current_phase_type
+ * @property mixed $days_total
+ * @property mixed $days_in_phase
+ * @property mixed $vintage_year
+ * @property mixed $total
+ * @property mixed $in_progress
+ * @property mixed $bottled
+ * @property mixed $sold
+ * @property mixed $aged
+ * @property mixed $currentStates
+ * @property mixed $pivot
+ */
 class Wine extends Model
 {
     const WINE_TYPES = [
@@ -75,27 +89,32 @@ class Wine extends Model
 
     // ─── Relaciones ────────────────────────────────────────────────────────────
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Oenologist, $this> */
     public function oenologist(): BelongsTo
     {
         return $this->belongsTo(Oenologist::class);
     }
 
+    /** @return HasMany<WineProcessDetail, $this> */
     public function processDetails(): HasMany
     {
         return $this->hasMany(WineProcessDetail::class)->orderBy('start_date');
     }
 
     /** Recepciones de uva que componen este lote */
+    /** @return HasMany<WineHarvest, $this> */
     public function wineHarvests(): HasMany
     {
         return $this->hasMany(WineHarvest::class);
     }
 
+    /** @return BelongsToMany<Harvest, $this> */
     public function harvests(): BelongsToMany
     {
         return $this->belongsToMany(Harvest::class, 'wine_harvests')
@@ -103,56 +122,67 @@ class Wine extends Model
             ->withTimestamps();
     }
 
+    /** @return HasMany<WineTransfer, $this> */
     public function transfers(): HasMany
     {
         return $this->hasMany(WineTransfer::class)->orderByDesc('transfer_date');
     }
 
+    /** @return HasMany<WineLoss, $this> */
     public function losses(): HasMany
     {
         return $this->hasMany(WineLoss::class)->orderByDesc('loss_date');
     }
 
+    /** @return HasMany<WineFermentationControl, $this> */
     public function fermentationControls(): HasMany
     {
         return $this->hasMany(WineFermentationControl::class)->orderByDesc('control_date');
     }
 
+    /** @return HasMany<WineAnalysis, $this> */
     public function analyses(): HasMany
     {
         return $this->hasMany(WineAnalysis::class)->orderByDesc('analysis_date');
     }
 
+    /** @return HasMany<WineAdditive, $this> */
     public function additives(): HasMany
     {
         return $this->hasMany(WineAdditive::class)->orderByDesc('application_date');
     }
 
+    /** @return HasMany<WineBottling, $this> */
     public function bottlings(): HasMany
     {
         return $this->hasMany(WineBottling::class)->orderByDesc('bottling_date');
     }
 
+    /** @return HasMany<WineLabeling, $this> */
     public function labelings(): HasMany
     {
         return $this->hasMany(WineLabeling::class)->orderByDesc('labeling_date');
     }
 
+    /** @return HasMany<WineTastingNote, $this> */
     public function tastingNotes(): HasMany
     {
         return $this->hasMany(WineTastingNote::class)->orderByDesc('evaluation_date');
     }
 
+    /** @return HasMany<WineSubproduct, $this> */
     public function subproducts(): HasMany
     {
         return $this->hasMany(WineSubproduct::class)->orderByDesc('subproduct_date');
     }
 
+    /** @return HasMany<ProductLot, $this> */
     public function productLots(): HasMany
     {
         return $this->hasMany(ProductLot::class);
     }
 
+    /** @return HasMany<WineCost, $this> */
     public function costs(): HasMany
     {
         return $this->hasMany(WineCost::class)->orderByDesc('cost_date');
@@ -270,12 +300,12 @@ class Wine extends Model
 
     public function getTypeLabelAttribute(): string
     {
-        return __(self::WINE_TYPES[$this->wine_type] ?? $this->wine_type);
+        return __(self::WINE_TYPES[$this->wine_type]);
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return __(self::STATUSES[$this->status] ?? $this->status);
+        return __(self::STATUSES[$this->status]);
     }
 
     public function getAgingTypeLabelAttribute(): ?string

@@ -158,7 +158,7 @@ class LabelingController extends BaseApiController
                 'name' => $l->labelBatch->name,
                 'available_quantity' => $l->labelBatch->available_quantity,
             ] : null,
-            'labeling_date' => $l->labeling_date?->toDateString(),
+            'labeling_date' => $l->labeling_date->toDateString(),
             'quantity_labeled' => $l->quantity_labeled,
             'label_range' => $l->label_range,
             'from_number' => $l->from_number,

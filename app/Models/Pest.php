@@ -62,6 +62,8 @@ class Pest extends Model
 
     /**
      * Productos fitosanitarios eficaces contra esta plaga
+     *
+     * @return BelongsToMany<PhytosanitaryProduct, $this>
      */
     public function products(): BelongsToMany
     {
@@ -78,6 +80,7 @@ class Pest extends Model
     /**
      * Observaciones relacionadas con esta plaga
      */
+    /** @return HasMany<Observation, $this> */
     public function observations(): HasMany
     {
         return $this->hasMany(Observation::class);
@@ -86,6 +89,7 @@ class Pest extends Model
     /**
      * Tratamientos fitosanitarios dirigidos a esta plaga
      */
+    /** @return HasMany<PhytosanitaryTreatment, $this> */
     public function treatments(): HasMany
     {
         return $this->hasMany(PhytosanitaryTreatment::class);

@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property mixed $total_kg
+ * @property mixed $available_kg
+ * @property mixed $partidas
+ */
 class ExternalGrape extends Model
 {
     const TYPES = [
@@ -70,16 +75,19 @@ class ExternalGrape extends Model
         return array_map(fn ($v) => __($v), static::STATUSES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<GrapeVariety, $this> */
     public function grapeVariety(): BelongsTo
     {
         return $this->belongsTo(GrapeVariety::class);
     }
 
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
@@ -92,7 +100,7 @@ class ExternalGrape extends Model
 
     public function getTypeLabel(): string
     {
-        return self::TYPES[$this->grape_type] ?? $this->grape_type;
+        return self::TYPES[$this->grape_type];
     }
 
     public function getColorLabel(): string

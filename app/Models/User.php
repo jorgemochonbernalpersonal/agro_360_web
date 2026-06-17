@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\AgriculturalActivity;
 use App\Models\Traits\HasBetaAccess;
 use App\Models\Traits\HasHierarchy;
 use App\Models\Traits\HasInvoicing;
@@ -9,10 +10,39 @@ use App\Models\Traits\HasSubscriptions;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property array<string, mixed>|null $notification_preferences
+ * @property array<string, mixed>|null $preferences
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property \Illuminate\Support\Carbon|null $invitation_sent_at
+ * @property \Illuminate\Support\Carbon|null $invitation_expires_at
+ * @property \Illuminate\Support\Carbon|null $beta_ends_at
+ * @property \Illuminate\Support\Carbon|null $last_login_at
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property mixed $total
+ * @property mixed $role_admin
+ * @property mixed $role_supervisor
+ * @property mixed $role_winery
+ * @property mixed $role_viticulturist
+ * @property mixed $role_producer
+ * @property mixed $active
+ * @property mixed $inactive
+ * @property mixed $verified
+ * @property mixed $unverified
+ * @property mixed $beta_active
+ * @property mixed $beta_expired
+ * @property mixed $can_edit
+ * @property mixed $activeSubscription
+ * @property mixed $adminNotes
+ */
 class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -151,8 +181,10 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
 
     /**
      * Organización a la que pertenece este usuario (winery/DO).
+     *
+     * @return BelongsTo<Organization, $this>
      */
-    public function organization()
+    public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
     }
@@ -188,8 +220,10 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
 
     /**
      * Perfil del usuario
+     *
+     * @return HasOne<UserProfile, $this>
      */
-    public function profile()
+    public function profile(): HasOne
     {
         return $this->hasOne(UserProfile::class);
     }
@@ -212,10 +246,18 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
 
     /**
      * Parcelas donde el usuario es viticultor
+     *
+     * @return HasMany<Plot, $this>
      */
-    public function plots()
+    public function plots(): HasMany
     {
         return $this->hasMany(Plot::class, 'viticulturist_id');
+    }
+
+    /** @return HasMany<AgriculturalActivity, $this> */
+    public function agriculturalActivities(): HasMany
+    {
+        return $this->hasMany(AgriculturalActivity::class, 'viticulturist_id');
     }
 
     /**
@@ -273,10 +315,10 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     {
         // Limpiar propiedades de cache antes de guardar
         static::saving(function ($user) {
-            unset($user->_wineries_cache);
-            unset($user->_supervisor_cache);
-            unset($user->_was_created_by_another_cache);
-            unset($user->_needs_password_change_cache);
+            $user->_wineries_cache = null;
+            $user->_supervisor_cache = null;
+            $user->_was_created_by_another_cache = null;
+            $user->_needs_password_change_cache = null;
         });
 
         static::saved(function ($user) {

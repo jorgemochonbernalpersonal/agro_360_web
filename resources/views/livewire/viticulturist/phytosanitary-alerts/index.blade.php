@@ -62,7 +62,7 @@
         <x-agro.filter-button modal="phyto-alerts-filters" :count="$filterCount" />
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         {{-- Nueva Alerta --}}
         <flux:button href="{{ roleRoute('viticulturist.phytosanitary-alerts.create') }}" variant="primary" icon="plus">

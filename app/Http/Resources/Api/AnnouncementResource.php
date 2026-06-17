@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\WineryAnnouncement;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin WineryAnnouncement */
 class AnnouncementResource extends JsonResource
 {
     public function toArray(Request $request): array

@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $recipients
+ * @property-read int $recipientCount
+ */
 class Index extends Component
 {
     use WithReadOnlyGuard, WithToastNotifications;

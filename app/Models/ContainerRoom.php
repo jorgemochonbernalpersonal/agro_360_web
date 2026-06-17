@@ -33,6 +33,7 @@ class ContainerRoom extends Model
     /**
      * Usuario propietario
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -41,6 +42,7 @@ class ContainerRoom extends Model
     /**
      * Contenedores en esta sala
      */
+    /** @return HasMany<Container, $this> */
     public function containers(): HasMany
     {
         return $this->hasMany(Container::class);

@@ -110,12 +110,12 @@ class WineryAlertController extends BaseApiController
             'reference_type' => $a->reference_type,
             'reference_id' => $a->reference_id,
             'is_read' => $a->is_read,
-            'read_at' => $a->read_at?->toIso8601String(),
+            'read_at' => $a->read_at->toIso8601String(),
             'auto_generated' => $a->auto_generated,
-            'triggered_at' => $a->triggered_at?->toIso8601String(),
-            'expires_at' => $a->expires_at?->toIso8601String(),
+            'triggered_at' => $a->triggered_at->toIso8601String(),
+            'expires_at' => $a->expires_at->toIso8601String(),
             'is_expired' => $a->isExpired(),
-            'created_at' => $a->created_at?->toIso8601String(),
+            'created_at' => $a->created_at->toIso8601String(),
         ];
     }
 }

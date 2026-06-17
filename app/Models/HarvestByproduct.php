@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $byproduct_type
+ * @property string $destination_type
+ */
 class HarvestByproduct extends Model
 {
     const BYPRODUCT_TYPES = [
@@ -46,11 +50,13 @@ class HarvestByproduct extends Model
         return array_map(fn ($v) => __($v), static::DESTINATION_TYPES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);

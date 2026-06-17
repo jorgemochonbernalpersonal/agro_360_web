@@ -68,7 +68,7 @@ class PlotController extends BaseApiController
 
         $result = $plots
             ->filter(fn ($p) => isset($centroids[$p->id]) ||
-                ($p->municipality?->lat && $p->municipality?->lng)
+                ($p->municipality->lat && $p->municipality->lng)
             )
             ->map(fn ($p) => [
                 'plot_id' => $p->id,

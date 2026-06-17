@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/** @property string $concept_type */
 class InvoiceItem extends Model
 {
     use HasFactory, SoftDeletes;
@@ -55,6 +56,7 @@ class InvoiceItem extends Model
     /**
      * Factura a la que pertenece este item
      */
+    /** @return BelongsTo<Invoice, $this> */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
@@ -63,6 +65,7 @@ class InvoiceItem extends Model
     /**
      * Lote de producto relacionado (si aplica)
      */
+    /** @return BelongsTo<ProductLot, $this> */
     public function wineLot(): BelongsTo
     {
         return $this->belongsTo(ProductLot::class, 'wine_lot_id');
@@ -71,6 +74,7 @@ class InvoiceItem extends Model
     /**
      * Cosecha relacionada (si aplica)
      */
+    /** @return BelongsTo<Harvest, $this> */
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class);
@@ -79,6 +83,7 @@ class InvoiceItem extends Model
     /**
      * Albarán de venta de cosecha relacionado (si aplica)
      */
+    /** @return BelongsTo<MarketedHarvest, $this> */
     public function marketedHarvest(): BelongsTo
     {
         return $this->belongsTo(MarketedHarvest::class, 'marketed_harvest_id');
@@ -87,6 +92,7 @@ class InvoiceItem extends Model
     /**
      * Impuesto aplicado
      */
+    /** @return BelongsTo<Tax, $this> */
     public function tax(): BelongsTo
     {
         return $this->belongsTo(Tax::class);

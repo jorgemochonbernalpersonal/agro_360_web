@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property mixed $plot_geometry_id
+ */
 class MultipartPlotSigpac extends Model
 {
     protected $table = 'multipart_plot_sigpac';
@@ -19,6 +22,7 @@ class MultipartPlotSigpac extends Model
     /**
      * Parcela relacionada
      */
+    /** @return BelongsTo<Plot, $this> */
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);
@@ -27,6 +31,7 @@ class MultipartPlotSigpac extends Model
     /**
      * Código SIGPAC relacionado
      */
+    /** @return BelongsTo<SigpacCode, $this> */
     public function sigpacCode(): BelongsTo
     {
         return $this->belongsTo(SigpacCode::class, 'sigpac_code_id');
@@ -35,6 +40,7 @@ class MultipartPlotSigpac extends Model
     /**
      * Geometría de la parcela
      */
+    /** @return BelongsTo<PlotGeometry, $this> */
     public function plotGeometry(): BelongsTo
     {
         return $this->belongsTo(PlotGeometry::class, 'plot_geometry_id');

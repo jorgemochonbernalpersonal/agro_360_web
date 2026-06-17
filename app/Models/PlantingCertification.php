@@ -26,6 +26,7 @@ class PlantingCertification extends Model
     /**
      * Plantación certificada
      */
+    /** @return BelongsTo<PlotPlanting, $this> */
     public function plotPlanting(): BelongsTo
     {
         return $this->belongsTo(PlotPlanting::class);

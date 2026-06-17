@@ -61,21 +61,25 @@ class ResidueManagement extends Model
         return array_map(fn ($v) => __($v), static::MATERIAL_TYPES);
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
     }
 
+    /** @return BelongsTo<Plot, $this> */
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);
     }
 
+    /** @return BelongsTo<PlotPlanting, $this> */
     public function plotPlanting(): BelongsTo
     {
         return $this->belongsTo(PlotPlanting::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
@@ -83,12 +87,12 @@ class ResidueManagement extends Model
 
     public function getPracticeLabelAttribute(): string
     {
-        return __(self::PRACTICE_TYPES[$this->practice_type] ?? $this->practice_type);
+        return __(self::PRACTICE_TYPES[$this->practice_type]);
     }
 
     public function getMaterialLabelAttribute(): string
     {
-        return __(self::MATERIAL_TYPES[$this->material_type] ?? $this->material_type);
+        return __(self::MATERIAL_TYPES[$this->material_type]);
     }
 
     public function scopeActive($query)

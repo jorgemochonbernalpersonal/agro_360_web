@@ -21,6 +21,7 @@ class SupportTicketComment extends Model
     /**
      * Ticket al que pertenece el comentario
      */
+    /** @return BelongsTo<SupportTicket, $this> */
     public function ticket(): BelongsTo
     {
         return $this->belongsTo(SupportTicket::class, 'ticket_id');
@@ -29,6 +30,7 @@ class SupportTicketComment extends Model
     /**
      * Usuario que creó el comentario
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

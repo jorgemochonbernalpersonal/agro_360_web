@@ -34,8 +34,8 @@ class Timeline extends Component
             ->map(function ($wine) {
                 $latestProcess = $wine->processDetails->last();
 
-                $wine->current_phase_label = $latestProcess?->process_type_label ?? 'Sin proceso registrado';
-                $wine->current_phase_type = $latestProcess?->process_type ?? 'pending';
+                $wine->current_phase_label = $latestProcess->process_type_label ?? 'Sin proceso registrado';
+                $wine->current_phase_type = $latestProcess->process_type ?? 'pending';
                 $wine->days_total = (int) now()->diffInDays($wine->created_at);
                 $wine->days_in_phase = $latestProcess?->start_date
                     ? (int) now()->diffInDays($latestProcess->start_date)

@@ -406,7 +406,7 @@ class Index extends Component
             'total' => (clone $base)->count(),
             'issued' => (clone $base)->where('status', 'issued')->count(),
             'draft' => (clone $base)->where('status', 'draft')->count(),
-            'pending_amount' => (clone $base)->where('payment_status', 'unpaid')->where('status', 'issued')->sum('total_amount') ?? 0,
+            'pending_amount' => (clone $base)->where('payment_status', 'unpaid')->where('status', 'issued')->sum('total_amount'),
         ];
 
         return view('livewire.viticulturist.invoices.index', [

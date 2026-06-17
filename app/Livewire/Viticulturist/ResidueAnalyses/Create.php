@@ -32,7 +32,7 @@ class Create extends AbstractCreate
     public function mount(): void
     {
         $campaign = Campaign::getOrCreateActiveForYear($this->viticulturistId());
-        $this->campaign_id = (string) ($campaign?->id ?? '');
+        $this->campaign_id = (string) ($campaign->id ?? '');
         $this->analysis_date = now()->format('Y-m-d');
     }
 

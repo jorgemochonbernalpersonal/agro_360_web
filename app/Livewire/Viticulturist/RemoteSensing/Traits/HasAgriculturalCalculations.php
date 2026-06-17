@@ -139,7 +139,7 @@ trait HasAgriculturalCalculations
             ->first();
 
         if ($lastYearData) {
-            $this->lastYearNdvi = $lastYearData->ndvi_mean;
+            $this->lastYearNdvi = $lastYearData->ndvi_mean !== null ? (float) $lastYearData->ndvi_mean : null;
             $current = $this->ndviData->ndvi_mean ?? 0;
             if ($this->lastYearNdvi > 0) {
                 $this->yearChange = ($current - $this->lastYearNdvi) / $this->lastYearNdvi;

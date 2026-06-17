@@ -61,11 +61,13 @@ class Index extends AbstractIndex
         return ['search' => '', 'yearFilter' => ''];
     }
 
+    /** @return \Illuminate\Database\Eloquent\Builder<\App\Models\Campaign> */
     protected function baseQuery(): Builder
     {
         return Campaign::forViticulturist($this->wineryId())->withCount('activities');
     }
 
+    /** @param \Illuminate\Database\Eloquent\Builder<\App\Models\Campaign> $query */
     protected function applyFilters(Builder $query): void
     {
         if ($this->search) {

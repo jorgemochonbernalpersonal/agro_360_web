@@ -24,26 +24,31 @@ class ContainerAdditiveSupply extends Model
         'additive_date' => 'date',
     ];
 
+    /** @return BelongsTo<Container, $this> */
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
     }
 
+    /** @return BelongsTo<ContainerCurrentState, $this> */
     public function containerCurrentState(): BelongsTo
     {
         return $this->belongsTo(ContainerCurrentState::class, 'container_current_state_id');
     }
 
+    /** @return BelongsTo<WinerySupply, $this> */
     public function winerySupply(): BelongsTo
     {
         return $this->belongsTo(WinerySupply::class);
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -51,6 +56,6 @@ class ContainerAdditiveSupply extends Model
 
     public function getDisplayNameAttribute(): string
     {
-        return $this->winerySupply?->name ?? $this->additive_name ?? '—';
+        return $this->winerySupply->name ?? $this->additive_name ?? '—';
     }
 }

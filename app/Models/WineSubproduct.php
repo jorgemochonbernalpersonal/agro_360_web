@@ -50,21 +50,25 @@ class WineSubproduct extends Model
         return array_map(fn ($v) => __($v), static::DESTINATIONS);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Wine, $this> */
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
     }
 
+    /** @return BelongsTo<UnitOfMeasurement, $this> */
     public function unit(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class, 'unit_of_measurement_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

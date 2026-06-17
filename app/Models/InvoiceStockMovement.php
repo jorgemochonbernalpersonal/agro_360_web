@@ -22,21 +22,25 @@ class InvoiceStockMovement extends Model
         'qty' => 'decimal:3',
     ];
 
+    /** @return BelongsTo<Invoice, $this> */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }
 
+    /** @return BelongsTo<InvoiceItem, $this> */
     public function invoiceItem(): BelongsTo
     {
         return $this->belongsTo(InvoiceItem::class);
     }
 
+    /** @return BelongsTo<ProductLot, $this> */
     public function wineLot(): BelongsTo
     {
         return $this->belongsTo(ProductLot::class, 'wine_lot_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

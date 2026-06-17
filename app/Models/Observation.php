@@ -30,6 +30,7 @@ class Observation extends Model
     /**
      * Actividad agrícola asociada
      */
+    /** @return BelongsTo<AgriculturalActivity, $this> */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');
@@ -38,6 +39,7 @@ class Observation extends Model
     /**
      * Plaga asociada (si la observación es sobre una plaga)
      */
+    /** @return BelongsTo<Pest, $this> */
     public function pest(): BelongsTo
     {
         return $this->belongsTo(Pest::class, 'pest_id');

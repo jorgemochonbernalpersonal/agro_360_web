@@ -140,9 +140,9 @@ class DenominationOfOriginController extends BaseApiController
             'taste_score' => $q->taste_score,
             'overall_score' => $q->overall_score,
             'result' => $q->result,
-            'result_label' => DoQualification::RESULT_LABELS[$q->result] ?? $q->result,
+            'result_label' => DoQualification::RESULT_LABELS[$q->result],
             'tasting_notes' => $q->tasting_notes,
-            'qualification_date' => $q->qualification_date?->toDateString(),
+            'qualification_date' => $q->qualification_date->toDateString(),
             'created_at' => $q->created_at->toIso8601String(),
         ];
     }
@@ -157,10 +157,10 @@ class DenominationOfOriginController extends BaseApiController
             'quantity_issued' => $l->quantity_issued,
             'quantity_stock' => $l->quantity_stock,
             'status' => $l->status,
-            'status_label' => DoLabel::STATUS_LABELS[$l->status] ?? $l->status,
+            'status_label' => DoLabel::STATUS_LABELS[$l->status],
             'notes' => $l->notes,
-            'requested_at' => $l->requested_at?->toIso8601String(),
-            'issued_at' => $l->issued_at?->toIso8601String(),
+            'requested_at' => $l->requested_at->toIso8601String(),
+            'issued_at' => $l->issued_at->toIso8601String(),
             'created_at' => $l->created_at->toIso8601String(),
         ];
     }
@@ -169,11 +169,11 @@ class DenominationOfOriginController extends BaseApiController
     {
         return [
             'id' => $i->id,
-            'inspection_date' => $i->inspection_date?->toDateString(),
+            'inspection_date' => $i->inspection_date->toDateString(),
             'status' => $i->status,
-            'status_label' => DoInspection::STATUS_LABELS[$i->status] ?? $i->status,
+            'status_label' => DoInspection::STATUS_LABELS[$i->status],
             'result' => $i->result,
-            'result_label' => DoInspection::RESULT_LABELS[$i->result] ?? $i->result,
+            'result_label' => DoInspection::RESULT_LABELS[$i->result],
             'findings' => $i->findings,
             'notes' => $i->notes,
             'reference_number' => $i->reference_number,
@@ -188,10 +188,10 @@ class DenominationOfOriginController extends BaseApiController
             'type' => $d->type,
             'title' => $d->title,
             'version' => $d->version,
-            'effective_date' => $d->effective_date?->toDateString(),
+            'effective_date' => $d->effective_date->toDateString(),
             'content' => $d->content,
             'status' => $d->status,
-            'status_label' => DoDocument::STATUS_LABELS[$d->status] ?? $d->status,
+            'status_label' => DoDocument::STATUS_LABELS[$d->status],
             'created_at' => $d->created_at->toIso8601String(),
         ];
     }

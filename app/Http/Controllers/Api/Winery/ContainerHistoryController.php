@@ -131,7 +131,7 @@ class ContainerHistoryController extends BaseApiController
                 'is_empty' => $container->isEmpty(),
                 'is_full' => $container->isFull(),
                 'next_maintenance' => $container->next_maintenance_date?->toDateString(),
-                'last_maintenance' => $lastMaintenance?->start_date?->toDateString(),
+                'last_maintenance' => $lastMaintenance?->start_date->toDateString(),
             ],
             'summary' => [
                 'total_operations' => array_sum(array_column($byType->toArray(), 'count')),
@@ -171,7 +171,7 @@ class ContainerHistoryController extends BaseApiController
 
                 return [
                     'room_id' => $first->container_room_id,
-                    'room_name' => $first->containerRoom?->name ?? 'Sin sala',
+                    'room_name' => $first->containerRoom->name ?? 'Sin sala',
                     'count' => $group->count(),
                     'capacity' => $capacity,
                     'used' => $used,
@@ -186,7 +186,7 @@ class ContainerHistoryController extends BaseApiController
 
                 return [
                     'type_id' => $first->type_id,
-                    'type_name' => $first->containerType?->name ?? 'Sin tipo',
+                    'type_name' => $first->containerType->name ?? 'Sin tipo',
                     'count' => $group->count(),
                     'capacity' => $group->sum(fn ($c) => (float) $c->capacity),
                 ];
@@ -202,7 +202,7 @@ class ContainerHistoryController extends BaseApiController
             ->map(fn ($c) => [
                 'id' => $c->id,
                 'name' => $c->name,
-                'next_maintenance' => $c->next_maintenance_date?->toDateString(),
+                'next_maintenance' => $c->next_maintenance_date->toDateString(),
                 'days_until' => (int) now()->diffInDays($c->next_maintenance_date, false),
             ]);
 
@@ -233,8 +233,8 @@ class ContainerHistoryController extends BaseApiController
             'harvest_id' => $h->harvest_id,
             'quantity' => (float) $h->quantity,
             'is_inbound' => $h->isInbound(),
-            'start_date' => $h->start_date?->toIso8601String(),
-            'end_date' => $h->end_date?->toIso8601String(),
+            'start_date' => $h->start_date->toIso8601String(),
+            'end_date' => $h->end_date->toIso8601String(),
             'created_by' => $h->creator?->name,
             'has_subproducts' => $h->has_subproducts,
         ];

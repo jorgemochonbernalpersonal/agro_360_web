@@ -49,27 +49,13 @@
         <x-agro.filter-button modal="reception-filters" :count="$filterCount" />
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
-        {{-- Exportar PDF --}}
-        <a href="{{ roleRoute('grape-reception.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}"
-           target="_blank"
-           class="inline-flex items-center gap-2 px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-           title="{{ __('Exportar PDF') }}">
-            <flux:icon icon="document-arrow-down" class="size-4 text-zinc-500" />
-            PDF
-        </a>
-
-        {{-- Exportar Excel --}}
-        <a href="{{ roleRoute('grape-reception.export-excel', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}"
-           class="inline-flex items-center gap-2 px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-           title="{{ __('Exportar Excel') }}">
-            <flux:icon icon="table-cells" class="size-4 text-zinc-500" />
-            Excel
-        </a>
+        <flux:button href="{{ roleRoute('grape-reception.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}" target="_blank" icon="document-arrow-down">PDF</flux:button>
+        <flux:button href="{{ roleRoute('grape-reception.export-excel', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}" icon="table-cells">Excel</flux:button>
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         {{-- Nueva Recepción --}}
         <flux:button href="{{ roleRoute('grape-reception.create') }}" wire:navigate variant="primary" icon="plus">

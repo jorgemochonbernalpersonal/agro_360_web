@@ -339,7 +339,7 @@ class Index extends Component
 
         $relation->delete();
 
-        $this->toastSuccess(__(':name eliminado del pool de la denominación.', ['name' => $grower?->name ?? __('El viticultor')]));
+        $this->toastSuccess(__(':name eliminado del pool de la denominación.', ['name' => $grower->name ?? __('El viticultor')]));
     }
 
     // ── Render ────────────────────────────────────────────────────────────────

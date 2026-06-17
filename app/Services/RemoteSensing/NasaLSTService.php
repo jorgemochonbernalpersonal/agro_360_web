@@ -15,15 +15,12 @@ use Illuminate\Support\Facades\Log;
  */
 class NasaLSTService
 {
-    private string $baseUrl;
-
     private bool $useMockData;
 
     private RateLimitService $rateLimitService;
 
     public function __construct(RateLimitService $rateLimitService)
     {
-        $this->baseUrl = config('services.nasa_earthdata.api_url');
         $this->useMockData = config('services.nasa_earthdata.mock', true);
         $this->rateLimitService = $rateLimitService;
     }
@@ -53,8 +50,8 @@ class NasaLSTService
         }
 
         try {
-            $startJulian = 'A'.now()->subDays(8)->format('Y').str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
-            $endJulian = 'A'.now()->format('Y').str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $startJulian = 'A'.now()->subDays(8)->format('Y').str_pad((string) now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian = 'A'.now()->format('Y').str_pad((string) now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             $response = Http::timeout(30)
                 ->get('https://modis.ornl.gov/rst/api/v1/MOD11A2/subset', [
@@ -89,9 +86,7 @@ class NasaLSTService
         }
 
         $fallback = $this->fetchFromOpenMeteo($coords, $plot->id);
-        if ($fallback !== null) {
-            \Illuminate\Support\Facades\Cache::put($cacheKey, $fallback, now()->addHour());
-        }
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $fallback, now()->addHour());
 
         return $fallback;
     }

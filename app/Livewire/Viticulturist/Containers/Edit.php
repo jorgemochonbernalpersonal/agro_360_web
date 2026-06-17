@@ -88,7 +88,7 @@ class Edit extends Component
     {
         // Validar que no se reduzca capacidad si está ocupado
         if ($this->capacity < $this->container->used_capacity) {
-            $this->addError('capacity', __('No puedes reducir la capacidad a :capacity L porque hay :used L ocupados.', ['capacity' => number_format($this->capacity, 2), 'used' => number_format($this->container->used_capacity, 2)]));
+            $this->addError('capacity', __('No puedes reducir la capacidad a :capacity L porque hay :used L ocupados.', ['capacity' => number_format((float) $this->capacity, 2), 'used' => number_format((float) $this->container->used_capacity, 2)]));
 
             return;
         }

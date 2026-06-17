@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
 
+/**
+ * @property mixed $pivot
+ */
 class GrapeVariety extends Model
 {
     use HasTranslations;
@@ -50,6 +53,7 @@ class GrapeVariety extends Model
     /**
      * Plantaciones de esta variedad
      */
+    /** @return HasMany<PlotPlanting, $this> */
     public function plantings(): HasMany
     {
         return $this->hasMany(PlotPlanting::class);

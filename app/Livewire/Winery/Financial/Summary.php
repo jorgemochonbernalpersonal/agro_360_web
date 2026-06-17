@@ -72,7 +72,7 @@ class Summary extends Component
         $monthlyData = collect(range(1, 12))->map(fn ($m) => [
             'month' => $m,
             'label' => now()->month($m)->format('M'),
-            'total' => (float) ($monthlyRevenue->get($m)?->total ?? 0),
+            'total' => (float) ($monthlyRevenue->get($m)->total ?? 0),
         ]);
 
         // ── Ingresos por tipo de vino ─────────────────────────────────────────

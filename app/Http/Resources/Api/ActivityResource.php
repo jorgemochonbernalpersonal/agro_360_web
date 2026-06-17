@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\AgriculturalActivity;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin AgriculturalActivity */
 class ActivityResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -12,7 +14,7 @@ class ActivityResource extends JsonResource
         return [
             'id' => $this->id,
             'activity_type' => $this->activity_type,
-            'activity_date' => $this->activity_date?->toDateString(),
+            'activity_date' => $this->activity_date->toDateString(),
             'phenological_stage' => $this->phenological_stage,
             'weather_conditions' => $this->weather_conditions,
             'temperature' => $this->temperature !== null ? (float) $this->temperature : null,

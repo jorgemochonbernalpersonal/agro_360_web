@@ -16,13 +16,6 @@ use Carbon\Carbon;
  */
 class MaturityCalculator
 {
-    private PhenologyCalculator $phenologyCalculator;
-
-    public function __construct(PhenologyCalculator $phenologyCalculator)
-    {
-        $this->phenologyCalculator = $phenologyCalculator;
-    }
-
     /**
      * Calculate maturity index (0-100)
      * Based on multiple factors
@@ -282,7 +275,7 @@ class MaturityCalculator
     /**
      * Estimate days to optimal harvest
      */
-    private function estimateDaysToHarvest(float $maturityIndex): ?int
+    private function estimateDaysToHarvest(float $maturityIndex): int
     {
         return match (true) {
             $maturityIndex >= 85 => 0,       // Harvest now!
@@ -298,13 +291,9 @@ class MaturityCalculator
     /**
      * Estimate harvest date
      */
-    private function estimateHarvestDate(float $maturityIndex): ?Carbon
+    private function estimateHarvestDate(float $maturityIndex): Carbon
     {
         $days = $this->estimateDaysToHarvest($maturityIndex);
-
-        if ($days === null) {
-            return null;
-        }
 
         return now()->addDays($days);
     }

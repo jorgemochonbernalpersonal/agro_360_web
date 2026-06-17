@@ -9,7 +9,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property mixed $centroid_data
+ * @property mixed $has_geometry
+ * @property mixed $total_area
+ * @property mixed $organic_area
+ * @property mixed $sigpacCodesOld
+ * @property mixed $tenure_regime
+ * @method static \Illuminate\Database\Eloquent\Builder<static> forUser(\App\Models\User $user)
+ */
 class Plot extends Model
 {
     use Auditable, HasFactory;
@@ -87,46 +98,55 @@ class Plot extends Model
     /**
      * Viticultor asignado a la parcela
      */
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    /** @return BelongsTo<SoilType, $this> */
     public function soilType(): BelongsTo
     {
         return $this->belongsTo(SoilType::class);
     }
 
+    /** @return BelongsTo<IrrigationType, $this> */
     public function irrigationType(): BelongsTo
     {
         return $this->belongsTo(IrrigationType::class);
     }
 
+    /** @return BelongsTo<Topography, $this> */
     public function topography(): BelongsTo
     {
         return $this->belongsTo(Topography::class);
     }
 
+    /** @return BelongsTo<Orientation, $this> */
     public function orientation(): BelongsTo
     {
         return $this->belongsTo(Orientation::class);
     }
 
+    /** @return BelongsTo<PropertyType, $this> */
     public function propertyType(): BelongsTo
     {
         return $this->belongsTo(PropertyType::class);
     }
 
+    /** @return BelongsTo<Valley, $this> */
     public function valleyZone(): BelongsTo
     {
         return $this->belongsTo(Valley::class, 'valley_id');
     }
 
+    /** @return BelongsTo<Site, $this> */
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
@@ -135,6 +155,7 @@ class Plot extends Model
     /**
      * Comunidad autónoma
      */
+    /** @return BelongsTo<AutonomousCommunity, $this> */
     public function autonomousCommunity(): BelongsTo
     {
         return $this->belongsTo(AutonomousCommunity::class, 'autonomous_community_id');
@@ -143,6 +164,7 @@ class Plot extends Model
     /**
      * Provincia
      */
+    /** @return BelongsTo<Province, $this> */
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class, 'province_id');
@@ -151,6 +173,7 @@ class Plot extends Model
     /**
      * Municipio
      */
+    /** @return BelongsTo<Municipality, $this> */
     public function municipality(): BelongsTo
     {
         return $this->belongsTo(Municipality::class, 'municipality_id');
@@ -159,6 +182,7 @@ class Plot extends Model
     /**
      * Usos SIGPAC (many-to-many)
      */
+    /** @return BelongsToMany<SigpacUse, $this> */
     public function sigpacUses(): BelongsToMany
     {
         return $this->belongsToMany(SigpacUse::class, 'plot_sigpac_use', 'plot_id', 'sigpac_use_id');
@@ -167,6 +191,7 @@ class Plot extends Model
     /**
      * Códigos SIGPAC (nueva estructura - many-to-many con geometrías)
      */
+    /** @return BelongsToMany<SigpacCode, $this> */
     public function sigpacCodes(): BelongsToMany
     {
         return $this->belongsToMany(SigpacCode::class, 'multipart_plot_sigpac', 'plot_id', 'sigpac_code_id')
@@ -177,6 +202,7 @@ class Plot extends Model
     /**
      * Relaciones múltiples plot-sigpac (para acceder a geometrías)
      */
+    /** @return HasMany<MultipartPlotSigpac, $this> */
     public function multiplePlotSigpacs(): HasMany
     {
         return $this->hasMany(MultipartPlotSigpac::class, 'plot_id');
@@ -184,8 +210,10 @@ class Plot extends Model
 
     /**
      * Geometrías de la parcela (via multiple_plot_sigpac)
+     *
+     * @return HasManyThrough<PlotGeometry, MultipartPlotSigpac, $this>
      */
-    public function plotGeometries()
+    public function plotGeometries(): HasManyThrough
     {
         return $this->hasManyThrough(
             PlotGeometry::class,
@@ -200,6 +228,7 @@ class Plot extends Model
     /**
      * Actividades agrícolas de la parcela
      */
+    /** @return HasMany<AgriculturalActivity, $this> */
     public function agriculturalActivities(): HasMany
     {
         return $this->hasMany(AgriculturalActivity::class, 'plot_id');
@@ -208,6 +237,7 @@ class Plot extends Model
     /**
      * Plantaciones de variedades de uva en la parcela
      */
+    /** @return HasMany<PlotPlanting, $this> */
     public function plantings(): HasMany
     {
         return $this->hasMany(PlotPlanting::class);
@@ -253,11 +283,13 @@ class Plot extends Model
     /**
      * Datos de teledetección de la parcela
      */
+    /** @return HasMany<PlotRemoteSensing, $this> */
     public function remoteSensingData(): HasMany
     {
         return $this->hasMany(PlotRemoteSensing::class);
     }
 
+    /** @return HasMany<PlotAlertPreference, $this> */
     public function alertPreferences(): HasMany
     {
         return $this->hasMany(PlotAlertPreference::class);
@@ -265,8 +297,10 @@ class Plot extends Model
 
     /**
      * Último dato de teledetección
+     *
+     * @return HasOne<PlotRemoteSensing, $this>
      */
-    public function latestRemoteSensing()
+    public function latestRemoteSensing(): HasOne
     {
         return $this->hasOne(PlotRemoteSensing::class)->latestOfMany('image_date');
     }
@@ -274,6 +308,7 @@ class Plot extends Model
     /**
      * Usuario que bloqueó la parcela
      */
+    /** @return BelongsTo<User, $this> */
     public function lockedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'locked_by');
@@ -373,6 +408,11 @@ class Plot extends Model
 
                 return $safeDate->isFuture();
             });
+    }
+
+    public function scopeForUser($query, User $user): void
+    {
+        $query->where('viticulturist_id', $user->id);
     }
 
     protected static function booted(): void

@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin Invoice */
 class GrapePurchaseInvoiceResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -27,10 +29,10 @@ class GrapePurchaseInvoiceResource extends JsonResource
                 'email' => $this->viticulturist->email,
             ] : null),
             // Totales
-            'subtotal' => $this->subtotal !== null ? (float) $this->subtotal : null,
-            'tax_amount' => $this->tax_amount !== null ? (float) $this->tax_amount : null,
-            'total_amount' => $this->total_amount !== null ? (float) $this->total_amount : null,
-            'discount_amount' => $this->discount_amount !== null ? (float) $this->discount_amount : null,
+            'subtotal' => (float) $this->subtotal,
+            'tax_amount' => (float) $this->tax_amount,
+            'total_amount' => (float) $this->total_amount,
+            'discount_amount' => (float) $this->discount_amount,
             // Banco / pago
             'bank_name' => $this->bank_name,
             'bank_account_number' => $this->bank_account_number,

@@ -39,11 +39,13 @@ class AdvisoryMembership extends Model
         return array_map(fn ($v) => __($v), static::SPECIALTIES);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
+    /** @return BelongsTo<Campaign, $this> */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
@@ -51,7 +53,7 @@ class AdvisoryMembership extends Model
 
     public function getSpecialtyLabelAttribute(): string
     {
-        return __(self::SPECIALTIES[$this->specialty] ?? $this->specialty);
+        return __(self::SPECIALTIES[$this->specialty]);
     }
 
     public function scopeActive($query)

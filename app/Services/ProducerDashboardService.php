@@ -44,7 +44,7 @@ class ProducerDashboardService
 
         // ── Bodega ───────────────────────────────────────────────────────────
         $activeCampaign = Campaign::forViticulturist($userId)->where('active', true)->first();
-        $vintageYear = $activeCampaign?->year ?? now()->year;
+        $vintageYear = $activeCampaign->year ?? now()->year;
 
         $activeBatches = GrapeReceptionBatch::where('winery_id', $userId)
             ->where('vintage_year', $vintageYear)

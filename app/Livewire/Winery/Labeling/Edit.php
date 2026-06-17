@@ -14,6 +14,11 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $wines
+ * @property-read mixed $wineBottlings
+ * @property-read mixed $labelBatches
+ */
 class Edit extends Component
 {
     use WithRoleAwareRedirect, WithToastNotifications;

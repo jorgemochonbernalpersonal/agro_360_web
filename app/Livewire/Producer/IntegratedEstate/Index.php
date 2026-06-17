@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read mixed $campaigns
+ * @property-read mixed $plots
+ */
 class Index extends Component
 {
     public string $filterCampaign = '';
@@ -26,7 +30,7 @@ class Index extends Component
             ->orderByDesc('year')
             ->first();
 
-        $this->filterCampaign = (string) ($active?->id ?? '');
+        $this->filterCampaign = (string) ($active->id ?? '');
     }
 
     #[Computed(cache: true, seconds: 300)]
@@ -87,7 +91,7 @@ class Index extends Component
         $totalPlantings = $plantings->count();
 
         $varietyCounts = $plantings
-            ->groupBy(fn ($pl) => $pl->grapeVariety?->name ?? 'Sin variedad')
+            ->groupBy(fn ($pl) => $pl->grapeVariety->name ?? 'Sin variedad')
             ->map->count()
             ->sortDesc();
 

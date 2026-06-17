@@ -14,10 +14,9 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    <div class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800 flex items-center gap-2">
-        <flux:icon icon="information-circle" class="size-4 flex-shrink-0" />
-        <span>{{ __('El "último ejecutado" solo se registra cuando se usa el botón "Ejecutar ahora" desde esta página. Para producción, el cron ejecuta estas tareas automáticamente.') }}</span>
-    </div>
+    <flux:callout variant="info" icon="information-circle">
+        <flux:callout.text>{{ __('El "último ejecutado" solo se registra cuando se usa el botón "Ejecutar ahora" desde esta página. Para producción, el cron ejecuta estas tareas automáticamente.') }}</flux:callout.text>
+    </flux:callout>
 
     <x-agro.card :padding="false">
         <div class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
