@@ -315,22 +315,13 @@
         @endif
 
         @if($orphanedPlots > 0)
-        <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
-            <div class="flex items-center gap-3">
-                <flux:icon icon="map" class="size-5 text-amber-600 flex-shrink-0" />
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-amber-900">
-                        {{ $orphanedPlots }} {{ $orphanedPlots > 1 ? __('parcelas huérfanas — sin viticultor activo vinculado') : __('parcela huérfana — sin viticultor activo vinculado') }}
-                    </p>
-                    <p class="text-xs text-amber-700 mt-0.5">
-                        {{ __('El propietario está inactivo o fue eliminado.') }}
-                    </p>
-                </div>
-                <a href="{{ route('admin.plots.index') }}" class="flex-shrink-0 text-xs font-medium text-amber-700 hover:text-amber-900">
-                    {{ __('Ver parcelas') }} →
-                </a>
-            </div>
-        </div>
+        <flux:callout variant="warning" icon="map">
+            <flux:callout.heading>{{ $orphanedPlots }} {{ $orphanedPlots > 1 ? __('parcelas huérfanas — sin viticultor activo vinculado') : __('parcela huérfana — sin viticultor activo vinculado') }}</flux:callout.heading>
+            <flux:callout.text>
+                {{ __('El propietario está inactivo o fue eliminado.') }}
+                <a href="{{ route('admin.plots.index') }}" class="block mt-1 font-medium underline underline-offset-2 hover:opacity-80">{{ __('Ver parcelas') }} →</a>
+            </flux:callout.text>
+        </flux:callout>
         @endif
     </div>
     @endif
