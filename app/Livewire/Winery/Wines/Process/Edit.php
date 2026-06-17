@@ -46,7 +46,7 @@ class Edit extends Component
         $this->process_type = $process->process_type;
         $this->container_id = (string) ($process->container_id ?? '');
         $this->start_date = $process->start_date->toDateString();
-        $this->end_date = $process->end_date->toDateString();
+        $this->end_date = $process->end_date?->toDateString() ?? '';
         $this->quantity = (string) ($process->quantity ?? '');
         $this->unit_of_measurement_id = (string) ($process->unit_of_measurement_id ?? '');
         $this->observations = $process->observations ?? '';
