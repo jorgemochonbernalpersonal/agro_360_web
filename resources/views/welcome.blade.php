@@ -744,6 +744,74 @@
         </div>
     </section>
 
+    <!-- El producto en acción -->
+    <section class="py-20 bg-white border-t border-zinc-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 space-y-3">
+                <p class="text-xs font-semibold uppercase tracking-widest text-agro-600">El producto real</p>
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">Así se ve Agro365 por dentro</h2>
+                <p class="text-zinc-500 max-w-xl mx-auto">Datos de demostración — el panel real que usarás desde el primer día.</p>
+            </div>
+
+            {{-- Tabs --}}
+            <div x-data="{ tab: 1 }">
+                <div class="flex flex-wrap justify-center gap-2 mb-8">
+                    <button @click="tab = 1"
+                            :class="tab === 1 ? 'bg-agro-700 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'"
+                            class="px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-150">
+                        📋 Cuaderno de Campo
+                    </button>
+                    <button @click="tab = 2"
+                            :class="tab === 2 ? 'bg-agro-700 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'"
+                            class="px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-150">
+                        🗺️ Mapa SIGPAC
+                    </button>
+                    <button @click="tab = 3"
+                            :class="tab === 3 ? 'bg-agro-700 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'"
+                            class="px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-150">
+                        🍇 Declaraciones de Vendimia
+                    </button>
+                </div>
+
+                <div class="relative rounded-2xl border border-zinc-200 shadow-2xl shadow-zinc-900/8 overflow-hidden bg-white">
+                    {{-- Barra de navegador falsa --}}
+                    <div class="flex items-center gap-1.5 px-4 py-2.5 bg-zinc-50 border-b border-zinc-200">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-green-400"></span>
+                        <span class="ml-3 text-xs text-zinc-400 font-mono">app.agro365.es</span>
+                    </div>
+
+                    <div x-show="tab === 1" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                        <img src="{{ asset('images/foto1.png') }}"
+                             alt="Cuaderno de campo digital Agro365 — tratamientos, fertilización, riegos y cosecha"
+                             class="w-full h-auto"
+                             loading="lazy" decoding="async">
+                    </div>
+                    <div x-show="tab === 2" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                        <img src="{{ asset('images/foto2.png') }}"
+                             alt="Mapa SIGPAC de parcelas vitícolas en Agro365"
+                             class="w-full h-auto"
+                             loading="lazy" decoding="async">
+                    </div>
+                    <div x-show="tab === 3" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                        <img src="{{ asset('images/foto3.png') }}"
+                             alt="Declaraciones de vendimia ante DO en Agro365"
+                             class="w-full h-auto"
+                             loading="lazy" decoding="async">
+                    </div>
+                </div>
+
+                {{-- Leyenda por tab --}}
+                <div class="mt-4 text-center text-sm text-zinc-400">
+                    <span x-show="tab === 1">Cuaderno de Campo · Campaña 2026 · Tratamientos fitosanitarios, fertilización, riegos y cosecha en un solo panel</span>
+                    <span x-show="tab === 2">Mapa SIGPAC · Parcelas importadas automáticamente desde el Ministerio con un solo clic</span>
+                    <span x-show="tab === 3">Declaraciones de Vendimia · Gestión de declaraciones ante la DO con trazabilidad completa por parcela</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Ecosistema Conectado -->
     <section id="ecosistema" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
