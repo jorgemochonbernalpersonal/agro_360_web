@@ -40,6 +40,26 @@ class BottlingTest extends WineryTestCase
             ->assertHasErrors(['wine_id', 'bottling_date', 'bottle_format', 'quantity_bottles', 'quantity_liters']);
     }
 
+    public function test_create_rejects_wine_from_other_winery(): void
+    {
+        $otherWine = Wine::create([
+            'user_id'       => $this->makeOtherWinery()->id,
+            'name'          => 'Other Wine',
+            'wine_type'     => 'red',
+            'status'        => 'in_progress',
+            'volume_liters' => 1000,
+        ]);
+
+        Livewire::test(Create::class)
+            ->set('wine_id', (string) $otherWine->id)
+            ->set('bottling_date', now()->toDateString())
+            ->set('bottle_format', '750')
+            ->set('quantity_bottles', '100')
+            ->set('quantity_liters', '75')
+            ->call('save')
+            ->assertHasErrors(['wine_id']);
+    }
+
     public function test_other_winery_cannot_edit(): void
     {
         $otherWinery = $this->makeOtherWinery();
