@@ -5,6 +5,7 @@ namespace Tests\Feature\Winery\Subproducts;
 use App\Livewire\Winery\Subproducts\Create;
 use App\Livewire\Winery\Subproducts\Edit;
 use App\Models\User;
+use App\Models\Wine;
 use App\Models\WineSubproduct;
 use Livewire\Livewire;
 use Tests\Feature\WineryTestCase;
@@ -78,6 +79,28 @@ class SubproductsTest extends WineryTestCase
             'id' => $subproduct->id,
             'quantity' => 200,
         ]);
+    }
+
+    public function test_create_rejects_wine_from_other_winery(): void
+    {
+        $otherWine = Wine::create([
+            'user_id'   => $this->makeOtherWinery()->id,
+            'name'      => 'Other Wine',
+            'wine_type' => 'red',
+            'status'    => 'in_progress',
+        ]);
+
+        $firstType = array_key_first(WineSubproduct::TYPES);
+        $firstDestination = array_key_first(WineSubproduct::DESTINATIONS);
+
+        Livewire::test(Create::class)
+            ->set('wine_id', (string) $otherWine->id)
+            ->set('type', $firstType)
+            ->set('subproduct_date', today()->toDateString())
+            ->set('quantity', '100')
+            ->set('destination', $firstDestination)
+            ->call('save')
+            ->assertHasErrors(['wine_id']);
     }
 
     public function test_other_winery_cannot_edit(): void
