@@ -202,7 +202,7 @@ class Register extends Component
             $founderCode = config('app.founder_code', '');
             $isFounder = $founderCode !== ''
                 && hash_equals($founderCode, $this->founder_code)
-                && User::where('is_founder', true)->count() < config('app.founder_max_slots', 50);
+                && User::where('is_founder', true)->count() < config('app.founder_max_slots', 25);
         }
 
         try {

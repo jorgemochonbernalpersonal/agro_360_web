@@ -6,7 +6,7 @@
 
     <!-- SEO Meta Tags -->
     <title>Software para Bodegas | Gestión Profesional de Bodegas - Agro365</title>
-    <meta name="description" content="Software profesional para bodegas en España. Trazabilidad integral, gestión de vendimia, control de depósitos y cumplimiento normativo. Bodega independiente 14€/mes. Gratis si perteneces a una DO.">
+    <meta name="description" content="Software profesional para bodegas en España. Trazabilidad integral, gestión de vendimia, control de depósitos y cumplimiento normativo. Bodega independiente desde 19€/mes. Gratis si perteneces a una DO.">
     <meta name="keywords" content="software bodegas, software bodega, gestión bodegas, software producción vino, gestión bodega, software enología, software bodegas España">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">
@@ -21,7 +21,7 @@
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ url('/software-bodegas') }}">
     <meta property="og:title" content="Software para Bodegas - Gestión Profesional · Agro365">
-    <meta property="og:description" content="Trazabilidad integral, gestión de vendimia, control de depósitos y cumplimiento normativo. Bodega independiente 14€/mes. Gratis si perteneces a una DO.">
+    <meta property="og:description" content="Trazabilidad integral, gestión de vendimia, control de depósitos y cumplimiento normativo. Bodega independiente desde 19€/mes. Gratis si perteneces a una DO.">
     <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/software-bodegas') }}">
     <meta name="twitter:title" content="Software para Bodegas - Agro365">
-    <meta name="twitter:description" content="Trazabilidad integral desde la uva hasta la botella. Bodega independiente 14€/mes. Gratis si perteneces a una DO.">
+    <meta name="twitter:description" content="Trazabilidad integral desde la uva hasta la botella. Bodega independiente desde 19€/mes. Gratis si perteneces a una DO.">
     <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
 
     <!-- Favicon -->
@@ -281,10 +281,10 @@
                         <h3 class="text-xl font-bold text-zinc-800 mb-1">{{ __('Bodega independiente') }}</h3>
                         <p class="text-zinc-500 text-sm mb-4">{{ __('Sin DO o con DO que aún no está en Agro365.') }}</p>
                         <div class="flex items-end gap-1 mb-1">
-                            <span class="text-4xl font-bold text-red-700">14€</span>
+                            <span class="text-4xl font-bold text-red-700">desde 19€</span>
                             <span class="text-zinc-500 mb-1">/mes</span>
                         </div>
-                        <p class="text-zinc-500 text-sm mb-6">o <strong>{{ __('130€/año') }}</strong> · Onboarding personalizado incluido.</p>
+                        <p class="text-zinc-500 text-sm mb-6">{{ __('Escala con el número de viticultores · Onboarding personalizado incluido.') }}</p>
                         <ul class="space-y-2 text-sm text-zinc-600">
                             @foreach([
                                 'Gestión completa de vendimia y producción',
@@ -321,7 +321,7 @@
         <section class="py-16 bg-gradient-to-br from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)]">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">{{ __('Lleva tu bodega al siguiente nivel') }}</h2>
-                <p class="text-green-100 text-lg mb-2">{{ __('Desde 14€/mes · 3 meses gratis · Sin tarjeta') }}</p>
+                <p class="text-green-100 text-lg mb-2">{{ __('Desde 19€/mes · 3 meses gratis · Sin tarjeta') }}</p>
                 <p class="text-green-200/70 text-sm mb-8">{{ __('Prueba gratuita de 3 meses para las primeras 50 bodegas. Onboarding personalizado incluido.') }}</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">

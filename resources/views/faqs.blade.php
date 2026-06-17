@@ -179,7 +179,7 @@
                     'name' => '¿Cuánto cuesta Agro365 realmente?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Depende del perfil. Viticultor básico (invitado por bodega): gratis. Viticultor completo (invitado): 9€/mes o 85€/año. Viticultor independiente: 14€/mes o 130€/año. Bodega dentro de una DO: gratis. Bodega independiente: 14€/mes o 130€/año. DO: desde 149€/mes. Sin tarjeta requerida para empezar.'
+                        'text' => 'Depende del perfil. Viticultor básico (invitado por bodega): gratis. Viticultor completo (invitado): 9€/mes o 85€/año. Viticultor independiente: 14€/mes o 130€/año. Bodega dentro de una DO: gratis. Bodega independiente: desde 19€/mes (escala con el número de viticultores gestionados). DO: desde 149€/mes. Sin tarjeta requerida para empezar.'
                     ]
                 ],
                 [

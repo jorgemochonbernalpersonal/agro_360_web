@@ -359,7 +359,7 @@ class Show extends Component
             return;
         }
 
-        $maxSlots = config('app.founder_max_slots', 50);
+        $maxSlots = config('app.founder_max_slots', 25);
         $enabling = ! $this->user->is_founder;
 
         if ($enabling && User::where('is_founder', true)->count() >= $maxSlots) {

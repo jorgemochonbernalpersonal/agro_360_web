@@ -109,7 +109,7 @@
                                 <div class="min-w-0">
                                     <p class="font-semibold text-zinc-800 text-sm">{{ __('Bodega') }}</p>
                                     <p class="text-xs text-zinc-500 mt-0.5">{{ __('Recibo uva de viticultores y gestiono la elaboración. Controlo depósitos, vendimia y facturación a mis proveedores.') }}</p>
-                                    <p class="text-xs text-agro-700 font-medium mt-1.5">{{ __('Desde 14€/mes · Incluye gestión de viticultores') }}</p>
+                                    <p class="text-xs text-agro-700 font-medium mt-1.5">{{ __('Desde 19€/mes · Incluye gestión de viticultores') }}</p>
                                 </div>
                             </div>
                         </label>

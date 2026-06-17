@@ -138,7 +138,7 @@
                             <li><strong>{{ __('Viticultor completo') }}</strong> (invitado por bodega): 9€/mes o 85€/año</li>
                             <li><strong>{{ __('Viticultor independiente') }}</strong>: 14€/mes o 130€/año</li>
                             <li><strong>{{ __('Bodega dentro de una DO asociada') }}</strong>: gratis</li>
-                            <li><strong>{{ __('Bodega independiente') }}</strong>: 14€/mes o 130€/año</li>
+                            <li><strong>{{ __('Bodega independiente') }}</strong>: desde 19€/mes (escala con el número de viticultores gestionados)</li>
                             <li><strong>{{ __('Denominación de Origen') }}</strong>: desde 149€/mes según número de bodegas</li>
                         </ul>
                         <p class="text-gray-700 leading-relaxed mt-4">{{ __('Nos reservamos el derecho de modificar los precios con 30 días de aviso previo.') }}</p>
