@@ -435,7 +435,7 @@
         $waFounders = $waBase . '?text=Hola%2C%20me%20interesa%20el%20programa%20de%20fundadores%20de%20Agro365';
         $waDO       = $waBase . '?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365';
 
-        $foundersTotal = 50;
+        $foundersTotal = config('app.founder_max_slots', 50);
         $foundersTaken = \App\Models\User::where('is_founder', true)->count();
         $foundersLeft  = max(0, $foundersTotal - $foundersTaken);
         $foundersPct   = (int) round($foundersTaken / $foundersTotal * 100);
@@ -1440,7 +1440,7 @@
                     ],
                     [
                         '¿Los viticultores de mi bodega tienen que pagar su propio plan?',
-                        'No para el uso básico. El viticultor invitado accede al cuaderno de campo gratis. Si quiere funciones avanzadas (SIGPAC, teledetección, PAC, facturación...) paga 9€/mes por su cuenta — la bodega no asume ese coste. Tú como bodega solo pagas tu cuota fija (14€/mes si eres independiente, o gratis si estás dentro de una DO).',
+                        'No para el uso básico. El viticultor invitado accede al cuaderno de campo gratis. Si quiere funciones avanzadas (SIGPAC, teledetección, PAC, facturación...) paga 9€/mes por su cuenta — la bodega no asume ese coste. Tú como bodega solo pagas tu cuota fija (desde 19€/mes si eres independiente, escala según el número de viticultores gestionados, o gratis si estás dentro de una DO).',
                     ],
                     [
                         '¿Los informes que genera Agro365 son válidos para inspecciones PAC?',
@@ -1488,7 +1488,7 @@
             <h2 class="text-3xl lg:text-5xl font-bold tracking-tight text-white mb-5">
                 La normativa no espera.<br>Tu viñedo tampoco.
             </h2>
-            <p class="text-agro-100/90 text-lg mb-10 max-w-2xl mx-auto">{{ __('Viticultor básico gratis · Bodega 14€/mes · Productor 19€/mes · DO desde 149€/mes.') }}</p>
+            <p class="text-agro-100/90 text-lg mb-10 max-w-2xl mx-auto">{{ __('Viticultor básico gratis · Bodega desde 19€/mes · Productor 19€/mes · DO desde 149€/mes.') }}</p>
             <div class="flex flex-wrap gap-3 justify-center">
                 <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-white text-agro-800 hover:bg-agro-50 transition-colors font-semibold text-base shadow-sm">
                     Empezar gratis

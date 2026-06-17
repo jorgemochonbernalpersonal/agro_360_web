@@ -28,6 +28,8 @@ class Index extends Component
 
     public $filterBeta = '';
 
+    public $filterFounder = '';
+
     public $filterDateFrom = '';
 
     public $filterDateTo = '';
@@ -59,6 +61,7 @@ class Index extends Component
         'filterActive' => ['except' => ''],
         'filterVerified' => ['except' => ''],
         'filterBeta' => ['except' => ''],
+        'filterFounder' => ['except' => ''],
         'filterDateFrom' => ['except' => '', 'as' => 'from'],
         'filterDateTo' => ['except' => '', 'as' => 'to'],
     ];
@@ -94,6 +97,12 @@ class Index extends Component
     }
 
     public function updatingFilterBeta()
+    {
+        $this->resetPage();
+        $this->selectedUsers = [];
+    }
+
+    public function updatingFilterFounder()
     {
         $this->resetPage();
         $this->selectedUsers = [];
@@ -292,6 +301,44 @@ class Index extends Component
         $this->toastSuccess("Beta desactivado para {$count} usuario(s).");
     }
 
+    // ─── Toggle founder ───────────────────────────────────────────────────────
+
+    public function toggleFounder($userId)
+    {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
+        $user = User::findOrFail($userId);
+
+        if ($user->isAdmin()) {
+            $this->toastError(__('No aplica a administradores.'));
+
+            return;
+        }
+
+        $maxSlots = config('app.founder_max_slots', 50);
+        $enabling = ! $user->is_founder;
+
+        if ($enabling && User::where('is_founder', true)->count() >= $maxSlots) {
+            $this->toastError("No quedan plazas de fundador (máx. {$maxSlots}).");
+
+            return;
+        }
+
+        $user->update(['is_founder' => $enabling]);
+
+        SecurityLogger::logSecurityEvent('user_founder_toggled', [
+            'admin_id' => Auth::id(),
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'action' => $enabling ? 'granted' : 'revoked',
+        ]);
+
+        $estado = $enabling ? 'marcado como fundador' : 'ya no es fundador';
+        $this->toastSuccess("Usuario {$estado}.");
+    }
+
     // ─── Impersonate / Toggle ─────────────────────────────────────────────────
 
     public function impersonate($userId)
@@ -441,7 +488,7 @@ class Index extends Component
         return response()->streamDownload(function () use ($users) {
             $handle = fopen('php://output', 'w');
             fwrite($handle, "\xEF\xBB\xBF"); // UTF-8 BOM for Excel
-            fputcsv($handle, ['ID', 'Nombre', 'Email', 'Rol', 'Estado', 'Email Verificado', 'Beta', 'Fin Beta', 'Registro']);
+            fputcsv($handle, ['ID', 'Nombre', 'Email', 'Rol', 'Estado', 'Email Verificado', 'Beta', 'Fin Beta', 'Fundador', 'Registro']);
 
             foreach ($users as $user) {
                 fputcsv($handle, [
@@ -453,6 +500,7 @@ class Index extends Component
                     $user->email_verified_at ? 'Sí' : 'No',
                     $user->is_beta_user ? 'Sí' : 'No',
                     $user->beta_ends_at ? $user->beta_ends_at->format('d/m/Y') : '',
+                    $user->is_founder ? 'Sí' : 'No',
                     $user->created_at->format('d/m/Y H:i'),
                 ]);
             }
@@ -480,6 +528,7 @@ class Index extends Component
             ->selectRaw('SUM(CASE WHEN email_verified_at IS NULL THEN 1 ELSE 0 END) as unverified')
             ->selectRaw('SUM(CASE WHEN is_beta_user = 1 AND (beta_ends_at IS NULL OR beta_ends_at > NOW()) THEN 1 ELSE 0 END) as beta_active')
             ->selectRaw('SUM(CASE WHEN is_beta_user = 1 AND beta_ends_at <= NOW() THEN 1 ELSE 0 END) as beta_expired')
+            ->selectRaw('SUM(CASE WHEN is_founder = 1 THEN 1 ELSE 0 END) as founders')
             ->first();
 
         $stats = [
@@ -497,6 +546,7 @@ class Index extends Component
             'unverified' => (int) $raw->unverified,
             'beta_active' => (int) $raw->beta_active,
             'beta_expired' => (int) $raw->beta_expired,
+            'founders' => (int) $raw->founders,
         ];
 
         return view('livewire.admin.users.index', [
@@ -533,6 +583,10 @@ class Index extends Component
             } else {
                 $query->whereNull('email_verified_at');
             }
+        }
+
+        if ($this->filterFounder !== '') {
+            $query->where('is_founder', $this->filterFounder === '1');
         }
 
         if ($this->filterBeta !== '') {
