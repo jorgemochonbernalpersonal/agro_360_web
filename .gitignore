@@ -1,3 +1,6 @@
+# PHPStan
+phpstan_no_baseline.neon
+
 # Laravel
 /node_modules
 # IMPORTANTE: /public/build NO debe estar ignorado
