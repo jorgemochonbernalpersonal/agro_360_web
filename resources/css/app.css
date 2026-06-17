@@ -25,25 +25,6 @@
     --color-agro-800: #1a3a0e;
     --color-agro-900: #0f2508;
 
-    /* ─────────────────────────────────────────────────────────────────────
-       Convención de uso de color (derivada del rediseño de la landing).
-       Usar SIEMPRE la paleta agro-*; evitar green-*/emerald-* salvo estados
-       semánticos (éxito/alerta). Referencia: welcome.blade.php
-
-       · Botón primario .......... bg-agro-700 text-white hover:bg-agro-600
-       · Botón secundario ........ bg-white border-zinc-300
-                                    hover:border-agro-500 hover:text-agro-700
-       · Links / texto de acento . text-agro-600
-       · Badges / chips / icon-bg  bg-agro-50 text-agro-700
-       · Iconos decorativos ...... text-agro-500
-       · Borde de acento en card . border-agro-400
-       · Texto principal ......... text-zinc-900   secundario: text-zinc-600
-       · Radios .................. rounded-lg (botones) · rounded-xl/2xl (cards)
-
-       NOTA: el hover del botón primario ACLARA (700→600), no oscurece;
-       agro-800 (#1a3a0e) es casi negro y solo para texto/CTA muy oscuro.
-       ───────────────────────────────────────────────────────────────────── */
-
     /* Flux UI accent → green automatically */
     --color-accent: var(--color-agro-500);
     --color-accent-content: var(--color-agro-600);
@@ -121,6 +102,29 @@
         box-shadow: var(--shadow-strong);
     }
 }
+
+/* ─── Hero animado viñedo ───────────────────────────────── */
+@keyframes hero-drive  { 0%{left:-220px} 100%{left:108%} }
+@keyframes hero-bounce { 0%{transform:translateY(0) rotate(-0.3deg)} 100%{transform:translateY(-3px) rotate(0.3deg)} }
+@keyframes hero-spin   { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes hero-puff   { 0%{opacity:0.55;transform:scale(1) translateX(0)} 100%{opacity:0;transform:scale(2) translateX(-20px)} }
+
+.hero-agro             { position:relative; overflow:hidden; min-height:600px; }
+@media (min-width:1024px) { .hero-agro { min-height:680px; } }
+.hero-agro-bg          { position:absolute;inset:0;background:linear-gradient(160deg,#0d2206 0%,#1a3d0a 40%,#2d5c14 70%,#3a7018 100%); }
+.hero-agro-sky         { position:absolute;top:0;left:0;width:100%;height:52%;pointer-events:none; }
+.hero-agro-overlay     { position:absolute;inset:0;background:linear-gradient(105deg,rgba(5,12,2,0.88) 0%,rgba(5,12,2,0.55) 55%,rgba(5,12,2,0.1) 100%); }
+.hero-agro-ground      { position:absolute;bottom:0;left:0;right:0;height:115px;background:linear-gradient(to top,#0e2206,#162e08,transparent); }
+.hero-agro-vines       { position:absolute;bottom:0;left:0;right:0;pointer-events:none; }
+.hero-agro-tractor-wrap  { position:absolute;bottom:58px;animation:hero-drive 16s linear infinite; }
+.hero-agro-tractor-inner { animation:hero-bounce 0.5s ease-in-out infinite alternate; }
+.hero-agro-dust        { position:absolute;bottom:14px;left:-8px; }
+.hero-agro-dp          { position:absolute;border-radius:50%;background:rgba(160,130,60,0.32); }
+.hero-agro-dp1         { width:24px;height:14px;bottom:0;left:0;animation:hero-puff 1s ease-out infinite; }
+.hero-agro-dp2         { width:17px;height:10px;bottom:2px;left:-14px;animation:hero-puff 1s ease-out infinite 0.22s; }
+.hero-agro-dp3         { width:12px;height:8px;bottom:3px;left:-24px;animation:hero-puff 1s ease-out infinite 0.42s; }
+.hero-agro-wheel       { transform-box:fill-box;transform-origin:center;animation:hero-spin 0.65s linear infinite; }
+.hero-agro-wheel-f     { transform-box:fill-box;transform-origin:center;animation:hero-spin 1.05s linear infinite; }
 
 /* Skeleton shimmer loader */
 .skeleton {
