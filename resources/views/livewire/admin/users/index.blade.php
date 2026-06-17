@@ -36,8 +36,8 @@
             <div class="grid grid-cols-2 gap-4">
                 <x-agro.stat-card :label="__('Total Usuarios')"  :value="$stats['total']"       icon="users"        color="purple" />
                 <x-agro.stat-card :label="__('Activos')"          :value="$stats['active']"      icon="check-circle" color="agro"   />
-                <x-agro.stat-card :label="__('Verificados')"      :value="$stats['verified']"    icon="envelope"     color="blue"   />
                 <x-agro.stat-card :label="__('Beta Activos')"     :value="$stats['beta_active']" icon="clock"        color="orange" />
+                <x-agro.stat-card :label="__('Fundadores')"       :value="$stats['founders']"    icon="star"         color="amber"  />
             </div>
         </div>
     </div>
@@ -238,6 +238,9 @@
                                             <x-agro.status-badge :label="__('Beta activo')" type="warning" />
                                         @endif
                                     @endif
+                                    @if($user->is_founder)
+                                        <flux:badge color="amber" size="sm" icon="star">{{ __('Fundador') }}</flux:badge>
+                                    @endif
                                 </div>
                             </x-agro.table-cell>
 
@@ -279,6 +282,15 @@
                                             wire:confirm="{{ $user->is_beta_user ? __('¿Quitar acceso beta a este usuario?') : __('¿Dar acceso beta a este usuario?') }}"
                                             tooltip="{{ $user->is_beta_user ? __('Quitar beta') : __('Dar beta') }}"
                                             @class(['text-yellow-500' => $user->is_beta_user])
+                                        />
+                                        <flux:button
+                                            variant="ghost"
+                                            size="sm"
+                                            icon="star"
+                                            wire:click="toggleFounder({{ $user->id }})"
+                                            wire:confirm="{{ $user->is_founder ? __('¿Revocar estado de fundador a :name?', ['name' => $user->name]) : __('¿Marcar a :name como fundador?', ['name' => $user->name]) }}"
+                                            tooltip="{{ $user->is_founder ? __('Revocar fundador') : __('Conceder fundador') }}"
+                                            @class(['text-amber-500' => $user->is_founder])
                                         />
                                     @endif
 

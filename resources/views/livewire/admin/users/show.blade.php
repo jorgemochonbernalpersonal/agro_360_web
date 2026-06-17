@@ -160,7 +160,8 @@
                         icon="{{ $user->is_founder ? 'x-mark' : 'star' }}"
                     >{{ $user->is_founder ? __('Quitar') : __('Hacer fundador') }}</flux:button>
                 </div>
-                <p class="text-xs text-zinc-400 mt-1">{{ __('Beneficio: 1 año de plan Completo gratis') }}</p>
+                @php $maxSlots = config('app.founder_max_slots', 25); $taken = \App\Models\User::where('is_founder', true)->count(); @endphp
+                <p class="text-xs text-zinc-400 mt-1">{{ $taken }} / {{ $maxSlots }} plazas ocupadas · {{ __('Beneficio: 1 año de plan Completo gratis') }}</p>
             </div>
             @endunless
             @if($user->isProducer())
