@@ -401,7 +401,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     /**
      * Get authentication token
      */
-    protected function getAuthToken(): ?string
+    public function getAuthToken(): ?string
     {
         if ($this->token) {
             return $this->token;

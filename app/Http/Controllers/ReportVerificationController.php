@@ -175,10 +175,6 @@ class ReportVerificationController extends Controller
                 }
 
             } else {
-                if ($report->report_type !== 'full_digital_notebook') {
-                    return true; // Tipo no soportado: asumir válido
-                }
-
                 $campaignId = $report->report_metadata['campaign_id'] ?? null;
 
                 if (! $campaignId) {

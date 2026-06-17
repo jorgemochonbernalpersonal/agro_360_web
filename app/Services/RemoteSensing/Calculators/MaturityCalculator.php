@@ -291,13 +291,9 @@ class MaturityCalculator
     /**
      * Estimate harvest date
      */
-    private function estimateHarvestDate(float $maturityIndex): ?Carbon
+    private function estimateHarvestDate(float $maturityIndex): Carbon
     {
         $days = $this->estimateDaysToHarvest($maturityIndex);
-
-        if ($days === null) {
-            return null;
-        }
 
         return now()->addDays($days);
     }

@@ -59,27 +59,18 @@ class AgriculturalActivityAuditLog extends Model
             }
 
             // Si no hay usuario autenticado, usar el viticulturist_id de la actividad
-            if ($userId === null && isset($activity->viticulturist_id)) {
-                $userId = $activity->viticulturist_id;
-            }
-        }
-
-        // Si aún no hay userId, usar 1 como fallback (admin o sistema)
-        if ($userId === null) {
-            $userId = 1;
+            $userId ??= $activity->viticulturist_id;
         }
 
         $request = request();
         $ipAddress = '127.0.0.1';
         $userAgent = 'Seeder';
 
-        if ($request) {
-            try {
-                $ipAddress = $request->ip() ?? '127.0.0.1';
-                $userAgent = $request->userAgent() ?? 'Seeder';
-            } catch (\Exception $e) {
-                // Si falla, usar valores por defecto
-            }
+        try {
+            $ipAddress = $request->ip() ?? '127.0.0.1';
+            $userAgent = $request->userAgent() ?? 'Seeder';
+        } catch (\Exception $e) {
+            // Si falla, usar valores por defecto
         }
 
         return self::create([

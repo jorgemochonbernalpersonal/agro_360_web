@@ -596,7 +596,7 @@ class Create extends Component
         $this->validate($rules, $messages);
 
         try {
-            $service = new OfficialReportService;
+            $service = app(OfficialReportService::class);
 
             if ($this->reportType === 'phytosanitary_treatments') {
                 // Informe de tratamientos fitosanitarios

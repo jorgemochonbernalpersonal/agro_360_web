@@ -1,24 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Call to protected method getAuthToken\(\) of class App\\Services\\RemoteSensing\\NasaEarthdataService\.$#'
-			identifier: method.protected
-			count: 1
-			path: app/Console/Commands/CheckAreaRequestTasks.php
-
-		-
-			message: '#^Array has 2 duplicate keys with value ''font'' \(''font'', ''font''\)\.$#'
-			identifier: array.duplicateKey
-			count: 1
-			path: app/Exports/InventoryExport.php
-
-		-
-			message: '#^Array has 2 duplicate keys with value ''font'' \(''font'', ''font''\)\.$#'
-			identifier: array.duplicateKey
-			count: 1
-			path: app/Exports/MovementsExport.php
-
-		-
 			message: '#^Anonymous function should return array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: mixed, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\} but returns array\{id\: int, name\: string, area\: float, active\: bool, plantings\: Illuminate\\Support\\Collection\<int, array\{id\: int, variety\: mixed, area\: float, planting_year\: mixed, plant_count\: mixed\}\>\}\.$#'
 			identifier: return.type
 			count: 1
@@ -29,18 +11,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Api/Viticulturist/PlotController.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between ''full_digital…'' and ''full_digital…'' will always evaluate to false\.$#'
-			identifier: notIdentical.alwaysFalse
-			count: 1
-			path: app/Http/Controllers/ReportVerificationController.php
-
-		-
-			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: app/Http/Controllers/Viticulturist/OfficialReportController.php
 
 		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: mixed, supply_name\: mixed, winery_supply_id\: mixed, quantity_used\: float, unit_of_measurement_id\: mixed, cost\: float\|null, notes\: mixed\}\>\.$#'
@@ -61,34 +31,10 @@ parameters:
 			path: app/Http/Resources/Api/WineProcessStepResource.php
 
 		-
-			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: app/Jobs/GenerateOfficialReportJob.php
-
-		-
-			message: '#^Parameter \#1 \$num of function number_format expects float, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Livewire/Admin/Plots/Index.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: app/Livewire/Viticulturist/Harvests/Index.php
-
-		-
-			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: app/Livewire/Viticulturist/OfficialReports/Create.php
-
-		-
-			message: '#^Class App\\Services\\OfficialReportService constructor invoked with 0 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: app/Livewire/Viticulturist/OfficialReports/Index.php
 
 		-
 			message: '#^Class App\\Notifications\\ViticulturistInvitationNotification constructor invoked with 1 parameter, 2 required\.$#'
@@ -113,63 +59,3 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Livewire/Winery/Harvest/QualityAnalysis/Index.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: app/Models/AgriculturalActivityAuditLog.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between ''disputed''\|''matched''\|''pending'' and ''resolved'' will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Models/HarvestDelivery.php
-
-		-
-			message: '#^Offset ''external''\|''own'' does not exist on array\{standard\: ''Estándar'', complete\: ''Completo'', organic\: ''Ecológico'', custom\: ''Personalizado''\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: app/Models/WineAnalysis.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: app/Observers/InvoiceObserver.php
-
-		-
-			message: '#^Match expression does not handle remaining value\: string$#'
-			identifier: match.unhandled
-			count: 1
-			path: app/Services/OfficialReportService.php
-
-		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
-			count: 1
-			path: app/Services/ProductStockService.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between ''harvest''\|''other''\|''product''\|''service'' and ''wine'' will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: app/Services/ProductStockService.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Services/ProductStockService.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Services/RemoteSensing/Calculators/MaturityCalculator.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Services/Validators/PacComplianceValidator.php

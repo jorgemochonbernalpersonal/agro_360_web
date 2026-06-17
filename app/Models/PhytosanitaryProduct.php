@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/** @property int|null $withdrawal_period_days */
 class PhytosanitaryProduct extends Model
 {
     protected $fillable = [

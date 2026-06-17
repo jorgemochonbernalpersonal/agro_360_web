@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/** @property 'pending'|'matched'|'disputed'|'resolved' $status */
 class HarvestDelivery extends Model
 {
     protected $fillable = [

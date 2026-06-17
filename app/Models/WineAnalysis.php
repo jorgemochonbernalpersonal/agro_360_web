@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/** @property string $analysis_type */
 class WineAnalysis extends Model
 {
     // ─── Constants ─────────────────────────────────────────────────────────────

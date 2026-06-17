@@ -124,7 +124,7 @@ class Index extends Component
                     $plot->viticulturist->role ?? '',
                     $plot->municipality->name ?? '',
                     $plot->municipality?->province->name ?? '',
-                    number_format($plot->area, 2),
+                    number_format((float) ($plot->area ?? 0), 2),
                     $plot->active ? 'Activa' : 'Inactiva',
                     $plot->created_at->format('d/m/Y'),
                 ]);

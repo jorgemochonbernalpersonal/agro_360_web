@@ -255,7 +255,7 @@ class Index extends Component
                 return;
             }
 
-            $service = new \App\Services\OfficialReportService;
+            $service = app(\App\Services\OfficialReportService::class);
 
             return $service->downloadReportInFormat($report, $format);
 

@@ -160,6 +160,7 @@ class OfficialReportService
                 $report->xml_path ?? throw new \Exception(__('El archivo XML no está disponible.')),
                 basename($report->xml_path),
             ],
+            default => throw new \InvalidArgumentException("Formato no soportado: {$format}"),
         };
     }
 

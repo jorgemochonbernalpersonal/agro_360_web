@@ -77,12 +77,11 @@ class MovementsExport implements FromCollection, WithHeadings, WithMapping, With
     {
         return [
             1 => [
-                'font' => ['bold' => true],
+                'font' => ['color' => ['rgb' => 'FFFFFF'], 'bold' => true],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '2196F3'],
                 ],
-                'font' => ['color' => ['rgb' => 'FFFFFF'], 'bold' => true],
             ],
         ];
     }

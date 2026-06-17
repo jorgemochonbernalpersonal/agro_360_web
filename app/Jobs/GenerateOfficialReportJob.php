@@ -275,7 +275,7 @@ class GenerateOfficialReportJob implements ShouldQueue
 
                 // Generar PDF
                 $user = \App\Models\User::find($this->userId);
-                $service = new OfficialReportService;
+                $service = app(OfficialReportService::class);
                 $pdfPath = $service->generateFullNotebookPDF($report, $user, $campaign, $activities, $stats);
 
                 // OPTIMIZACIÓN: Calcular hash sin cargar todo en memoria
