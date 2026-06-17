@@ -59,6 +59,40 @@ use App\Policies\WineFermentationControlPolicy;
 use App\Policies\WineLossPolicy;
 use App\Policies\WinePolicy;
 use App\Policies\WineTransferPolicy;
+use App\Models\BottlingAuthorization;
+use App\Models\CellarOperation;
+use App\Models\ContainerRoom;
+use App\Models\EcoCertification;
+use App\Models\ExternalGrape;
+use App\Models\LabelBatch;
+use App\Models\Oenologist;
+use App\Models\ProductLot;
+use App\Models\SanitaryRegistration;
+use App\Models\Supplier;
+use App\Models\WineAnalysis;
+use App\Models\WineBottling;
+use App\Models\WineCost;
+use App\Models\WineLabeling;
+use App\Models\WineTastingNote;
+use App\Models\WineryDocument;
+use App\Models\WinerySupply;
+use App\Policies\BottlingAuthorizationPolicy;
+use App\Policies\CellarOperationPolicy;
+use App\Policies\ContainerRoomPolicy;
+use App\Policies\EcoCertificationPolicy;
+use App\Policies\ExternalGrapePolicy;
+use App\Policies\LabelBatchPolicy;
+use App\Policies\OenologistPolicy;
+use App\Policies\ProductLotPolicy;
+use App\Policies\SanitaryRegistrationPolicy;
+use App\Policies\SupplierPolicy;
+use App\Policies\WineAnalysisPolicy;
+use App\Policies\WineBottlingPolicy;
+use App\Policies\WineCostPolicy;
+use App\Policies\WineLabelingPolicy;
+use App\Policies\WineTastingNotePolicy;
+use App\Policies\WineryDocumentPolicy;
+use App\Policies\WinerySupplyPolicy;
 use App\Services\ContainerStockService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
@@ -94,6 +128,23 @@ class AppServiceProvider extends ServiceProvider
         DoLabel::class => DoLabelPolicy::class,
         DoInspection::class => DoInspectionPolicy::class,
         DoQualification::class => DoQualificationPolicy::class,
+        BottlingAuthorization::class => BottlingAuthorizationPolicy::class,
+        CellarOperation::class => CellarOperationPolicy::class,
+        ContainerRoom::class => ContainerRoomPolicy::class,
+        EcoCertification::class => EcoCertificationPolicy::class,
+        ExternalGrape::class => ExternalGrapePolicy::class,
+        LabelBatch::class => LabelBatchPolicy::class,
+        Oenologist::class => OenologistPolicy::class,
+        ProductLot::class => ProductLotPolicy::class,
+        SanitaryRegistration::class => SanitaryRegistrationPolicy::class,
+        Supplier::class => SupplierPolicy::class,
+        WineAnalysis::class => WineAnalysisPolicy::class,
+        WineBottling::class => WineBottlingPolicy::class,
+        WineCost::class => WineCostPolicy::class,
+        WineLabeling::class => WineLabelingPolicy::class,
+        WineTastingNote::class => WineTastingNotePolicy::class,
+        WineryDocument::class => WineryDocumentPolicy::class,
+        WinerySupply::class => WinerySupplyPolicy::class,
     ];
 
     public function register(): void

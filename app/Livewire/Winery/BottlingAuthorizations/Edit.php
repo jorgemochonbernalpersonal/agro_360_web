@@ -37,7 +37,7 @@ class Edit extends Component
 
     public function mount(BottlingAuthorization $bottlingAuthorization): void
     {
-        abort_if($bottlingAuthorization->user_id !== Auth::id(), 403);
+        $this->authorize('update', $bottlingAuthorization);
         $this->bottlingAuthorization = $bottlingAuthorization;
         $this->authorization_number = $bottlingAuthorization->authorization_number;
         $this->authorization_type = $bottlingAuthorization->authorization_type;

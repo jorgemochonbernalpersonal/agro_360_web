@@ -127,7 +127,7 @@ class Edit extends Component
 
     public function mount(ProductLot $lot): void
     {
-        abort_if($lot->user_id !== Auth::id(), 403);
+        $this->authorize('update', $lot);
 
         $this->lot = $lot;
 

@@ -30,7 +30,7 @@ class Edit extends Component
 
     public function mount(WineCost $cost): void
     {
-        abort_if($cost->user_id !== Auth::id(), 403);
+        $this->authorize('update', $cost);
 
         $this->cost = $cost;
         $this->wine_id = $cost->wine_id;
@@ -67,7 +67,7 @@ class Edit extends Component
 
     public function delete(): void
     {
-        abort_if($this->cost->user_id !== Auth::id(), 403);
+        $this->authorize('delete', $this->cost);
         $this->cost->delete();
         session()->flash('success', __('Coste eliminado.'));
         $this->redirect(roleRoute('production-costs.index'), navigate: true);

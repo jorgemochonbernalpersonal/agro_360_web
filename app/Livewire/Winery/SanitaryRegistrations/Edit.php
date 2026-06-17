@@ -31,7 +31,7 @@ class Edit extends Component
 
     public function mount(SanitaryRegistration $sanitaryRegistration): void
     {
-        abort_if($sanitaryRegistration->user_id !== Auth::id(), 403);
+        $this->authorize('update', $sanitaryRegistration);
         $this->sanitaryRegistration = $sanitaryRegistration;
         $this->registration_number = $sanitaryRegistration->registration_number;
         $this->registration_type = $sanitaryRegistration->registration_type;

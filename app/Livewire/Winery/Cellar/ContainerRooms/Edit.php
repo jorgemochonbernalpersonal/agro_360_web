@@ -25,7 +25,7 @@ class Edit extends Component
 
     public function mount(ContainerRoom $room): void
     {
-        abort_if($room->user_id !== Auth::id(), 403);
+        $this->authorize('update', $room);
 
         $this->room = $room;
         $this->name = $room->name;

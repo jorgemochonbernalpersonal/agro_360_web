@@ -49,7 +49,7 @@ class Edit extends Component
 
     public function mount(ExternalGrape $grape): void
     {
-        abort_if($grape->user_id !== Auth::id(), 403);
+        $this->authorize('update', $grape);
         $this->grape = $grape;
 
         $this->supplier_name = $grape->supplier_name;

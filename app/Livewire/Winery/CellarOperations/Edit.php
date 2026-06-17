@@ -33,7 +33,7 @@ class Edit extends Component
 
     public function mount(CellarOperation $operation): void
     {
-        abort_if($operation->user_id !== Auth::id(), 403);
+        $this->authorize('update', $operation);
 
         $this->operation = $operation;
         $this->operation_type = $operation->operation_type;
