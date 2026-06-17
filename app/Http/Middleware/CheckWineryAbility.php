@@ -32,12 +32,20 @@ class CheckWineryAbility
             abort(403);
         }
 
-        // Sin configurar por la DO → acceso total (retrocompatible con bodegas
-        // independientes y con bodegas existentes antes de que el supervisor configure
-        // restricciones). Una vez configurada, el set es vinculante: vacío = ningún módulo.
-        // Alineado con User::hasAbility().
+        // Sin configurar por la DO → solo el plan del usuario decide (retrocompatible:
+        // antes era acceso total; ahora es "todo lo que el plan incluya", lo que gatea
+        // correctamente cuando la beta expira sin suscripción)
         if (! $user->abilities_configured) {
+            if (! $user->hasPlanAbility($ability)) {
+                abort(403, __('Necesitas una suscripción activa para acceder a este módulo.'));
+            }
+
             return $next($request);
+        }
+
+        // Bodega configurada por DO: debe estar en plan Y en overrides concedidos
+        if (! $user->hasPlanAbility($ability)) {
+            abort(403, __('Necesitas una suscripción activa para acceder a este módulo.'));
         }
 
         $granted = Cache::remember(

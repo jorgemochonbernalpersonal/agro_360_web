@@ -15,24 +15,9 @@ class CheckBetaAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
-
-        if (! $user) {
-            return $next($request);
-        }
-
-        // Si el usuario es beta y la beta expiró...
-        if ($user->betaExpired()) {
-            // Todos los viticultores (vinculados o independientes) y productores
-            // conservan el plan Básico gratis de forma permanente. Las funciones del
-            // plan Completo se bloquean aparte vía el middleware require.complete.
-            if ($user->hasBasicFreeAccess()) {
-                return $next($request);
-            }
-
-            return redirect()->route('beta.expired');
-        }
-
+        // Beta expirada → el usuario se degrada al plan Free automáticamente.
+        // Los módulos premium quedan bloqueados vía require.ability / winery.ability.
+        // No se redirige a beta.expired: nadie pierde el acceso operativo.
         return $next($request);
     }
 }

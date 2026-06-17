@@ -46,9 +46,15 @@ trait HasBetaAccess
      * @param \Carbon\Carbon|null $endsAt Fecha fin heredada (para cascada desde bodega).
      *                                    Si null, usa now()+3 meses.
      */
+    public function isFounder(): bool
+    {
+        return $this->is_founder === true;
+    }
+
     public function grantBetaAccess(?\Carbon\Carbon $endsAt = null): void
     {
-        $betaEndsAt = $endsAt ?? now()->addMonths(3)->endOfDay();
+        $months     = $this->isFounder() ? 12 : 3;
+        $betaEndsAt = $endsAt ?? now()->addMonths($months)->endOfDay();
 
         $this->update([
             'is_beta_user' => true,
@@ -120,7 +126,7 @@ trait HasBetaAccess
         }
 
         return $this->hasWinery()
-            ? \App\Models\Subscription::PRICE_MONTHLY_WINERY
+            ? \App\Models\Subscription::PRICE_MONTHLY_VIT_LINKED
             : \App\Models\Subscription::PRICE_MONTHLY_INDEPENDENT;
     }
 
@@ -134,7 +140,162 @@ trait HasBetaAccess
         }
 
         return $this->hasWinery()
-            ? \App\Models\Subscription::PRICE_YEARLY_WINERY
+            ? \App\Models\Subscription::PRICE_YEARLY_VIT_LINKED
             : \App\Models\Subscription::PRICE_YEARLY_INDEPENDENT;
+    }
+
+    /**
+     * Plan efectivo del usuario según rol + estado de acceso.
+     *
+     * Sin acceso activo (beta/suscripción) → 'free'.
+     * Con acceso activo → plan correspondiente al rol.
+     *
+     * @return 'free'|'vit_pro'|'winery'|'do'
+     */
+    public function effectivePlan(): string
+    {
+        if (! $this->hasActiveAccess()) {
+            return 'free';
+        }
+
+        if ($this->isSupervisor()) {
+            return 'do';
+        }
+
+        if ($this->hasWineryAccess() && ! $this->hasViticulturistAccess()) {
+            return 'winery';
+        }
+
+        return 'vit_pro';
+    }
+
+    /**
+     * Conjunto de ability codes que le corresponden al usuario según su plan efectivo.
+     * Resuelve los prefijos '@plan' de config/plans.php.
+     *
+     * @return array<string>
+     */
+    public function planAbilities(): array
+    {
+        $plans = config('plans', []);
+
+        $resolve = function (string $plan) use ($plans, &$resolve): array {
+            $codes = $plans[$plan] ?? [];
+            $result = [];
+
+            foreach ($codes as $code) {
+                if (str_starts_with($code, '@')) {
+                    $result = array_merge($result, $resolve(substr($code, 1)));
+                } else {
+                    $result[] = $code;
+                }
+            }
+
+            return array_unique($result);
+        };
+
+        return $resolve($this->effectivePlan());
+    }
+
+    /**
+     * Verificar si el usuario tiene una ability según su plan efectivo O
+     * si la DO le ha concedido un override individual (lógica existente en hasAbility).
+     * Este método unifica ambas fuentes para que el middleware pueda usarlo.
+     */
+    public function hasPlanAbility(string $code): bool
+    {
+        return in_array($code, $this->planAbilities(), true);
+    }
+
+    // ── Tramos DO ─────────────────────────────────────────────────────────
+
+    /**
+     * Número de bodegas adscritas a este supervisor/DO.
+     * Para roles no-supervisor siempre devuelve 0.
+     */
+    public function managedWineryCount(): int
+    {
+        if (! $this->isSupervisor()) {
+            return 0;
+        }
+
+        return \Illuminate\Support\Facades\DB::table('supervisor_winery')
+            ->where('supervisor_id', $this->id)
+            ->count();
+    }
+
+    /**
+     * Tramo DO que le corresponde según bodegas adscritas.
+     *
+     * @return array{min:int,max:int|null,label:string,monthly:float|null,yearly:float|null}
+     */
+    public function doTier(): array
+    {
+        return \App\Models\Subscription::doTierForCount(
+            $this->managedWineryCount()
+        );
+    }
+
+    /**
+     * Precio mensual DO según tramo. Null = enterprise (requiere negociación).
+     */
+    public function doMonthlyPrice(): ?float
+    {
+        return $this->doTier()['monthly'];
+    }
+
+    /**
+     * Precio anual DO según tramo. Null = enterprise.
+     */
+    public function doYearlyPrice(): ?float
+    {
+        return $this->doTier()['yearly'];
+    }
+
+    // ── Tramos de red bodega ───────────────────────────────────────────────
+
+    /**
+     * Número de viticultores activos vinculados a esta bodega.
+     * Para roles no-bodega siempre devuelve 0.
+     */
+    public function managedViticulturistCount(): int
+    {
+        if (! $this->hasWineryAccess()) {
+            return 0;
+        }
+
+        return \Illuminate\Support\Facades\DB::table('winery_viticulturist')
+            ->where('winery_id', $this->id)
+            ->count();
+    }
+
+    /**
+     * Tramo de red que le corresponde a esta bodega según viticultores gestionados.
+     *
+     * @return array{min:int,max:int|null,label:string,monthly:float|null,yearly:float|null}
+     */
+    public function wineryTier(): array
+    {
+        return \App\Models\Subscription::wineryTierForCount(
+            $this->managedViticulturistCount()
+        );
+    }
+
+    /**
+     * Precio mensual que le corresponde a la bodega según su tramo de red.
+     * Devuelve null si el tramo es enterprise (requiere negociación).
+     */
+    public function wineryMonthlyPrice(): ?float
+    {
+        return $this->wineryTier()['monthly'];
+    }
+
+    /**
+     * Precio anual que le corresponde a la bodega según su tramo de red.
+     * Devuelve null si el tramo es enterprise (requiere negociación).
+     */
+    public function wineryYearlyPrice(): ?float
+    {
+        return $this->wineryTier()['yearly'];
     }
 }

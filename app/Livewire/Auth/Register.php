@@ -35,6 +35,8 @@ class Register extends Component
 
     public $honeypot = ''; // Honeypot anti-bots
 
+    public $founder_code = ''; // Código secreto del programa de fundadores (llega por URL, no se muestra)
+
     public function mount()
     {
         // Si está autenticado, determinar rol por defecto según quién crea
@@ -57,6 +59,10 @@ class Register extends Component
                 if (in_array($requested, ['viticulturist', 'winery', 'producer'])) {
                     $this->role = $requested;
                 }
+            }
+            // Código de fundador (llega vía URL enviada por el equipo por WhatsApp)
+            if (request()->has('founder_code')) {
+                $this->founder_code = (string) request()->query('founder_code');
             }
         }
     }
@@ -190,8 +196,17 @@ class Register extends Component
             $password = Hash::make($this->password);
         }
 
+        // Detectar fundador: código correcto + plazas disponibles + registro público
+        $isFounder = false;
+        if (! Auth::check() && $this->founder_code !== '') {
+            $founderCode = config('app.founder_code', '');
+            $isFounder = $founderCode !== ''
+                && hash_equals($founderCode, $this->founder_code)
+                && User::where('is_founder', true)->count() < config('app.founder_max_slots', 50);
+        }
+
         try {
-            $user = DB::transaction(function () use ($password, $normalizedDni, $isViticulturistCreatingViticulturist) {
+            $user = DB::transaction(function () use ($password, $normalizedDni, $isViticulturistCreatingViticulturist, $isFounder) {
                 $user = User::create([
                     'name' => $this->name,
                     'email' => $this->email,
@@ -200,6 +215,7 @@ class Register extends Component
                     'dni' => $normalizedDni ?? null,
                     'password_must_reset' => $isViticulturistCreatingViticulturist,
                     'can_login' => true,
+                    'is_founder' => $isFounder,
                 ]);
 
                 // Crear relaciones automáticas si está autenticado

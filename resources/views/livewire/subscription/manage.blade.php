@@ -65,7 +65,45 @@
     @else
         {{-- Sin suscripción activa --}}
 
-        @if($isProducer)
+        @if($isDO)
+            {{-- Información de tramo DO --}}
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                <flux:icon icon="building-library" class="size-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <div class="text-sm text-amber-800">
+                    @if($doTier && $doTier['label'] === 'enterprise')
+                        <strong>{{ __('Tu DO supera las 100 bodegas adscritas.') }}</strong><br>
+                        {{ __('Este volumen requiere un plan personalizado. Contáctanos para hablarlo.') }}
+                    @else
+                        <strong>{{ __('Denominación de Origen — Capa de red agregada') }}</strong><br>
+                        {{ __('Tu precio escala con el número de bodegas adscritas a la DO.') }}
+                        @if($doTier)
+                            {{ __('Tramo actual: :min–:max bodegas.', ['min' => $doTier['min'], 'max' => $doTier['max'] ?? '+100']) }}
+                        @endif
+                    @endif
+                </div>
+            </div>
+        @elseif($isWinery)
+            {{-- Información de tramo de bodega --}}
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+                <flux:icon icon="building-office" class="size-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                <div class="text-sm text-blue-800">
+                    @if($wineryTier && $wineryTier['label'] === 'enterprise')
+                        <strong>{{ __('Tu bodega supera los 100 viticultores gestionados.') }}</strong><br>
+                        {{ __('Este volumen requiere un plan personalizado. Contáctanos para hablarlo.') }}
+                    @else
+                        <strong>{{ __('Bodega — Capa de red') }}</strong><br>
+                        @if($wineryTier && $wineryTier['max'] === 0)
+                            {{ __('Tu precio incluye la gestión de tu propio vino (sin viticultores externos).') }}
+                        @else
+                            {{ __('Tu precio escala con el número de viticultores que gestionas.') }}
+                            @if($wineryTier)
+                                {{ __('Tramo actual: :min–:max viticultores.', ['min' => $wineryTier['min'], 'max' => $wineryTier['max']]) }}
+                            @endif
+                        @endif
+                    @endif
+                </div>
+            </div>
+        @elseif($isProducer)
             <div class="bg-violet-50 border border-violet-200 rounded-xl p-4 flex items-start gap-3">
                 <flux:icon icon="information-circle" class="size-5 text-violet-500 flex-shrink-0 mt-0.5" />
                 <div class="text-sm text-violet-800">
@@ -84,6 +122,17 @@
                 </div>
             </div>
         @endif
+
+        @if(($isWinery || $isDO) && $monthlyPrice === null)
+            {{-- Enterprise: no hay precio automático --}}
+            <div class="bg-zinc-100 border border-zinc-300 rounded-xl p-6 text-center">
+                <p class="font-semibold text-zinc-700">{{ __('Plan personalizado') }}</p>
+                <p class="text-sm text-zinc-500 mt-1">{{ __('Contáctanos para configurar tu plan enterprise.') }}</p>
+                <flux:button href="mailto:hola@agro365.es" variant="primary" class="mt-4">
+                    {{ __('Contactar con ventas') }}
+                </flux:button>
+            </div>
+        @else
 
         {{-- Selector de plan --}}
         <div class="grid grid-cols-2 gap-4">
@@ -177,6 +226,8 @@
         </flux:button>
 
         <p class="text-center text-xs text-zinc-400">{{ __('Pago seguro vía PayPal · Cancela cuando quieras') }}</p>
+
+        @endif {{-- fin guard enterprise --}}
     @endif
 
     <script>

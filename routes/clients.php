@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 | Same pattern as routes/plots.php — shared namespace, role filtering in code.
 */
 
-Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist,producer', 'check.beta'])
+Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist,producer'])
     ->prefix('clients')
     ->name('clients.')
     ->group(function () {

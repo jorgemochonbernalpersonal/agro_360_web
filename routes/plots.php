@@ -11,7 +11,7 @@ use App\Livewire\Plots\Show;
 use App\Livewire\Settings\TerritorialManagement;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist,producer', 'check.beta'])
+Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist,producer'])
     ->prefix('plots')
     ->name('plots.')
     ->group(function () {

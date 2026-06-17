@@ -14,19 +14,9 @@ class ApiBetaCheck
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
-
-        if (! $user) {
-            return $next($request);
-        }
-
-        if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
-            return response()->json([
-                'message' => __('Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.'),
-                'beta_expired' => true,
-            ], 403);
-        }
-
+        // Beta expirada → el usuario se degrada al plan Free automáticamente.
+        // Los módulos premium quedan bloqueados vía winery.ability / require.ability.
+        // No se rechaza la petición aquí: la lógica de acceso vive en los gates de ability.
         return $next($request);
     }
 }

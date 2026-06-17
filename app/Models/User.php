@@ -88,6 +88,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
         'is_beta_user',
         'beta_ends_at',
         'beta_access_granted',
+        'is_founder',
         'compra_uva_externa',
         'organization_id',
         'locale',
@@ -199,16 +200,21 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
      */
     public function hasAbility(string $code): bool
     {
+        // Roles sin acceso a bodega solo pueden tener abilities de su plan
         if (! $this->hasWineryAccess()) {
-            return false;
+            return $this->hasPlanAbility($code);
         }
 
-        // Sin configurar por la DO → acceso total (retrocompatible)
+        // Bodega sin configurar por la DO → lo que el plan incluya (retrocompatible:
+        // antes devolvía true para todo; ahora devuelve true solo para lo que el plan cubre,
+        // lo que cierra el acceso gratuito indefinido cuando la beta expira)
         if (! $this->abilities_configured) {
-            return true;
+            return $this->hasPlanAbility($code);
         }
 
-        return $this->abilities()->pluck('code')->contains($code);
+        // Bodega configurada por DO → plan ∩ overrides concedidos por la DO
+        return $this->hasPlanAbility($code)
+            && $this->abilities()->pluck('code')->contains($code);
     }
 
     public function abilities()
@@ -301,6 +307,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'is_beta_user' => 'boolean',
             'beta_ends_at' => 'datetime',
             'beta_access_granted' => 'boolean',
+            'is_founder' => 'boolean',
             'compra_uva_externa' => 'boolean',
             'preferences' => 'array',
             'notification_preferences' => 'array',

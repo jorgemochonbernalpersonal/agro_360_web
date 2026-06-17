@@ -37,6 +37,10 @@
     --color-agro-green-bg:     var(--color-agro-50);
     --color-agro-green-bright: var(--color-agro-300);
 
+    /* Verde de acción (CTAs sobre fondos oscuros: hero, marquee, barra sticky) */
+    --color-agro-action:       #6bbf3e;
+    --color-agro-action-hover: #5aaa2e;
+
     /* Semantic colors */
     --color-agro-blue:         #3b82f6;
     --color-agro-blue-light:   #dbeafe;
@@ -194,6 +198,36 @@ html {
 }
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
+
+    .animate-fade-in,
+    .animate-fade-in-up,
+    .animate-slide-in-right,
+    .animate-scale-in { animation: none; opacity: 1; transform: none; }
+
+    .marquee-track { animation: none; }
+
+    .hero-agro-tractor-wrap,
+    .hero-agro-tractor-inner,
+    .hero-agro-dp1,
+    .hero-agro-dp2,
+    .hero-agro-dp3,
+    .hero-agro-wheel,
+    .hero-agro-wheel-f { animation: none; }
+
+    .skeleton { animation: none; background: var(--color-agro-50); }
+
+    .reveal-ready { opacity: 1; transform: none; transition: none; }
+}
+
+/* Pausar animaciones del hero cuando sale del viewport (ver JS sticky-cta) */
+.hero-agro.animations-paused .hero-agro-tractor-wrap,
+.hero-agro.animations-paused .hero-agro-tractor-inner,
+.hero-agro.animations-paused .hero-agro-dp1,
+.hero-agro.animations-paused .hero-agro-dp2,
+.hero-agro.animations-paused .hero-agro-dp3,
+.hero-agro.animations-paused .hero-agro-wheel,
+.hero-agro.animations-paused .hero-agro-wheel-f {
+    animation-play-state: paused;
 }
 
 /* Fix browser autofill dark background (Chrome/Edge) */

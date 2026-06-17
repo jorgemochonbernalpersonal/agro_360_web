@@ -7,7 +7,7 @@ use App\Livewire\Sigpac\UsesIndex;
 use Illuminate\Support\Facades\Route;
 
 // Lectura: todos los roles autenticados con beta
-Route::middleware(['auth', 'verified', 'check.beta'])
+Route::middleware(['auth', 'verified'])
     ->prefix('sigpac')
     ->name('sigpac.')
     ->group(function () {

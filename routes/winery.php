@@ -20,11 +20,13 @@ Route::middleware(['role:winery,producer'])
         Route::get('/denomination/qualifications', \App\Livewire\Winery\Denomination\Qualifications\Index::class)->name('denomination.qualifications.index');
 
         // ── Viticultores ─────────────────────────────────────────────
-        Route::get('/viticulturists', \App\Livewire\Winery\Viticulturists\Index::class)->name('viticulturists.index');
-        Route::get('/viticulturists/create', \App\Livewire\Winery\Viticulturists\Create::class)->name('viticulturists.create');
-        Route::get('/viticulturists/invite', \App\Livewire\Winery\Viticulturists\Invite::class)->name('viticulturists.invite');
-        Route::get('/viticulturists/{viticulturist}', \App\Livewire\Winery\Viticulturists\Show::class)->name('viticulturists.show');
-        Route::get('/viticulturists/{viticulturist}/edit', \App\Livewire\Winery\Viticulturists\Edit::class)->name('viticulturists.edit');
+        Route::middleware('winery.ability:viticulturist_panel')->group(function () {
+            Route::get('/viticulturists', \App\Livewire\Winery\Viticulturists\Index::class)->name('viticulturists.index');
+            Route::get('/viticulturists/create', \App\Livewire\Winery\Viticulturists\Create::class)->name('viticulturists.create');
+            Route::get('/viticulturists/invite', \App\Livewire\Winery\Viticulturists\Invite::class)->name('viticulturists.invite');
+            Route::get('/viticulturists/{viticulturist}', \App\Livewire\Winery\Viticulturists\Show::class)->name('viticulturists.show');
+            Route::get('/viticulturists/{viticulturist}/edit', \App\Livewire\Winery\Viticulturists\Edit::class)->name('viticulturists.edit');
+        });
 
         // ── Parcelas y Plantaciones ───────────────────────────────────────
         // Producer usa siempre el flujo viticultor (con cuaderno, fenología, etc.)
@@ -232,10 +234,12 @@ Route::middleware(['role:winery,producer'])
         Route::get('/documents/{wineryDocument}/edit', \App\Livewire\Winery\Documents\Edit::class)->name('documents.edit');
 
         // ── Resumen Económico ─────────────────────────────────────────
-        Route::get('/financial-summary', \App\Livewire\Winery\Financial\Summary::class)->name('financial-summary.index');
+        Route::middleware('winery.ability:financial_stats')->group(function () {
+            Route::get('/financial-summary', \App\Livewire\Winery\Financial\Summary::class)->name('financial-summary.index');
 
-        // ── Estadísticas Financieras ──────────────────────────────────
-        Route::get('/financial-stats', \App\Livewire\Winery\Financial\Stats::class)->name('financial-stats.index');
+            // ── Estadísticas Financieras ──────────────────────────────────
+            Route::get('/financial-stats', \App\Livewire\Winery\Financial\Stats::class)->name('financial-stats.index');
+        });
 
         // ── Embotellado ───────────────────────────────────────────────
         Route::middleware('winery.ability:product_sales')->group(function () {

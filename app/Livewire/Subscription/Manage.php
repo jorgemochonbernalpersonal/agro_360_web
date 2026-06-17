@@ -40,10 +40,39 @@ class Manage extends Component
             return;
         }
 
-        // Determinar precio según el plan y si el usuario está vinculado a bodega
-        $amount = $this->selectedPlan === 'yearly'
-            ? $user->viticulturistYearlyPrice()
-            : $user->viticulturistMonthlyPrice();
+        // Determinar precio según rol y plan:
+        // DO/supervisor → tramo por nº de bodegas adscritas.
+        // Bodegas → tramo de red (según nº de viticultores gestionados).
+        // Viticultores / productores → precio fijo por vinculación.
+        $isWinery = $user->hasWineryAccess() && ! $user->hasViticulturistAccess();
+        $isDO = $user->isSupervisor();
+
+        if ($isDO) {
+            $amount = $this->selectedPlan === 'yearly'
+                ? $user->doYearlyPrice()
+                : $user->doMonthlyPrice();
+
+            if ($amount === null) {
+                $this->toastError(__('Tu DO supera las 100 bodegas. Contáctanos para un plan personalizado.'));
+
+                return;
+            }
+        } elseif ($isWinery) {
+            $amount = $this->selectedPlan === 'yearly'
+                ? $user->wineryYearlyPrice()
+                : $user->wineryMonthlyPrice();
+
+            // Tramo enterprise (>100 viticultores): requiere negociación directa
+            if ($amount === null) {
+                $this->toastError(__('Tu bodega supera los 100 viticultores. Contáctanos para un plan personalizado.'));
+
+                return;
+            }
+        } else {
+            $amount = $this->selectedPlan === 'yearly'
+                ? $user->viticulturistYearlyPrice()
+                : $user->viticulturistMonthlyPrice();
+        }
 
         try {
             $provider = new PayPalClient;
@@ -153,12 +182,37 @@ class Manage extends Component
     public function render()
     {
         $user = Auth::user();
+        $isWinery = $user->hasWineryAccess() && ! $user->hasViticulturistAccess();
+        $isDO = $user->isSupervisor();
+
+        if ($isDO) {
+            $tier = $user->doTier();
+            $monthlyPrice = $tier['monthly'];
+            $yearlyPrice  = $tier['yearly'];
+            $wineryTier   = null;
+            $doTier       = $tier;
+        } elseif ($isWinery) {
+            $tier = $user->wineryTier();
+            $monthlyPrice = $tier['monthly'];
+            $yearlyPrice  = $tier['yearly'];
+            $wineryTier   = $tier;
+            $doTier       = null;
+        } else {
+            $monthlyPrice = $user->viticulturistMonthlyPrice();
+            $yearlyPrice  = $user->viticulturistYearlyPrice();
+            $wineryTier   = null;
+            $doTier       = null;
+        }
 
         return view('livewire.subscription.manage', [
-            'monthlyPrice' => $user->viticulturistMonthlyPrice(),
-            'yearlyPrice' => $user->viticulturistYearlyPrice(),
-            'isWineryLinked' => $user->hasWinery(),
-            'isProducer' => $user->isProducer(),
+            'monthlyPrice'    => $monthlyPrice,
+            'yearlyPrice'     => $yearlyPrice,
+            'isWinery'        => $isWinery,
+            'isDO'            => $isDO,
+            'wineryTier'      => $wineryTier,
+            'doTier'          => $doTier,
+            'isWineryLinked'  => $user->hasWinery(),
+            'isProducer'      => $user->isProducer(),
         ]);
     }
 }

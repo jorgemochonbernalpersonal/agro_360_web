@@ -217,14 +217,16 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
             Route::delete('/grape-receptions/{id}', [GrapeReceptionController::class, 'destroy'])->middleware('throttle:60,1');
         });
         // Viticultores
-        Route::get('/viticulturists', [ViticulturistController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/viticulturists', [ViticulturistController::class, 'store'])->middleware('throttle:30,1');
-        Route::get('/viticulturists/search', [ViticulturistController::class, 'search'])->middleware('throttle:30,1');
-        Route::post('/viticulturists/link', [ViticulturistController::class, 'link'])->middleware('throttle:30,1');
-        Route::get('/viticulturists/{id}', [ViticulturistController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/viticulturists/{id}', [ViticulturistController::class, 'update'])->middleware('throttle:30,1');
-        Route::post('/viticulturists/{id}/invite', [ViticulturistController::class, 'invite'])->middleware('throttle:5,1');
-        Route::delete('/viticulturists/{id}/invite', [ViticulturistController::class, 'revokeInvite'])->middleware('throttle:10,1');
+        Route::middleware('winery.ability:viticulturist_panel')->group(function () {
+            Route::get('/viticulturists', [ViticulturistController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/viticulturists', [ViticulturistController::class, 'store'])->middleware('throttle:30,1');
+            Route::get('/viticulturists/search', [ViticulturistController::class, 'search'])->middleware('throttle:30,1');
+            Route::post('/viticulturists/link', [ViticulturistController::class, 'link'])->middleware('throttle:30,1');
+            Route::get('/viticulturists/{id}', [ViticulturistController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/viticulturists/{id}', [ViticulturistController::class, 'update'])->middleware('throttle:30,1');
+            Route::post('/viticulturists/{id}/invite', [ViticulturistController::class, 'invite'])->middleware('throttle:5,1');
+            Route::delete('/viticulturists/{id}/invite', [ViticulturistController::class, 'revokeInvite'])->middleware('throttle:10,1');
+        });
 
         // Trasvases, mermas y entradas de stock
         Route::middleware('winery.ability:wine_process')->group(function () {
@@ -584,12 +586,14 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         });
 
         // Resumen y estadísticas económicas (alias)
-        Route::get('/financial-summary', EconomicSummaryController::class)->middleware('throttle:30,1');
-        Route::get('/financial-stats', WineryStatsController::class)->middleware('throttle:30,1');
+        Route::middleware('winery.ability:financial_stats')->group(function () {
+            Route::get('/financial-summary', EconomicSummaryController::class)->middleware('throttle:30,1');
+            Route::get('/financial-stats', WineryStatsController::class)->middleware('throttle:30,1');
+        });
     });
 
     // ── Viticulturist / Producer ───────────────────────────────────────────────
-    Route::prefix('viticulturist')->middleware(['api.role:viticulturist,producer', 'api.check.beta'])->group(function () {
+    Route::prefix('viticulturist')->middleware(['api.role:viticulturist,producer'])->group(function () {
 
         Route::get('/dashboard', ViticulturistDashboard::class)->middleware('throttle:60,1');
 

@@ -38,7 +38,7 @@ use App\Livewire\Viticulturist\PhytosanitaryProducts\Edit as PhytosanitaryProduc
 use App\Livewire\Viticulturist\PhytosanitaryProducts\Index as PhytosanitaryProductsIndex;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['role:viticulturist,producer', 'check.beta'])
+Route::middleware(['role:viticulturist,producer'])
     ->prefix('viticulturist')
     ->name('viticulturist.')
     ->group(function () {
@@ -125,7 +125,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
         });
 
         // ── PLAN COMPLETO (requiere suscripción) ─────────────────────────────────
-        Route::middleware('require.complete')->group(function () {
+        Route::middleware('require.ability:financial_stats')->group(function () {
 
             // Estadísticas Financieras
             Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats');
@@ -460,5 +460,5 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             // ── Trazabilidad de Uva (requiere bodega vinculada) ────────────
             Route::get('/grape-traceability', \App\Livewire\Viticulturist\GrapeTraceability\Index::class)->name('grape-traceability')->middleware('require.winery');
 
-        }); // end require.complete
+        }); // end require.ability:financial_stats
     });

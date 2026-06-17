@@ -2,7 +2,7 @@
 <html lang="es" itemscope itemtype="https://schema.org/WebSite">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
     <!-- SEO Meta Tags -->
@@ -25,7 +25,7 @@
     
     <!-- Additional SEO Meta Tags -->
     <meta name="publisher" content="Agro365">
-    <meta name="theme-color" content="#10b981">
+    <meta name="theme-color" content="#2d5016">
     <meta name="format-detection" content="telephone=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -63,7 +63,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/icon_512x512.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/icon_512x512.png') }}">
     <meta name="msapplication-TileImage" content="{{ asset('images/icon_512x512.png') }}">
-    <meta name="msapplication-TileColor" content="#10b981">
+    <meta name="msapplication-TileColor" content="#2d5016">
     
     <!-- Fonts - Optimized for Performance -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
@@ -117,11 +117,11 @@
                 ],
                 [
                     '@type' => 'Offer',
-                    'name' => 'Bodega independiente — Mensual',
-                    'price' => '14.00',
+                    'name' => 'Bodega independiente — desde (solo su vino)',
+                    'price' => '19.00',
                     'priceCurrency' => 'EUR',
                     'availability' => 'https://schema.org/InStock',
-                    'description' => 'Trazabilidad, depósitos, Verifactu y gestión de vendimia para bodega sin DO'
+                    'description' => 'Trazabilidad, depósitos, Verifactu y gestión de vendimia para bodega sin DO. Escala con el número de viticultores gestionados: 19€ (0 viticultores), 29€ (1-10), 49€ (11-30), 79€ (31-60), 119€ (61-100).'
                 ],
                 [
                     '@type' => 'Offer',
@@ -145,13 +145,13 @@
                     'price' => '19.00',
                     'priceCurrency' => 'EUR',
                     'availability' => 'https://schema.org/InStock',
-                    'description' => 'Plan combinado: todo el plan Viticultor Independiente más todo el plan Bodega (19€/mes frente a 28€ por separado)'
+                    'description' => 'Plan combinado: todo el plan Viticultor Independiente más todo el plan Bodega (19€/mes o 180€/año frente a 28€/mes por separado). Básico gratis para siempre.'
                 ]
             ],
             'description' => 'Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen. Cuaderno de campo digital obligatorio 2027. Teledetección NDVI, Verifactu y trazabilidad completa.',
             'operatingSystem' => ['Web', 'iOS', 'Android'],
             'releaseNotes' => 'Versión 1.0 - Plataforma en producción',
-            'screenshot' => asset('images/dashboard-preview.png'),
+            'screenshot' => asset('images/foto1.webp'),
             'featureList' => [
                 'Cuaderno de campo digital obligatorio 2027',
                 'Gestión de parcelas SIGPAC',
@@ -187,12 +187,8 @@
                 'availableLanguage' => ['Spanish'],
                 'areaServed' => 'ES'
             ],
-            'sameAs' => [
-                'https://instagram.com/agro365',
-                'https://youtube.com/@agro365',
-                'https://linkedin.com/company/agro365',
-                'https://twitter.com/agro365'
-            ]
+            // 'sameAs' => [...]  ← re-añadir SOLO cuando existan perfiles sociales reales y verificables.
+            //   Declarar perfiles inexistentes perjudica la validación del structured data en Google.
         ];
     @endphp
     {!! json_encode($organizationData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
@@ -218,7 +214,7 @@
                 'name' => 'España'
             ],
             'availableLanguage' => 'Spanish',
-            'priceRange' => '€0-€14',
+            'priceRange' => '€0-€119',
             'email' => 'info@agro365.es'
         ];
     @endphp
@@ -376,7 +372,7 @@
         "@@type": "HowTo",
         "name": "Cómo configurar Agro365 en 5 minutos",
         "description": "Guía paso a paso para configurar tu cuenta de Agro365 y empezar a gestionar tu viñedo digitalmente",
-        "image": "{{ asset('images/dashboard-preview.png') }}",
+        "image": "{{ asset('images/dashboard-preview.webp') }}",
         "totalTime": "PT5M",
         "estimatedCost": {
             "@@type": "MonetaryAmount",
@@ -426,8 +422,26 @@
     
     <!-- DNS Prefetch for faster loading -->
     <link rel="dns-prefetch" href="https://fonts.bunny.net">
+
+    <!-- Analítica cookieless (Plausible) — sin cookies ni datos personales, exenta de consentimiento.
+         Requiere dar de alta el dominio en https://plausible.io (o tu instancia self-hosted). -->
+    <link rel="dns-prefetch" href="https://plausible.io">
+    <script defer data-domain="agro365.es" src="https://plausible.io/js/script.js"></script>
 </head>
 <body class="bg-white min-h-screen text-zinc-800 antialiased">
+    @php
+        $waBase     = 'https://wa.me/34684217167';
+        $waDefault  = $waBase . '?text=Hola%2C%20me%20interesa%20Agro365';
+        $waFounders = $waBase . '?text=Hola%2C%20me%20interesa%20el%20programa%20de%20fundadores%20de%20Agro365';
+        $waDO       = $waBase . '?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365';
+
+        $foundersTotal = 50;
+        $foundersTaken = \App\Models\User::where('is_founder', true)->count();
+        $foundersLeft  = max(0, $foundersTotal - $foundersTaken);
+        $foundersPct   = (int) round($foundersTaken / $foundersTotal * 100);
+
+        $daysLeft = now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0;
+    @endphp
     
     <!-- Navigation Header -->
     <nav class="bg-white/90 backdrop-blur-md border-b border-zinc-200 sticky top-0 z-50" x-data="{ open: false }">
@@ -506,7 +520,7 @@
         <div class="hero-agro-bg"></div>
 
         {{-- Cielo SVG --}}
-        <svg class="hero-agro-sky" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <svg class="hero-agro-sky" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
                 <linearGradient id="hag-skyg" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%"   stop-color="#0a1a04"/>
@@ -527,7 +541,7 @@
         <div class="hero-agro-ground"></div>
 
         {{-- Filas de viñedo --}}
-        <svg class="hero-agro-vines" width="100%" height="120" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="hero-agro-vines" width="100%" height="120" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <line x1="0" y1="22"  x2="1440" y2="12"  stroke="#1a4008" stroke-width="1.5"/>
             <line x1="0" y1="42"  x2="1440" y2="28"  stroke="#1a4008" stroke-width="2"/>
             <line x1="0" y1="66"  x2="1440" y2="48"  stroke="#1e4a0a" stroke-width="3"/>
@@ -544,7 +558,7 @@
         </svg>
 
         {{-- Tractor --}}
-        <div class="hero-agro-tractor-wrap">
+        <div class="hero-agro-tractor-wrap" aria-hidden="true">
             <div class="hero-agro-tractor-inner">
                 <div class="hero-agro-dust">
                     <div class="hero-agro-dp hero-agro-dp1"></div>
@@ -606,26 +620,26 @@
                 {{-- Badge urgencia --}}
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm max-w-full">
                     <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
-                    <span class="text-xs font-semibold text-white/80 tracking-wide">{{ __('Cuaderno digital obligatorio desde enero 2027') }} — quedan <span id="days-counter">{{ now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0 }}</span> días</span>
+                    <span class="text-xs font-semibold text-white/80 tracking-wide">{{ __('Cuaderno digital obligatorio desde enero 2027') }} — quedan {{ $daysLeft }} días</span>
                 </div>
 
                 {{-- H1 --}}
                 <h1 class="text-4xl lg:text-5xl xl:text-[3.4rem] font-bold tracking-tight text-white leading-[1.08]">
                     {{ __('Cuaderno de Campo Digital') }}
-                    <span class="block text-[#6BBF3E] mt-1">{{ __('del viñedo a la botella') }}</span>
+                    <span class="block text-agro-action mt-1">{{ __('del viñedo a la botella') }}</span>
                 </h1>
 
                 {{-- Descripción --}}
                 <p class="text-lg text-white/65 leading-relaxed max-w-xl">
                     La plataforma de gestión para <strong class="font-semibold text-white/85">viticultores, bodegas y Denominaciones de Origen</strong>.
-                    Cumple la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-[#6BBF3E] font-medium hover:underline">PAC</a>,
-                    gestiona tus parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[#6BBF3E] font-medium hover:underline">SIGPAC</a>
+                    Cumple la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-agro-action font-medium hover:underline">PAC</a>,
+                    gestiona tus parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-agro-action font-medium hover:underline">SIGPAC</a>
                     y lleva la trazabilidad completa. {{ __('Sin papel. Sin Excel. Todo en un solo sitio.') }}
                 </p>
 
                 {{-- CTAs --}}
                 <div class="flex flex-wrap items-center gap-3">
-                    <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#6BBF3E] text-white hover:bg-[#5aaa2e] transition-colors duration-200 font-semibold text-base shadow-sm">
+                    <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-agro-action text-white hover:bg-agro-action-hover transition-colors duration-200 font-semibold text-base shadow-sm">
                         Empezar gratis
                         <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -638,9 +652,16 @@
 
                 {{-- Claims --}}
                 <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
-                    @foreach(['Básico gratis para siempre', '3 meses de plan Completo gratis', 'Sin tarjeta de crédito', 'Tus datos, siempre tuyos'] as $claim)
+                    @foreach([
+                        'Básico gratis para siempre',
+                        $foundersLeft > 0
+                            ? "Hasta 1 año gratis como fundador · {$foundersLeft} plazas"
+                            : '3 meses del plan Completo gratis al registrarte',
+                        'Sin tarjeta de crédito',
+                        'Tus datos, siempre tuyos',
+                    ] as $claim)
                     <div class="flex items-center gap-1.5">
-                        <svg class="w-4 h-4 text-[#6BBF3E]" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 text-agro-action" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
                         <span class="text-white/60 text-sm">{{ __($claim) }}</span>
@@ -670,7 +691,7 @@
             ];
             @endphp
             @foreach(array_merge($items, $items) as $item)
-            <span class="inline-flex items-center px-8 text-sm font-medium text-[#6BBF3E]/80 whitespace-nowrap">
+            <span class="inline-flex items-center px-8 text-sm font-medium text-agro-action/80 whitespace-nowrap">
                 {{ $item }}
                 <span class="mx-8 text-[#2a5010]">·</span>
             </span>
@@ -754,27 +775,36 @@
                     </div>
 
                     <div x-show="tab === 1" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                        <img src="{{ asset('images/foto1.png') }}"
-                             alt="Cuaderno de campo digital Agro365 — tratamientos, fertilización, riegos y cosecha"
-                             class="w-full h-auto block"
-                             style="box-shadow:inset 0 -2px 12px rgba(0,0,0,0.06)"
-                             loading="lazy" decoding="async">
+                        <picture>
+                            <source srcset="{{ asset('images/foto1.webp') }}" type="image/webp">
+                            <img src="{{ asset('images/foto1.png') }}"
+                                 alt="Cuaderno de campo digital Agro365 — tratamientos, fertilización, riegos y cosecha"
+                                 class="w-full h-auto block"
+                                 style="box-shadow:inset 0 -2px 12px rgba(0,0,0,0.06)"
+                                 loading="lazy" decoding="async">
+                        </picture>
                     </div>
                     <div x-show="tab === 2" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                         <div class="w-full overflow-hidden" style="height:480px">
-                            <img src="{{ asset('images/foto2.png') }}"
-                                 alt="Mapa SIGPAC de parcelas vitícolas en Agro365"
-                                 class="w-full h-full object-cover"
-                                 style="object-position:35% 30%;box-shadow:inset 0 -2px 12px rgba(0,0,0,0.06)"
-                                 loading="lazy" decoding="async">
+                            <picture>
+                                <source srcset="{{ asset('images/foto2.webp') }}" type="image/webp">
+                                <img src="{{ asset('images/foto2.png') }}"
+                                     alt="Mapa SIGPAC de parcelas vitícolas en Agro365"
+                                     class="w-full h-full object-cover"
+                                     style="object-position:35% 30%;box-shadow:inset 0 -2px 12px rgba(0,0,0,0.06)"
+                                     loading="lazy" decoding="async">
+                            </picture>
                         </div>
                     </div>
                     <div x-show="tab === 3" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                        <img src="{{ asset('images/foto3.png') }}"
-                             alt="Declaraciones de vendimia ante DO en Agro365"
-                             class="w-full h-auto block"
-                             style="box-shadow:inset 0 -2px 12px rgba(0,0,0,0.06)"
-                             loading="lazy" decoding="async">
+                        <picture>
+                            <source srcset="{{ asset('images/foto3.webp') }}" type="image/webp">
+                            <img src="{{ asset('images/foto3.png') }}"
+                                 alt="Declaraciones de vendimia ante DO en Agro365"
+                                 class="w-full h-auto block"
+                                 style="box-shadow:inset 0 -2px 12px rgba(0,0,0,0.06)"
+                                 loading="lazy" decoding="async">
+                        </picture>
                     </div>
                 </div>
 
@@ -783,6 +813,50 @@
                     <span x-show="tab === 1">Cuaderno de Campo · Campaña 2026 · Tratamientos fitosanitarios, fertilización, riegos y cosecha en un solo panel</span>
                     <span x-show="tab === 2">Mapa SIGPAC · Parcelas importadas automáticamente desde el Ministerio con un solo clic</span>
                     <span x-show="tab === 3">Declaraciones de Vendimia · Gestión de declaraciones ante la DO con trazabilidad completa por parcela</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Credibilidad / Confianza -->
+    <section class="py-16 bg-zinc-50 border-t border-zinc-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10 space-y-3">
+                <p class="text-xs font-semibold uppercase tracking-widest text-agro-600">{{ __('Por qué fiarte de Agro365') }}</p>
+                <h2 class="text-2xl lg:text-3xl font-bold tracking-tight text-zinc-900">{{ __('Construido sobre la normativa, no sobre promesas') }}</h2>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Normativa -->
+                <div class="bg-white rounded-2xl p-6 border border-zinc-200">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h3 class="font-bold text-zinc-900 mb-1.5">{{ __('Conforme a la ley') }}</h3>
+                    <p class="text-sm text-zinc-600 leading-relaxed">{{ __('Diseñado según el Reglamento de Ejecución (UE) 2022/1441 y la obligación del cuaderno digital 2027–2028.') }}</p>
+                </div>
+                <!-- Datos -->
+                <div class="bg-white rounded-2xl p-6 border border-zinc-200">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    </div>
+                    <h3 class="font-bold text-zinc-900 mb-1.5">{{ __('Tus datos, siempre tuyos') }}</h3>
+                    <p class="text-sm text-zinc-600 leading-relaxed">{{ __('Cumplimiento RGPD, exportables en cualquier momento y sin permanencia. Si te vas, te los llevas.') }}</p>
+                </div>
+                <!-- Firma -->
+                <div class="bg-white rounded-2xl p-6 border border-zinc-200">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <h3 class="font-bold text-zinc-900 mb-1.5">{{ __('Informes con validez') }}</h3>
+                    <p class="text-sm text-zinc-600 leading-relaxed">{{ __('Firma electrónica SHA-256 y código QR de verificación, listos para inspecciones PAC.') }}</p>
+                </div>
+                <!-- España -->
+                <div class="bg-white rounded-2xl p-6 border border-zinc-200">
+                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <h3 class="font-bold text-zinc-900 mb-1.5">{{ __('Hecho en España') }}</h3>
+                    <p class="text-sm text-zinc-600 leading-relaxed">{{ __('Desarrollado junto a viticultores reales, con soporte en español y trato directo con el equipo.') }}</p>
                 </div>
             </div>
         </div>
@@ -838,7 +912,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-bold text-zinc-900">{{ __('Bodega') }}</h3>
-                    <p class="text-xs font-semibold text-agro-600 uppercase tracking-wide mt-1 mb-3">{{ __('Gratis dentro de una DO · 14€/mes independiente') }}</p>
+                    <p class="text-xs font-semibold text-agro-600 uppercase tracking-wide mt-1 mb-3">{{ __('Gratis dentro de una DO · desde 19€/mes independiente') }}</p>
                     <p class="text-sm text-zinc-600 leading-relaxed mb-4">
                         Conecta con tus viticultores y recibe sus cuadernos en tiempo real.
                         <strong class="text-zinc-800">{{ __('Invita a tus proveedores') }}</strong> — acceden en modo básico gratis o completo por 9€/mes.
@@ -905,7 +979,7 @@
                         @endforeach
                     </ul>
                     <div class="mt-auto space-y-2">
-                        <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
+                        <a href="{{ $waDO }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-agro-700 font-semibold text-sm hover:underline">
                             Hablar por WhatsApp
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
@@ -1021,6 +1095,94 @@
 
 
 
+    <!-- Comparativa Excel/papel vs Agro365 -->
+    <section class="py-20 bg-white border-t border-zinc-100">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 space-y-3">
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Excel y papel vs. Agro365') }}</h2>
+                <p class="text-zinc-500 max-w-xl mx-auto">{{ __('Lo que cambia cuando dejas la hoja de cálculo y el cuaderno de tapa dura.') }}</p>
+            </div>
+            <div class="overflow-hidden rounded-2xl border border-zinc-200 shadow-sm">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-zinc-50 border-b border-zinc-200">
+                            <th class="text-left px-5 py-4 font-semibold text-zinc-700">{{ __('Tarea') }}</th>
+                            <th class="text-center px-4 py-4 font-semibold text-zinc-500">{{ __('Excel / papel') }}</th>
+                            <th class="text-center px-4 py-4 font-semibold text-agro-700">{{ __('Agro365') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100">
+                        @php
+                        $rows = [
+                            'Cumplir el cuaderno digital obligatorio 2027',
+                            'Importar parcelas desde SIGPAC por NIF',
+                            'Informes válidos para inspección PAC (firma SHA-256)',
+                            'Trazabilidad viñedo → bodega → botella',
+                            'Teledetección NDVI del estado del viñedo',
+                            'Registrar tratamientos desde el campo, en el móvil',
+                            'Datos a salvo ante pérdida, robo o café derramado',
+                        ];
+                        @endphp
+                        @foreach($rows as $row)
+                        <tr class="bg-white">
+                            <td class="px-5 py-3.5 text-zinc-700">{{ __($row) }}</td>
+                            <td class="px-4 py-3.5 text-center">
+                                <svg class="w-5 h-5 text-zinc-300 inline-block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+                            </td>
+                            <td class="px-4 py-3.5 text-center">
+                                <svg class="w-5 h-5 text-agro-500 inline-block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-center text-xs text-zinc-400 mt-4">{{ __('Excel y Google Sheets cubren algunas de estas funciones con configuración manual. La comparativa refleja el caso de uso típico sin desarrollo adicional.') }}</p>
+        </div>
+    </section>
+
+    <!-- Programa de Fundadores -->
+    <section class="py-20 bg-gradient-to-br from-agro-900 via-agro-800 to-agro-700 relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm mb-6">
+                <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+                <span class="text-xs font-semibold text-white/80 tracking-wide">{{ __('Programa Fundadores · Plazas limitadas') }}</span>
+            </div>
+            <h2 class="text-3xl lg:text-5xl font-bold tracking-tight text-white mb-5">
+                {{ __('Sé uno de los primeros') }} <span class="text-agro-action">{{ __('viticultores fundadores') }}</span>
+            </h2>
+            <p class="text-agro-100/90 text-lg max-w-2xl mx-auto mb-8">
+                {{ __('Los primeros') }} {{ $foundersTotal }} {{ __('en unirse consiguen') }}
+                <strong class="text-white">{{ __('1 año del plan Completo gratis') }}</strong>
+                <span class="text-agro-200/70 text-base">({{ __('en lugar de los 3 meses estándar') }})</span>,
+                {{ __('acceso directo al equipo y precio de fundador para siempre. A cambio: tu opinión real para mejorar el producto.') }}
+            </p>
+
+            {{-- Barra de plazas --}}
+            <div class="max-w-md mx-auto mb-8">
+                <div class="flex items-center justify-between text-sm text-white/70 mb-2">
+                    <span>{{ __('Plazas ocupadas') }}</span>
+                    <span class="font-semibold text-white">{{ $foundersTaken }} / {{ $foundersTotal }}</span>
+                </div>
+                <div class="h-2.5 rounded-full bg-white/15 overflow-hidden">
+                    <div class="h-full rounded-full bg-agro-action" style="width: {{ max($foundersPct, 4) }}%"></div>
+                </div>
+                <p class="text-xs text-white/60 mt-2">{{ __('Quedan') }} <span class="font-semibold text-agro-action">{{ $foundersLeft }}</span> {{ __('plazas de fundador') }}</p>
+            </div>
+
+            <div class="flex flex-wrap gap-3 justify-center">
+                <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-agro-action text-white hover:bg-agro-action-hover transition-colors font-semibold text-base shadow-sm">
+                    {{ __('Quiero ser fundador') }}
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </a>
+                <a href="{{ $waFounders }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg border border-white/40 text-white hover:bg-white/10 transition-colors font-semibold text-base">
+                    {{ __('Preguntar por WhatsApp') }}
+                </a>
+            </div>
+            <p class="text-agro-200/70 text-sm mt-6">{{ __('Sin tarjeta · Sin permanencia · Plazas reales, no marketing') }}</p>
+        </div>
+    </section>
+
     <!-- Pricing Section -->
     <section id="precios" class="py-20 bg-zinc-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1035,7 +1197,7 @@
                 <div class="bg-white rounded-2xl p-8 border-2 border-agro-600 relative overflow-hidden transition-all duration-300 shadow-lg">
                     <div class="absolute top-0 right-0">
                         <div class="bg-agro-700 text-white px-5 py-1.5 rounded-bl-2xl font-semibold text-sm">
-                            Más popular
+                            Empieza aquí
                         </div>
                     </div>
                     <div class="mb-5 pt-6">
@@ -1046,10 +1208,10 @@
                         <!-- Tier básico gratuito -->
                         <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-zinc-600">{{ __('Básico (invitado por bodega)') }}</span>
+                                <span class="text-xs font-semibold text-zinc-600">{{ __('Básico (cualquier viticultor)') }}</span>
                                 <span class="text-base font-bold text-zinc-800">{{ __('Gratis') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-400 mt-0.5">{{ __('Cuaderno de campo básico') }}</p>
+                            <p class="text-xs text-zinc-400 mt-0.5">{{ __('Cuaderno de campo · gratis para siempre') }}</p>
                         </div>
                         <!-- Tier completo invitado -->
                         <div class="p-3 bg-[var(--color-agro-green-bg)] rounded-xl border border-[var(--color-agro-green-light)]/40">
@@ -1058,6 +1220,7 @@
                                 <span class="text-base font-bold text-[var(--color-agro-green-dark)]">{{ __('9€/mes') }}</span>
                             </div>
                             <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 85€/año — SIGPAC, PAC, teledetección...') }}</p>
+                            <p class="text-xs font-semibold text-[var(--color-agro-green-dark)] mt-1">{{ __('3 meses gratis al registrarte') }}</p>
                         </div>
                         <!-- Tier independiente -->
                         <div class="p-3 bg-[var(--color-agro-green-bg)] rounded-xl border-2 border-[var(--color-agro-green)]">
@@ -1104,9 +1267,9 @@
                         <div class="p-3 bg-agro-50 rounded-xl border-2 border-agro-500">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-agro-700">{{ __('Independiente (sin DO)') }}</span>
-                                <span class="text-xl font-bold text-zinc-900">{{ __('14€/mes') }}</span>
+                                <span class="text-xl font-bold text-zinc-900">{{ __('desde 19€/mes') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 130€/año · Onboarding incluido + migración gratuita') }}</p>
+                            <p class="text-xs text-zinc-500 mt-0.5">{{ __('Escala con tu red: 19€ (solo tu vino) · 29€ (1-10 viticultores) · 49€ (11-30) · …') }}</p>
                             <p class="text-xs font-semibold text-agro-700 mt-1">{{ __('3 meses gratis al registrarte') }}</p>
                         </div>
                     </div>
@@ -1138,13 +1301,21 @@
                         <p class="text-zinc-500 text-sm mt-1">{{ __('Cultivas y elaboras tu propio vino') }}</p>
                     </div>
                     <div class="mb-6 space-y-2">
+                        <!-- Tier básico gratuito -->
+                        <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-zinc-600">{{ __('Básico') }}</span>
+                                <span class="text-base font-bold text-zinc-800">{{ __('Gratis') }}</span>
+                            </div>
+                            <p class="text-xs text-zinc-400 mt-0.5">{{ __('Cuaderno de campo, parcelas y SIGPAC · gratis para siempre') }}</p>
+                        </div>
                         <!-- Precio bundle -->
                         <div class="p-3 bg-agro-50 rounded-xl border-2 border-agro-500">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-agro-700">{{ __('Viticultor + Bodega') }}</span>
                                 <span class="text-xl font-bold text-zinc-900">{{ __('19€/mes') }}</span>
                             </div>
-                            <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 175€/año — ~14,5€/mes') }}</p>
+                            <p class="text-xs text-zinc-500 mt-0.5">{{ __('o 180€/año — ~15€/mes') }}</p>
                             <p class="text-xs font-semibold text-agro-700 mt-1">{{ __('3 meses gratis al registrarte') }}</p>
                         </div>
                         <!-- Ahorro -->
@@ -1204,7 +1375,7 @@
                         </li>
                         @endforeach
                     </ul>
-                    <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full text-center px-6 py-4 rounded-xl bg-agro-700 hover:bg-agro-600 text-white transition-colors duration-200 font-semibold">
+                    <a href="{{ $waDO }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full text-center px-6 py-4 rounded-xl bg-agro-700 hover:bg-agro-600 text-white transition-colors duration-200 font-semibold">
                         <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                         Hablar por WhatsApp
                     </a>
@@ -1257,11 +1428,11 @@
                     ],
                     [
                         '¿Cuánto cuesta Agro365 para un viticultor?',
-                        'Depende del perfil. Si tu bodega ya está en Agro365 y te invita, el uso básico (cuaderno de campo) es gratis. Si quieres funciones completas (SIGPAC, teledetección, PAC, facturación...) pagas 9€/mes o 85€/año. Si eres viticultor independiente sin bodega asociada, el plan completo cuesta 14€/mes o 130€/año. No se requiere tarjeta de crédito para empezar.',
+                        'Depende del perfil. El cuaderno de campo básico es gratis para cualquier viticultor, esté o no vinculado a una bodega. Si tu bodega te ha invitado y quieres funciones completas (SIGPAC, teledetección, PAC, facturación...) pagas 9€/mes o 85€/año. Si eres viticultor independiente sin bodega asociada, el plan completo cuesta 14€/mes o 130€/año. En ambos casos los primeros 3 meses son gratis al registrarte — sin tarjeta de crédito.',
                     ],
                     [
                         '¿Qué es el plan Productor y para quién es?',
-                        'El plan Productor es un bundle diseñado para quien cultiva sus propias uvas y además elabora su propio vino. Incluye todo el plan Viticultor Independiente (cuaderno de campo, SIGPAC, teledetección, PAC, facturación agrícola) más todo el plan Bodega (gestión de vendimia, trazabilidad, depósitos, elaboración, facturación). Todo en una sola cuenta, con un panel unificado que permite cambiar entre contexto campo y contexto bodega. Cuesta 19€/mes o 175€/año — frente a los 28€/mes que costaría contratar los dos planes por separado.',
+                        'El plan Productor es un bundle diseñado para quien cultiva sus propias uvas y además elabora su propio vino. El cuaderno de campo, parcelas y SIGPAC son gratis para siempre. Para el resto de funcionalidades (teledetección, PAC, vendimia, depósitos, trazabilidad, facturación...) el plan completo cuesta 19€/mes o 180€/año — frente a los 28€/mes que costaría contratar el plan Viticultor Independiente y el plan Bodega por separado. Todo en una sola cuenta con un panel unificado.',
                     ],
                     [
                         '¿Puedo ser viticultor independiente y al mismo tiempo pertenecer a una bodega?',
@@ -1288,8 +1459,8 @@
 
                 @foreach($faqs as $faq)
                 <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question"
-                     class="border border-zinc-200 rounded-xl overflow-hidden group">
-                    <details>
+                     class="border border-zinc-200 rounded-xl overflow-hidden">
+                    <details class="group">
                         <summary class="flex items-center justify-between px-6 py-4 cursor-pointer bg-white hover:bg-zinc-50 transition-colors font-semibold text-zinc-800 text-sm list-none" itemprop="name">
                             {{ $faq[0] }}
                             <svg class="w-5 h-5 text-zinc-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1325,7 +1496,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>
                 </a>
-                <a href="https://wa.me/34684217167?text=Hola%2C%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg border border-white/40 text-white hover:bg-white/10 transition-colors font-semibold text-base">
+                <a href="{{ $waDefault }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg border border-white/40 text-white hover:bg-white/10 transition-colors font-semibold text-base">
                     Hablar con nosotros
                 </a>
             </div>
@@ -1340,7 +1511,7 @@
          class="fixed bottom-0 left-0 right-0 z-40 translate-y-full transition-transform duration-300 bg-agro-800/95 backdrop-blur-md border-t border-agro-700 shadow-[0_-4px_24px_rgba(0,0,0,0.18)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
             <p class="text-sm text-white/70 hidden sm:block">
-                <span class="text-amber-400 font-semibold">Quedan {{ now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0 }} días</span>
+                <span class="text-amber-400 font-semibold">Quedan {{ $daysLeft }} días</span>
                 · Cuaderno digital obligatorio 2027
             </p>
             <div class="flex items-center gap-3 w-full sm:w-auto justify-center sm:justify-end">
@@ -1349,7 +1520,7 @@
                     Iniciar sesión
                 </a>
                 <a href="{{ route('register') }}" rel="nofollow"
-                   class="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-[#6BBF3E] text-white hover:bg-[#5aaa2e] transition-colors font-semibold text-sm">
+                   class="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-agro-action text-white hover:bg-agro-action-hover transition-colors font-semibold text-sm">
                     Empezar gratis →
                 </a>
             </div>
@@ -1357,7 +1528,7 @@
     </div>
 
     <!-- Botón flotante WhatsApp -->
-    <a href="https://wa.me/34684217167?text=Hola%2C%20me%20interesa%20Agro365"
+    <a href="{{ $waDefault }}"
        target="_blank" rel="noopener noreferrer"
        class="fixed bottom-20 right-5 z-50 w-14 h-14 rounded-full bg-[#25D366] shadow-xl flex items-center justify-center hover:scale-110 transition-transform duration-200"
        aria-label="Contactar por WhatsApp">
@@ -1365,6 +1536,35 @@
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
         </svg>
     </a>
+
+    <!-- Banner de cookies / privacidad -->
+    {{-- Nota: la analítica (Plausible) es cookieless y está exenta de consentimiento.
+         Este aviso informa del uso de almacenamiento técnico. Si en el futuro se añaden
+         herramientas con cookies (Meta Pixel, GA4...), convertir en aceptar/rechazar y
+         GATEAR la carga de esos scripts según la elección guardada. --}}
+    <div x-data="{ show: false }"
+         x-init="show = ! localStorage.getItem('cookieConsent')"
+         x-show="show"
+         x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         class="fixed bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm z-[60] bg-white rounded-2xl border border-zinc-200 shadow-2xl p-5">
+        <p class="text-sm text-zinc-700 leading-relaxed">
+            {{ __('Usamos analítica anónima sin cookies para entender cómo se usa la web. No rastreamos datos personales.') }}
+            <a href="{{ route('cookies') }}" class="text-agro-700 font-semibold hover:underline">{{ __('Más información') }}</a>.
+        </p>
+        <div class="flex items-center gap-2 mt-4">
+            <button @click="localStorage.setItem('cookieConsent', '1'); show = false"
+                    class="flex-1 px-4 py-2.5 rounded-lg bg-agro-700 text-white hover:bg-agro-600 transition-colors font-semibold text-sm">
+                {{ __('Entendido') }}
+            </button>
+            <a href="{{ route('cookies') }}"
+               class="px-4 py-2.5 rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors font-medium text-sm">
+                {{ __('Ajustes') }}
+            </a>
+        </div>
+    </div>
 
     <script>
     // ── Scroll reveal ──────────────────────────────────────────
@@ -1390,14 +1590,17 @@
         });
     })();
 
-    // ── Barra sticky inferior ──────────────────────────────────
+    // ── Barra sticky inferior + pausa animaciones hero ────────
     (function () {
         const bar  = document.getElementById('sticky-cta');
         const hero = document.querySelector('.hero-agro');
-        if (!bar || !hero) return;
+        if (!hero) return;
         new IntersectionObserver(([e]) => {
-            bar.classList.toggle('translate-y-full', e.isIntersecting);
-            bar.classList.toggle('translate-y-0',    !e.isIntersecting);
+            if (bar) {
+                bar.classList.toggle('translate-y-full', e.isIntersecting);
+                bar.classList.toggle('translate-y-0',    !e.isIntersecting);
+            }
+            hero.classList.toggle('animations-paused', !e.isIntersecting);
         }, { threshold: 0 }).observe(hero);
     })();
 

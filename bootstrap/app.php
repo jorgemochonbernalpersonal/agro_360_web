@@ -69,6 +69,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.beta' => \App\Http\Middleware\CheckBetaAccess::class,
             'api.check.beta' => \App\Http\Middleware\ApiBetaCheck::class,
             'require.complete' => \App\Http\Middleware\RequireCompleteAccess::class,
+            'require.ability' => \App\Http\Middleware\RequireAbility::class,
             'winery.ability' => \App\Http\Middleware\CheckWineryAbility::class,
             'require.winery' => \App\Http\Middleware\RequireWinery::class,
             'require.supervisor' => \App\Http\Middleware\RequireSupervisor::class,

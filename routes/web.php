@@ -167,7 +167,7 @@ Route::middleware(['auth', 'check.can_login', 'password.changed', 'require.passw
     require __DIR__.'/payment.php';
 
     // Dashboard combinado para productor
-    Route::middleware(['role:producer', 'check.beta'])
+    Route::middleware(['role:producer'])
         ->get('/producer/dashboard', \App\Livewire\Producer\Dashboard::class)
         ->name('producer.dashboard');
 
