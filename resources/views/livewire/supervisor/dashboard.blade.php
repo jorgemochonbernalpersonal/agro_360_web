@@ -77,39 +77,29 @@
     @if($overdueRequests > 0 || $pendingNotebookCount > 0 || $expiringCertifications->count() > 0 || $pendingLabels > 0 || $nonCompliantInspections > 0)
         <div class="flex flex-wrap gap-3">
             @if($overdueRequests > 0)
-                <a href="{{ route('supervisor.requests.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 hover:bg-red-100 transition">
-                    <flux:icon icon="exclamation-circle" class="size-4" />
+                <x-agro.alert-chip color="red" icon="exclamation-circle" href="{{ route('supervisor.requests.index') }}" wire:navigate>
                     {{ $overdueRequests }} {{ $overdueRequests !== 1 ? __('solicitudes vencidas') : __('solicitud vencida') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
             @if($nonCompliantInspections > 0)
-                <a href="{{ route('supervisor.inspection.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 hover:bg-red-100 transition">
-                    <flux:icon icon="shield-exclamation" class="size-4" />
+                <x-agro.alert-chip color="red" icon="shield-exclamation" href="{{ route('supervisor.inspection.index') }}" wire:navigate>
                     {{ $nonCompliantInspections }} {{ $nonCompliantInspections !== 1 ? __('inspecciones no conformes') : __('inspección no conforme') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
             @if($pendingLabels > 0)
-                <a href="{{ route('supervisor.labels.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-rose-50 border border-rose-200 text-sm text-rose-700 hover:bg-rose-100 transition">
-                    <flux:icon icon="tag" class="size-4" />
+                <x-agro.alert-chip color="rose" icon="tag" href="{{ route('supervisor.labels.index') }}" wire:navigate>
                     {{ $pendingLabels }} {{ $pendingLabels !== 1 ? __('contraetiquetas pendientes') : __('contraetiqueta pendiente') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
             @if($pendingNotebookCount > 0)
-                <a href="{{ route('supervisor.notebook.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700 hover:bg-amber-100 transition">
-                    <flux:icon icon="book-open" class="size-4" />
+                <x-agro.alert-chip color="amber" icon="book-open" href="{{ route('supervisor.notebook.index') }}" wire:navigate>
                     {{ $pendingNotebookCount }} {{ $pendingNotebookCount !== 1 ? __('solicitudes de cuaderno pendientes') : __('solicitud de cuaderno pendiente') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
             @if($expiringCertifications->count() > 0)
-                <a href="{{ route('supervisor.oversight.certifications.index') }}" wire:navigate
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 border border-orange-200 text-sm text-orange-700 hover:bg-orange-100 transition">
-                    <flux:icon icon="check-badge" class="size-4" />
+                <x-agro.alert-chip color="orange" icon="check-badge" href="{{ route('supervisor.oversight.certifications.index') }}" wire:navigate>
                     {{ $expiringCertifications->count() }} {{ $expiringCertifications->count() !== 1 ? __('certificaciones por vencer') : __('certificación por vencer') }}
-                </a>
+                </x-agro.alert-chip>
             @endif
         </div>
     @endif

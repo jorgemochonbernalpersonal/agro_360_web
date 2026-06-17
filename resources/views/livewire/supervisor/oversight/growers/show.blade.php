@@ -44,16 +44,14 @@
     @if($plotsWithoutPac > 0 || $lockedPlots > 0)
         <div class="flex flex-wrap gap-3">
             @if($plotsWithoutPac > 0)
-                <div class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700">
-                    <flux:icon icon="exclamation-triangle" class="size-4" />
+                <x-agro.alert-chip color="amber" icon="exclamation-triangle">
                     {{ $plotsWithoutPac }} parcela{{ $plotsWithoutPac !== 1 ? 's' : '' }} sin datos PAC
-                </div>
+                </x-agro.alert-chip>
             @endif
             @if($lockedPlots > 0)
-                <div class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-sm text-blue-700">
-                    <flux:icon icon="lock-closed" class="size-4" />
+                <x-agro.alert-chip color="blue" icon="lock-closed">
                     {{ $lockedPlots }} parcela{{ $lockedPlots !== 1 ? 's' : '' }} bloqueada{{ $lockedPlots !== 1 ? 's' : '' }} (PAC)
-                </div>
+                </x-agro.alert-chip>
             @endif
         </div>
     @endif
