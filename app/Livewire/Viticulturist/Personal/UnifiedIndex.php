@@ -12,6 +12,7 @@ use App\Notifications\ViticulturistInvitationNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -243,14 +244,15 @@ class UnifiedIndex extends Component
             return;
         }
 
-        try {
-            // Enviar solo la invitación (el email de verificación se enviará cuando se registre)
-            $viticulturist->notify(new ViticulturistInvitationNotification($user));
+        $plainToken = Str::random(64);
+        $viticulturist->update([
+            'invitation_token'    => hash('sha256', $plainToken),
+            'invitation_sent_at'  => now(),
+            'invitation_expires_at' => now()->addDays(7),
+        ]);
 
-            // Marcar que se envió la invitación
-            $viticulturist->update([
-                'invitation_sent_at' => now(),
-            ]);
+        try {
+            $viticulturist->notify(new ViticulturistInvitationNotification($user, $plainToken));
 
             $this->toastSuccess(__('Invitación enviada correctamente por email.'));
         } catch (\Exception $e) {
