@@ -652,6 +652,61 @@
         </div>
     </section>
 
+    <!-- Marquee de features -->
+    <div class="overflow-hidden bg-[#0a1c04] border-b border-[#1a4008] py-3.5 select-none">
+        <div class="marquee-track gap-0">
+            @php
+            $items = [
+                '🌿 Cuaderno de campo digital',
+                '📍 Parcelas SIGPAC',
+                '🍇 Trazabilidad viñedo→botella',
+                '🛰️ Teledetección NDVI',
+                '🧾 Facturación Verifactu',
+                '📋 Informes PAC oficiales',
+                '🏺 Control de depósitos',
+                '🌾 Gestión de cosechas',
+                '🏛️ Denominaciones de Origen',
+                '📱 Sin papel · Sin Excel',
+            ];
+            @endphp
+            @foreach(array_merge($items, $items) as $item)
+            <span class="inline-flex items-center px-8 text-sm font-medium text-[#6BBF3E]/80 whitespace-nowrap">
+                {{ $item }}
+                <span class="mx-8 text-[#2a5010]">·</span>
+            </span>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Contadores animados -->
+    <section class="py-14 bg-white border-b border-zinc-100">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                <div class="space-y-1">
+                    <div class="text-4xl lg:text-5xl font-bold text-agro-700 tabular-nums"
+                         data-count="{{ now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0 }}"
+                         data-suffix="">0</div>
+                    <p class="text-sm text-zinc-500 font-medium">días para la obligatoriedad</p>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-4xl lg:text-5xl font-bold text-agro-700 tabular-nums"
+                         data-count="500" data-prefix="+" data-suffix="">0</div>
+                    <p class="text-sm text-zinc-500 font-medium">parcelas gestionadas</p>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-4xl lg:text-5xl font-bold text-agro-700 tabular-nums"
+                         data-count="48" data-prefix="+" data-suffix="">0</div>
+                    <p class="text-sm text-zinc-500 font-medium">bodegas y viticultores</p>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-4xl lg:text-5xl font-bold text-agro-700 tabular-nums"
+                         data-count="100" data-suffix="%" data-prefix="">0</div>
+                    <p class="text-sm text-zinc-500 font-medium">conforme normativa PAC</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Cómo funciona -->
     <section id="como-funciona" class="py-20 bg-zinc-50 border-t border-zinc-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1279,6 +1334,56 @@
     </section>
 
     @include('partials.footer-seo')
+
+    <script>
+    // ── Scroll reveal ──────────────────────────────────────────
+    (function () {
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                e.target.classList.add('revealed');
+                revealObserver.unobserve(e.target);
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll(
+            '#como-funciona .rounded-2xl, ' +
+            '#ecosistema .rounded-2xl, #ecosistema .rounded-xl, ' +
+            '#funcionalidades .rounded-2xl, #funcionalidades .rounded-xl, ' +
+            '#precios .rounded-2xl, ' +
+            '#faq details'
+        ).forEach((el, i) => {
+            el.classList.add('reveal-ready');
+            el.style.transitionDelay = (i % 4 * 80) + 'ms';
+            revealObserver.observe(el);
+        });
+    })();
+
+    // ── Contador animado ───────────────────────────────────────
+    (function () {
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                const el     = e.target;
+                const target = +el.dataset.count;
+                const suffix = el.dataset.suffix || '';
+                const prefix = el.dataset.prefix || '';
+                const dur    = 1600;
+                const start  = performance.now();
+                const tick   = (now) => {
+                    const p    = Math.min((now - start) / dur, 1);
+                    const ease = 1 - Math.pow(1 - p, 3);
+                    el.textContent = prefix + Math.round(ease * target).toLocaleString('es-ES') + suffix;
+                    if (p < 1) requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+                counterObserver.unobserve(el);
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+    })();
+    </script>
 
 </body>
 </html>

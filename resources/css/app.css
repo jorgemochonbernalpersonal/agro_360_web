@@ -103,6 +103,22 @@
     }
 }
 
+/* ─── Scroll reveal ────────────────────────────────────── */
+.reveal-ready {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal-ready.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ─── Marquee ───────────────────────────────────────────── */
+@keyframes marquee-scroll { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+.marquee-track { display:flex; width:max-content; animation: marquee-scroll 35s linear infinite; }
+.marquee-track:hover { animation-play-state: paused; }
+
 /* ─── Hero animado viñedo ───────────────────────────────── */
 @keyframes hero-drive  { 0%{left:-220px} 100%{left:108%} }
 @keyframes hero-bounce { 0%{transform:translateY(0) rotate(-0.3deg)} 100%{transform:translateY(-3px) rotate(0.3deg)} }
