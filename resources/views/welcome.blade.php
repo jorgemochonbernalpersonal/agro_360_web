@@ -648,24 +648,6 @@
                     @endforeach
                 </div>
 
-                {{-- Normativa: dos fases --}}
-                <div class="grid sm:grid-cols-2 gap-3 pt-4">
-                    <div class="flex gap-3 p-4 rounded-xl border border-white/15 bg-white/10 backdrop-blur-sm">
-                        <div class="shrink-0 w-10 h-10 rounded-lg bg-amber-400/20 border border-amber-400/30 text-amber-300 flex items-center justify-center font-bold text-xs">'27</div>
-                        <div>
-                            <div class="font-semibold text-white text-sm mb-0.5">{{ __('Enero 2027 — Fase 1') }}</div>
-                            <p class="text-xs text-white/55 leading-relaxed">{{ __('Obligatorio el registro digital de tratamientos fitosanitarios. Agro365 te cubre desde hoy.') }}</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3 p-4 rounded-xl border border-white/15 bg-white/10 backdrop-blur-sm">
-                        <div class="shrink-0 w-10 h-10 rounded-lg bg-[#6BBF3E]/20 border border-[#6BBF3E]/30 text-[#9fe06a] flex items-center justify-center font-bold text-xs">'28</div>
-                        <div>
-                            <div class="font-semibold text-white text-sm mb-0.5">{{ __('Enero 2028 — Fase 2') }}</div>
-                            <p class="text-xs text-white/55 leading-relaxed">{{ __('Entra en vigor el cuaderno completo según el Reglamento (UE) 2022/1441. Parcelas, riegos, fertilización y maquinaria — todo en digital.') }}</p>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
