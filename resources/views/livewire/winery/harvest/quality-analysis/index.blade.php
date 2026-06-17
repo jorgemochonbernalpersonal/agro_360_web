@@ -32,13 +32,7 @@
 
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-            <a href="{{ roleRoute('harvest-quality.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter])) }}"
-               target="_blank"
-               class="inline-flex items-center gap-2 px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
-               title="{{ __('Exportar PDF de calidad') }}">
-                <flux:icon icon="document-arrow-down" class="size-4 text-zinc-500" />
-                PDF
-            </a>
+            <flux:button href="{{ roleRoute('harvest-quality.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter])) }}" target="_blank" icon="document-arrow-down">PDF</flux:button>
         </div>
 
         {{-- Panel inline --}}
