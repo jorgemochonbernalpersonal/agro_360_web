@@ -116,6 +116,12 @@
     </script>
 </head>
 <body class="font-sans antialiased bg-white">
+    @php
+        $foundersTotal = (int) config('app.founder_max_slots', 25);
+        $foundersTaken = \App\Models\User::where('is_founder', true)->count();
+        $foundersLeft  = max(0, $foundersTotal - $foundersTaken);
+        $hasFounders   = $foundersLeft > 0;
+    @endphp
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
@@ -237,8 +243,8 @@
                         </ul>
 
                         <div class="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 text-center">
-                            <p class="text-xs font-semibold text-amber-800">{{ __('🎁 3 meses gratis al registrarte') }}</p>
-                            <p class="text-xs text-amber-600 mt-0.5">{{ __('Sin tarjeta · Sin compromiso') }}</p>
+                            <p class="text-xs font-semibold text-amber-800">{{ $hasFounders ? __('🎁 1 año gratis como fundador') : __('🎁 3 meses gratis al registrarte') }}</p>
+                            <p class="text-xs text-amber-600 mt-0.5">{{ $hasFounders ? __('Quedan ') . $foundersLeft . __(' plazas · Sin tarjeta') : __('Sin tarjeta · Sin compromiso') }}</p>
                         </div>
 
                         <a href="{{ route('register') }}" class="block w-full text-center px-4 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg font-bold text-sm">
@@ -297,8 +303,8 @@
                         </ul>
 
                         <div class="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 text-center">
-                            <p class="text-xs font-semibold text-amber-800">{{ __('🎁 3 meses gratis al registrarte') }}</p>
-                            <p class="text-xs text-amber-600 mt-0.5">{{ __('Sin tarjeta · Sin compromiso') }}</p>
+                            <p class="text-xs font-semibold text-amber-800">{{ $hasFounders ? __('🎁 1 año gratis como fundador') : __('🎁 3 meses gratis al registrarte') }}</p>
+                            <p class="text-xs text-amber-600 mt-0.5">{{ $hasFounders ? __('Quedan ') . $foundersLeft . __(' plazas · Sin tarjeta') : __('Sin tarjeta · Sin compromiso') }}</p>
                         </div>
 
                         <a href="{{ route('register', ['role' => 'producer']) }}" class="block w-full text-center px-4 py-3 rounded-xl bg-gradient-to-r from-violet-700 to-violet-500 text-white hover:from-violet-800 hover:to-violet-600 transition-all duration-300 shadow-lg font-bold text-sm">
@@ -374,8 +380,8 @@
                         </ul>
 
                         <div class="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 text-center">
-                            <p class="text-xs font-semibold text-amber-800">{{ __('🎁 3 meses gratis al registrarte') }}</p>
-                            <p class="text-xs text-amber-600 mt-0.5">{{ __('Demo gratuita · Onboarding incluido') }}</p>
+                            <p class="text-xs font-semibold text-amber-800">{{ $hasFounders ? __('🎁 1 año gratis como fundador') : __('🎁 3 meses gratis al registrarte') }}</p>
+                            <p class="text-xs text-amber-600 mt-0.5">{{ $hasFounders ? __('Quedan ') . $foundersLeft . __(' plazas · Demo gratuita') : __('Demo gratuita · Onboarding incluido') }}</p>
                         </div>
 
                         <a href="{{ route('register', ['role' => 'winery']) }}" class="block w-full text-center px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 shadow-lg font-bold text-sm">

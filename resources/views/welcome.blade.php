@@ -145,7 +145,7 @@
                     'price' => '19.00',
                     'priceCurrency' => 'EUR',
                     'availability' => 'https://schema.org/InStock',
-                    'description' => 'Plan combinado: todo el plan Viticultor Independiente más todo el plan Bodega (19€/mes o 180€/año frente a 28€/mes por separado). Básico gratis para siempre.'
+                    'description' => 'Plan combinado: todo el plan Viticultor Independiente más todo el plan Bodega (19€/mes o 180€/año frente a 33€/mes por separado). Básico gratis para siempre.'
                 ]
             ],
             'description' => 'Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen. Cuaderno de campo digital obligatorio 2027. Teledetección NDVI, Verifactu y trazabilidad completa.',
@@ -1155,7 +1155,7 @@
                 {{ __('Los primeros') }} {{ $foundersTotal }} {{ __('en unirse consiguen') }}
                 <strong class="text-white">{{ __('1 año del plan Completo gratis') }}</strong>
                 <span class="text-agro-200/70 text-base">({{ __('en lugar de los 3 meses estándar') }})</span>,
-                {{ __('acceso directo al equipo y precio de fundador para siempre. A cambio: tu opinión real para mejorar el producto.') }}
+                {{ __('y acceso directo al equipo. A cambio: tu opinión real para mejorar el producto.') }}
             </p>
 
             {{-- Barra de plazas --}}
@@ -1429,7 +1429,7 @@
                     ],
                     [
                         '¿Qué es el plan Productor y para quién es?',
-                        'El plan Productor es un bundle diseñado para quien cultiva sus propias uvas y además elabora su propio vino. El cuaderno de campo, parcelas y SIGPAC son gratis para siempre. Para el resto de funcionalidades (teledetección, PAC, vendimia, depósitos, trazabilidad, facturación...) el plan completo cuesta 19€/mes o 180€/año — frente a los 28€/mes que costaría contratar el plan Viticultor Independiente y el plan Bodega por separado. Todo en una sola cuenta con un panel unificado.',
+                        'El plan Productor es un bundle diseñado para quien cultiva sus propias uvas y además elabora su propio vino. El cuaderno de campo, parcelas y SIGPAC son gratis para siempre. Para el resto de funcionalidades (teledetección, PAC, vendimia, depósitos, trazabilidad, facturación...) el plan completo cuesta 19€/mes o 180€/año — frente a los 33€/mes que costaría contratar el plan Viticultor Independiente y el plan Bodega por separado. Todo en una sola cuenta con un panel unificado.',
                     ],
                     [
                         '¿Puedo ser viticultor independiente y al mismo tiempo pertenecer a una bodega?',
