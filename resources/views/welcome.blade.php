@@ -638,7 +638,7 @@
 
                 {{-- Claims --}}
                 <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
-                    @foreach(['Básico gratis para siempre', '3 meses de plan Completo gratis', 'Sin tarjeta de crédito', 'Cancela cuando quieras'] as $claim)
+                    @foreach(['Básico gratis para siempre', '3 meses de plan Completo gratis', 'Sin tarjeta de crédito', 'Tus datos, siempre tuyos'] as $claim)
                     <div class="flex items-center gap-1.5">
                         <svg class="w-4 h-4 text-[#6BBF3E]" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -922,7 +922,7 @@
     <section id="funcionalidades" class="py-20 bg-zinc-50 border-y border-zinc-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Las herramientas de Agro365') }}</h2>
+                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Todo lo que necesitas para cumplir la normativa 2027') }}</h2>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1020,50 +1020,6 @@
     </section>
 
 
-
-    <!-- Benefits Section -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-14">
-                <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900">{{ __('¿Por qué elegir Agro365?') }}</h2>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Beneficio 1 -->
-                <div class="rounded-2xl p-8 border border-zinc-200 bg-white">
-                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-5">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-zinc-900 mb-2">{{ __('Ahorra tiempo') }}</h3>
-                    <p class="text-zinc-600 text-sm leading-relaxed">{{ __('Registra un tratamiento en menos de 2 minutos desde el móvil. Sin papel, sin Excel, sin volver a la oficina.') }}</p>
-                </div>
-
-                <!-- Beneficio 2 -->
-                <div class="rounded-2xl p-8 border border-zinc-200 bg-white">
-                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-5">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-zinc-900 mb-2">{{ __('Cumplimiento normativo') }}</h3>
-                    <p class="text-zinc-600 text-sm leading-relaxed">{{ __('El cuaderno genera automáticamente los informes exigidos por PAC y la normativa 2027. Sin errores de formato, sin campos olvidados.') }}</p>
-                </div>
-
-                <!-- Beneficio 3 -->
-                <div class="rounded-2xl p-8 border border-zinc-200 bg-white">
-                    <div class="w-11 h-11 rounded-lg bg-agro-50 text-agro-700 flex items-center justify-center mb-5">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l5-5 4 4 8-8m0 0v5m0-5h-5"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-zinc-900 mb-2">{{ __('Mejora rentabilidad') }}</h3>
-                    <p class="text-zinc-600 text-sm leading-relaxed">{{ __('Ve qué parcelas rinden más, qué costes se disparan y qué vendimias han sido más rentables. Decisiones con datos, no con intuición.') }}</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Pricing Section -->
     <section id="precios" class="py-20 bg-zinc-50">
