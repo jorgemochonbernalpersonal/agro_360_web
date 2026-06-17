@@ -141,6 +141,28 @@
                     @endif
                 </div>
             </div>
+            @unless($user->isAdmin())
+            <div>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Fundador') }}</p>
+                <div class="flex items-center gap-2 mt-0.5">
+                    @if($user->is_founder)
+                        <flux:badge color="amber" size="sm" icon="star">{{ __('Fundador') }}</flux:badge>
+                    @else
+                        <span class="text-sm text-zinc-400">{{ __('No') }}</span>
+                    @endif
+                    <flux:button
+                        wire:click="toggleFounder"
+                        wire:confirm="{{ $user->is_founder
+                            ? __('¿Quitar el estado de fundador a :name?', ['name' => $user->name])
+                            : __('¿Marcar a :name como fundador? Se le extenderá la beta a 1 año.', ['name' => $user->name]) }}"
+                        variant="ghost"
+                        size="xs"
+                        icon="{{ $user->is_founder ? 'x-mark' : 'star' }}"
+                    >{{ $user->is_founder ? __('Quitar') : __('Hacer fundador') }}</flux:button>
+                </div>
+                <p class="text-xs text-zinc-400 mt-1">{{ __('Beneficio: 1 año de plan Completo gratis') }}</p>
+            </div>
+            @endunless
             @if($user->isProducer())
             <div>
                 <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ __('Compra Uva Externa') }}</p>
@@ -538,6 +560,7 @@
                 'user_edited_by_admin'            => ['label' => 'Datos editados por admin',        'color' => 'blue',   'icon' => 'pencil'],
                 'user_account_toggled'            => ['label' => 'Estado activado/desactivado',     'color' => 'yellow', 'icon' => 'power'],
                 'user_beta_toggled'               => ['label' => 'Beta activado/desactivado',       'color' => 'violet', 'icon' => 'beaker'],
+                'user_founder_toggled'            => ['label' => 'Fundador activado/desactivado',   'color' => 'amber',  'icon' => 'star'],
                 'email_verified_manually_by_admin'=> ['label' => 'Email verificado por admin',      'color' => 'agro',   'icon' => 'check-badge'],
                 'impersonation_started'           => ['label' => 'Sesión impersonada',              'color' => 'orange', 'icon' => 'arrow-right-end-on-rectangle'],
                 'admin_readonly_toggled'          => ['label' => 'Permiso solo-lectura cambiado',   'color' => 'zinc',   'icon' => 'shield-check'],

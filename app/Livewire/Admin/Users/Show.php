@@ -231,6 +231,55 @@ class Show extends Component
         $this->toastSuccess("Usuario {$status}.");
     }
 
+    // ─── Fundador ──────────────────────────────────────────────────────────────
+
+    /**
+     * Marca o desmarca al usuario como fundador.
+     * Al marcarlo, extiende su beta a 1 año (beneficio del programa de fundadores).
+     * Al desmarcarlo, conserva la beta actual sin recortarla.
+     */
+    public function toggleFounder(): void
+    {
+        if ($this->isReadOnly()) {
+            return;
+        }
+
+        if ($this->user->isAdmin()) {
+            $this->toastError(__('El programa de fundadores no aplica a administradores.'));
+
+            return;
+        }
+
+        $makingFounder = ! $this->user->is_founder;
+
+        $this->user->is_founder = $makingFounder;
+
+        if ($makingFounder) {
+            // Garantizar el beneficio: beta de al menos 1 año desde hoy.
+            $oneYear = now()->addMonths(12)->endOfDay();
+            $this->user->is_beta_user = true;
+            $this->user->beta_access_granted = true;
+            if (! $this->user->beta_ends_at || $this->user->beta_ends_at->lt($oneYear)) {
+                $this->user->beta_ends_at = $oneYear;
+            }
+        }
+
+        $this->user->save();
+        $this->user->refresh();
+
+        SecurityLogger::logSecurityEvent('user_founder_toggled', [
+            'admin_id' => Auth::id(),
+            'user_id' => $this->user->id,
+            'user_email' => $this->user->email,
+            'is_founder' => $this->user->is_founder,
+        ]);
+
+        $this->loadStats();
+        $this->toastSuccess($makingFounder
+            ? __('Usuario marcado como fundador (beta extendida a 1 año).')
+            : __('Usuario ya no es fundador.'));
+    }
+
     // ─── Compra uva externa ───────────────────────────────────────────────────
 
     public function toggleCompraUvaExterna()
@@ -631,6 +680,7 @@ class Show extends Component
             'user_deleted_by_admin',
             'user_account_toggled',
             'user_beta_toggled',
+            'user_founder_toggled',
             'email_verified_manually_by_admin',
             'impersonation_started',
             'admin_readonly_toggled',

@@ -79,6 +79,11 @@
                     <option value="expired">{{ __('Beta expirado') }}</option>
                     <option value="never">{{ __('Sin beta') }}</option>
                 </x-agro.filter-select>
+                <x-agro.filter-select wire:model.live="filterFounder">
+                    <option value="">{{ __('Fundador') }}</option>
+                    <option value="1">{{ __('Fundadores') }}</option>
+                    <option value="0">{{ __('No fundadores') }}</option>
+                </x-agro.filter-select>
                 {{-- Rango de fecha de registro --}}
                 <input
                     type="date"
@@ -187,6 +192,9 @@
                                     <div>
                                         <div class="flex items-center gap-1.5">
                                             <p class="text-sm font-semibold text-zinc-900">{{ $user->name }}</p>
+                                            @if($user->is_founder)
+                                                <flux:badge color="amber" size="sm" icon="star">{{ __('Fundador') }}</flux:badge>
+                                            @endif
                                         </div>
                                         <p class="text-xs text-zinc-400">ID: {{ $user->id }}</p>
                                     </div>

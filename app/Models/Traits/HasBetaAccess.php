@@ -80,10 +80,25 @@ trait HasBetaAccess
     }
 
     /**
-     * Verificar si tiene acceso activo (beta o suscripción)
+     * Bodega cubierta por una Denominación de Origen.
+     * El paquete de la DO cubre el acceso de todas sus bodegas adscritas:
+     * acceso completo sin coste y sin necesidad de suscripción propia.
+     */
+    public function isCoveredByDo(): bool
+    {
+        return $this->isWinery() && $this->hasWinerySupervisor();
+    }
+
+    /**
+     * Verificar si tiene acceso activo (cubierto por DO, beta o suscripción)
      */
     public function hasActiveAccess(): bool
     {
+        // Bodega adscrita a una DO: cubierta por el paquete de la DO
+        if ($this->isCoveredByDo()) {
+            return true;
+        }
+
         // Beta activo
         if ($this->isBetaUser() && ! $this->betaExpired()) {
             return true;

@@ -28,6 +28,8 @@ class Index extends Component
 
     public $filterBeta = '';
 
+    public $filterFounder = '';
+
     public $filterDateFrom = '';
 
     public $filterDateTo = '';
@@ -59,6 +61,7 @@ class Index extends Component
         'filterActive' => ['except' => ''],
         'filterVerified' => ['except' => ''],
         'filterBeta' => ['except' => ''],
+        'filterFounder' => ['except' => ''],
         'filterDateFrom' => ['except' => '', 'as' => 'from'],
         'filterDateTo' => ['except' => '', 'as' => 'to'],
     ];
@@ -431,6 +434,7 @@ class Index extends Component
             $this->filterActive,
             $this->filterVerified,
             $this->filterBeta,
+            $this->filterFounder,
             $this->filterDateFrom,
             $this->filterDateTo,
         ]);
@@ -548,6 +552,10 @@ class Index extends Component
             } elseif ($this->filterBeta === 'never') {
                 $query->where('is_beta_user', false);
             }
+        }
+
+        if ($this->filterFounder !== '') {
+            $query->where('is_founder', $this->filterFounder === '1');
         }
 
         if ($this->filterDateFrom !== '') {

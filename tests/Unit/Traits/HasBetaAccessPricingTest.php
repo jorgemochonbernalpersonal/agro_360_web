@@ -292,6 +292,57 @@ class HasBetaAccessPricingTest extends TestCase
         $this->assertNull($winery->wineryYearlyPrice());
     }
 
+    // ── isCoveredByDo: bodega adscrita a una DO ───────────────────────────────
+
+    public function test_bodega_sin_supervisor_no_esta_cubierta_por_do(): void
+    {
+        $winery = $this->userWithoutAccess(['role' => 'winery']);
+
+        $this->assertFalse($winery->isCoveredByDo());
+    }
+
+    public function test_bodega_adscrita_a_do_esta_cubierta(): void
+    {
+        $winery     = $this->userWithoutAccess(['role' => 'winery']);
+        $supervisor = User::factory()->create(['role' => 'supervisor']);
+        $this->linkWineryToSupervisor($winery, $supervisor);
+
+        $this->assertTrue($winery->isCoveredByDo());
+    }
+
+    public function test_bodega_adscrita_a_do_tiene_acceso_activo_sin_beta_ni_suscripcion(): void
+    {
+        $winery     = $this->userWithoutAccess(['role' => 'winery']);
+        $supervisor = User::factory()->create(['role' => 'supervisor']);
+        $this->linkWineryToSupervisor($winery, $supervisor);
+
+        $this->assertTrue($winery->hasActiveAccess());
+        $this->assertSame('winery', $winery->effectivePlan());
+    }
+
+    public function test_bodega_adscrita_a_do_con_beta_expirada_sigue_con_acceso(): void
+    {
+        $winery = User::factory()->create([
+            'role'         => 'winery',
+            'is_beta_user' => true,
+            'beta_ends_at' => now()->subDay(),
+        ]);
+        $supervisor = User::factory()->create(['role' => 'supervisor']);
+        $this->linkWineryToSupervisor($winery, $supervisor);
+
+        $this->assertTrue($winery->hasActiveAccess());
+        $this->assertSame('winery', $winery->effectivePlan());
+    }
+
+    public function test_viticultor_y_productor_nunca_estan_cubiertos_por_do(): void
+    {
+        $vit      = $this->userWithBeta(['role' => 'viticulturist']);
+        $producer = $this->userWithBeta(['role' => 'producer']);
+
+        $this->assertFalse($vit->isCoveredByDo());
+        $this->assertFalse($producer->isCoveredByDo());
+    }
+
     // ── managedWineryCount / doTier ───────────────────────────────────────────
 
     public function test_no_supervisor_siempre_devuelve_count_0(): void

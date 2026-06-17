@@ -62,6 +62,22 @@
             </div>
         </div>
 
+    @elseif($isCoveredByDo)
+        {{-- Bodega adscrita a una DO: acceso cubierto por el paquete de la denominación --}}
+        <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 bg-green-100 rounded-full p-2">
+                    <flux:icon icon="building-library" class="size-5 text-green-600" />
+                </div>
+                <div class="space-y-1">
+                    <p class="font-semibold text-green-800">{{ __('Acceso completo cubierto por tu Denominación de Origen') }}</p>
+                    <p class="text-sm text-green-700">
+                        {{ __('Tu bodega está adscrita a una Denominación de Origen, así que el paquete de la DO cubre tu acceso completo sin coste adicional. No necesitas contratar una suscripción.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
     @else
         {{-- Sin suscripción activa --}}
 

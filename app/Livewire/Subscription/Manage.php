@@ -40,6 +40,13 @@ class Manage extends Component
             return;
         }
 
+        // Bodega adscrita a una DO: su acceso lo cubre el paquete de la DO, no paga.
+        if ($user->isCoveredByDo()) {
+            $this->toastError(__('Tu bodega está adscrita a una Denominación de Origen — tu acceso está cubierto sin coste.'));
+
+            return;
+        }
+
         // Determinar precio según rol y plan:
         // DO/supervisor → tramo por nº de bodegas adscritas.
         // Bodegas → tramo de red (según nº de viticultores gestionados).
@@ -213,6 +220,7 @@ class Manage extends Component
             'doTier'          => $doTier,
             'isWineryLinked'  => $user->hasWinery(),
             'isProducer'      => $user->isProducer(),
+            'isCoveredByDo'   => $user->isCoveredByDo(),
         ]);
     }
 }

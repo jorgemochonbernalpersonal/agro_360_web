@@ -3,6 +3,7 @@
 namespace Tests\Feature\Admin;
 
 use App\Livewire\Admin\Users\Index as AdminUsersIndex;
+use App\Livewire\Admin\Users\Show as AdminUsersShow;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -108,6 +109,84 @@ class UserManagementTest extends TestCase
         // Viticulturist keeps beta (cascade only applies when enabling)
         $this->assertTrue($this->viticulturist->fresh()->is_beta_user);
     }
+
+    // ── toggleFounder ─────────────────────────────────────────────────────────
+
+    public function test_admin_can_mark_user_as_founder(): void
+    {
+        $this->actingAs($this->admin);
+
+        Livewire::test(AdminUsersShow::class, ['user' => $this->winery])
+            ->call('toggleFounder');
+
+        $fresh = $this->winery->fresh();
+        $this->assertTrue($fresh->is_founder);
+        $this->assertTrue($fresh->is_beta_user);
+        $this->assertGreaterThanOrEqual(
+            now()->addMonths(11)->startOfDay(),
+            $fresh->beta_ends_at
+        );
+    }
+
+    public function test_marking_founder_extends_beta_to_one_year(): void
+    {
+        // Usuario con beta de 3 meses ya concedida
+        $this->winery->update([
+            'is_beta_user'       => true,
+            'beta_access_granted' => true,
+            'beta_ends_at'       => now()->addMonths(3),
+        ]);
+
+        $this->actingAs($this->admin);
+
+        Livewire::test(AdminUsersShow::class, ['user' => $this->winery])
+            ->call('toggleFounder');
+
+        $fresh = $this->winery->fresh();
+        $this->assertTrue($fresh->is_founder);
+        // La beta debe ser aproximadamente 1 año desde hoy, no 3 meses
+        $this->assertGreaterThanOrEqual(
+            now()->addMonths(11)->startOfDay(),
+            $fresh->beta_ends_at
+        );
+    }
+
+    public function test_admin_can_remove_founder_status(): void
+    {
+        $this->winery->update(['is_founder' => true]);
+
+        $this->actingAs($this->admin);
+
+        Livewire::test(AdminUsersShow::class, ['user' => $this->winery])
+            ->call('toggleFounder');
+
+        $this->assertFalse($this->winery->fresh()->is_founder);
+    }
+
+    public function test_admin_cannot_be_marked_as_founder(): void
+    {
+        $this->actingAs($this->admin);
+
+        Livewire::test(AdminUsersShow::class, ['user' => $this->otherAdmin])
+            ->call('toggleFounder');
+
+        $this->assertFalse($this->otherAdmin->fresh()->is_founder);
+    }
+
+    public function test_founder_slot_limit_is_respected_at_registration(): void
+    {
+        $max = config('app.founder_max_slots', 25);
+
+        // Rellenar todas las plazas
+        User::factory()->count($max)->create(['is_founder' => true]);
+
+        // El siguiente usuario con código correcto NO debe ser fundador
+        $user = User::factory()->create(['is_founder' => false]);
+        $this->assertFalse($user->is_founder);
+        $this->assertEquals($max, User::where('is_founder', true)->count());
+    }
+
+    // ── toggleBeta cascade ────────────────────────────────────────────────────
 
     public function test_toggle_beta_is_atomic(): void
     {
