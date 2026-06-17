@@ -32,45 +32,16 @@
 
     {{-- KPI stat cards --}}
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <a href="{{ route('supervisor.oversight.wineries.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-indigo-300 transition-colors group">
-            <flux:icon icon="building-office-2" class="size-5 text-indigo-400 mb-2 group-hover:text-indigo-500" />
-            <p class="text-2xl font-bold text-indigo-600 leading-none">{{ $wineryCount }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Bodegas') }}</p>
-        </a>
-        <a href="{{ route('supervisor.growers.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-emerald-300 transition-colors group">
-            <flux:icon icon="users" class="size-5 text-emerald-400 mb-2 group-hover:text-emerald-500" />
-            <p class="text-2xl font-bold text-emerald-600 leading-none">{{ $viticulturistCount }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Viticultores') }}</p>
-        </a>
-        <a href="{{ route('supervisor.qualification.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-amber-300 transition-colors group">
-            <flux:icon icon="star" class="size-5 text-amber-400 mb-2 group-hover:text-amber-500" />
-            <p class="text-2xl font-bold text-amber-600 leading-none">{{ $pendingQualifications }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Calificaciones') }}</p>
-        </a>
-        <a href="{{ route('supervisor.labels.index', ['tab' => 'issued']) }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-rose-300 transition-colors group">
-            <flux:icon icon="tag" class="size-5 text-rose-400 mb-2 group-hover:text-rose-500" />
-            <p class="text-2xl font-bold text-rose-600 leading-none">{{ number_format($issuedLabelsThisYear) }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Emitidas') }} {{ now()->year }}</p>
+        <x-agro.kpi-tile color="indigo" icon="building-office-2" :value="$wineryCount" :label="__('Bodegas')" href="{{ route('supervisor.oversight.wineries.index') }}" />
+        <x-agro.kpi-tile color="emerald" icon="users" :value="$viticulturistCount" :label="__('Viticultores')" href="{{ route('supervisor.growers.index') }}" />
+        <x-agro.kpi-tile color="amber" icon="star" :value="$pendingQualifications" :label="__('Calificaciones')" href="{{ route('supervisor.qualification.index') }}" />
+        <x-agro.kpi-tile color="rose" icon="tag" :value="number_format($issuedLabelsThisYear)" :label="__('Emitidas') . ' ' . now()->year" href="{{ route('supervisor.labels.index', ['tab' => 'issued']) }}">
             @if($pendingLabels > 0)
                 <p class="text-[10px] text-rose-500 mt-0.5 font-medium">{{ $pendingLabels }} {{ $pendingLabels !== 1 ? __('pendientes') : __('pendiente') }}</p>
             @endif
-        </a>
-        <a href="{{ route('supervisor.requests.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-blue-300 transition-colors group">
-            <flux:icon icon="inbox" class="size-5 text-blue-400 mb-2 group-hover:text-blue-500" />
-            <p class="text-2xl font-bold text-blue-600 leading-none">{{ $pendingRequests }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Solicitudes') }}</p>
-        </a>
-        <a href="{{ route('supervisor.requests.index') }}" wire:navigate
-           class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm {{ $overdueRequests > 0 ? 'border-red-300 bg-red-50/30' : '' }} hover:border-red-300 transition-colors group">
-            <flux:icon icon="clock" class="size-5 {{ $overdueRequests > 0 ? 'text-red-400' : 'text-zinc-300' }} mb-2" />
-            <p class="text-2xl font-bold {{ $overdueRequests > 0 ? 'text-red-600' : 'text-zinc-400' }} leading-none">{{ $overdueRequests }}</p>
-            <p class="text-[11px] text-zinc-400 mt-1">{{ __('Vencidas') }}</p>
-        </a>
+        </x-agro.kpi-tile>
+        <x-agro.kpi-tile color="blue" icon="inbox" :value="$pendingRequests" :label="__('Solicitudes')" href="{{ route('supervisor.requests.index') }}" />
+        <x-agro.kpi-tile color="red" icon="clock" :value="$overdueRequests" :label="__('Vencidas')" href="{{ route('supervisor.requests.index') }}" :active="$overdueRequests > 0" />
     </div>
 
     {{-- Alerts row --}}
