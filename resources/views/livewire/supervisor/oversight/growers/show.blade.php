@@ -69,7 +69,7 @@
                 </x-slot>
 
                 @forelse($plots as $plot)
-                    <div class="px-4 py-3 border-b border-zinc-100 last:border-0">
+                    <x-agro.list-row class="px-4 py-3">
                         <div class="flex items-start justify-between gap-2">
                             <div>
                                 <div class="flex items-center gap-2">
@@ -112,7 +112,7 @@
                                 · {{ \App\Models\AgriculturalActivity::activityTypes()[$plot->lastAgriculturalActivity->activity_type] ?? $plot->lastAgriculturalActivity->activity_type }}
                             </div>
                         @endif
-                    </div>
+                    </x-agro.list-row>
                 @empty
                     <div class="px-4 py-8 text-center text-sm text-zinc-400">{{ __('Sin parcelas activas') }}</div>
                 @endforelse
@@ -138,7 +138,7 @@
                     </x-slot>
 
                     @forelse($recentActivities as $activity)
-                        <div class="px-4 py-2.5 border-b border-zinc-100 last:border-0 flex items-center justify-between gap-4">
+                        <x-agro.list-row class="px-4 py-2.5 flex items-center justify-between gap-4">
                             <div>
                                 <span class="text-sm text-zinc-700">
                                     {{ \App\Models\AgriculturalActivity::activityTypes()[$activity->activity_type] ?? $activity->activity_type }}
@@ -148,7 +148,7 @@
                                 @endif
                             </div>
                             <span class="text-xs text-zinc-400 shrink-0">{{ $activity->activity_date->format('d/m/Y') }}</span>
-                        </div>
+                        </x-agro.list-row>
                     @empty
                         <div class="px-4 py-6 text-center text-sm text-zinc-400">{{ __('Sin actividades registradas aún.') }}</div>
                     @endforelse
@@ -211,7 +211,7 @@
                     </div>
                 </x-slot>
                 @forelse($wineryRelations as $rel)
-                    <div class="px-4 py-2.5 border-b border-zinc-100 last:border-0 flex items-center gap-3">
+                    <x-agro.list-row class="px-4 py-2.5 flex items-center gap-3">
                         <div class="flex-1 min-w-0">
                             <div class="text-sm font-medium text-zinc-700 truncate">{{ $rel->winery?->name ?? '—' }}</div>
                             <div class="text-xs mt-0.5">
@@ -230,7 +230,7 @@
                         >
                             <flux:icon icon="x-mark" class="size-4" />
                         </button>
-                    </div>
+                    </x-agro.list-row>
                 @empty
                     <div class="px-4 py-4 text-center text-sm text-zinc-400">{{ __('No asignado a bodegas') }}</div>
                 @endforelse
@@ -245,7 +245,7 @@
                     </div>
                 </x-slot>
                 @forelse($certifications as $cert)
-                    <div class="px-4 py-2.5 border-b border-zinc-100 last:border-0">
+                    <x-agro.list-row class="px-4 py-2.5">
                         <div class="text-sm font-medium text-zinc-700">{{ $cert->certification_type_label }}</div>
                         @if($cert->expiry_date)
                             <div class="text-xs mt-0.5
@@ -256,7 +256,7 @@
                                 @endif
                             </div>
                         @endif
-                    </div>
+                    </x-agro.list-row>
                 @empty
                     <div class="px-4 py-4 text-center text-sm text-zinc-400">{{ __('Sin certificaciones') }}</div>
                 @endforelse
@@ -272,7 +272,7 @@
                         </div>
                     </x-slot>
                     @foreach($inspections as $insp)
-                        <div class="px-4 py-2.5 border-b border-zinc-100 last:border-0 flex items-center justify-between gap-2">
+                        <x-agro.list-row class="px-4 py-2.5 flex items-center justify-between gap-2">
                             <div>
                                 <div class="text-sm text-zinc-700">{{ $insp->inspection_date?->format('d/m/Y') ?? '—' }}</div>
                                 @if($insp->result)
@@ -282,7 +282,7 @@
                                 @endif
                             </div>
                             <x-agro.status-badge :status="$insp->status" />
-                        </div>
+                        </x-agro.list-row>
                     @endforeach
                 </x-agro.card>
             @endif

@@ -93,14 +93,14 @@
                     <h2 class="text-xl font-bold text-zinc-900 mb-4">{{ __('Historial de Operaciones') }}</h2>
                     <div class="space-y-2">
                         @foreach($container->histories->take(10) as $history)
-                            <div class="flex items-center text-sm py-2 border-b border-zinc-100 last:border-0">
+                            <x-agro.list-row class="flex items-center text-sm py-2">
                                 <span class="text-zinc-500 w-36 flex-shrink-0">{{ $history->start_date->format('d/m/Y H:i') }}</span>
                                 <span class="mx-2 text-zinc-300">•</span>
                                 <span class="text-zinc-900">
                                     {{ ucfirst($history->operation_type) }}:
                                     {{ $history->quantity > 0 ? '+' : '' }}{{ number_format($history->quantity, 0) }} L
                                 </span>
-                            </div>
+                            </x-agro.list-row>
                         @endforeach
                     </div>
                 </x-agro.card>

@@ -38,7 +38,7 @@
             @php
                 $resultColor = $resultColors[$inspection->result] ?? 'zinc';
             @endphp
-            <div class="flex items-start gap-4 py-3 border-b border-zinc-100 last:border-0">
+            <x-agro.list-row class="flex items-start gap-4 py-3">
                 <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center shrink-0">
                     <span class="text-[10px] font-bold leading-none text-indigo-700">{{ $inspection->inspection_date->format('d') }}</span>
                     <span class="text-[9px] uppercase leading-none text-indigo-500">{{ $inspection->inspection_date->format('M') }}</span>
@@ -63,7 +63,7 @@
                     @endif
                 </div>
                 <x-agro.status-badge :status="$inspection->status" />
-            </div>
+            </x-agro.list-row>
         @empty
             <x-agro.empty-state
                 icon="shield-check"

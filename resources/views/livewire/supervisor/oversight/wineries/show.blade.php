@@ -429,7 +429,7 @@
 
             @if($editNoteId === $note->id)
                 {{-- Formulario edición inline --}}
-                <div class="py-3 border-b border-zinc-100 last:border-0">
+                <x-agro.list-row class="py-3">
                     <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl space-y-3">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
@@ -457,9 +457,9 @@
                             <button wire:click="closeEditNote" class="px-3 py-1.5 text-xs font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-100 transition">{{ __('Cancelar') }}</button>
                         </div>
                     </div>
-                </div>
+                </x-agro.list-row>
             @else
-                <div class="flex items-start gap-3 py-3 border-b border-zinc-100 last:border-0 group">
+                <x-agro.list-row class="flex items-start gap-3 py-3 group">
                     <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center
                         {{ $nColor === 'blue' ? 'bg-blue-100' : ($nColor === 'green' ? 'bg-green-100' : ($nColor === 'amber' ? 'bg-amber-100' : 'bg-zinc-100')) }}">
                         <flux:icon icon="{{ $nIcon }}" class="size-4
@@ -481,7 +481,7 @@
                             <flux:icon icon="trash" class="size-4" />
                         </button>
                     </div>
-                </div>
+                </x-agro.list-row>
             @endif
         @empty
             <div class="py-8 text-center">

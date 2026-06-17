@@ -96,7 +96,7 @@
                 </x-slot:header>
 
                 @forelse($upcomingInspections as $insp)
-                    <div class="flex items-center gap-3 py-2.5 border-b border-zinc-100 last:border-0">
+                    <x-agro.list-row class="flex items-center gap-3 py-2.5">
                         @php
                             $daysLeft = today()->diffInDays($insp->inspection_date, false);
                             $urgency  = $daysLeft <= 3 ? 'bg-red-50 text-red-700 border-red-200'
@@ -120,7 +120,7 @@
                             </p>
                         </div>
                         <x-agro.status-badge :status="$insp->status" />
-                    </div>
+                    </x-agro.list-row>
                 @empty
                     <div class="py-6 text-center text-sm text-zinc-400">
                         <flux:icon icon="calendar" class="size-8 mx-auto mb-2 text-zinc-300" />
@@ -144,7 +144,7 @@
                     </x-slot:header>
 
                     @foreach($recentRequests as $req)
-                        <div class="flex items-center gap-3 py-2.5 border-b border-zinc-100 last:border-0">
+                        <x-agro.list-row class="flex items-center gap-3 py-2.5">
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-zinc-800 truncate">{{ $req->title }}</p>
                                 <p class="text-xs text-zinc-400">
@@ -157,7 +157,7 @@
                                 </p>
                             </div>
                             <x-agro.status-badge :status="$req->status" />
-                        </div>
+                        </x-agro.list-row>
                     @endforeach
                 </x-agro.card>
             @endif
@@ -178,7 +178,7 @@
                     </x-slot:header>
 
                     @foreach($pendingNotebookRequests as $req)
-                        <div class="flex items-center gap-3 py-2.5 border-b border-zinc-100 last:border-0">
+                        <x-agro.list-row class="flex items-center gap-3 py-2.5">
                             <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
                                 <flux:icon icon="user" class="size-4 text-amber-600" />
                             </div>
@@ -186,7 +186,7 @@
                                 <p class="text-sm font-medium text-zinc-800 truncate">{{ $req->viticulturist?->name }}</p>
                                 <p class="text-xs text-zinc-400">{{ __('Solicitado') }} {{ $req->requested_at->diffForHumans() }}</p>
                             </div>
-                        </div>
+                        </x-agro.list-row>
                     @endforeach
 
                     <div class="pt-2">
@@ -213,7 +213,7 @@
                             $daysLeft = today()->diffInDays($cert->expiry_date, false);
                             $color = $daysLeft <= 15 ? 'text-red-600' : 'text-orange-600';
                         @endphp
-                        <div class="flex items-center gap-3 py-2.5 border-b border-zinc-100 last:border-0">
+                        <x-agro.list-row class="flex items-center gap-3 py-2.5">
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-zinc-800 truncate">{{ $cert->viticulturist?->name }}</p>
                                 <p class="text-xs text-zinc-500 truncate">{{ $cert->certification_type_label }}</p>
@@ -221,7 +221,7 @@
                             <span class="text-xs font-semibold {{ $color }} shrink-0">
                                 {{ $daysLeft === 0 ? __('Hoy') : __('En :nd', ['n' => $daysLeft]) }}
                             </span>
-                        </div>
+                        </x-agro.list-row>
                     @endforeach
                 </x-agro.card>
             @endif

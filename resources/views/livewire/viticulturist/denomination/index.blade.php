@@ -103,7 +103,7 @@
             </x-slot:header>
 
             @forelse($supervisorWineries as $winery)
-                <div class="flex items-center gap-3 py-3 border-b border-zinc-100 last:border-0">
+                <x-agro.list-row class="flex items-center gap-3 py-3">
                     <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                         <flux:icon icon="home-modern" class="size-4 text-blue-600" />
                     </div>
@@ -114,7 +114,7 @@
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-50 text-violet-600 border border-violet-200">
                         {{ __('Asignada por DO') }}
                     </span>
-                </div>
+                </x-agro.list-row>
             @empty
                 <div class="py-6 text-center">
                     <flux:icon icon="home-modern" class="size-8 mx-auto text-zinc-300 mb-2" />

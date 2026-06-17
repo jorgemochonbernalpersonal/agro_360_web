@@ -42,7 +42,7 @@
     {{-- Tabla --}}
     <x-agro.card>
         @forelse($labels as $label)
-            <div class="flex items-center gap-4 py-3 border-b border-zinc-100 last:border-0">
+            <x-agro.list-row class="flex items-center gap-4 py-3">
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium text-zinc-800">
                         Añada {{ $label->vintage }}
@@ -64,7 +64,7 @@
                     @endif
                 </div>
                 <x-agro.status-badge :status="$label->status" />
-            </div>
+            </x-agro.list-row>
         @empty
             <x-agro.empty-state
                 icon="tag"

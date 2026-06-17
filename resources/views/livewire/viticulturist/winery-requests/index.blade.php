@@ -89,7 +89,7 @@
             </x-slot>
 
             @foreach($pending as $req)
-                <div class="px-4 py-3 border-b border-zinc-100 last:border-0 flex items-center justify-between gap-4"
+                <x-agro.list-row class="px-4 py-3 flex items-center justify-between gap-4"
                      wire:key="pending-{{ $req->id }}">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
@@ -115,7 +115,7 @@
                     >
                         {{ __('Cancelar') }}
                     </flux:button>
-                </div>
+                </x-agro.list-row>
             @endforeach
         </x-agro.card>
     @endif
@@ -131,7 +131,7 @@
             </x-slot>
 
             @foreach($approved as $req)
-                <div class="px-4 py-3 border-b border-zinc-100 last:border-0 flex items-center justify-between gap-4"
+                <x-agro.list-row class="px-4 py-3 flex items-center justify-between gap-4"
                      wire:key="approved-{{ $req->id }}">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
@@ -147,7 +147,7 @@
                         </div>
                     </div>
                     <flux:badge color="green" icon="check-circle" size="sm">{{ __('Vinculado') }}</flux:badge>
-                </div>
+                </x-agro.list-row>
             @endforeach
         </x-agro.card>
     @endif
@@ -163,7 +163,7 @@
             </x-slot>
 
             @foreach($rejected as $req)
-                <div class="px-4 py-3 border-b border-zinc-100 last:border-0 flex items-center gap-3 min-w-0"
+                <x-agro.list-row class="px-4 py-3 flex items-center gap-3 min-w-0"
                      wire:key="rejected-{{ $req->id }}">
                     <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center shrink-0">
                         <span class="text-xs font-bold text-red-400">
@@ -175,7 +175,7 @@
                         <p class="text-xs text-zinc-400">{{ __('Rechazada') }} {{ $req->responded_at?->diffForHumans() ?? '—' }}</p>
                     </div>
                     <flux:badge color="red" size="sm">{{ __('Rechazada') }}</flux:badge>
-                </div>
+                </x-agro.list-row>
             @endforeach
         </x-agro.card>
     @endif
