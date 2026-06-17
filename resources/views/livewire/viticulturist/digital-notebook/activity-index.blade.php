@@ -27,7 +27,7 @@
 
         <x-agro.filter-button modal="activity-filters" :count="$filterCount" />
 
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         @can('create', \App\Models\AgriculturalActivity::class)
             <flux:button href="{{ $createRoute }}" variant="primary" icon="plus">

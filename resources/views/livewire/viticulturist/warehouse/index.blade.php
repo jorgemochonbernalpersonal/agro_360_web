@@ -54,7 +54,7 @@
                 @php $filterCount = ($inv_product ? 1 : 0) + ($inv_warehouse ? 1 : 0) + ($inv_status !== 'all' ? 1 : 0); @endphp
                 <x-agro.filter-button modal="almacen-inv-filters" :count="$filterCount" />
 
-                <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+                <x-agro.divider-vertical />
 
                 <flux:button href="{{ roleRoute('viticulturist.warehouse.stock.analytics') }}" variant="outline" icon="chart-bar">
                     {{ __('Analíticas') }}
@@ -238,7 +238,7 @@
                 @php $supFilterCount = ($sup_type ? 1 : 0) + ($sup_low ? 1 : 0); @endphp
                 <x-agro.filter-button modal="almacen-sup-filters" :count="$supFilterCount" />
 
-                <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+                <x-agro.divider-vertical />
 
                 <flux:button href="{{ roleRoute('viticulturist.warehouse.supplies.create') }}" variant="primary" icon="plus">{{ __('Nuevo Insumo') }}</flux:button>
             </div>
@@ -395,7 +395,7 @@
         <div class="space-y-3">
             <div class="flex items-center gap-3">
                 <x-agro.search-input wire:model.live.debounce.300ms="wh_search" :placeholder="__('Buscar por nombre o ubicación...')" />
-                <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+                <x-agro.divider-vertical />
                 <flux:button href="{{ roleRoute('viticulturist.warehouse.warehouses.create') }}" variant="primary" icon="plus">
                     {{ __('Nuevo') }}
                 </flux:button>

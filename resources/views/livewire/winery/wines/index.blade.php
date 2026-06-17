@@ -12,7 +12,7 @@
         @php $filterCount = ($typeFilter ? 1 : 0) + ($statusFilter ? 1 : 0) + ($vintageFilter ? 1 : 0); @endphp
         <x-agro.filter-button modal="wine-filters" :count="$filterCount" />
 
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         <flux:button href="{{ roleRoute('wines.create') }}" wire:navigate variant="primary" icon="plus">
             Nuevo

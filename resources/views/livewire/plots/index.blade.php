@@ -63,7 +63,7 @@
         <x-agro.filter-button modal="plot-filters" :count="$filterCount" />
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         {{-- Nueva Parcela --}}
         @can('create', \App\Models\Plot::class)

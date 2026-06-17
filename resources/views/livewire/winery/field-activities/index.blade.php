@@ -56,7 +56,7 @@
     <div class="flex items-center gap-3">
         <x-agro.filter-button modal="field-activities-filters" :count="$filterCount" />
 
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         @if(auth()->user()->hasWineryAccess())
         <flux:button variant="ghost" icon="chart-bar" href="{{ roleRoute('harvest-summary.index') }}" wire:navigate size="sm">

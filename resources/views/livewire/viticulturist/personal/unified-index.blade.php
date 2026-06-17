@@ -49,7 +49,7 @@
                 @endif
             </button>
 
-            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+            <x-agro.divider-vertical />
 
             @if($viewMode === 'crews')
                 @can('create', \App\Models\Crew::class)

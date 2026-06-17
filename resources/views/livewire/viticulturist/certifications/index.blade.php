@@ -64,7 +64,7 @@
         <x-agro.filter-button modal="certifications-filters" :count="$filterCount" />
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         {{-- Nueva Certificación --}}
         <flux:button href="{{ roleRoute('viticulturist.certifications.create') }}" variant="primary" icon="plus">

@@ -30,7 +30,7 @@
                 <flux:icon icon="chevron-down" class="size-3.5 text-zinc-400 transition-transform duration-200" x-bind:class="filtersOpen ? 'rotate-180' : ''" />
             </button>
 
-            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+            <x-agro.divider-vertical />
 
             <flux:button href="{{ roleRoute('harvest-quality.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter])) }}" target="_blank" icon="document-arrow-down">PDF</flux:button>
         </div>

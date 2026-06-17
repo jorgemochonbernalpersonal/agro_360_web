@@ -55,7 +55,7 @@
 
         <x-agro.filter-button modal="campaign-filters" :count="$filterCount" />
 
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         @can('create', \App\Models\Campaign::class)
             <flux:button href="{{ roleRoute('viticulturist.campaign.create') }}" variant="primary" icon="plus">

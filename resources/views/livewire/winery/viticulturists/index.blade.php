@@ -57,7 +57,7 @@
         </flux:select>
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         {{-- Exportar Excel --}}
         <flux:button wire:click="export" variant="ghost" icon="arrow-down-tray">{{ __('Exportar') }}</flux:button>

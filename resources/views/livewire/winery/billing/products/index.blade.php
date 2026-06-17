@@ -16,7 +16,7 @@
 
             <flux:button wire:click="openExportModal" variant="outline" icon="arrow-down-tray">{{ __('Exportar') }}</flux:button>
 
-            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+            <x-agro.divider-vertical />
 
             <flux:button wire:click="openQuickModal" variant="outline" icon="bolt">{{ __('Rápida') }}</flux:button>
 

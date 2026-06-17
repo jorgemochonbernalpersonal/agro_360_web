@@ -24,7 +24,7 @@
             @php $filterCount = ($filterStatus !== '' ? 1 : 0); @endphp
             <x-agro.filter-button modal="container-filters" :count="$filterCount" />
 
-            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+            <x-agro.divider-vertical />
 
             <flux:button href="{{ roleRoute('viticulturist.containers.create') }}" variant="primary" icon="plus">
                 {{ __('Nuevo') }}

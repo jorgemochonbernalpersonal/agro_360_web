@@ -49,13 +49,13 @@
         <x-agro.filter-button modal="reception-filters" :count="$filterCount" />
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         <flux:button href="{{ roleRoute('grape-reception.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}" target="_blank" icon="document-arrow-down">PDF</flux:button>
         <flux:button href="{{ roleRoute('grape-reception.export-excel', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}" icon="table-cells">Excel</flux:button>
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         {{-- Nueva Recepción --}}
         <flux:button href="{{ roleRoute('grape-reception.create') }}" wire:navigate variant="primary" icon="plus">

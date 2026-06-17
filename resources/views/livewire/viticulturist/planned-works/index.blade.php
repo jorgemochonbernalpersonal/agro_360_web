@@ -69,7 +69,7 @@
         <x-agro.filter-button modal="planned-works-filters" :count="$filterCount" />
 
         {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+        <x-agro.divider-vertical />
 
         {{-- Nuevo Trabajo --}}
         <flux:button href="{{ roleRoute('viticulturist.planned-works.create') }}" variant="primary" icon="plus">
