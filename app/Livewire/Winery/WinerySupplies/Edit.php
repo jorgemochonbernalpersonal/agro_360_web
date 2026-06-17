@@ -32,7 +32,7 @@ class Edit extends Component
 
     public function mount(WinerySupply $winerySupply): void
     {
-        abort_if($winerySupply->user_id !== Auth::id(), 403);
+        $this->authorize('update', $winerySupply);
         $this->winerySupply = $winerySupply;
         $this->name = $winerySupply->name;
         $this->commercial_name = $winerySupply->commercial_name ?? '';

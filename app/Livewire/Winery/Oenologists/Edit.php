@@ -28,7 +28,7 @@ class Edit extends Component
 
     public function mount(Oenologist $oenologist): void
     {
-        abort_if($oenologist->user_id !== Auth::id(), 403);
+        $this->authorize('update', $oenologist);
 
         $this->oenologist = $oenologist;
         $this->name = $oenologist->name;

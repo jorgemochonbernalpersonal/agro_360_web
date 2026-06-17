@@ -43,7 +43,7 @@ class Edit extends Component
 
     public function mount(WineLabeling $labeling): void
     {
-        abort_if($labeling->user_id !== Auth::id(), 403);
+        $this->authorize('update', $labeling);
 
         $this->labeling = $labeling;
 

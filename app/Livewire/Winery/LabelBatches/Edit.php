@@ -47,7 +47,7 @@ class Edit extends Component
 
     public function mount(LabelBatch $batch): void
     {
-        abort_if($batch->user_id !== Auth::id(), 403);
+        $this->authorize('update', $batch);
 
         $this->batch = $batch;
         $this->name = $batch->name;

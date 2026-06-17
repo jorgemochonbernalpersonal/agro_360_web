@@ -56,7 +56,7 @@ class Edit extends Component
 
     public function mount(Client $client): void
     {
-        abort_if($client->user_id !== Auth::id(), 403);
+        $this->authorize('update', $client);
 
         $this->client = $client;
         $this->client_type = $client->client_type;

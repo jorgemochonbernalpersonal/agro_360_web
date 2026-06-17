@@ -27,7 +27,7 @@ class Create extends Component
 
     public function mount(LabelBatch $labelBatch): void
     {
-        abort_if($labelBatch->user_id !== Auth::id(), 403);
+        $this->authorize('update', $labelBatch);
         $this->labelBatch = $labelBatch;
         $this->waste_date = now()->toDateString();
     }

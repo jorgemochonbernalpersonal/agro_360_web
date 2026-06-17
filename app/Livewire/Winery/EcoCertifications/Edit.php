@@ -31,7 +31,7 @@ class Edit extends Component
 
     public function mount(EcoCertification $ecoCertification): void
     {
-        abort_if($ecoCertification->user_id !== Auth::id(), 403);
+        $this->authorize('update', $ecoCertification);
         $this->ecoCertification = $ecoCertification;
         $this->name = $ecoCertification->name;
         $this->certification_type = $ecoCertification->certification_type;

@@ -29,7 +29,7 @@ class Edit extends Component
 
     public function mount(WineryDocument $wineryDocument): void
     {
-        abort_if($wineryDocument->user_id !== Auth::id(), 403);
+        $this->authorize('update', $wineryDocument);
         $this->wineryDocument = $wineryDocument;
         $this->title = $wineryDocument->title;
         $this->document_type = $wineryDocument->document_type;

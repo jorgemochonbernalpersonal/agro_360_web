@@ -500,92 +500,154 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="relative py-16 lg:py-24 overflow-hidden border-b border-zinc-100 bg-gradient-to-b from-zinc-50/80 to-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                <!-- Hero Content -->
-                <div class="space-y-7 animate-fade-in">
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 bg-white shadow-sm max-w-full">
-                        <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
-                        <span class="text-xs font-semibold text-zinc-700 tracking-wide">{{ __('Cuaderno digital obligatorio desde enero 2027') }} — quedan <span id="days-counter">{{ now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0 }}</span> días</span>
-                    </div>
+    <!-- Hero Section – full-width animado -->
+    <section class="hero-agro">
+        {{-- Fondo --}}
+        <div class="hero-agro-bg"></div>
 
-                    <h1 class="text-4xl lg:text-5xl xl:text-[3.4rem] font-bold tracking-tight text-zinc-900 leading-[1.08]">
-                        {{ __('Cuaderno de Campo Digital') }}
-                        <span class="block text-agro-600 mt-1">{{ __('del viñedo a la botella') }}</span>
-                    </h1>
+        {{-- Cielo SVG --}}
+        <svg class="hero-agro-sky" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="hag-skyg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stop-color="#0a1a04"/>
+                    <stop offset="40%"  stop-color="#1a3d0a"/>
+                    <stop offset="100%" stop-color="#2a5a10" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            <rect width="1440" height="400" fill="url(#hag-skyg)"/>
+            <ellipse cx="1150" cy="110" rx="130" ry="110" fill="#f5c040" opacity="0.06"/>
+            <ellipse cx="1150" cy="110" rx="60"  ry="55"  fill="#f5d060" opacity="0.10"/>
+            <circle  cx="1150" cy="110" r="22"           fill="#ffe080"  opacity="0.50"/>
+            <circle  cx="1150" cy="110" r="12"           fill="#fff4b0"  opacity="0.80"/>
+            <path d="M0,320 Q360,270 720,295 Q1080,318 1440,280 L1440,400 L0,400Z" fill="#0d2206" opacity="0.7"/>
+            <path d="M0,360 Q480,325 960,342 Q1200,352 1440,335 L1440,400 L0,400Z" fill="#0a1a05" opacity="0.85"/>
+        </svg>
 
-                    <p class="text-lg text-zinc-600 leading-relaxed max-w-xl">
-                        La plataforma de gestión para <strong class="font-semibold text-zinc-800">viticultores, bodegas y Denominaciones de Origen</strong>.
-                        Cumple la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-agro-600 font-medium hover:underline">PAC</a>,
-                        gestiona tus parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-agro-600 font-medium hover:underline">SIGPAC</a>
-                        y lleva la trazabilidad completa. {{ __('Sin papel. Sin Excel. Todo en un solo sitio.') }}
-                    </p>
+        <div class="hero-agro-overlay"></div>
+        <div class="hero-agro-ground"></div>
 
-                    <div class="flex flex-wrap items-center gap-3">
-                        <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-agro-700 text-white hover:bg-agro-600 transition-colors duration-200 font-semibold text-base shadow-sm">
-                            Empezar gratis
-                            <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                            </svg>
-                        </a>
-                        <a href="#precios" class="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-zinc-300 bg-white text-zinc-800 hover:border-agro-500 hover:text-agro-700 transition-colors duration-200 font-semibold text-base">
-                            Ver planes y precios
-                        </a>
-                    </div>
+        {{-- Filas de viñedo --}}
+        <svg class="hero-agro-vines" width="100%" height="120" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="22"  x2="1440" y2="12"  stroke="#1a4008" stroke-width="1.5"/>
+            <line x1="0" y1="42"  x2="1440" y2="28"  stroke="#1a4008" stroke-width="2"/>
+            <line x1="0" y1="66"  x2="1440" y2="48"  stroke="#1e4a0a" stroke-width="3"/>
+            <line x1="0" y1="96"  x2="1440" y2="72"  stroke="#1e4a0a" stroke-width="4.5"/>
+            <line x1="0" y1="120" x2="1440" y2="100" stroke="#1e4a0a" stroke-width="6"/>
+            <g stroke="#2a5010" stroke-width="1">
+                <line x1="160"  y1="22" x2="160"  y2="42"/><line x1="160"  y1="42" x2="160"  y2="66"/>
+                <line x1="380"  y1="20" x2="380"  y2="42"/><line x1="380"  y1="42" x2="380"  y2="66"/>
+                <line x1="600"  y1="18" x2="600"  y2="40"/><line x1="600"  y1="40" x2="600"  y2="64"/>
+                <line x1="820"  y1="16" x2="820"  y2="38"/><line x1="820"  y1="38" x2="820"  y2="62"/>
+                <line x1="1040" y1="14" x2="1040" y2="36"/><line x1="1040" y1="36" x2="1040" y2="60"/>
+                <line x1="1260" y1="13" x2="1260" y2="35"/>
+            </g>
+        </svg>
 
-                    <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
-                        @foreach(['Básico gratis para siempre', '3 meses de plan Completo gratis', 'Sin tarjeta de crédito', 'Cancela cuando quieras'] as $claim)
-                        <div class="flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-agro-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-zinc-600 text-sm">{{ __($claim) }}</span>
-                        </div>
-                        @endforeach
-                    </div>
+        {{-- Tractor --}}
+        <div class="hero-agro-tractor-wrap">
+            <div class="hero-agro-tractor-inner">
+                <div class="hero-agro-dust">
+                    <div class="hero-agro-dp hero-agro-dp1"></div>
+                    <div class="hero-agro-dp hero-agro-dp2"></div>
+                    <div class="hero-agro-dp hero-agro-dp3"></div>
                 </div>
-
-                <!-- Product screenshot -->
-                <div class="relative animate-scale-in lg:pl-4">
-                    <div class="rounded-xl border border-zinc-200 bg-white shadow-2xl shadow-zinc-900/10 overflow-hidden">
-                        <div class="flex items-center gap-1.5 px-4 py-2.5 bg-zinc-50 border-b border-zinc-200">
-                            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300"></span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300"></span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300"></span>
-                        </div>
-                        <img
-                            src="{{ asset('images/dashboard-preview-1400.jpg') }}"
-                            alt="Panel de control de Agro365 con parcelas, actividades, facturación y cosechas"
-                            width="1400"
-                            height="669"
-                            class="w-full h-auto"
-                            fetchpriority="high"
-                            loading="eager"
-                            decoding="async"
-                        >
-                    </div>
-                    <p class="text-center text-xs text-zinc-400 mt-3">{{ __('Panel real de Agro365 · Datos de demostración') }}</p>
-                </div>
+                <svg width="190" height="115" viewBox="0 0 190 115" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="95" cy="108" rx="78" ry="6" fill="rgba(0,0,0,0.32)"/>
+                    <rect x="20" y="54" width="130" height="16" rx="3" fill="#0e2232"/>
+                    <rect x="26" y="22" width="80" height="38" rx="6" fill="#5aaa28" stroke="#1C3A4A" stroke-width="1.5"/>
+                    <rect x="30" y="25" width="72" height="10" rx="3" fill="rgba(255,255,255,0.1)"/>
+                    <rect x="96" y="28" width="50" height="28" rx="4" fill="#4a9020" stroke="#1C3A4A" stroke-width="1.5"/>
+                    <rect x="100" y="32" width="42" height="8" rx="2" fill="rgba(0,0,0,0.12)"/>
+                    <rect x="100" y="42" width="42" height="4" rx="1" fill="rgba(0,0,0,0.08)"/>
+                    <rect x="140" y="12" width="5" height="18" rx="2.5" fill="#1C3A4A"/>
+                    <circle cx="142" cy="9" r="4" fill="rgba(210,210,190,0.35)"/>
+                    <circle cx="144" cy="4" r="3" fill="rgba(210,210,190,0.2)"/>
+                    <circle cx="141" cy="0" r="2" fill="rgba(210,210,190,0.12)"/>
+                    <rect x="24" y="10" width="58" height="16" rx="4" fill="#152a38"/>
+                    <rect x="30" y="14" width="42" height="20" rx="3" fill="#b8dff0" opacity="0.7"/>
+                    <line x1="35" y1="15" x2="40" y2="33" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                    <rect x="20" y="6" width="64" height="7" rx="3" fill="#0e1e2c"/>
+                    <line x1="68" y1="24" x2="68" y2="58" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+                    <rect x="15" y="56" width="11" height="4" rx="1" fill="#0a1a28"/>
+                    <rect x="15" y="62" width="9"  height="4" rx="1" fill="#0a1a28"/>
+                    <g class="hero-agro-wheel">
+                        <circle cx="52" cy="82" r="28" fill="#181818" stroke="#080808" stroke-width="1.5"/>
+                        <circle cx="52" cy="82" r="20" fill="#242424"/>
+                        <circle cx="52" cy="82" r="11" fill="#e5e5dd"/>
+                        <circle cx="52" cy="82" r="5.5" fill="#1C3A4A"/>
+                        <line x1="52" y1="54"  x2="52" y2="61"  stroke="#4a4a4a" stroke-width="3.5" stroke-linecap="round"/>
+                        <line x1="52" y1="103" x2="52" y2="110" stroke="#4a4a4a" stroke-width="3.5" stroke-linecap="round"/>
+                        <line x1="24" y1="82"  x2="31" y2="82"  stroke="#4a4a4a" stroke-width="3.5" stroke-linecap="round"/>
+                        <line x1="73" y1="82"  x2="80" y2="82"  stroke="#4a4a4a" stroke-width="3.5" stroke-linecap="round"/>
+                        <line x1="32" y1="62"  x2="37" y2="67"  stroke="#4a4a4a" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="67" y1="97"  x2="72" y2="102" stroke="#4a4a4a" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="32" y1="102" x2="37" y2="97"  stroke="#4a4a4a" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="67" y1="67"  x2="72" y2="62"  stroke="#4a4a4a" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                    <g class="hero-agro-wheel-f">
+                        <circle cx="144" cy="86" r="17" fill="#181818" stroke="#080808" stroke-width="1.5"/>
+                        <circle cx="144" cy="86" r="11" fill="#242424"/>
+                        <circle cx="144" cy="86" r="6"  fill="#e5e5dd"/>
+                        <circle cx="144" cy="86" r="2.8" fill="#1C3A4A"/>
+                        <line x1="144" y1="69"  x2="144" y2="75"  stroke="#4a4a4a" stroke-width="2.5" stroke-linecap="round"/>
+                        <line x1="144" y1="97"  x2="144" y2="103" stroke="#4a4a4a" stroke-width="2.5" stroke-linecap="round"/>
+                        <line x1="127" y1="86"  x2="133" y2="86"  stroke="#4a4a4a" stroke-width="2.5" stroke-linecap="round"/>
+                        <line x1="155" y1="86"  x2="161" y2="86"  stroke="#4a4a4a" stroke-width="2.5" stroke-linecap="round"/>
+                    </g>
+                    <rect x="8" y="62" width="16" height="6" rx="2" fill="#0a1820"/>
+                </svg>
             </div>
+        </div>
 
-            <!-- Normativa: dos fases -->
-            <div class="mt-14 grid md:grid-cols-2 gap-4">
-                <div class="flex gap-4 p-5 rounded-xl border border-zinc-200 bg-white">
-                    <div class="shrink-0 w-11 h-11 rounded-lg bg-amber-50 border border-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">'27</div>
-                    <div>
-                        <div class="font-semibold text-zinc-900 text-sm mb-1">{{ __('Enero 2027 — Fase 1') }}</div>
-                        <p class="text-sm text-zinc-600 leading-relaxed">{{ __('Obligatorio el registro digital de tratamientos fitosanitarios. Agro365 te cubre desde hoy.') }}</p>
-                    </div>
+        {{-- Contenido --}}
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-44 lg:pt-28 lg:pb-52">
+            <div class="max-w-2xl space-y-7 animate-fade-in">
+
+                {{-- Badge urgencia --}}
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm max-w-full">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+                    <span class="text-xs font-semibold text-white/80 tracking-wide">{{ __('Cuaderno digital obligatorio desde enero 2027') }} — quedan <span id="days-counter">{{ now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0 }}</span> días</span>
                 </div>
-                <div class="flex gap-4 p-5 rounded-xl border border-zinc-200 bg-white">
-                    <div class="shrink-0 w-11 h-11 rounded-lg bg-agro-50 border border-agro-100 text-agro-700 flex items-center justify-center font-bold text-sm">'28</div>
-                    <div>
-                        <div class="font-semibold text-zinc-900 text-sm mb-1">{{ __('Enero 2028 — Fase 2') }}</div>
-                        <p class="text-sm text-zinc-600 leading-relaxed">{{ __('Entra en vigor el cuaderno completo según el Reglamento (UE) 2022/1441. Parcelas, riegos, fertilización y maquinaria — todo en digital.') }}</p>
-                    </div>
+
+                {{-- H1 --}}
+                <h1 class="text-4xl lg:text-5xl xl:text-[3.4rem] font-bold tracking-tight text-white leading-[1.08]">
+                    {{ __('Cuaderno de Campo Digital') }}
+                    <span class="block text-[#6BBF3E] mt-1">{{ __('del viñedo a la botella') }}</span>
+                </h1>
+
+                {{-- Descripción --}}
+                <p class="text-lg text-white/65 leading-relaxed max-w-xl">
+                    La plataforma de gestión para <strong class="font-semibold text-white/85">viticultores, bodegas y Denominaciones de Origen</strong>.
+                    Cumple la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-[#6BBF3E] font-medium hover:underline">PAC</a>,
+                    gestiona tus parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[#6BBF3E] font-medium hover:underline">SIGPAC</a>
+                    y lleva la trazabilidad completa. {{ __('Sin papel. Sin Excel. Todo en un solo sitio.') }}
+                </p>
+
+                {{-- CTAs --}}
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#6BBF3E] text-white hover:bg-[#5aaa2e] transition-colors duration-200 font-semibold text-base shadow-sm">
+                        Empezar gratis
+                        <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                    <a href="#precios" class="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-white/30 text-white/85 hover:border-white/60 hover:text-white transition-colors duration-200 font-semibold text-base">
+                        Ver planes y precios
+                    </a>
                 </div>
+
+                {{-- Claims --}}
+                <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+                    @foreach(['Básico gratis para siempre', '3 meses de plan Completo gratis', 'Sin tarjeta de crédito', 'Cancela cuando quieras'] as $claim)
+                    <div class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-[#6BBF3E]" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-white/60 text-sm">{{ __($claim) }}</span>
+                    </div>
+                    @endforeach
+                </div>
+
             </div>
         </div>
     </section>

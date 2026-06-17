@@ -31,7 +31,7 @@ class Edit extends Component
 
     public function mount(Supplier $supplier): void
     {
-        abort_if($supplier->user_id !== Auth::id(), 403);
+        $this->authorize('update', $supplier);
         $this->supplier = $supplier;
         $this->name = $supplier->name;
         $this->contact_person = $supplier->contact_person ?? '';
