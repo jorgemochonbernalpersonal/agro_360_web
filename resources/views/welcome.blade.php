@@ -756,19 +756,24 @@
                     <div x-show="tab === 1" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                         <img src="{{ asset('images/foto1.png') }}"
                              alt="Cuaderno de campo digital Agro365 — tratamientos, fertilización, riegos y cosecha"
-                             class="w-full h-auto"
+                             class="w-full h-auto block"
+                             style="box-shadow:inset 0 -2px 12px rgba(0,0,0,0.06)"
                              loading="lazy" decoding="async">
                     </div>
                     <div x-show="tab === 2" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                        <img src="{{ asset('images/foto2.png') }}"
-                             alt="Mapa SIGPAC de parcelas vitícolas en Agro365"
-                             class="w-full h-auto"
-                             loading="lazy" decoding="async">
+                        <div class="w-full overflow-hidden" style="height:480px">
+                            <img src="{{ asset('images/foto2.png') }}"
+                                 alt="Mapa SIGPAC de parcelas vitícolas en Agro365"
+                                 class="w-full h-full object-cover"
+                                 style="object-position:35% 30%;box-shadow:inset 0 -2px 12px rgba(0,0,0,0.06)"
+                                 loading="lazy" decoding="async">
+                        </div>
                     </div>
                     <div x-show="tab === 3" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                         <img src="{{ asset('images/foto3.png') }}"
                              alt="Declaraciones de vendimia ante DO en Agro365"
-                             class="w-full h-auto"
+                             class="w-full h-auto block"
+                             style="box-shadow:inset 0 -2px 12px rgba(0,0,0,0.06)"
                              loading="lazy" decoding="async">
                     </div>
                 </div>
