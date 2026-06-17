@@ -20,7 +20,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now(),
             'ends_at' => now()->addMonth(),
@@ -36,7 +36,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now(),
             'ends_at' => now()->addMonth(),
@@ -45,7 +45,7 @@ class SubscriptionTest extends TestCase
         $payment1 = Payment::create([
             'user_id' => $user->id,
             'subscription_id' => $subscription->id,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Payment::STATUS_COMPLETED,
             'paid_at' => now(),
         ]);
@@ -53,7 +53,7 @@ class SubscriptionTest extends TestCase
         $payment2 = Payment::create([
             'user_id' => $user->id,
             'subscription_id' => $subscription->id,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Payment::STATUS_COMPLETED,
             'paid_at' => now(),
         ]);
@@ -70,7 +70,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now()->subDays(10),
             'ends_at' => now()->addDays(20),
@@ -86,7 +86,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_CANCELLED,
             'starts_at' => now()->subDays(10),
             'ends_at' => now()->addDays(20),
@@ -102,7 +102,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now()->subMonths(2),
             'ends_at' => now()->subMonth(),
@@ -118,7 +118,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now()->subMonths(2),
             'ends_at' => now()->subDays(5),
@@ -134,7 +134,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now(),
             'ends_at' => now()->addMonth(),
@@ -150,7 +150,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now(),
             'ends_at' => now()->addMonth(),
@@ -180,8 +180,12 @@ class SubscriptionTest extends TestCase
 
     public function test_price_constants_are_defined(): void
     {
-        $this->assertEquals(12.00, Subscription::PRICE_MONTHLY);
-        $this->assertEquals(120.00, Subscription::PRICE_YEARLY);
+        $this->assertEquals(9.00, Subscription::PRICE_MONTHLY_VIT_LINKED);
+        $this->assertEquals(85.00, Subscription::PRICE_YEARLY_VIT_LINKED);
+        $this->assertEquals(14.00, Subscription::PRICE_MONTHLY_INDEPENDENT);
+        $this->assertEquals(130.00, Subscription::PRICE_YEARLY_INDEPENDENT);
+        $this->assertEquals(19.00, Subscription::PRICE_MONTHLY_PRODUCER);
+        $this->assertEquals(180.00, Subscription::PRICE_YEARLY_PRODUCER);
     }
 
     public function test_starts_at_and_ends_at_are_cast_to_datetime(): void
@@ -191,7 +195,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now(),
             'ends_at' => now()->addMonth(),
@@ -208,7 +212,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_CANCELLED,
             'starts_at' => now(),
             'ends_at' => now()->addMonth(),
@@ -225,7 +229,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now(),
             'ends_at' => now()->addMonth(),
@@ -233,6 +237,6 @@ class SubscriptionTest extends TestCase
 
         // Laravel's decimal cast returns a string, not a float
         $this->assertIsNumeric($subscription->amount);
-        $this->assertEquals('12.00', $subscription->amount);
+        $this->assertEquals('19.00', $subscription->amount);
     }
 }

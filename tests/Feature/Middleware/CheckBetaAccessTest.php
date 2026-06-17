@@ -44,7 +44,7 @@ class CheckBetaAccessTest extends TestCase
         Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now(),
             'ends_at' => now()->addMonth(), // 2026-08-01

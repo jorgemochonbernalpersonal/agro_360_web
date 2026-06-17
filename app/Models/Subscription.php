@@ -47,11 +47,6 @@ class Subscription extends Model
 
     public const PRICE_YEARLY_PRODUCER = 180.00;
 
-    // Alias legacy (precio anterior, sin uso activo)
-    public const PRICE_MONTHLY = 12.00;
-
-    public const PRICE_YEARLY = 120.00;
-
     // Tramos bodega según nº de viticultores gestionados (Capa red).
     // Cada tramo: min, max (null = sin límite), label, monthly, yearly.
     // monthly/yearly null = enterprise (requiere negociación).

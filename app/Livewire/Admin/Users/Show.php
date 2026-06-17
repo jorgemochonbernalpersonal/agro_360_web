@@ -252,6 +252,13 @@ class Show extends Component
 
         $makingFounder = ! $this->user->is_founder;
 
+        $maxSlots = config('app.founder_max_slots', 25);
+        if ($makingFounder && User::where('is_founder', true)->count() >= $maxSlots) {
+            $this->toastError("No quedan plazas de fundador (máx. {$maxSlots}).");
+
+            return;
+        }
+
         $this->user->is_founder = $makingFounder;
 
         if ($makingFounder) {
@@ -343,44 +350,6 @@ class Show extends Component
         $this->toastSuccess("Ahora estás viendo como: {$this->user->name}");
 
         return $this->redirect(route($dashboardRoute), navigate: true);
-    }
-
-    // ─── Toggle founder ──────────────────────────────────────────────────────
-
-    public function toggleFounder(): void
-    {
-        if ($this->isReadOnly()) {
-            return;
-        }
-
-        if ($this->user->isAdmin()) {
-            $this->toastError(__('No aplica a administradores.'));
-
-            return;
-        }
-
-        $maxSlots = config('app.founder_max_slots', 25);
-        $enabling = ! $this->user->is_founder;
-
-        if ($enabling && User::where('is_founder', true)->count() >= $maxSlots) {
-            $this->toastError("No quedan plazas de fundador (máx. {$maxSlots}).");
-
-            return;
-        }
-
-        $this->user->is_founder = $enabling;
-        $this->user->save();
-        $this->user->refresh();
-
-        SecurityLogger::logSecurityEvent('user_founder_toggled', [
-            'admin_id' => Auth::id(),
-            'user_id' => $this->user->id,
-            'user_email' => $this->user->email,
-            'action' => $enabling ? 'granted' : 'revoked',
-        ]);
-
-        $estado = $enabling ? 'marcado como fundador' : 'ya no es fundador';
-        $this->toastSuccess("Usuario {$estado}.");
     }
 
     // ─── Toggle read-only admin ───────────────────────────────────────────────

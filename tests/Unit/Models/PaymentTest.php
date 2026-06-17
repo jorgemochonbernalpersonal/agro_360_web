@@ -34,7 +34,7 @@ class PaymentTest extends TestCase
         $subscription = Subscription::create([
             'user_id' => $user->id,
             'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => now(),
             'ends_at' => now()->addMonth(),
@@ -43,7 +43,7 @@ class PaymentTest extends TestCase
         $payment = Payment::create([
             'user_id' => $user->id,
             'subscription_id' => $subscription->id,
-            'amount' => Subscription::PRICE_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
             'currency' => 'EUR',
             'status' => Payment::STATUS_PENDING,
         ]);
