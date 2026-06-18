@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\DB;
  */
 class ViticulturistDemoSeeder extends Seeder
 {
-    private const VIT_USER_ID = 3;
+    private int $vitUserId;
 
     private const WINERY_USER_ID = 1;
 
@@ -55,6 +55,8 @@ class ViticulturistDemoSeeder extends Seeder
 
     public function run(): void
     {
+        $this->vitUserId = (int) env('VIT_DEMO_USER_ID', 3);
+
         $now = now();
 
         $this->command->info('');
@@ -67,7 +69,7 @@ class ViticulturistDemoSeeder extends Seeder
         // ── 0. Verificar / crear usuarios demo ───────────────────────────────
         $this->ensureDemoUsers($now);
 
-        $vit = DB::table('users')->find(self::VIT_USER_ID);
+        $vit = DB::table('users')->find($this->vitUserId);
         $winery = DB::table('users')->find(self::WINERY_USER_ID);
         $this->command->info("✅ Viticultor: {$vit->email}");
         $this->command->info("✅ Bodega:     {$winery->email}");
@@ -199,7 +201,7 @@ class ViticulturistDemoSeeder extends Seeder
         });
 
         $this->step('Relleno masivo → 450 (cumplimiento, recursos, registros)', function () {
-            $seeder = new DemoBulkFillSeeder(self::VIT_USER_ID, 1);
+            $seeder = new DemoBulkFillSeeder($this->vitUserId, 1);
             $seeder->setCommand($this->command);
             $seeder->run();
         });
@@ -238,10 +240,10 @@ class ViticulturistDemoSeeder extends Seeder
             $this->command->info('  ✅ Usuario winery creado (id='.self::WINERY_USER_ID.')');
         }
 
-        if (! DB::table('users')->where('id', self::VIT_USER_ID)->exists()) {
+        if (! DB::table('users')->where('id', $this->vitUserId)->exists()) {
             DB::statement('SET FOREIGN_KEY_CHECKS=0');
             DB::table('users')->insert([
-                'id' => self::VIT_USER_ID,
+                'id' => $this->vitUserId,
                 'name' => 'Viticultor Agaete Demo',
                 'email' => 'demo_viticulturist@agro365.es',
                 'email_verified_at' => $now,
@@ -251,7 +253,7 @@ class ViticulturistDemoSeeder extends Seeder
                 'updated_at' => $now,
             ]);
             DB::statement('SET FOREIGN_KEY_CHECKS=1');
-            $this->command->info('  ✅ Usuario viticulturist creado (id='.self::VIT_USER_ID.')');
+            $this->command->info('  ✅ Usuario viticulturist creado (id='.$this->vitUserId.')');
         }
     }
 
@@ -259,7 +261,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function cleanup(): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
 
         // Actividades y sus sub-tablas (cascada por FK)
         $activityIds = DB::table('agricultural_activities')
@@ -456,7 +458,7 @@ class ViticulturistDemoSeeder extends Seeder
                 'withdrawal_period_days' => 28,
                 'safety_interval_days' => 28,
                 'active' => true,
-                'user_id' => self::VIT_USER_ID,
+                'user_id' => $this->vitUserId,
                 'description' => 'Fungicida sistémico-de contacto para mildiu de la vid',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -471,7 +473,7 @@ class ViticulturistDemoSeeder extends Seeder
                 'withdrawal_period_days' => 21,
                 'safety_interval_days' => 21,
                 'active' => true,
-                'user_id' => self::VIT_USER_ID,
+                'user_id' => $this->vitUserId,
                 'description' => 'Fungicida específico para el control del oídio',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -486,7 +488,7 @@ class ViticulturistDemoSeeder extends Seeder
                 'withdrawal_period_days' => 35,
                 'safety_interval_days' => 35,
                 'active' => true,
-                'user_id' => self::VIT_USER_ID,
+                'user_id' => $this->vitUserId,
                 'description' => 'Fungicida combinado para mildiu y botritis',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -501,7 +503,7 @@ class ViticulturistDemoSeeder extends Seeder
                 'withdrawal_period_days' => 14,
                 'safety_interval_days' => 14,
                 'active' => true,
-                'user_id' => self::VIT_USER_ID,
+                'user_id' => $this->vitUserId,
                 'description' => 'Insecticida piretroide para polilla del racimo y trips',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -516,7 +518,7 @@ class ViticulturistDemoSeeder extends Seeder
                 'withdrawal_period_days' => 14,
                 'safety_interval_days' => 14,
                 'active' => true,
-                'user_id' => self::VIT_USER_ID,
+                'user_id' => $this->vitUserId,
                 'description' => 'Fungicida de cobre para tratamientos preventivos y post-vendimia',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -537,7 +539,7 @@ class ViticulturistDemoSeeder extends Seeder
     {
         return DB::table('winery_viticulturist')->insertGetId([
             'winery_id' => self::WINERY_USER_ID,
-            'viticulturist_id' => self::VIT_USER_ID,
+            'viticulturist_id' => $this->vitUserId,
             'source' => 'own',
             'notebook_access' => true,
             'notebook_granted_at' => $now,
@@ -611,7 +613,7 @@ class ViticulturistDemoSeeder extends Seeder
 
             $plotId = DB::table('plots')->insertGetId([
                 'name' => $plotName,
-                'viticulturist_id' => self::VIT_USER_ID,
+                'viticulturist_id' => $this->vitUserId,
                 'area' => $rec['area_ha'] > 0 ? $rec['area_ha'] : round(mt_rand(10, 350) / 100, 2),
                 'active' => true,
                 'autonomous_community_id' => self::AC_ID,
@@ -845,7 +847,7 @@ class ViticulturistDemoSeeder extends Seeder
     private function createCampaigns($now): array
     {
         $base = [
-            'viticulturist_id' => self::VIT_USER_ID,
+            'viticulturist_id' => $this->vitUserId,
             'winery_viticulturist_id' => null,
             'mid_validation_signed' => false,
             'final_validation_signed' => false,
@@ -862,7 +864,7 @@ class ViticulturistDemoSeeder extends Seeder
             'description' => 'Campaña 2024 cerrada. Vendimia: 4.820 kg cosechados.',
             'final_validation_signed' => true,
             'final_validation_date' => '2024-11-30 10:00:00',
-            'final_validation_user_id' => self::VIT_USER_ID,
+            'final_validation_user_id' => $this->vitUserId,
         ]));
 
         $id2025 = DB::table('campaigns')->insertGetId(array_merge($base, [
@@ -874,7 +876,7 @@ class ViticulturistDemoSeeder extends Seeder
             'description' => 'Campaña 2025 cerrada. Vendimia exitosa.',
             'final_validation_signed' => true,
             'final_validation_date' => '2025-11-28 10:00:00',
-            'final_validation_user_id' => self::VIT_USER_ID,
+            'final_validation_user_id' => $this->vitUserId,
         ]));
 
         $id2026 = DB::table('campaigns')->insertGetId(array_merge($base, [
@@ -899,7 +901,7 @@ class ViticulturistDemoSeeder extends Seeder
 
         // Helper: insertar actividad y devolver su ID
         $act = fn (array $data) => DB::table('agricultural_activities')->insertGetId(array_merge([
-            'viticulturist_id' => self::VIT_USER_ID,
+            'viticulturist_id' => $this->vitUserId,
             'winery_viticulturist_id' => null,
             'campaign_id' => $campaignId,
             'is_locked' => false,
@@ -1193,7 +1195,7 @@ class ViticulturistDemoSeeder extends Seeder
         [$mildiuId, $oidioId, $mixtoId, $insectId, $cobreId] = $productIds;
 
         $act = fn (array $data) => DB::table('agricultural_activities')->insertGetId(array_merge([
-            'viticulturist_id' => self::VIT_USER_ID,
+            'viticulturist_id' => $this->vitUserId,
             'winery_viticulturist_id' => null,
             'campaign_id' => $campaignId,
             'is_locked' => false,
@@ -1406,7 +1408,7 @@ class ViticulturistDemoSeeder extends Seeder
         [$mildiuId, $oidioId, $mixtoId, $insectId, $cobreId] = $productIds;
 
         $act = fn (array $data) => DB::table('agricultural_activities')->insertGetId(array_merge([
-            'viticulturist_id' => self::VIT_USER_ID,
+            'viticulturist_id' => $this->vitUserId,
             'winery_viticulturist_id' => null,
             'campaign_id' => $campaignId,
             'is_locked' => false,
@@ -1757,7 +1759,7 @@ class ViticulturistDemoSeeder extends Seeder
             DB::table('estimated_yields')->insertOrIgnore([
                 'plot_planting_id' => $plantingIds[$pIdx],
                 'campaign_id' => $campaign2024Id,
-                'estimated_by' => self::VIT_USER_ID,
+                'estimated_by' => $this->vitUserId,
                 'estimated_yield_per_hectare' => $estHa,
                 'estimated_total_yield' => $estTotal,
                 'estimation_date' => '2024-07-20',
@@ -1793,7 +1795,7 @@ class ViticulturistDemoSeeder extends Seeder
             DB::table('estimated_yields')->insertOrIgnore([
                 'plot_planting_id' => $plantingIds[$pIdx],
                 'campaign_id' => $campaign2024Id,
-                'estimated_by' => self::VIT_USER_ID,
+                'estimated_by' => $this->vitUserId,
                 'estimated_yield_per_hectare' => $estHa,
                 'estimated_total_yield' => $estTotal,
                 'estimation_date' => '2024-09-01',
@@ -1832,7 +1834,7 @@ class ViticulturistDemoSeeder extends Seeder
             DB::table('estimated_yields')->insertOrIgnore([
                 'plot_planting_id' => $plantingIds[$pIdx],
                 'campaign_id' => $campaign2025Id,
-                'estimated_by' => self::VIT_USER_ID,
+                'estimated_by' => $this->vitUserId,
                 'estimated_yield_per_hectare' => $estHa,
                 'estimated_total_yield' => $estTotal,
                 'estimation_date' => '2025-06-20',
@@ -1871,7 +1873,7 @@ class ViticulturistDemoSeeder extends Seeder
             DB::table('estimated_yields')->insertOrIgnore([
                 'plot_planting_id' => $plantingIds[$pIdx],
                 'campaign_id' => $campaign2026Id,
-                'estimated_by' => self::VIT_USER_ID,
+                'estimated_by' => $this->vitUserId,
                 'estimated_yield_per_hectare' => $estHa,
                 'estimated_total_yield' => $estTotal,
                 'estimation_date' => '2026-04-10',
@@ -1907,7 +1909,7 @@ class ViticulturistDemoSeeder extends Seeder
             DB::table('phenology_observations')->insertOrIgnore([
                 'plot_planting_id' => $plantingId,
                 'campaign_id' => $campaignId,
-                'viticulturist_id' => self::VIT_USER_ID,
+                'viticulturist_id' => $this->vitUserId,
                 'event' => $event,
                 'obs_date' => $date,
                 'source' => 'manual',
@@ -1967,7 +1969,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createMachinery($now): array
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
         $rows = [
             ['name' => 'Tractor John Deere 5075E',       'type' => 'tractor',        'brand' => 'John Deere',   'model' => '5075E',        'serial_number' => 'JD5075-AGT-001', 'year' => 2019, 'purchase_date' => '2019-03-10', 'purchase_price' => 42000.00, 'current_value' => 30000.00, 'roma_registration' => 'GC-T-4821', 'is_rented' => false, 'capacity' => '75 CV', 'last_revision_date' => '2025-10-15', 'active' => true],
             ['name' => 'Tractor New Holland T4.90',       'type' => 'tractor',        'brand' => 'New Holland',  'model' => 'T4.90',        'serial_number' => 'NH490-AGT-001',  'year' => 2021, 'purchase_date' => '2021-05-20', 'purchase_price' => 52000.00, 'current_value' => 44000.00, 'roma_registration' => 'GC-T-5102', 'is_rented' => false, 'capacity' => '90 CV', 'last_revision_date' => '2025-11-05', 'active' => true],
@@ -2055,7 +2057,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createExploitations($now): array
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
         $rows = [
             [
                 'exploitation_name' => 'Explotación Viticultora Agaete — Principal',
@@ -2102,7 +2104,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createCompliance(array $exploitationIds, int $c24, int $c25, int $c26, $now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
         $expId = $exploitationIds[0] ?? null;
 
         // ── Aplicadores ROPO (5) ──────────────────────────────────────────────
@@ -2172,7 +2174,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createClients($now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
 
         // ── 250 empresas (10 tipos × 25 variantes) ───────────────────────────
         $bizTypes = [
@@ -2282,7 +2284,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createSubcontractings(array $plotIds, int $c24, int $c25, int $c26, $now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
 
         // Distribución por campaña: 2024=100, 2025=150, 2026=200 (énfasis 2026)
         $campaignPool = array_merge(
@@ -2379,7 +2381,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createRegistrosOficiales(array $plantingIds, array $plotIds, array $productIds, array $machineryIds, array $exploitationIds, int $c24, int $c25, int $c26, $now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
         $expId = $exploitationIds[0] ?? null;
         $mach1 = $machineryIds[0] ?? null;
         $mach4 = $machineryIds[3] ?? null;
@@ -2794,7 +2796,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createPAC(array $plotIds, int $c24, int $c25, int $c26, $now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
 
         foreach ([
             [$c24, 2024, 'GC-PAC-2024-35003-0021', 8.45, 8.20, 'approved', '2024-04-20'],
@@ -2861,7 +2863,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createBilling(array $plotIds, int $c24, int $c25, int $c26, $now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
 
         // ── Costes por Parcela (45) ───────────────────────────────────────────
         $categories = [
@@ -2984,7 +2986,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createOperationalData(array $plotIds, array $plantingIds, int $c24, int $c25, int $c26, $now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
         $winId = self::WINERY_USER_ID;
 
         // ── Documentos de Campaña (15) ────────────────────────────────────────
@@ -3070,7 +3072,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createContainers($now): array
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
 
         $containers = [
             // ── Bins de vendimia — fibra de vidrio, 500 kg (BV-01…20) ──────
@@ -3212,7 +3214,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createAlmacen(array $productIds, int $c24, int $c25, int $c26, $now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
 
         // ── Almacén (1) ───────────────────────────────────────────────────────
         $warehouseId = DB::table('warehouses')->insertGetId([
@@ -3349,7 +3351,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createInvoices(int $c24, int $c25, int $c26, $now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
         $winId = self::WINERY_USER_ID;
 
         // Obtener clientes del viticultor
@@ -3668,7 +3670,7 @@ class ViticulturistDemoSeeder extends Seeder
 
     private function createTerritorial($now): void
     {
-        $vitId = self::VIT_USER_ID;
+        $vitId = $this->vitUserId;
         $munId = self::MUNICIPALITY_ID; // 5243 = Agaete
 
         // ── Parajes / Sites (7) ───────────────────────────────────────────────
