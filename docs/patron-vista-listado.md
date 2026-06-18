@@ -148,5 +148,8 @@ container-returns, winery/clients, etc.).
 **Migración por fases** (ver memoria `project-patron-vistas`):
 - F1 ✅ notación unificada a punto + alias de guion eliminado.
 - F1 (resto): añadir `empty-state`/`loading-grid` donde falten.
-- F2: auditar conformidad por vista (verde/amarillo/rojo).
+- F2 ✅ auditar conformidad por vista (2026-06-18): 148 vistas auditadas. Todos
+  los mínimos (header + empty + paginación) se cumplen en todas las vistas.
+  Nota: `x-agro.data-table` con props `empty-:message`/`empty-icon` llama
+  `x-agro.empty-state` internamente — contar como cumplido.
 - F3: normalizar composición por dominios (viticulturist → winery → supervisor → resto), 1 PR por dominio.

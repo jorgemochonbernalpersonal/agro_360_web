@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\InviteViticulturistRequest;
+use App\Http\Requests\Api\Winery\StoreViticulturistRequest;
+use App\Http\Requests\Api\Winery\UpdateViticulturistRequest;
 use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
 use App\Models\NotebookAccessRequest;
@@ -13,7 +16,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class ViticulturistController extends BaseApiController
 {
@@ -51,18 +53,11 @@ class ViticulturistController extends BaseApiController
 
     // ─── POST /winery/viticulturists ─────────────────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreViticulturistRequest $request): JsonResponse
     {
         $winery = $request->user();
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
-            'notes' => ['nullable', 'string', 'max:1000'],
-        ], [
-            'name.required' => __('El nombre es obligatorio.'),
-            'email.unique' => __('Ya existe un usuario con este email.'),
-        ]);
+        $validated = $request->validated();
 
         $vit = User::create([
             'name' => $validated['name'],
@@ -207,7 +202,7 @@ class ViticulturistController extends BaseApiController
 
     // ─── PUT /winery/viticulturists/{id} ─────────────────────────────────────
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateViticulturistRequest $request, int $id): JsonResponse
     {
         $winery = $request->user();
 
@@ -218,14 +213,7 @@ class ViticulturistController extends BaseApiController
 
         $vit = $rel->viticulturist;
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($id)],
-            'notes' => ['nullable', 'string', 'max:1000'],
-        ], [
-            'name.required' => __('El nombre es obligatorio.'),
-            'email.unique' => __('Ya existe un usuario con este email.'),
-        ]);
+        $validated = $request->validated();
 
         $rawEmail = $vit->email ?? '';
         $newEmail = $validated['email'] ?? null;
@@ -242,7 +230,7 @@ class ViticulturistController extends BaseApiController
 
     // ─── POST /winery/viticulturists/{id}/invite ─────────────────────────────
 
-    public function invite(Request $request, int $id): JsonResponse
+    public function invite(InviteViticulturistRequest $request, int $id): JsonResponse
     {
         $winery = $request->user();
 
@@ -253,12 +241,7 @@ class ViticulturistController extends BaseApiController
 
         $vit = $rel->viticulturist;
 
-        $validated = $request->validate([
-            'email' => ['required', 'email', 'max:255'],
-        ], [
-            'email.required' => __('Introduce el email del viticultor.'),
-            'email.email' => __('El email no es válido.'),
-        ]);
+        $validated = $request->validated();
 
         if ($vit->invitation_sent_at && $vit->invitation_sent_at->isAfter(now()->subHour())) {
             return response()->json([

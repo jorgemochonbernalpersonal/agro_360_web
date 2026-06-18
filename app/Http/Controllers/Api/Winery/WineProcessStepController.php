@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\StoreWineProcessStepRequest;
 use App\Http\Resources\Api\WineProcessStepResource;
 use App\Models\Container;
 use App\Models\Oenologist;
@@ -38,27 +39,13 @@ class WineProcessStepController extends BaseApiController
 
     // ─── POST /winery/wines/{id}/process ─────────────────────────────────────
 
-    public function store(Request $request, int $wineId): JsonResponse
+    public function store(StoreWineProcessStepRequest $request, int $wineId): JsonResponse
     {
         $user = $request->user();
 
         $wine = Wine::forUser($user->id)->findOrFail($wineId);
 
-        $validated = $request->validate([
-            'process_type' => 'required|string|in:'.implode(',', array_keys(WineProcessDetail::PROCESS_TYPES)),
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'container_id' => 'nullable|integer|exists:containers,id',
-            'oenologist_id' => 'nullable|integer|exists:oenologists,id',
-            'quantity' => 'nullable|numeric|min:0',
-            'unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-            'observations' => 'nullable|string|max:2000',
-            // Contenedores adicionales (blending, trasvases múltiples, etc.)
-            'extra_containers' => 'nullable|array|max:10',
-            'extra_containers.*.container_id' => 'required|integer|exists:containers,id',
-            'extra_containers.*.quantity' => 'nullable|numeric|min:0',
-            'extra_containers.*.unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-        ]);
+        $validated = $request->validated();
 
         if (isset($validated['container_id'])) {
             Container::where('user_id', $user->id)->findOrFail($validated['container_id']);

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\StoreWineAdditiveRequest;
+use App\Http\Requests\Api\Winery\UpdateWineAdditiveRequest;
 use App\Models\Container;
 use App\Models\Oenologist;
 use App\Models\Wine;
@@ -63,21 +65,11 @@ class WineAdditiveController extends BaseApiController
         return $this->paginated($additives, $additives->map(fn ($a) => $this->format($a)));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreWineAdditiveRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        $validated = $request->validate([
-            'wine_id' => 'required|integer|exists:wines,id',
-            'wine_process_detail_id' => 'nullable|integer|exists:wine_process_details,id',
-            'winery_supply_id' => 'nullable|integer|exists:winery_supplies,id',
-            'oenologist_id' => 'nullable|integer|exists:oenologists,id',
-            'unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-            'additive_name' => 'required|string|max:255',
-            'quantity' => 'required|numeric|min:0',
-            'application_date' => 'required|date',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
 
@@ -91,21 +83,13 @@ class WineAdditiveController extends BaseApiController
         return $this->created($this->format($additive));
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateWineAdditiveRequest $request, int $id): JsonResponse
     {
         $user = $request->user();
 
         $additive = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))->findOrFail($id);
 
-        $validated = $request->validate([
-            'winery_supply_id' => 'sometimes|nullable|integer|exists:winery_supplies,id',
-            'oenologist_id' => 'sometimes|nullable|integer|exists:oenologists,id',
-            'unit_of_measurement_id' => 'sometimes|nullable|integer|exists:unit_of_measurements,id',
-            'additive_name' => 'sometimes|string|max:255',
-            'quantity' => 'sometimes|numeric|min:0',
-            'application_date' => 'sometimes|date',
-            'notes' => 'sometimes|nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         $additive->update($validated);
         $additive->load(['wine', 'supply', 'oenologist', 'unitOfMeasurement']);
