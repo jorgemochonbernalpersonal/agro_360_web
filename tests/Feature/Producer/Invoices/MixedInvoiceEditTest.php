@@ -314,6 +314,98 @@ class MixedInvoiceEditTest extends ProducerTestCase
         $this->assertEquals(6, (int) $lot->reserved_quantity);
     }
 
+    // ── Aislamiento: producer no puede editar recursos ajenos ────────────────
+
+    public function test_other_producer_invoice_returns_404_on_mount(): void
+    {
+        $otherProducer = $this->makeOtherProducer();
+        $foreignInvoice = Invoice::create([
+            'user_id' => $otherProducer->id,
+            'invoice_type' => 'producer_sale',
+            'status' => 'draft',
+            'delivery_status' => 'pending',
+            'payment_status' => 'unpaid',
+            'invoice_date' => now()->toDateString(),
+            'subtotal' => 0,
+            'discount_amount' => 0,
+            'tax_base' => 0,
+            'tax_amount' => 0,
+            'total_amount' => 0,
+        ]);
+
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
+        Livewire::test(Edit::class, ['invoice' => $foreignInvoice]);
+    }
+
+    public function test_edit_with_injected_foreign_harvest_does_not_modify_foreign_stock(): void
+    {
+        $otherProducer = $this->makeOtherProducer();
+        $foreignHarvest = $this->makeForeignHarvest($otherProducer, 500);
+        $foreignHarvestStocksBefore = HarvestStock::where('harvest_id', $foreignHarvest->id)->count();
+
+        $ownHarvest = $this->makeHarvest(300);
+        $invoice = $this->makeInvoice();
+        $this->seedHarvestItem($invoice, $ownHarvest, reserved: 100);
+
+        Livewire::test(Edit::class, ['invoice' => $invoice])
+            ->set('items', [
+                $this->harvestItemData($foreignHarvest->id, qty: 200, available: 500),
+            ])
+            ->call('update');
+
+        $this->assertEquals(
+            $foreignHarvestStocksBefore,
+            HarvestStock::where('harvest_id', $foreignHarvest->id)->count(),
+            'No debe crearse ningún HarvestStock para la cosecha ajena'
+        );
+    }
+
+    public function test_edit_with_injected_foreign_lot_does_not_modify_foreign_stock(): void
+    {
+        $otherProducer = $this->makeOtherProducer();
+        $foreignLot = ProductLot::create([
+            'user_id' => $otherProducer->id,
+            'name' => 'Lote Ajeno',
+            'available_quantity' => 100,
+            'reserved_quantity' => 0,
+            'sold_quantity' => 0,
+            'unit' => 'botellas',
+            'archived' => false,
+        ]);
+
+        $ownLot = $this->seedProductLot(available: 50, reserved: 0);
+        $invoice = $this->makeInvoice();
+        InvoiceItem::withoutEvents(fn () => $invoice->items()->create([
+            'wine_lot_id' => $ownLot->id,
+            'harvest_id' => null,
+            'concept_type' => 'wine',
+            'name' => 'Lote Propio',
+            'quantity' => 10,
+            'unit' => 'botella',
+            'unit_price' => 8.50,
+            'discount_percentage' => 0,
+            'discount_amount' => 0,
+            'tax_id' => $this->tax->id,
+            'tax_name' => 'IVA 10%',
+            'tax_rate' => 10,
+            'tax_base' => 85,
+            'tax_amount' => 8.5,
+            'subtotal' => 85,
+            'total' => 93.5,
+        ]));
+
+        Livewire::test(Edit::class, ['invoice' => $invoice])
+            ->set('items', [
+                $this->wineItemData($foreignLot->id, qty: 6, available: 100),
+            ])
+            ->call('update');
+
+        $foreignLot->refresh();
+        $this->assertEquals(100, (int) $foreignLot->available_quantity, 'El lote ajeno no debe ser modificado');
+        $this->assertEquals(0, (int) $foreignLot->reserved_quantity);
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     /**
@@ -481,5 +573,50 @@ class MixedInvoiceEditTest extends ProducerTestCase
             'discount_percentage' => 0,
             'tax_id' => $this->tax->id,
         ];
+    }
+
+    /**
+     * Cosecha perteneciente a otro productor, para probar aislamiento en edit.
+     */
+    private function makeForeignHarvest(\App\Models\User $owner, float $weight = 500): Harvest
+    {
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+
+        $plot = Plot::create([
+            'viticulturist_id' => $owner->id,
+            'name' => 'Parcela Ajena Edit',
+            'reference' => 'PAE-999',
+            'area' => 2.0,
+            'active' => true,
+        ]);
+
+        $planting = PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => 2.0,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
+
+        $campaign = Campaign::getOrCreateActiveForYear($owner->id, now()->year);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $owner->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'harvest',
+            'activity_date' => now()->toDateString(),
+        ]);
+
+        return Harvest::withoutEvents(fn () => Harvest::create([
+            'activity_id' => $activity->id,
+            'plot_planting_id' => $planting->id,
+            'harvest_start_date' => now()->toDateString(),
+            'total_weight' => $weight,
+            'status' => 'active',
+        ]));
     }
 }
