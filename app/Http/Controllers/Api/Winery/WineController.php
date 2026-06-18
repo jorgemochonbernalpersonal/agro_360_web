@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\StoreWineRequest;
+use App\Http\Requests\Api\Winery\UpdateWineRequest;
 use App\Http\Resources\Api\FermentationControlResource;
 use App\Http\Resources\Api\WineResource;
 use App\Models\Wine;
@@ -74,24 +76,11 @@ class WineController extends BaseApiController
 
     // ─── POST /winery/wines ───────────────────────────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreWineRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'vintage' => 'required|integer|min:1900|max:'.(now()->year + 2),
-            'wine_type' => 'required|string|in:'.implode(',', array_keys(Wine::WINE_TYPES)),
-            'aging_type' => 'nullable|string|in:'.implode(',', array_keys(Wine::AGING_TYPES)),
-            'category' => 'nullable|string|in:'.implode(',', array_keys(Wine::CATEGORIES)),
-            'variety' => 'nullable|string|max:255',
-            'volume_liters' => 'required|numeric|min:0.001',
-            'initial_quantity_kg' => 'nullable|numeric|min:0',
-            'internal_code' => 'nullable|string|max:100',
-            'is_must' => 'nullable|boolean',
-            'is_organic' => 'nullable|boolean',
-            'notes' => 'nullable|string|max:2000',
-        ]);
+        $validated = $request->validated();
 
         $wine = Wine::create(array_merge($validated, [
             'user_id' => $user->id,
@@ -103,26 +92,13 @@ class WineController extends BaseApiController
 
     // ─── PUT /winery/wines/{id} ───────────────────────────────────────────────
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateWineRequest $request, int $id): JsonResponse
     {
         $user = $request->user();
 
         $wine = Wine::forUser($user->id)->findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'vintage' => 'sometimes|nullable|integer|min:1900|max:'.(now()->year + 2),
-            'wine_type' => 'sometimes|string|in:'.implode(',', array_keys(Wine::WINE_TYPES)),
-            'aging_type' => 'sometimes|nullable|string|in:'.implode(',', array_keys(Wine::AGING_TYPES)),
-            'category' => 'sometimes|nullable|string|in:'.implode(',', array_keys(Wine::CATEGORIES)),
-            'status' => 'sometimes|string|in:'.implode(',', array_keys(Wine::STATUSES)),
-            'variety' => 'sometimes|nullable|string|max:255',
-            'volume_liters' => 'sometimes|nullable|numeric|min:0',
-            'internal_code' => 'sometimes|nullable|string|max:100',
-            'is_must' => 'sometimes|nullable|boolean',
-            'is_organic' => 'sometimes|nullable|boolean',
-            'notes' => 'sometimes|nullable|string|max:2000',
-        ]);
+        $validated = $request->validated();
 
         $wine->update($validated);
 

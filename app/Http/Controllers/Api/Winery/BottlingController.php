@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\StoreBottlingRequest;
+use App\Http\Requests\Api\Winery\UpdateBottlingRequest;
 use App\Http\Resources\Api\BottlingResource;
 use App\Models\Container;
 use App\Models\Oenologist;
@@ -59,30 +61,11 @@ class BottlingController extends BaseApiController
 
     // ─── POST /winery/bottlings ───────────────────────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreBottlingRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        $validated = $request->validate([
-            'wine_id' => 'required|integer|exists:wines,id',
-            'container_id' => 'nullable|integer|exists:containers,id',
-            'wine_process_detail_id' => 'nullable|integer|exists:wine_process_details,id',
-            'product_lot_id' => 'nullable|integer|exists:wine_lots,id',
-            'oenologist_id' => 'nullable|integer|exists:oenologists,id',
-            'bottling_date' => 'required|date',
-            'bottle_format' => 'required|string|in:'.implode(',', array_keys(WineBottling::BOTTLE_FORMATS)),
-            'quantity_bottles' => 'required|integer|min:1',
-            'quantity_liters' => 'required|numeric|min:0',
-            'lot_number' => 'nullable|string|max:100',
-            'notes' => 'nullable|string|max:2000',
-            // Insumos usados en el embotellado
-            'supplies' => 'nullable|array|max:20',
-            'supplies.*.winery_supply_id' => 'nullable|integer|exists:winery_supplies,id',
-            'supplies.*.supply_name' => 'required_without:supplies.*.winery_supply_id|string|max:255',
-            'supplies.*.quantity' => 'nullable|numeric|min:0',
-            'supplies.*.unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-            'supplies.*.notes' => 'nullable|string|max:500',
-        ]);
+        $validated = $request->validated();
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
 
@@ -129,23 +112,13 @@ class BottlingController extends BaseApiController
 
     // ─── PUT /winery/bottlings/{id} ───────────────────────────────────────────
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateBottlingRequest $request, int $id): JsonResponse
     {
         $user = $request->user();
 
         $bottling = WineBottling::forUser($user->id)->findOrFail($id);
 
-        $validated = $request->validate([
-            'container_id' => 'sometimes|nullable|integer|exists:containers,id',
-            'product_lot_id' => 'sometimes|nullable|integer|exists:wine_lots,id',
-            'oenologist_id' => 'sometimes|nullable|integer|exists:oenologists,id',
-            'bottling_date' => 'sometimes|date',
-            'bottle_format' => 'sometimes|string|in:'.implode(',', array_keys(WineBottling::BOTTLE_FORMATS)),
-            'quantity_bottles' => 'sometimes|integer|min:1',
-            'quantity_liters' => 'sometimes|numeric|min:0',
-            'lot_number' => 'sometimes|nullable|string|max:100',
-            'notes' => 'sometimes|nullable|string|max:2000',
-        ]);
+        $validated = $request->validated();
 
         if (isset($validated['container_id'])) {
             Container::where('user_id', $user->id)->findOrFail($validated['container_id']);

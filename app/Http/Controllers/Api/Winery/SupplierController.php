@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\StoreSupplierRequest;
+use App\Http\Requests\Api\Winery\UpdateSupplierRequest;
 use App\Models\Supplier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -52,20 +54,11 @@ class SupplierController extends BaseApiController
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreSupplierRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'contact_person' => 'nullable|string|max:150',
-            'email' => 'nullable|email|max:150',
-            'phone' => 'nullable|string|max:30',
-            'address' => 'nullable|string|max:500',
-            'vat_number' => 'nullable|string|max:30',
-            'category' => 'nullable|string|in:'.implode(',', array_keys(Supplier::CATEGORIES)),
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         $supplier = Supplier::create([...$validated, 'user_id' => $user->id, 'active' => true]);
 
@@ -81,23 +74,13 @@ class SupplierController extends BaseApiController
         return $this->success($supplier);
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateSupplierRequest $request, int $id): JsonResponse
     {
         $user = $request->user();
 
         $supplier = Supplier::forUser($user->id)->findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'contact_person' => 'sometimes|nullable|string|max:150',
-            'email' => 'sometimes|nullable|email|max:150',
-            'phone' => 'sometimes|nullable|string|max:30',
-            'address' => 'sometimes|nullable|string|max:500',
-            'vat_number' => 'sometimes|nullable|string|max:30',
-            'category' => 'sometimes|nullable|string|in:'.implode(',', array_keys(Supplier::CATEGORIES)),
-            'active' => 'sometimes|boolean',
-            'notes' => 'sometimes|nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         $supplier->update($validated);
 

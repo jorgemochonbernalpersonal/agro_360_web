@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\StoreWinerySupplyRequest;
+use App\Http\Requests\Api\Winery\UpdateWinerySupplyRequest;
 use App\Models\WinerySupply;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -57,20 +59,11 @@ class WinerySupplyController extends BaseApiController
         return $this->success($this->format($supply));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreWinerySupplyRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'commercial_name' => 'nullable|string|max:255',
-            'supply_type' => 'required|string|in:'.implode(',', array_keys(WinerySupply::SUPPLY_TYPES)),
-            'unit_of_measurement_id' => 'nullable|integer|exists:unit_of_measurements,id',
-            'current_stock' => 'nullable|numeric|min:0',
-            'min_stock_alert' => 'nullable|numeric|min:0',
-            'expiry_date' => 'nullable|date',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         $supply = WinerySupply::create([...$validated, 'user_id' => $user->id, 'active' => true]);
         $supply->load('unitOfMeasurement');
@@ -78,23 +71,13 @@ class WinerySupplyController extends BaseApiController
         return $this->created($this->format($supply));
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateWinerySupplyRequest $request, int $id): JsonResponse
     {
         $user = $request->user();
 
         $supply = WinerySupply::forUser($user->id)->findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'commercial_name' => 'sometimes|nullable|string|max:255',
-            'supply_type' => 'sometimes|string|in:'.implode(',', array_keys(WinerySupply::SUPPLY_TYPES)),
-            'unit_of_measurement_id' => 'sometimes|nullable|integer|exists:unit_of_measurements,id',
-            'current_stock' => 'sometimes|nullable|numeric|min:0',
-            'min_stock_alert' => 'sometimes|nullable|numeric|min:0',
-            'expiry_date' => 'sometimes|nullable|date',
-            'active' => 'sometimes|boolean',
-            'notes' => 'sometimes|nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         $supply->update($validated);
         $supply->load('unitOfMeasurement');
