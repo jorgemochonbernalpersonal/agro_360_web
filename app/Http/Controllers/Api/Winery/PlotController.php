@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\IndexWineryPlotRequest;
+use App\Http\Requests\Api\Winery\StorePlantingRequest;
+use App\Http\Requests\Api\Winery\StoreWineryPlotRequest;
 use App\Http\Resources\Api\PlotResource;
 use App\Models\AgriculturalActivity;
 use App\Models\Plot;
@@ -15,15 +18,9 @@ class PlotController extends BaseApiController
 {
     // ─── GET /winery/plots ────────────────────────────────────────────────────
 
-    public function index(Request $request): JsonResponse
+    public function index(IndexWineryPlotRequest $request): JsonResponse
     {
         $user = $request->user();
-
-        $request->validate([
-            'per_page' => 'nullable|integer|min:1|max:100',
-            'viticulturist' => 'nullable|integer|min:1',
-            'search' => 'nullable|string|max:100',
-        ]);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->where('notebook_access', true)
@@ -275,26 +272,11 @@ class PlotController extends BaseApiController
 
     // ─── POST /winery/plots ───────────────────────────────────────────────────
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreWineryPlotRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        $data = $request->validate([
-            'viticulturist_id' => 'required|integer|exists:users,id',
-            'name' => 'required|string|max:255',
-            'area' => 'required|numeric|min:0.001',
-            'autonomous_community_id' => 'required|integer|exists:autonomous_communities,id',
-            'province_id' => 'required|integer|exists:provinces,id',
-            'municipality_id' => 'required|integer|exists:municipalities,id',
-            'is_organic' => 'nullable|boolean',
-        ]);
-
-        abort_unless(
-            WineryViticulturist::where('winery_id', $user->id)
-                ->where('viticulturist_id', $data['viticulturist_id'])
-                ->exists(),
-            403
-        );
+        $data = $request->validated();
 
         $plot = Plot::create([
             'viticulturist_id' => $data['viticulturist_id'],
@@ -316,7 +298,7 @@ class PlotController extends BaseApiController
 
     // ─── POST /winery/plots/{id}/plantings ────────────────────────────────────
 
-    public function storePlanting(Request $request, int $id): JsonResponse
+    public function storePlanting(StorePlantingRequest $request, int $id): JsonResponse
     {
         $user = $request->user();
 
@@ -325,13 +307,7 @@ class PlotController extends BaseApiController
 
         $plot = Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
 
-        $data = $request->validate([
-            'grape_variety_id' => 'required|integer|exists:grape_varieties,id',
-            'area_planted' => 'required|numeric|min:0.001',
-            'planting_year' => 'required|integer|min:1900|max:2100',
-            'name' => 'nullable|string|max:255',
-            'irrigated' => 'nullable|boolean',
-        ]);
+        $data = $request->validated();
 
         $planting = $plot->plantings()->create([
             'grape_variety_id' => $data['grape_variety_id'],

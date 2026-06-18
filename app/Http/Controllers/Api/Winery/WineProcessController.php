@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\Api\Winery\StoreLossRequest;
+use App\Http\Requests\Api\Winery\StoreTransferRequest;
+use App\Http\Requests\Api\Winery\UpdateLossRequest;
+use App\Http\Requests\Api\Winery\UpdateTransferRequest;
 use App\Http\Resources\Api\LossResource;
 use App\Http\Resources\Api\TransferResource;
 use App\Models\Container;
@@ -63,20 +67,11 @@ class WineProcessController extends BaseApiController
 
     // ─── POST /winery/transfers ───────────────────────────────────────────────
 
-    public function storeTransfer(Request $request): JsonResponse
+    public function storeTransfer(StoreTransferRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        $validated = $request->validate([
-            'wine_id' => 'required|integer|exists:wines,id',
-            'from_container_id' => 'required|integer|exists:containers,id',
-            'to_container_id' => 'required|integer|exists:containers,id|different:from_container_id',
-            'quantity' => 'required|numeric|min:0.001',
-            'unit_of_measurement_id' => 'nullable|integer|exists:units_of_measurement,id',
-            'transfer_type' => 'required|string|in:racking,blending,top_up,other',
-            'transfer_date' => 'required|date',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
         Container::where('user_id', $user->id)->findOrFail($validated['from_container_id']);
@@ -104,21 +99,11 @@ class WineProcessController extends BaseApiController
 
     // ─── POST /winery/losses ──────────────────────────────────────────────────
 
-    public function storeLoss(Request $request): JsonResponse
+    public function storeLoss(StoreLossRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        $validated = $request->validate([
-            'wine_id' => 'required|integer|exists:wines,id',
-            'container_id' => 'required|integer|exists:containers,id',
-            'loss_type' => 'required|string|in:evaporation,filtration,sampling,spillage,other',
-            'loss_authorization' => 'required|string|in:authorized,processing,extraordinary,quality',
-            'unit_of_measurement_id' => 'required|integer|exists:units_of_measurement,id',
-            'quantity' => 'required|numeric|min:0.001',
-            'loss_date' => 'required|date',
-            'regulatory_reference' => 'nullable|string|max:255',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         Wine::forUser($user->id)->findOrFail($validated['wine_id']);
         Container::where('user_id', $user->id)->findOrFail($validated['container_id']);
@@ -140,7 +125,7 @@ class WineProcessController extends BaseApiController
 
     // ─── PUT /winery/transfers/{id} ──────────────────────────────────────────
 
-    public function updateTransfer(Request $request, int $id): JsonResponse
+    public function updateTransfer(UpdateTransferRequest $request, int $id): JsonResponse
     {
         $user = $request->user();
 
@@ -148,15 +133,7 @@ class WineProcessController extends BaseApiController
             'wine', fn ($q) => $q->where('user_id', $user->id)
         )->findOrFail($id);
 
-        $validated = $request->validate([
-            'from_container_id' => 'sometimes|integer|exists:containers,id',
-            'to_container_id' => 'sometimes|integer|exists:containers,id|different:from_container_id',
-            'quantity' => 'sometimes|numeric|min:0.001',
-            'transfer_type' => 'sometimes|string|in:racking,blending,top_up,other',
-            'transfer_date' => 'sometimes|date',
-            'oenologist_id' => 'sometimes|nullable|integer|exists:oenologists,id',
-            'notes' => 'sometimes|nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         $oldData = [
             'wine_id' => $transfer->wine_id,
@@ -178,7 +155,7 @@ class WineProcessController extends BaseApiController
 
     // ─── PUT /winery/losses/{id} ──────────────────────────────────────────────
 
-    public function updateLoss(Request $request, int $id): JsonResponse
+    public function updateLoss(UpdateLossRequest $request, int $id): JsonResponse
     {
         $user = $request->user();
 
@@ -186,15 +163,7 @@ class WineProcessController extends BaseApiController
             'wine', fn ($q) => $q->where('user_id', $user->id)
         )->findOrFail($id);
 
-        $validated = $request->validate([
-            'container_id' => 'sometimes|integer|exists:containers,id',
-            'loss_type' => 'sometimes|string|in:evaporation,filtration,sampling,spillage,other',
-            'loss_authorization' => 'sometimes|string|in:authorized,processing,extraordinary,quality',
-            'quantity' => 'sometimes|numeric|min:0.001',
-            'loss_date' => 'sometimes|date',
-            'regulatory_reference' => 'sometimes|nullable|string|max:255',
-            'notes' => 'sometimes|nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         $oldData = [
             'wine_id' => $loss->wine_id,
