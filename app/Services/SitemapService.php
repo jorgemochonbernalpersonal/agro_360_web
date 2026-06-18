@@ -70,9 +70,9 @@ class SitemapService
      * fiable. Lo que no aparezca aquí hereda FALLBACK_DATE.
      */
     private const LASTMOD = [
-        '' => '2026-06-01',                  // home
+        '' => '2026-06-17',                  // home
         'faqs' => '2026-05-27',
-        'precios' => '2026-05-27',
+        'precios' => '2026-06-17',
         'viticultores' => '2026-05-27',
         'bodegas' => '2026-05-27',
         'cooperativas' => '2026-05-27',
