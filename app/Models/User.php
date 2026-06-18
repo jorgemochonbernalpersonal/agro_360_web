@@ -61,9 +61,6 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
 
     public const ROLE_PRODUCER = 'producer';
 
-    // ROLE_DO is an alias for ROLE_SUPERVISOR — denomination_of_origin uses 'supervisor' in DB
-    public const ROLE_DO = 'supervisor';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -163,11 +160,6 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     public function isProducer(): bool
     {
         return $this->role === self::ROLE_PRODUCER;
-    }
-
-    public function isDO(): bool
-    {
-        return $this->role === self::ROLE_DO;
     }
 
     public function hasViticulturistAccess(): bool
