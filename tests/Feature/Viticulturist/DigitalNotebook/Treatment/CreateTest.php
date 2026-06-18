@@ -354,6 +354,17 @@ class CreateTest extends ViticulturistTestCase
             ->set('product_id', $product->id)
             ->assertSet('applicationsThisCampaign', 1);
     }
+    // ── autorización ──────────────────────────────────────────────────────────
+
+    public function test_policy_denies_create_for_other_viticulturist_plot(): void
+    {
+        $viticulturist = $this->makeViticulturist();
+        $other = $this->makeOtherViticulturist();
+        $plot = $this->makePlot($viticulturist);
+
+        $this->assertFalse($other->can('create-activity', $plot));
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
 
     private function makePlot($viticulturist): Plot
