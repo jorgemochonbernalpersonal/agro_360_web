@@ -3,7 +3,7 @@
     <button
         @click="open = !open"
         class="relative p-2 rounded-lg text-zinc-600 hover:bg-agro-50 transition-all duration-200"
-        aria-:label="__('Notificaciones')"
+        aria-label="{{ __('Notificaciones') }}"
     >
         <flux:icon icon="bell" class="size-6" />
 

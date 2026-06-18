@@ -3,7 +3,7 @@
         {{-- Tabs Navigation --}}
         <x-agro.card :padding="false">
             <div class="border-b border-zinc-200">
-                <nav class="flex space-x-4 px-6" aria-:label="__('Tabs')">
+                <nav class="flex space-x-4 px-6" aria-label="{{ __('Tabs') }}">
                     <button
                         wire:click="setActiveTab('personal')"
                         class="py-4 px-6 text-sm font-semibold border-b-2 transition-all duration-200 {{ $activeTab === 'personal' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-400' }}"
@@ -159,7 +159,7 @@
                                                 type="password"
                                                 id="current_password"
                                                 x-bind:type="showCurrentPassword ? 'text' : 'password'"
-                                                :placeholder="__('Tu contraseña actual')"
+                                                placeholder="{{ __('Tu contraseña actual') }}"
                                                 class="w-full px-4 py-3 pr-12 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:border-agro-700 focus:ring-agro-700/20 @error('current_password') border-red-400 bg-red-50 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror"
                                                 required
                                             />
@@ -186,7 +186,7 @@
                                                 type="password"
                                                 id="password"
                                                 x-bind:type="showPassword ? 'text' : 'password'"
-                                                :placeholder="__('Nueva contraseña')"
+                                                placeholder="{{ __('Nueva contraseña') }}"
                                                 class="w-full px-4 py-3 pr-12 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:border-agro-700 focus:ring-agro-700/20 @error('password') border-red-400 bg-red-50 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror"
                                                 required
                                             />
@@ -213,7 +213,7 @@
                                                 type="password"
                                                 id="password_confirmation"
                                                 x-bind:type="showPasswordConfirmation ? 'text' : 'password'"
-                                                :placeholder="__('Confirma la nueva contraseña')"
+                                                placeholder="{{ __('Confirma la nueva contraseña') }}"
                                                 class="w-full px-4 py-3 pr-12 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:border-agro-700 focus:ring-agro-700/20"
                                                 required
                                             />

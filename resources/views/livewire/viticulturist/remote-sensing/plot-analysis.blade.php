@@ -72,7 +72,7 @@
 
         <!-- Tabs Navigation -->
         <div class="mb-6 border-b border-zinc-200">
-            <nav class="flex gap-4 overflow-x-auto" aria-:label="__('Tabs')">
+            <nav class="flex gap-4 overflow-x-auto" aria-label="{{ __('Tabs') }}">
                 <button wire:click="setTab('satellite')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
                             {{ $activeTab === 'satellite' ? 'border-green-500 text-green-600' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
