@@ -22,7 +22,7 @@ class Index extends Component
     public function mount(): void
     {
         $active = Campaign::where('viticulturist_id', Auth::id())
-            ->where('status', 'active')
+            ->where('active', true)
             ->orderByDesc('year')
             ->first();
 
@@ -133,8 +133,8 @@ class Index extends Component
             ->selectRaw('
                 COUNT(*) as total_lots,
                 COALESCE(SUM(quantity), 0) as total_units,
-                COALESCE(SUM(sold_qty), 0) as sold_units,
-                COALESCE(SUM(quantity * price), 0) as total_value
+                COALESCE(SUM(quantity - available_quantity), 0) as sold_units,
+                COALESCE(SUM(quantity * price_per_unit), 0) as total_value
             ')->first();
 
         // ── Flujo resumido por parcela ───────────────────────────────────
