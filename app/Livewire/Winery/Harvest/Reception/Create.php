@@ -5,6 +5,8 @@ namespace App\Livewire\Winery\Harvest\Reception;
 use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\Harvest\Reception\Traits\WithHarvestContextSelect;
+use App\Livewire\Winery\Harvest\Reception\Traits\WithHarvestLimitPanel;
 use App\Models\Campaign;
 use App\Models\Container;
 use App\Models\GrapeReceptionBatch;
@@ -12,7 +14,6 @@ use App\Models\Harvest;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\WineryViticulturist;
-use App\Models\WineryYieldForecast;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -20,16 +21,12 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
+    use WithHarvestContextSelect,
+        WithHarvestLimitPanel,
+        WithOwnershipRules,
+        WithRoleAwareRedirect,
+        WithToastNotifications;
 
-    // ── Context ─────────────────────────────────────────────────────────────
-    public string $viticulturist_id = '';
-
-    public string $plot_id = '';
-
-    public string $plot_planting_id = '';
-
-    // ── Datos de recepción ──────────────────────────────────────────────────
     public int $vintage_year = 0;
 
     public string $harvest_start_date = '';
@@ -40,7 +37,6 @@ class Create extends Component
 
     public string $price_per_kg = '';
 
-    // ── Calidad ─────────────────────────────────────────────────────────────
     public string $baume_degree = '';
 
     public string $brix_degree = '';
@@ -51,7 +47,6 @@ class Create extends Component
 
     public string $potential_alcohol = '';
 
-    // ── Estado sanitario ────────────────────────────────────────────────────
     public string $health_status = '';
 
     public string $sanitary_state_grapes = '';
@@ -64,7 +59,6 @@ class Create extends Component
 
     public string $sanitary_state_mildew = '';
 
-    // ── Transporte / trazabilidad ────────────────────────────────────────────
     public string $transport_document_number = '';
 
     public string $destination_rega_code = '';
@@ -73,41 +67,24 @@ class Create extends Component
 
     public string $harvest_time = '';
 
-    // ── Contenedor bodega ───────────────────────────────────────────────────
     public string $container_id = '';
 
-    // ── Descarte ────────────────────────────────────────────────────────────
     public bool $disqualified = false;
 
     public string $disqualified_reason = '';
 
     public string $notes = '';
 
-    // ── Estado reactivo (panel de control de límites) ───────────────────────
-    public ?PlotPlanting $selectedPlanting = null;
-
-    public float $totalReceivedInCampaign = 0;   // solo recepciones de esta bodega
-
-    public ?array $harvestLimitInfo = null;
-
-    /** @var array<int, mixed> */
-    public array $availablePlots = [];
-
-    /** @var array<int, mixed> */
-    public array $availablePlantings = [];
-
     public function mount(): void
     {
         $this->harvest_start_date = now()->toDateString();
         $this->vintage_year = now()->year;
 
-        // Producer: pre-select themselves as the viticulturist
         if (Auth::user()->isProducer() && ! request()->query('viticulturist_id')) {
             $this->viticulturist_id = (string) Auth::id();
             $this->updatedViticulturistId();
         }
 
-        // Pre-populate from previous reception (passed via query params)
         if ($preVitic = request()->query('viticulturist_id')) {
             $this->viticulturist_id = $preVitic;
             $this->updatedViticulturistId();
@@ -116,71 +93,6 @@ class Create extends Component
                 $this->plot_id = $prePlot;
                 $this->updatedPlotId();
             }
-        }
-    }
-
-    // ── Watchers ─────────────────────────────────────────────────────────────
-
-    public function updatedViticulturistId(): void
-    {
-        $this->plot_id = '';
-        $this->plot_planting_id = '';
-        $this->availablePlots = [];
-        $this->availablePlantings = [];
-        $this->resetPlantingState();
-
-        if (! $this->viticulturist_id) {
-            return;
-        }
-
-        $wineryId = Auth::id();
-        $isSelf = Auth::user()->isProducer() && (int) $this->viticulturist_id === $wineryId;
-        $isLinked = $isSelf || WineryViticulturist::where('winery_id', $wineryId)
-            ->where('viticulturist_id', $this->viticulturist_id)
-            ->exists();
-
-        if (! $isLinked) {
-            $this->viticulturist_id = '';
-
-            return;
-        }
-
-        $this->availablePlots = Plot::where('viticulturist_id', $this->viticulturist_id)
-            ->where('active', true)
-            ->whereHas('plantings', fn ($q) => $q->where('status', 'active'))
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->toArray();
-    }
-
-    public function updatedPlotId(): void
-    {
-        $this->plot_planting_id = '';
-        $this->availablePlantings = [];
-        $this->resetPlantingState();
-
-        if (! $this->plot_id) {
-            return;
-        }
-
-        $this->availablePlantings = PlotPlanting::where('plot_id', $this->plot_id)
-            ->where('status', 'active')
-            ->with('grapeVariety:id,name')
-            ->get()
-            ->map(fn ($p) => [
-                'id' => $p->id,
-                'label' => ($p->grapeVariety->name ?? $p->name ?? 'Sin variedad')
-                    .($p->area_planted ? ' — '.number_format((float) $p->area_planted, 2).' ha' : ''),
-                'area' => $p->area_planted,
-                'limit_kg' => $p->harvest_limit_kg,
-                'planting_year' => $p->planting_year,
-                'do' => $p->designation_of_origin,
-            ])
-            ->toArray();
-
-        if (count($this->availablePlantings) === 1) {
-            $this->plot_planting_id = (string) $this->availablePlantings[0]['id'];
-            $this->loadPlantingState();
         }
     }
 
@@ -194,34 +106,12 @@ class Create extends Component
         $this->updateLimitInfo();
     }
 
-    public function updatedHarvestStartDate(): void
-    {
-        if ($this->selectedPlanting) {
-            $this->totalReceivedInCampaign = $this->selectedPlanting
-                ->getTotalWineryReceptionsForVintage($this->harvestVintage(), Auth::id());
-            $this->updateLimitInfo();
-        }
-    }
-
-    public function updatedVintageYear(): void
-    {
-        if ($this->selectedPlanting) {
-            $this->totalReceivedInCampaign = $this->selectedPlanting
-                ->getTotalWineryReceptionsForVintage($this->harvestVintage(), Auth::id());
-            $this->updateLimitInfo();
-        }
-    }
-
-    // ── Save ─────────────────────────────────────────────────────────────────
-
     public function save(): mixed
     {
         $this->validate();
 
         $wineryId = Auth::id();
 
-        // Guard: viticulturist must be linked to this winery
-        // Exception: producer receiving their own grapes
         $isSelfReception = Auth::user()->isProducer() && (int) $this->viticulturist_id === $wineryId;
         abort_unless(
             $isSelfReception || WineryViticulturist::where('winery_id', $wineryId)
@@ -231,21 +121,17 @@ class Create extends Component
             'El viticultor no está vinculado a esta bodega.'
         );
 
-        // Guard: plot must belong to the viticulturist
         $plot = Plot::where('viticulturist_id', $this->viticulturist_id)
             ->findOrFail($this->plot_id);
 
-        // Guard: planting must belong to the plot
         $planting = PlotPlanting::where('plot_id', $plot->id)
             ->findOrFail($this->plot_planting_id);
 
-        // Guard: container must belong to this winery
         $container = Container::where('user_id', $wineryId)->findOrFail((int) $this->container_id);
         $containerId = $container->id;
 
         $weight = (float) $this->total_weight;
 
-        // Pre-check rápido (la validación real con lock se hace dentro del transaction)
         if (! $container->hasAvailableCapacity($weight)) {
             $this->addError('container_id',
                 __('El contenedor «:name» no tiene capacidad suficiente. Disponible: :available kg.', ['name' => $container->name, 'available' => number_format((float) $container->getAvailableCapacity(), 0)])
@@ -254,11 +140,9 @@ class Create extends Component
             return null;
         }
 
-        // Auto-get/create campaign for vintage year
         $campaign = Campaign::getOrCreateActiveForYear($wineryId, $this->vintage_year);
         abort_if(! $campaign, 500, 'No se pudo obtener la campaña.');
 
-        // Guard: batch cerrado
         $existingBatch = GrapeReceptionBatch::where('winery_id', $wineryId)
             ->where('plot_planting_id', $planting->id)
             ->where('campaign_id', $campaign->id)
@@ -275,7 +159,6 @@ class Create extends Component
         try {
             DB::transaction(function () use ($wineryId, $campaign, $planting, $containerId, $weight, $pricePerKg, $totalValue) {
 
-                // 1. Obtener o crear el batch acumulador (una sola entrada por bodega+plantación+campaña)
                 $batch = GrapeReceptionBatch::firstOrCreate(
                     [
                         'winery_id' => $wineryId,
@@ -291,7 +174,6 @@ class Create extends Component
                     ]
                 );
 
-                // 2. Registrar la carga individual (sin activity_id)
                 Harvest::create([
                     'winery_id' => $wineryId,
                     'batch_id' => $batch->id,
@@ -326,12 +208,9 @@ class Create extends Component
                         : null,
                     'notes' => $this->notes ?: null,
                 ]);
-                // El HarvestObserver actualiza container.used_capacity automáticamente.
 
-                // 3. Acumular en el batch
                 $batch->increment('total_weight_kg', $weight);
 
-                // 4. Feedback de calidad al viticultor (si tiene datos de calidad y no es el propio usuario)
                 $hasQuality = $this->baume_degree || $this->potential_alcohol || $this->acidity_level || $this->ph_level;
                 $isExternalViticulturist = $batch->viticulturist_id && $batch->viticulturist_id !== $wineryId;
                 if ($hasQuality && $isExternalViticulturist) {
@@ -362,13 +241,10 @@ class Create extends Component
         return null;
     }
 
-    // ── Render ───────────────────────────────────────────────────────────────
-
     public function render()
     {
         $wineryId = Auth::id();
 
-        // Solo viticultores que tienen parcelas activas con plantaciones activas
         $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
             ->with('viticulturist:id,name')
             ->whereHas('viticulturist.plots', fn ($q) => $q->where('active', true)
@@ -379,7 +255,6 @@ class Create extends Component
             ->sortBy('name')
             ->values();
 
-        // Producer: add themselves at the top if they have plots with plantings
         if (Auth::user()->isProducer()) {
             $hasPlotsWithPlantings = Plot::where('viticulturist_id', $wineryId)
                 ->where('active', true)
@@ -390,7 +265,6 @@ class Create extends Component
             }
         }
 
-        // Solo depósitos de kg con capacidad disponible
         $availableContainers = Container::where('user_id', $wineryId)
             ->where('archived', false)
             ->where('unit', 'kg')
@@ -403,91 +277,6 @@ class Create extends Component
             'availableContainers' => $availableContainers,
         ])->layout('layouts.app');
     }
-
-    // ── Helpers privados ─────────────────────────────────────────────────────
-
-    protected function loadPlantingState(): void
-    {
-        if (! $this->plot_planting_id) {
-            $this->resetPlantingState();
-
-            return;
-        }
-
-        $this->selectedPlanting = PlotPlanting::with('grapeVariety')->find($this->plot_planting_id);
-        if (! $this->selectedPlanting) {
-            return;
-        }
-
-        $vintage = $this->harvestVintage();
-        $this->totalReceivedInCampaign = $this->selectedPlanting
-            ->getTotalWineryReceptionsForVintage($vintage, Auth::id());
-
-        $this->updateLimitInfo();
-    }
-
-    protected function updateLimitInfo(): void
-    {
-        if (! $this->selectedPlanting) {
-            $this->harvestLimitInfo = null;
-
-            return;
-        }
-
-        $vintage = $this->harvestVintage();
-        $effectiveLimit = $this->selectedPlanting->effectiveHarvestLimitKg($vintage);
-
-        if ($effectiveLimit === null) {
-            $this->harvestLimitInfo = null;
-
-            return;
-        }
-
-        $received = $this->totalReceivedInCampaign;
-        $adding = (float) ($this->total_weight ?: 0);
-        $newTotal = $received + $adding;
-        $rawLimit = (float) $this->selectedPlanting->harvest_limit_kg;
-
-        // Forecast confirmado de bodega para esta plantación+añada
-        $forecast = WineryYieldForecast::where('winery_id', Auth::id())
-            ->where('plot_planting_id', $this->selectedPlanting->id)
-            ->where('vintage_year', $vintage)
-            ->where('status', 'confirmed')
-            ->first();
-
-        $forecastKg = $forecast ? (float) $forecast->estimated_kg : null;
-        $opLimit = $forecastKg !== null ? min($forecastKg, $effectiveLimit) : $effectiveLimit;
-
-        $this->harvestLimitInfo = [
-            'limit' => $opLimit,
-            'pac_limit' => $effectiveLimit,
-            'raw_limit' => $rawLimit,
-            'age_factor' => $rawLimit > 0 ? round($effectiveLimit / $rawLimit * 100) : 100,
-            'forecast_kg' => $forecastKg,
-            'has_forecast' => $forecastKg !== null,
-            'received' => $received,
-            'adding' => $adding,
-            'new_total' => $newTotal,
-            'remaining' => max(0, $opLimit - $newTotal),
-            'percentage' => $opLimit > 0 ? round(($newTotal / $opLimit) * 100, 1) : 0,
-            'exceeds' => $newTotal > $opLimit,
-            'exceeds_pac' => $newTotal > $effectiveLimit,
-        ];
-    }
-
-    protected function harvestVintage(): int
-    {
-        return $this->vintage_year ?: now()->year;
-    }
-
-    protected function resetPlantingState(): void
-    {
-        $this->selectedPlanting = null;
-        $this->totalReceivedInCampaign = 0;
-        $this->harvestLimitInfo = null;
-    }
-
-    // ── Validación ───────────────────────────────────────────────────────────
 
     protected function rules(): array
     {
