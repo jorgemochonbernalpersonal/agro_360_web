@@ -21,6 +21,11 @@ abstract class WineryTestCase extends TestCase
         return User::factory()->create([
             'role' => 'winery',
             'email_verified_at' => now(),
+            // Acceso activo (beta sin caducidad) → plan 'winery' efectivo, de modo
+            // que los módulos premium (product_sales, label_batches, …) gateados por
+            // winery.ability quedan habilitados igual que en una bodega real con plan.
+            'is_beta_user' => true,
+            'beta_ends_at' => null,
         ]);
     }
 
@@ -29,6 +34,8 @@ abstract class WineryTestCase extends TestCase
         return User::factory()->create([
             'role' => 'winery',
             'email_verified_at' => now(),
+            'is_beta_user' => true,
+            'beta_ends_at' => null,
         ]);
     }
 }
