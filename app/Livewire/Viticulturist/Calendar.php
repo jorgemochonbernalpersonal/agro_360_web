@@ -2,19 +2,14 @@
 
 namespace App\Livewire\Viticulturist;
 
+use App\Livewire\Concerns\WithCalendarActivities;
+use App\Livewire\Concerns\WithCalendarEvents;
+use App\Livewire\Concerns\WithCalendarHelpers;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
-use App\Models\CommercialAuthorization;
-use App\Models\EnergyUsage;
-use App\Models\FieldApplicator;
-use App\Models\FieldEquipment;
-use App\Models\PacDeclaration;
-use App\Models\PacPayment;
 use App\Models\Plot;
-use App\Models\ResidueAnalysis;
-use App\Models\ResidueManagement;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -22,7 +17,7 @@ use Livewire\Component;
 
 class Calendar extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    use WithCalendarActivities, WithCalendarEvents, WithCalendarHelpers, WithRoleAwareRedirect, WithToastNotifications;
 
     public $selectedCampaign = null;
 
@@ -47,16 +42,15 @@ class Calendar extends Component
         'currentYear' => ['except' => ''],
     ];
 
-    public function mount()
+    public function mount(): void
     {
-        $user = Auth::user();
-
-        $campaign = Campaign::getOrCreateActiveForYear($user->id);
+        $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
 
         if (! $campaign) {
             $this->toastError(__('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.'));
+            $this->viticulturistRoleRedirect('campaign.index');
 
-            return $this->viticulturistRoleRedirect('campaign.index');
+            return;
         }
 
         $this->selectedCampaign = $campaign->id;
@@ -66,37 +60,36 @@ class Calendar extends Component
         $this->currentYear = $this->currentYear ?? $now->year;
     }
 
-    public function previousMonth()
+    public function previousMonth(): void
     {
         $date = Carbon::create($this->currentYear, $this->currentMonth, 1)->subMonth();
         $this->currentMonth = $date->month;
         $this->currentYear = $date->year;
     }
 
-    public function nextMonth()
+    public function nextMonth(): void
     {
         $date = Carbon::create($this->currentYear, $this->currentMonth, 1)->addMonth();
         $this->currentMonth = $date->month;
         $this->currentYear = $date->year;
     }
 
-    public function goToToday()
+    public function goToToday(): void
     {
         $now = Carbon::now();
         $this->currentMonth = $now->month;
         $this->currentYear = $now->year;
     }
 
-    public function selectDate($date)
+    public function selectDate($date): void
     {
         $this->selectedDate = $date;
         $this->loadActivitiesForDate($date);
     }
 
-    public function loadActivitiesForDate($date)
+    public function loadActivitiesForDate($date): void
     {
-        $user = Auth::user();
-        $query = AgriculturalActivity::forViticulturist($user->id)
+        $query = AgriculturalActivity::forViticulturist(Auth::id())
             ->whereDate('activity_date', $date)
             ->with(['plot', 'crew', 'phytosanitaryTreatment.product', 'fertilization',
                 'irrigation', 'culturalWork', 'observation', 'machinery']);
@@ -109,12 +102,12 @@ class Calendar extends Component
         }
 
         $this->selectedActivity = $query->get();
-        $this->selectedEvents = $this->getEventsForDate($user->id, $date);
+        $this->selectedEvents = $this->getEventsForDate(Auth::id(), $date);
         $this->selectedDate = $date;
         $this->showActivityModal = true;
     }
 
-    public function getFormattedSelectedDate()
+    public function getFormattedSelectedDate(): string
     {
         if (! $this->selectedDate) {
             return '';
@@ -123,392 +116,12 @@ class Calendar extends Component
         return Carbon::parse($this->selectedDate)->format('d/m/Y');
     }
 
-    public function closeModal()
+    public function closeModal(): void
     {
         $this->showActivityModal = false;
         $this->selectedActivity = null;
         $this->selectedEvents = null;
         $this->selectedDate = null;
-    }
-
-    // ─────────────────────────────────────────────
-    // Actividades del cuaderno de campo (existente)
-    // ─────────────────────────────────────────────
-
-    public function getActivitiesForMonth()
-    {
-        $user = Auth::user();
-        $startDate = Carbon::create($this->currentYear, $this->currentMonth, 1)->startOfMonth();
-        $endDate = $startDate->copy()->endOfMonth();
-
-        $query = AgriculturalActivity::forViticulturist($user->id)
-            ->whereBetween('activity_date', [$startDate, $endDate])
-            ->with(['plot', 'phytosanitaryTreatment.product', 'fertilization',
-                'irrigation', 'culturalWork', 'observation']);
-
-        if ($this->selectedCampaign) {
-            $query->forCampaign($this->selectedCampaign);
-        }
-        if ($this->activityType) {
-            $query->ofType($this->activityType);
-        }
-
-        return $query->get()->groupBy(fn ($a) => Carbon::parse($a->activity_date)->format('Y-m-d'));
-    }
-
-    // ─────────────────────────────────────────────
-    // Eventos/alertas de otros módulos
-    // ─────────────────────────────────────────────
-
-    /**
-     * Eventos no-actividad para el mes visible, agrupados por fecha Y-m-d.
-     * Cada evento: ['type', 'label', 'description', 'urgency' => normal|warning|danger]
-     */
-    public function getEventsForPeriod(Carbon $start, Carbon $end): \Illuminate\Support\Collection
-    {
-        $user = Auth::user();
-        $userId = $user->id;
-        $events = collect();
-        $today = Carbon::today();
-
-        // ── Vencimiento ROPO (aplicadores) ──────────────────────────
-        try {
-            FieldApplicator::forViticulturist($userId)
-                ->whereNotNull('ropo_expiry_date')
-                ->whereBetween('ropo_expiry_date', [$start, $end])
-                ->get()
-                ->each(function ($item) use (&$events, $today) {
-                    $expires = Carbon::parse($item->ropo_expiry_date);
-                    $events->push([
-                        'date' => $expires->format('Y-m-d'),
-                        'type' => 'alert_ropo',
-                        'label' => __('ROPO vence'),
-                        'description' => $item->name ?? '',
-                        'urgency' => $expires->diffInDays($today, false) >= 0 ? 'danger' : ($expires->diffInDays($today) <= 30 ? 'warning' : 'normal'),
-                    ]);
-                });
-        } catch (\Exception $e) {
-        }
-
-        // ── Próxima inspección ITB/ITEA ─────────────────────────────
-        try {
-            FieldEquipment::forViticulturist($userId)
-                ->whereNotNull('next_inspection_date')
-                ->whereBetween('next_inspection_date', [$start, $end])
-                ->get()
-                ->each(function ($item) use (&$events, $today) {
-                    $due = Carbon::parse($item->next_inspection_date);
-                    $events->push([
-                        'date' => $due->format('Y-m-d'),
-                        'type' => 'alert_itb',
-                        'label' => __('Inspección ITB'),
-                        'description' => $item->name ?? '',
-                        'urgency' => $due->diffInDays($today, false) >= 0 ? 'danger' : ($due->diffInDays($today) <= 30 ? 'warning' : 'normal'),
-                    ]);
-                });
-        } catch (\Exception $e) {
-        }
-
-        // ── Vencimiento autorizaciones comerciales ───────────────────
-        try {
-            CommercialAuthorization::forViticulturist($userId)
-                ->whereNotNull('expiry_date')
-                ->whereBetween('expiry_date', [$start, $end])
-                ->get()
-                ->each(function ($item) use (&$events, $today) {
-                    $expires = Carbon::parse($item->expiry_date);
-                    $events->push([
-                        'date' => $expires->format('Y-m-d'),
-                        'type' => 'alert_authorization',
-                        'label' => __('Autorización vence'),
-                        'description' => $item->name ?? $item->authorization_code ?? '',
-                        'urgency' => $expires->diffInDays($today, false) >= 0 ? 'danger' : ($expires->diffInDays($today) <= 30 ? 'warning' : 'normal'),
-                    ]);
-                });
-        } catch (\Exception $e) {
-        }
-
-        // ── Análisis de residuos ────────────────────────────────────
-        try {
-            ResidueAnalysis::forViticulturist($userId)
-                ->whereBetween('analysis_date', [$start, $end])
-                ->with('plotPlanting.plot')
-                ->get()
-                ->each(function ($item) use (&$events) {
-                    $events->push([
-                        'date' => Carbon::parse($item->analysis_date)->format('Y-m-d'),
-                        'type' => 'residue_analysis',
-                        'label' => __('Análisis residuos'),
-                        'description' => $item->plotPlanting?->plot->name ?? '',
-                        'urgency' => 'normal',
-                    ]);
-                });
-        } catch (\Exception $e) {
-        }
-
-        // ── Gestión de residuos ─────────────────────────────────────
-        try {
-            ResidueManagement::forViticulturist($userId)
-                ->whereBetween('date', [$start, $end])
-                ->get()
-                ->each(function ($item) use (&$events) {
-                    $events->push([
-                        'date' => Carbon::parse($item->date)->format('Y-m-d'),
-                        'type' => 'residue_management',
-                        'label' => __('Gestión residuos'),
-                        'description' => $item->residue_type ?? '',
-                        'urgency' => 'normal',
-                    ]);
-                });
-        } catch (\Exception $e) {
-        }
-
-        // ── Consumo energético ──────────────────────────────────────
-        try {
-            EnergyUsage::forViticulturist($userId)
-                ->whereBetween('date', [$start, $end])
-                ->get()
-                ->each(function ($item) use (&$events) {
-                    $events->push([
-                        'date' => Carbon::parse($item->date)->format('Y-m-d'),
-                        'type' => 'energy',
-                        'label' => __('Consumo energético'),
-                        'description' => $item->energy_type ?? '',
-                        'urgency' => 'normal',
-                    ]);
-                });
-        } catch (\Exception $e) {
-        }
-
-        // ── Declaraciones PAC ───────────────────────────────────────
-        try {
-            PacDeclaration::forViticulturist($userId)
-                ->whereNotNull('submitted_at')
-                ->whereBetween('submitted_at', [$start, $end])
-                ->get()
-                ->each(function ($item) use (&$events) {
-                    $events->push([
-                        'date' => Carbon::parse($item->submitted_at)->format('Y-m-d'),
-                        'type' => 'pac_declaration',
-                        'label' => __('Declaración PAC'),
-                        'description' => $item->campaign_year ?? '',
-                        'urgency' => 'normal',
-                    ]);
-                });
-        } catch (\Exception $e) {
-        }
-
-        // ── Pagos PAC ───────────────────────────────────────────────
-        try {
-            PacPayment::forViticulturist($userId)
-                ->whereNotNull('payment_date')
-                ->whereBetween('payment_date', [$start, $end])
-                ->get()
-                ->each(function ($item) use (&$events) {
-                    $events->push([
-                        'date' => Carbon::parse($item->payment_date)->format('Y-m-d'),
-                        'type' => 'pac_payment',
-                        'label' => __('Pago PAC'),
-                        'description' => $item->concept ?? '',
-                        'urgency' => 'normal',
-                    ]);
-                });
-        } catch (\Exception $e) {
-        }
-
-        // ── Hitos de campaña ────────────────────────────────────────
-        if ($this->selectedCampaign) {
-            try {
-                $campaign = Campaign::find($this->selectedCampaign);
-                if ($campaign) {
-                    foreach ([
-                        'mid_validation_date' => __('Validación intermedia'),
-                        'final_validation_date' => __('Validación final'),
-                    ] as $field => $label) {
-                        if ($campaign->$field) {
-                            $date = Carbon::parse($campaign->$field);
-                            if ($date->between($start, $end)) {
-                                $events->push([
-                                    'date' => $date->format('Y-m-d'),
-                                    'type' => 'campaign_milestone',
-                                    'label' => $label,
-                                    'description' => $campaign->name,
-                                    'urgency' => 'normal',
-                                ]);
-                            }
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-            }
-        }
-
-        return $events->groupBy('date');
-    }
-
-    /**
-     * Eventos para un día concreto (modal).
-     */
-    public function getEventsForDate(int $userId, string $date): \Illuminate\Support\Collection
-    {
-        $day = Carbon::parse($date);
-
-        return $this->getEventsForPeriod($day->copy()->startOfDay(), $day->copy()->endOfDay())
-            ->get($date, collect());
-    }
-
-    // ─────────────────────────────────────────────
-    // Próximas actividades (7 días desde hoy)
-    // ─────────────────────────────────────────────
-
-    public function getUpcomingActivities()
-    {
-        $user = Auth::user();
-        $today = Carbon::today();
-        $end = $today->copy()->addDays(6)->endOfDay();
-
-        $query = AgriculturalActivity::forViticulturist($user->id)
-            ->whereBetween('activity_date', [$today, $end])
-            ->with(['plot', 'phytosanitaryTreatment.product', 'fertilization',
-                'irrigation', 'culturalWork', 'observation'])
-            ->orderBy('activity_date');
-
-        if ($this->selectedCampaign) {
-            $query->forCampaign($this->selectedCampaign);
-        }
-
-        return $query->get();
-    }
-
-    public function getRecentActivities()
-    {
-        $user = Auth::user();
-        $today = Carbon::today();
-        $weekStart = $today->copy()->subDays(6)->startOfDay();
-
-        $query = AgriculturalActivity::forViticulturist($user->id)
-            ->whereBetween('activity_date', [$weekStart, $today->copy()->subDay()->endOfDay()])
-            ->with(['plot'])
-            ->orderByDesc('activity_date')
-            ->limit(5);
-
-        if ($this->selectedCampaign) {
-            $query->forCampaign($this->selectedCampaign);
-        }
-
-        return $query->get();
-    }
-
-    // ─────────────────────────────────────────────
-    // Construcción del grid
-    // ─────────────────────────────────────────────
-
-    public function getCalendarDays()
-    {
-        $startDate = Carbon::create($this->currentYear, $this->currentMonth, 1)->startOfMonth();
-        $endDate = $startDate->copy()->endOfMonth();
-        $startOfCalendar = $startDate->copy()->startOfWeek(Carbon::MONDAY);
-        $endOfCalendar = $endDate->copy()->endOfWeek(Carbon::SUNDAY);
-
-        $activities = $this->getActivitiesForMonth();
-        $events = $this->getEventsForPeriod($startOfCalendar, $endOfCalendar);
-
-        $days = [];
-        $currentDay = $startOfCalendar->copy();
-
-        while ($currentDay <= $endOfCalendar) {
-            $dateKey = $currentDay->format('Y-m-d');
-            $dayActivities = $activities->get($dateKey, collect());
-            $dayEvents = $events->get($dateKey, collect());
-
-            $days[] = [
-                'date' => $currentDay->copy(),
-                'dateKey' => $dateKey,
-                'day' => $currentDay->day,
-                'isCurrentMonth' => $currentDay->month == $this->currentMonth,
-                'isToday' => $currentDay->isToday(),
-                'activities' => $dayActivities,
-                'activityCount' => $dayActivities->count(),
-                'events' => $dayEvents,
-                'eventCount' => $dayEvents->count(),
-                'hasAlerts' => $dayEvents->whereIn('type', ['alert_ropo', 'alert_itb', 'alert_authorization'])->isNotEmpty(),
-            ];
-
-            $currentDay->addDay();
-        }
-
-        return $days;
-    }
-
-    // ─────────────────────────────────────────────
-    // Helpers de color y etiqueta
-    // ─────────────────────────────────────────────
-
-    public function getActivityTypeColor($type)
-    {
-        return match ($type) {
-            'phytosanitary' => 'bg-red-100 text-red-700 border-red-300',
-            'fertilization' => 'bg-blue-100 text-blue-700 border-blue-300',
-            'irrigation' => 'bg-cyan-100 text-cyan-700 border-cyan-300',
-            'cultural' => 'bg-yellow-100 text-yellow-700 border-yellow-300',
-            'observation' => 'bg-zinc-100 text-zinc-700 border-zinc-300',
-            'pruning' => 'bg-lime-100 text-lime-700 border-lime-300',
-            'harvest' => 'bg-amber-100 text-amber-700 border-amber-300',
-            'post_harvest' => 'bg-purple-100 text-purple-700 border-purple-300',
-            default => 'bg-zinc-100 text-zinc-700 border-zinc-300',
-        };
-    }
-
-    public function getActivityTypeLabel($type)
-    {
-        return match ($type) {
-            'phytosanitary' => __('Tratamiento'),
-            'fertilization' => __('Fertilización'),
-            'irrigation' => __('Riego'),
-            'cultural' => __('Labor'),
-            'observation' => __('Observación'),
-            'pruning' => __('Poda'),
-            'harvest' => __('Vendimia'),
-            'post_harvest' => __('Post-vendimia'),
-            default => __('Actividad'),
-        };
-    }
-
-    public function getEventColor($type, $urgency = 'normal')
-    {
-        if (in_array($type, ['alert_ropo', 'alert_itb', 'alert_authorization'])) {
-            return match ($urgency) {
-                'danger' => 'bg-red-100 text-red-800 border-red-400',
-                'warning' => 'bg-orange-100 text-orange-800 border-orange-400',
-                default => 'bg-orange-50 text-orange-700 border-orange-300',
-            };
-        }
-
-        return match ($type) {
-            'residue_analysis' => 'bg-purple-100 text-purple-700 border-purple-300',
-            'residue_management' => 'bg-slate-100 text-slate-700 border-slate-300',
-            'energy' => 'bg-amber-100 text-amber-700 border-amber-300',
-            'pac_declaration' => 'bg-amber-100 text-amber-800 border-amber-400',
-            'pac_payment' => 'bg-teal-100 text-teal-700 border-teal-300',
-            'campaign_milestone' => 'bg-green-100 text-green-800 border-green-400',
-            default => 'bg-zinc-100 text-zinc-700 border-zinc-300',
-        };
-    }
-
-    public function getEventLabel($type)
-    {
-        return match ($type) {
-            'alert_ropo' => __('ROPO vence'),
-            'alert_itb' => __('Inspección ITB'),
-            'alert_authorization' => __('Autorización vence'),
-            'residue_analysis' => __('Análisis residuos'),
-            'residue_management' => __('Gestión residuos'),
-            'energy' => __('Consumo energético'),
-            'pac_declaration' => __('Declaración PAC'),
-            'pac_payment' => __('Pago PAC'),
-            'campaign_milestone' => __('Hito campaña'),
-            default => __('Evento'),
-        };
     }
 
     #[Layout('layouts.app', [
@@ -564,12 +177,7 @@ class Calendar extends Component
             'monthName' => $monthName,
             'upcomingActivities' => $this->getUpcomingActivities(),
             'recentActivities' => $this->getRecentActivities(),
-            'routePrefix' => $this->routePrefix(),
+            'routePrefix' => Auth::user()->role === 'producer' ? 'producer' : 'viticulturist',
         ]);
-    }
-
-    private function routePrefix(): string
-    {
-        return Auth::user()->role === 'producer' ? 'producer' : 'viticulturist';
     }
 }

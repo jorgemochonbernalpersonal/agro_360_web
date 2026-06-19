@@ -2,17 +2,15 @@
 
 namespace App\Livewire\Viticulturist\Personal;
 
+use App\Livewire\Concerns\WithCrewManagement;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithViticulturistOperations;
 use App\Models\Crew;
 use App\Models\CrewMember;
 use App\Models\User;
 use App\Models\WineryViticulturist;
-use App\Notifications\ViticulturistInvitationNotification;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -21,20 +19,17 @@ use Livewire\WithPagination;
  */
 class UnifiedIndex extends Component
 {
-    use WithPagination, WithToastNotifications, WithUserFilters;
+    use WithCrewManagement, WithPagination, WithToastNotifications, WithUserFilters, WithViticulturistOperations;
 
-    public $viewMode = 'personal'; // 'personal' o 'crews'
+    public $viewMode = 'personal';
 
     public $search = '';
 
     public $wineryFilter = '';
 
-    public $statusFilter = ''; // 'in_crew', 'individual', 'unassigned'
+    public $statusFilter = '';
 
-    public $crewFilter = ''; // Filtro por cuadrilla específica
-
-    // Para asignaciones
-    public $assignToCrewId = '';
+    public $crewFilter = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -44,290 +39,33 @@ class UnifiedIndex extends Component
         'viewMode' => ['except' => 'personal'],
     ];
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function updatingWineryFilter()
+    public function updatingWineryFilter(): void
     {
         $this->resetPage();
     }
 
-    public function updatingStatusFilter()
+    public function updatingStatusFilter(): void
     {
         $this->resetPage();
     }
 
-    public function updatingCrewFilter()
+    public function updatingCrewFilter(): void
     {
         $this->resetPage();
     }
 
-    public function switchView($mode)
+    public function switchView($mode): void
     {
         $this->viewMode = $mode;
         $this->resetPage();
     }
 
-    public function assignToCrew(int $viticulturistId): void
-    {
-        if (empty($viticulturistId) || empty($this->assignToCrewId)) {
-            $this->toastError(__('Debes seleccionar un equipo.'));
-
-            return;
-        }
-
-        $user = Auth::user();
-
-        // Verificar que el viticultor pertenece al usuario actual
-        $canEdit = WineryViticulturist::editableBy($user)
-            ->where('viticulturist_id', $viticulturistId)
-            ->exists();
-
-        if (! $canEdit) {
-            $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
-
-            return;
-        }
-
-        // Verificar que la cuadrilla pertenece al viticultor actual
-        $crew = Crew::forViticulturist($user->id)
-            ->where('id', $this->assignToCrewId)
-            ->first();
-
-        if (! $crew) {
-            $this->toastError(__('No tienes permiso para gestionar este equipo.'));
-
-            return;
-        }
-
-        // Evitar duplicados de CrewMember por viticultor
-        $member = CrewMember::where('viticulturist_id', $viticulturistId)->first();
-
-        if ($member && $member->crew_id === $crew->id) {
-            $this->toastError(__('Este viticultor ya forma parte de este equipo.'));
-
-            return;
-        }
-
-        try {
-            if (! $member) {
-                // Crear nuevo miembro directamente asignado al equipo
-                CrewMember::create([
-                    'viticulturist_id' => $viticulturistId,
-                    'crew_id' => $crew->id,
-                    'assigned_by' => $user->id,
-                ]);
-            } else {
-                // Actualizar miembro existente (sin equipo u otro equipo) a este equipo
-                $member->update([
-                    'crew_id' => $crew->id,
-                    'assigned_by' => $user->id,
-                ]);
-            }
-
-            $this->assignToCrewId = '';
-
-            $this->toastSuccess(__('Viticultor asignado al equipo correctamente.'));
-        } catch (\Exception $e) {
-            Log::error('Error al asignar viticultor a equipo', [
-                'error' => $e->getMessage(),
-                'viticulturist_id' => $viticulturistId,
-                'crew_id' => $this->assignToCrewId,
-                'user_id' => $user->id,
-            ]);
-
-            $this->toastError(__('Error al asignar el viticultor al equipo. Por favor, intenta de nuevo.'));
-        }
-    }
-
-    public function makeIndividual(int $viticulturistId): void
-    {
-        $user = Auth::user();
-
-        // Verificar que el viticultor pertenece al usuario actual
-        $canEdit = WineryViticulturist::editableBy($user)
-            ->where('viticulturist_id', $viticulturistId)
-            ->exists();
-
-        if (! $canEdit) {
-            $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
-
-            return;
-        }
-
-        $member = CrewMember::where('viticulturist_id', $viticulturistId)->first();
-
-        if (! $member) {
-            // Crear como trabajador sin equipo
-            CrewMember::create([
-                'viticulturist_id' => $viticulturistId,
-                'crew_id' => null,
-                'assigned_by' => $user->id,
-            ]);
-            $this->toastSuccess(__('Viticultor marcado como sin equipo.'));
-        } else {
-            // Convertir a sin equipo
-            $member->update(['crew_id' => null]);
-            $this->toastSuccess(__('Viticultor convertido a sin equipo.'));
-        }
-    }
-
-    public function deleteCrew(Crew $crew)
-    {
-        if (! Auth::user()->can('delete', $crew)) {
-            $this->toastError(__('No tienes permiso para eliminar este equipo.'));
-
-            return;
-        }
-
-        if ($crew->activities()->exists()) {
-            $this->toastError(__('No se puede eliminar un equipo con actividades asociadas.'));
-
-            return;
-        }
-
-        try {
-            DB::transaction(function () use ($crew) {
-                // Eliminar miembros primero
-                $crew->members()->delete();
-                $crew->delete();
-            });
-
-            $this->toastSuccess(__('Equipo eliminado correctamente.'));
-        } catch (\Exception $e) {
-            Log::error('Error deleting crew', [
-                'crew_id' => $crew->id,
-                'user_id' => Auth::id(),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            $this->toastError(__('Hubo un error al eliminar el equipo. Por favor, inténtalo de nuevo.'));
-        }
-    }
-
-    public function sendInvitation(int $viticulturistId): void
-    {
-        $user = Auth::user();
-
-        // Verificar que el viticultor pertenece al usuario actual
-        $canEdit = WineryViticulturist::editableBy($user)
-            ->where('viticulturist_id', $viticulturistId)
-            ->exists();
-
-        if (! $canEdit) {
-            $this->toastError(__('No tienes permiso para gestionar este viticultor.'));
-
-            return;
-        }
-
-        $viticulturist = User::find($viticulturistId);
-
-        if (! $viticulturist) {
-            $this->toastError(__('Viticultor no encontrado.'));
-
-            return;
-        }
-
-        // Verificar que no se haya enviado ya la invitación
-        if ($viticulturist->invitation_sent_at !== null) {
-            $this->toastError(__('La invitación ya fue enviada anteriormente.'));
-
-            return;
-        }
-
-        // Verificar que el viticultor aún no puede hacer login (estado inicial)
-        if ($viticulturist->can_login) {
-            $this->toastError(__('Este viticultor ya puede iniciar sesión. No es necesario enviar invitación.'));
-
-            return;
-        }
-
-        $plainToken = Str::random(64);
-        $viticulturist->update([
-            'invitation_token'    => hash('sha256', $plainToken),
-            'invitation_sent_at'  => now(),
-            'invitation_expires_at' => now()->addDays(7),
-        ]);
-
-        try {
-            $viticulturist->notify(new ViticulturistInvitationNotification($user, $plainToken));
-
-            $this->toastSuccess(__('Invitación enviada correctamente por email.'));
-        } catch (\Exception $e) {
-            Log::error('Error al enviar invitación', [
-                'error' => $e->getMessage(),
-                'viticulturist_id' => $viticulturistId,
-                'user_id' => $user->id,
-            ]);
-
-            $this->toastError(__('Error al enviar la invitación. Por favor, intenta de nuevo.'));
-        }
-    }
-
-    public function deleteViticulturist($viticulturistId)
-    {
-        $user = Auth::user();
-
-        // Verify this user can delete the viticulturist: must be the creator
-        $relation = WineryViticulturist::where('viticulturist_id', $viticulturistId)
-            ->where('parent_viticulturist_id', $user->id)
-            ->first();
-
-        if (! $relation) {
-            $this->toastError(__('No tienes permiso para eliminar este viticultor.'));
-
-            return;
-        }
-
-        // Check dependent records
-        $hasPlots = \App\Models\Plot::where('viticulturist_id', $viticulturistId)->exists();
-        $hasCampaigns = \App\Models\Campaign::where('viticulturist_id', $viticulturistId)->exists();
-        $hasActivities = \App\Models\AgriculturalActivity::where('viticulturist_id', $viticulturistId)->exists();
-        $hasDeliveries = \App\Models\HarvestDelivery::where('viticulturist_id', $viticulturistId)->exists();
-        $hasInvoices = \App\Models\Invoice::where('user_id', $viticulturistId)->exists();
-        $hasCrews = Crew::where('viticulturist_id', $viticulturistId)->exists();
-        $hasSubs = \App\Models\Subscription::where('user_id', $viticulturistId)->exists();
-        $hasPayments = \App\Models\Payment::where('user_id', $viticulturistId)->exists();
-        $hasSupervisorLinks = \App\Models\SupervisorViticulturist::where('viticulturist_id', $viticulturistId)->exists();
-        // Exclude the creator's own link record (source=viticulturist, parent=current user)
-        // to avoid permanently blocking deletion of sub-viticulturists.
-        $hasWineryRelations = WineryViticulturist::where('viticulturist_id', $viticulturistId)
-            ->where(function ($q) use ($user) {
-                $q->where('source', '!=', WineryViticulturist::SOURCE_VITICULTURIST)
-                    ->orWhere('parent_viticulturist_id', '!=', $user->id);
-            })
-            ->exists();
-
-        if ($hasPlots || $hasCampaigns || $hasActivities || $hasDeliveries || $hasInvoices
-            || $hasCrews || $hasSubs || $hasPayments || $hasSupervisorLinks || $hasWineryRelations) {
-            $this->toastError(__('No se puede eliminar el viticultor porque tiene datos relacionados.'));
-
-            return;
-        }
-
-        $vit = User::find($viticulturistId);
-        if (! $vit) {
-            $this->toastError(__('Viticultor no encontrado.'));
-
-            return;
-        }
-
-        try {
-            $vit->delete();
-            $this->toastSuccess(__('Viticultor eliminado correctamente.'));
-        } catch (\Exception $e) {
-            Log::error('Error al eliminar viticultor', [
-                'error' => $e->getMessage(),
-                'viticulturist_id' => $viticulturistId,
-                'user_id' => $user->id,
-            ]);
-            $this->toastError(__('Error al eliminar el viticultor. Por favor, intenta de nuevo.'));
-        }
-    }
-
-    public function clearFilters()
+    public function clearFilters(): void
     {
         $this->search = '';
         $this->wineryFilter = '';
@@ -341,17 +79,13 @@ class UnifiedIndex extends Component
         $user = Auth::user();
         $wineries = $user->wineries;
 
-        if ($this->viewMode === 'personal') {
-            return $this->renderPersonalView($user, $wineries);
-        } else {
-            return $this->renderCrewsView($user, $wineries);
-        }
+        return $this->viewMode === 'personal'
+            ? $this->renderPersonalView($user, $wineries)
+            : $this->renderCrewsView($user, $wineries);
     }
 
     private function renderPersonalView($user, $wineries)
     {
-        // Usar el trait WithUserFilters para obtener todos los viticultores visibles
-        // Esto incluye: el usuario mismo, los que creó, los de sus bodegas, y los del supervisor
         $allVisibleViticulturists = $this->viticulturists;
         $visibleIds = $allVisibleViticulturists->pluck('id');
 
@@ -359,7 +93,6 @@ class UnifiedIndex extends Component
             ->where('role', 'viticulturist')
             ->whereIn('id', $visibleIds);
 
-        // Búsqueda
         if ($this->search) {
             $search = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($search) {
@@ -368,77 +101,49 @@ class UnifiedIndex extends Component
             });
         }
 
-        // Filtro por bodega
         if ($this->wineryFilter) {
             $viticulturistIds = WineryViticulturist::where('winery_id', $this->wineryFilter)
                 ->pluck('viticulturist_id');
             $query->whereIn('id', $viticulturistIds);
         }
 
-        // Filtro por cuadrilla específica
         if ($this->crewFilter) {
             $crewMemberIds = CrewMember::where('crew_id', $this->crewFilter)
                 ->pluck('viticulturist_id');
             $query->whereIn('id', $crewMemberIds);
         }
 
-        // Filtro de estado - aplicar antes de paginar
         if ($this->statusFilter) {
             if ($this->statusFilter === 'in_crew') {
-                // Solo viticultores que están en alguna cuadrilla
-                $crewMemberIds = CrewMember::whereNotNull('crew_id')
-                    ->pluck('viticulturist_id');
-                $query->whereIn('id', $crewMemberIds);
+                $query->whereIn('id', CrewMember::whereNotNull('crew_id')->pluck('viticulturist_id'));
             } elseif ($this->statusFilter === 'individual') {
-                // Solo viticultores que son individuales (tienen CrewMember pero sin crew_id)
-                $crewMemberIds = CrewMember::whereNull('crew_id')
-                    ->pluck('viticulturist_id');
-                $query->whereIn('id', $crewMemberIds);
+                $query->whereIn('id', CrewMember::whereNull('crew_id')->pluck('viticulturist_id'));
             } elseif ($this->statusFilter === 'unassigned') {
-                // Solo viticultores que no tienen CrewMember
-                $assignedIds = CrewMember::pluck('viticulturist_id');
-                $query->whereNotIn('id', $assignedIds);
+                $query->whereNotIn('id', CrewMember::pluck('viticulturist_id'));
             }
         }
 
         $viticulturists = $query->orderBy('name')->paginate(15);
 
-        // Obtener miembros de una vez
         $membersByViticulturist = CrewMember::with('crew')
             ->whereIn('viticulturist_id', $viticulturists->pluck('id'))
             ->get()
             ->keyBy('viticulturist_id');
 
-        // Cuadrillas disponibles
-        $crews = Crew::forViticulturist($user->id)
-            ->orderBy('name')
-            ->get();
+        $crews = Crew::forViticulturist($user->id)->orderBy('name')->get();
 
-        // Calcular estadísticas para todos los viticultores (no solo los paginados)
-        $allViticulturists = User::where('role', 'viticulturist')
-            ->whereIn('id', $visibleIds)
-            ->get();
-
+        $allViticulturists = User::where('role', 'viticulturist')->whereIn('id', $visibleIds)->get();
         $allMembers = CrewMember::whereIn('viticulturist_id', $allViticulturists->pluck('id'))
-            ->with('crew')
-            ->get()
-            ->keyBy('viticulturist_id');
+            ->with('crew')->get()->keyBy('viticulturist_id');
 
         $inCrewCount = $allMembers->filter(fn ($m) => $m->crew_id !== null)->count();
         $individualCount = $allMembers->filter(fn ($m) => $m->crew_id === null)->count();
         $unassignedCount = $allViticulturists->count() - $allMembers->count();
         $crewsCount = Crew::forViticulturist($user->id)->count();
 
-        // Eager load wineries para cada viticultor paginado
-        $viticulturistIds = $viticulturists->pluck('id');
-        $wineryRelations = WineryViticulturist::whereIn('viticulturist_id', $viticulturistIds)
-            ->with('winery')
-            ->get()
-            ->groupBy('viticulturist_id');
-
-        $wineriesByViticulturist = $wineryRelations->map(function ($relations) {
-            return $relations->pluck('winery')->filter()->unique('id')->values();
-        });
+        $wineryRelations = WineryViticulturist::whereIn('viticulturist_id', $viticulturists->pluck('id'))
+            ->with('winery')->get()->groupBy('viticulturist_id');
+        $wineriesByViticulturist = $wineryRelations->map(fn ($r) => $r->pluck('winery')->filter()->unique('id')->values());
 
         return view('livewire.viticulturist.personal.unified-index', [
             'viticulturists' => $viticulturists,
@@ -481,15 +186,11 @@ class UnifiedIndex extends Component
 
         $crewsPaginated = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        // Calcular estadísticas para equipos
         $allCrews = Crew::forViticulturist($user->id)->get();
         $crewsCount = $allCrews->count();
 
-        // Calcular estadísticas de viticultores para el panel
-        $createdViticulturistIds = WineryViticulturist::editableBy($user)
-            ->pluck('viticulturist_id');
         $allViticulturists = User::where('role', 'viticulturist')
-            ->whereIn('id', $createdViticulturistIds)
+            ->whereIn('id', WineryViticulturist::editableBy($user)->pluck('viticulturist_id'))
             ->count();
 
         return view('livewire.viticulturist.personal.unified-index', [
