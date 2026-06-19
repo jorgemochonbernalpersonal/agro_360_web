@@ -2,13 +2,12 @@
 
 namespace App\Livewire\Winery\ProductionCosts;
 
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Wine;
 use App\Models\WineCost;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
     public ?int $wine_id = null;
 
@@ -32,49 +31,6 @@ class Create extends Component
         $this->cost_date = now()->toDateString();
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $userId = Auth::id();
-
-        // Ensure wine belongs to this winery
-        $wine = Wine::where('id', $this->wine_id)->where('user_id', $userId)->firstOrFail();
-
-        WineCost::create([
-            'wine_id' => $wine->id,
-            'user_id' => $userId,
-            'category' => $this->category,
-            'description' => $this->description,
-            'amount' => $this->amount,
-            'cost_date' => $this->cost_date,
-            'supplier' => $this->supplier ?: null,
-            'invoice_reference' => $this->invoice_reference ?: null,
-            'notes' => $this->notes ?: null,
-            'created_by' => $userId,
-        ]);
-
-        session()->flash('success', __('Coste registrado correctamente.'));
-        $this->redirect(roleRoute('production-costs.index'), navigate: true);
-    }
-
-    #[Layout('layouts.app')]
-    public function render()
-    {
-        $userId = Auth::id();
-
-        $wines = Wine::where('user_id', $userId)
-            ->whereNotIn('status', ['cancelled'])
-            ->orderByDesc('vintage')
-            ->orderBy('name')
-            ->get(['id', 'name', 'vintage', 'wine_type']);
-
-        return view('livewire.winery.production-costs.create', [
-            'wines' => $wines,
-            'categories' => WineCost::categoryOptions(),
-        ]);
-    }
-
     protected function rules(): array
     {
         return [
@@ -86,6 +42,47 @@ class Create extends Component
             'supplier' => 'nullable|string|max:150',
             'invoice_reference' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:2000',
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        // Ensure wine belongs to this winery
+        $wine = Wine::where('id', $this->wine_id)->where('user_id', Auth::id())->firstOrFail();
+
+        WineCost::create([
+            'wine_id' => $wine->id,
+            'user_id' => $this->ownerId(),
+            'category' => $this->category,
+            'description' => $this->description,
+            'amount' => $this->amount,
+            'cost_date' => $this->cost_date,
+            'supplier' => $this->supplier ?: null,
+            'invoice_reference' => $this->invoice_reference ?: null,
+            'notes' => $this->notes ?: null,
+            'created_by' => $this->ownerId(),
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Coste registrado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.production-costs.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'wines' => Wine::where('user_id', Auth::id())
+                ->whereNotIn('status', ['cancelled'])
+                ->orderByDesc('vintage')
+                ->orderBy('name')
+                ->get(['id', 'name', 'vintage', 'wine_type']),
+            'categories' => WineCost::categoryOptions(),
         ];
     }
 }

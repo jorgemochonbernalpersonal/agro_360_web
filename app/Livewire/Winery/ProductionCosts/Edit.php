@@ -2,13 +2,12 @@
 
 namespace App\Livewire\Winery\ProductionCosts;
 
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\Wine;
 use App\Models\WineCost;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
     public WineCost $cost;
 
@@ -43,51 +42,12 @@ class Edit extends Component
         $this->notes = $cost->notes ?? '';
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $userId = Auth::id();
-        Wine::where('id', $this->wine_id)->where('user_id', $userId)->firstOrFail();
-
-        $this->cost->update([
-            'wine_id' => $this->wine_id,
-            'category' => $this->category,
-            'description' => $this->description,
-            'amount' => $this->amount,
-            'cost_date' => $this->cost_date,
-            'supplier' => $this->supplier ?: null,
-            'invoice_reference' => $this->invoice_reference ?: null,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        session()->flash('success', __('Coste actualizado correctamente.'));
-        $this->redirect(roleRoute('production-costs.index'), navigate: true);
-    }
-
     public function delete(): void
     {
         $this->authorize('delete', $this->cost);
         $this->cost->delete();
         session()->flash('success', __('Coste eliminado.'));
         $this->redirect(roleRoute('production-costs.index'), navigate: true);
-    }
-
-    #[Layout('layouts.app')]
-    public function render()
-    {
-        $userId = Auth::id();
-
-        $wines = Wine::where('user_id', $userId)
-            ->whereNotIn('status', ['cancelled'])
-            ->orderByDesc('vintage')
-            ->orderBy('name')
-            ->get(['id', 'name', 'vintage', 'wine_type']);
-
-        return view('livewire.winery.production-costs.edit', [
-            'wines' => $wines,
-            'categories' => WineCost::categoryOptions(),
-        ]);
     }
 
     protected function rules(): array
@@ -101,6 +61,44 @@ class Edit extends Component
             'supplier' => 'nullable|string|max:150',
             'invoice_reference' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:2000',
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        Wine::where('id', $this->wine_id)->where('user_id', Auth::id())->firstOrFail();
+
+        $this->cost->update([
+            'wine_id' => $this->wine_id,
+            'category' => $this->category,
+            'description' => $this->description,
+            'amount' => $this->amount,
+            'cost_date' => $this->cost_date,
+            'supplier' => $this->supplier ?: null,
+            'invoice_reference' => $this->invoice_reference ?: null,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Coste actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.production-costs.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'wines' => Wine::where('user_id', Auth::id())
+                ->whereNotIn('status', ['cancelled'])
+                ->orderByDesc('vintage')
+                ->orderBy('name')
+                ->get(['id', 'name', 'vintage', 'wine_type']),
+            'categories' => WineCost::categoryOptions(),
         ];
     }
 }
