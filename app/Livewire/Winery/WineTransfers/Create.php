@@ -3,7 +3,7 @@
 namespace App\Livewire\Winery\WineTransfers;
 
 use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Container;
 use App\Models\Oenologist;
 use App\Models\UnitOfMeasurement;
@@ -12,11 +12,11 @@ use App\Models\WineTransfer;
 use App\Services\WineContainerStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
+use Illuminate\Validation\ValidationException;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithOwnershipRules, WithToastNotifications;
+    use WithOwnershipRules;
 
     public string $wine_id = '';
 
@@ -41,17 +41,30 @@ class Create extends Component
         $this->transfer_date = now()->format('Y-m-d');
     }
 
-    public function save(): void
+    protected function rules(): array
     {
-        $this->validate();
+        return [
+            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'from_container_id' => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
+            'to_container_id' => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
+            'quantity' => ['required', 'numeric', 'min:0.001'],
+            'unit_of_measurement_id' => ['required', 'exists:units_of_measurement,id'],
+            'transfer_type' => ['required', 'in:'.implode(',', array_keys(WineTransfer::TRANSFER_TYPES))],
+            'transfer_date' => ['required', 'date'],
+            'oenologist_id' => $this->ownedOenologistRule(),
+            'notes' => ['nullable', 'string'],
+        ];
+    }
 
+    protected function performCreate(): void
+    {
         // Validate destination container has enough free capacity
         if ($this->to_container_id) {
             $dest = Container::where('user_id', Auth::id())->find($this->to_container_id);
             if ($dest && $dest->getAvailableCapacity() < (float) $this->quantity) {
-                $this->addError('quantity', __('El contenedor destino no tiene capacidad suficiente (:available L disponibles).', ['available' => number_format($dest->getAvailableCapacity(), 1)]));
-
-                return;
+                throw ValidationException::withMessages([
+                    'quantity' => __('El contenedor destino no tiene capacidad suficiente (:available L disponibles).', ['available' => number_format($dest->getAvailableCapacity(), 1)]),
+                ]);
             }
         }
 
@@ -65,38 +78,30 @@ class Create extends Component
             'transfer_date' => $this->transfer_date,
             'oenologist_id' => $this->oenologist_id ?: null,
             'notes' => $this->notes ?: null,
-            'created_by' => Auth::id(),
+            'created_by' => $this->ownerId(),
         ]);
 
         app(WineContainerStockService::class)->recordTransfer($transfer);
-
-        $this->toastSuccess(__('Trasvase registrado correctamente.'));
-        $this->redirect(roleRoute('wine-transfers.index'), navigate: true);
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.winery.wine-transfers.create', [
+        return __('Trasvase registrado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.wine-transfers.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
             'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
             'containers' => Container::where('user_id', Auth::id())->orderBy('name')->get(),
             'units' => UnitOfMeasurement::orderBy('name')->get(),
             'types' => WineTransfer::transferTypeOptions(),
             'oenologists' => Oenologist::where('user_id', Auth::id())->orderBy('name')->get(),
-        ])->layout('layouts.app');
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
-            'from_container_id' => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
-            'to_container_id' => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
-            'quantity' => ['required', 'numeric', 'min:0.001'],
-            'unit_of_measurement_id' => ['required', 'exists:units_of_measurement,id'],
-            'transfer_type' => ['required', 'in:'.implode(',', array_keys(WineTransfer::TRANSFER_TYPES))],
-            'transfer_date' => ['required', 'date'],
-            'oenologist_id' => $this->ownedOenologistRule(),
-            'notes' => ['nullable', 'string'],
         ];
     }
 }

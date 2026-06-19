@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Winery\WineLosses;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Container;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
@@ -10,16 +10,14 @@ use App\Models\WineLoss;
 use App\Services\WineContainerStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
 /**
  * @property-read mixed $containers
  */
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithToastNotifications;
-
     public string $wine_id = '';
 
     public string $container_id = '';
@@ -75,19 +73,32 @@ class Create extends Component
         unset($this->containers);
     }
 
-    public function save(): void
+    protected function rules(): array
     {
-        $this->validate();
+        return [
+            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'container_id' => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
+            'loss_type' => ['required', 'in:'.implode(',', array_keys(WineLoss::LOSS_TYPES))],
+            'loss_authorization' => ['nullable', 'in:'.implode(',', array_keys(WineLoss::LOSS_AUTHORIZATIONS))],
+            'regulatory_reference' => ['nullable', 'string', 'max:255'],
+            'quantity' => ['required', 'numeric', 'min:0.001'],
+            'unit_of_measurement_id' => ['required', 'exists:units_of_measurement,id'],
+            'loss_date' => ['required', 'date'],
+            'notes' => ['nullable', 'string'],
+        ];
+    }
 
+    protected function performCreate(): void
+    {
         Wine::where('user_id', Auth::id())->findOrFail($this->wine_id);
 
         // Validate container has enough wine stock
         if ($this->container_id) {
             $container = Container::where('user_id', Auth::id())->find($this->container_id);
             if ($container && $container->wine_volume_liters < (float) $this->quantity) {
-                $this->addError('quantity', __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format((float) $container->wine_volume_liters, 1)]));
-
-                return;
+                throw ValidationException::withMessages([
+                    'quantity' => __('El depósito solo tiene :volume L disponibles para embotellar.', ['volume' => number_format((float) $container->wine_volume_liters, 1)]),
+                ]);
             }
         }
 
@@ -101,38 +112,30 @@ class Create extends Component
             'unit_of_measurement_id' => $this->unit_of_measurement_id,
             'loss_date' => $this->loss_date,
             'notes' => $this->notes ?: null,
-            'created_by' => Auth::id(),
+            'created_by' => $this->ownerId(),
         ]);
 
         app(WineContainerStockService::class)->recordLoss($loss);
-
-        $this->toastSuccess(__('Merma registrada correctamente.'));
-        $this->redirect(roleRoute('wine-losses.index'), navigate: true);
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.winery.wine-losses.create', [
+        return __('Merma registrada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.wine-losses.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
             'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
             'containers' => $this->containers,
             'units' => UnitOfMeasurement::orderBy('name')->get(),
             'lossTypes' => WineLoss::lossTypeOptions(),
             'lossAuths' => WineLoss::lossAuthorizationOptions(),
-        ])->layout('layouts.app');
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
-            'container_id' => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
-            'loss_type' => ['required', 'in:'.implode(',', array_keys(WineLoss::LOSS_TYPES))],
-            'loss_authorization' => ['nullable', 'in:'.implode(',', array_keys(WineLoss::LOSS_AUTHORIZATIONS))],
-            'regulatory_reference' => ['nullable', 'string', 'max:255'],
-            'quantity' => ['required', 'numeric', 'min:0.001'],
-            'unit_of_measurement_id' => ['required', 'exists:units_of_measurement,id'],
-            'loss_date' => ['required', 'date'],
-            'notes' => ['nullable', 'string'],
         ];
     }
 }

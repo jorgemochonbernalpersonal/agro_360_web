@@ -6,6 +6,7 @@
     />
 
     <x-agro.form-card>
+        <form wire:submit="save" class="space-y-6">
         <x-agro.form-section title="{{ __('Identificación') }}">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -95,11 +96,8 @@
             @error('notes') <flux:error>{{ $message }}</flux:error> @enderror
         </x-agro.form-section>
 
-        <x-agro.form-actions
-            submit-:label="__('Guardar cambios')"
-            cancel-href="{{ roleRoute('wine-losses.index') }}"
-            wire:submit="save"
-        />
+        <x-agro.form-actions :cancel-url="roleRoute('wine-losses.index')" :submit-label="__('Guardar cambios')" />
+        </form>
     </x-agro.form-card>
 
 </div>

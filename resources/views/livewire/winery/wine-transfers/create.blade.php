@@ -119,6 +119,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('wine-transfers.index')" submit-:label="__('Guardar trasvase')" />
+        <x-agro.form-actions :cancel-url="roleRoute('wine-transfers.index')" :submit-label="__('Guardar trasvase')" />
     </form>
 </x-agro.form-card>
