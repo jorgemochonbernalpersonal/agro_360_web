@@ -192,6 +192,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('tasting-notes.index')" submit-:label="__('Guardar cata')" />
+        <x-agro.form-actions :cancel-url="roleRoute('tasting-notes.index')" :submit-label="__('Guardar cata')" />
     </form>
 </x-agro.form-card>

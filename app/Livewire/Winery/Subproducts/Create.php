@@ -3,22 +3,20 @@
 namespace App\Livewire\Winery\Subproducts;
 
 use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
 use App\Models\WineSubproduct;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
 /**
  * @property-read mixed $wines
  * @property-read mixed $units
  */
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
+    use WithOwnershipRules;
 
     public string $wine_id = '';
 
@@ -57,43 +55,6 @@ class Create extends Component
         return UnitOfMeasurement::orderBy('name')->get();
     }
 
-    public function save(): void
-    {
-        $data = $this->validate();
-
-        // Ownership check if wine is specified
-        if (! empty($data['wine_id'])) {
-            Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
-        }
-
-        WineSubproduct::create([
-            'user_id' => Auth::id(),
-            'wine_id' => $data['wine_id'] ?: null,
-            'type' => $data['type'],
-            'subproduct_date' => $data['subproduct_date'],
-            'quantity' => $data['quantity'],
-            'unit_of_measurement_id' => $data['unit_of_measurement_id'] ?: null,
-            'destination' => $data['destination'],
-            'destination_name' => $data['destination_name'] ?: null,
-            'lot_number' => $data['lot_number'] ?: null,
-            'notes' => $data['notes'] ?: null,
-            'created_by' => Auth::id(),
-        ]);
-
-        $this->toastSuccess(__('Subproducto registrado correctamente.'));
-        $this->roleRedirect('subproducts.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.subproducts.create', [
-            'types' => WineSubproduct::typeOptions(),
-            'destinations' => WineSubproduct::destinationOptions(),
-            'wines' => $this->wines,
-            'units' => $this->units,
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -116,6 +77,47 @@ class Create extends Component
             'quantity.required' => __('Indica la cantidad generada.'),
             'quantity.min' => __('La cantidad debe ser mayor que cero.'),
             'destination.required' => __('Debes indicar el destino.'),
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        if ($this->wine_id !== '') {
+            Wine::where('user_id', Auth::id())->findOrFail($this->wine_id);
+        }
+
+        WineSubproduct::create([
+            'user_id' => $this->ownerId(),
+            'wine_id' => $this->wine_id ?: null,
+            'type' => $this->type,
+            'subproduct_date' => $this->subproduct_date,
+            'quantity' => $this->quantity,
+            'unit_of_measurement_id' => $this->unit_of_measurement_id ?: null,
+            'destination' => $this->destination,
+            'destination_name' => $this->destination_name ?: null,
+            'lot_number' => $this->lot_number ?: null,
+            'notes' => $this->notes ?: null,
+            'created_by' => $this->ownerId(),
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Subproducto registrado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.subproducts.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => WineSubproduct::typeOptions(),
+            'destinations' => WineSubproduct::destinationOptions(),
+            'wines' => $this->wines,
+            'units' => $this->units,
         ];
     }
 }

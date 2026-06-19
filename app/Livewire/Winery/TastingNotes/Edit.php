@@ -3,23 +3,21 @@
 namespace App\Livewire\Winery\TastingNotes;
 
 use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\Oenologist;
 use App\Models\Wine;
 use App\Models\WineTastingNote;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
 /**
  * @property-read mixed $wines
  * @property-read mixed $oenologists
  * @property-read mixed $selectedWine
  */
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
+    use WithOwnershipRules;
 
     public WineTastingNote $tastingNote;
 
@@ -97,48 +95,9 @@ class Edit extends Component
         return $this->wine_id ? Wine::find($this->wine_id) : null;
     }
 
-    public function save(): void
+    public function updatedWineId(): void
     {
-        $data = $this->validate();
-
-        Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
-
-        $this->tastingNote->update([
-            'wine_id' => $data['wine_id'],
-            'oenologist_id' => $data['oenologist_id'] ?: null,
-            'evaluation_date' => $data['evaluation_date'],
-            'evaluator_name' => $data['evaluator_name'] ?: null,
-            'visual_color' => $data['visual_color'] ?: null,
-            'visual_clarity' => $data['visual_clarity'] ?: null,
-            'visual_intensity' => $data['visual_intensity'] ?: null,
-            'aroma_intensity' => $data['aroma_intensity'] ?: null,
-            'aroma_descriptors' => $data['aroma_descriptors'] ?: null,
-            'palate_acidity' => $data['palate_acidity'] ?: null,
-            'palate_tannins' => $data['palate_tannins'] ?: null,
-            'palate_body' => $data['palate_body'] ?: null,
-            'palate_finish' => $data['palate_finish'] ?: null,
-            'overall_score' => $data['overall_score'] ?: null,
-            'overall_conclusion' => $data['overall_conclusion'] ?: null,
-            'notes' => $data['notes'] ?: null,
-        ]);
-
-        $this->toastSuccess(__('Nota de cata actualizada correctamente.'));
-        $this->roleRedirect('tasting-notes.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.tasting-notes.edit', [
-            'visualClarityOptions' => WineTastingNote::visualClarityOptions(),
-            'visualIntensityOptions' => WineTastingNote::visualIntensityOptions(),
-            'aromaIntensityOptions' => WineTastingNote::aromaIntensityOptions(),
-            'palateLevelOptions' => WineTastingNote::palateLevelOptions(),
-            'palateBodyOptions' => WineTastingNote::palateBodyOptions(),
-            'palateFinishOptions' => WineTastingNote::palateFinishOptions(),
-            'wines' => $this->wines,
-            'oenologists' => $this->oenologists,
-            'selectedWine' => $this->selectedWine,
-        ])->layout('layouts.app');
+        unset($this->selectedWine);
     }
 
     protected function rules(): array
@@ -160,6 +119,55 @@ class Edit extends Component
             'overall_score' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'overall_conclusion' => ['nullable', 'string'],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        Wine::where('user_id', Auth::id())->findOrFail($this->wine_id);
+
+        $this->tastingNote->update([
+            'wine_id' => $this->wine_id,
+            'oenologist_id' => $this->oenologist_id ?: null,
+            'evaluation_date' => $this->evaluation_date,
+            'evaluator_name' => $this->evaluator_name ?: null,
+            'visual_color' => $this->visual_color ?: null,
+            'visual_clarity' => $this->visual_clarity ?: null,
+            'visual_intensity' => $this->visual_intensity ?: null,
+            'aroma_intensity' => $this->aroma_intensity ?: null,
+            'aroma_descriptors' => $this->aroma_descriptors ?: null,
+            'palate_acidity' => $this->palate_acidity ?: null,
+            'palate_tannins' => $this->palate_tannins ?: null,
+            'palate_body' => $this->palate_body ?: null,
+            'palate_finish' => $this->palate_finish ?: null,
+            'overall_score' => $this->overall_score ?: null,
+            'overall_conclusion' => $this->overall_conclusion ?: null,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Nota de cata actualizada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.tasting-notes.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'visualClarityOptions' => WineTastingNote::visualClarityOptions(),
+            'visualIntensityOptions' => WineTastingNote::visualIntensityOptions(),
+            'aromaIntensityOptions' => WineTastingNote::aromaIntensityOptions(),
+            'palateLevelOptions' => WineTastingNote::palateLevelOptions(),
+            'palateBodyOptions' => WineTastingNote::palateBodyOptions(),
+            'palateFinishOptions' => WineTastingNote::palateFinishOptions(),
+            'wines' => $this->wines,
+            'oenologists' => $this->oenologists,
+            'selectedWine' => $this->selectedWine,
         ];
     }
 }

@@ -2,17 +2,14 @@
 
 namespace App\Livewire\Winery\WineAnalysis;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\Wine;
 use App\Models\WineAnalysis;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithToastNotifications;
-
     public WineAnalysis $analysis;
 
     public string $wine_id = '';
@@ -83,41 +80,6 @@ class Edit extends Component
         $this->notes = $analysis->notes ?? '';
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $this->analysis->update([
-            'wine_id' => $this->wine_id ?: null,
-            'analysis_type' => $this->analysis_type,
-            'analysis_date' => $this->analysis_date,
-            'laboratory' => $this->laboratory ?: null,
-            'sample_reference' => $this->sample_reference ?: null,
-            'alcoholic_strength' => $this->alcoholic_strength !== '' ? $this->alcoholic_strength : null,
-            'total_acidity' => $this->total_acidity !== '' ? $this->total_acidity : null,
-            'volatile_acidity' => $this->volatile_acidity !== '' ? $this->volatile_acidity : null,
-            'residual_sugar' => $this->residual_sugar !== '' ? $this->residual_sugar : null,
-            'free_so2' => $this->free_so2 !== '' ? $this->free_so2 : null,
-            'total_so2' => $this->total_so2 !== '' ? $this->total_so2 : null,
-            'ph' => $this->ph !== '' ? $this->ph : null,
-            'density' => $this->density !== '' ? $this->density : null,
-            'result' => $this->result,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess(__('Análisis actualizado correctamente.'));
-        $this->redirect(roleRoute('wine-analysis.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.wine-analysis.edit', [
-            'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
-            'types' => WineAnalysis::analysisTypeOptions(),
-            'results' => WineAnalysis::resultOptions(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -136,6 +98,46 @@ class Edit extends Component
             'density' => ['nullable', 'numeric', 'min:0'],
             'result' => ['required', 'in:'.implode(',', array_keys(WineAnalysis::RESULTS))],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->analysis->update([
+            'wine_id' => $this->wine_id ?: null,
+            'analysis_type' => $this->analysis_type,
+            'analysis_date' => $this->analysis_date,
+            'laboratory' => $this->laboratory ?: null,
+            'sample_reference' => $this->sample_reference ?: null,
+            'alcoholic_strength' => $this->alcoholic_strength !== '' ? $this->alcoholic_strength : null,
+            'total_acidity' => $this->total_acidity !== '' ? $this->total_acidity : null,
+            'volatile_acidity' => $this->volatile_acidity !== '' ? $this->volatile_acidity : null,
+            'residual_sugar' => $this->residual_sugar !== '' ? $this->residual_sugar : null,
+            'free_so2' => $this->free_so2 !== '' ? $this->free_so2 : null,
+            'total_so2' => $this->total_so2 !== '' ? $this->total_so2 : null,
+            'ph' => $this->ph !== '' ? $this->ph : null,
+            'density' => $this->density !== '' ? $this->density : null,
+            'result' => $this->result,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Análisis actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.wine-analysis.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
+            'types' => WineAnalysis::analysisTypeOptions(),
+            'results' => WineAnalysis::resultOptions(),
         ];
     }
 }

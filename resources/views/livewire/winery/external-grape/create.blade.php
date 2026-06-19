@@ -131,6 +131,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('external-grape.index')" submit-:label="__('Guardar partida')" />
+        <x-agro.form-actions :cancel-url="roleRoute('external-grape.index')" :submit-label="__('Guardar partida')" />
     </form>
 </x-agro.form-card>

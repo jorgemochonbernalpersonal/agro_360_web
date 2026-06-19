@@ -3,22 +3,20 @@
 namespace App\Livewire\Winery\Subproducts;
 
 use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
 use App\Models\WineSubproduct;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
 /**
  * @property-read mixed $wines
  * @property-read mixed $units
  */
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
+    use WithOwnershipRules;
 
     public WineSubproduct $subproduct;
 
@@ -42,9 +40,7 @@ class Edit extends Component
 
     public function mount(WineSubproduct $subproduct): void
     {
-        if ($subproduct->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorizeOwnership($subproduct);
 
         $this->subproduct = $subproduct;
         $this->wine_id = (string) ($subproduct->wine_id ?? '');
@@ -72,40 +68,6 @@ class Edit extends Component
         return UnitOfMeasurement::orderBy('name')->get();
     }
 
-    public function save(): void
-    {
-        $data = $this->validate();
-
-        if (! empty($data['wine_id'])) {
-            Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
-        }
-
-        $this->subproduct->update([
-            'wine_id' => $data['wine_id'] ?: null,
-            'type' => $data['type'],
-            'subproduct_date' => $data['subproduct_date'],
-            'quantity' => $data['quantity'],
-            'unit_of_measurement_id' => $data['unit_of_measurement_id'] ?: null,
-            'destination' => $data['destination'],
-            'destination_name' => $data['destination_name'] ?: null,
-            'lot_number' => $data['lot_number'] ?: null,
-            'notes' => $data['notes'] ?: null,
-        ]);
-
-        $this->toastSuccess(__('Subproducto actualizado correctamente.'));
-        $this->roleRedirect('subproducts.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.subproducts.edit', [
-            'types' => WineSubproduct::typeOptions(),
-            'destinations' => WineSubproduct::destinationOptions(),
-            'wines' => $this->wines,
-            'units' => $this->units,
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -128,6 +90,45 @@ class Edit extends Component
             'quantity.required' => __('Indica la cantidad generada.'),
             'quantity.min' => __('La cantidad debe ser mayor que cero.'),
             'destination.required' => __('Debes indicar el destino.'),
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        if ($this->wine_id !== '') {
+            Wine::where('user_id', Auth::id())->findOrFail($this->wine_id);
+        }
+
+        $this->subproduct->update([
+            'wine_id' => $this->wine_id ?: null,
+            'type' => $this->type,
+            'subproduct_date' => $this->subproduct_date,
+            'quantity' => $this->quantity,
+            'unit_of_measurement_id' => $this->unit_of_measurement_id ?: null,
+            'destination' => $this->destination,
+            'destination_name' => $this->destination_name ?: null,
+            'lot_number' => $this->lot_number ?: null,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Subproducto actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.subproducts.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => WineSubproduct::typeOptions(),
+            'destinations' => WineSubproduct::destinationOptions(),
+            'wines' => $this->wines,
+            'units' => $this->units,
         ];
     }
 }

@@ -2,19 +2,15 @@
 
 namespace App\Livewire\Winery\ExternalGrape;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Container;
 use App\Models\ExternalGrape;
 use App\Models\GrapeVariety;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public string $supplier_name = '';
 
     public string $grape_type = 'grapes';
@@ -50,44 +46,6 @@ class Create extends Component
         $this->entry_date = now()->toDateString();
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        ExternalGrape::create([
-            'user_id' => Auth::id(),
-            'supplier_name' => $this->supplier_name,
-            'grape_type' => $this->grape_type,
-            'grape_variety_id' => $this->grape_variety_id ?: null,
-            'color' => $this->color ?: null,
-            'protection_level' => $this->protection_level ?: null,
-            'geographic_origin' => $this->geographic_origin ?: null,
-            'vintage_year' => $this->vintage_year ?: null,
-            'alcohol_pct' => $this->alcohol_pct ?: null,
-            'total_weight_kg' => $this->total_weight_kg,
-            'used_weight_kg' => 0,
-            'entry_date' => $this->entry_date,
-            'harvest_date' => $this->harvest_date ?: null,
-            'expiration_date' => $this->expiration_date ?: null,
-            'container_id' => $this->container_id ?: null,
-            'notes' => $this->notes ?: null,
-            'status' => $this->status,
-        ]);
-
-        $this->toastSuccess(__('Partida registrada correctamente.'));
-        $this->roleRedirect('external-grape.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.external-grape.create', [
-            'varieties' => GrapeVariety::orderBy('name')->get(['id', 'name']),
-            'containers' => Container::where('user_id', Auth::id())->active()->orderBy('name')->get(['id', 'name']),
-            'types' => ExternalGrape::typeOptions(),
-            'colors' => ExternalGrape::colorOptions(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -106,6 +64,49 @@ class Create extends Component
             'container_id' => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
             'notes' => 'nullable|string',
             'status' => 'required|in:available,used,archived',
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        ExternalGrape::create([
+            'user_id' => $this->ownerId(),
+            'supplier_name' => $this->supplier_name,
+            'grape_type' => $this->grape_type,
+            'grape_variety_id' => $this->grape_variety_id ?: null,
+            'color' => $this->color ?: null,
+            'protection_level' => $this->protection_level ?: null,
+            'geographic_origin' => $this->geographic_origin ?: null,
+            'vintage_year' => $this->vintage_year ?: null,
+            'alcohol_pct' => $this->alcohol_pct ?: null,
+            'total_weight_kg' => $this->total_weight_kg,
+            'used_weight_kg' => 0,
+            'entry_date' => $this->entry_date,
+            'harvest_date' => $this->harvest_date ?: null,
+            'expiration_date' => $this->expiration_date ?: null,
+            'container_id' => $this->container_id ?: null,
+            'notes' => $this->notes ?: null,
+            'status' => $this->status,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Partida registrada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.external-grape.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'varieties' => GrapeVariety::orderBy('name')->get(['id', 'name']),
+            'containers' => Container::where('user_id', Auth::id())->active()->orderBy('name')->get(['id', 'name']),
+            'types' => ExternalGrape::typeOptions(),
+            'colors' => ExternalGrape::colorOptions(),
         ];
     }
 }

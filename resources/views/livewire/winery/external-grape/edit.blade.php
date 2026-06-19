@@ -5,7 +5,7 @@
     icon-color="from-agro-500 to-agro-700"
     :back-url="roleRoute('external-grape.index')"
 >
-    <form wire:submit="update" class="space-y-8">
+    <form wire:submit="save" class="space-y-8">
 
         <x-agro.form-section title="{{ __('Proveedor y Tipo') }}" color="green">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -130,6 +130,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('external-grape.index')" submit-:label="__('Actualizar partida')" />
+        <x-agro.form-actions :cancel-url="roleRoute('external-grape.index')" :submit-label="__('Actualizar partida')" />
     </form>
 </x-agro.form-card>
