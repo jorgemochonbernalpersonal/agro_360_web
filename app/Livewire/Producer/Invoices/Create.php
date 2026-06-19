@@ -3,18 +3,13 @@
 namespace App\Livewire\Producer\Invoices;
 
 use App\Livewire\Concerns\WithInvoiceFormRules;
+use App\Livewire\Concerns\WithProducerInvoiceItems;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\Client;
-use App\Models\Harvest;
-use App\Models\HarvestStock;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
-use App\Models\ProductLot;
-use App\Models\Tax;
-use App\Services\InvoiceService;
-use App\Services\UnifiedStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +17,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithInvoiceFormRules, WithToastNotifications;
+    use WithInvoiceFormRules, WithProducerInvoiceItems, WithToastNotifications;
 
     public string $client_id = '';
 
@@ -44,141 +39,20 @@ class Create extends Component
 
     public bool $delivery_note_code_modified = false;
 
-    public array $items = [];
-
-    public string $selectedHarvestId = '';
-
-    public string $selectedCampaign = '';
-
-    public string $selectedLotId = '';
-
-    public $availableClients = [];
-
-    public $availableAddresses = [];
-
-    public $availableTaxes = [];
-
-    public $availableHarvests = [];
-
-    public $availableLots = [];
-
-    protected InvoiceService $invoiceService;
-
-    protected string $defaultTaxId = '';
-
-    public function boot(InvoiceService $invoiceService): void
-    {
-        $this->invoiceService = $invoiceService;
-    }
-
     public function mount(): void
     {
         $this->invoice_date = now()->toDateString();
         $this->delivery_note_date = now()->toDateString();
 
-        $user = Auth::user();
+        $this->loadTaxes();
 
-        $this->availableTaxes = $user->taxes()->orderByPivot('order')->get();
-        if ($this->availableTaxes->isEmpty()) {
-            $this->availableTaxes = Tax::active()->orderBy('rate')->get();
-        }
-
-        $defaultTax = $user->defaultTax()->first() ?? $this->availableTaxes->first();
-        $this->defaultTaxId = (string) ($defaultTax->id ?? '');
-
-        $settings = InvoicingSetting::getOrCreateForUser($user->id);
+        $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
         $this->delivery_note_code_auto = $settings->getDeliveryNotePreview();
         $this->delivery_note_code = $this->delivery_note_code_auto;
 
-        $this->loadData();
-    }
-
-    public function loadData(): void
-    {
-        $user = Auth::user();
-        $this->availableClients = Client::forUser($user->id)->active()->get();
+        $this->availableClients = Client::forUser(Auth::id())->active()->get();
         $this->loadHarvests();
         $this->loadLots();
-    }
-
-    public function loadHarvests(): void
-    {
-        $user = Auth::user();
-
-        $harvests = Harvest::whereHas('activity', function ($q) use ($user) {
-            $q->where('viticulturist_id', $user->id);
-        })
-            ->with(['activity.plot', 'plotPlanting.grapeVariety', 'activity.campaign', 'container'])
-            ->when($this->selectedCampaign, function ($q) {
-                $q->whereHas('activity', fn ($q) => $q->where('campaign_id', $this->selectedCampaign));
-            })
-            ->where('total_weight', '>', 0)
-            ->orderBy('harvest_start_date', 'desc')
-            ->get();
-
-        $harvestIds = $harvests->pluck('id');
-        $latestStocks = HarvestStock::whereIn('harvest_id', $harvestIds)
-            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stocks hs2 WHERE hs2.harvest_id = harvest_stocks.harvest_id)')
-            ->get()
-            ->keyBy('harvest_id');
-
-        $this->availableHarvests = $harvests
-            ->map(function ($harvest) use ($latestStocks) {
-                $latestStock = $latestStocks->get($harvest->id);
-                $harvest->available_qty_computed = $latestStock
-                    ? (float) $latestStock->available_qty
-                    : (float) $harvest->total_weight;
-
-                return $harvest;
-            })
-            ->filter(fn ($h) => $h->available_qty_computed > 0)
-            ->values();
-    }
-
-    public function loadLots(): void
-    {
-        $this->availableLots = ProductLot::where('user_id', Auth::id())
-            ->where('archived', false)
-            ->where('available_quantity', '>', 0)
-            ->orderBy('name')
-            ->get();
-    }
-
-    public function updatedSelectedCampaign(): void
-    {
-        $this->loadHarvests();
-        $this->selectedHarvestId = '';
-    }
-
-    public function updatedClientId(string $value): void
-    {
-        if ($value) {
-            $client = Client::with([
-                'addresses.municipality',
-                'addresses.province',
-                'addresses.autonomousCommunity',
-            ])->find($value);
-
-            if ($client) {
-                $primary = $client->addresses->firstWhere('is_default', true)
-                    ?? $client->addresses->first();
-
-                if ($primary) {
-                    $this->client_address_id = (string) $primary->id;
-                } else {
-                    $this->client_address_id = '';
-                    $this->addError('client_id', __('Este cliente no tiene ninguna dirección configurada. Por favor, añade una dirección al cliente primero.'));
-                }
-
-                $this->availableAddresses = $client->addresses;
-            } else {
-                $this->availableAddresses = collect();
-                $this->client_address_id = '';
-            }
-        } else {
-            $this->availableAddresses = collect();
-            $this->client_address_id = '';
-        }
     }
 
     public function updatedDeliveryNoteCode(string $value): void
@@ -186,192 +60,25 @@ class Create extends Component
         $this->delivery_note_code_modified = ($value !== $this->delivery_note_code_auto);
     }
 
-    // ── Add harvest item ──────────────────────────────────────────────────────
-
-    public function addHarvestToInvoice(): void
-    {
-        if (! $this->selectedHarvestId) {
-            return;
-        }
-
-        $harvest = Harvest::with(['activity.plot', 'plotPlanting.grapeVariety'])
-            ->find($this->selectedHarvestId);
-
-        if (! $harvest) {
-            $this->toastError(__('Cosecha no encontrada.'));
-
-            return;
-        }
-
-        foreach ($this->items as $item) {
-            if (isset($item['harvest_id']) && (int) $item['harvest_id'] === $harvest->id) {
-                $this->toastError(__('Esta cosecha ya está en la factura actual.'));
-
-                return;
-            }
-        }
-
-        $latestStock = HarvestStock::where('harvest_id', $harvest->id)->latest('id')->first();
-        $availableQty = $latestStock
-            ? (float) $latestStock->available_qty
-            : (float) $harvest->total_weight;
-
-        if ($availableQty <= 0) {
-            $this->toastError(__('Esta cosecha no tiene stock disponible para facturar.'));
-
-            return;
-        }
-
-        $user = Auth::user();
-        $defaultTax = $user->defaultTax()->first()
-            ?? $this->availableTaxes->where('code', 'IVA')->where('rate', 21)->first()
-            ?? $this->availableTaxes->first();
-
-        $grapeVarietyName = $harvest->plotPlanting->grapeVariety->name ?? 'Uva';
-        $plotName = $harvest->activity->plot->name ?? '';
-        $itemName = $grapeVarietyName.($plotName ? ' - '.$plotName : '');
-
-        $this->items[] = [
-            'harvest_id' => $harvest->id,
-            'wine_lot_id' => null,
-            'concept_type' => 'harvest',
-            'name' => $itemName,
-            'description' => __('Cosecha del ').$harvest->harvest_start_date->format('d/m/Y').
-                                     ($harvest->plotPlanting->grapeVariety ? ' - Variedad: '.$harvest->plotPlanting->grapeVariety->name : ''),
-            'sku' => __('HARV-').$harvest->id,
-            'quantity' => $availableQty,
-            'unit' => 'kg',
-            'available_qty' => $availableQty,
-            'unit_price' => $harvest->price_per_kg ?? 0,
-            'discount_percentage' => 0,
-            'tax_id' => $defaultTax?->id,
-        ];
-
-        $this->selectedHarvestId = '';
-        $this->toastSuccess(__('Cosecha añadida a la factura.'));
-    }
-
-    // ── Add wine lot item ─────────────────────────────────────────────────────
-
-    public function addWineToInvoice(): void
-    {
-        if (! $this->selectedLotId) {
-            return;
-        }
-
-        $lot = ProductLot::where('user_id', Auth::id())->find($this->selectedLotId);
-
-        if (! $lot) {
-            $this->toastError(__('Lote no encontrado.'));
-
-            return;
-        }
-
-        if ((float) $lot->available_quantity <= 0) {
-            $this->toastError(__('Este lote no tiene stock disponible para facturar.'));
-
-            return;
-        }
-
-        foreach ($this->items as $item) {
-            if (isset($item['wine_lot_id']) && (int) $item['wine_lot_id'] === $lot->id) {
-                $this->toastError(__('Este lote ya está en la factura.'));
-
-                return;
-            }
-        }
-
-        $this->items[] = [
-            'harvest_id' => null,
-            'wine_lot_id' => $lot->id,
-            'concept_type' => 'wine',
-            'name' => $lot->name.($lot->vintage ? " ({$lot->vintage})" : ''),
-            'description' => '',
-            'sku' => $lot->sku ?? '',
-            'quantity' => 1,
-            'unit' => 'botella',
-            'available_qty' => (float) $lot->available_quantity,
-            'unit_price' => $lot->price_per_unit ? (float) $lot->price_per_unit : 0,
-            'discount_percentage' => 0,
-            'tax_id' => $this->defaultTaxId ?: null,
-        ];
-
-        $this->selectedLotId = '';
-        $this->toastSuccess(__('Producto añadido al albarán.'));
-    }
-
-    // ── Add manual item ───────────────────────────────────────────────────────
-
-    public function addItem(): void
-    {
-        $this->items[] = [
-            'harvest_id' => null,
-            'wine_lot_id' => null,
-            'concept_type' => 'other',
-            'name' => '',
-            'description' => '',
-            'sku' => '',
-            'quantity' => 1,
-            'unit' => 'unidades',
-            'available_qty' => null,
-            'unit_price' => 0,
-            'discount_percentage' => 0,
-            'tax_id' => $this->defaultTaxId ?: null,
-        ];
-    }
-
-    public function removeItem(int $index): void
-    {
-        unset($this->items[$index]);
-        $this->items = array_values($this->items);
-    }
-
-    // ── Computed totals ───────────────────────────────────────────────────────
-
-    // El subtotal del productor es la base NETA (tras descuentos), por convención.
-    public function getSubtotalProperty(): float
-    {
-        return $this->vatTotals()['tax_base'];
-    }
-
-    public function getDiscountAmountProperty(): float
-    {
-        return $this->vatTotals()['discount_amount'];
-    }
-
-    public function getTaxAmountProperty(): float
-    {
-        return $this->vatTotals()['tax_amount'];
-    }
-
-    public function getTotalAmountProperty(): float
-    {
-        return $this->vatTotals()['total'];
-    }
-
-    // ── Save ──────────────────────────────────────────────────────────────────
-
     public function save()
     {
         $this->validate();
 
-        $user = Auth::user();
         $taxRates = $this->availableTaxes->keyBy('id');
         $noteCode = null;
 
         try {
-            DB::transaction(function () use ($user, $taxRates, &$noteCode) {
+            DB::transaction(function () use ($taxRates, &$noteCode) {
                 $noteCode = $this->invoiceService->generateDeliveryNoteCode(
-                    $user->id,
+                    Auth::id(),
                     $this->delivery_note_code_modified,
                     $this->delivery_note_code,
                 );
 
-                // Calculate totals
                 $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
 
                 $invoice = Invoice::create([
-                    'user_id' => $user->id,
+                    'user_id' => Auth::id(),
                     'client_id' => $this->client_id,
                     'client_address_id' => $this->client_address_id ?: null,
                     'invoice_type' => 'producer_sale',
@@ -394,9 +101,8 @@ class Create extends Component
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
 
-                $stockService = app(UnifiedStockService::class);
+                $stockService = app(\App\Services\UnifiedStockService::class);
 
-                // Create items — bypass InvoiceItemObserver, handle stock manually
                 InvoiceItem::withoutEvents(function () use ($invoice, $taxRates, $stockService) {
                     foreach ($this->items as $item) {
                         $tax = ($item['tax_id'] ?? null) ? $taxRates[$item['tax_id']] ?? null : null;
@@ -438,16 +144,15 @@ class Create extends Component
                 'user_id' => Auth::id(),
                 'exception' => $e,
             ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al crear la factura. Inténtalo de nuevo.'));
+            $this->toastError($e instanceof \RuntimeException
+                ? $e->getMessage()
+                : __('Error al crear la factura. Inténtalo de nuevo.'));
         }
     }
 
-    // ── Render ────────────────────────────────────────────────────────────────
-
     public function render()
     {
-        $user = Auth::user();
-        $campaigns = Campaign::where('viticulturist_id', $user->id)
+        $campaigns = Campaign::where('viticulturist_id', Auth::id())
             ->orderBy('year', 'desc')
             ->get();
 
@@ -455,8 +160,6 @@ class Create extends Component
             'campaigns' => $campaigns,
         ])->layout('layouts.app', ['title' => __('Crear albarán - Agro365')]);
     }
-
-    // ── Validation ────────────────────────────────────────────────────────────
 
     protected function rules(): array
     {
@@ -470,18 +173,5 @@ class Create extends Component
             'items.required' => __('Debes añadir al menos un ítem a la factura.'),
             'items.min' => __('Debes añadir al menos un ítem a la factura.'),
         ];
-    }
-
-    /**
-     * Totales VAT en vivo para la UI. Misma fuente de verdad que save()
-     * (InvoiceService::calculateVatTotals), de modo que el total mostrado no puede
-     * diverger del total persistido.
-     */
-    private function vatTotals(): array
-    {
-        return $this->invoiceService->calculateVatTotals(
-            $this->items,
-            $this->availableTaxes->keyBy('id'),
-        );
     }
 }
