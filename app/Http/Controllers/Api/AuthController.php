@@ -83,7 +83,7 @@ class AuthController extends BaseApiController
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             RateLimiter::hit($throttleKey, self::LOCKOUT_MINUTES * 60);
-            SecurityLogger::logFailedLogin($request->email);
+            SecurityLogger::logFailedLogin($request->email, 'credenciales_incorrectas');
 
             throw ValidationException::withMessages([
                 'email' => ['Las credenciales no son correctas.'],

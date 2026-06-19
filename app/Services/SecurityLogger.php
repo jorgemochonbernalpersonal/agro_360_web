@@ -42,14 +42,14 @@ class SecurityLogger
         static::persist('warning', 'failed_login', 'Login fallido', $ctx);
     }
 
-    public static function logCaptchaActivated(string $email): void
+    public static function logCaptchaActivated(string $email, int $failedAttempts = 0): void
     {
         $ctx = [
             'event' => 'captcha_activated',
             'email' => $email,
             'ip' => static::resolveRequest()->ip(),
             'user_agent' => static::resolveRequest()->userAgent(),
-            'failed_attempts' => session('login_failed_attempts', 0),
+            'failed_attempts' => $failedAttempts,
             'timestamp' => now()->toISOString(),
         ];
         Log::channel(self::CHANNEL)->notice('CAPTCHA activado - Posible bot detectado', $ctx);

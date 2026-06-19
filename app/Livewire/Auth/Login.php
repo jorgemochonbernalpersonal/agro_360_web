@@ -75,7 +75,7 @@ class Login extends Component
             // Validar reCAPTCHA si está habilitado
             if (config('services.recaptcha.enabled', false)) {
                 if (empty($this->recaptchaToken)) {
-                    SecurityLogger::logCaptchaActivated($this->email);
+                    SecurityLogger::logCaptchaActivated($this->email, $failedAttempts);
                     throw ValidationException::withMessages([
                         'email' => __('Por favor, completa la verificación CAPTCHA.'),
                     ]);
@@ -128,7 +128,7 @@ class Login extends Component
             // Mostrar CAPTCHA si ya hay 2+ intentos fallidos
             if (RateLimiter::attempts($failedKey) >= 3) {
                 $this->showCaptcha = true;
-                SecurityLogger::logCaptchaActivated($this->email);
+                SecurityLogger::logCaptchaActivated($this->email, RateLimiter::attempts($failedKey));
             }
 
             throw ValidationException::withMessages([
