@@ -2,60 +2,49 @@
 
 namespace App\Livewire\Viticulturist\OfficialReports;
 
+use App\Livewire\Concerns\WithOfficialReportBatch;
+use App\Livewire\Concerns\WithOfficialReportSummary;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Models\Campaign;
+use App\Models\DigitalSignature;
+use App\Models\OfficialReport;
 use App\Services\OfficialReportService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use RuntimeException;
 
 class Create extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications, WithViticulturistValidation;
+    use WithOfficialReportBatch, WithOfficialReportSummary,
+        WithRoleAwareRedirect, WithToastNotifications, WithViticulturistValidation;
 
-    // Formulario de generación
-    public $reportType = 'phytosanitary_treatments';
+    public string $reportType = 'phytosanitary_treatments';
 
-    public $startDate;
+    public ?string $startDate = null;
 
-    public $endDate;
+    public ?string $endDate = null;
 
     public $campaignId = null;
 
-    public $password = '';
+    public string $password = '';
 
-    // Contador de registros en tiempo real
-    public $recordCount = 0;
+    public int $recordCount = 0;
 
-    public $activitiesCount = 0;
+    public int $activitiesCount = 0;
 
-    // Modales
-    public $showSummaryModal = false;
+    public bool $showSuccessModal = false;
 
-    public $showSuccessModal = false;
-
-    // Para el informe generado
     public $generatedReport = null;
 
-    // Resumen del informe
-    public $reportSummary = [];
+    public bool $hasDigitalSignature = false;
 
-    // Verificar si tiene contraseña de firma configurada
-    public $hasDigitalSignature = false;
-
-    // Campañas disponibles
     public $campaigns = [];
 
-    // Generación por lotes
-    public $showBatchOption = false;
-
-    public $batchPeriods = [];
-
-    public $totalBatches = 0;
-
-    protected $messages = [
+    protected array $messages = [
         'reportType.required' => 'Selecciona el tipo de informe.',
         'startDate.required_if' => 'La fecha de inicio es obligatoria.',
         'endDate.required_if' => 'La fecha de fin es obligatoria.',
@@ -64,71 +53,47 @@ class Create extends Component
         'password.required' => 'La contraseña de firma digital es obligatoria.',
     ];
 
-    // Listeners para sincronización con otros componentes
     protected $listeners = ['signature-updated' => 'refreshSignatureStatus'];
 
-    public function mount()
+    public function mount(): void
     {
-        // Inicializar fechas (último mes)
         $this->startDate = now()->startOfMonth()->toDateString();
         $this->endDate = now()->toDateString();
 
-        // Cargar campañas del usuario
         $this->campaigns = Campaign::where('viticulturist_id', auth()->id())
             ->orderBy('year', 'desc')
             ->get();
 
-        // Verificar si tiene contraseña de firma configurada
-        $this->hasDigitalSignature = \App\Models\DigitalSignature::forUser(auth()->id()) !== null;
-
-        // Calcular contador inicial
+        $this->hasDigitalSignature = DigitalSignature::forUser(auth()->id()) !== null;
         $this->updateRecordCount();
     }
 
-    /**
-     * Refrescar estado de firma digital (llamado por evento)
-     */
-    public function refreshSignatureStatus()
+    public function refreshSignatureStatus(): void
     {
-        $this->hasDigitalSignature = \App\Models\DigitalSignature::forUser(auth()->id()) !== null;
+        $this->hasDigitalSignature = DigitalSignature::forUser(auth()->id()) !== null;
     }
 
-    /**
-     * Cuando cambia el tipo de informe
-     */
-    public function updatedReportType()
+    public function updatedReportType(): void
     {
         $this->updateRecordCount();
     }
 
-    /**
-     * Cuando cambia la fecha de inicio
-     */
-    public function updatedStartDate()
+    public function updatedStartDate(): void
     {
         $this->updateRecordCount();
     }
 
-    /**
-     * Cuando cambia la fecha de fin
-     */
-    public function updatedEndDate()
+    public function updatedEndDate(): void
     {
         $this->updateRecordCount();
     }
 
-    /**
-     * Cuando cambia la campaña
-     */
-    public function updatedCampaignId()
+    public function updatedCampaignId(): void
     {
         $this->updateRecordCount();
     }
 
-    /**
-     * Actualizar contador de registros
-     */
-    public function updateRecordCount()
+    public function updateRecordCount(): void
     {
         try {
             if ($this->reportType === 'phytosanitary_treatments') {
@@ -138,443 +103,97 @@ class Create extends Component
                         ->whereBetween('activity_date', [$this->startDate, $this->endDate])
                         ->count();
                 }
-            } else {
-                if ($this->campaignId) {
-                    $this->activitiesCount = \App\Models\AgriculturalActivity::forUser(auth()->id())
-                        ->forCampaign($this->campaignId)
-                        ->count();
-                }
+            } elseif ($this->campaignId) {
+                $this->activitiesCount = \App\Models\AgriculturalActivity::forUser(auth()->id())
+                    ->forCampaign($this->campaignId)
+                    ->count();
             }
-        } catch (\Exception $e) {
-            // Silenciar errores de conteo
+        } catch (\Exception) {
             $this->recordCount = 0;
             $this->activitiesCount = 0;
         }
     }
 
-    /**
-     * Establecer periodo rápido
-     *
-     * @param mixed $period
-     */
-    public function setQuickPeriod($period)
+    public function setQuickPeriod(string $period): void
     {
-        switch ($period) {
-            case 'last_week':
-                $this->startDate = now()->subWeek()->toDateString();
-                $this->endDate = now()->toDateString();
-                break;
-            case 'last_month':
-                $this->startDate = now()->startOfMonth()->subMonth()->toDateString();
-                $this->endDate = now()->startOfMonth()->subDay()->toDateString();
-                break;
-            case 'this_month':
-                $this->startDate = now()->startOfMonth()->toDateString();
-                $this->endDate = now()->toDateString();
-                break;
-            case 'last_quarter':
-                $this->startDate = now()->subMonths(3)->toDateString();
-                $this->endDate = now()->toDateString();
-                break;
-            case 'this_year':
-                $this->startDate = now()->startOfYear()->toDateString();
-                $this->endDate = now()->toDateString();
-                break;
-        }
+        $this->startDate = match ($period) {
+            'last_week' => now()->subWeek()->toDateString(),
+            'last_month' => now()->startOfMonth()->subMonth()->toDateString(),
+            'this_month' => now()->startOfMonth()->toDateString(),
+            'last_quarter' => now()->subMonths(3)->toDateString(),
+            'this_year' => now()->startOfYear()->toDateString(),
+            default => $this->startDate,
+        };
+
+        $this->endDate = match ($period) {
+            'last_month' => now()->startOfMonth()->subDay()->toDateString(),
+            default => now()->toDateString(),
+        };
 
         $this->updateRecordCount();
     }
 
-    /**
-     * Calcular resumen del informe antes de generar
-     */
-    public function calculateSummary()
+    public function confirmAndGenerateReport(): void
     {
-        // Validar campos antes de calcular
-        if ($this->reportType === 'phytosanitary_treatments') {
-            $this->validate([
-                'startDate' => 'required|date',
-                'endDate' => 'required|date|after_or_equal:startDate',
-            ]);
-        } else {
-            $this->validate([
-                'campaignId' => $this->campaignOwnershipRule(),
-            ]);
-        }
-
-        try {
-            $user = auth()->user();
-
-            if ($this->reportType === 'phytosanitary_treatments') {
-                // Contar tratamientos en el periodo
-                $treatments = \App\Models\PhytosanitaryTreatment::whereHas('activity', function ($q) use ($user) {
-                    $q
-                        ->where('viticulturist_id', $user->id)
-                        ->whereBetween('activity_date', [$this->startDate, $this->endDate]);
-                })->with(['activity.plot', 'product'])->get();
-
-                $totalTreatments = $treatments->count();
-
-                // LÍMITE: Máximo 150 tratamientos
-                if ($totalTreatments > 150) {
-                    $this->addError('generation', __('Demasiados tratamientos (:count). El límite es 150. Reduce el periodo o contacta con soporte.', ['count' => $totalTreatments]));
-
-                    return;
-                }
-
-                if ($totalTreatments === 0) {
-                    $this->addError('generation', __('No hay tratamientos fitosanitarios en este periodo.'));
-
-                    return;
-                }
-
-                $plots = $treatments->pluck('activity.plot')->unique('id');
-                $products = $treatments->pluck('product')->unique('id');
-                $totalArea = $treatments->sum('area_treated');
-
-                // VALIDACIÓN PAC: Verificar cumplimiento antes de generar
-                $validator = new \App\Services\Validators\PacComplianceValidator;
-                $activities = \App\Models\AgriculturalActivity::ofType('phytosanitary')
-                    ->forUser($user->id)
-                    ->whereBetween('activity_date', [$this->startDate, $this->endDate])
-                    ->with(['plot.sigpacCodes', 'plot.sigpacUses', 'phytosanitaryTreatment.product'])
-                    ->get();
-
-                $validation = $validator->validateActivities($activities);
-
-                // Si hay errores críticos PAC, no permitir generar
-                if (! $validation['is_compliant']) {
-                    $errorCount = count($validation['errors']);
-                    $this->addError('generation', __('⚠️ El informe contiene :count error(es) PAC que deben corregirse antes de generar (RD 1311/2012).', ['count' => $errorCount]));
-
-                    // Mostrar los primeros 3 errores específicos
-                    $errorMessages = [];
-                    foreach (array_slice($validation['errors'], 0, 3) as $error) {
-                        $errorMessages[] = "Actividad #{$error['activity_id']} ({$error['activity_date']}): ".implode(', ', $error['errors']);
-                    }
-
-                    if ($errorCount > 3) {
-                        $errorMessages[] = '... y '.($errorCount - 3).' error(es) más.';
-                    }
-
-                    foreach ($errorMessages as $idx => $msg) {
-                        $this->addError('pac_error_'.$idx, $msg);
-                    }
-
-                    return;
-                }
-
-                // Estimar tamaño (aproximado)
-                $estimatedSizeKb = 150 + ($totalTreatments * 5);  // Base 150KB + 5KB por tratamiento
-
-                $this->reportSummary = [
-                    'type' => 'phytosanitary_treatments',
-                    'period' => \Carbon\Carbon::parse($this->startDate)->format('d/m/Y').' - '.\Carbon\Carbon::parse($this->endDate)->format('d/m/Y'),
-                    'total_treatments' => $totalTreatments,
-                    'plots_count' => $plots->count(),
-                    'products_count' => $products->count(),
-                    'total_area' => round($totalArea, 2),
-                    'estimated_size' => $estimatedSizeKb.' KB',
-                    'estimated_time' => $totalTreatments < 20 ? '5-10' : ($totalTreatments < 50 ? '10-15' : '15-30'),
-                    'pac_warnings' => $validation['has_warnings'] ? count($validation['warnings']) : 0,
-                    'pac_compliance' => round($validator->getCompliancePercentage($validation), 1),
-                ];
-            } else {
-                // Cuaderno completo
-                $campaign = \App\Models\Campaign::findOrFail($this->campaignId);
-                $activities = \App\Models\AgriculturalActivity::where('viticulturist_id', $user->id)
-                    ->where('campaign_id', $campaign->id)
-                    ->get();
-
-                $totalActivities = $activities->count();
-
-                if ($totalActivities === 0) {
-                    $this->addError('generation', __('No hay actividades registradas en esta campaña.'));
-
-                    return;
-                }
-
-                // Si hay más de 200 actividades, calcular períodos para generación por lotes
-                if ($totalActivities > 200) {
-                    $this->batchPeriods = $this->calculatePeriods($campaign, $totalActivities);
-                    $this->totalBatches = count($this->batchPeriods);
-                    $this->showBatchOption = true;
-
-                    // Calcular resumen para mostrar información
-                    $estimatedSizeKb = 200 + ($totalActivities * 4);
-                    $this->reportSummary = [
-                        'type' => 'full_digital_notebook',
-                        'campaign' => $campaign->name.' ('.$campaign->year.')',
-                        'total_activities' => $totalActivities,
-                        'estimated_size' => $estimatedSizeKb.' KB',
-                        'estimated_time' => '5-10 min por lote',
-                        'batch_mode' => true,
-                    ];
-                } else {
-                    $this->showBatchOption = false;
-                    $estimatedSizeKb = 200 + ($totalActivities * 4);
-
-                    $this->reportSummary = [
-                        'type' => 'full_digital_notebook',
-                        'campaign' => $campaign->name.' ('.$campaign->year.')',
-                        'total_activities' => $totalActivities,
-                        'estimated_size' => $estimatedSizeKb.' KB',
-                        'estimated_time' => $totalActivities < 30 ? '10-15' : ($totalActivities < 80 ? '15-25' : '25-40'),
-                    ];
-                }
-            }
-
-            // Verificar si tiene contraseña configurada antes de mostrar el modal
-            $this->hasDigitalSignature = \App\Models\DigitalSignature::forUser(auth()->id()) !== null;
-
-            // Mostrar modal de resumen
-            $this->showSummaryModal = true;
-        } catch (\Exception $e) {
-            $this->addError('generation', __('Error al calcular resumen: :message', ['message' => $e->getMessage()]));
-        }
-    }
-
-    /**
-     * Confirmar y generar informe (con validación de contraseña)
-     */
-    public function confirmAndGenerateReport()
-    {
-        // Verificar que tenga contraseña configurada
-        $this->hasDigitalSignature = \App\Models\DigitalSignature::forUser(auth()->id()) !== null;
-
-        if (! $this->hasDigitalSignature) {
-            $this->addError('generation', __('No tienes una contraseña de firma digital configurada. Por favor, créala en Configuración → Firma Digital.'));
-            $this->toastError(__('Debes configurar tu contraseña de firma digital primero.'));
-
+        if (! $this->checkSignaturePassword()) {
             return;
         }
 
-        // Validar contraseña
-        $this->validate([
-            'password' => 'required|string',
-        ], [
-            'password.required' => __('La contraseña de firma digital es obligatoria.'),
-        ]);
-
-        // Verificar que la contraseña sea correcta ANTES de generar el informe
-        $digitalSignature = \App\Models\DigitalSignature::forUser(auth()->id());
-        if (! $digitalSignature) {
-            \Log::error('No se encontró firma digital para el usuario', ['user_id' => auth()->id()]);
-            $this->addError('generation', __('Error al verificar la contraseña. Por favor, intenta de nuevo.'));
-            $this->toastError(__('Error al verificar la contraseña.'));
-
-            return;
-        }
-
-        if (! $digitalSignature->verifyPassword($this->password)) {
-            $this->addError('password', __('Contraseña de firma digital incorrecta. Recuerda: es la contraseña que configuraste en Configuración → Firma Digital, NO tu contraseña de login. ¿La olvidaste?'));
-            $this->toastError(__('Contraseña de firma incorrecta. No uses tu contraseña de login, usa la de Configuración → Firma Digital.'));
-
-            return;
-        }
-
-        // Cerrar modal de resumen y generar
         $this->showSummaryModal = false;
 
         try {
-            // Obtener periodo según tipo de informe
             if ($this->reportType === 'phytosanitary_treatments') {
                 $periodStart = $this->startDate;
                 $periodEnd = $this->endDate;
             } else {
-                // Para cuaderno digital completo, usar fechas de la campaña
-                $campaign = \App\Models\Campaign::find($this->campaignId);
+                $campaign = Campaign::find($this->campaignId);
                 $periodStart = $campaign->start_date ?? now()->startOfYear();
                 $periodEnd = $campaign->end_date ?? now();
             }
 
-            // Crear registro de informe con estado pending
-            $report = \App\Models\OfficialReport::create([
+            $report = OfficialReport::create([
                 'user_id' => auth()->id(),
                 'report_type' => $this->reportType,
                 'period_start' => $periodStart,
                 'period_end' => $periodEnd,
                 'report_metadata' => $this->reportType === 'full_digital_notebook'
-                    ? [
-                        'campaign_id' => $this->campaignId,
-                        'campaign_name' => \App\Models\Campaign::find($this->campaignId)?->name,
-                    ]
+                    ? ['campaign_id' => $this->campaignId, 'campaign_name' => Campaign::find($this->campaignId)?->name]
                     : [],
-                'verification_code' => \App\Models\OfficialReport::generateVerificationCode(),
+                'verification_code' => OfficialReport::generateVerificationCode(),
                 'is_valid' => true,
                 'processing_status' => 'pending',
-                'signature_hash' => __('TEMP_').uniqid().'_'.time(),  // Hash temporal único
+                'signature_hash' => 'TEMP_'.uniqid().'_'.time(),
                 'signed_at' => now(),
                 'signed_ip' => request()->ip(),
             ]);
 
-            // Despachar job a la cola
             \App\Jobs\GenerateOfficialReportJob::dispatch(
                 $report->id,
                 auth()->id(),
                 $this->reportType,
-                [
-                    'start_date' => $this->startDate,
-                    'end_date' => $this->endDate,
-                    'campaign_id' => $this->campaignId,
-                ],
+                ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'campaign_id' => $this->campaignId],
                 $this->password
             );
 
-            // Limpiar y notificar
             $this->password = '';
             $this->toastSuccess(__('✅ Informe en proceso. Te avisaremos por email cuando esté listo (1-5 min).'));
+            $this->viticulturistRoleRedirect('official-reports.index');
 
-            // Redirigir
-            return $this->viticulturistRoleRedirect('official-reports.index');
         } catch (\Exception $e) {
-            \Log::error('Error al crear informe para cola', [
+            Log::error('Error al crear informe para cola', [
                 'user_id' => auth()->id(),
                 'report_type' => $this->reportType,
                 'error' => $e->getMessage(),
             ]);
-            // Re-abrir el modal de resumen para mostrar el error
             $this->showSummaryModal = true;
             $this->addError('generation', $e->getMessage());
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : __('Error al generar el informe. Inténtalo de nuevo.'));
         }
     }
 
-    /**
-     * Cerrar modal de resumen
-     */
-    public function closeSummaryModal()
+    public function generateReport(): void
     {
-        $this->showSummaryModal = false;
-        $this->reportSummary = [];
-        $this->password = '';
-        $this->showBatchOption = false;
-        $this->batchPeriods = [];
-        $this->totalBatches = 0;
-        $this->resetValidation('password');
-
-        // Verificar si ahora tiene contraseña configurada (por si fue a configurarla)
-        $this->hasDigitalSignature = \App\Models\DigitalSignature::forUser(auth()->id()) !== null;
-    }
-
-    /**
-     * Generar informes por lotes
-     */
-    public function generateBatchReports()
-    {
-        // Verificar que tenga contraseña configurada
-        $this->hasDigitalSignature = \App\Models\DigitalSignature::forUser(auth()->id()) !== null;
-
-        if (! $this->hasDigitalSignature) {
-            $this->addError('generation', __('No tienes una contraseña de firma digital configurada. Por favor, créala en Configuración → Firma Digital.'));
-            $this->toastError(__('Debes configurar tu contraseña de firma digital primero.'));
-
-            return;
-        }
-
-        // Validar contraseña
-        $this->validate([
-            'password' => 'required|string',
-        ], [
-            'password.required' => __('La contraseña de firma digital es obligatoria.'),
-        ]);
-
-        // Verificar que la contraseña sea correcta
-        $digitalSignature = \App\Models\DigitalSignature::forUser(auth()->id());
-        if (! $digitalSignature) {
-            \Log::error('No se encontró firma digital para el usuario', ['user_id' => auth()->id()]);
-            $this->addError('generation', __('Error al verificar la contraseña. Por favor, intenta de nuevo.'));
-            $this->toastError(__('Error al verificar la contraseña.'));
-
-            return;
-        }
-
-        if (! $digitalSignature->verifyPassword($this->password)) {
-            $this->addError('password', __('Contraseña de firma digital incorrecta.'));
-            $this->toastError(__('Contraseña de firma incorrecta.'));
-
-            return;
-        }
-
-        $campaign = \App\Models\Campaign::findOrFail($this->campaignId);
-        $generatedCount = 0;
-        $errors = [];
-
-        foreach ($this->batchPeriods as $index => $period) {
-            try {
-                // Crear informe para este período
-                $report = \App\Models\OfficialReport::create([
-                    'user_id' => auth()->id(),
-                    'report_type' => 'full_digital_notebook',
-                    'period_start' => $period['start'],
-                    'period_end' => $period['end'],
-                    'report_metadata' => [
-                        'campaign_id' => $this->campaignId,
-                        'campaign_name' => $campaign->name,
-                        'batch_index' => $index + 1,
-                        'total_batches' => count($this->batchPeriods),
-                        'period_label' => $period['label'],
-                    ],
-                    'verification_code' => \App\Models\OfficialReport::generateVerificationCode(),
-                    'processing_status' => 'pending',
-                    'signature_hash' => __('TEMP_').uniqid().'_'.time(),
-                    'signed_at' => now(),
-                    'signed_ip' => request()->ip(),
-                ]);
-
-                // Despachar job con filtro de fechas
-                \App\Jobs\GenerateOfficialReportJob::dispatch(
-                    $report->id,
-                    auth()->id(),
-                    'full_digital_notebook',
-                    [
-                        'campaign_id' => $this->campaignId,
-                        'start_date' => $period['start'],  // Filtro adicional
-                        'end_date' => $period['end'],  // Filtro adicional
-                    ],
-                    $this->password
-                );
-
-                $generatedCount++;
-            } catch (\Exception $e) {
-                \Log::error('Error generando informe por lotes', [
-                    'period' => $period['label'],
-                    'error' => $e->getMessage(),
-                ]);
-                $errors[] = "Error en {$period['label']}: ".$e->getMessage();
-            }
-        }
-
-        if ($generatedCount > 0) {
-            $this->password = '';
-            $this->toastSuccess("✅ Se generarán {$generatedCount} informes en lotes. Te avisaremos por email cuando estén listos (5-10 min por lote).");
-
-            return $this->viticulturistRoleRedirect('official-reports.index');
-        } else {
-            $this->addError('generation', __('Error al generar informes: :list', ['list' => implode(', ', $errors)]));
-            $this->toastError(__('Error al generar informes por lotes.'));
-        }
-    }
-
-    /**
-     * Forzar generación de un solo informe (aunque tenga más de 200 actividades)
-     */
-    public function forceGenerateSingle()
-    {
-        $this->showBatchOption = false;
-        // Continuar con el flujo normal de confirmAndGenerateReport
-    }
-
-    /**
-     * Generar el informe oficial
-     */
-    public function generateReport()
-    {
-        // Construir reglas de validación dinámicamente según el tipo de informe
-        $rules = [
-            'reportType' => 'required|in:phytosanitary_treatments,full_digital_notebook',
-            'password' => 'required|string',
-        ];
+        $rules = ['reportType' => 'required|in:phytosanitary_treatments,full_digital_notebook', 'password' => 'required|string'];
 
         if ($this->reportType === 'phytosanitary_treatments') {
             $rules['startDate'] = 'required|date';
@@ -583,79 +202,54 @@ class Create extends Component
             $rules['campaignId'] = $this->campaignOwnershipRule();
         }
 
-        $messages = [
+        $this->validate($rules, [
             'reportType.required' => __('Selecciona el tipo de informe.'),
             'startDate.required' => __('La fecha de inicio es obligatoria.'),
             'endDate.required' => __('La fecha de fin es obligatoria.'),
             'endDate.after_or_equal' => __('La fecha fin debe ser posterior o igual a la fecha inicio.'),
             'campaignId.required' => __('Selecciona una campaña.'),
-            'campaignId.exists' => __('La campaña seleccionada no existe.'),
             'password.required' => __('La contraseña de firma digital es obligatoria.'),
-        ];
-
-        $this->validate($rules, $messages);
+        ]);
 
         try {
             $service = app(OfficialReportService::class);
 
-            if ($this->reportType === 'phytosanitary_treatments') {
-                // Informe de tratamientos fitosanitarios
-                $this->generatedReport = $service->generatePhytosanitaryReport(
-                    auth()->id(),
-                    Carbon::parse($this->startDate),
-                    Carbon::parse($this->endDate),
-                    $this->password
-                );
-            } else {
-                // Cuaderno digital completo
-                $this->generatedReport = $service->generateFullNotebookReport(
-                    auth()->id(),
-                    $this->campaignId,
-                    $this->password
-                );
-            }
+            $this->generatedReport = $this->reportType === 'phytosanitary_treatments'
+                ? $service->generatePhytosanitaryReport(auth()->id(), Carbon::parse($this->startDate), Carbon::parse($this->endDate), $this->password)
+                : $service->generateFullNotebookReport(auth()->id(), $this->campaignId, $this->password);
 
-            // Verificar que el informe se creó correctamente
             if (! $this->generatedReport->id) {
                 throw new \Exception(__('El informe se generó pero no se pudo recuperar correctamente.'));
             }
 
-            // Enviar email automático de notificación
             try {
-                \Mail::to(auth()->user()->email)->send(new \App\Mail\OfficialReportGenerated($this->generatedReport));
+                Mail::to(auth()->user()->email)->send(new \App\Mail\OfficialReportGenerated($this->generatedReport));
             } catch (\Exception $emailError) {
-                // Log error pero no fallar operación
-                \Log::error('Error enviando email de informe generado: '.$emailError->getMessage());
+                Log::error('Error enviando email de informe generado: '.$emailError->getMessage());
             }
 
-            // Limpiar contraseña y abrir modal de éxito
             $this->password = '';
             $this->showSuccessModal = true;
             $this->toastSuccess(__('Informe generado y firmado correctamente.'));
+
         } catch (\Exception $e) {
-            \Log::error('Error al generar informe oficial', [
+            Log::error('Error al generar informe oficial', [
                 'user_id' => auth()->id(),
                 'report_type' => $this->reportType,
                 'error' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
             ]);
-
             $this->addError('generation', $e->getMessage());
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : __('Error al generar el informe. Inténtalo de nuevo.'));
             $this->showSummaryModal = true;
         }
     }
 
-    /**
-     * Cerrar modal de éxito
-     */
-    public function closeSuccessModal()
+    public function closeSuccessModal(): void
     {
         $this->showSuccessModal = false;
-
-        // Redirigir a la lista de informes
-        return $this->viticulturistRoleRedirect('official-reports.index');
+        $this->viticulturistRoleRedirect('official-reports.index');
     }
 
     public function render()
@@ -674,110 +268,38 @@ class Create extends Component
         ];
     }
 
-    /**
-     * Calcular períodos para generación por lotes
-     *
-     * @param mixed $campaign
-     * @param mixed $totalActivities
-     */
-    private function calculatePeriods($campaign, $totalActivities)
+    protected function checkSignaturePassword(): bool
     {
-        $start = Carbon::parse($campaign->start_date);
-        $end = Carbon::parse($campaign->end_date);
-        $daysDiff = $start->diffInDays($end);
+        $this->hasDigitalSignature = DigitalSignature::forUser(auth()->id()) !== null;
 
-        // Si la campaña es menor a 6 meses, dividir por meses
-        // Si es mayor, dividir por trimestres
-        if ($daysDiff < 180) {
-            return $this->splitByMonths($start, $end, $campaign->id);
-        } else {
-            return $this->splitByQuarters($start, $end, $campaign->id);
-        }
-    }
+        if (! $this->hasDigitalSignature) {
+            $this->addError('generation', __('No tienes una contraseña de firma digital configurada. Por favor, créala en Configuración → Firma Digital.'));
+            $this->toastError(__('Debes configurar tu contraseña de firma digital primero.'));
 
-    /**
-     * Dividir campaña por meses
-     *
-     * @param mixed $start
-     * @param mixed $end
-     * @param mixed $campaignId
-     */
-    private function splitByMonths($start, $end, $campaignId)
-    {
-        $periods = [];
-        $current = $start->copy();
-
-        while ($current->lt($end) || $current->isSameDay($end)) {
-            $periodStart = $current->copy();
-            $periodEnd = $current->copy()->endOfMonth();
-            if ($periodEnd->gt($end)) {
-                $periodEnd = $end->copy();
-            }
-
-            // Contar actividades en este período
-            $count = \App\Models\AgriculturalActivity::forUser(auth()->id())
-                ->forCampaign($campaignId)
-                ->whereBetween('activity_date', [$periodStart->format('Y-m-d'), $periodEnd->format('Y-m-d')])
-                ->count();
-
-            if ($count > 0) {
-                $periods[] = [
-                    'label' => $periodStart->format('M Y'),
-                    'start' => $periodStart->format('Y-m-d'),
-                    'end' => $periodEnd->format('Y-m-d'),
-                    'count' => $count,
-                ];
-            }
-
-            $current->addMonth()->startOfMonth();
-            if ($current->gt($end)) {
-                break;
-            }
+            return false;
         }
 
-        return $periods;
-    }
+        $this->validate(
+            ['password' => 'required|string'],
+            ['password.required' => __('La contraseña de firma digital es obligatoria.')]
+        );
 
-    /**
-     * Dividir campaña por trimestres
-     *
-     * @param mixed $start
-     * @param mixed $end
-     * @param mixed $campaignId
-     */
-    private function splitByQuarters($start, $end, $campaignId)
-    {
-        $periods = [];
-        $current = $start->copy();
+        $digitalSignature = DigitalSignature::forUser(auth()->id());
+        if (! $digitalSignature) {
+            Log::error('No se encontró firma digital para el usuario', ['user_id' => auth()->id()]);
+            $this->addError('generation', __('Error al verificar la contraseña. Por favor, intenta de nuevo.'));
+            $this->toastError(__('Error al verificar la contraseña.'));
 
-        while ($current->lt($end) || $current->isSameDay($end)) {
-            $periodStart = $current->copy();
-            $periodEnd = $current->copy()->addMonths(3)->subDay();
-            if ($periodEnd->gt($end)) {
-                $periodEnd = $end->copy();
-            }
-
-            $count = \App\Models\AgriculturalActivity::forUser(auth()->id())
-                ->forCampaign($campaignId)
-                ->whereBetween('activity_date', [$periodStart->format('Y-m-d'), $periodEnd->format('Y-m-d')])
-                ->count();
-
-            if ($count > 0) {
-                $quarter = ceil($periodStart->month / 3);
-                $periods[] = [
-                    'label' => "Q{$quarter} {$periodStart->year}",
-                    'start' => $periodStart->format('Y-m-d'),
-                    'end' => $periodEnd->format('Y-m-d'),
-                    'count' => $count,
-                ];
-            }
-
-            $current->addMonths(3)->startOfMonth();
-            if ($current->gt($end)) {
-                break;
-            }
+            return false;
         }
 
-        return $periods;
+        if (! $digitalSignature->verifyPassword($this->password)) {
+            $this->addError('password', __('Contraseña de firma digital incorrecta. Recuerda: es la contraseña que configuraste en Configuración → Firma Digital, NO tu contraseña de login.'));
+            $this->toastError(__('Contraseña de firma incorrecta. No uses tu contraseña de login, usa la de Configuración → Firma Digital.'));
+
+            return false;
+        }
+
+        return true;
     }
 }
