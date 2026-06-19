@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
+use App\Livewire\Concerns\WithHarvestControlPanel;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
@@ -11,7 +12,6 @@ use App\Models\Campaign;
 use App\Models\Container;
 use App\Models\Crew;
 use App\Models\CrewMember;
-use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
 use App\Models\Machinery;
 use App\Models\PhenologyObservation;
@@ -28,14 +28,13 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class CreateHarvest extends Component
 {
-    use WithRoleAwareRedirect, WithToastNotifications, WithUserFilters, WithViticulturistValidation;
+    use WithHarvestControlPanel, WithRoleAwareRedirect, WithToastNotifications, WithUserFilters, WithViticulturistValidation;
 
-    // Básico
     public $plot_id = '';
 
     public $plot_planting_id = '';
 
-    public $container_id = ''; // Contenedor opcional (cuaderno de campo)
+    public $container_id = '';
 
     public $activity_date = '';
 
@@ -43,12 +42,10 @@ class CreateHarvest extends Component
 
     public $harvest_end_date = '';
 
-    // Cantidad
     public $total_weight = '';
 
     public $yield_per_hectare = '';
 
-    // Calidad (opcional)
     public $baume_degree = '';
 
     public $brix_degree = '';
@@ -59,14 +56,12 @@ class CreateHarvest extends Component
 
     public $potential_alcohol = '';
 
-    // Evaluación organoléptica (opcional)
     public $color_rating = '';
 
     public $aroma_rating = '';
 
     public $health_status = '';
 
-    // Destino
     public $destination_type = '';
 
     public $destination = '';
@@ -79,7 +74,6 @@ class CreateHarvest extends Component
 
     public $buyer_name = '';
 
-    // Estado sanitario detallado (opcional)
     public $harvest_ticket_number = '';
 
     public $sanitary_state_grapes = '';
@@ -92,12 +86,10 @@ class CreateHarvest extends Component
 
     public $sanitary_state_mildew = '';
 
-    // Económico (opcional)
     public $price_per_kg = '';
 
     public $total_value = '';
 
-    // Común a todas las actividades
     public $workType = '';
 
     public $crew_id = '';
@@ -113,34 +105,6 @@ class CreateHarvest extends Component
     public $notes = '';
 
     public $campaign_id = '';
-
-    // Plantaciones disponibles (dinámico)
-    public $availablePlantings = [];
-
-    // Contenedores disponibles
-    public $availableContainers = [];
-
-    // Alertas de plazos de seguridad
-    public $hasActiveWithdrawal = false;
-
-    public $activeWithdrawalTreatments = [];
-
-    public $withdrawalAcknowledged = false;
-
-    public $withdrawalReason = '';
-
-    // Panel de control de límite y rendimiento
-    public $selectedPlanting = null;
-
-    public $estimatedYield = null;
-
-    public $totalHarvestedInCampaign = 0;
-
-    public $harvestLimitInfo = null;
-
-    public $yieldVarianceInfo = null;
-
-    public float $wineryReceivedKg = 0; // kg recibidos por bodegas de esta plantación en la añada
 
     public function mount()
     {
@@ -159,22 +123,14 @@ class CreateHarvest extends Component
         }
 
         $this->campaign_id = $campaign->id;
-
-        // Cargar contenedores disponibles
         $this->loadAvailableContainers();
     }
 
-    /**
-     * Cuando se selecciona un contenedor, actualizar el peso automáticamente
-     *
-     * @param mixed $value
-     */
-    public function updatedContainerId($value)
+    public function updatedContainerId($value): void
     {
         if ($value) {
             $container = Container::where('user_id', auth()->id())->find($value);
             if ($container && $container->hasAvailableCapacity(0)) {
-                // Actualizar el peso con la capacidad disponible del contenedor
                 $this->total_weight = $container->getAvailableCapacity();
                 $this->calculateYield();
                 $this->calculateTotalValue();
@@ -183,12 +139,7 @@ class CreateHarvest extends Component
         }
     }
 
-    /**
-     * Cuando cambia la parcela, actualizar plantaciones disponibles
-     *
-     * @param mixed $value
-     */
-    public function updatedPlotId($value)
+    public function updatedPlotId($value): void
     {
         if (! $value) {
             $this->availablePlantings = [];
@@ -203,7 +154,6 @@ class CreateHarvest extends Component
             ->with('grapeVariety')
             ->get();
 
-        // Si solo hay una plantación, auto-seleccionarla
         if ($this->availablePlantings->count() === 1) {
             $this->plot_planting_id = $this->availablePlantings->first()->id;
             $this->loadControlPanelData();
@@ -218,31 +168,12 @@ class CreateHarvest extends Component
         $this->calculateYield();
     }
 
-    public function updatedPlotPlantingId()
-    {
-        $this->calculateYield();
-        $this->loadControlPanelData();
-    }
-
-    public function updatedTotalWeight()
-    {
-        $this->calculateYield();
-        $this->calculateTotalValue();
-        $this->updateControlPanelData();
-    }
-
-    public function updatedPricePerKg()
-    {
-        $this->calculateTotalValue();
-    }
-
     public function save()
     {
         $this->validate();
 
         $user = Auth::user();
 
-        // Validar workType
         if (! $this->workType) {
             $this->addError('workType', __('Debes seleccionar quién realizó el trabajo.'));
 
@@ -261,10 +192,8 @@ class CreateHarvest extends Component
             return;
         }
 
-        // Validar que la parcela pertenece al viticultor
-        $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
+        $this->authorizeCreateActivityForPlot($this->plot_id);
 
-        // Validar contenedor si se seleccionó uno
         if ($this->container_id) {
             $container = Container::where('user_id', auth()->id())->find($this->container_id);
             if (! $container) {
@@ -273,7 +202,10 @@ class CreateHarvest extends Component
                 return;
             }
             if (! $container->hasAvailableCapacity($this->total_weight)) {
-                $this->addError('container_id', __('Capacidad insuficiente. Disponible: :available kg, Necesario: :required kg.', ['available' => number_format($container->getAvailableCapacity(), 2), 'required' => number_format($this->total_weight, 2)]));
+                $this->addError('container_id', __('Capacidad insuficiente. Disponible: :available kg, Necesario: :required kg.', [
+                    'available' => number_format($container->getAvailableCapacity(), 2),
+                    'required' => number_format($this->total_weight, 2),
+                ]));
 
                 return;
             }
@@ -285,13 +217,9 @@ class CreateHarvest extends Component
 
                 if ($this->workType === 'individual' && $this->crew_member_id) {
                     $crewMember = CrewMember::firstOrCreate(
-                        [
-                            'viticulturist_id' => $this->crew_member_id,
-                            'assigned_by' => $user->id,
-                        ],
+                        ['viticulturist_id' => $this->crew_member_id, 'assigned_by' => $user->id],
                         ['crew_id' => null]
                     );
-
                     $crewMemberId = $crewMember->id;
                 }
 
@@ -307,7 +235,6 @@ class CreateHarvest extends Component
                     $notes = $warningNote.($notes ? "\n".$notes : '');
                 }
 
-                // Crear actividad base
                 $activity = AgriculturalActivity::create([
                     'plot_id' => $this->plot_id,
                     'viticulturist_id' => $user->id,
@@ -322,8 +249,7 @@ class CreateHarvest extends Component
                     'notes' => $notes,
                 ]);
 
-                // Crear cosecha
-                $harvest = Harvest::create([
+                Harvest::create([
                     'activity_id' => $activity->id,
                     'plot_planting_id' => $this->plot_planting_id,
                     'container_id' => $this->container_id ?: null,
@@ -357,7 +283,6 @@ class CreateHarvest extends Component
                     'notes' => $this->notes,
                 ]);
 
-                // Registrar evento fenológico de vendimia
                 PhenologyObservation::updateOrCreate(
                     [
                         'plot_planting_id' => $this->plot_planting_id,
@@ -372,12 +297,6 @@ class CreateHarvest extends Component
                         'active' => true,
                     ]
                 );
-
-                // El HarvestObserver se encarga automáticamente de:
-                // - Incrementar used_capacity del contenedor
-                // - Crear HarvestStock inicial
-                // - Crear ContainerCurrentState
-                // - Registrar en ContainerHistory
             });
 
             $this->toastSuccess(__('Cosecha registrada correctamente.'));
@@ -394,8 +313,6 @@ class CreateHarvest extends Component
             ]);
 
             $this->toastError(__('Error al registrar la cosecha. Por favor, intenta de nuevo.'));
-
-            return;
         }
     }
 
@@ -403,27 +320,14 @@ class CreateHarvest extends Component
     {
         $user = Auth::user();
 
-        // Solo parcelas con plantaciones activas
         $plots = Plot::forUser($user)
             ->where('active', true)
-            ->whereHas('plantings', function ($q) {
-                $q->where('status', 'active');
-            })
+            ->whereHas('plantings', fn ($q) => $q->where('status', 'active'))
             ->orderBy('name')
             ->get();
 
-        $crews = Crew::where('viticulturist_id', $user->id)
-            ->orderBy('name')
-            ->get();
-
-        $machinery = Machinery::forViticulturist($user->id)
-            ->active()
-            ->orderBy('name')
-            ->get();
-
-        // SIEMPRE incluir al usuario mismo al principio
-        $allViticulturists = $this->viticulturists;
-
+        $crews = Crew::where('viticulturist_id', $user->id)->orderBy('name')->get();
+        $machinery = Machinery::forViticulturist($user->id)->active()->orderBy('name')->get();
         $campaign = Campaign::find($this->campaign_id);
 
         return view('livewire.viticulturist.digital-notebook.create-harvest', [
@@ -431,187 +335,17 @@ class CreateHarvest extends Component
             'crews' => $crews,
             'machinery' => $machinery,
             'campaign' => $campaign,
-            'allViticulturists' => $allViticulturists,
+            'allViticulturists' => $this->viticulturists,
         ]);
     }
 
-    /**
-     * Cargar contenedores disponibles (con capacidad disponible)
-     */
-    protected function loadAvailableContainers()
+    protected function loadAvailableContainers(): void
     {
-        // Cargar contenedores que tengan capacidad disponible (no necesariamente vacíos)
-        // Un contenedor puede tener múltiples cosechas hasta llenarse al 100%
         $this->availableContainers = Container::where('user_id', auth()->id())
             ->where('archived', false)
-            ->whereColumn('used_capacity', '<', 'capacity') // Solo los que tienen espacio
+            ->whereColumn('used_capacity', '<', 'capacity')
             ->orderBy('name')
             ->get();
-    }
-
-    /**
-     * Verificar plazos de seguridad activos
-     */
-    protected function checkWithdrawalPeriods()
-    {
-        if (! $this->plot_id) {
-            $this->resetWithdrawalWarning();
-
-            return;
-        }
-
-        $plot = Plot::find($this->plot_id);
-        if (! $plot) {
-            $this->resetWithdrawalWarning();
-
-            return;
-        }
-
-        $activeWithdrawals = $plot->activeWithdrawalPeriods();
-
-        if ($activeWithdrawals->count() > 0) {
-            $this->hasActiveWithdrawal = true;
-            $this->activeWithdrawalTreatments = $activeWithdrawals->map(function ($activity) {
-                $treatment = $activity->phytosanitaryTreatment;
-                $product = $treatment->product;
-                $withdrawalDays = $product->withdrawal_period_days;
-                $safeDate = $activity->activity_date->copy()->addDays($withdrawalDays);
-
-                return [
-                    'product_name' => $product->name,
-                    'application_date' => $activity->activity_date->format('d/m/Y'),
-                    'withdrawal_days' => $withdrawalDays,
-                    'safe_date' => $safeDate->format('d/m/Y'),
-                    'days_remaining' => now()->diffInDays($safeDate, false),
-                ];
-            })->toArray();
-        } else {
-            $this->resetWithdrawalWarning();
-        }
-    }
-
-    protected function resetWithdrawalWarning()
-    {
-        $this->hasActiveWithdrawal = false;
-        $this->activeWithdrawalTreatments = [];
-        $this->withdrawalAcknowledged = false;
-        $this->withdrawalReason = '';
-    }
-
-    protected function calculateYield()
-    {
-        if (! $this->total_weight || ! $this->plot_planting_id) {
-            $this->yield_per_hectare = '';
-
-            return;
-        }
-
-        $planting = PlotPlanting::find($this->plot_planting_id);
-        if ($planting && $planting->area_planted > 0) {
-            $this->yield_per_hectare = round($this->total_weight / $planting->area_planted, 3);
-        }
-    }
-
-    protected function calculateTotalValue()
-    {
-        if (! $this->total_weight || ! $this->price_per_kg) {
-            $this->total_value = '';
-
-            return;
-        }
-
-        $this->total_value = round($this->total_weight * $this->price_per_kg, 3);
-    }
-
-    /**
-     * Cargar datos del panel de control cuando se selecciona una plantación
-     */
-    protected function loadControlPanelData()
-    {
-        if (! $this->plot_planting_id || ! $this->campaign_id) {
-            $this->selectedPlanting = null;
-            $this->estimatedYield = null;
-            $this->harvestLimitInfo = null;
-            $this->yieldVarianceInfo = null;
-            $this->totalHarvestedInCampaign = 0;
-            $this->wineryReceivedKg = 0;
-
-            return;
-        }
-
-        $this->selectedPlanting = PlotPlanting::with(['grapeVariety', 'plot'])->find($this->plot_planting_id);
-        if (! $this->selectedPlanting) {
-            return;
-        }
-
-        // Cargar rendimiento estimado
-        $this->estimatedYield = $this->selectedPlanting->getEstimatedYieldForCampaign($this->campaign_id);
-
-        // Año de vendimia: preferir harvest_start_date, sino campaña
-        $vintage = $this->harvest_start_date
-            ? (int) \Carbon\Carbon::parse($this->harvest_start_date)->year
-            : (Campaign::find($this->campaign_id)->year ?? now()->year);
-
-        // Solo cosechas del cuaderno del viticultor (excluye recepciones de bodega)
-        $this->totalHarvestedInCampaign = $this->selectedPlanting->getTotalViticulturistYieldForVintage($vintage, Auth::id());
-
-        // Total recibido por bodegas de esta plantación en la añada
-        $this->wineryReceivedKg = (float) GrapeReceptionBatch::where('viticulturist_id', Auth::id())
-            ->where('plot_planting_id', $this->selectedPlanting->id)
-            ->where('vintage_year', $vintage)
-            ->sum('total_weight_kg');
-
-        // Cargar información del límite con factor edad
-        $effectiveLimit = $this->selectedPlanting->effectiveHarvestLimitKg($vintage);
-        if ($effectiveLimit !== null) {
-            $rawLimit = (float) $this->selectedPlanting->harvest_limit_kg;
-            $this->harvestLimitInfo = [
-                'limit' => $effectiveLimit,
-                'raw_limit' => $rawLimit,
-                'age_factor' => $rawLimit > 0 ? round($effectiveLimit / $rawLimit * 100) : 100,
-                'harvested' => $this->totalHarvestedInCampaign,
-                'remaining' => max(0, $effectiveLimit - $this->totalHarvestedInCampaign),
-                'percentage' => $effectiveLimit > 0
-                    ? round(($this->totalHarvestedInCampaign / $effectiveLimit) * 100, 1)
-                    : 0,
-            ];
-        } else {
-            $this->harvestLimitInfo = null;
-        }
-
-        // Cargar varianza de rendimiento
-        $this->updateControlPanelData();
-    }
-
-    /**
-     * Actualizar datos del panel de control cuando cambia el peso
-     */
-    protected function updateControlPanelData()
-    {
-        if (! $this->selectedPlanting || ! $this->campaign_id) {
-            return;
-        }
-
-        $newWeight = (float) ($this->total_weight ?: 0);
-
-        // Actualizar información del límite con el nuevo peso
-        if ($this->harvestLimitInfo) {
-            $limit = $this->harvestLimitInfo['limit'];
-            $newTotal = $this->totalHarvestedInCampaign + $newWeight;
-            $this->harvestLimitInfo['new_total'] = $newTotal;
-            $this->harvestLimitInfo['new_remaining'] = max(0, round($limit - $newTotal, 3));
-            $this->harvestLimitInfo['new_percentage'] = $limit > 0
-                ? round(($newTotal / $limit) * 100, 1)
-                : null;
-            $this->harvestLimitInfo['exceeds'] = $newTotal > $limit;
-        }
-
-        // Actualizar varianza de rendimiento
-        if ($this->estimatedYield) {
-            $this->yieldVarianceInfo = $this->selectedPlanting->getYieldVariance($this->campaign_id, $newWeight);
-        } else {
-            $this->yieldVarianceInfo = null;
-        }
     }
 
     protected function rules(): array
@@ -624,39 +358,30 @@ class CreateHarvest extends Component
             'activity_date' => 'required|date',
             'harvest_start_date' => 'required|date',
             'harvest_end_date' => 'nullable|date|after_or_equal:harvest_start_date',
-
             'total_weight' => 'required|numeric|min:0.01',
             'yield_per_hectare' => 'nullable|numeric|min:0',
-
             'baume_degree' => 'nullable|numeric|min:0|max:20',
             'brix_degree' => 'nullable|numeric|min:0|max:40',
             'acidity_level' => 'nullable|numeric|min:0|max:20',
             'ph_level' => 'nullable|numeric|min:0|max:14',
             'potential_alcohol' => 'nullable|numeric|min:0|max:25',
-
             'color_rating' => 'nullable|in:excelente,bueno,aceptable,deficiente',
             'aroma_rating' => 'nullable|in:excelente,bueno,aceptable,deficiente',
             'health_status' => 'nullable|in:sano,daño_leve,daño_moderado,daño_grave',
-
-            // Estado sanitario detallado
             'harvest_ticket_number' => 'nullable|string|max:50',
             'sanitary_state_grapes' => 'nullable|numeric|min:0|max:100',
             'sanitary_state_agraces' => 'nullable|numeric|min:0|max:100',
             'sanitary_state_botrytis' => 'nullable|numeric|min:0|max:100',
             'sanitary_state_oidium' => 'nullable|numeric|min:0|max:100',
             'sanitary_state_mildew' => 'nullable|numeric|min:0|max:100',
-
             'destination_type' => 'required|in:winery,direct_sale,cooperative,self_consumption,other',
             'destination' => 'nullable|string|max:255',
-            // Campos PAC Trazabilidad (obligatorios excepto autoconsumo)
             'transport_document_number' => 'required_unless:destination_type,self_consumption|nullable|string|max:50',
             'destination_rega_code' => 'required_unless:destination_type,self_consumption|nullable|string|max:20',
             'vehicle_plate' => 'nullable|string|max:20',
             'buyer_name' => 'nullable|string|max:255',
-
             'price_per_kg' => 'nullable|numeric|min:0',
             'total_value' => 'nullable|numeric|min:0',
-
             'workType' => 'required|in:crew,individual',
             'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
             'crew_member_id' => 'required_if:workType,individual|nullable|exists:users,id',
@@ -666,7 +391,6 @@ class CreateHarvest extends Component
             'notes' => 'nullable|string',
         ];
 
-        // Si hay plazo de seguridad activo, validar confirmación
         if ($this->hasActiveWithdrawal) {
             $rules['withdrawalAcknowledged'] = 'required|accepted';
             $rules['withdrawalReason'] = 'required|string|min:20';
