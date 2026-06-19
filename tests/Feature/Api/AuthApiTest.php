@@ -169,8 +169,20 @@ class AuthApiTest extends TestCase
             ->assertJsonPath('user.id', $user->id)
             ->assertJsonPath('user.email', $user->email)
             ->assertJsonStructure(['user' => [
-                'id', 'name', 'email', 'role', 'password_must_reset', 'created_at',
+                'id', 'name', 'email', 'role', 'abilities', 'password_must_reset', 'created_at',
             ]]);
+    }
+
+    public function test_me_includes_effective_abilities_as_array(): void
+    {
+        $user = User::factory()->create(['can_login' => true]);
+
+        $response = $this->actingAs($user, 'sanctum')
+            ->getJson('/api/v1/me')
+            ->assertStatus(200);
+
+        $this->assertIsArray($response->json('user.abilities'));
+        $this->assertSame($user->effectiveAbilityCodes(), $response->json('user.abilities'));
     }
 
     public function test_me_returns_401_when_unauthenticated(): void

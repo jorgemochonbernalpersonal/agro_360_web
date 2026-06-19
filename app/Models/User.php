@@ -192,21 +192,31 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
      */
     public function hasAbility(string $code): bool
     {
-        // Roles sin acceso a bodega solo pueden tener abilities de su plan
-        if (! $this->hasWineryAccess()) {
-            return $this->hasPlanAbility($code);
+        return in_array($code, $this->effectiveAbilityCodes(), true);
+    }
+
+    /**
+     * Conjunto efectivo de ability codes del usuario (la misma lógica que [hasAbility],
+     * pero materializada como lista). Fuente única de verdad para autorización y para
+     * exponer las abilities al cliente (UserResource → app móvil).
+     *
+     * - Roles sin acceso a bodega → lo que cubra su plan.
+     * - Bodega sin configurar por la DO → lo que cubra su plan (retrocompatible).
+     * - Bodega configurada por la DO → plan ∩ overrides concedidos por la DO.
+     *
+     * @return array<int, string>
+     */
+    public function effectiveAbilityCodes(): array
+    {
+        $plan = $this->planAbilities();
+
+        if (! $this->hasWineryAccess() || ! $this->abilities_configured) {
+            return array_values($plan);
         }
 
-        // Bodega sin configurar por la DO → lo que el plan incluya (retrocompatible:
-        // antes devolvía true para todo; ahora devuelve true solo para lo que el plan cubre,
-        // lo que cierra el acceso gratuito indefinido cuando la beta expira)
-        if (! $this->abilities_configured) {
-            return $this->hasPlanAbility($code);
-        }
+        $granted = $this->abilities()->pluck('code')->all();
 
-        // Bodega configurada por DO → plan ∩ overrides concedidos por la DO
-        return $this->hasPlanAbility($code)
-            && $this->abilities()->pluck('code')->contains($code);
+        return array_values(array_intersect($plan, $granted));
     }
 
     public function abilities()

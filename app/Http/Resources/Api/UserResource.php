@@ -16,6 +16,9 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'role' => $this->role,
+            // Set efectivo de abilities (plan ∩ overrides). La app móvil lo usa en
+            // FeatureGate; lista vacía => fail-open (muestra todo) por retrocompatibilidad.
+            'abilities' => $this->effectiveAbilityCodes(),
             'has_winery' => (bool) $this->hasWinery(),
             'has_supervisor' => (bool) $this->hasSupervisor(),
             'password_must_reset' => (bool) $this->password_must_reset,
