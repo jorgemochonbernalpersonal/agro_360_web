@@ -82,10 +82,28 @@ y opcionalmente `applyFilters()`, `filterDefaults()`, `perPage()`. Ver `docs/pat
 Viticulturist→`viticulturist_id`, Winery/Producer→`user_id`. No la repitas en el componente.
 
 **Vista Blade** — `<x-agro.form-card>` → `<x-agro.form-section>` → campos Flux → `<x-agro.form-actions>`.
-`form-actions` usa props `:cancel-url` y `:submit-label` (ojo: `submit-:label` NO enlaza).
+`form-actions` usa props `:cancel-url` y `:submit-label` (ojo: `submit-:label` NO enlaza, y
+`:back-url`/`cancel-href` NO existen en `form-actions`). El `<form wire:submit="save">` lo pones tú
+dentro de `form-card` (la card NO envuelve un `<form>`).
+
+**Abortar dentro de `performCreate()`/`performUpdate()`** — la base hace
+`validate()→perform…()→toast→redirect` sin `try/catch`, así que NO puedes cortar con `return` ni
+`addError()+return`. Para validaciones de negocio (stock, capacidad…) lanza
+`throw ValidationException::withMessages(['campo' => $msg])`: muestra el error en el campo y aborta
+toast+redirect. Si el chequeo vive dentro de un `DB::transaction` que devuelve un string de error sin
+hacer rollback, lanza la excepción DESPUÉS del commit para conservar el comportamiento exacto.
+
+**Computed properties y `messages()`** — se conservan tal cual en el componente. Los `#[Computed]`
+se siguen pasando por `viewData()` (la vista usa `$wines`, no `$this->wines`). El trait
+`WithOwnershipRules` se añade en el componente cuando se usa `ownedWineRule()`/`ownedOenologistRule()`
+(la base no lo trae para los hooks, aunque sí lo usa internamente).
 
 Referencia canónica: `Winery\EcoCertifications\{Create,Edit,Index}` y `Viticulturist\Certifications\*`.
-Migración en curso: ~108 componentes aún extienden `Component` directo (Winery es el grueso).
+Migración en curso (Winery): hechos piloto + lotes 1–3 = 20 dominios; quedan ~36 (Wines\Process,
+Harvest\Campaigns, Cellar\Containers/ProductLots, Reception/Forecasts, Billing…), luego Viticulturist.
+Excepción puntual: componentes cuyo `index` requiere parámetro de ruta (p.ej.
+`LabelBatches\Waste\Create` → `…waste.index, $labelBatch`) no encajan en la base (`redirect()->route($name)`
+sin params) y se dejan fuera.
 
 **Excluidos del patrón** (divergen legítimamente, ya unificados vía servicios): Billing/Invoices
 (5 flujos, `InvoiceService`) y wizards multi-paso.
