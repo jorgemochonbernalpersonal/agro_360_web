@@ -2,16 +2,11 @@
 
 namespace App\Livewire\Winery\Oenologists;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\Oenologist;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public Oenologist $oenologist;
 
     public string $name = '';
@@ -39,29 +34,6 @@ class Edit extends Component
         $this->notes = $oenologist->notes ?? '';
     }
 
-    public function update()
-    {
-        $this->validate();
-
-        $this->oenologist->update([
-            'name' => $this->name,
-            'surname' => $this->surname ?: null,
-            'license_number' => $this->license_number ?: null,
-            'email' => $this->email ?: null,
-            'phone' => $this->phone ?: null,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess(__('Enólogo actualizado correctamente.'));
-
-        return $this->roleRedirect('oenologists.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.oenologists.edit')->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -72,5 +44,27 @@ class Edit extends Component
             'phone' => 'nullable|string|max:50',
             'notes' => 'nullable|string',
         ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->oenologist->update([
+            'name' => $this->name,
+            'surname' => $this->surname ?: null,
+            'license_number' => $this->license_number ?: null,
+            'email' => $this->email ?: null,
+            'phone' => $this->phone ?: null,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Enólogo actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.oenologists.index';
     }
 }

@@ -106,7 +106,7 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('wines.index')" submit-:label="__('Actualizar vino')">
+        <x-agro.form-actions :cancel-url="roleRoute('wines.index')" :submit-label="__('Actualizar vino')">
             <x-slot:extra>
                 <flux:button variant="ghost" icon="plus"
                     href="{{ roleRoute('wines.process.create', $wine) }}" wire:navigate>

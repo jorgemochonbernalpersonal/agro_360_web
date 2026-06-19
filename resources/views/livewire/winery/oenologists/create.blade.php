@@ -49,7 +49,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="roleRoute('oenologists.index')" submit-:label="__('Crear Enólogo')" />
+            <x-agro.form-actions :cancel-url="roleRoute('oenologists.index')" :submit-label="__('Crear Enólogo')" />
 
         </form>
     </x-agro.form-card>

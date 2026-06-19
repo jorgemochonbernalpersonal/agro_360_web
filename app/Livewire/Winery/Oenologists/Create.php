@@ -2,16 +2,11 @@
 
 namespace App\Livewire\Winery\Oenologists;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Oenologist;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public string $name = '';
 
     public string $surname = '';
@@ -24,31 +19,6 @@ class Create extends Component
 
     public string $notes = '';
 
-    public function save()
-    {
-        $this->validate();
-
-        Oenologist::create([
-            'user_id' => Auth::id(),
-            'name' => $this->name,
-            'surname' => $this->surname ?: null,
-            'license_number' => $this->license_number ?: null,
-            'email' => $this->email ?: null,
-            'phone' => $this->phone ?: null,
-            'notes' => $this->notes ?: null,
-            'active' => true,
-        ]);
-
-        $this->toastSuccess(__('Enólogo creado correctamente.'));
-
-        return $this->roleRedirect('oenologists.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.oenologists.create')->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -59,5 +29,29 @@ class Create extends Component
             'phone' => 'nullable|string|max:50',
             'notes' => 'nullable|string',
         ];
+    }
+
+    protected function performCreate(): void
+    {
+        Oenologist::create([
+            'user_id' => $this->ownerId(),
+            'name' => $this->name,
+            'surname' => $this->surname ?: null,
+            'license_number' => $this->license_number ?: null,
+            'email' => $this->email ?: null,
+            'phone' => $this->phone ?: null,
+            'notes' => $this->notes ?: null,
+            'active' => true,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Enólogo creado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.oenologists.index';
     }
 }

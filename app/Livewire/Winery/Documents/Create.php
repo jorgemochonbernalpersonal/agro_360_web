@@ -2,15 +2,11 @@
 
 namespace App\Livewire\Winery\Documents;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\WineryDocument;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithToastNotifications;
-
     public string $title = '';
 
     public string $document_type = 'other';
@@ -25,33 +21,6 @@ class Create extends Component
 
     public string $notes = '';
 
-    public function save(): void
-    {
-        $this->validate();
-
-        WineryDocument::create([
-            'user_id' => Auth::id(),
-            'title' => $this->title,
-            'document_type' => $this->document_type,
-            'reference_number' => $this->reference_number ?: null,
-            'issue_date' => $this->issue_date ?: null,
-            'expiry_date' => $this->expiry_date ?: null,
-            'issuing_authority' => $this->issuing_authority ?: null,
-            'notes' => $this->notes ?: null,
-            'active' => true,
-        ]);
-
-        $this->toastSuccess("Documento «{$this->title}» creado correctamente.");
-        $this->redirect(roleRoute('documents.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.documents.create', [
-            'types' => WineryDocument::documentTypeOptions(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -62,6 +31,38 @@ class Create extends Component
             'expiry_date' => ['nullable', 'date'],
             'issuing_authority' => ['nullable', 'string', 'max:200'],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        WineryDocument::create([
+            'user_id' => $this->ownerId(),
+            'title' => $this->title,
+            'document_type' => $this->document_type,
+            'reference_number' => $this->reference_number ?: null,
+            'issue_date' => $this->issue_date ?: null,
+            'expiry_date' => $this->expiry_date ?: null,
+            'issuing_authority' => $this->issuing_authority ?: null,
+            'notes' => $this->notes ?: null,
+            'active' => true,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Documento «:title» creado correctamente.', ['title' => $this->title]);
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.documents.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => WineryDocument::documentTypeOptions(),
         ];
     }
 }

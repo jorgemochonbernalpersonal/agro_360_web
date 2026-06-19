@@ -2,18 +2,15 @@
 
 namespace App\Livewire\Winery\FermentationControls;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\Container;
 use App\Models\Wine;
 use App\Models\WineFermentationControl;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithToastNotifications;
-
     public WineFermentationControl $control;
 
     public string $wine_id = '';
@@ -53,35 +50,6 @@ class Edit extends Component
         $this->notes = $control->notes ?? '';
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $this->control->update([
-            'wine_id' => $this->wine_id,
-            'container_id' => $this->container_id,
-            'control_date' => $this->control_date,
-            'temperature' => $this->temperature !== '' ? $this->temperature : null,
-            'brix_degree' => $this->brix_degree !== '' ? $this->brix_degree : null,
-            'baume_degree' => $this->baume_degree !== '' ? $this->baume_degree : null,
-            'density' => $this->density !== '' ? $this->density : null,
-            'ph' => $this->ph !== '' ? $this->ph : null,
-            'volatile_acidity' => $this->volatile_acidity !== '' ? $this->volatile_acidity : null,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess(__('Control actualizado.'));
-        $this->redirect(roleRoute('fermentation-controls.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.fermentation-controls.edit', [
-            'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
-            'containers' => Container::where('user_id', Auth::id())->orderBy('name')->get(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -95,6 +63,40 @@ class Edit extends Component
             'ph' => ['nullable', 'numeric', 'min:0', 'max:14'],
             'volatile_acidity' => ['nullable', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->control->update([
+            'wine_id' => $this->wine_id,
+            'container_id' => $this->container_id,
+            'control_date' => $this->control_date,
+            'temperature' => $this->temperature !== '' ? $this->temperature : null,
+            'brix_degree' => $this->brix_degree !== '' ? $this->brix_degree : null,
+            'baume_degree' => $this->baume_degree !== '' ? $this->baume_degree : null,
+            'density' => $this->density !== '' ? $this->density : null,
+            'ph' => $this->ph !== '' ? $this->ph : null,
+            'volatile_acidity' => $this->volatile_acidity !== '' ? $this->volatile_acidity : null,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Control actualizado.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.fermentation-controls.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
+            'containers' => Container::where('user_id', Auth::id())->orderBy('name')->get(),
         ];
     }
 }

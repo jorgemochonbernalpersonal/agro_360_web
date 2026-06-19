@@ -56,7 +56,7 @@ class OenologistsTest extends WineryTestCase
 
         Livewire::test(Edit::class, ['oenologist' => $oenologist])
             ->set('name', 'Pedro Actualizado')
-            ->call('update')
+            ->call('save')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('oenologists', [

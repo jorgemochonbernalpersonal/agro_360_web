@@ -62,6 +62,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('documents.index')" submit-:label="__('Guardar documento')" />
+        <x-agro.form-actions :cancel-url="roleRoute('documents.index')" :submit-label="__('Guardar documento')" />
     </form>
 </x-agro.form-card>

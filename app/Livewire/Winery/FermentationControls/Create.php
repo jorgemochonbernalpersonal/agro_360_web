@@ -2,18 +2,15 @@
 
 namespace App\Livewire\Winery\FermentationControls;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Container;
 use App\Models\Wine;
 use App\Models\WineFermentationControl;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithToastNotifications;
-
     public string $wine_id = '';
 
     public string $container_id = '';
@@ -39,40 +36,6 @@ class Create extends Component
         $this->control_date = now()->format('Y-m-d\TH:i');
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        WineFermentationControl::create([
-            'wine_id' => $this->wine_id,
-            'container_id' => $this->container_id,
-            'control_date' => $this->control_date,
-            'temperature' => $this->temperature !== '' ? $this->temperature : null,
-            'brix_degree' => $this->brix_degree !== '' ? $this->brix_degree : null,
-            'baume_degree' => $this->baume_degree !== '' ? $this->baume_degree : null,
-            'density' => $this->density !== '' ? $this->density : null,
-            'ph' => $this->ph !== '' ? $this->ph : null,
-            'volatile_acidity' => $this->volatile_acidity !== '' ? $this->volatile_acidity : null,
-            'notes' => $this->notes ?: null,
-            'created_by' => Auth::id(),
-        ]);
-
-        $this->toastSuccess(__('Control de fermentación registrado.'));
-        $this->redirect(roleRoute('fermentation-controls.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        $containers = $this->wine_id
-            ? Container::where('user_id', Auth::id())->orderBy('name')->get()
-            : collect();
-
-        return view('livewire.winery.fermentation-controls.create', [
-            'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
-            'containers' => $containers,
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -86,6 +49,43 @@ class Create extends Component
             'ph' => ['nullable', 'numeric', 'min:0', 'max:14'],
             'volatile_acidity' => ['nullable', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        WineFermentationControl::create([
+            'wine_id' => $this->wine_id,
+            'container_id' => $this->container_id,
+            'control_date' => $this->control_date,
+            'temperature' => $this->temperature !== '' ? $this->temperature : null,
+            'brix_degree' => $this->brix_degree !== '' ? $this->brix_degree : null,
+            'baume_degree' => $this->baume_degree !== '' ? $this->baume_degree : null,
+            'density' => $this->density !== '' ? $this->density : null,
+            'ph' => $this->ph !== '' ? $this->ph : null,
+            'volatile_acidity' => $this->volatile_acidity !== '' ? $this->volatile_acidity : null,
+            'notes' => $this->notes ?: null,
+            'created_by' => $this->ownerId(),
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Control de fermentación registrado.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.fermentation-controls.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
+            'containers' => $this->wine_id
+                ? Container::where('user_id', Auth::id())->orderBy('name')->get()
+                : collect(),
         ];
     }
 }

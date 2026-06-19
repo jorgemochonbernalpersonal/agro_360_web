@@ -108,6 +108,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('fermentation-controls.index')" submit-:label="__('Actualizar control')" />
+        <x-agro.form-actions :cancel-url="roleRoute('fermentation-controls.index')" :submit-label="__('Actualizar control')" />
     </form>
 </x-agro.form-card>

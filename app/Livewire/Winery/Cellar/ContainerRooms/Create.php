@@ -2,15 +2,11 @@
 
 namespace App\Livewire\Winery\Cellar\ContainerRooms;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\ContainerRoom;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithToastNotifications;
-
     public string $name = '';
 
     public string $description = '';
@@ -21,29 +17,6 @@ class Create extends Component
 
     public string $humidity = '';
 
-    public function save(): void
-    {
-        $this->validate();
-
-        ContainerRoom::create([
-            'user_id' => Auth::id(),
-            'name' => $this->name,
-            'description' => $this->description ?: null,
-            'capacity' => $this->capacity ?: null,
-            'temperature' => $this->temperature ?: null,
-            'humidity' => $this->humidity ?: null,
-        ]);
-
-        $this->toastSuccess(__('Sala de bodega creada correctamente.'));
-        $this->redirect(roleRoute('container-rooms.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.cellar.container-rooms.create')
-            ->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -53,5 +26,27 @@ class Create extends Component
             'temperature' => ['nullable', 'numeric', 'min:-20', 'max:50'],
             'humidity' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
+    }
+
+    protected function performCreate(): void
+    {
+        ContainerRoom::create([
+            'user_id' => $this->ownerId(),
+            'name' => $this->name,
+            'description' => $this->description ?: null,
+            'capacity' => $this->capacity ?: null,
+            'temperature' => $this->temperature ?: null,
+            'humidity' => $this->humidity ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Sala de bodega creada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.container-rooms.index';
     }
 }

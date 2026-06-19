@@ -71,6 +71,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('winery-supplies.index')" submit-:label="__('Actualizar insumo')" />
+        <x-agro.form-actions :cancel-url="roleRoute('winery-supplies.index')" :submit-label="__('Actualizar insumo')" />
     </form>
 </x-agro.form-card>

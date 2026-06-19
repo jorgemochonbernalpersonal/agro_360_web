@@ -2,15 +2,11 @@
 
 namespace App\Livewire\Winery\SanitaryRegistrations;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\SanitaryRegistration;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithToastNotifications;
-
     public SanitaryRegistration $sanitaryRegistration;
 
     public string $registration_number = '';
@@ -43,33 +39,6 @@ class Edit extends Component
         $this->notes = $sanitaryRegistration->notes ?? '';
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $this->sanitaryRegistration->update([
-            'registration_number' => $this->registration_number,
-            'registration_type' => $this->registration_type,
-            'activity_description' => $this->activity_description ?: null,
-            'registration_date' => $this->registration_date ?: null,
-            'renewal_date' => $this->renewal_date ?: null,
-            'issuing_authority' => $this->issuing_authority ?: null,
-            'status' => $this->status,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess(__('Registro sanitario actualizado correctamente.'));
-        $this->redirect(roleRoute('sanitary-registrations.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.sanitary-registrations.edit', [
-            'types' => SanitaryRegistration::registrationTypeOptions(),
-            'statuses' => SanitaryRegistration::statusOptions(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -81,6 +50,38 @@ class Edit extends Component
             'issuing_authority' => ['nullable', 'string', 'max:200'],
             'status' => ['required', 'in:'.implode(',', array_keys(SanitaryRegistration::STATUSES))],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->sanitaryRegistration->update([
+            'registration_number' => $this->registration_number,
+            'registration_type' => $this->registration_type,
+            'activity_description' => $this->activity_description ?: null,
+            'registration_date' => $this->registration_date ?: null,
+            'renewal_date' => $this->renewal_date ?: null,
+            'issuing_authority' => $this->issuing_authority ?: null,
+            'status' => $this->status,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Registro sanitario actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.sanitary-registrations.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => SanitaryRegistration::registrationTypeOptions(),
+            'statuses' => SanitaryRegistration::statusOptions(),
         ];
     }
 }

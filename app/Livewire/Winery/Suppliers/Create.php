@@ -2,15 +2,11 @@
 
 namespace App\Livewire\Winery\Suppliers;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Supplier;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithToastNotifications;
-
     public string $name = '';
 
     public string $contact_person = '';
@@ -27,34 +23,6 @@ class Create extends Component
 
     public string $notes = '';
 
-    public function save(): void
-    {
-        $this->validate();
-
-        Supplier::create([
-            'user_id' => Auth::id(),
-            'name' => $this->name,
-            'contact_person' => $this->contact_person ?: null,
-            'email' => $this->email ?: null,
-            'phone' => $this->phone ?: null,
-            'address' => $this->address ?: null,
-            'vat_number' => $this->vat_number ?: null,
-            'category' => $this->category,
-            'notes' => $this->notes ?: null,
-            'active' => true,
-        ]);
-
-        $this->toastSuccess("Proveedor «{$this->name}» creado correctamente.");
-        $this->redirect(roleRoute('suppliers.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.suppliers.create', [
-            'categories' => Supplier::categoryOptions(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -66,6 +34,39 @@ class Create extends Component
             'vat_number' => ['nullable', 'string', 'max:50'],
             'category' => ['required', 'in:'.implode(',', array_keys(Supplier::CATEGORIES))],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        Supplier::create([
+            'user_id' => $this->ownerId(),
+            'name' => $this->name,
+            'contact_person' => $this->contact_person ?: null,
+            'email' => $this->email ?: null,
+            'phone' => $this->phone ?: null,
+            'address' => $this->address ?: null,
+            'vat_number' => $this->vat_number ?: null,
+            'category' => $this->category,
+            'notes' => $this->notes ?: null,
+            'active' => true,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Proveedor «:name» creado correctamente.', ['name' => $this->name]);
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.suppliers.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'categories' => Supplier::categoryOptions(),
         ];
     }
 }

@@ -2,16 +2,12 @@
 
 namespace App\Livewire\Winery\WinerySupplies;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\UnitOfMeasurement;
 use App\Models\WinerySupply;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithToastNotifications;
-
     public WinerySupply $winerySupply;
 
     public string $name = '';
@@ -44,33 +40,6 @@ class Edit extends Component
         $this->notes = $winerySupply->notes ?? '';
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $this->winerySupply->update([
-            'name' => $this->name,
-            'commercial_name' => $this->commercial_name ?: null,
-            'supply_type' => $this->supply_type,
-            'unit_of_measurement_id' => $this->unit_of_measurement_id ?: null,
-            'current_stock' => $this->current_stock !== '' ? $this->current_stock : null,
-            'min_stock_alert' => $this->min_stock_alert !== '' ? $this->min_stock_alert : null,
-            'expiry_date' => $this->expiry_date ?: null,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess(__('Insumo actualizado correctamente.'));
-        $this->redirect(roleRoute('winery-supplies.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.winery-supplies.edit', [
-            'types' => WinerySupply::supplyTypeOptions(),
-            'units' => UnitOfMeasurement::orderBy('name')->get(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -82,6 +51,38 @@ class Edit extends Component
             'min_stock_alert' => ['nullable', 'numeric', 'min:0'],
             'expiry_date' => ['nullable', 'date'],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->winerySupply->update([
+            'name' => $this->name,
+            'commercial_name' => $this->commercial_name ?: null,
+            'supply_type' => $this->supply_type,
+            'unit_of_measurement_id' => $this->unit_of_measurement_id ?: null,
+            'current_stock' => $this->current_stock !== '' ? $this->current_stock : null,
+            'min_stock_alert' => $this->min_stock_alert !== '' ? $this->min_stock_alert : null,
+            'expiry_date' => $this->expiry_date ?: null,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Insumo actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.winery-supplies.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => WinerySupply::supplyTypeOptions(),
+            'units' => UnitOfMeasurement::orderBy('name')->get(),
         ];
     }
 }

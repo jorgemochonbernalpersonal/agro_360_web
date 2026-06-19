@@ -2,18 +2,14 @@
 
 namespace App\Livewire\Winery\Wines;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Oenologist;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public string $name = '';
 
     public string $vintage = '';
@@ -40,44 +36,6 @@ class Create extends Component
 
     public string $notes = '';
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $wine = Wine::create([
-            'user_id' => Auth::id(),
-            'oenologist_id' => $this->oenologist_id ?: null,
-            'name' => $this->name,
-            'vintage' => $this->vintage ?: null,
-            'wine_type' => $this->wine_type,
-            'aging_type' => $this->aging_type ?: null,
-            'category' => $this->category ?: null,
-            'status' => $this->status,
-            'variety' => $this->variety ?: null,
-            'volume_liters' => $this->volume_liters ?: null,
-            'internal_code' => $this->internal_code ?: null,
-            'is_must' => $this->is_must,
-            'is_organic' => $this->is_organic,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess("Vino «{$wine->name}» creado correctamente.");
-        $this->roleRedirect('wines.index');
-    }
-
-    public function render()
-    {
-        $oenologists = Oenologist::where('user_id', Auth::id())->active()->orderBy('name')->get();
-
-        return view('livewire.winery.wines.create', [
-            'types' => Wine::wineTypeOptions(),
-            'statuses' => Wine::statusOptions(),
-            'agingTypes' => Wine::agingTypeOptions(),
-            'categories' => Wine::categoryOptions(),
-            'oenologists' => $oenologists,
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -94,6 +52,47 @@ class Create extends Component
             'is_organic' => ['boolean'],
             'oenologist_id' => ['nullable', Rule::exists('oenologists', 'id')->where('user_id', Auth::id())],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        Wine::create([
+            'user_id' => $this->ownerId(),
+            'oenologist_id' => $this->oenologist_id ?: null,
+            'name' => $this->name,
+            'vintage' => $this->vintage ?: null,
+            'wine_type' => $this->wine_type,
+            'aging_type' => $this->aging_type ?: null,
+            'category' => $this->category ?: null,
+            'status' => $this->status,
+            'variety' => $this->variety ?: null,
+            'volume_liters' => $this->volume_liters ?: null,
+            'internal_code' => $this->internal_code ?: null,
+            'is_must' => $this->is_must,
+            'is_organic' => $this->is_organic,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Vino «:name» creado correctamente.', ['name' => $this->name]);
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.wines.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => Wine::wineTypeOptions(),
+            'statuses' => Wine::statusOptions(),
+            'agingTypes' => Wine::agingTypeOptions(),
+            'categories' => Wine::categoryOptions(),
+            'oenologists' => Oenologist::where('user_id', Auth::id())->active()->orderBy('name')->get(),
         ];
     }
 }

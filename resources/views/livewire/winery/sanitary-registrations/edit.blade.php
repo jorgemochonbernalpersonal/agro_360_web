@@ -72,6 +72,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('sanitary-registrations.index')" submit-:label="__('Actualizar registro')" />
+        <x-agro.form-actions :cancel-url="roleRoute('sanitary-registrations.index')" :submit-label="__('Actualizar registro')" />
     </form>
 </x-agro.form-card>

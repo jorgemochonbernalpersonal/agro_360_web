@@ -4,7 +4,7 @@
         :description="__('Modifica los datos del técnico enológico')"
         :back-url="roleRoute('oenologists.index')"
     >
-        <form wire:submit="update" class="space-y-8">
+        <form wire:submit="save" class="space-y-8">
 
             <x-agro.form-section title="{{ __('Datos Personales') }}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -49,7 +49,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="roleRoute('oenologists.index')" submit-:label="__('Guardar Cambios')" />
+            <x-agro.form-actions :cancel-url="roleRoute('oenologists.index')" :submit-label="__('Guardar Cambios')" />
 
         </form>
     </x-agro.form-card>

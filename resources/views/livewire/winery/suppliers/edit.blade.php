@@ -64,6 +64,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('suppliers.index')" submit-:label="__('Actualizar proveedor')" />
+        <x-agro.form-actions :cancel-url="roleRoute('suppliers.index')" :submit-label="__('Actualizar proveedor')" />
     </form>
 </x-agro.form-card>

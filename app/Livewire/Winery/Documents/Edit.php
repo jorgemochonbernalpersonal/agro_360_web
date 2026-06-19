@@ -2,15 +2,11 @@
 
 namespace App\Livewire\Winery\Documents;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\WineryDocument;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithToastNotifications;
-
     public WineryDocument $wineryDocument;
 
     public string $title = '';
@@ -40,31 +36,6 @@ class Edit extends Component
         $this->notes = $wineryDocument->notes ?? '';
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $this->wineryDocument->update([
-            'title' => $this->title,
-            'document_type' => $this->document_type,
-            'reference_number' => $this->reference_number ?: null,
-            'issue_date' => $this->issue_date ?: null,
-            'expiry_date' => $this->expiry_date ?: null,
-            'issuing_authority' => $this->issuing_authority ?: null,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess(__('Documento actualizado correctamente.'));
-        $this->redirect(roleRoute('documents.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.documents.edit', [
-            'types' => WineryDocument::documentTypeOptions(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -75,6 +46,36 @@ class Edit extends Component
             'expiry_date' => ['nullable', 'date'],
             'issuing_authority' => ['nullable', 'string', 'max:200'],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->wineryDocument->update([
+            'title' => $this->title,
+            'document_type' => $this->document_type,
+            'reference_number' => $this->reference_number ?: null,
+            'issue_date' => $this->issue_date ?: null,
+            'expiry_date' => $this->expiry_date ?: null,
+            'issuing_authority' => $this->issuing_authority ?: null,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Documento actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.documents.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => WineryDocument::documentTypeOptions(),
         ];
     }
 }

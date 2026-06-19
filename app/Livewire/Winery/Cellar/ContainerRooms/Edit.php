@@ -2,15 +2,11 @@
 
 namespace App\Livewire\Winery\Cellar\ContainerRooms;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\ContainerRoom;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithToastNotifications;
-
     public ContainerRoom $room;
 
     public string $name = '';
@@ -35,28 +31,6 @@ class Edit extends Component
         $this->humidity = (string) ($room->humidity ?? '');
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $this->room->update([
-            'name' => $this->name,
-            'description' => $this->description ?: null,
-            'capacity' => $this->capacity ?: null,
-            'temperature' => $this->temperature ?: null,
-            'humidity' => $this->humidity ?: null,
-        ]);
-
-        $this->toastSuccess(__('Sala actualizada correctamente.'));
-        $this->redirect(roleRoute('container-rooms.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.cellar.container-rooms.edit')
-            ->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -66,5 +40,26 @@ class Edit extends Component
             'temperature' => ['nullable', 'numeric', 'min:-20', 'max:50'],
             'humidity' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->room->update([
+            'name' => $this->name,
+            'description' => $this->description ?: null,
+            'capacity' => $this->capacity ?: null,
+            'temperature' => $this->temperature ?: null,
+            'humidity' => $this->humidity ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Sala actualizada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.container-rooms.index';
     }
 }

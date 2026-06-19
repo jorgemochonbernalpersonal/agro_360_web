@@ -2,18 +2,14 @@
 
 namespace App\Livewire\Winery\Wines;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\Oenologist;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public Wine $wine;
 
     public string $name = '';
@@ -61,43 +57,6 @@ class Edit extends Component
         $this->notes = $wine->notes ?? '';
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $this->wine->update([
-            'oenologist_id' => $this->oenologist_id ?: null,
-            'name' => $this->name,
-            'vintage' => $this->vintage ?: null,
-            'wine_type' => $this->wine_type,
-            'aging_type' => $this->aging_type ?: null,
-            'category' => $this->category ?: null,
-            'status' => $this->status,
-            'variety' => $this->variety ?: null,
-            'volume_liters' => $this->volume_liters ?: null,
-            'internal_code' => $this->internal_code ?: null,
-            'is_must' => $this->is_must,
-            'is_organic' => $this->is_organic,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess(__('Vino actualizado correctamente.'));
-        $this->roleRedirect('wines.index');
-    }
-
-    public function render()
-    {
-        $oenologists = Oenologist::where('user_id', Auth::id())->active()->orderBy('name')->get();
-
-        return view('livewire.winery.wines.edit', [
-            'types' => Wine::wineTypeOptions(),
-            'statuses' => Wine::statusOptions(),
-            'agingTypes' => Wine::agingTypeOptions(),
-            'categories' => Wine::categoryOptions(),
-            'oenologists' => $oenologists,
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -114,6 +73,46 @@ class Edit extends Component
             'is_organic' => ['boolean'],
             'oenologist_id' => ['nullable', Rule::exists('oenologists', 'id')->where('user_id', Auth::id())],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->wine->update([
+            'oenologist_id' => $this->oenologist_id ?: null,
+            'name' => $this->name,
+            'vintage' => $this->vintage ?: null,
+            'wine_type' => $this->wine_type,
+            'aging_type' => $this->aging_type ?: null,
+            'category' => $this->category ?: null,
+            'status' => $this->status,
+            'variety' => $this->variety ?: null,
+            'volume_liters' => $this->volume_liters ?: null,
+            'internal_code' => $this->internal_code ?: null,
+            'is_must' => $this->is_must,
+            'is_organic' => $this->is_organic,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Vino actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.wines.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => Wine::wineTypeOptions(),
+            'statuses' => Wine::statusOptions(),
+            'agingTypes' => Wine::agingTypeOptions(),
+            'categories' => Wine::categoryOptions(),
+            'oenologists' => Oenologist::where('user_id', Auth::id())->active()->orderBy('name')->get(),
         ];
     }
 }

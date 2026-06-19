@@ -2,15 +2,11 @@
 
 namespace App\Livewire\Winery\SanitaryRegistrations;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\SanitaryRegistration;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithToastNotifications;
-
     public string $registration_number = '';
 
     public string $registration_type = 'rgseaa';
@@ -27,34 +23,6 @@ class Create extends Component
 
     public string $notes = '';
 
-    public function save(): void
-    {
-        $this->validate();
-
-        SanitaryRegistration::create([
-            'user_id' => Auth::id(),
-            'registration_number' => $this->registration_number,
-            'registration_type' => $this->registration_type,
-            'activity_description' => $this->activity_description ?: null,
-            'registration_date' => $this->registration_date ?: null,
-            'renewal_date' => $this->renewal_date ?: null,
-            'issuing_authority' => $this->issuing_authority ?: null,
-            'status' => $this->status,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess("Registro sanitario «{$this->registration_number}» creado correctamente.");
-        $this->redirect(roleRoute('sanitary-registrations.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.sanitary-registrations.create', [
-            'types' => SanitaryRegistration::registrationTypeOptions(),
-            'statuses' => SanitaryRegistration::statusOptions(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -66,6 +34,39 @@ class Create extends Component
             'issuing_authority' => ['nullable', 'string', 'max:200'],
             'status' => ['required', 'in:'.implode(',', array_keys(SanitaryRegistration::STATUSES))],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        SanitaryRegistration::create([
+            'user_id' => $this->ownerId(),
+            'registration_number' => $this->registration_number,
+            'registration_type' => $this->registration_type,
+            'activity_description' => $this->activity_description ?: null,
+            'registration_date' => $this->registration_date ?: null,
+            'renewal_date' => $this->renewal_date ?: null,
+            'issuing_authority' => $this->issuing_authority ?: null,
+            'status' => $this->status,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Registro sanitario «:number» creado correctamente.', ['number' => $this->registration_number]);
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.sanitary-registrations.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => SanitaryRegistration::registrationTypeOptions(),
+            'statuses' => SanitaryRegistration::statusOptions(),
         ];
     }
 }

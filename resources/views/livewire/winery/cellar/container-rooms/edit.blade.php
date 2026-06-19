@@ -45,6 +45,6 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('container-rooms.index')" submit-:label="__('Guardar cambios')" />
+        <x-agro.form-actions :cancel-url="roleRoute('container-rooms.index')" :submit-label="__('Guardar cambios')" />
     </form>
 </x-agro.form-card>

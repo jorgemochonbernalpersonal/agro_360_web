@@ -2,15 +2,11 @@
 
 namespace App\Livewire\Winery\Suppliers;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\Supplier;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithToastNotifications;
-
     public Supplier $supplier;
 
     public string $name = '';
@@ -43,32 +39,6 @@ class Edit extends Component
         $this->notes = $supplier->notes ?? '';
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $this->supplier->update([
-            'name' => $this->name,
-            'contact_person' => $this->contact_person ?: null,
-            'email' => $this->email ?: null,
-            'phone' => $this->phone ?: null,
-            'address' => $this->address ?: null,
-            'vat_number' => $this->vat_number ?: null,
-            'category' => $this->category,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess(__('Proveedor actualizado correctamente.'));
-        $this->redirect(roleRoute('suppliers.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.suppliers.edit', [
-            'categories' => Supplier::categoryOptions(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -80,6 +50,37 @@ class Edit extends Component
             'vat_number' => ['nullable', 'string', 'max:50'],
             'category' => ['required', 'in:'.implode(',', array_keys(Supplier::CATEGORIES))],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->supplier->update([
+            'name' => $this->name,
+            'contact_person' => $this->contact_person ?: null,
+            'email' => $this->email ?: null,
+            'phone' => $this->phone ?: null,
+            'address' => $this->address ?: null,
+            'vat_number' => $this->vat_number ?: null,
+            'category' => $this->category,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Proveedor actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.suppliers.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'categories' => Supplier::categoryOptions(),
         ];
     }
 }
