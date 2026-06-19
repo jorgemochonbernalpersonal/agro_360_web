@@ -2,8 +2,7 @@
 
 namespace App\Livewire\Winery\Labeling;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\LabelBatch;
 use App\Models\Wine;
 use App\Models\WineBottling;
@@ -11,8 +10,8 @@ use App\Models\WineLabeling;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
 /**
  * @property-read mixed $wines
@@ -20,10 +19,8 @@ use Livewire\Component;
  * @property-read mixed $labelBatches
  * @property-read mixed $selectedBatch
  */
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public string $wine_id = '';
 
     public string $wine_bottling_id = '';
@@ -113,15 +110,27 @@ class Create extends Component
         }
     }
 
-    public function save(): void
+    protected function rules(): array
     {
-        $data = $this->validate();
+        return [
+            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'wine_bottling_id' => ['nullable', Rule::exists('wine_bottlings', 'id')->where('user_id', Auth::id())],
+            'label_batch_id' => ['nullable', Rule::exists('label_batches', 'id')->where('user_id', Auth::id())],
+            'labeling_date' => ['required', 'date'],
+            'quantity_labeled' => ['required', 'integer', 'min:1'],
+            'from_number' => ['nullable', 'integer', 'min:1'],
+            'to_number' => ['nullable', 'integer', 'min:1', 'gte:from_number'],
+            'notes' => ['nullable', 'string'],
+        ];
+    }
 
-        Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
+    protected function performCreate(): void
+    {
+        Wine::where('user_id', Auth::id())->findOrFail($this->wine_id);
 
-        $error = DB::transaction(function () use ($data) {
-            $batchId = $data['label_batch_id'] ?: null;
-            $qty = (int) $data['quantity_labeled'];
+        $error = DB::transaction(function () {
+            $batchId = $this->label_batch_id ?: null;
+            $qty = (int) $this->quantity_labeled;
 
             if ($batchId) {
                 $batch = LabelBatch::where('id', $batchId)
@@ -137,52 +146,43 @@ class Create extends Component
             }
 
             WineLabeling::create([
-                'user_id' => Auth::id(),
-                'wine_id' => $data['wine_id'],
-                'wine_bottling_id' => $data['wine_bottling_id'] ?: null,
+                'user_id' => $this->ownerId(),
+                'wine_id' => $this->wine_id,
+                'wine_bottling_id' => $this->wine_bottling_id ?: null,
                 'label_batch_id' => $batchId,
-                'labeling_date' => $data['labeling_date'],
+                'labeling_date' => $this->labeling_date,
                 'quantity_labeled' => $qty,
-                'from_number' => $data['from_number'] ?: null,
-                'to_number' => $data['to_number'] ?: null,
-                'notes' => $data['notes'] ?: null,
-                'created_by' => Auth::id(),
+                'from_number' => $this->from_number ?: null,
+                'to_number' => $this->to_number ?: null,
+                'notes' => $this->notes ?: null,
+                'created_by' => $this->ownerId(),
             ]);
 
             return null;
         });
 
         if ($error) {
-            $this->addError('quantity_labeled', $error);
-
-            return;
+            throw ValidationException::withMessages(['quantity_labeled' => $error]);
         }
-
-        $this->toastSuccess(__('Sesión de etiquetado registrada.'));
-        $this->roleRedirect('labeling.index');
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.winery.labeling.create', [
+        return __('Sesión de etiquetado registrada.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.labeling.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
             'wines' => $this->wines,
             'wineBottlings' => $this->wineBottlings,
             'labelBatches' => $this->labelBatches,
             'selectedBatch' => $this->selectedBatch,
-        ])->layout('layouts.app');
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
-            'wine_bottling_id' => ['nullable', Rule::exists('wine_bottlings', 'id')->where('user_id', Auth::id())],
-            'label_batch_id' => ['nullable', Rule::exists('label_batches', 'id')->where('user_id', Auth::id())],
-            'labeling_date' => ['required', 'date'],
-            'quantity_labeled' => ['required', 'integer', 'min:1'],
-            'from_number' => ['nullable', 'integer', 'min:1'],
-            'to_number' => ['nullable', 'integer', 'min:1', 'gte:from_number'],
-            'notes' => ['nullable', 'string'],
         ];
     }
 }

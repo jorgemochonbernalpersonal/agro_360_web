@@ -110,6 +110,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('labeling.index')" submit-:label="__('Guardar sesión')" />
+        <x-agro.form-actions :cancel-url="roleRoute('labeling.index')" :submit-label="__('Guardar sesión')" />
     </form>
 </x-agro.form-card>

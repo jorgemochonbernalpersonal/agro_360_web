@@ -2,8 +2,7 @@
 
 namespace App\Livewire\Winery\Labeling;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\LabelBatch;
 use App\Models\Wine;
 use App\Models\WineBottling;
@@ -11,18 +10,16 @@ use App\Models\WineLabeling;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
 /**
  * @property-read mixed $wines
  * @property-read mixed $wineBottlings
  * @property-read mixed $labelBatches
  */
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public WineLabeling $labeling;
 
     public string $wine_id = '';
@@ -96,18 +93,30 @@ class Edit extends Component
         unset($this->labelBatches);
     }
 
-    public function save(): void
+    protected function rules(): array
     {
-        $data = $this->validate();
+        return [
+            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'wine_bottling_id' => ['nullable', Rule::exists('wine_bottlings', 'id')->where('user_id', Auth::id())],
+            'label_batch_id' => ['nullable', Rule::exists('label_batches', 'id')->where('user_id', Auth::id())],
+            'labeling_date' => ['required', 'date'],
+            'quantity_labeled' => ['required', 'integer', 'min:1'],
+            'from_number' => ['nullable', 'integer', 'min:1'],
+            'to_number' => ['nullable', 'integer', 'min:1', 'gte:from_number'],
+            'notes' => ['nullable', 'string'],
+        ];
+    }
 
-        Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
+    protected function performUpdate(): void
+    {
+        Wine::where('user_id', Auth::id())->findOrFail($this->wine_id);
 
-        $newQty = (int) $data['quantity_labeled'];
+        $newQty = (int) $this->quantity_labeled;
         $oldQty = $this->labeling->quantity_labeled;
         $oldBatch = $this->labeling->label_batch_id;
-        $newBatch = $data['label_batch_id'] ?: null;
+        $newBatch = $this->label_batch_id ?: null;
 
-        $error = DB::transaction(function () use ($data, $newQty, $oldQty, $oldBatch, $newBatch) {
+        $error = DB::transaction(function () use ($newQty, $oldQty, $oldBatch, $newBatch) {
             // Reverse old batch consumption
             if ($oldBatch) {
                 LabelBatch::where('id', $oldBatch)->decrement('used_quantity', $oldQty);
@@ -120,8 +129,10 @@ class Edit extends Component
                     ->lockForUpdate()
                     ->firstOrFail();
 
-                $availableAfterReverse = $batch->available_quantity
-                    + ($oldBatch === $newBatch ? $oldQty : 0);
+                // Si es el mismo lote, el decrement previo ya devolvió oldQty al
+                // stock, por lo que available_quantity (releído fresco) ya refleja
+                // la reversión — no hay que sumarlo otra vez.
+                $availableAfterReverse = $batch->available_quantity;
 
                 if ($newQty > $availableAfterReverse) {
                     return "El lote solo tiene {$availableAfterReverse} etiquetas disponibles.";
@@ -131,49 +142,40 @@ class Edit extends Component
             }
 
             $this->labeling->update([
-                'wine_id' => $data['wine_id'],
-                'wine_bottling_id' => $data['wine_bottling_id'] ?: null,
+                'wine_id' => $this->wine_id,
+                'wine_bottling_id' => $this->wine_bottling_id ?: null,
                 'label_batch_id' => $newBatch,
-                'labeling_date' => $data['labeling_date'],
+                'labeling_date' => $this->labeling_date,
                 'quantity_labeled' => $newQty,
-                'from_number' => $data['from_number'] ?: null,
-                'to_number' => $data['to_number'] ?: null,
-                'notes' => $data['notes'] ?: null,
+                'from_number' => $this->from_number ?: null,
+                'to_number' => $this->to_number ?: null,
+                'notes' => $this->notes ?: null,
             ]);
 
             return null;
         });
 
         if ($error) {
-            $this->addError('quantity_labeled', $error);
-
-            return;
+            throw ValidationException::withMessages(['quantity_labeled' => $error]);
         }
-
-        $this->toastSuccess(__('Sesión de etiquetado actualizada.'));
-        $this->roleRedirect('labeling.index');
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.winery.labeling.edit', [
+        return __('Sesión de etiquetado actualizada.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.labeling.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
             'wines' => $this->wines,
             'wineBottlings' => $this->wineBottlings,
             'labelBatches' => $this->labelBatches,
-        ])->layout('layouts.app');
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
-            'wine_bottling_id' => ['nullable', Rule::exists('wine_bottlings', 'id')->where('user_id', Auth::id())],
-            'label_batch_id' => ['nullable', Rule::exists('label_batches', 'id')->where('user_id', Auth::id())],
-            'labeling_date' => ['required', 'date'],
-            'quantity_labeled' => ['required', 'integer', 'min:1'],
-            'from_number' => ['nullable', 'integer', 'min:1'],
-            'to_number' => ['nullable', 'integer', 'min:1', 'gte:from_number'],
-            'notes' => ['nullable', 'string'],
         ];
     }
 }
