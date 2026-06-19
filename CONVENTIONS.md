@@ -59,6 +59,39 @@ Centraliza cálculo de VAT/IRPF y numeración en los 5 flujos. No calcules total
 
 ---
 
+## Formularios Create / Edit / Index (patrón unificado)
+
+**Todo Create/Edit/Index extiende su clase base de rol**, nunca `Livewire\Component` directo.
+
+Jerarquía: `Shared\Abstract{Create,Edit,Index}` ← `{Rol}\Abstract{Create,Edit,Index}`.
+La base resuelve `save()`, `render()`, vista (`resolveViewName`), layout, redirect role-aware
+(`resolveIndexRoute`: winery→producer automático) y toasts. El componente solo declara los hooks.
+
+**Create** — declara: `rules()`, `performCreate()`, `successMessage()`, `indexRoute()`, `viewData()`.
+Usa `$this->ownerId()` para estampar la propiedad (no `Auth::id()` inline). Sin `save()` ni `render()`.
+
+**Edit** — igual que Create con `performUpdate()`, más `mount(Model $m)` que:
+1. autoriza — `$this->authorize('update', $m)` si el modelo tiene Policy (preferido, ver §Autorización);
+   si no, `$this->authorizeOwnership($m)` (chequea `ownerColumn()`, default `user_id`).
+2. asigna el modelo y rellena las propiedades tipadas.
+
+**Index** — extiende `{Rol}\AbstractIndex`; declara `baseQuery()`, `defaultOrderBy()`, `viewData()`
+y opcionalmente `applyFilters()`, `filterDefaults()`, `perPage()`. Ver `docs/patron-vista-listado.md`.
+
+**Columna de propiedad por rol** — la define `ownerColumn()` en el abstract de rol:
+Viticulturist→`viticulturist_id`, Winery/Producer→`user_id`. No la repitas en el componente.
+
+**Vista Blade** — `<x-agro.form-card>` → `<x-agro.form-section>` → campos Flux → `<x-agro.form-actions>`.
+`form-actions` usa props `:cancel-url` y `:submit-label` (ojo: `submit-:label` NO enlaza).
+
+Referencia canónica: `Winery\EcoCertifications\{Create,Edit,Index}` y `Viticulturist\Certifications\*`.
+Migración en curso: ~108 componentes aún extienden `Component` directo (Winery es el grueso).
+
+**Excluidos del patrón** (divergen legítimamente, ya unificados vía servicios): Billing/Invoices
+(5 flujos, `InvoiceService`) y wizards multi-paso.
+
+---
+
 ## UI
 
 **Componentes Blade en `resources/views/components/`**

@@ -3,12 +3,11 @@
 namespace App\Livewire\Viticulturist;
 
 use App\Livewire\Shared\AbstractEdit as SharedAbstractEdit;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 abstract class AbstractEdit extends SharedAbstractEdit
 {
-    // WithOwnershipRules inherited via Shared\AbstractEdit
+    // WithOwnershipRules + authorizeOwnership() inherited via Shared\AbstractEdit
 
     protected function viticulturistId(): int
     {
@@ -23,10 +22,8 @@ abstract class AbstractEdit extends SharedAbstractEdit
         };
     }
 
-    protected function authorizeOwnership(Model $model): void
+    protected function ownerColumn(): string
     {
-        if ($model->getAttribute('viticulturist_id') !== Auth::id()) {
-            abort(403);
-        }
+        return 'viticulturist_id';
     }
 }

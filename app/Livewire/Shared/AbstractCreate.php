@@ -42,6 +42,23 @@ abstract class AbstractCreate extends Component
     }
 
     /**
+     * Column on the created model that holds the owning user's id.
+     * Override per role (e.g. 'viticulturist_id'). Defaults to 'user_id'.
+     */
+    protected function ownerColumn(): string
+    {
+        return 'user_id';
+    }
+
+    /**
+     * The authenticated user's id, for stamping ownership in performCreate().
+     */
+    protected function ownerId(): int
+    {
+        return (int) Auth::id();
+    }
+
+    /**
      * Resolve the index route respecting the producer role prefix.
      * Winery components return 'winery.foo.index' — if the user is a producer
      * and a matching 'producer.foo.index' route exists, redirect there instead.

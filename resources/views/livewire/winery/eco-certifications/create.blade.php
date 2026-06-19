@@ -72,6 +72,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('eco-certifications.index')" submit-:label="__('Guardar certificación')" />
+        <x-agro.form-actions :cancel-url="roleRoute('eco-certifications.index')" :submit-label="__('Guardar certificación')" />
     </form>
 </x-agro.form-card>

@@ -21,4 +21,9 @@ abstract class AbstractCreate extends SharedAbstractCreate
             default => 'viticulturist',
         };
     }
+
+    protected function ownerColumn(): string
+    {
+        return 'viticulturist_id';
+    }
 }

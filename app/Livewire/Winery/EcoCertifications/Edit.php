@@ -2,15 +2,11 @@
 
 namespace App\Livewire\Winery\EcoCertifications;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\EcoCertification;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithToastNotifications;
-
     public EcoCertification $ecoCertification;
 
     public string $name = '';
@@ -43,33 +39,6 @@ class Edit extends Component
         $this->notes = $ecoCertification->notes ?? '';
     }
 
-    public function save(): void
-    {
-        $this->validate();
-
-        $this->ecoCertification->update([
-            'name' => $this->name,
-            'certification_type' => $this->certification_type,
-            'certifying_body' => $this->certifying_body ?: null,
-            'certificate_number' => $this->certificate_number ?: null,
-            'valid_from' => $this->valid_from ?: null,
-            'valid_until' => $this->valid_until ?: null,
-            'status' => $this->status,
-            'notes' => $this->notes ?: null,
-        ]);
-
-        $this->toastSuccess(__('Certificación actualizada correctamente.'));
-        $this->redirect(roleRoute('eco-certifications.index'), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.eco-certifications.edit', [
-            'types' => EcoCertification::certificationTypeOptions(),
-            'statuses' => EcoCertification::statusOptions(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -81,6 +50,38 @@ class Edit extends Component
             'valid_until' => ['nullable', 'date'],
             'status' => ['required', 'in:'.implode(',', array_keys(EcoCertification::STATUSES))],
             'notes' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $this->ecoCertification->update([
+            'name' => $this->name,
+            'certification_type' => $this->certification_type,
+            'certifying_body' => $this->certifying_body ?: null,
+            'certificate_number' => $this->certificate_number ?: null,
+            'valid_from' => $this->valid_from ?: null,
+            'valid_until' => $this->valid_until ?: null,
+            'status' => $this->status,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Certificación actualizada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.eco-certifications.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => EcoCertification::certificationTypeOptions(),
+            'statuses' => EcoCertification::statusOptions(),
         ];
     }
 }

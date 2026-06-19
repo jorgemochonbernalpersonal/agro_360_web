@@ -4,6 +4,7 @@ namespace App\Livewire\Shared;
 
 use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -39,6 +40,27 @@ abstract class AbstractEdit extends Component
     protected function viewData(): array
     {
         return [];
+    }
+
+    /**
+     * Column on the edited model that holds the owning user's id.
+     * Override per role (e.g. 'viticulturist_id'). Defaults to 'user_id'.
+     */
+    protected function ownerColumn(): string
+    {
+        return 'user_id';
+    }
+
+    /**
+     * Guard ownership in mount(): aborts 403 if the model is not owned by the
+     * authenticated user. Roles with relational ownership (e.g. harvest via
+     * activity) should override this with their own check.
+     */
+    protected function authorizeOwnership(Model $model): void
+    {
+        if ($model->getAttribute($this->ownerColumn()) !== Auth::id()) {
+            abort(403);
+        }
     }
 
     /**
