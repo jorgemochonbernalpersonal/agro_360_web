@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Billing\ProductSale;
 use App\Livewire\Concerns\WithProductSaleFormRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\Billing\ProductSale\Traits\WithProductSaleStatusModals;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -23,7 +24,10 @@ use Livewire\Component;
  */
 class Edit extends Component
 {
-    use WithProductSaleFormRules, WithRoleAwareRedirect, WithToastNotifications;
+    use WithProductSaleFormRules,
+        WithProductSaleStatusModals,
+        WithRoleAwareRedirect,
+        WithToastNotifications;
 
     public Invoice $invoice;
 
@@ -42,13 +46,6 @@ class Edit extends Component
     public string $delivery_status = '';
 
     public bool $is_gift = false;
-
-    // ── Status modals ────────────────────────────────────────────────────────
-    public bool $showDeliveryModal = false;
-
-    public string $pendingDeliveryStatus = '';
-
-    public bool $showPaymentDateModal = false;
 
     public array $items = [];
 
@@ -105,8 +102,6 @@ class Edit extends Component
         ])->toArray();
     }
 
-    // ── Computed properties ───────────────────────────────────────────────────
-
     public function getIsLockedProperty(): bool
     {
         return $this->invoice->delivery_status === 'delivered'
@@ -119,8 +114,6 @@ class Edit extends Component
         return $this->invoice->status === 'sent';
     }
 
-    // El subtotal de venta de producto es el bruto (antes de descuentos), por convención.
-    // La UI muestra los totales reales: el multiplicador de regalo solo se aplica al guardar.
     public function getSubtotalProperty(): float
     {
         return $this->vatTotals()['gross_subtotal'];
@@ -140,8 +133,6 @@ class Edit extends Component
     {
         return $this->vatTotals()['total'];
     }
-
-    // ── Añadir producto (solo en borrador) ────────────────────────────────────
 
     public function addProductToInvoice(): void
     {
@@ -204,117 +195,6 @@ class Edit extends Component
         $this->items = array_values($this->items);
     }
 
-    // ── Guardar estados (entrega + cobro) ─────────────────────────────────────
-
-    public function saveStatuses(): void
-    {
-        if ($this->invoice->status === 'cancelled') {
-            $this->toastError(__('No se puede modificar una factura cancelada.'));
-
-            return;
-        }
-
-        // Si cobro = pagado y no hay fecha → modal para pedir la fecha
-        if ($this->payment_status === 'paid' && ! $this->payment_date) {
-            $this->showPaymentDateModal = true;
-
-            return;
-        }
-
-        // Si la entrega cambia a un estado que mueve stock → confirmar
-        $originalDelivery = $this->invoice->delivery_status;
-        if ($this->delivery_status !== $originalDelivery
-            && in_array($this->delivery_status, ['delivered', 'cancelled'])) {
-            $this->pendingDeliveryStatus = $this->delivery_status;
-            $this->showDeliveryModal = true;
-
-            return;
-        }
-
-        $this->persistStatuses();
-    }
-
-    // ── Modal: fecha de pago ──────────────────────────────────────────────────
-
-    public function confirmPaymentDate(): void
-    {
-        $this->validate(
-            ['payment_date' => 'required|date'],
-            ['payment_date.required' => __('La fecha de pago es obligatoria.')]
-        );
-
-        $this->showPaymentDateModal = false;
-
-        // Comprobar si además hay que confirmar entrega
-        $originalDelivery = $this->invoice->delivery_status;
-        if ($this->delivery_status !== $originalDelivery
-            && in_array($this->delivery_status, ['delivered', 'cancelled'])) {
-            $this->pendingDeliveryStatus = $this->delivery_status;
-            $this->showDeliveryModal = true;
-
-            return;
-        }
-
-        $this->persistStatuses();
-    }
-
-    public function closePaymentDateModal(): void
-    {
-        $this->showPaymentDateModal = false;
-        $this->resetValidation('payment_date');
-    }
-
-    // ── Modal: confirmación entrega (mueve stock) ─────────────────────────────
-
-    public function closeDeliveryModal(): void
-    {
-        // Revertir el select al valor actual de la BD
-        $this->delivery_status = $this->invoice->delivery_status;
-        $this->showDeliveryModal = false;
-        $this->pendingDeliveryStatus = '';
-    }
-
-    public function confirmDeliveryStatus(): void
-    {
-        $newStatus = $this->pendingDeliveryStatus;
-
-        if (! in_array($newStatus, ['delivered', 'cancelled'])) {
-            $this->closeDeliveryModal();
-
-            return;
-        }
-
-        try {
-            DB::transaction(function () use ($newStatus) {
-                $this->invoice->load('items.wineLot');
-                if (! $this->invoice->corrective) {
-                    $action = $newStatus === 'delivered' ? 'deliver' : 'cancel';
-                    ProductStockService::moveForInvoice($this->invoice, $action);
-                }
-                $this->invoice->update(['delivery_status' => $newStatus]);
-            });
-
-            $this->delivery_status = $newStatus;
-            $this->showDeliveryModal = false;
-            $this->pendingDeliveryStatus = '';
-
-            $this->persistPaymentStatus();
-
-            $label = $newStatus === 'delivered' ? 'entregada' : 'cancelada';
-            $this->toastSuccess("Estados guardados. Entrega: {$label}.");
-
-        } catch (\Exception $e) {
-            Log::error('Error al actualizar estado de entrega: '.$e->getMessage(), [
-                'invoice_id' => $this->invoice->id,
-                'user_id' => Auth::id(),
-            ]);
-            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al actualizar el estado de entrega.'));
-            $this->closeDeliveryModal();
-        }
-    }
-
-    // ── Save ──────────────────────────────────────────────────────────────────
-
     public function save()
     {
         $this->validate();
@@ -330,19 +210,14 @@ class Edit extends Component
 
         try {
             DB::transaction(function () use ($client, $taxRates) {
-                // 1. Recargar items frescos del DB antes de restaurar stock
                 $this->invoice->load('items.wineLot');
                 ProductStockService::moveForInvoice($this->invoice, 'cancel');
 
-                // 2. Borrar líneas antiguas
                 InvoiceItem::withoutEvents(fn () => $this->invoice->items()->delete());
 
-                // 3. Calcular totales
                 $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
-
                 $multiplyGift = $this->is_gift ? 0 : 1;
 
-                // 4. Actualizar cabecera
                 $this->invoice->update([
                     'client_id' => $client->id,
                     'billing_first_name' => $client->first_name,
@@ -362,7 +237,6 @@ class Edit extends Component
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
 
-                // 5. Crear líneas nuevas + mover stock
                 InvoiceItem::withoutEvents(function () use ($taxRates, $multiplyGift) {
                     foreach ($this->items as $item) {
                         $tax = $item['tax_id'] ? $taxRates[$item['tax_id']] ?? null : null;
@@ -433,8 +307,6 @@ class Edit extends Component
         ])->layout('layouts.app');
     }
 
-    // ── Validation ────────────────────────────────────────────────────────────
-
     protected function rules(): array
     {
         return array_merge($this->productSaleBaseRules(allowArchivedLots: true), [
@@ -454,38 +326,11 @@ class Edit extends Component
         return $attrs;
     }
 
-    /**
-     * Totales VAT en vivo para la UI. Misma fuente de verdad que save()
-     * (InvoiceService::calculateVatTotals), de modo que el total mostrado no puede
-     * diverger del total persistido.
-     */
     private function vatTotals(): array
     {
         return $this->invoiceService->calculateVatTotals(
             $this->items,
             $this->availableTaxes->keyBy('id'),
         );
-    }
-
-    private function persistStatuses(): void
-    {
-        $this->invoice->update([
-            'delivery_status' => $this->delivery_status,
-            'payment_status' => $this->payment_status,
-            'payment_type' => $this->payment_type ?: null,
-            'payment_date' => $this->payment_status === 'paid' ? ($this->payment_date ?: null) : null,
-        ]);
-        $this->invoice->refresh();
-        $this->toastSuccess(__('Estados actualizados correctamente.'));
-    }
-
-    private function persistPaymentStatus(): void
-    {
-        $this->invoice->update([
-            'payment_status' => $this->payment_status,
-            'payment_type' => $this->payment_type ?: null,
-            'payment_date' => $this->payment_status === 'paid' ? ($this->payment_date ?: null) : null,
-        ]);
-        $this->invoice->refresh();
     }
 }
