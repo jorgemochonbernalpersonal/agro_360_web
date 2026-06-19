@@ -2,23 +2,19 @@
 
 namespace App\Livewire\Winery\LabelBatches;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\LabelBatch;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
 /**
  * @property-read mixed $wines
  * @property-read mixed $totalPreview
  */
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public string $name = '';
 
     public string $wine_id = '';
@@ -49,43 +45,6 @@ class Create extends Component
         return $end >= $start ? ($end - $start + 1) : null;
     }
 
-    public function save(): void
-    {
-        $data = $this->validate();
-
-        if ($data['wine_id']) {
-            Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
-        }
-
-        $start = (int) $data['start_number'];
-        $end = (int) $data['end_number'];
-
-        LabelBatch::create([
-            'user_id' => Auth::id(),
-            'wine_id' => $data['wine_id'] ?: null,
-            'name' => $data['name'],
-            'source' => $data['source'],
-            'start_number' => $start,
-            'end_number' => $end,
-            'total_quantity' => $end - $start + 1,
-            'used_quantity' => 0,
-            'wasted_quantity' => 0,
-            'notes' => $data['notes'] ?: null,
-        ]);
-
-        $this->toastSuccess(__('Lote de etiquetas creado correctamente.'));
-        $this->roleRedirect('label-batches.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.label-batches.create', [
-            'sources' => LabelBatch::SOURCES,
-            'wines' => $this->wines,
-            'totalPreview' => $this->totalPreview,
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -102,6 +61,48 @@ class Create extends Component
     {
         return [
             'end_number.gte' => __('El número final debe ser mayor o igual al número inicial.'),
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        if ($this->wine_id) {
+            Wine::where('user_id', Auth::id())->findOrFail($this->wine_id);
+        }
+
+        $start = (int) $this->start_number;
+        $end = (int) $this->end_number;
+
+        LabelBatch::create([
+            'user_id' => $this->ownerId(),
+            'wine_id' => $this->wine_id ?: null,
+            'name' => $this->name,
+            'source' => $this->source,
+            'start_number' => $start,
+            'end_number' => $end,
+            'total_quantity' => $end - $start + 1,
+            'used_quantity' => 0,
+            'wasted_quantity' => 0,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Lote de etiquetas creado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.label-batches.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'sources' => LabelBatch::SOURCES,
+            'wines' => $this->wines,
+            'totalPreview' => $this->totalPreview,
         ];
     }
 }

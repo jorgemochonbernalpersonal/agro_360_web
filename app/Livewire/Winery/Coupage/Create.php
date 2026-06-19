@@ -3,7 +3,7 @@
 namespace App\Livewire\Winery\Coupage;
 
 use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Container;
 use App\Models\Oenologist;
 use App\Models\UnitOfMeasurement;
@@ -13,12 +13,11 @@ use App\Services\WineContainerStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
+use Illuminate\Validation\ValidationException;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithOwnershipRules, WithToastNotifications;
+    use WithOwnershipRules;
 
     public string $target_wine_id = '';
 
@@ -55,21 +54,34 @@ class Create extends Component
         $this->sources = array_values($this->sources);
     }
 
-    public function save(): void
+    protected function rules(): array
     {
-        $this->validate();
+        return [
+            'target_wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'to_container_id' => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
+            'unit_of_measurement_id' => ['required', 'exists:units_of_measurement,id'],
+            'coupage_date' => ['required', 'date'],
+            'oenologist_id' => $this->ownedOenologistRule(),
+            'notes' => ['nullable', 'string', 'max:2000'],
+            'sources' => ['required', 'array', 'min:1'],
+            'sources.*.wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'sources.*.from_container_id' => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
+            'sources.*.quantity' => ['required', 'numeric', 'min:0.001'],
+        ];
+    }
 
+    protected function performCreate(): void
+    {
         $userId = Auth::id();
-        $destId = $this->to_container_id;
-        $dest = Container::where('user_id', $userId)->findOrFail($destId);
+        $dest = Container::where('user_id', $userId)->findOrFail($this->to_container_id);
         $service = app(WineContainerStockService::class);
 
         $totalQty = collect($this->sources)->sum('quantity');
 
         if ($dest->getAvailableCapacity() < $totalQty) {
-            $this->addError('to_container_id', __('El contenedor destino no tiene capacidad suficiente (:available L disponibles para :requested L solicitados).', ['available' => number_format($dest->getAvailableCapacity(), 1), 'requested' => number_format($totalQty, 1)]));
-
-            return;
+            throw ValidationException::withMessages([
+                'to_container_id' => __('El contenedor destino no tiene capacidad suficiente (:available L disponibles para :requested L solicitados).', ['available' => number_format($dest->getAvailableCapacity(), 1), 'requested' => number_format($totalQty, 1)]),
+            ]);
         }
 
         DB::transaction(function () use ($userId, $service) {
@@ -91,37 +103,27 @@ class Create extends Component
                 $service->recordTransfer($transfer);
             }
         });
-
-        $this->toastSuccess(__('Coupage registrado correctamente.'));
-        $this->redirect(roleRoute('coupage.index'), navigate: true);
     }
 
-    #[Layout('layouts.app')]
-    public function render()
+    protected function successMessage(): string
+    {
+        return __('Coupage registrado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.coupage.index';
+    }
+
+    protected function viewData(): array
     {
         $userId = Auth::id();
 
-        return view('livewire.winery.coupage.create', [
+        return [
             'wines' => Wine::where('user_id', $userId)->whereNotIn('status', ['cancelled'])->orderByDesc('vintage')->orderBy('name')->get(['id', 'name', 'vintage', 'wine_type']),
             'containers' => Container::where('user_id', $userId)->where('archived', false)->orderBy('name')->get(['id', 'name']),
             'units' => UnitOfMeasurement::where('type', 'volume')->orderBy('name')->get(['id', 'name', 'symbol']),
             'oenologists' => Oenologist::where('user_id', $userId)->orderBy('name')->get(['id', 'name']),
-        ]);
-    }
-
-    protected function rules(): array
-    {
-        return [
-            'target_wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
-            'to_container_id' => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
-            'unit_of_measurement_id' => ['required', 'exists:units_of_measurement,id'],
-            'coupage_date' => ['required', 'date'],
-            'oenologist_id' => $this->ownedOenologistRule(),
-            'notes' => ['nullable', 'string', 'max:2000'],
-            'sources' => ['required', 'array', 'min:1'],
-            'sources.*.wine_id' => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
-            'sources.*.from_container_id' => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
-            'sources.*.quantity' => ['required', 'numeric', 'min:0.001'],
         ];
     }
 }

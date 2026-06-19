@@ -85,6 +85,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('label-batches.index')" submit-:label="__('Crear lote')" />
+        <x-agro.form-actions :cancel-url="roleRoute('label-batches.index')" :submit-label="__('Crear lote')" />
     </form>
 </x-agro.form-card>

@@ -194,6 +194,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('bottling.index')" submit-:label="__('Guardar embotellado')" />
+        <x-agro.form-actions :cancel-url="roleRoute('bottling.index')" :submit-label="__('Guardar embotellado')" />
     </form>
 </x-agro.form-card>

@@ -152,6 +152,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('coupage.index')" submit-:label="__('Registrar coupage')" />
+        <x-agro.form-actions :cancel-url="roleRoute('coupage.index')" :submit-label="__('Registrar coupage')" />
     </form>
 </x-agro.form-card>

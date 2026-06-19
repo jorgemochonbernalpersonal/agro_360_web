@@ -74,7 +74,7 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('label-batches.index')" submit-:label="__('Guardar cambios')" />
+        <x-agro.form-actions :cancel-url="roleRoute('label-batches.index')" :submit-label="__('Guardar cambios')" />
     </form>
 
     {{-- ── Mermas ──────────────────────────────────────────────────────────── --}}

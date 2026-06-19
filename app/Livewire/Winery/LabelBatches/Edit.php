@@ -3,23 +3,21 @@
 namespace App\Livewire\Winery\LabelBatches;
 
 use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\LabelBatch;
 use App\Models\LabelWaste;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
 /**
  * @property-read mixed $wines
  * @property-read mixed $wastes
  */
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
+    use WithOwnershipRules;
 
     public LabelBatch $batch;
 
@@ -67,25 +65,6 @@ class Edit extends Component
     public function wastes()
     {
         return $this->batch->wastes()->get();
-    }
-
-    public function save(): void
-    {
-        $data = $this->validate();
-
-        if ($data['wine_id']) {
-            Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
-        }
-
-        $this->batch->update([
-            'wine_id' => $data['wine_id'] ?: null,
-            'name' => $data['name'],
-            'source' => $data['source'],
-            'notes' => $data['notes'] ?: null,
-        ]);
-
-        $this->toastSuccess(__('Lote actualizado correctamente.'));
-        $this->roleRedirect('label-batches.index');
     }
 
     public function toggleWasteForm(): void
@@ -156,15 +135,6 @@ class Edit extends Component
         $this->toastSuccess(__('Merma eliminada.'));
     }
 
-    public function render()
-    {
-        return view('livewire.winery.label-batches.edit', [
-            'sources' => LabelBatch::SOURCES,
-            'wines' => $this->wines,
-            'wastes' => $this->wastes,
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -193,5 +163,38 @@ class Edit extends Component
         $this->waste_to = '';
         $this->waste_reason = '';
         $this->waste_date = now()->toDateString();
+    }
+
+    protected function performUpdate(): void
+    {
+        if ($this->wine_id) {
+            Wine::where('user_id', Auth::id())->findOrFail($this->wine_id);
+        }
+
+        $this->batch->update([
+            'wine_id' => $this->wine_id ?: null,
+            'name' => $this->name,
+            'source' => $this->source,
+            'notes' => $this->notes ?: null,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Lote actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.label-batches.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'sources' => LabelBatch::SOURCES,
+            'wines' => $this->wines,
+            'wastes' => $this->wastes,
+        ];
     }
 }

@@ -48,6 +48,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="roleRoute('label-batches.waste.index', $labelBatch)" submit-:label="__('Registrar merma')" />
+        <x-agro.form-actions :cancel-url="roleRoute('label-batches.waste.index', $labelBatch)" :submit-label="__('Registrar merma')" />
     </form>
 </x-agro.form-card>
