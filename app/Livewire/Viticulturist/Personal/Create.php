@@ -2,86 +2,43 @@
 
 namespace App\Livewire\Viticulturist\Personal;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Viticulturist\AbstractCreate;
 use App\Models\Crew;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
+    public string $name = '';
 
-    public $name = '';
-
-    public $description = '';
+    public string $description = '';
 
     public $winery_id = '';
 
-    public function mount()
+    public function mount(): void
     {
         if (! Auth::user()->can('create', Crew::class)) {
-            abort(403, __('No tienes permiso para crear cuadrillas.'));
+            abort(403);
         }
 
-        $user = Auth::user();
-
-        // Si solo tiene una bodega, auto-seleccionarla
-        $wineries = $user->wineries;
+        $wineries = Auth::user()->wineries;
 
         if ($wineries->count() === 1) {
             $this->winery_id = $wineries->first()->id;
         }
     }
 
-    public function save()
+    protected function performCreate(): void
     {
-        $this->validate();
-
-        $user = Auth::user();
-
-        try {
-            DB::transaction(function () use ($user) {
-                Crew::create([
-                    'name' => $this->name,
-                    'description' => $this->description,
-                    'viticulturist_id' => $user->id,
-                    'winery_id' => $this->winery_id ?: null,  // Convertir cadena vacía a NULL
-                ]);
-            });
-
-            $this->toastSuccess(__('Cuadrilla creada correctamente.'));
-
-            return $this->viticulturistRoleRedirect('personal.index');
-        } catch (\Exception $e) {
-            Log::error('Error al crear cuadrilla', [
-                'error' => $e->getMessage(),
-                'user_id' => $user->id,
-                'winery_id' => $this->winery_id,
-                'trace' => $e->getTraceAsString(),
+        DB::transaction(function () {
+            Crew::create([
+                'name' => $this->name,
+                'description' => $this->description,
+                'viticulturist_id' => $this->viticulturistId(),
+                'winery_id' => $this->winery_id ?: null,
             ]);
-
-            $this->toastError(__('Error al crear la cuadrilla. Por favor, intenta de nuevo.'));
-
-            return;
-        }
-    }
-
-    #[Layout('layouts.app')]
-    public function render()
-    {
-        $user = Auth::user();
-
-        // Obtener wineries usando relación
-        $wineries = $user->wineries;
-
-        return view('livewire.viticulturist.personal.create', [
-            'wineries' => $wineries,
-        ]);
+        });
     }
 
     protected function rules(): array
@@ -96,7 +53,6 @@ class Create extends Component
                 'exists:users,id',
                 function ($attribute, $value, $fail) use ($user) {
                     if ($value) {
-                        // Solo validar si se proporciona winery_id
                         $exists = WineryViticulturist::where('viticulturist_id', $user->id)
                             ->where('winery_id', $value)
                             ->exists();
@@ -108,5 +64,20 @@ class Create extends Component
                 },
             ],
         ];
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Cuadrilla creada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'personal.index';
+    }
+
+    protected function viewData(): array
+    {
+        return ['wineries' => Auth::user()->wineries];
     }
 }
