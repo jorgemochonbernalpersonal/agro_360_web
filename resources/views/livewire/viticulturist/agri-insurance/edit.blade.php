@@ -4,7 +4,7 @@
     :description="__('Modifica los datos de la póliza de seguro.')"
     :back-url="roleRoute('viticulturist.agri-insurance.index')"
 >
-    <form wire:submit.prevent="update" class="space-y-8">
+    <form wire:submit.prevent="save" class="space-y-8">
         <x-agro.form-section :title="__('Datos de la Póliza')">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 

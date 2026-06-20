@@ -2,19 +2,14 @@
 
 namespace App\Livewire\Viticulturist\PlotCosts;
 
-use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Viticulturist\AbstractEdit;
 use App\Models\Campaign;
 use App\Models\Plot;
 use App\Models\PlotCost;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
-
     public PlotCost $cost;
 
     public string $plot_id = '';
@@ -37,9 +32,7 @@ class Edit extends Component
 
     public function mount(PlotCost $cost): void
     {
-        if ($cost->viticulturist_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorizeOwnership($cost);
 
         $this->cost = $cost;
         $this->plot_id = (string) ($cost->plot_id ?? '');
@@ -53,10 +46,8 @@ class Edit extends Component
         $this->notes = $cost->notes ?? '';
     }
 
-    public function update(): mixed
+    protected function performUpdate(): void
     {
-        $this->validate();
-
         $this->cost->update([
             'plot_id' => $this->plot_id ?: null,
             'campaign_id' => $this->campaign_id ?: null,
@@ -68,21 +59,27 @@ class Edit extends Component
             'invoice_reference' => $this->invoice_reference ?: null,
             'notes' => $this->notes ?: null,
         ]);
-
-        $this->toastSuccess(__('Coste actualizado correctamente.'));
-
-        return $this->viticulturistRoleRedirect('plot-costs.index');
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        $user = Auth::user();
+        return __('Coste actualizado correctamente.');
+    }
 
-        return view('livewire.viticulturist.plot-costs.edit', [
-            'plots' => Plot::where('viticulturist_id', $user->id)->orderBy('name')->get(),
-            'campaigns' => Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get(),
+    protected function indexRoute(): string
+    {
+        return 'plot-costs.index';
+    }
+
+    protected function viewData(): array
+    {
+        $userId = Auth::id();
+
+        return [
+            'plots' => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(),
+            'campaigns' => Campaign::where('viticulturist_id', $userId)->orderByDesc('year')->get(),
             'categories' => PlotCost::categoryOptions(),
-        ])->layout('layouts.app');
+        ];
     }
 
     protected function rules(): array

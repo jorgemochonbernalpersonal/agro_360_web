@@ -4,7 +4,7 @@
     :description="__('Modifica los datos del coste registrado.')"
     :back-url="roleRoute('viticulturist.plot-costs.index')"
 >
-    <form wire:submit.prevent="update" class="space-y-8">
+    <form wire:submit.prevent="save" class="space-y-8">
         <x-agro.form-section :title="__('Datos del Coste')">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 

@@ -4,7 +4,7 @@
     :description="__('Modifica los datos del servicio subcontratado.')"
     :back-url="roleRoute('viticulturist.subcontracting.index')"
 >
-    <form wire:submit.prevent="update" class="space-y-8">
+    <form wire:submit.prevent="save" class="space-y-8">
         <x-agro.form-section :title="__('Datos del Servicio')">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 

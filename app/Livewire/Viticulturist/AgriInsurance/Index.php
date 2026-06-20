@@ -2,16 +2,12 @@
 
 namespace App\Livewire\Viticulturist\AgriInsurance;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Viticulturist\AbstractIndex;
 use App\Models\AgriInsurance;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\WithPagination;
+use Illuminate\Database\Eloquent\Builder;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination, WithToastNotifications;
-
     public string $filter_status = '';
 
     public string $filter_coverage_type = '';
@@ -33,26 +29,38 @@ class Index extends Component
 
     public function delete(int $id): void
     {
-        AgriInsurance::where('viticulturist_id', Auth::id())->findOrFail($id)->delete();
+        $this->findOwned(AgriInsurance::class, $id)->delete();
         $this->toastSuccess(__('Seguro eliminado.'));
     }
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $user = Auth::user();
+        return AgriInsurance::where('viticulturist_id', $this->viticulturistId());
+    }
 
-        $query = AgriInsurance::where('viticulturist_id', $user->id);
-
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->filter_status) {
             $query->where('status', $this->filter_status);
         }
         if ($this->filter_coverage_type) {
             $query->where('coverage_type', $this->filter_coverage_type);
         }
+    }
 
-        $insurances = $query->orderByDesc('end_date')->paginate(20);
+    protected function defaultOrderBy(): array
+    {
+        return ['end_date', 'desc'];
+    }
 
-        $base = AgriInsurance::where('viticulturist_id', $user->id);
+    protected function filterDefaults(): array
+    {
+        return ['filter_status' => '', 'filter_coverage_type' => ''];
+    }
+
+    protected function viewData(mixed $entries): array
+    {
+        $base = AgriInsurance::where('viticulturist_id', $this->viticulturistId());
         $stats = [
             'total' => (clone $base)->count(),
             'active' => (clone $base)->active()->count(),
@@ -60,13 +68,13 @@ class Index extends Component
             'expired' => (clone $base)->where('status', 'expired')->count(),
         ];
 
-        return view('livewire.viticulturist.agri-insurance.index', [
-            'insurances' => $insurances,
+        return [
+            'insurances' => $entries,
             'stats' => $stats,
             'expiringSoon' => $stats['expiring'],
             'activeCount' => $stats['active'],
             'coverageTypes' => AgriInsurance::coverageTypeOptions(),
             'statuses' => AgriInsurance::statusOptions(),
-        ])->layout('layouts.app');
+        ];
     }
 }

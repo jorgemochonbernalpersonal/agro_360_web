@@ -25,7 +25,7 @@ class EditTest extends ViticulturistTestCase
         Livewire::test(Edit::class, ['cost' => $cost])
             ->set('description', 'Actualizado')
             ->set('amount', '200.00')
-            ->call('update')
+            ->call('save')
             ->assertRedirect(route('viticulturist.plot-costs.index'));
 
         $this->assertDatabaseHas('plot_costs', [
