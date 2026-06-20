@@ -8,6 +8,7 @@ use App\Models\AppSetting;
 use App\Models\User;
 use App\Services\SecurityLogger;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -51,6 +52,15 @@ class Index extends Component
 
     // Beta date from settings
     public $betaEndsAt = '';
+
+    // Delete confirmation modal
+    public $showDeleteModal = false;
+
+    public $deleteUserId = null;
+
+    public $deleteUserName = '';
+
+    public $deleteCounts = [];
 
     // Bulk operations
     public $selectedUsers = [];
@@ -185,7 +195,11 @@ class Index extends Component
 
     // ─── Delete ───────────────────────────────────────────────────────────────
 
-    public function deleteUser($userId)
+    /**
+     * Abre el modal de confirmación mostrando el volumen de datos que se
+     * borrarán en cascada junto al usuario.
+     */
+    public function confirmDeleteUser($userId)
     {
         if ($this->isReadOnly()) {
             return;
@@ -193,28 +207,97 @@ class Index extends Component
 
         $user = User::findOrFail($userId);
 
-        if ($user->isAdmin()) {
-            $this->toastError(__('No puedes eliminar a un administrador.'));
-
+        if (! $this->canDelete($user)) {
             return;
         }
 
-        if ($user->id === Auth::id()) {
-            $this->toastError(__('No puedes eliminarte a ti mismo.'));
+        $this->deleteUserId = $user->id;
+        $this->deleteUserName = $user->name;
+        $this->deleteCounts = $this->dependencyCounts($user);
+        $this->showDeleteModal = true;
+    }
+
+    public function deleteUser()
+    {
+        if ($this->isReadOnly() || $this->deleteUserId === null) {
+            return;
+        }
+
+        $user = User::findOrFail($this->deleteUserId);
+
+        if (! $this->canDelete($user)) {
+            $this->closeDeleteModal();
 
             return;
         }
 
         $name = $user->name;
+        $email = $user->email;
+        $id = $user->id;
+
+        try {
+            $user->delete();
+        } catch (QueryException $e) {
+            report($e);
+            $this->toastError(__('No se pudo eliminar el usuario: tiene datos asociados que lo impiden. Considera desactivarlo en su lugar.'));
+            $this->closeDeleteModal();
+
+            return;
+        }
 
         SecurityLogger::logSecurityEvent('user_deleted_by_admin', [
             'admin_id' => Auth::id(),
-            'user_id' => $userId,
-            'user_email' => $user->email,
+            'user_id' => $id,
+            'user_email' => $email,
         ]);
 
-        $user->delete();
+        $this->closeDeleteModal();
         $this->toastSuccess("Usuario {$name} eliminado.");
+    }
+
+    public function closeDeleteModal()
+    {
+        $this->showDeleteModal = false;
+        $this->deleteUserId = null;
+        $this->deleteUserName = '';
+        $this->deleteCounts = [];
+    }
+
+    /**
+     * Reglas compartidas: no se puede borrar a un admin ni a uno mismo.
+     */
+    private function canDelete(User $user): bool
+    {
+        if ($user->isAdmin()) {
+            $this->toastError(__('No puedes eliminar a un administrador.'));
+
+            return false;
+        }
+
+        if ($user->id === Auth::id()) {
+            $this->toastError(__('No puedes eliminarte a ti mismo.'));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Recuento de datos que se eliminarán en cascada. Solo se devuelven las
+     * entidades con al menos un registro.
+     *
+     * @return array<string, int>
+     */
+    private function dependencyCounts(User $user): array
+    {
+        return array_filter([
+            __('Campañas') => $user->campaigns()->count(),
+            __('Actividades agrícolas') => $user->agriculturalActivities()->count(),
+            __('Parcelas') => $user->plots()->count(),
+            __('Clientes') => DB::table('clients')->where('user_id', $user->id)->count(),
+            __('Facturas') => DB::table('invoices')->where('user_id', $user->id)->count(),
+        ], fn ($count) => $count > 0);
     }
 
     // ─── Bulk operations ──────────────────────────────────────────────────────

@@ -2,16 +2,11 @@
 
 namespace App\Livewire\Viticulturist\AgriInsurance;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Viticulturist\AbstractEdit;
 use App\Models\AgriInsurance;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public AgriInsurance $insurance;
 
     public string $policy_number = '';
@@ -42,9 +37,7 @@ class Edit extends Component
 
     public function mount(AgriInsurance $insurance): void
     {
-        if ($insurance->viticulturist_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorizeOwnership($insurance);
 
         $this->insurance = $insurance;
         $this->policy_number = $insurance->policy_number ?? '';
@@ -62,10 +55,8 @@ class Edit extends Component
         $this->notes = $insurance->notes ?? '';
     }
 
-    public function update(): mixed
+    protected function performUpdate(): void
     {
-        $this->validate();
-
         $this->insurance->update([
             'policy_number' => $this->policy_number ?: null,
             'insurance_company' => $this->insurance_company,
@@ -81,18 +72,24 @@ class Edit extends Component
             'covered_plots' => $this->covered_plots ?: null,
             'notes' => $this->notes ?: null,
         ]);
-
-        $this->toastSuccess(__('Seguro actualizado correctamente.'));
-
-        return $this->viticulturistRoleRedirect('agri-insurance.index');
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.viticulturist.agri-insurance.edit', [
+        return __('Seguro actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'agri-insurance.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
             'coverageTypes' => AgriInsurance::coverageTypeOptions(),
             'statuses' => AgriInsurance::statusOptions(),
-        ])->layout('layouts.app');
+        ];
     }
 
     protected function rules(): array

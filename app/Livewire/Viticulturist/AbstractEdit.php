@@ -26,4 +26,13 @@ abstract class AbstractEdit extends SharedAbstractEdit
     {
         return 'viticulturist_id';
     }
+
+    protected function resolveIndexRoute(): string
+    {
+        $suffix = $this->indexRoute();
+        $prefix = $this->rolePrefix();
+        $candidate = "{$prefix}.{$suffix}";
+
+        return \Illuminate\Support\Facades\Route::has($candidate) ? $candidate : $suffix;
+    }
 }

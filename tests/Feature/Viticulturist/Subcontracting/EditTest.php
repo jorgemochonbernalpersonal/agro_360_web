@@ -24,7 +24,7 @@ class EditTest extends ViticulturistTestCase
 
         Livewire::test(Edit::class, ['record' => $record])
             ->set('company_name', 'Actualizada SL')
-            ->call('update')
+            ->call('save')
             ->assertRedirect(route('viticulturist.subcontracting.index'));
 
         $this->assertDatabaseHas('subcontractings', [

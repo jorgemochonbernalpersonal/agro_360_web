@@ -2,18 +2,14 @@
 
 namespace App\Livewire\Viticulturist\Subcontracting;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Viticulturist\AbstractIndex;
 use App\Models\Campaign;
 use App\Models\Plot;
 use App\Models\Subcontracting;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\WithPagination;
+use Illuminate\Database\Eloquent\Builder;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination, WithToastNotifications;
-
     public string $filter_campaign_id = '';
 
     public string $filter_plot_id = '';
@@ -49,35 +45,29 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function clearFilters(): void
-    {
-        $this->filter_campaign_id = '';
-        $this->filter_plot_id = '';
-        $this->filter_service_type = '';
-        $this->filter_invoiced = '';
-        $this->resetPage();
-    }
-
     public function delete(int $id): void
     {
-        Subcontracting::where('viticulturist_id', Auth::id())->findOrFail($id)->delete();
+        $this->findOwned(Subcontracting::class, $id)->delete();
         $this->toastSuccess(__('Subcontratación eliminada.'));
     }
 
     public function toggleInvoiced(int $id): void
     {
-        $record = Subcontracting::where('viticulturist_id', Auth::id())->findOrFail($id);
+        $record = $this->findOwned(Subcontracting::class, $id);
         $record->update(['invoiced' => ! $record->invoiced]);
-        $this->toastSuccess($record->invoiced ? __('Marcado como facturado.') : __('Marcado como pendiente de factura.'));
+        $this->toastSuccess($record->invoiced
+            ? __('Marcado como facturado.')
+            : __('Marcado como pendiente de factura.'));
     }
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $user = Auth::user();
-
-        $query = Subcontracting::where('viticulturist_id', $user->id)
+        return Subcontracting::where('viticulturist_id', $this->viticulturistId())
             ->with(['plot', 'campaign']);
+    }
 
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->filter_campaign_id) {
             $query->where('campaign_id', $this->filter_campaign_id);
         }
@@ -90,10 +80,27 @@ class Index extends Component
         if ($this->filter_invoiced !== '') {
             $query->where('invoiced', (bool) $this->filter_invoiced);
         }
+    }
 
-        $records = $query->orderByDesc('service_date')->paginate(20);
+    protected function defaultOrderBy(): array
+    {
+        return ['service_date', 'desc'];
+    }
 
-        $base = Subcontracting::where('viticulturist_id', $user->id);
+    protected function filterDefaults(): array
+    {
+        return [
+            'filter_campaign_id' => '',
+            'filter_plot_id' => '',
+            'filter_service_type' => '',
+            'filter_invoiced' => '',
+        ];
+    }
+
+    protected function viewData(mixed $entries): array
+    {
+        $viticulturistId = $this->viticulturistId();
+        $base = Subcontracting::where('viticulturist_id', $viticulturistId);
         $stats = [
             'total' => (clone $base)->count(),
             'total_amount' => (clone $base)->whereNotNull('amount')->sum('amount'),
@@ -101,15 +108,12 @@ class Index extends Component
             'pending' => (clone $base)->where('invoiced', false)->count(),
         ];
 
-        $campaigns = Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get();
-        $plots = Plot::where('viticulturist_id', $user->id)->orderBy('name')->get();
-
-        return view('livewire.viticulturist.subcontracting.index', [
-            'records' => $records,
+        return [
+            'records' => $entries,
             'stats' => $stats,
-            'campaigns' => $campaigns,
-            'plots' => $plots,
+            'campaigns' => Campaign::where('viticulturist_id', $viticulturistId)->orderByDesc('year')->get(),
+            'plots' => Plot::where('viticulturist_id', $viticulturistId)->orderBy('name')->get(),
             'serviceTypes' => Subcontracting::serviceTypeOptions(),
-        ])->layout('layouts.app');
+        ];
     }
 }

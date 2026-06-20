@@ -2,18 +2,15 @@
 
 namespace App\Livewire\Viticulturist\Pac\Surfaces;
 
+use App\Livewire\Viticulturist\AbstractIndex;
 use App\Models\Plot;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\WithPagination;
+use Illuminate\Database\Eloquent\Builder;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination;
-
     public string $search = '';
 
-    public string $filterPac = ''; // 'with' | 'without'
+    public string $filterPac = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -30,25 +27,40 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function clearFilters(): void
+    protected function filterDefaults(): array
     {
-        $this->search = '';
-        $this->filterPac = '';
-        $this->resetPage();
+        return ['search' => '', 'filterPac' => ''];
     }
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $query = Plot::where('viticulturist_id', Auth::id())
+        return Plot::where('viticulturist_id', $this->viticulturistId())
             ->where('active', true)
-            ->with(['municipality'])
-            ->when($this->search, fn ($q) => $q->where('name', 'like', '%'.$this->search.'%'))
-            ->when($this->filterPac === 'with', fn ($q) => $q->whereNotNull('pac_eligible_area'))
-            ->when($this->filterPac === 'without', fn ($q) => $q->whereNull('pac_eligible_area'));
+            ->with(['municipality']);
+    }
 
-        $plots = $query->orderBy('name')->paginate(20);
+    protected function applyFilters(Builder $query): void
+    {
+        if ($this->search) {
+            $query->where('name', 'like', '%'.$this->search.'%');
+        }
 
-        $allPlots = Plot::where('viticulturist_id', Auth::id())->where('active', true)->get();
+        if ($this->filterPac === 'with') {
+            $query->whereNotNull('pac_eligible_area');
+        } elseif ($this->filterPac === 'without') {
+            $query->whereNull('pac_eligible_area');
+        }
+    }
+
+    protected function defaultOrderBy(): array
+    {
+        return ['name', 'asc'];
+    }
+
+    protected function viewData(mixed $entries): array
+    {
+        $allPlots = Plot::where('viticulturist_id', $this->viticulturistId())->where('active', true)->get();
+
         $stats = [
             'total' => $allPlots->count(),
             'with_pac' => $allPlots->whereNotNull('pac_eligible_area')->count(),
@@ -57,9 +69,9 @@ class Index extends Component
             'total_eligible' => $allPlots->sum('pac_eligible_area'),
         ];
 
-        return view('livewire.viticulturist.pac.surfaces.index', [
-            'plots' => $plots,
+        return [
+            'plots' => $entries,
             'stats' => $stats,
-        ])->layout('layouts.app');
+        ];
     }
 }

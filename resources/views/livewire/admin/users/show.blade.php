@@ -56,8 +56,7 @@
 
             @if(!$user->isAdmin())
                 <flux:button
-                    wire:click="deleteUser"
-                    wire:confirm="{{ __('¿Eliminar a :name? Esta acción no se puede deshacer.', ['name' => $user->name]) }}"
+                    wire:click="confirmDeleteUser"
                     variant="danger"
                     icon="trash"
                 >
@@ -732,4 +731,41 @@
             </div>
         </x-agro.card>
     </div>
+
+    {{-- Delete confirmation modal --}}
+    <flux:modal wire:model="showDeleteModal" class="w-full max-w-lg">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-red-50">
+                    <flux:icon icon="exclamation-triangle" class="size-5 text-red-600" />
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-zinc-900">{{ __('Eliminar usuario') }}</h3>
+                    <p class="text-xs text-zinc-500">{{ __('Esta acción no se puede deshacer.') }}</p>
+                </div>
+            </div>
+
+            <p class="text-sm text-zinc-700">
+                {{ __('Vas a eliminar a :name. Se borrarán de forma permanente todos sus datos asociados:', ['name' => $user->name]) }}
+            </p>
+
+            @if(count($deleteCounts) > 0)
+                <ul class="mt-3 space-y-1.5 rounded-lg bg-red-50 border border-red-100 p-3">
+                    @foreach($deleteCounts as $label => $count)
+                        <li class="flex items-center justify-between text-sm">
+                            <span class="text-zinc-700">{{ $label }}</span>
+                            <span class="font-semibold text-red-700">{{ $count }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="mt-3 text-sm text-zinc-500">{{ __('El usuario no tiene datos asociados registrados.') }}</p>
+            @endif
+
+            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
+                <flux:button variant="ghost" wire:click="closeDeleteModal">{{ __('Cancelar') }}</flux:button>
+                <flux:button variant="danger" icon="trash" wire:click="deleteUser">{{ __('Eliminar definitivamente') }}</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>

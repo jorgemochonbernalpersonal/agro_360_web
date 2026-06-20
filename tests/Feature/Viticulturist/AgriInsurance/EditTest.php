@@ -27,7 +27,7 @@ class EditTest extends ViticulturistTestCase
         Livewire::test(Edit::class, ['insurance' => $insurance])
             ->set('insurance_company', 'Actualizada SA')
             ->set('status', 'expired')
-            ->call('update')
+            ->call('save')
             ->assertRedirect(route('viticulturist.agri-insurance.index'));
 
         $this->assertDatabaseHas('agri_insurances', [

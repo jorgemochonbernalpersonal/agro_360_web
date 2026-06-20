@@ -18,6 +18,7 @@ use App\Models\SupervisorWinery;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use App\Services\SecurityLogger;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
@@ -46,6 +47,11 @@ class Show extends Component
     public $editEmail = '';
 
     public $editRole = '';
+
+    // Delete confirmation modal
+    public $showDeleteModal = false;
+
+    public $deleteCounts = [];
 
     public function mount($user)
     {
@@ -127,36 +133,91 @@ class Show extends Component
 
     // ─── Delete ───────────────────────────────────────────────────────────────
 
+    /**
+     * Abre el modal de confirmación mostrando el volumen de datos que se
+     * borrarán en cascada junto al usuario.
+     */
+    public function confirmDeleteUser()
+    {
+        if ($this->isReadOnly() || ! $this->canDelete()) {
+            return;
+        }
+
+        $this->deleteCounts = $this->dependencyCounts($this->user);
+        $this->showDeleteModal = true;
+    }
+
     public function deleteUser()
     {
-        if ($this->isReadOnly()) {
-            return;
-        }
-
-        if ($this->user->isAdmin()) {
-            $this->toastError(__('No puedes eliminar a un administrador.'));
-
-            return;
-        }
-
-        if ($this->user->id === Auth::id()) {
-            $this->toastError(__('No puedes eliminarte a ti mismo.'));
+        if ($this->isReadOnly() || ! $this->canDelete()) {
+            $this->closeDeleteModal();
 
             return;
         }
 
         $name = $this->user->name;
+        $email = $this->user->email;
+        $id = $this->user->id;
+
+        try {
+            $this->user->delete();
+        } catch (QueryException $e) {
+            report($e);
+            $this->toastError(__('No se pudo eliminar el usuario: tiene datos asociados que lo impiden. Considera desactivarlo en su lugar.'));
+            $this->closeDeleteModal();
+
+            return;
+        }
 
         SecurityLogger::logSecurityEvent('user_deleted_by_admin', [
             'admin_id' => Auth::id(),
-            'user_id' => $this->user->id,
-            'user_email' => $this->user->email,
+            'user_id' => $id,
+            'user_email' => $email,
         ]);
 
-        $this->user->delete();
         $this->toastSuccess("Usuario {$name} eliminado.");
 
         return $this->redirect(route('admin.users.index'), navigate: true);
+    }
+
+    public function closeDeleteModal()
+    {
+        $this->showDeleteModal = false;
+        $this->deleteCounts = [];
+    }
+
+    private function canDelete(): bool
+    {
+        if ($this->user->isAdmin()) {
+            $this->toastError(__('No puedes eliminar a un administrador.'));
+
+            return false;
+        }
+
+        if ($this->user->id === Auth::id()) {
+            $this->toastError(__('No puedes eliminarte a ti mismo.'));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Recuento de datos que se eliminarán en cascada. Solo se devuelven las
+     * entidades con al menos un registro.
+     *
+     * @return array<string, int>
+     */
+    private function dependencyCounts(User $user): array
+    {
+        return array_filter([
+            __('Campañas') => $user->campaigns()->count(),
+            __('Actividades agrícolas') => $user->agriculturalActivities()->count(),
+            __('Parcelas') => $user->plots()->count(),
+            __('Clientes') => DB::table('clients')->where('user_id', $user->id)->count(),
+            __('Facturas') => DB::table('invoices')->where('user_id', $user->id)->count(),
+        ], fn ($count) => $count > 0);
     }
 
     // ─── Password reset ───────────────────────────────────────────────────────

@@ -6,13 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\HarvestDelivery;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class HarvestDeliveryAlbaranController extends Controller
 {
     public function __invoke(HarvestDelivery $delivery): Response
     {
-        abort_unless($delivery->viticulturist_id === Auth::id(), 403);
+        $this->authorize('view', $delivery);
 
         $delivery->load([
             'viticulturist.profile.province',

@@ -2,16 +2,11 @@
 
 namespace App\Livewire\Viticulturist\AgriInsurance;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Viticulturist\AbstractCreate;
 use App\Models\AgriInsurance;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public string $policy_number = '';
 
     public string $insurance_company = '';
@@ -44,12 +39,10 @@ class Create extends Component
         $this->end_date = now()->addYear()->format('Y-m-d');
     }
 
-    public function save(): mixed
+    protected function performCreate(): void
     {
-        $this->validate();
-
         AgriInsurance::create([
-            'viticulturist_id' => Auth::id(),
+            'viticulturist_id' => $this->ownerId(),
             'policy_number' => $this->policy_number ?: null,
             'insurance_company' => $this->insurance_company,
             'coverage_type' => $this->coverage_type,
@@ -64,18 +57,24 @@ class Create extends Component
             'covered_plots' => $this->covered_plots ?: null,
             'notes' => $this->notes ?: null,
         ]);
-
-        $this->toastSuccess(__('Seguro agrario registrado correctamente.'));
-
-        return $this->viticulturistRoleRedirect('agri-insurance.index');
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.viticulturist.agri-insurance.create', [
+        return __('Seguro agrario registrado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'agri-insurance.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
             'coverageTypes' => AgriInsurance::coverageTypeOptions(),
             'statuses' => AgriInsurance::statusOptions(),
-        ])->layout('layouts.app');
+        ];
     }
 
     protected function rules(): array

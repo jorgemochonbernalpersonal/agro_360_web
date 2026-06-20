@@ -2,19 +2,14 @@
 
 namespace App\Livewire\Viticulturist\Subcontracting;
 
-use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Viticulturist\AbstractEdit;
 use App\Models\Campaign;
 use App\Models\Plot;
 use App\Models\Subcontracting;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
-
     public Subcontracting $record;
 
     public string $plot_id = '';
@@ -45,9 +40,7 @@ class Edit extends Component
 
     public function mount(Subcontracting $record): void
     {
-        if ($record->viticulturist_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorizeOwnership($record);
 
         $this->record = $record;
         $this->plot_id = (string) ($record->plot_id ?? '');
@@ -65,10 +58,8 @@ class Edit extends Component
         $this->notes = $record->notes ?? '';
     }
 
-    public function update(): mixed
+    protected function performUpdate(): void
     {
-        $this->validate();
-
         $this->record->update([
             'plot_id' => $this->plot_id ?: null,
             'campaign_id' => $this->campaign_id ?: null,
@@ -84,21 +75,27 @@ class Edit extends Component
             'description' => $this->description ?: null,
             'notes' => $this->notes ?: null,
         ]);
-
-        $this->toastSuccess(__('Subcontratación actualizada correctamente.'));
-
-        return $this->viticulturistRoleRedirect('subcontracting.index');
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        $user = Auth::user();
+        return __('Subcontratación actualizada correctamente.');
+    }
 
-        return view('livewire.viticulturist.subcontracting.edit', [
-            'plots' => Plot::where('viticulturist_id', $user->id)->orderBy('name')->get(),
-            'campaigns' => Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get(),
+    protected function indexRoute(): string
+    {
+        return 'subcontracting.index';
+    }
+
+    protected function viewData(): array
+    {
+        $userId = Auth::id();
+
+        return [
+            'plots' => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(),
+            'campaigns' => Campaign::where('viticulturist_id', $userId)->orderByDesc('year')->get(),
             'serviceTypes' => Subcontracting::serviceTypeOptions(),
-        ])->layout('layouts.app');
+        ];
     }
 
     protected function rules(): array

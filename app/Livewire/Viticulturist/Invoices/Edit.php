@@ -281,6 +281,13 @@ class Edit extends Component
                 $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
 
                 foreach ($this->items as $itemData) {
+                    if (! empty($itemData['harvest_id'])) {
+                        $this->invoiceService->validateViticulturistHarvestOwnership(
+                            (int) $itemData['harvest_id'],
+                            Auth::id(),
+                        );
+                    }
+
                     $tax = $taxRates->get($itemData['tax_id'] ?? null);
                     $line = $this->invoiceService->calculateVatLine($itemData, $tax);
 
