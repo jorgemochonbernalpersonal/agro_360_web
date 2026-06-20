@@ -49,6 +49,12 @@ return [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
+        // Client IDs nativos de las apps móviles. El id_token que emiten lleva como
+        // 'aud' el client_id de SU plataforma (Android usa el Web client_id como
+        // serverClientId; iOS usa su propio client_id). El backend debe aceptar
+        // cualquiera de estos como audiencia válida.
+        'ios_client_id' => env('GOOGLE_IOS_CLIENT_ID'),
+        'android_client_id' => env('GOOGLE_ANDROID_CLIENT_ID'),
     ],
 
     'apple' => [

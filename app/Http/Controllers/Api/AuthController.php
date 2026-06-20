@@ -464,9 +464,15 @@ class AuthController extends BaseApiController
             return response()->json(['message' => __('El email de Google no está verificado.')], 422);
         }
 
-        // Verificar que el token es para esta app
-        $clientId = config('services.google.client_id');
-        if ($clientId && ($payload['aud'] ?? '') !== $clientId) {
+        // Verificar que el token es para alguna de nuestras apps (web / Android / iOS).
+        // Android emite el id_token con aud = Web client_id (serverClientId);
+        // iOS lo emite con aud = iOS client_id. Aceptamos cualquiera de los configurados.
+        $allowedAudiences = array_filter([
+            config('services.google.client_id'),
+            config('services.google.ios_client_id'),
+            config('services.google.android_client_id'),
+        ]);
+        if (! empty($allowedAudiences) && ! in_array($payload['aud'] ?? '', $allowedAudiences, true)) {
             return response()->json(['message' => __('Token de Google inválido.')], 422);
         }
 
