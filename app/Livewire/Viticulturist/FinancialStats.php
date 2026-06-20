@@ -97,20 +97,13 @@ class FinancialStats extends Component
 
         // Top 10 clientes por facturación
         $topClients = Client::forUser($user->id)
-            ->with('invoices')
+            ->withSum(['invoices as total_invoiced' => function ($q) {
+                $q->whereYear('invoice_date', $this->selectedYear)
+                    ->where('status', '!=', 'cancelled');
+            }], 'total_amount')
             ->get()
-            ->map(function ($client) {
-                $client->total_invoiced = $client->invoices()
-                    ->whereYear('invoice_date', $this->selectedYear)
-                    ->where('status', '!=', 'cancelled')
-                    ->sum('total_amount');
-
-                return $client;
-            })
-            ->filter(function ($client) {
-                return $client->total_invoiced > 0;
-            })
-            ->sortByDesc('total_invoiced')
+            ->sortByDesc(fn ($c) => (float) ($c->total_invoiced ?? 0))
+            ->filter(fn ($c) => ($c->total_invoiced ?? 0) > 0)
             ->take(10)
             ->values();
 

@@ -196,6 +196,13 @@ class Create extends Component
                 ]);
 
                 foreach ($this->items as $itemData) {
+                    if (! empty($itemData['harvest_id'])) {
+                        $this->invoiceService->validateViticulturistHarvestOwnership(
+                            (int) $itemData['harvest_id'],
+                            $user->id,
+                        );
+                    }
+
                     $tax = $taxRates->get($itemData['tax_id'] ?? null);
                     $line = $this->invoiceService->calculateVatLine($itemData, $tax);
 

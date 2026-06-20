@@ -2,19 +2,17 @@
 
 namespace App\Livewire\Viticulturist\PestManagement;
 
+use App\Livewire\Viticulturist\AbstractIndex;
 use App\Models\Pest;
-use Livewire\Component;
-use Livewire\WithPagination;
+use Illuminate\Database\Eloquent\Builder;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination;
+    public string $search = '';
 
-    public $search = '';
+    public string $typeFilter = 'all';
 
-    public $typeFilter = 'all'; // all, pest, disease
-
-    public $showOnlyRisk = false;
+    public bool $showOnlyRisk = false;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -22,34 +20,37 @@ class Index extends Component
         'showOnlyRisk' => ['except' => false],
     ];
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function updatingTypeFilter()
+    public function updatingTypeFilter(): void
     {
         $this->resetPage();
     }
 
-    public function updatingShowOnlyRisk()
+    public function updatingShowOnlyRisk(): void
     {
         $this->resetPage();
     }
 
-    public function clearFilters(): void
+    protected function filterDefaults(): array
     {
-        $this->search = '';
-        $this->typeFilter = 'all';
-        $this->showOnlyRisk = false;
-        $this->resetPage();
+        return [
+            'search' => '',
+            'typeFilter' => 'all',
+            'showOnlyRisk' => false,
+        ];
     }
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $query = Pest::query()->active();
+        return Pest::query()->active();
+    }
 
-        // Filtro de búsqueda
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('name', 'like', '%'.$this->search.'%')
@@ -58,24 +59,35 @@ class Index extends Component
             });
         }
 
-        // Filtro por tipo
         if ($this->typeFilter !== 'all') {
             $query->byType($this->typeFilter);
         }
 
-        // Filtro por riesgo actual
         if ($this->showOnlyRisk) {
             $query->inRiskPeriod();
         }
+    }
 
-        $pests = $query->orderBy('type')->orderBy('name')->paginate(12);
+    protected function defaultOrderBy(): array
+    {
+        return ['name', 'asc'];
+    }
 
-        // Obtener plagas en riesgo para alertas
-        $pestsInRisk = Pest::active()->inRiskPeriod()->get();
+    protected function applyOrderBy(Builder $query): void
+    {
+        $query->orderBy('type')->orderBy('name');
+    }
 
-        return view('livewire.viticulturist.pest-management.index', [
-            'pests' => $pests,
-            'pestsInRisk' => $pestsInRisk,
-        ])->layout('layouts.app');
+    protected function perPage(): int
+    {
+        return 12;
+    }
+
+    protected function viewData(mixed $entries): array
+    {
+        return [
+            'pests' => $entries,
+            'pestsInRisk' => Pest::active()->inRiskPeriod()->get(),
+        ];
     }
 }

@@ -2,27 +2,27 @@
 
 namespace App\Livewire\Viticulturist\Announcements;
 
+use App\Livewire\Viticulturist\AbstractIndex;
 use App\Models\WineryAnnouncement;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\WithPagination;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination;
-
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $user = Auth::user();
+        return WineryAnnouncement::active()
+            ->visibleTo(Auth::user())
+            ->with('winery:id,name');
+    }
 
-        $announcements = WineryAnnouncement::active()
-            ->visibleTo($user)
-            ->with('winery:id,name')
-            ->orderByDesc('published_at')
-            ->paginate(20);
+    protected function defaultOrderBy(): array
+    {
+        return ['published_at', 'desc'];
+    }
 
-        return view('livewire.viticulturist.announcements.index', [
-            'announcements' => $announcements,
-        ])->layout('layouts.app');
+    protected function viewData(mixed $entries): array
+    {
+        return ['announcements' => $entries];
     }
 }

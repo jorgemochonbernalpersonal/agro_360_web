@@ -59,7 +59,7 @@ trait WithInvoiceHarvestItems
         $harvest = Harvest::with(['activity.plot', 'plotPlanting.grapeVariety'])
             ->find($this->selectedHarvestId);
 
-        if (! $harvest) {
+        if (! $harvest || (int) optional($harvest->activity)->viticulturist_id !== Auth::id()) {
             $this->toastError(__('Cosecha no encontrada.'));
 
             return;
