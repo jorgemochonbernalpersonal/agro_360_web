@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\UserResource;
 use App\Models\User;
 use App\Services\SecurityLogger;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -54,6 +55,43 @@ class AuthController extends BaseApiController
             'email_unverified' => true,
             'user' => new UserResource($user),
         ], 201);
+    }
+
+    // ─── POST /email/verify ────────────────────────────────────────────────────
+    // Verificación nativa para la app móvil: valida id + sha1(email) sin depender
+    // de la firma de la URL (que Gmail/proxies pueden romper → 403). NO emite token:
+    // solo marca el email como verificado; el login sigue exigiendo contraseña, así
+    // conocer el email de otro no concede acceso a su cuenta.
+
+    public function verifyEmail(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id' => 'required|integer',
+            'hash' => 'required|string',
+        ]);
+
+        $user = User::find($validated['id']);
+
+        if (! $user || ! hash_equals(sha1($user->getEmailForVerification()), $validated['hash'])) {
+            return response()->json([
+                'message' => __('Enlace de verificación inválido.'),
+            ], 422);
+        }
+
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            event(new Verified($user));
+
+            SecurityLogger::logSecurityEvent('email_verified', [
+                'user_id' => $user->id,
+                'role' => $user->role,
+            ]);
+        }
+
+        return response()->json([
+            'verified' => true,
+            'message' => __('Email verificado correctamente.'),
+        ]);
     }
 
     // ─── POST /login ──────────────────────────────────────────────────────────

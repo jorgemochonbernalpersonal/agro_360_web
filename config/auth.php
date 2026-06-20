@@ -101,6 +101,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Email Verification Expiration
+    |--------------------------------------------------------------------------
+    |
+    | Minutos de validez del enlace firmado de verificación de email. Debe
+    | coincidir con lo que promete el correo ("24 horas") y con el cron que
+    | elimina usuarios no verificados (users:delete-unverified --hours=24).
+    | Sin esta clave, Laravel usa 60 min por defecto y el enlace caduca antes
+    | de lo prometido, provocando un 403 al verificar (sobre todo en móvil).
+    |
+    */
+
+    'verification' => [
+        'expire' => env('AUTH_VERIFICATION_EXPIRE', 1440), // 24 horas
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Password Confirmation Timeout
     |--------------------------------------------------------------------------
     |
