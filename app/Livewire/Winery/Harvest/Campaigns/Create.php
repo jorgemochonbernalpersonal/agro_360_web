@@ -2,15 +2,12 @@
 
 namespace App\Livewire\Winery\Harvest\Campaigns;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Campaign;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
+use Illuminate\Validation\ValidationException;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithToastNotifications;
-
     public string $name = '';
 
     public string $year = '';
@@ -29,20 +26,25 @@ class Create extends Component
         $this->end_date = now()->setMonth(11)->endOfMonth()->format('Y-m-d');
     }
 
-    public function save(): void
+    protected function rules(): array
     {
-        $this->validate();
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'year' => ['required', 'integer', 'min:2000', 'max:2099'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ];
+    }
 
-        $wineryId = Auth::id();
+    protected function performCreate(): void
+    {
+        $wineryId = $this->ownerId();
 
-        $exists = Campaign::forViticulturist($wineryId)
-            ->forYear((int) $this->year)
-            ->exists();
-
-        if ($exists) {
-            $this->addError('year', __('Ya existe una campaña para el año :year.', ['year' => $this->year]));
-
-            return;
+        if (Campaign::forViticulturist($wineryId)->forYear((int) $this->year)->exists()) {
+            throw ValidationException::withMessages([
+                'year' => __('Ya existe una campaña para el año :year.', ['year' => $this->year]),
+            ]);
         }
 
         $campaign = Campaign::create([
@@ -55,31 +57,24 @@ class Create extends Component
             'active' => true,
         ]);
 
-        // Desactivar otras campañas de la bodega
         Campaign::forViticulturist($wineryId)
             ->where('id', '!=', $campaign->id)
             ->update(['active' => false]);
-
-        $this->toastSuccess("Campaña {$campaign->year} creada correctamente.");
-
-        $this->redirect(roleRoute('campaigns.index'), navigate: true);
     }
 
-    public function render()
+    protected function ownerColumn(): string
     {
-        return view('livewire.winery.harvest.campaigns.create')
-            ->layout('layouts.app');
+        return 'viticulturist_id';
     }
 
-    protected function rules(): array
+    protected function successMessage(): string
     {
-        return [
-            'name' => ['required', 'string', 'max:255'],
-            'year' => ['required', 'integer', 'min:2000', 'max:2099'],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'description' => ['nullable', 'string', 'max:1000'],
-        ];
+        return "Campaña {$this->year} creada correctamente.";
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.campaigns.index';
     }
 
     protected function messages(): array

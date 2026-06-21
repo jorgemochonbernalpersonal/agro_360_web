@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\WineCost;
 use App\Models\User;
+use App\Models\WineCost;
 
 class WineCostPolicy
 {

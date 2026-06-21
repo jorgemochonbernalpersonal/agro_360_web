@@ -24,13 +24,6 @@ class PlotPlantingHarvestSummaryTest extends ViticulturistTestCase
         $this->admin = User::factory()->create(['role' => 'admin']);
     }
 
-    private function plantingOwnedBy(User $user): PlotPlanting
-    {
-        $plot = (new Plot(['viticulturist_id' => $user->id]));
-
-        return (new PlotPlanting())->setRelation('plot', $plot);
-    }
-
     public function test_owner_can_view_harvest_summary(): void
     {
         $planting = $this->plantingOwnedBy($this->owner);
@@ -50,5 +43,12 @@ class PlotPlantingHarvestSummaryTest extends ViticulturistTestCase
         $planting = $this->plantingOwnedBy($this->owner);
 
         $this->assertTrue($this->admin->can('viewHarvestSummary', $planting));
+    }
+
+    private function plantingOwnedBy(User $user): PlotPlanting
+    {
+        $plot = (new Plot(['viticulturist_id' => $user->id]));
+
+        return (new PlotPlanting)->setRelation('plot', $plot);
     }
 }

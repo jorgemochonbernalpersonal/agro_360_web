@@ -10,25 +10,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class ConsumeStockTest extends ViticulturistTestCase
 {
-    private function makeStock($viticulturist, float $quantity = 10): ProductStock
-    {
-        $product = PhytosanitaryProduct::create([
-            'user_id' => $viticulturist->id,
-            'name' => 'Producto',
-            'registration_number' => 'ES-12345678',
-            'registration_status' => 'active',
-            'withdrawal_period_days' => 0,
-            'active' => true,
-        ]);
-
-        return ProductStock::create([
-            'user_id' => $viticulturist->id,
-            'product_id' => $product->id,
-            'quantity' => $quantity,
-            'unit' => 'L',
-        ]);
-    }
-
     public function test_can_consume_stock(): void
     {
         $v = $this->makeViticulturist();
@@ -118,5 +99,24 @@ class ConsumeStockTest extends ViticulturistTestCase
         $this->actingAs($v)
             ->get(route('viticulturist.warehouse.stock.consume', $stock))
             ->assertStatus(403);
+    }
+
+    private function makeStock($viticulturist, float $quantity = 10): ProductStock
+    {
+        $product = PhytosanitaryProduct::create([
+            'user_id' => $viticulturist->id,
+            'name' => 'Producto',
+            'registration_number' => 'ES-12345678',
+            'registration_status' => 'active',
+            'withdrawal_period_days' => 0,
+            'active' => true,
+        ]);
+
+        return ProductStock::create([
+            'user_id' => $viticulturist->id,
+            'product_id' => $product->id,
+            'quantity' => $quantity,
+            'unit' => 'L',
+        ]);
     }
 }

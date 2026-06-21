@@ -26,8 +26,6 @@ use Illuminate\Support\Facades\DB;
  */
 class ViticulturistDemoSeeder extends Seeder
 {
-    private int $vitUserId;
-
     private const WINERY_USER_ID = 1;
 
     // ── Geografía Agaete, Gran Canaria ────────────────────────────────────────
@@ -52,6 +50,8 @@ class ViticulturistDemoSeeder extends Seeder
     ];
 
     private const PREFIJOS = ['Finca', 'Parcela', 'Viña', 'Viñedo', 'Pago', 'Suerte', 'Lote'];
+
+    private int $vitUserId;
 
     public function run(): void
     {

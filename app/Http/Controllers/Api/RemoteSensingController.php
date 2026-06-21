@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\BaseApiController;
 use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
 use App\Services\RemoteSensing\NasaEarthdataService;

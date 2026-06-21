@@ -100,38 +100,38 @@ class ProducerDashboardService
 
         return [
             'field' => [
-                'plots'       => $plots,
+                'plots' => $plots,
                 'total_plots' => $plots->count(),
-                'total_area'  => round((float) $plots->sum('area'), 2),
+                'total_area' => round((float) $plots->sum('area'), 2),
                 'activities_this_month' => $activitiesThisMonth,
                 'delivered_kg' => $deliveredKg,
             ],
             'winery' => [
-                'vintage_year'           => $vintageYear,
-                'total_kg_campaign'      => $totalKgCampaign,
-                'total_receptions'       => $totalReceptions,
-                'today_kg'               => (float) ($todayStats->kg ?? 0),
-                'today_count'            => (int) ($todayStats->count ?? 0),
-                'active_wines'           => Wine::where('user_id', $userId)->where('status', 'active')->count(),
-                'active_fermentations'   => WineFermentationControl::whereHas('wine', fn ($q) => $q->where('user_id', $userId))
+                'vintage_year' => $vintageYear,
+                'total_kg_campaign' => $totalKgCampaign,
+                'total_receptions' => $totalReceptions,
+                'today_kg' => (float) ($todayStats->kg ?? 0),
+                'today_count' => (int) ($todayStats->count ?? 0),
+                'active_wines' => Wine::where('user_id', $userId)->where('status', 'active')->count(),
+                'active_fermentations' => WineFermentationControl::whereHas('wine', fn ($q) => $q->where('user_id', $userId))
                     ->where(fn ($q) => $q->where('density', '>', 1.000)->orWhere('brix_degree', '>', 2))
                     ->whereDate('control_date', '>=', now()->subDays(3))
                     ->distinct('wine_id')->count('wine_id'),
-                'product_lots'           => ProductLot::where('user_id', $userId)->count(),
-                'linked_viticulturists'  => WineryViticulturist::where('winery_id', $userId)
+                'product_lots' => ProductLot::where('user_id', $userId)->count(),
+                'linked_viticulturists' => WineryViticulturist::where('winery_id', $userId)
                     ->whereHas('viticulturist', fn ($q) => $q->where('can_login', true))->count(),
                 'pending_viticulturists' => WineryViticulturist::where('winery_id', $userId)
                     ->whereHas('viticulturist', fn ($q) => $q->where('can_login', false))->count(),
             ],
             'containers' => [
-                'total_capacity'     => $capTotal,
-                'used_capacity'      => $capUsed,
-                'usage_pct'          => $capTotal > 0 ? round(min($capUsed / $capTotal * 100, 100), 1) : 0,
+                'total_capacity' => $capTotal,
+                'used_capacity' => $capUsed,
+                'usage_pct' => $capTotal > 0 ? round(min($capUsed / $capTotal * 100, 100), 1) : 0,
                 'maintenance_overdue' => $maintenanceOverdue,
             ],
             'alerts' => [
                 'exceeded' => $alertsExceeded,
-                'at_risk'  => $alertsAtRisk,
+                'at_risk' => $alertsAtRisk,
             ],
         ];
     }

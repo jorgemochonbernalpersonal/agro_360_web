@@ -195,32 +195,32 @@ class Manage extends Component
         if ($isDO) {
             $tier = $user->doTier();
             $monthlyPrice = $tier['monthly'];
-            $yearlyPrice  = $tier['yearly'];
-            $wineryTier   = null;
-            $doTier       = $tier;
+            $yearlyPrice = $tier['yearly'];
+            $wineryTier = null;
+            $doTier = $tier;
         } elseif ($isWinery) {
             $tier = $user->wineryTier();
             $monthlyPrice = $tier['monthly'];
-            $yearlyPrice  = $tier['yearly'];
-            $wineryTier   = $tier;
-            $doTier       = null;
+            $yearlyPrice = $tier['yearly'];
+            $wineryTier = $tier;
+            $doTier = null;
         } else {
             $monthlyPrice = $user->viticulturistMonthlyPrice();
-            $yearlyPrice  = $user->viticulturistYearlyPrice();
-            $wineryTier   = null;
-            $doTier       = null;
+            $yearlyPrice = $user->viticulturistYearlyPrice();
+            $wineryTier = null;
+            $doTier = null;
         }
 
         return view('livewire.subscription.manage', [
-            'monthlyPrice'    => $monthlyPrice,
-            'yearlyPrice'     => $yearlyPrice,
-            'isWinery'        => $isWinery,
-            'isDO'            => $isDO,
-            'wineryTier'      => $wineryTier,
-            'doTier'          => $doTier,
-            'isWineryLinked'  => $user->hasWinery(),
-            'isProducer'      => $user->isProducer(),
-            'isCoveredByDo'   => $user->isCoveredByDo(),
+            'monthlyPrice' => $monthlyPrice,
+            'yearlyPrice' => $yearlyPrice,
+            'isWinery' => $isWinery,
+            'isDO' => $isDO,
+            'wineryTier' => $wineryTier,
+            'doTier' => $doTier,
+            'isWineryLinked' => $user->hasWinery(),
+            'isProducer' => $user->isProducer(),
+            'isCoveredByDo' => $user->isCoveredByDo(),
         ]);
     }
 }

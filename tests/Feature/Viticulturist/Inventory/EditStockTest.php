@@ -11,33 +11,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class EditStockTest extends ViticulturistTestCase
 {
-    private function makeUnit(): Unit
-    {
-        return Unit::firstOrCreate(
-            ['symbol' => 'L'],
-            ['name' => 'Litros', 'category' => 'volume', 'active' => true]
-        );
-    }
-
-    private function makeStock($viticulturist): ProductStock
-    {
-        $product = PhytosanitaryProduct::create([
-            'user_id' => $viticulturist->id,
-            'name' => 'Fungicida',
-            'registration_number' => 'ES-12345678',
-            'registration_status' => 'active',
-            'withdrawal_period_days' => 0,
-            'active' => true,
-        ]);
-
-        return ProductStock::create([
-            'user_id' => $viticulturist->id,
-            'product_id' => $product->id,
-            'quantity' => 10,
-            'unit' => 'L',
-        ]);
-    }
-
     public function test_mount_fills_fields(): void
     {
         $v = $this->makeViticulturist();
@@ -96,5 +69,32 @@ class EditStockTest extends ViticulturistTestCase
         $this->actingAs($v)
             ->get(route('viticulturist.warehouse.stock.edit', $stock))
             ->assertStatus(403);
+    }
+
+    private function makeUnit(): Unit
+    {
+        return Unit::firstOrCreate(
+            ['symbol' => 'L'],
+            ['name' => 'Litros', 'category' => 'volume', 'active' => true]
+        );
+    }
+
+    private function makeStock($viticulturist): ProductStock
+    {
+        $product = PhytosanitaryProduct::create([
+            'user_id' => $viticulturist->id,
+            'name' => 'Fungicida',
+            'registration_number' => 'ES-12345678',
+            'registration_status' => 'active',
+            'withdrawal_period_days' => 0,
+            'active' => true,
+        ]);
+
+        return ProductStock::create([
+            'user_id' => $viticulturist->id,
+            'product_id' => $product->id,
+            'quantity' => 10,
+            'unit' => 'L',
+        ]);
     }
 }

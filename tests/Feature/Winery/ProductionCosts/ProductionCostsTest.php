@@ -20,29 +20,6 @@ class ProductionCostsTest extends WineryTestCase
         $this->actingAs($this->winery);
     }
 
-    private function makeWine(?int $userId = null): Wine
-    {
-        return Wine::create([
-            'user_id' => $userId ?? $this->winery->id,
-            'name' => 'Test Wine',
-            'wine_type' => 'red',
-            'status' => 'in_progress',
-        ]);
-    }
-
-    private function makeCost(Wine $wine): WineCost
-    {
-        return WineCost::create([
-            'wine_id' => $wine->id,
-            'user_id' => $wine->user_id,
-            'category' => 'analysis',
-            'description' => 'Análisis test',
-            'amount' => '150.00',
-            'cost_date' => now()->toDateString(),
-            'created_by' => $wine->user_id,
-        ]);
-    }
-
     // --- Index ---
 
     public function test_index_renders(): void
@@ -164,5 +141,28 @@ class ProductionCostsTest extends WineryTestCase
         $this->actingAs($this->makeOtherWinery())
             ->get(route('winery.production-costs.edit', $cost))
             ->assertForbidden();
+    }
+
+    private function makeWine(?int $userId = null): Wine
+    {
+        return Wine::create([
+            'user_id' => $userId ?? $this->winery->id,
+            'name' => 'Test Wine',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
+        ]);
+    }
+
+    private function makeCost(Wine $wine): WineCost
+    {
+        return WineCost::create([
+            'wine_id' => $wine->id,
+            'user_id' => $wine->user_id,
+            'category' => 'analysis',
+            'description' => 'Análisis test',
+            'amount' => '150.00',
+            'cost_date' => now()->toDateString(),
+            'created_by' => $wine->user_id,
+        ]);
     }
 }

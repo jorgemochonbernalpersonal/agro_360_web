@@ -21,7 +21,6 @@ use Livewire\Component;
 /**
  * @property-read bool $isLocked
  */
-
 class Edit extends Component
 {
     use WithHarvestSaleFormRules, WithHarvestSaleStock, WithRoleAwareRedirect, WithToastNotifications;
@@ -307,5 +306,4 @@ class Edit extends Component
             'isLocked' => $this->isLocked,
         ])->layout('layouts.app');
     }
-
 }

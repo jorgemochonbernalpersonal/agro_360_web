@@ -21,54 +21,6 @@ class HasBetaAccessPricingTest extends TestCase
         Cache::flush();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private function userWithBeta(array $attrs = []): User
-    {
-        return User::factory()->create(array_merge([
-            'is_beta_user' => true,
-            'beta_ends_at' => now()->addDays(30),
-        ], $attrs));
-    }
-
-    private function userWithoutAccess(array $attrs = []): User
-    {
-        return User::factory()->create(array_merge([
-            'is_beta_user' => false,
-            'beta_ends_at' => null,
-        ], $attrs));
-    }
-
-    private function linkViticulturistToWinery(User $viticulturist, User $winery): void
-    {
-        WineryViticulturist::create([
-            'viticulturist_id' => $viticulturist->id,
-            'winery_id'        => $winery->id,
-        ]);
-        Cache::forget("user_{$viticulturist->id}_has_winery");
-    }
-
-    private function linkWineryToSupervisor(User $winery, User $supervisor): void
-    {
-        DB::table('supervisor_winery')->insert([
-            'supervisor_id' => $supervisor->id,
-            'winery_id'     => $winery->id,
-        ]);
-    }
-
-    private function activeSubscriptionFor(User $user): void
-    {
-        Subscription::create([
-            'user_id'   => $user->id,
-            'plan_type' => Subscription::PLAN_MONTHLY,
-            'amount'    => Subscription::PRICE_MONTHLY_PRODUCER,
-            'status'    => Subscription::STATUS_ACTIVE,
-            'starts_at' => now(),
-            'ends_at'   => now()->addMonth(),
-        ]);
-        $user->load('activeSubscription');
-    }
-
     // ── viticulturistMonthlyPrice / viticulturistYearlyPrice ─────────────────
 
     public function test_precio_mensual_viticultor_independiente(): void
@@ -82,7 +34,7 @@ class HasBetaAccessPricingTest extends TestCase
     public function test_precio_mensual_viticultor_vinculado_a_bodega(): void
     {
         $winery = User::factory()->create(['role' => 'winery']);
-        $vit    = $this->userWithBeta(['role' => 'viticulturist']);
+        $vit = $this->userWithBeta(['role' => 'viticulturist']);
         $this->linkViticulturistToWinery($vit, $winery);
 
         $this->assertSame(Subscription::PRICE_MONTHLY_VIT_LINKED, $vit->viticulturistMonthlyPrice());
@@ -145,7 +97,7 @@ class HasBetaAccessPricingTest extends TestCase
     public function test_plan_efectivo_bodega_con_beta_expirada_sin_suscripcion_es_free(): void
     {
         $user = User::factory()->create([
-            'role'         => 'winery',
+            'role' => 'winery',
             'is_beta_user' => true,
             'beta_ends_at' => now()->subDay(),
         ]);
@@ -237,8 +189,8 @@ class HasBetaAccessPricingTest extends TestCase
     public function test_bodega_con_viticultores_devuelve_count_correcto(): void
     {
         $winery = $this->userWithBeta(['role' => 'winery']);
-        $vit1   = User::factory()->create(['role' => 'viticulturist']);
-        $vit2   = User::factory()->create(['role' => 'viticulturist']);
+        $vit1 = User::factory()->create(['role' => 'viticulturist']);
+        $vit2 = User::factory()->create(['role' => 'viticulturist']);
 
         $this->linkViticulturistToWinery($vit1, $winery);
         $this->linkViticulturistToWinery($vit2, $winery);
@@ -284,7 +236,7 @@ class HasBetaAccessPricingTest extends TestCase
             $vit = User::factory()->create(['role' => 'viticulturist']);
             DB::table('winery_viticulturist')->insert([
                 'viticulturist_id' => $vit->id,
-                'winery_id'        => $winery->id,
+                'winery_id' => $winery->id,
             ]);
         }
 
@@ -303,7 +255,7 @@ class HasBetaAccessPricingTest extends TestCase
 
     public function test_bodega_adscrita_a_do_esta_cubierta(): void
     {
-        $winery     = $this->userWithoutAccess(['role' => 'winery']);
+        $winery = $this->userWithoutAccess(['role' => 'winery']);
         $supervisor = User::factory()->create(['role' => 'supervisor']);
         $this->linkWineryToSupervisor($winery, $supervisor);
 
@@ -312,7 +264,7 @@ class HasBetaAccessPricingTest extends TestCase
 
     public function test_bodega_adscrita_a_do_tiene_acceso_activo_sin_beta_ni_suscripcion(): void
     {
-        $winery     = $this->userWithoutAccess(['role' => 'winery']);
+        $winery = $this->userWithoutAccess(['role' => 'winery']);
         $supervisor = User::factory()->create(['role' => 'supervisor']);
         $this->linkWineryToSupervisor($winery, $supervisor);
 
@@ -323,7 +275,7 @@ class HasBetaAccessPricingTest extends TestCase
     public function test_bodega_adscrita_a_do_con_beta_expirada_sigue_con_acceso(): void
     {
         $winery = User::factory()->create([
-            'role'         => 'winery',
+            'role' => 'winery',
             'is_beta_user' => true,
             'beta_ends_at' => now()->subDay(),
         ]);
@@ -336,7 +288,7 @@ class HasBetaAccessPricingTest extends TestCase
 
     public function test_viticultor_y_productor_nunca_estan_cubiertos_por_do(): void
     {
-        $vit      = $this->userWithBeta(['role' => 'viticulturist']);
+        $vit = $this->userWithBeta(['role' => 'viticulturist']);
         $producer = $this->userWithBeta(['role' => 'producer']);
 
         $this->assertFalse($vit->isCoveredByDo());
@@ -362,8 +314,8 @@ class HasBetaAccessPricingTest extends TestCase
     public function test_supervisor_con_bodegas_devuelve_count_correcto(): void
     {
         $supervisor = $this->userWithBeta(['role' => 'supervisor']);
-        $winery1    = User::factory()->create(['role' => 'winery']);
-        $winery2    = User::factory()->create(['role' => 'winery']);
+        $winery1 = User::factory()->create(['role' => 'winery']);
+        $winery2 = User::factory()->create(['role' => 'winery']);
 
         $this->linkWineryToSupervisor($winery1, $supervisor);
         $this->linkWineryToSupervisor($winery2, $supervisor);
@@ -410,5 +362,53 @@ class HasBetaAccessPricingTest extends TestCase
 
         $this->assertNull($supervisor->doMonthlyPrice());
         $this->assertNull($supervisor->doYearlyPrice());
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function userWithBeta(array $attrs = []): User
+    {
+        return User::factory()->create(array_merge([
+            'is_beta_user' => true,
+            'beta_ends_at' => now()->addDays(30),
+        ], $attrs));
+    }
+
+    private function userWithoutAccess(array $attrs = []): User
+    {
+        return User::factory()->create(array_merge([
+            'is_beta_user' => false,
+            'beta_ends_at' => null,
+        ], $attrs));
+    }
+
+    private function linkViticulturistToWinery(User $viticulturist, User $winery): void
+    {
+        WineryViticulturist::create([
+            'viticulturist_id' => $viticulturist->id,
+            'winery_id' => $winery->id,
+        ]);
+        Cache::forget("user_{$viticulturist->id}_has_winery");
+    }
+
+    private function linkWineryToSupervisor(User $winery, User $supervisor): void
+    {
+        DB::table('supervisor_winery')->insert([
+            'supervisor_id' => $supervisor->id,
+            'winery_id' => $winery->id,
+        ]);
+    }
+
+    private function activeSubscriptionFor(User $user): void
+    {
+        Subscription::create([
+            'user_id' => $user->id,
+            'plan_type' => Subscription::PLAN_MONTHLY,
+            'amount' => Subscription::PRICE_MONTHLY_PRODUCER,
+            'status' => Subscription::STATUS_ACTIVE,
+            'starts_at' => now(),
+            'ends_at' => now()->addMonth(),
+        ]);
+        $user->load('activeSubscription');
     }
 }

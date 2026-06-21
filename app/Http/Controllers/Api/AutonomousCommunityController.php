@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\BaseApiController;
 use App\Models\AutonomousCommunity;
 use Illuminate\Http\JsonResponse;
 

@@ -33,26 +33,39 @@ class Ability extends Model
     // ── Abilities nuevas (rediseño de precios) ────────────────────────────────
 
     // Free
-    public const DIGITAL_NOTEBOOK    = 'digital_notebook';
-    public const SIGPAC_PLOTS        = 'sigpac_plots';
-    public const MAPS                = 'maps';
-    public const PLANTINGS           = 'plantings';
-    public const PHENOLOGY           = 'phenology';
-    public const PEST_MANAGEMENT     = 'pest_management';
-    public const HARVESTS_VIEW       = 'harvests_view';
-    public const INVOICING           = 'invoicing';
+    public const DIGITAL_NOTEBOOK = 'digital_notebook';
+
+    public const SIGPAC_PLOTS = 'sigpac_plots';
+
+    public const MAPS = 'maps';
+
+    public const PLANTINGS = 'plantings';
+
+    public const PHENOLOGY = 'phenology';
+
+    public const PEST_MANAGEMENT = 'pest_management';
+
+    public const HARVESTS_VIEW = 'harvests_view';
+
+    public const INVOICING = 'invoicing';
 
     // Capa A — Compliance / Inteligencia
-    public const REMOTE_SENSING      = 'remote_sensing';
-    public const PAC                 = 'pac';
-    public const HARVEST_OPERATIONS  = 'harvest_operations';
-    public const FINANCIAL_STATS     = 'financial_stats';
-    public const ROPO_APPLICATORS    = 'ropo_applicators';
+    public const REMOTE_SENSING = 'remote_sensing';
+
+    public const PAC = 'pac';
+
+    public const HARVEST_OPERATIONS = 'harvest_operations';
+
+    public const FINANCIAL_STATS = 'financial_stats';
+
+    public const ROPO_APPLICATORS = 'ropo_applicators';
 
     // Capa B — Red
-    public const VITICULTURIST_PANEL  = 'viticulturist_panel';
+    public const VITICULTURIST_PANEL = 'viticulturist_panel';
+
     public const CONSOLIDATED_REPORTS = 'consolidated_reports';
-    public const DO_OVERSIGHT         = 'do_oversight';
+
+    public const DO_OVERSIGHT = 'do_oversight';
 
     public const SEEDED = [
         [

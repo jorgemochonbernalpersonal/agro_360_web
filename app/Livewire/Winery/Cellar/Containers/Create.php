@@ -2,19 +2,15 @@
 
 namespace App\Livewire\Winery\Cellar\Containers;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Container;
 use App\Models\ContainerRoom;
 use App\Models\ContainerType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public string $name = '';
 
     public string $type_id = '';
@@ -33,38 +29,6 @@ class Create extends Component
 
     public string $supplier_name = '';
 
-    public function save(): mixed
-    {
-        $this->validate();
-
-        Container::create([
-            'user_id' => Auth::id(),
-            'name' => $this->name,
-            'type_id' => (int) $this->type_id,
-            'capacity' => (float) $this->capacity,
-            'unit' => $this->unit,
-            'container_room_id' => $this->container_room_id ?: null,
-            'used_capacity' => 0,
-            'serial_number' => $this->serial_number ?: null,
-            'description' => $this->description ?: null,
-            'purchase_date' => $this->purchase_date ?: null,
-            'supplier_name' => $this->supplier_name ?: null,
-            'archived' => false,
-        ]);
-
-        $this->toastSuccess("Contenedor «{$this->name}» creado correctamente.");
-
-        return $this->roleRedirect('containers.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.cellar.containers.create', [
-            'types' => ContainerType::orderBy('name')->get(),
-            'rooms' => ContainerRoom::where('user_id', Auth::id())->orderBy('name')->get(),
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -77,6 +41,42 @@ class Create extends Component
             'description' => ['nullable', 'string'],
             'purchase_date' => ['nullable', 'date'],
             'supplier_name' => ['nullable', 'string', 'max:100'],
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        Container::create([
+            'user_id' => $this->ownerId(),
+            'name' => $this->name,
+            'type_id' => (int) $this->type_id,
+            'capacity' => (float) $this->capacity,
+            'unit' => $this->unit,
+            'container_room_id' => $this->container_room_id ?: null,
+            'used_capacity' => 0,
+            'serial_number' => $this->serial_number ?: null,
+            'description' => $this->description ?: null,
+            'purchase_date' => $this->purchase_date ?: null,
+            'supplier_name' => $this->supplier_name ?: null,
+            'archived' => false,
+        ]);
+    }
+
+    protected function successMessage(): string
+    {
+        return "Contenedor «{$this->name}» creado correctamente.";
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.containers.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => ContainerType::orderBy('name')->get(),
+            'rooms' => ContainerRoom::where('user_id', Auth::id())->orderBy('name')->get(),
         ];
     }
 

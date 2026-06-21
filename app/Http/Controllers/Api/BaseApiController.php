@@ -31,24 +31,25 @@ abstract class BaseApiController extends Controller
      * Build the standard meta block from a paginator.
      * Merge extra keys (e.g. aggregate stats) before returning.
      *
-     * @param  array<string, mixed>  $extra
+     * @param array<string, mixed> $extra
+     *
      * @return array<string, mixed>
      */
     protected function paginationMeta(LengthAwarePaginator $paginator, array $extra = []): array
     {
         return array_merge([
-            'total'        => $paginator->total(),
-            'per_page'     => $paginator->perPage(),
+            'total' => $paginator->total(),
+            'per_page' => $paginator->perPage(),
             'current_page' => $paginator->currentPage(),
-            'last_page'    => $paginator->lastPage(),
-            'has_more'     => $paginator->hasMorePages(),
+            'last_page' => $paginator->lastPage(),
+            'has_more' => $paginator->hasMorePages(),
         ], $extra);
     }
 
     /**
      * Return a paginated JSON response with a standard meta block.
      *
-     * @param  array<string, mixed>  $extraMeta
+     * @param array<string, mixed> $extraMeta
      */
     protected function paginated(
         LengthAwarePaginator $paginator,

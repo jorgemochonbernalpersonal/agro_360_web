@@ -9,15 +9,6 @@ class UpdateNotebookRequest extends ViticulturistApiRequest
 {
     private ?AgriculturalActivity $resolvedActivity = null;
 
-    protected function prepareForValidation(): void
-    {
-        $id = $this->route('id');
-        if ($id) {
-            $this->resolvedActivity = AgriculturalActivity::forViticulturist($this->user()->id)
-                ->find((int) $id);
-        }
-    }
-
     public function rules(): array
     {
         $type = $this->resolvedActivity?->activity_type;
@@ -26,6 +17,15 @@ class UpdateNotebookRequest extends ViticulturistApiRequest
             $this->baseUpdateRules(),
             $this->detailRules($type)
         );
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $id = $this->route('id');
+        if ($id) {
+            $this->resolvedActivity = AgriculturalActivity::forViticulturist($this->user()->id)
+                ->find((int) $id);
+        }
     }
 
     private function baseUpdateRules(): array

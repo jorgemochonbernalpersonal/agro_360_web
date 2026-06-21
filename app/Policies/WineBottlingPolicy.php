@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\WineBottling;
 use App\Models\User;
+use App\Models\WineBottling;
 
 class WineBottlingPolicy
 {

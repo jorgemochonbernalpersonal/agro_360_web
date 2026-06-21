@@ -312,7 +312,7 @@ class Create extends Component
                     }
                 },
             ],
-            'order_date'         => 'required|date',
+            'order_date' => 'required|date',
             'delivery_note_date' => 'nullable|date',
             'delivery_note_code' => 'required|string|max:255',
         ]);

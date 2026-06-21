@@ -17,6 +17,38 @@ class Index extends AbstractIndex
 
     protected $queryString = ['search', 'wineryFilter'];
 
+    public function delete(Crew $crew): void
+    {
+        if (! Auth::user()->can('delete', $crew)) {
+            $this->toastError(__('No tienes permiso para eliminar esta cuadrilla.'));
+
+            return;
+        }
+
+        if ($crew->activities()->exists()) {
+            $this->toastError(__('No se puede eliminar una cuadrilla con actividades asociadas.'));
+
+            return;
+        }
+
+        try {
+            DB::transaction(function () use ($crew) {
+                $crew->members()->delete();
+                $crew->delete();
+            });
+
+            $this->toastSuccess(__('Cuadrilla eliminada correctamente.'));
+        } catch (\Exception $e) {
+            Log::error('Error deleting crew', [
+                'crew_id' => $crew->id,
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+            ]);
+
+            $this->toastError(__('Hubo un error al eliminar la cuadrilla. Por favor, inténtalo de nuevo.'));
+        }
+    }
+
     protected function baseQuery(): Builder
     {
         return Crew::forViticulturist($this->viticulturistId())
@@ -63,37 +95,5 @@ class Index extends AbstractIndex
                 'with_activities' => Crew::forViticulturist($this->viticulturistId())->has('activities')->count(),
             ],
         ];
-    }
-
-    public function delete(Crew $crew): void
-    {
-        if (! Auth::user()->can('delete', $crew)) {
-            $this->toastError(__('No tienes permiso para eliminar esta cuadrilla.'));
-
-            return;
-        }
-
-        if ($crew->activities()->exists()) {
-            $this->toastError(__('No se puede eliminar una cuadrilla con actividades asociadas.'));
-
-            return;
-        }
-
-        try {
-            DB::transaction(function () use ($crew) {
-                $crew->members()->delete();
-                $crew->delete();
-            });
-
-            $this->toastSuccess(__('Cuadrilla eliminada correctamente.'));
-        } catch (\Exception $e) {
-            Log::error('Error deleting crew', [
-                'crew_id' => $crew->id,
-                'user_id' => Auth::id(),
-                'error' => $e->getMessage(),
-            ]);
-
-            $this->toastError(__('Hubo un error al eliminar la cuadrilla. Por favor, inténtalo de nuevo.'));
-        }
     }
 }

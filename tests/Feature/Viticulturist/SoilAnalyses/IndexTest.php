@@ -10,17 +10,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeAnalysis($viticulturist, array $attrs = []): SoilAnalysis
-    {
-        $plot = Plot::factory()->forViticulturist($viticulturist)->create();
-
-        return SoilAnalysis::create(array_merge([
-            'viticulturist_id' => $viticulturist->id,
-            'plot_id' => $plot->id,
-            'analysis_date' => '2024-06-15',
-        ], $attrs));
-    }
-
     public function test_index_shows_analyses(): void
     {
         $v = $this->makeViticulturist();
@@ -91,5 +80,16 @@ class IndexTest extends ViticulturistTestCase
                 return (float) $s['avg_ph'] === 6.5
                     && $s['avg_ph_color'] === 'green';
             });
+    }
+
+    private function makeAnalysis($viticulturist, array $attrs = []): SoilAnalysis
+    {
+        $plot = Plot::factory()->forViticulturist($viticulturist)->create();
+
+        return SoilAnalysis::create(array_merge([
+            'viticulturist_id' => $viticulturist->id,
+            'plot_id' => $plot->id,
+            'analysis_date' => '2024-06-15',
+        ], $attrs));
     }
 }

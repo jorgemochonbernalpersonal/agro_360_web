@@ -2,20 +2,17 @@
 
 namespace App\Livewire\Winery\Cellar\Containers;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\Container;
 use App\Models\ContainerRoom;
 use App\Models\ContainerType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
+use Illuminate\Validation\ValidationException;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public Container $container;
 
     public string $name = '';
@@ -52,66 +49,6 @@ class Edit extends Component
         $this->supplier_name = $container->supplier_name ?? '';
     }
 
-    public function save(): mixed
-    {
-        $this->validate();
-
-        $newCapacity = (float) $this->capacity;
-        $containerId = $this->container->id;
-
-        $error = DB::transaction(function () use ($newCapacity, $containerId) {
-            $fresh = Container::where('id', $containerId)->where('user_id', Auth::id())->lockForUpdate()->first();
-            if (! $fresh) {
-                return __('Contenedor no encontrado.');
-            }
-
-            // No se puede cambiar la unidad si el contenedor tiene contenido
-            if ($fresh->getTotalUsed() > 0 && $this->unit !== ($fresh->unit ?? 'kg')) {
-                return __('No se puede cambiar la unidad de un contenedor con contenido.');
-            }
-
-            $totalUsed = $fresh->getTotalUsed();
-            if ($newCapacity < $totalUsed) {
-                $unit = $fresh->unit ?? 'kg';
-
-                return "La capacidad no puede ser menor que lo ya utilizado ({$totalUsed} {$unit}).";
-            }
-
-            $fresh->update([
-                'name' => $this->name,
-                'type_id' => (int) $this->type_id,
-                'capacity' => $newCapacity,
-                'unit' => $this->unit,
-                'container_room_id' => $this->container_room_id ?: null,
-                'serial_number' => $this->serial_number ?: null,
-                'description' => $this->description ?: null,
-                'purchase_date' => $this->purchase_date ?: null,
-                'supplier_name' => $this->supplier_name ?: null,
-            ]);
-
-            return null;
-        });
-
-        if ($error) {
-            $this->addError('capacity', $error);
-
-            return null;
-        }
-
-        $this->toastSuccess(__('Contenedor actualizado correctamente.'));
-
-        return $this->roleRedirect('containers.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.winery.cellar.containers.edit', [
-            'types' => ContainerType::orderBy('name')->get(),
-            'rooms' => ContainerRoom::where('user_id', Auth::id())->orderBy('name')->get(),
-            'hasStock' => $this->container->getTotalUsed() > 0,
-        ])->layout('layouts.app');
-    }
-
     protected function rules(): array
     {
         return [
@@ -124,6 +61,69 @@ class Edit extends Component
             'description' => ['nullable', 'string'],
             'purchase_date' => ['nullable', 'date'],
             'supplier_name' => ['nullable', 'string', 'max:100'],
+        ];
+    }
+
+    protected function performUpdate(): void
+    {
+        $newCapacity = (float) $this->capacity;
+        $containerId = $this->container->id;
+        $unit = $this->unit;
+
+        $error = DB::transaction(function () use ($newCapacity, $containerId, $unit) {
+            $fresh = Container::where('id', $containerId)->where('user_id', Auth::id())->lockForUpdate()->first();
+
+            if (! $fresh) {
+                return __('Contenedor no encontrado.');
+            }
+
+            if ($fresh->getTotalUsed() > 0 && $unit !== ($fresh->unit ?? 'kg')) {
+                return __('No se puede cambiar la unidad de un contenedor con contenido.');
+            }
+
+            $totalUsed = $fresh->getTotalUsed();
+            if ($newCapacity < $totalUsed) {
+                $freshUnit = $fresh->unit ?? 'kg';
+
+                return "La capacidad no puede ser menor que lo ya utilizado ({$totalUsed} {$freshUnit}).";
+            }
+
+            $fresh->update([
+                'name' => $this->name,
+                'type_id' => (int) $this->type_id,
+                'capacity' => $newCapacity,
+                'unit' => $unit,
+                'container_room_id' => $this->container_room_id ?: null,
+                'serial_number' => $this->serial_number ?: null,
+                'description' => $this->description ?: null,
+                'purchase_date' => $this->purchase_date ?: null,
+                'supplier_name' => $this->supplier_name ?: null,
+            ]);
+
+            return null;
+        });
+
+        if ($error) {
+            throw ValidationException::withMessages(['capacity' => $error]);
+        }
+    }
+
+    protected function successMessage(): string
+    {
+        return __('Contenedor actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.containers.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            'types' => ContainerType::orderBy('name')->get(),
+            'rooms' => ContainerRoom::where('user_id', Auth::id())->orderBy('name')->get(),
+            'hasStock' => $this->container->getTotalUsed() > 0,
         ];
     }
 

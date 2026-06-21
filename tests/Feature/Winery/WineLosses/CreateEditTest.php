@@ -27,30 +27,6 @@ class CreateEditTest extends WineryTestCase
         );
     }
 
-    private function makeWine(?int $userId = null): Wine
-    {
-        return Wine::create([
-            'user_id'       => $userId ?? $this->winery->id,
-            'name'          => 'Vino Test',
-            'wine_type'     => 'red',
-            'status'        => 'in_progress',
-            'volume_liters' => 1000,
-        ]);
-    }
-
-    private function makeLoss(Wine $wine): WineLoss
-    {
-        return WineLoss::create([
-            'wine_id'               => $wine->id,
-            'loss_type'             => 'evaporation',
-            'loss_authorization'    => 'authorized',
-            'quantity'              => 10,
-            'unit_of_measurement_id' => $this->uom->id,
-            'loss_date'             => now()->toDateString(),
-            'created_by'            => $wine->user_id,
-        ]);
-    }
-
     // --- Create ---
 
     public function test_create_renders(): void
@@ -98,8 +74,8 @@ class CreateEditTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_losses', [
-            'wine_id'    => $wine->id,
-            'loss_type'  => 'evaporation',
+            'wine_id' => $wine->id,
+            'loss_type' => 'evaporation',
             'created_by' => $this->winery->id,
         ]);
     }
@@ -131,8 +107,32 @@ class CreateEditTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_losses', [
-            'id'    => $loss->id,
+            'id' => $loss->id,
             'notes' => 'Nota actualizada',
+        ]);
+    }
+
+    private function makeWine(?int $userId = null): Wine
+    {
+        return Wine::create([
+            'user_id' => $userId ?? $this->winery->id,
+            'name' => 'Vino Test',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
+            'volume_liters' => 1000,
+        ]);
+    }
+
+    private function makeLoss(Wine $wine): WineLoss
+    {
+        return WineLoss::create([
+            'wine_id' => $wine->id,
+            'loss_type' => 'evaporation',
+            'loss_authorization' => 'authorized',
+            'quantity' => 10,
+            'unit_of_measurement_id' => $this->uom->id,
+            'loss_date' => now()->toDateString(),
+            'created_by' => $wine->user_id,
         ]);
     }
 }

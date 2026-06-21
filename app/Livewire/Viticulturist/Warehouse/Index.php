@@ -63,23 +63,50 @@ class Index extends Component
         $this->p_invoice_date = now()->format('Y-m-d');
     }
 
-    public function updatingTab(): void { $this->resetPage(); }
+    public function updatingTab(): void
+    {
+        $this->resetPage();
+    }
 
-    public function updatingInvSearch(): void { $this->resetPage(); }
+    public function updatingInvSearch(): void
+    {
+        $this->resetPage();
+    }
 
-    public function updatingInvProduct(): void { $this->resetPage(); }
+    public function updatingInvProduct(): void
+    {
+        $this->resetPage();
+    }
 
-    public function updatingInvWarehouse(): void { $this->resetPage(); }
+    public function updatingInvWarehouse(): void
+    {
+        $this->resetPage();
+    }
 
-    public function updatingInvStatus(): void { $this->resetPage(); }
+    public function updatingInvStatus(): void
+    {
+        $this->resetPage();
+    }
 
-    public function updatingSupSearch(): void { $this->resetPage(); }
+    public function updatingSupSearch(): void
+    {
+        $this->resetPage();
+    }
 
-    public function updatingSupType(): void { $this->resetPage(); }
+    public function updatingSupType(): void
+    {
+        $this->resetPage();
+    }
 
-    public function updatingSupLow(): void { $this->resetPage(); }
+    public function updatingSupLow(): void
+    {
+        $this->resetPage();
+    }
 
-    public function updatingWhSearch(): void { $this->resetPage(); }
+    public function updatingWhSearch(): void
+    {
+        $this->resetPage();
+    }
 
     public function clearInventoryFilters(): void
     {

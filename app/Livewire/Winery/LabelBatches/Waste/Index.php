@@ -5,7 +5,6 @@ namespace App\Livewire\Winery\LabelBatches\Waste;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\LabelBatch;
 use App\Models\LabelWaste;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 

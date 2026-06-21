@@ -43,10 +43,10 @@ class BottlingTest extends WineryTestCase
     public function test_create_rejects_wine_from_other_winery(): void
     {
         $otherWine = Wine::create([
-            'user_id'       => $this->makeOtherWinery()->id,
-            'name'          => 'Other Wine',
-            'wine_type'     => 'red',
-            'status'        => 'in_progress',
+            'user_id' => $this->makeOtherWinery()->id,
+            'name' => 'Other Wine',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
             'volume_liters' => 1000,
         ]);
 

@@ -198,6 +198,8 @@ class Index extends Component
     /**
      * Abre el modal de confirmación mostrando el volumen de datos que se
      * borrarán en cascada junto al usuario.
+     *
+     * @param mixed $userId
      */
     public function confirmDeleteUser($userId)
     {
@@ -261,43 +263,6 @@ class Index extends Component
         $this->deleteUserId = null;
         $this->deleteUserName = '';
         $this->deleteCounts = [];
-    }
-
-    /**
-     * Reglas compartidas: no se puede borrar a un admin ni a uno mismo.
-     */
-    private function canDelete(User $user): bool
-    {
-        if ($user->isAdmin()) {
-            $this->toastError(__('No puedes eliminar a un administrador.'));
-
-            return false;
-        }
-
-        if ($user->id === Auth::id()) {
-            $this->toastError(__('No puedes eliminarte a ti mismo.'));
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Recuento de datos que se eliminarán en cascada. Solo se devuelven las
-     * entidades con al menos un registro.
-     *
-     * @return array<string, int>
-     */
-    private function dependencyCounts(User $user): array
-    {
-        return array_filter([
-            __('Campañas') => $user->campaigns()->count(),
-            __('Actividades agrícolas') => $user->agriculturalActivities()->count(),
-            __('Parcelas') => $user->plots()->count(),
-            __('Clientes') => DB::table('clients')->where('user_id', $user->id)->count(),
-            __('Facturas') => DB::table('invoices')->where('user_id', $user->id)->count(),
-        ], fn ($count) => $count > 0);
     }
 
     // ─── Bulk operations ──────────────────────────────────────────────────────
@@ -599,7 +564,7 @@ class Index extends Component
     {
         $users = $this->buildFilteredQuery()->orderBy('created_at', 'desc')->paginate(20);
 
-        $raw = User::query()
+        $raw = \Illuminate\Support\Facades\DB::table('users')
             ->selectRaw('COUNT(*) as total')
             ->selectRaw("SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as role_admin")
             ->selectRaw("SUM(CASE WHEN role = 'supervisor' THEN 1 ELSE 0 END) as role_supervisor")
@@ -638,6 +603,43 @@ class Index extends Component
             'stats' => $stats,
             'pageUserIds' => $users->pluck('id')->toArray(),
         ])->layout('layouts.app');
+    }
+
+    /**
+     * Reglas compartidas: no se puede borrar a un admin ni a uno mismo.
+     */
+    private function canDelete(User $user): bool
+    {
+        if ($user->isAdmin()) {
+            $this->toastError(__('No puedes eliminar a un administrador.'));
+
+            return false;
+        }
+
+        if ($user->id === Auth::id()) {
+            $this->toastError(__('No puedes eliminarte a ti mismo.'));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Recuento de datos que se eliminarán en cascada. Solo se devuelven las
+     * entidades con al menos un registro.
+     *
+     * @return array<string, int>
+     */
+    private function dependencyCounts(User $user): array
+    {
+        return array_filter([
+            __('Campañas') => $user->campaigns()->count(),
+            __('Actividades agrícolas') => $user->agriculturalActivities()->count(),
+            __('Parcelas') => $user->plots()->count(),
+            __('Clientes') => DB::table('clients')->where('user_id', $user->id)->count(),
+            __('Facturas') => DB::table('invoices')->where('user_id', $user->id)->count(),
+        ], fn ($count) => $count > 0);
     }
 
     // ─── Filtered query (shared by render + export) ───────────────────────────

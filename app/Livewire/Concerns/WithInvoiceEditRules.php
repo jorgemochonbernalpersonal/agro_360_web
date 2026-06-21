@@ -34,9 +34,9 @@ trait WithInvoiceEditRules
                     }
                 },
             ],
-            'client_address_id'           => 'required|exists:client_addresses,id',
-            'invoice_date'                => 'nullable|date',
-            'delivery_note_date'          => 'nullable|date',
+            'client_address_id' => 'required|exists:client_addresses,id',
+            'invoice_date' => 'nullable|date',
+            'delivery_note_date' => 'nullable|date',
             'delivery_status' => [
                 'required',
                 'in:pending,in_transit,delivered,cancelled',
@@ -55,18 +55,18 @@ trait WithInvoiceEditRules
                     $this->delivery_status
                 ),
             ],
-            'observations'                => 'nullable|string',
-            'observations_invoice'        => 'nullable|string',
-            'items'                       => 'required|array|min:1',
-            'items.*.name'                => 'required|string|max:255',
-            'items.*.description'         => 'nullable|string',
-            'items.*.sku'                 => 'nullable|string|max:255',
-            'items.*.quantity'            => 'required|numeric|min:0.001',
-            'items.*.unit_price'          => 'required|numeric|min:0',
+            'observations' => 'nullable|string',
+            'observations_invoice' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.name' => 'required|string|max:255',
+            'items.*.description' => 'nullable|string',
+            'items.*.sku' => 'nullable|string|max:255',
+            'items.*.quantity' => 'required|numeric|min:0.001',
+            'items.*.unit_price' => 'required|numeric|min:0',
             'items.*.discount_percentage' => 'nullable|numeric|min:0|max:100',
-            'items.*.tax_id'              => 'nullable|exists:taxes,id',
-            'items.*.unit'                => 'nullable|string|max:20',
-            'items.*.concept_type'        => "nullable|in:{$conceptTypes}",
+            'items.*.tax_id' => 'nullable|exists:taxes,id',
+            'items.*.unit' => 'nullable|string|max:20',
+            'items.*.concept_type' => "nullable|in:{$conceptTypes}",
         ];
     }
 }

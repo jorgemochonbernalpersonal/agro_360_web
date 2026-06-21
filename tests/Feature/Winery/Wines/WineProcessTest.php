@@ -20,26 +20,6 @@ class WineProcessTest extends WineryTestCase
         $this->actingAs($this->winery);
     }
 
-    private function makeWine(?int $userId = null): Wine
-    {
-        return Wine::create([
-            'user_id' => $userId ?? $this->winery->id,
-            'name' => 'Test Wine',
-            'wine_type' => 'red',
-            'status' => 'in_progress',
-        ]);
-    }
-
-    private function makeProcess(Wine $wine): WineProcessDetail
-    {
-        return WineProcessDetail::create([
-            'wine_id' => $wine->id,
-            'process_type' => 'fermentation',
-            'start_date' => now()->toDateString(),
-            'created_by' => $wine->user_id,
-        ]);
-    }
-
     // --- Create ---
 
     public function test_create_renders(): void
@@ -122,6 +102,26 @@ class WineProcessTest extends WineryTestCase
         $this->assertDatabaseHas('wine_process_details', [
             'id' => $process->id,
             'process_type' => 'aging',
+        ]);
+    }
+
+    private function makeWine(?int $userId = null): Wine
+    {
+        return Wine::create([
+            'user_id' => $userId ?? $this->winery->id,
+            'name' => 'Test Wine',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
+        ]);
+    }
+
+    private function makeProcess(Wine $wine): WineProcessDetail
+    {
+        return WineProcessDetail::create([
+            'wine_id' => $wine->id,
+            'process_type' => 'fermentation',
+            'start_date' => now()->toDateString(),
+            'created_by' => $wine->user_id,
         ]);
     }
 }

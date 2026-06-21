@@ -39,6 +39,11 @@ trait HasBetaAccess
         return (int) now()->diffInDays($this->beta_ends_at, false);
     }
 
+    public function isFounder(): bool
+    {
+        return $this->is_founder === true;
+    }
+
     /**
      * Activar acceso beta.
      * Si el usuario es una bodega, cascada beta a sus viticultores vinculados.
@@ -46,14 +51,9 @@ trait HasBetaAccess
      * @param \Carbon\Carbon|null $endsAt Fecha fin heredada (para cascada desde bodega).
      *                                    Si null, usa now()+3 meses.
      */
-    public function isFounder(): bool
-    {
-        return $this->is_founder === true;
-    }
-
     public function grantBetaAccess(?\Carbon\Carbon $endsAt = null): void
     {
-        $months     = $this->isFounder() ? 12 : 3;
+        $months = $this->isFounder() ? 12 : 3;
         $betaEndsAt = $endsAt ?? now()->addMonths($months)->endOfDay();
 
         $this->update([

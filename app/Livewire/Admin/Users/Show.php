@@ -186,40 +186,6 @@ class Show extends Component
         $this->deleteCounts = [];
     }
 
-    private function canDelete(): bool
-    {
-        if ($this->user->isAdmin()) {
-            $this->toastError(__('No puedes eliminar a un administrador.'));
-
-            return false;
-        }
-
-        if ($this->user->id === Auth::id()) {
-            $this->toastError(__('No puedes eliminarte a ti mismo.'));
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Recuento de datos que se eliminarán en cascada. Solo se devuelven las
-     * entidades con al menos un registro.
-     *
-     * @return array<string, int>
-     */
-    private function dependencyCounts(User $user): array
-    {
-        return array_filter([
-            __('Campañas') => $user->campaigns()->count(),
-            __('Actividades agrícolas') => $user->agriculturalActivities()->count(),
-            __('Parcelas') => $user->plots()->count(),
-            __('Clientes') => DB::table('clients')->where('user_id', $user->id)->count(),
-            __('Facturas') => DB::table('invoices')->where('user_id', $user->id)->count(),
-        ], fn ($count) => $count > 0);
-    }
-
     // ─── Password reset ───────────────────────────────────────────────────────
 
     public function sendPasswordReset()
@@ -507,6 +473,40 @@ class Show extends Component
         ]);
     }
 
+    private function canDelete(): bool
+    {
+        if ($this->user->isAdmin()) {
+            $this->toastError(__('No puedes eliminar a un administrador.'));
+
+            return false;
+        }
+
+        if ($this->user->id === Auth::id()) {
+            $this->toastError(__('No puedes eliminarte a ti mismo.'));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Recuento de datos que se eliminarán en cascada. Solo se devuelven las
+     * entidades con al menos un registro.
+     *
+     * @return array<string, int>
+     */
+    private function dependencyCounts(User $user): array
+    {
+        return array_filter([
+            __('Campañas') => $user->campaigns()->count(),
+            __('Actividades agrícolas') => $user->agriculturalActivities()->count(),
+            __('Parcelas') => $user->plots()->count(),
+            __('Clientes') => DB::table('clients')->where('user_id', $user->id)->count(),
+            __('Facturas') => DB::table('invoices')->where('user_id', $user->id)->count(),
+        ], fn ($count) => $count > 0);
+    }
+
     // ─── Hierarchy ────────────────────────────────────────────────────────────
 
     private function loadHierarchy()
@@ -743,21 +743,21 @@ class Show extends Component
                 ->orWhere('admin_id', $userId);
         })
             ->whereIn('event', [
-            'user_created_by_admin',
-            'user_edited_by_admin',
-            'user_deleted_by_admin',
-            'user_account_toggled',
-            'user_beta_toggled',
-            'user_founder_toggled',
-            'email_verified_manually_by_admin',
-            'impersonation_started',
-            'admin_readonly_toggled',
-            'login',
-            'logout',
-            'failed_login',
-            'password_reset_requested',
-            'password_changed',
-        ])
+                'user_created_by_admin',
+                'user_edited_by_admin',
+                'user_deleted_by_admin',
+                'user_account_toggled',
+                'user_beta_toggled',
+                'user_founder_toggled',
+                'email_verified_manually_by_admin',
+                'impersonation_started',
+                'admin_readonly_toggled',
+                'login',
+                'logout',
+                'failed_login',
+                'password_reset_requested',
+                'password_changed',
+            ])
             ->orderByDesc('created_at')
             ->limit(20)
             ->get();

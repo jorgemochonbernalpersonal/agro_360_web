@@ -256,5 +256,4 @@ class Create extends Component
             'buyers' => $buyers,
         ])->layout('layouts.app');
     }
-
 }

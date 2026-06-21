@@ -73,13 +73,13 @@ class UserBetaAccessTest extends TestCase
     public function grant_beta_cascades_to_linked_viticulturists()
     {
         $winery = User::factory()->create(['role' => 'winery', 'is_beta_user' => false]);
-        $vit    = User::factory()->create(['role' => 'viticulturist', 'is_beta_user' => false]);
+        $vit = User::factory()->create(['role' => 'viticulturist', 'is_beta_user' => false]);
 
         \Illuminate\Support\Facades\DB::table('winery_viticulturist')->insert([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => 'own',
-            'assigned_by'      => $winery->id,
+            'source' => 'own',
+            'assigned_by' => $winery->id,
         ]);
 
         $winery->grantBetaAccess();
@@ -95,17 +95,17 @@ class UserBetaAccessTest extends TestCase
     public function grant_beta_cascade_does_not_overwrite_existing_beta()
     {
         $winery = User::factory()->create(['role' => 'winery']);
-        $vit    = User::factory()->create([
-            'role'         => 'viticulturist',
+        $vit = User::factory()->create([
+            'role' => 'viticulturist',
             'is_beta_user' => true,               // ya tenía beta
             'beta_ends_at' => now()->addMonths(6),
         ]);
 
         \Illuminate\Support\Facades\DB::table('winery_viticulturist')->insert([
-            'winery_id'        => $winery->id,
+            'winery_id' => $winery->id,
             'viticulturist_id' => $vit->id,
-            'source'           => 'own',
-            'assigned_by'      => $winery->id,
+            'source' => 'own',
+            'assigned_by' => $winery->id,
         ]);
 
         $winery->grantBetaAccess(); // solo afecta a quienes tienen is_beta_user=false

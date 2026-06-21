@@ -17,6 +17,7 @@ class WineProcessApiTest extends TestCase
     use RefreshDatabase;
 
     private User $winery;
+
     private UnitOfMeasurement $uom;
 
     protected function setUp(): void

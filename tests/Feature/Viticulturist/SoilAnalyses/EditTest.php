@@ -10,20 +10,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class EditTest extends ViticulturistTestCase
 {
-    private function makeAnalysis($viticulturist): SoilAnalysis
-    {
-        $plot = Plot::factory()->forViticulturist($viticulturist)->create();
-
-        return SoilAnalysis::create([
-            'viticulturist_id' => $viticulturist->id,
-            'plot_id' => $plot->id,
-            'analysis_date' => '2024-06-15',
-            'laboratory' => 'Lab Original',
-            'ph' => '6.5',
-            'organic_matter' => '2.0',
-        ]);
-    }
-
     public function test_mount_fills_fields(): void
     {
         $v = $this->makeViticulturist();
@@ -77,5 +63,19 @@ class EditTest extends ViticulturistTestCase
         $this->actingAs($v)
             ->get(route('viticulturist.soil-analyses.edit', $analysis))
             ->assertStatus(403);
+    }
+
+    private function makeAnalysis($viticulturist): SoilAnalysis
+    {
+        $plot = Plot::factory()->forViticulturist($viticulturist)->create();
+
+        return SoilAnalysis::create([
+            'viticulturist_id' => $viticulturist->id,
+            'plot_id' => $plot->id,
+            'analysis_date' => '2024-06-15',
+            'laboratory' => 'Lab Original',
+            'ph' => '6.5',
+            'organic_matter' => '2.0',
+        ]);
     }
 }

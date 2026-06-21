@@ -13,13 +13,25 @@ trait HasSummaryCards
         $lai = $data->lai ?? 0;
 
         if ($ndvi >= 0.7) {
-            $status = 'excellent'; $label = __('Excelente'); $color = 'green'; $icon = '✅';
+            $status = 'excellent';
+            $label = __('Excelente');
+            $color = 'green';
+            $icon = '✅';
         } elseif ($ndvi >= 0.5) {
-            $status = 'good'; $label = __('Bueno'); $color = 'emerald'; $icon = '✅';
+            $status = 'good';
+            $label = __('Bueno');
+            $color = 'emerald';
+            $icon = '✅';
         } elseif ($ndvi >= 0.3) {
-            $status = 'moderate'; $label = __('Moderado'); $color = 'yellow'; $icon = '⚠️';
+            $status = 'moderate';
+            $label = __('Moderado');
+            $color = 'yellow';
+            $icon = '⚠️';
         } else {
-            $status = 'poor'; $label = __('Bajo'); $color = 'orange'; $icon = '⚠️';
+            $status = 'poor';
+            $label = __('Bajo');
+            $color = 'orange';
+            $icon = '⚠️';
         }
 
         return [
@@ -39,13 +51,25 @@ trait HasSummaryCards
         }
 
         if ($cwsi < 0.2) {
-            $status = 'excellent'; $label = __('Sin Estrés'); $color = 'green'; $icon = '✅';
+            $status = 'excellent';
+            $label = __('Sin Estrés');
+            $color = 'green';
+            $icon = '✅';
         } elseif ($cwsi < 0.4) {
-            $status = 'good'; $label = __('Leve'); $color = 'yellow'; $icon = '⚠️';
+            $status = 'good';
+            $label = __('Leve');
+            $color = 'yellow';
+            $icon = '⚠️';
         } elseif ($cwsi < 0.6) {
-            $status = 'moderate'; $label = __('Moderado'); $color = 'orange'; $icon = '⚠️';
+            $status = 'moderate';
+            $label = __('Moderado');
+            $color = 'orange';
+            $icon = '⚠️';
         } else {
-            $status = 'critical'; $label = __('Alto Estrés'); $color = 'red'; $icon = '🚨';
+            $status = 'critical';
+            $label = __('Alto Estrés');
+            $color = 'red';
+            $icon = '🚨';
         }
 
         return [
@@ -69,13 +93,25 @@ trait HasSummaryCards
         $threshold = ($month >= 6 && $month <= 8) ? 42 : 38;
 
         if ($lstDay > $threshold + 5) {
-            $status = 'critical'; $label = __('Estrés Térmico'); $color = 'red'; $icon = '🔥';
+            $status = 'critical';
+            $label = __('Estrés Térmico');
+            $color = 'red';
+            $icon = '🔥';
         } elseif ($lstDay > $threshold) {
-            $status = 'warning'; $label = __('Calor Alto'); $color = 'orange'; $icon = '⚠️';
+            $status = 'warning';
+            $label = __('Calor Alto');
+            $color = 'orange';
+            $icon = '⚠️';
         } elseif ($lstNight !== null && $lstNight < 3 && $month >= 3 && $month <= 5) {
-            $status = 'warning'; $label = __('Riesgo Helada'); $color = 'blue'; $icon = '❄️';
+            $status = 'warning';
+            $label = __('Riesgo Helada');
+            $color = 'blue';
+            $icon = '❄️';
         } else {
-            $status = 'normal'; $label = __('Normal'); $color = 'green'; $icon = '✅';
+            $status = 'normal';
+            $label = __('Normal');
+            $color = 'green';
+            $icon = '✅';
         }
 
         return [
@@ -100,11 +136,17 @@ trait HasSummaryCards
         $totalYield = $yieldPerHa * $areaHa;
 
         if ($lai >= 1.5 && $lai <= 3.5) {
-            $confidence = 'high'; $confidenceLabel = __('Alta'); $color = 'green';
+            $confidence = 'high';
+            $confidenceLabel = __('Alta');
+            $color = 'green';
         } elseif ($lai >= 1.0 && $lai <= 4.5) {
-            $confidence = 'medium'; $confidenceLabel = __('Media'); $color = 'yellow';
+            $confidence = 'medium';
+            $confidenceLabel = __('Media');
+            $color = 'yellow';
         } else {
-            $confidence = 'low'; $confidenceLabel = __('Baja'); $color = 'orange';
+            $confidence = 'low';
+            $confidenceLabel = __('Baja');
+            $color = 'orange';
         }
 
         return [
@@ -125,13 +167,25 @@ trait HasSummaryCards
         }
 
         if ($gndvi >= 0.6) {
-            $status = 'optimal'; $label = __('Óptimo'); $color = 'green'; $icon = '✅';
+            $status = 'optimal';
+            $label = __('Óptimo');
+            $color = 'green';
+            $icon = '✅';
         } elseif ($gndvi >= 0.5) {
-            $status = 'good'; $label = __('Bueno'); $color = 'emerald'; $icon = '✅';
+            $status = 'good';
+            $label = __('Bueno');
+            $color = 'emerald';
+            $icon = '✅';
         } elseif ($gndvi >= 0.3) {
-            $status = 'low'; $label = __('Bajo N'); $color = 'yellow'; $icon = '⚠️';
+            $status = 'low';
+            $label = __('Bajo N');
+            $color = 'yellow';
+            $icon = '⚠️';
         } else {
-            $status = 'deficient'; $label = __('Deficiente'); $color = 'red'; $icon = '🚨';
+            $status = 'deficient';
+            $label = __('Deficiente');
+            $color = 'red';
+            $icon = '🚨';
         }
 
         return [

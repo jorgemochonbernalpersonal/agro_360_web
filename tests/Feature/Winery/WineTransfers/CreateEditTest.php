@@ -28,40 +28,6 @@ class CreateEditTest extends WineryTestCase
         );
     }
 
-    private function makeWine(?int $userId = null): Wine
-    {
-        return Wine::create([
-            'user_id'   => $userId ?? $this->winery->id,
-            'name'      => 'Vino Test',
-            'wine_type' => 'red',
-            'status'    => 'in_progress',
-        ]);
-    }
-
-    private function makeContainer(?int $userId = null): Container
-    {
-        return Container::create([
-            'user_id'  => $userId ?? $this->winery->id,
-            'name'     => 'Depósito Test',
-            'capacity' => 5000,
-        ]);
-    }
-
-    private function makeTransfer(Wine $wine): WineTransfer
-    {
-        $dest = $this->makeContainer($wine->user_id);
-
-        return WineTransfer::create([
-            'wine_id'               => $wine->id,
-            'to_container_id'       => $dest->id,
-            'quantity'              => 100,
-            'unit_of_measurement_id' => $this->uom->id,
-            'transfer_type'         => 'racking',
-            'transfer_date'         => now()->toDateString(),
-            'created_by'            => $wine->user_id,
-        ]);
-    }
-
     // --- Create ---
 
     public function test_create_renders(): void
@@ -99,7 +65,7 @@ class CreateEditTest extends WineryTestCase
 
     public function test_create_rejects_container_from_other_winery(): void
     {
-        $wine           = $this->makeWine();
+        $wine = $this->makeWine();
         $otherContainer = $this->makeContainer($this->makeOtherWinery()->id);
 
         Livewire::test(Create::class)
@@ -140,8 +106,42 @@ class CreateEditTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_transfers', [
-            'id'    => $transfer->id,
+            'id' => $transfer->id,
             'notes' => 'Actualizado en test',
+        ]);
+    }
+
+    private function makeWine(?int $userId = null): Wine
+    {
+        return Wine::create([
+            'user_id' => $userId ?? $this->winery->id,
+            'name' => 'Vino Test',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
+        ]);
+    }
+
+    private function makeContainer(?int $userId = null): Container
+    {
+        return Container::create([
+            'user_id' => $userId ?? $this->winery->id,
+            'name' => 'Depósito Test',
+            'capacity' => 5000,
+        ]);
+    }
+
+    private function makeTransfer(Wine $wine): WineTransfer
+    {
+        $dest = $this->makeContainer($wine->user_id);
+
+        return WineTransfer::create([
+            'wine_id' => $wine->id,
+            'to_container_id' => $dest->id,
+            'quantity' => 100,
+            'unit_of_measurement_id' => $this->uom->id,
+            'transfer_type' => 'racking',
+            'transfer_date' => now()->toDateString(),
+            'created_by' => $wine->user_id,
         ]);
     }
 }

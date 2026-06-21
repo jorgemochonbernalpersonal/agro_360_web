@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Resources\Api\UserResource;
 use App\Models\User;
 use App\Services\SecurityLogger;

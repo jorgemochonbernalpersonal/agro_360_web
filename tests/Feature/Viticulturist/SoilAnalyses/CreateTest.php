@@ -4,7 +4,6 @@ namespace Tests\Feature\Viticulturist\SoilAnalyses;
 
 use App\Livewire\Viticulturist\SoilAnalyses\Create;
 use App\Models\Plot;
-use App\Models\SoilAnalysis;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 

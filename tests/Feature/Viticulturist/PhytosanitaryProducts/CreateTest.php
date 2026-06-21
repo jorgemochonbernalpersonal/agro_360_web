@@ -3,7 +3,6 @@
 namespace Tests\Feature\Viticulturist\PhytosanitaryProducts;
 
 use App\Livewire\Viticulturist\PhytosanitaryProducts\Create;
-use App\Models\PhytosanitaryProduct;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 

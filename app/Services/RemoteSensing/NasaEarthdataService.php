@@ -317,6 +317,41 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     }
 
     /**
+     * Get authentication token
+     */
+    public function getAuthToken(): ?string
+    {
+        if ($this->token) {
+            return $this->token;
+        }
+
+        $cacheKey = $this->cacheService->getNasaTokenKey();
+        $cached = Cache::get($cacheKey);
+
+        if ($cached) {
+            $this->token = $cached;
+
+            return $this->token;
+        }
+
+        try {
+            $response = Http::withBasicAuth($this->username, $this->password)
+                ->post("{$this->baseUrl}/login");
+
+            if ($response->successful()) {
+                $this->token = $response->json('token');
+                Cache::put($cacheKey, $this->token, $this->cacheService->getNasaTokenTtl());
+
+                return $this->token;
+            }
+        } catch (\Exception $e) {
+            Log::error('NASA Earthdata auth failed', ['error' => $e->getMessage()]);
+        }
+
+        return null;
+    }
+
+    /**
      * Fetch NDVI data from NASA API or generate mock
      *
      * @param array|null $coordinates Override for the selected sigpac parcel ['lat','lng'|'lon']
@@ -396,41 +431,6 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
             return $this->generateMockData($plot);
         }
-    }
-
-    /**
-     * Get authentication token
-     */
-    public function getAuthToken(): ?string
-    {
-        if ($this->token) {
-            return $this->token;
-        }
-
-        $cacheKey = $this->cacheService->getNasaTokenKey();
-        $cached = Cache::get($cacheKey);
-
-        if ($cached) {
-            $this->token = $cached;
-
-            return $this->token;
-        }
-
-        try {
-            $response = Http::withBasicAuth($this->username, $this->password)
-                ->post("{$this->baseUrl}/login");
-
-            if ($response->successful()) {
-                $this->token = $response->json('token');
-                Cache::put($cacheKey, $this->token, $this->cacheService->getNasaTokenTtl());
-
-                return $this->token;
-            }
-        } catch (\Exception $e) {
-            Log::error('NASA Earthdata auth failed', ['error' => $e->getMessage()]);
-        }
-
-        return null;
     }
 
     /**

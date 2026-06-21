@@ -3,7 +3,6 @@
 namespace Tests\Feature\Viticulturist\ContainerReturns;
 
 use App\Livewire\Viticulturist\ContainerReturns\Create;
-use App\Models\PhytosanitaryContainerReturn;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 

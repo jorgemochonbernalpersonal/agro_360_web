@@ -3,7 +3,6 @@
 namespace Tests\Feature\Viticulturist\PhytosanitaryAlerts;
 
 use App\Livewire\Viticulturist\PhytosanitaryAlerts\Create;
-use App\Models\PhytosanitaryAlert;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 

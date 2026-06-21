@@ -9,18 +9,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class EditTest extends ViticulturistTestCase
 {
-    private function makeProduct($viticulturist): PhytosanitaryProduct
-    {
-        return PhytosanitaryProduct::create([
-            'user_id' => $viticulturist->id,
-            'name' => 'Producto Original',
-            'registration_number' => 'ES-11111111',
-            'registration_status' => 'active',
-            'withdrawal_period_days' => 5,
-            'active' => true,
-        ]);
-    }
-
     public function test_mount_fills_fields(): void
     {
         $v = $this->makeViticulturist();
@@ -75,5 +63,17 @@ class EditTest extends ViticulturistTestCase
         $this->actingAs($v)
             ->get(route('viticulturist.phytosanitary-products.edit', $product))
             ->assertStatus(403);
+    }
+
+    private function makeProduct($viticulturist): PhytosanitaryProduct
+    {
+        return PhytosanitaryProduct::create([
+            'user_id' => $viticulturist->id,
+            'name' => 'Producto Original',
+            'registration_number' => 'ES-11111111',
+            'registration_status' => 'active',
+            'withdrawal_period_days' => 5,
+            'active' => true,
+        ]);
     }
 }

@@ -20,27 +20,6 @@ class CreateEditTest extends WineryTestCase
         $this->actingAs($this->winery);
     }
 
-    private function makeWine(?int $userId = null): Wine
-    {
-        return Wine::create([
-            'user_id'   => $userId ?? $this->winery->id,
-            'name'      => 'Vino Test',
-            'wine_type' => 'red',
-            'status'    => 'bottled',
-        ]);
-    }
-
-    private function makeLabeling(Wine $wine): WineLabeling
-    {
-        return WineLabeling::create([
-            'user_id'          => $wine->user_id,
-            'wine_id'          => $wine->id,
-            'labeling_date'    => now()->toDateString(),
-            'quantity_labeled' => 100,
-            'created_by'       => $wine->user_id,
-        ]);
-    }
-
     // --- Create ---
 
     public function test_create_renders(): void
@@ -70,8 +49,8 @@ class CreateEditTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_labelings', [
-            'user_id'          => $this->winery->id,
-            'wine_id'          => $wine->id,
+            'user_id' => $this->winery->id,
+            'wine_id' => $wine->id,
             'quantity_labeled' => 150,
         ]);
     }
@@ -115,8 +94,29 @@ class CreateEditTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_labelings', [
-            'id'               => $labeling->id,
+            'id' => $labeling->id,
             'quantity_labeled' => 200,
+        ]);
+    }
+
+    private function makeWine(?int $userId = null): Wine
+    {
+        return Wine::create([
+            'user_id' => $userId ?? $this->winery->id,
+            'name' => 'Vino Test',
+            'wine_type' => 'red',
+            'status' => 'bottled',
+        ]);
+    }
+
+    private function makeLabeling(Wine $wine): WineLabeling
+    {
+        return WineLabeling::create([
+            'user_id' => $wine->user_id,
+            'wine_id' => $wine->id,
+            'labeling_date' => now()->toDateString(),
+            'quantity_labeled' => 100,
+            'created_by' => $wine->user_id,
         ]);
     }
 }
