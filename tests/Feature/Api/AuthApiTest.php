@@ -88,6 +88,72 @@ class AuthApiTest extends TestCase
         ])->assertStatus(422)->assertJsonValidationErrors(['role']);
     }
 
+    // ── POST /api/v1/email/verify ─────────────────────────────────────────────
+
+    public function test_verify_email_marks_user_as_verified(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'verifyme@example.com',
+            'email_verified_at' => null,
+        ]);
+
+        $this->postJson('/api/v1/email/verify', [
+            'id' => $user->id,
+            'hash' => sha1($user->getEmailForVerification()),
+        ])->assertStatus(200)->assertJsonPath('verified', true);
+
+        $this->assertNotNull($user->fresh()->email_verified_at);
+    }
+
+    public function test_verify_email_does_not_issue_a_token(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'notoken@example.com',
+            'email_verified_at' => null,
+        ]);
+
+        $this->postJson('/api/v1/email/verify', [
+            'id' => $user->id,
+            'hash' => sha1($user->getEmailForVerification()),
+        ])->assertStatus(200)->assertJsonMissing(['token']);
+    }
+
+    public function test_verify_email_rejects_invalid_hash(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'badhash@example.com',
+            'email_verified_at' => null,
+        ]);
+
+        $this->postJson('/api/v1/email/verify', [
+            'id' => $user->id,
+            'hash' => 'not-the-real-hash',
+        ])->assertStatus(422);
+
+        $this->assertNull($user->fresh()->email_verified_at);
+    }
+
+    public function test_verify_email_rejects_unknown_user(): void
+    {
+        $this->postJson('/api/v1/email/verify', [
+            'id' => 999999,
+            'hash' => sha1('ghost@example.com'),
+        ])->assertStatus(422);
+    }
+
+    public function test_verify_email_is_idempotent_for_already_verified_user(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'already@example.com',
+            'email_verified_at' => now(),
+        ]);
+
+        $this->postJson('/api/v1/email/verify', [
+            'id' => $user->id,
+            'hash' => sha1($user->getEmailForVerification()),
+        ])->assertStatus(200)->assertJsonPath('verified', true);
+    }
+
     // ── POST /api/v1/login ────────────────────────────────────────────────────
 
     public function test_login_returns_token_and_user(): void

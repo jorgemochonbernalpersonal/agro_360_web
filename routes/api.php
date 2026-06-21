@@ -136,6 +136,7 @@ Route::post('/auth/apple', [AuthController::class, 'loginWithApple'])->middlewar
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:5,1');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:5,1');
 Route::post('/claim-account', [AuthController::class, 'claimAccount'])->middleware('throttle:5,1');
+Route::post('/email/verify', [AuthController::class, 'verifyEmail'])->middleware('throttle:10,1');
 
 // ─── Protected ────────────────────────────────────────────────────────────────
 
