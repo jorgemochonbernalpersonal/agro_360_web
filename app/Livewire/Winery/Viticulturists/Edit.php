@@ -63,6 +63,12 @@ class Edit extends AbstractEdit
     protected function performUpdate(): void
     {
         $wineryId = Auth::id();
+
+        WineryViticulturist::where('winery_id', $wineryId)
+            ->where('viticulturist_id', $this->viticulturistId)
+            ->where('source', WineryViticulturist::SOURCE_OWN)
+            ->firstOrFail();
+
         $user = User::findOrFail($this->viticulturistId);
 
         $emailValue = $this->email ?: null;
