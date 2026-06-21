@@ -3,7 +3,7 @@
         :back-url="roleRoute('product-lots.index')">
 
         <div x-data="{ tab: 'general' }">
-            <form wire:submit.prevent="update" class="space-y-0">
+            <form wire:submit.prevent="save" class="space-y-0">
 
                 {{-- ── Tab nav ────────────────────────────────────────── --}}
                 <div class="flex border-b border-zinc-200 mb-8 -mx-6 px-6 overflow-x-auto gap-0">

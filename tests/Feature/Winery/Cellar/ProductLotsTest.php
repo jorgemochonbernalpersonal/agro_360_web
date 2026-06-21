@@ -69,7 +69,7 @@ class ProductLotsTest extends WineryTestCase
 
         Livewire::test(Edit::class, ['lot' => $lot])
             ->set('name', 'New Name')
-            ->call('update')
+            ->call('save')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_lots', [

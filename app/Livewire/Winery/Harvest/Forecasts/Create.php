@@ -2,9 +2,7 @@
 
 namespace App\Livewire\Winery\Harvest\Forecasts;
 
-use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
 use App\Models\GrapeReceptionBatch;
@@ -13,12 +11,10 @@ use App\Models\PlotPlanting;
 use App\Models\WineryViticulturist;
 use App\Models\WineryYieldForecast;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
+use Illuminate\Validation\ValidationException;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithOwnershipRules, WithRoleAwareRedirect, WithToastNotifications;
-
     public string $viticulturist_id = '';
 
     public string $plot_id = '';
@@ -49,10 +45,10 @@ class Create extends Component
 
     public ?int $ageFactor = null;
 
-    // Aforo del viticultor (EstimatedYield confirmado) para referencia
+    // Aforo del viticultor para referencia
     public ?float $viticEstimateKg = null;
 
-    public ?string $viticEstimateStatus = null; // 'confirmed' | 'draft' | null
+    public ?string $viticEstimateStatus = null;
 
     // Kg ya recibidos para esta plantación+campaña
     public ?float $receivedKg = null;
@@ -61,14 +57,12 @@ class Create extends Component
     {
         $this->estimation_date = now()->format('Y-m-d');
 
-        // Campaña activa por defecto
         $campaign = Campaign::forViticulturist(Auth::id())->where('active', true)->first();
         if ($campaign) {
             $this->campaign_id = (string) $campaign->id;
             $this->vintage_year = (string) $campaign->year;
         }
 
-        // Producer: pre-select themselves as the viticulturist
         if (Auth::user()->isProducer()) {
             $this->viticulturist_id = (string) Auth::id();
             $this->updatedViticulturistId();
@@ -111,13 +105,10 @@ class Create extends Component
         $this->updatePacLimit();
     }
 
-    public function save(): mixed
+    protected function performCreate(): void
     {
-        $this->validate();
-
         $wineryId = Auth::id();
 
-        // Guard: viticulturist must be linked (bypass for producer using own plots)
         $isSelfForecast = Auth::user()->isProducer() && (int) $this->viticulturist_id === $wineryId;
         abort_unless(
             $isSelfForecast || WineryViticulturist::where('winery_id', $wineryId)
@@ -126,20 +117,18 @@ class Create extends Component
             403
         );
 
-        // Guard: planting must belong to viticulturist
-        $planting = PlotPlanting::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $this->viticulturist_id)
-        )->findOrFail($this->plot_planting_id);
+        $planting = PlotPlanting::whereHas('plot', fn ($q) => $q->where('viticulturist_id', $this->viticulturist_id))
+            ->findOrFail($this->plot_planting_id);
 
-        // No duplicados por winery+planting+campaign
         $exists = WineryYieldForecast::where('winery_id', $wineryId)
             ->where('plot_planting_id', $planting->id)
             ->where('campaign_id', $this->campaign_id)
             ->exists();
 
         if ($exists) {
-            $this->addError('plot_planting_id', __('Ya existe una previsión para esta plantación y campaña. Edita la existente.'));
-
-            return null;
+            throw ValidationException::withMessages([
+                'plot_planting_id' => __('Ya existe una previsión para esta plantación y campaña. Edita la existente.'),
+            ]);
         }
 
         WineryYieldForecast::create([
@@ -153,13 +142,19 @@ class Create extends Component
             'status' => $this->status,
             'notes' => $this->notes ?: null,
         ]);
-
-        $this->toastSuccess(__('Previsión de vendimia creada correctamente.'));
-
-        return $this->roleRedirect('harvest-forecasts.index');
     }
 
-    public function render()
+    protected function successMessage(): string
+    {
+        return __('Previsión de vendimia creada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.harvest-forecasts.index';
+    }
+
+    protected function viewData(): array
     {
         $wineryId = Auth::id();
 
@@ -170,17 +165,14 @@ class Create extends Component
             ->sortBy('name')
             ->values();
 
-        // Producer: add themselves to the viticulturist list
         if (Auth::user()->isProducer()) {
             $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
         }
 
-        $campaigns = Campaign::forViticulturist($wineryId)->orderBy('year', 'desc')->get();
-
-        return view('livewire.winery.harvest.forecasts.create', [
+        return [
             'linkedViticulturists' => $linkedViticulturists,
-            'campaigns' => $campaigns,
-        ])->layout('layouts.app');
+            'campaigns' => Campaign::forViticulturist($wineryId)->orderBy('year', 'desc')->get(),
+        ];
     }
 
     protected function loadPlots(): void
@@ -243,7 +235,6 @@ class Create extends Component
             $this->ageFactor = null;
         }
 
-        // Aforo del viticultor para la misma plantación+añada (cualquier estado)
         $viticEstimate = EstimatedYield::where('plot_planting_id', $planting->id)
             ->whereHas('campaign', fn ($q) => $q->where('year', (int) $this->vintage_year))
             ->orderByRaw("CASE status WHEN 'confirmed' THEN 0 ELSE 1 END")
@@ -254,7 +245,6 @@ class Create extends Component
             $this->viticEstimateStatus = $viticEstimate->status;
         }
 
-        // Kg ya recibidos para esta plantación + campaña
         if ($this->campaign_id) {
             $batch = GrapeReceptionBatch::where('winery_id', Auth::id())
                 ->where('plot_planting_id', $this->plot_planting_id)
