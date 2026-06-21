@@ -46,7 +46,7 @@ class Edit extends AbstractEdit
     {
         $this->authorize('delete', $this->cost);
         $this->cost->delete();
-        session()->flash('success', __('Coste eliminado.'));
+        $this->toastSuccess(__('Coste eliminado.'));
         $this->redirect(roleRoute('production-costs.index'), navigate: true);
     }
 
