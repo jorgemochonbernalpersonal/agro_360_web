@@ -105,7 +105,8 @@ class Index extends AbstractIndex
 
     protected function baseQuery(): Builder
     {
-        $query = PlannedWork::where('viticulturist_id', $this->viticulturistId());
+        $query = PlannedWork::where('viticulturist_id', $this->viticulturistId())
+            ->with(['plot:id,name', 'campaign:id,name,year']);
 
         return match ($this->currentTab) {
             'pending' => $query->whereIn('status', ['pendiente', 'en_progreso']),

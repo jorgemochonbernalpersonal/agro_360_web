@@ -83,7 +83,7 @@
                 </div>
                 <ul class="space-y-2">
                     @foreach($composition as $i => $entry)
-                        @php $variety = $entry->harvest->plotPlanting?->plotVariety?->grapeVariety?->name ?? 'Variedad desconocida'; @endphp
+                        @php $variety = $entry->harvest->plotPlanting?->grapeVariety?->name ?? 'Variedad desconocida'; @endphp
                         <li class="flex items-center justify-between text-sm">
                             <span class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full {{ $colors[$i % count($colors)] }} inline-block"></span>

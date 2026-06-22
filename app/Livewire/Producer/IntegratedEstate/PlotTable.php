@@ -40,6 +40,7 @@ class PlotTable extends Component
                     ->whereNull('uprooting_date')
                     ->orderBy('name'),
                 'latestRemoteSensing',
+                'municipality:id,name',
             ])
             ->orderBy('name');
 

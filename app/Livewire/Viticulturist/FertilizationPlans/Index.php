@@ -76,6 +76,7 @@ class Index extends AbstractIndex
     protected function baseQuery(): Builder
     {
         return FertilizationPlan::where('viticulturist_id', $this->viticulturistId())
+            ->with('campaign:id,year')
             ->where('active', true);
     }
 

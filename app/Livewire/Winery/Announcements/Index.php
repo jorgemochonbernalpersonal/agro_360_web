@@ -93,6 +93,7 @@ class Index extends Component
         $wineryId = Auth::id();
 
         $announcements = WineryAnnouncement::where('winery_id', $wineryId)
+            ->withCount('viticulturists')
             ->orderByDesc('published_at')
             ->paginate(15);
 

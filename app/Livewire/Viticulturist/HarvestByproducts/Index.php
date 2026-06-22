@@ -79,6 +79,7 @@ class Index extends AbstractIndex
     protected function baseQuery(): Builder
     {
         return HarvestByproduct::where('viticulturist_id', $this->viticulturistId())
+            ->with('campaign:id,name')
             ->where('active', $this->currentTab === 'active');
     }
 

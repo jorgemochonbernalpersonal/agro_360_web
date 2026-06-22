@@ -20,7 +20,7 @@
                                 <h3 class="font-semibold text-zinc-900 truncate">{{ $a->title }}</h3>
                                 <flux:badge :color="\App\Models\WineryAnnouncement::TYPE_COLORS[$a->type]" size="sm">{{ $a->typeLabel() }}</flux:badge>
                                 @if($a->target === 'specific')
-                                    <flux:badge size="sm">{{ $a->viticulturists()->count() }} destinatarios</flux:badge>
+                                    <flux:badge size="sm">{{ $a->viticulturists_count }} destinatarios</flux:badge>
                                 @else
                                     <flux:badge color="zinc" size="sm">{{ __('Todos') }}</flux:badge>
                                 @endif
