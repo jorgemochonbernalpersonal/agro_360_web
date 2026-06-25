@@ -2,10 +2,9 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\AgriculturalActivity;
 use App\Models\CulturalWork;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CreateCulturalWork extends AbstractActivityForm
 {
@@ -44,11 +43,10 @@ class CreateCulturalWork extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $activity = AgriculturalActivity::create($this->activityData('cultural'));
-
-                CulturalWork::create([
-                    'activity_id' => $activity->id,
+            app(NotebookActivityService::class)->createActivity(
+                $this->activityData('cultural'),
+                fn (int $activityId) => CulturalWork::create([
+                    'activity_id' => $activityId,
                     'work_type' => $this->work_type,
                     'hours_worked' => $this->hours_worked ?: null,
                     'workers_count' => $this->workers_count ?: null,
@@ -58,8 +56,8 @@ class CreateCulturalWork extends AbstractActivityForm
                     'residue_management' => $this->residue_management ?: null,
                     'defoliation_face' => $this->work_type === 'deshojado' ? ($this->defoliation_face ?: null) : null,
                     'topping_height_cm' => $this->work_type === 'despuntado' ? ($this->topping_height_cm ?: null) : null,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Labor cultural registrada correctamente.'));
 

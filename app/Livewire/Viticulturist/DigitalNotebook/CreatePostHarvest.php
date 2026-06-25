@@ -2,12 +2,11 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\AgriculturalActivity;
 use App\Models\PhytosanitaryProduct;
 use App\Models\PostHarvestTreatment;
 use App\Models\WineryViticulturist;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 
 /**
@@ -55,25 +54,21 @@ class CreatePostHarvest extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $user = Auth::user();
+            $user = Auth::user();
+            $wineryViticulturistId = null;
+            if ($user->isViticulturist()) {
+                $wineryViticulturistId = WineryViticulturist::where('viticulturist_id', $user->id)
+                    ->whereNotNull('winery_id')
+                    ->value('id');
+            }
 
-                $wineryViticulturistId = null;
-                if ($user->isViticulturist()) {
-                    $wineryViticulturistId = WineryViticulturist::where('viticulturist_id', $user->id)
-                        ->whereNotNull('winery_id')
-                        ->value('id');
-                }
-
-                $activity = AgriculturalActivity::create(
-                    $this->activityData('post_harvest', array_filter(
-                        ['winery_viticulturist_id' => $wineryViticulturistId],
-                        fn ($v) => $v !== null
-                    ))
-                );
-
-                PostHarvestTreatment::create([
-                    'activity_id' => $activity->id,
+            app(NotebookActivityService::class)->createActivity(
+                $this->activityData('post_harvest', array_filter(
+                    ['winery_viticulturist_id' => $wineryViticulturistId],
+                    fn ($v) => $v !== null
+                )),
+                fn (int $activityId) => PostHarvestTreatment::create([
+                    'activity_id' => $activityId,
                     'product_id' => $this->product_id ?: null,
                     'application_type' => $this->application_type,
                     'treated_area_ha' => $this->treated_area_ha,
@@ -82,8 +77,8 @@ class CreatePostHarvest extends AbstractActivityForm
                     'water_volume_liters' => $this->water_volume_liters ?: null,
                     'reentry_interval_hours' => $this->reentry_interval_hours !== '' ? (int) $this->reentry_interval_hours : null,
                     'notes' => $this->notes,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Tratamiento post-vendimia registrado correctamente.'));
 

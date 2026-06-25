@@ -4,9 +4,9 @@ namespace App\Livewire\Viticulturist\DigitalNotebook;
 
 use App\Models\AgriculturalActivity;
 use App\Models\Fertilization;
+use App\Services\NotebookActivityService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class EditFertilization extends AbstractActivityForm
 {
@@ -91,10 +91,10 @@ class EditFertilization extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $this->activity->update($this->activityData('fertilization'));
-
-                $this->fertilization->update([
+            app(NotebookActivityService::class)->updateActivity(
+                $this->activity,
+                $this->activityData('fertilization'),
+                fn () => $this->fertilization->update([
                     'fertilizer_type' => $this->fertilizer_type,
                     'fertilizer_name' => $this->fertilizer_name,
                     'quantity' => $this->quantity ?: null,
@@ -107,8 +107,8 @@ class EditFertilization extends AbstractActivityForm
                     'manure_type' => $this->manure_type ?: null,
                     'burial_date' => $this->burial_date ?: null,
                     'emission_reduction_method' => $this->emission_reduction_method ?: null,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Fertilización actualizada correctamente.'));
 

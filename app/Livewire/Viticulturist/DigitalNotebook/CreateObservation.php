@@ -2,11 +2,10 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\AgriculturalActivity;
 use App\Models\Observation;
 use App\Models\Pest;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CreateObservation extends AbstractActivityForm
 {
@@ -63,11 +62,10 @@ class CreateObservation extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $activity = AgriculturalActivity::create($this->activityData('observation'));
-
-                Observation::create([
-                    'activity_id' => $activity->id,
+            app(NotebookActivityService::class)->createActivity(
+                $this->activityData('observation'),
+                fn (int $activityId) => Observation::create([
+                    'activity_id' => $activityId,
                     'pest_id' => $this->pest_id ?: null,
                     'observation_type' => $this->observation_type,
                     'description' => $this->description,
@@ -77,8 +75,8 @@ class CreateObservation extends AbstractActivityForm
                     'follow_up_date' => $this->follow_up_date ?: null,
                     'action_taken' => $this->action_taken,
                     'photos' => null,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Observación registrada correctamente.'));
 

@@ -2,13 +2,12 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\AgriculturalActivity;
 use App\Models\FieldApplicator;
 use App\Models\Pest;
 use App\Models\PhytosanitaryProduct;
 use App\Models\PhytosanitaryTreatment;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CreatePhytosanitaryTreatment extends AbstractActivityForm
 {
@@ -126,11 +125,10 @@ class CreatePhytosanitaryTreatment extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $activity = AgriculturalActivity::create($this->activityData('phytosanitary'));
-
-                PhytosanitaryTreatment::create([
-                    'activity_id' => $activity->id,
+            app(NotebookActivityService::class)->createActivity(
+                $this->activityData('phytosanitary'),
+                fn (int $activityId) => PhytosanitaryTreatment::create([
+                    'activity_id' => $activityId,
                     'field_applicator_id' => $this->field_applicator_id ?: null,
                     'product_id' => $this->product_id,
                     'dose_per_hectare' => $this->dose_per_hectare ?: null,
@@ -154,8 +152,8 @@ class CreatePhytosanitaryTreatment extends AbstractActivityForm
                     'manual_mechanical_control' => (bool) $this->manual_mechanical_control,
                     'biological_control' => (bool) $this->biological_control,
                     'cultural_preventions' => (bool) $this->cultural_preventions,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Tratamiento fitosanitario registrado correctamente.'));
 

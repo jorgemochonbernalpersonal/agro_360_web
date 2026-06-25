@@ -2,11 +2,10 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\AgriculturalActivity;
 use App\Models\CulturalWork;
 use App\Models\WineryViticulturist;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CreatePruning extends AbstractActivityForm
 {
@@ -40,25 +39,21 @@ class CreatePruning extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                // Link to winery if viticulturist is invited
-                $wineryViticulturistId = null;
-                $user = Auth::user();
-                if ($user->isViticulturist()) {
-                    $wineryViticulturistId = WineryViticulturist::where('viticulturist_id', $user->id)
-                        ->whereNotNull('winery_id')
-                        ->value('id');
-                }
+            $user = Auth::user();
+            $wineryViticulturistId = null;
+            if ($user->isViticulturist()) {
+                $wineryViticulturistId = WineryViticulturist::where('viticulturist_id', $user->id)
+                    ->whereNotNull('winery_id')
+                    ->value('id');
+            }
 
-                $activity = AgriculturalActivity::create(
-                    $this->activityData('pruning', array_filter(
-                        ['winery_viticulturist_id' => $wineryViticulturistId],
-                        fn ($v) => $v !== null
-                    ))
-                );
-
-                CulturalWork::create([
-                    'activity_id' => $activity->id,
+            app(NotebookActivityService::class)->createActivity(
+                $this->activityData('pruning', array_filter(
+                    ['winery_viticulturist_id' => $wineryViticulturistId],
+                    fn ($v) => $v !== null
+                )),
+                fn (int $activityId) => CulturalWork::create([
+                    'activity_id' => $activityId,
                     'work_type' => 'poda',
                     'pruning_type' => $this->pruning_type,
                     'productive_buds_per_hectare' => $this->productive_buds_per_hectare ?: null,
@@ -66,8 +61,8 @@ class CreatePruning extends AbstractActivityForm
                     'hours_worked' => $this->hours_worked ?: null,
                     'workers_count' => $this->workers_count ?: null,
                     'description' => $this->description,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Poda registrada correctamente.'));
 

@@ -2,10 +2,9 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
-use App\Models\AgriculturalActivity;
 use App\Models\Irrigation;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CreateIrrigation extends AbstractActivityForm
 {
@@ -52,11 +51,10 @@ class CreateIrrigation extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $activity = AgriculturalActivity::create($this->activityData('irrigation'));
-
-                Irrigation::create([
-                    'activity_id' => $activity->id,
+            app(NotebookActivityService::class)->createActivity(
+                $this->activityData('irrigation'),
+                fn (int $activityId) => Irrigation::create([
+                    'activity_id' => $activityId,
                     'water_volume' => $this->water_volume ?: null,
                     'water_volume_unit' => $this->water_volume_unit,
                     'irrigation_method' => $this->irrigation_method,
@@ -69,8 +67,8 @@ class CreateIrrigation extends AbstractActivityForm
                     'is_fertirrigation' => $this->is_fertirrigation,
                     'fertilizer_product' => $this->is_fertirrigation ? ($this->fertilizer_product ?: null) : null,
                     'fertilizer_dose_per_ha' => $this->is_fertirrigation ? ($this->fertilizer_dose_per_ha ?: null) : null,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Riego registrado correctamente.'));
 

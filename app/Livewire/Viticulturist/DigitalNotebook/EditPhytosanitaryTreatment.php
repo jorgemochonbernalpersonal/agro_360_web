@@ -7,9 +7,9 @@ use App\Models\FieldApplicator;
 use App\Models\Pest;
 use App\Models\PhytosanitaryProduct;
 use App\Models\PhytosanitaryTreatment;
+use App\Services\NotebookActivityService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class EditPhytosanitaryTreatment extends AbstractActivityForm
 {
@@ -164,10 +164,10 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $this->activity->update($this->activityData('phytosanitary'));
-
-                $this->treatment->update([
+            app(NotebookActivityService::class)->updateActivity(
+                $this->activity,
+                $this->activityData('phytosanitary'),
+                fn () => $this->treatment->update([
                     'field_applicator_id' => $this->field_applicator_id ?: null,
                     'product_id' => $this->product_id,
                     'dose_per_hectare' => $this->dose_per_hectare ?: null,
@@ -191,8 +191,8 @@ class EditPhytosanitaryTreatment extends AbstractActivityForm
                     'manual_mechanical_control' => (bool) $this->manual_mechanical_control,
                     'biological_control' => (bool) $this->biological_control,
                     'cultural_preventions' => (bool) $this->cultural_preventions,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Tratamiento fitosanitario actualizado correctamente.'));
 
