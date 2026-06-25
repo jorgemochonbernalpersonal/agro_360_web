@@ -140,45 +140,15 @@ class Show extends Component
         }
 
         $service = app(SigpacGeometryService::class);
-        $successCount = 0;
-        $errorCount = 0;
-        $errors = [];
 
         try {
             DB::beginTransaction();
-
-            foreach ($sigpacCodes as $sigpacCode) {
-                try {
-                    $wkt = $service->fetchWkt($sigpacCode);
-
-                    if (! $wkt) {
-                        $errorCount++;
-                        $errors[] = "No se pudieron obtener coordenadas para el código {$sigpacCode->code}";
-
-                        continue;
-                    }
-
-                    if (! preg_match(SigpacGeometryService::WKT_PATTERN, $wkt)) {
-                        $errorCount++;
-                        $errors[] = "Formato de coordenadas inválido para el código {$sigpacCode->code}";
-
-                        continue;
-                    }
-
-                    $service->upsertGeometry($plotId, $sigpacCode, $wkt);
-                    $successCount++;
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    $errors[] = "Error procesando código {$sigpacCode->code}: ".$e->getMessage();
-                    Log::error('Error generating map for sigpac code', [
-                        'sigpac_code_id' => $sigpacCode->id,
-                        'plot_id' => $plotId,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
-            }
-
+            $result = $service->generateForCodes($plotId, $sigpacCodes);
             DB::commit();
+
+            $successCount = $result['success'];
+            $errors = $result['errors'];
+            $errorCount = count($errors);
 
             if ($successCount > 0) {
                 $message = $successCount === 1
@@ -199,8 +169,7 @@ class Show extends Component
             }
 
             if ($errorCount > 0) {
-                $errorMessage = "Error al generar {$errorCount} mapa(s). ".implode(' ', array_slice($errors, 0, 3));
-                $this->toastError($errorMessage);
+                $this->toastError("Error al generar {$errorCount} mapa(s). ".implode(' ', array_slice($errors, 0, 3)));
             }
         } catch (\Exception $e) {
             DB::rollBack();

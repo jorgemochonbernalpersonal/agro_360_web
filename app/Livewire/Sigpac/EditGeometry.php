@@ -106,26 +106,8 @@ class EditGeometry extends Component
         try {
             DB::beginTransaction();
 
-            $points = $this->coordinates;
-            $firstPoint = $points[0];
-            $lastPoint = end($points);
-            if ($firstPoint['lat'] != $lastPoint['lat'] || $firstPoint['lng'] != $lastPoint['lng']) {
-                $points[] = $firstPoint;
-            }
-
-            $wktPoints = collect($points)->map(function ($point) {
-                $lng = filter_var($point['lng'], FILTER_VALIDATE_FLOAT);
-                $lat = filter_var($point['lat'], FILTER_VALIDATE_FLOAT);
-
-                if ($lng === false || $lat === false) {
-                    throw new \InvalidArgumentException(__('Coordenadas inválidas: deben ser valores numéricos.'));
-                }
-
-                return "$lng $lat";
-            })->join(', ');
-
-            $wkt = "POLYGON(($wktPoints))";
             $service = app(SigpacGeometryService::class);
+            $wkt = $service->buildWktFromCoordinates($this->coordinates);
 
             if ($this->geometryId) {
                 $service->updateGeometry($this->geometryId, $wkt);
@@ -181,45 +163,15 @@ class EditGeometry extends Component
         }
 
         $service = app(SigpacGeometryService::class);
-        $successCount = 0;
-        $errorCount = 0;
-        $errors = [];
 
         try {
             DB::beginTransaction();
-
-            foreach ($sigpacCodes as $sigpacCode) {
-                try {
-                    $wkt = $service->fetchWkt($sigpacCode);
-
-                    if (! $wkt) {
-                        $errorCount++;
-                        $errors[] = "No se pudieron obtener coordenadas para el código {$sigpacCode->code}";
-
-                        continue;
-                    }
-
-                    if (! preg_match(SigpacGeometryService::WKT_PATTERN, $wkt)) {
-                        $errorCount++;
-                        $errors[] = "Formato de coordenadas inválido para el código {$sigpacCode->code}";
-
-                        continue;
-                    }
-
-                    $service->upsertGeometry($this->plotId, $sigpacCode, $wkt);
-                    $successCount++;
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    $errors[] = "Error procesando código {$sigpacCode->code}: ".$e->getMessage();
-                    Log::error('Error generating map for sigpac code', [
-                        'sigpac_code_id' => $sigpacCode->id,
-                        'plot_id' => $this->plotId,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
-            }
-
+            $result = $service->generateForCodes($this->plotId, $sigpacCodes);
             DB::commit();
+
+            $successCount = $result['success'];
+            $errors = $result['errors'];
+            $errorCount = count($errors);
 
             if ($successCount > 0) {
                 $message = $successCount === 1
