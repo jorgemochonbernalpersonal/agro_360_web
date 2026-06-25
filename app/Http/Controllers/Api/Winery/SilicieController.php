@@ -9,6 +9,7 @@ use App\Http\Requests\Api\Winery\WineryApiRequest;
 use App\Models\Wine;
 use App\Models\WineStockSnapshot;
 use App\Services\Exporters\SilicieCsvExporter;
+use App\Services\WineryInfoviService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -326,7 +327,7 @@ class SilicieController extends BaseApiController
             ->orderBy('wss.wine_type')
             ->get();
 
-        $wineCategories = \App\Livewire\Winery\Silicie\Infovi::WINE_CATEGORIES;
+        $wineCategories = WineryInfoviService::WINE_CATEGORIES;
         $result = [];
         $total = 0;
 

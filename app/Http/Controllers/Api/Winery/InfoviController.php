@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Api\BaseApiController;
-use App\Livewire\Winery\Silicie\Infovi;
+use App\Services\WineryInfoviService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -220,7 +220,7 @@ class InfoviController extends BaseApiController
         $result = [];
         $totalHl = $totalBottles = 0;
 
-        foreach (Infovi::WINE_CATEGORIES as $type => $label) {
+        foreach (WineryInfoviService::WINE_CATEGORIES as $type => $label) {
             $row = $lotRows->firstWhere('wine_type', $type);
             $hl = $row ? round((float) $row->hl, 3) : 0;
             $bottles = $row ? (int) $row->bottles : 0;
@@ -321,7 +321,7 @@ class InfoviController extends BaseApiController
         $result = [];
         $totals = ['apertura' => 0, 'producido' => 0, 'comprado' => $compradoTotal, 'vendido' => 0, 'perdido' => 0, 'cierre_calc' => 0, 'cierre_real' => null];
 
-        foreach (Infovi::WINE_CATEGORIES as $type => $label) {
+        foreach (WineryInfoviService::WINE_CATEGORIES as $type => $label) {
             $apertura = round((float) ($aperturaByType[$type] ?? 0), 3);
             $producido = round((float) ($producidoByType[$type] ?? 0), 3);
             $vendido = round((float) ($vendidoByType[$type] ?? 0), 3);
@@ -431,7 +431,7 @@ class InfoviController extends BaseApiController
         $result = [];
         $total = 0;
 
-        foreach (Infovi::WINE_CATEGORIES as $type => $label) {
+        foreach (WineryInfoviService::WINE_CATEGORIES as $type => $label) {
             $row = $rows->firstWhere('wine_type', $type);
             $hl = $row ? round((float) $row->hl, 3) : 0;
             $result[] = [

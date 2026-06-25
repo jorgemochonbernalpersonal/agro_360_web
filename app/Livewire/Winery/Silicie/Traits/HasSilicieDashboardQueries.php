@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Winery\Silicie\Traits;
 
-use App\Livewire\Winery\Silicie\Infovi;
+use App\Services\WineryInfoviService;
 use App\Models\Wine;
 use App\Models\WineStockSnapshot;
 use Illuminate\Support\Facades\DB;
@@ -270,7 +270,7 @@ trait HasSilicieDashboardQueries
             ->orderBy('wss.wine_type')
             ->get();
 
-        $wineCategories = Infovi::WINE_CATEGORIES;
+        $wineCategories = WineryInfoviService::WINE_CATEGORIES;
         $result = [];
         $total = 0;
 
