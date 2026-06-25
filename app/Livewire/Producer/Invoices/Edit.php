@@ -11,9 +11,8 @@ use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\HarvestStock;
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
+use App\Services\ProducerInvoiceService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
@@ -165,69 +164,20 @@ class Edit extends Component
         $taxRates = $this->availableTaxes->keyBy('id');
 
         try {
-            DB::transaction(function () use ($taxRates) {
-                $this->invoice->load('items.harvest', 'items.wineLot');
-
-                $stockService = app(\App\Services\UnifiedStockService::class);
-
-                $stockService->cancelAllForEdit($this->invoice);
-
-                InvoiceItem::withoutEvents(fn () => $this->invoice->items()->delete());
-
-                $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
-
-                $this->invoice->update([
+            app(ProducerInvoiceService::class)->updateInvoice(
+                $this->invoice,
+                [
                     'client_id' => $this->client_id,
                     'client_address_id' => $this->client_address_id ?: null,
                     'invoice_date' => $this->invoice_date ?: null,
                     'delivery_note_date' => $this->delivery_note_date ?: null,
-                    'subtotal' => $totals['gross_subtotal'],
-                    'discount_amount' => $totals['discount_amount'],
-                    'tax_base' => $totals['tax_base'],
-                    'tax_rate' => $totals['effective_tax_rate'],
-                    'tax_amount' => $totals['tax_amount'],
-                    'total_amount' => $totals['total'],
                     'observations' => $this->observations ?: null,
                     'observations_invoice' => $this->observations_invoice ?: null,
-                ]);
-
-                InvoiceItem::withoutEvents(function () use ($taxRates, $stockService) {
-                    foreach ($this->items as $item) {
-                        $tax = ($item['tax_id'] ?? null) ? $taxRates[$item['tax_id']] ?? null : null;
-                        $line = $this->invoiceService->calculateVatLine($item, $tax);
-                        $qty = $line['quantity'];
-
-                        $createdItem = $this->invoice->items()->create([
-                            'harvest_id' => $item['harvest_id'] ?? null,
-                            'wine_lot_id' => $item['wine_lot_id'] ?? null,
-                            'concept_type' => $item['concept_type'] ?? 'other',
-                            'name' => $item['name'],
-                            'description' => $item['description'] ?: null,
-                            'sku' => $item['sku'] ?: null,
-                            'quantity' => $qty,
-                            'unit' => $item['unit'] ?? 'unidades',
-                            'unit_price' => $line['unit_price'],
-                            'discount_percentage' => $line['discount_percentage'],
-                            'discount_amount' => $line['discount_amount'],
-                            'tax_id' => $tax?->id,
-                            'tax_name' => $tax?->name,
-                            'tax_rate' => $line['tax_rate'],
-                            'tax_base' => $line['tax_base'],
-                            'tax_amount' => $line['tax_amount'],
-                            'subtotal' => $line['subtotal'],
-                            'total' => $line['total'],
-                        ]);
-
-                        $stockService->reserveOrSell($this->invoice, $createdItem, Auth::id(), $qty);
-                    }
-                });
-
-                $this->invoice->logAction('updated', 'Factura de productor actualizada', [
-                    'client_id' => ['old' => $this->invoice->getOriginal('client_id'), 'new' => $this->client_id],
-                    'total_amount' => ['old' => $this->invoice->getOriginal('total_amount'), 'new' => $totals['total']],
-                    'items_count' => count($this->items),
-                ]);
-            });
+                ],
+                $this->items,
+                $taxRates,
+                Auth::id(),
+            );
 
             $this->toastSuccess(__('Factura actualizada correctamente.'));
 
