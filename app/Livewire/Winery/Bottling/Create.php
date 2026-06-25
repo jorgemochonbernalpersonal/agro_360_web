@@ -11,9 +11,8 @@ use App\Models\Wine;
 use App\Models\WineBottling;
 use App\Models\WineProcessDetail;
 use App\Models\WinerySupply;
-use App\Services\WineContainerStockService;
+use App\Services\WineBottlingService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
@@ -230,9 +229,9 @@ class Create extends AbstractCreate
             }
         }
 
-        DB::transaction(function () use ($wine) {
-            $bottling = WineBottling::create([
-                'user_id' => $this->ownerId(),
+        app(WineBottlingService::class)->createBottling(
+            $this->ownerId(),
+            [
                 'wine_id' => $wine->id,
                 'container_id' => $this->container_id ?: null,
                 'wine_process_detail_id' => $this->wine_process_detail_id ?: null,
@@ -244,26 +243,9 @@ class Create extends AbstractCreate
                 'quantity_liters' => $this->quantity_liters,
                 'lot_number' => $this->lot_number ?: null,
                 'notes' => $this->notes ?: null,
-                'created_by' => $this->ownerId(),
-            ]);
-
-            // Decrementar wine_volume_liters en el contenedor origen
-            app(WineContainerStockService::class)->recordBottling($bottling);
-
-            foreach ($this->supplies as $row) {
-                if (empty($row['supply_name']) && empty($row['winery_supply_id'])) {
-                    continue;
-                }
-
-                $bottling->supplies()->create([
-                    'winery_supply_id' => $row['winery_supply_id'] ?: null,
-                    'supply_name' => $row['supply_name'] ?: '',
-                    'quantity' => $row['quantity'] ?: 0,
-                    'unit_of_measurement_id' => $row['unit_of_measurement_id'] ?: null,
-                    'notes' => $row['notes'] ?: null,
-                ]);
-            }
-        });
+            ],
+            $this->supplies,
+        );
     }
 
     protected function successMessage(): string

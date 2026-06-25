@@ -11,9 +11,8 @@ use App\Models\Wine;
 use App\Models\WineBottling;
 use App\Models\WineProcessDetail;
 use App\Models\WinerySupply;
-use App\Services\WineContainerStockService;
+use App\Services\WineBottlingService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
@@ -228,8 +227,9 @@ class Edit extends AbstractEdit
             }
         }
 
-        DB::transaction(function () {
-            $this->bottling->update([
+        app(WineBottlingService::class)->updateBottling(
+            $this->bottling,
+            [
                 'wine_id' => $this->wine_id,
                 'wine_process_detail_id' => $this->wine_process_detail_id ?: null,
                 'product_lot_id' => $this->product_lot_id ?: null,
@@ -240,27 +240,10 @@ class Edit extends AbstractEdit
                 'quantity_liters' => $this->quantity_liters,
                 'lot_number' => $this->lot_number ?: null,
                 'notes' => $this->notes ?: null,
-            ]);
-
-            $this->bottling->refresh();
-            app(WineContainerStockService::class)->updateBottling($this->bottling, $this->oldBottlingData);
-
-            $this->bottling->supplies()->delete();
-
-            foreach ($this->supplies as $row) {
-                if (empty($row['supply_name']) && empty($row['winery_supply_id'])) {
-                    continue;
-                }
-
-                $this->bottling->supplies()->create([
-                    'winery_supply_id' => $row['winery_supply_id'] ?: null,
-                    'supply_name' => $row['supply_name'] ?: '',
-                    'quantity' => $row['quantity'] ?: 0,
-                    'unit_of_measurement_id' => $row['unit_of_measurement_id'] ?: null,
-                    'notes' => $row['notes'] ?: null,
-                ]);
-            }
-        });
+            ],
+            $this->supplies,
+            $this->oldBottlingData,
+        );
     }
 
     protected function successMessage(): string
