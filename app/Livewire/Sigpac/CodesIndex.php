@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Sigpac;
 
+use App\Livewire\Concerns\WithGeoFiltering;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
@@ -15,7 +16,10 @@ use Livewire\WithPagination;
 
 class CodesIndex extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithGeoFiltering, WithPagination, WithToastNotifications;
+
+    // geoCachePrefix() usa el valor por defecto 'filter' del trait,
+    // que coincide con las claves existentes en caché.
 
     public $search = '';
 
@@ -170,73 +174,6 @@ class CodesIndex extends Component
     }
 
     /**
-     * Obtener opciones de Comunidades Autónomas (con caché)
-     */
-    public function getAutonomousCommunitiesProperty()
-    {
-        return \Illuminate\Support\Facades\Cache::remember('filter_autonomous_communities', now()->addHours(24), function () {
-            $user = Auth::user();
-            $plotIds = Plot::forUser($user)->pluck('id');
-
-            return \App\Models\AutonomousCommunity::whereHas('plots', function ($query) use ($plotIds) {
-                $query->whereIn('plots.id', $plotIds);
-            })
-                ->orderBy('name')
-                ->get()
-                ->mapWithKeys(fn ($ca) => [$ca->id => $ca->name]);
-        });
-    }
-
-    /**
-     * Obtener opciones de Provincias (filtradas por CA seleccionada)
-     */
-    public function getProvincesProperty()
-    {
-        if (! $this->filterAutonomousCommunity) {
-            return collect();
-        }
-
-        $cacheKey = "filter_provinces_{$this->filterAutonomousCommunity}";
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(24), function () {
-            $user = Auth::user();
-            $plotIds = Plot::forUser($user)->pluck('id');
-
-            return \App\Models\Province::where('autonomous_community_id', $this->filterAutonomousCommunity)
-                ->whereHas('plots', function ($query) use ($plotIds) {
-                    $query->whereIn('plots.id', $plotIds);
-                })
-                ->orderBy('name')
-                ->get()
-                ->mapWithKeys(fn ($prov) => [$prov->id => $prov->name]);
-        });
-    }
-
-    /**
-     * Obtener opciones de Municipios (filtradas por Provincia seleccionada)
-     */
-    public function getMunicipalitiesProperty()
-    {
-        if (! $this->filterProvince) {
-            return collect();
-        }
-
-        $cacheKey = "filter_municipalities_{$this->filterProvince}";
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(24), function () {
-            $user = Auth::user();
-            $plotIds = Plot::forUser($user)->pluck('id');
-
-            return \App\Models\Municipality::where('province_id', $this->filterProvince)
-                ->whereHas('plots', function ($query) use ($plotIds) {
-                    $query->whereIn('plots.id', $plotIds);
-                })
-                ->orderBy('name')
-                ->get()
-                ->mapWithKeys(fn ($mun) => [$mun->id => $mun->name]);
-        });
-    }
-
     /**
      * Verificar si el municipio seleccionado tiene códigos SIGPAC
      */

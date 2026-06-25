@@ -4,6 +4,7 @@ namespace App\Livewire\Viticulturist;
 
 use App\Models\Client;
 use App\Models\Harvest;
+use App\Models\HarvestStock;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use Illuminate\Support\Facades\Auth;
@@ -79,19 +80,23 @@ class FinancialStats extends Component
         // GRÁFICOS
         // =======================
 
-        // Evolución de ingresos (12 meses)
+        // Evolución de ingresos (12 meses) — una sola query agrupada por mes
+        $startMonth = now()->subMonths(11)->startOfMonth();
+        $incomeByMonth = Invoice::forUser($user->id)
+            ->where('invoice_date', '>=', $startMonth)
+            ->where('status', '!=', 'cancelled')
+            ->selectRaw('YEAR(invoice_date) as year, MONTH(invoice_date) as month, SUM(total_amount) as total')
+            ->groupBy('year', 'month')
+            ->get()
+            ->keyBy(fn ($row) => $row->year.'-'.str_pad($row->month, 2, '0', STR_PAD_LEFT));
+
         $monthlyIncome = [];
         for ($i = 11; $i >= 0; $i--) {
             $month = now()->subMonths($i);
-            $income = Invoice::forUser($user->id)
-                ->whereYear('invoice_date', $month->year)
-                ->whereMonth('invoice_date', $month->month)
-                ->where('status', '!=', 'cancelled')
-                ->sum('total_amount');
-
+            $key = $month->format('Y-m');
             $monthlyIncome[] = [
                 'month' => $month->format('M Y'),
-                'income' => $income,
+                'income' => (float) ($incomeByMonth[$key]->total ?? 0),
             ];
         }
 
@@ -136,26 +141,35 @@ class FinancialStats extends Component
             ->take(10)
             ->get();
 
-        // Stock por variedad (usando el nuevo sistema de stock)
-        $stockByVariety = Harvest::whereHas('activity', function ($q) use ($user) {
+        // Stock por variedad — última fila de stock por cosecha en una sola subquery
+        $harvests = Harvest::whereHas('activity', function ($q) use ($user) {
             $q->where('viticulturist_id', $user->id);
         })
             ->whereHas('plotPlanting.grapeVariety')
-            ->with(['plotPlanting.grapeVariety', 'stockMovements'])
-            ->get()
-            ->groupBy(function ($harvest) {
-                return $harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad';
+            ->with(['plotPlanting.grapeVariety'])
+            ->get();
+
+        $latestStocks = HarvestStock::whereIn('harvest_id', $harvests->pluck('id'))
+            ->whereIn('id', function ($sub) {
+                $sub->selectRaw('MAX(id)')
+                    ->from('harvest_stocks')
+                    ->groupBy('harvest_id');
             })
-            ->map(function ($harvests) {
+            ->get()
+            ->keyBy('harvest_id');
+
+        $stockByVariety = $harvests
+            ->groupBy(fn ($h) => $h->plotPlanting->grapeVariety->name ?? 'Sin variedad')
+            ->map(function ($varietyHarvests) use ($latestStocks) {
                 $available = 0;
                 $reserved = 0;
                 $sold = 0;
 
-                foreach ($harvests as $harvest) {
-                    $stock = $harvest->getCurrentStock();
-                    $available += $stock['available'];
-                    $reserved += $stock['reserved'];
-                    $sold += $stock['sold'];
+                foreach ($varietyHarvests as $harvest) {
+                    $stock = $latestStocks->get($harvest->id);
+                    $available += $stock?->available_qty ?? 0;
+                    $reserved += $stock?->reserved_qty ?? 0;
+                    $sold += $stock?->sold_qty ?? 0;
                 }
 
                 return [

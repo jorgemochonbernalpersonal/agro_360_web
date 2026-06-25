@@ -3,13 +3,11 @@
 namespace App\Livewire\Plots;
 
 use App\Livewire\Concerns\GeneratesCatastroGeometry;
+use App\Livewire\Concerns\WithGeoFiltering;
 use App\Livewire\Concerns\WithListing;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserPreferences;
-use App\Models\AutonomousCommunity;
-use App\Models\Municipality;
 use App\Models\Plot;
-use App\Models\Province;
 use App\Services\SigpacGeometryService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +21,12 @@ use Livewire\Component;
  */
 class Index extends Component
 {
-    use GeneratesCatastroGeometry, WithListing, WithToastNotifications, WithUserPreferences;
+    use GeneratesCatastroGeometry, WithGeoFiltering, WithListing, WithToastNotifications, WithUserPreferences;
+
+    protected function geoCachePrefix(): string
+    {
+        return 'filter_plots';
+    }
 
     public $filterAutonomousCommunity = '';
 
@@ -175,73 +178,6 @@ class Index extends Component
     }
 
     /**
-     * Obtener opciones de Comunidades Autónomas (con caché)
-     */
-    public function getAutonomousCommunitiesProperty()
-    {
-        return \Illuminate\Support\Facades\Cache::remember('filter_autonomous_communities_plots', now()->addHours(24), function () {
-            $user = Auth::user();
-            $plotIds = Plot::forUser($user)->pluck('id');
-
-            return AutonomousCommunity::whereHas('plots', function ($query) use ($plotIds) {
-                $query->whereIn('plots.id', $plotIds);
-            })
-                ->orderBy('name')
-                ->get()
-                ->mapWithKeys(fn ($ca) => [$ca->id => $ca->name]);
-        });
-    }
-
-    /**
-     * Obtener opciones de Provincias (filtradas por CA seleccionada)
-     */
-    public function getProvincesProperty()
-    {
-        if (! $this->filterAutonomousCommunity) {
-            return collect();
-        }
-
-        $cacheKey = "filter_provinces_plots_{$this->filterAutonomousCommunity}";
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(24), function () {
-            $user = Auth::user();
-            $plotIds = Plot::forUser($user)->pluck('id');
-
-            return Province::where('autonomous_community_id', $this->filterAutonomousCommunity)
-                ->whereHas('plots', function ($query) use ($plotIds) {
-                    $query->whereIn('plots.id', $plotIds);
-                })
-                ->orderBy('name')
-                ->get()
-                ->mapWithKeys(fn ($prov) => [$prov->id => $prov->name]);
-        });
-    }
-
-    /**
-     * Obtener opciones de Municipios (filtradas por Provincia seleccionada)
-     */
-    public function getMunicipalitiesProperty()
-    {
-        if (! $this->filterProvince) {
-            return collect();
-        }
-
-        $cacheKey = "filter_municipalities_plots_{$this->filterProvince}";
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(24), function () {
-            $user = Auth::user();
-            $plotIds = Plot::forUser($user)->pluck('id');
-
-            return Municipality::where('province_id', $this->filterProvince)
-                ->whereHas('plots', function ($query) use ($plotIds) {
-                    $query->whereIn('plots.id', $plotIds);
-                })
-                ->orderBy('name')
-                ->get()
-                ->mapWithKeys(fn ($mun) => [$mun->id => $mun->name]);
-        });
-    }
-
     /**
      * Verificar si el municipio seleccionado tiene alguna geometría generada (SIGPAC o Catastro)
      */

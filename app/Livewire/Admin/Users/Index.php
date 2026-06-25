@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Users;
 
 use App\Livewire\Concerns\WithReadOnlyGuard;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithUserAdminActions;
 use App\Models\AppSetting;
 use App\Models\User;
 use App\Services\SecurityLogger;
@@ -16,7 +17,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithReadOnlyGuard, WithToastNotifications;
+    use WithPagination, WithReadOnlyGuard, WithToastNotifications, WithUserAdminActions;
 
     // Filters
     public $currentTab = 'all';
@@ -391,48 +392,7 @@ class Index extends Component
 
     public function impersonate($userId)
     {
-        if (! Auth::user()->isAdmin()) {
-            $this->toastError(__('No tienes permiso para impersonar usuarios.'));
-
-            return;
-        }
-
-        $targetUser = User::findOrFail($userId);
-
-        if ($targetUser->isAdmin()) {
-            $this->toastError(__('No puedes impersonar a otro administrador por razones de seguridad.'));
-
-            return;
-        }
-
-        if (! $targetUser->can_login) {
-            $this->toastError(__('No puedes impersonar usuarios inactivos. Activa el usuario primero.'));
-
-            return;
-        }
-
-        session()->put('impersonating', true);
-        session()->put('admin_id', Auth::id());
-        session()->put('admin_name', Auth::user()->name);
-        session()->put('impersonation_started_at', now()->timestamp);
-
-        SecurityLogger::logImpersonation(Auth::id(), $targetUser->id);
-
-        Auth::login($targetUser);
-        session()->regenerate();
-
-        $dashboardRoute = match ($targetUser->role) {
-            'admin' => 'admin.dashboard',
-            'supervisor' => 'supervisor.dashboard',
-            'winery' => 'winery.dashboard',
-            'viticulturist' => 'viticulturist.dashboard',
-            'producer' => 'producer.dashboard',
-            default => 'home',
-        };
-
-        $this->toastSuccess("Ahora estás viendo como: {$targetUser->name}");
-
-        return $this->redirect(route($dashboardRoute), navigate: true);
+        return $this->impersonateUser(User::findOrFail($userId));
     }
 
     public function toggleActive($userId)
@@ -605,41 +565,9 @@ class Index extends Component
         ])->layout('layouts.app');
     }
 
-    /**
-     * Reglas compartidas: no se puede borrar a un admin ni a uno mismo.
-     */
     private function canDelete(User $user): bool
     {
-        if ($user->isAdmin()) {
-            $this->toastError(__('No puedes eliminar a un administrador.'));
-
-            return false;
-        }
-
-        if ($user->id === Auth::id()) {
-            $this->toastError(__('No puedes eliminarte a ti mismo.'));
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Recuento de datos que se eliminarán en cascada. Solo se devuelven las
-     * entidades con al menos un registro.
-     *
-     * @return array<string, int>
-     */
-    private function dependencyCounts(User $user): array
-    {
-        return array_filter([
-            __('Campañas') => $user->campaigns()->count(),
-            __('Actividades agrícolas') => $user->agriculturalActivities()->count(),
-            __('Parcelas') => $user->plots()->count(),
-            __('Clientes') => DB::table('clients')->where('user_id', $user->id)->count(),
-            __('Facturas') => DB::table('invoices')->where('user_id', $user->id)->count(),
-        ], fn ($count) => $count > 0);
+        return $this->canDeleteUser($user);
     }
 
     // ─── Filtered query (shared by render + export) ───────────────────────────
@@ -688,10 +616,6 @@ class Index extends Component
             } elseif ($this->filterBeta === 'never') {
                 $query->where('is_beta_user', false);
             }
-        }
-
-        if ($this->filterFounder !== '') {
-            $query->where('is_founder', $this->filterFounder === '1');
         }
 
         if ($this->filterDateFrom !== '') {

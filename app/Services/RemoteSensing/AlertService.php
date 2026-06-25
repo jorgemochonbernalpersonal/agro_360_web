@@ -26,9 +26,16 @@ class AlertService
 
         $plots = Plot::forUser($user)->with(['latestRemoteSensing'])->get();
 
+        // Pre-cargar todas las preferencias del usuario en batch (1 query para todos los plots)
+        $plotIds = $plots->pluck('id');
+        $preferences = PlotAlertPreference::where('user_id', $user->id)
+            ->whereIn('plot_id', $plotIds)
+            ->get()
+            ->keyBy('plot_id');
+
         foreach ($plots as $plot) {
             /** @var \App\Models\Plot $plot */
-            $plotAlerts = $this->checkPlotAlerts($plot, $user);
+            $plotAlerts = $this->checkPlotAlerts($plot, $preferences->get($plot->id));
             if (! empty($plotAlerts)) {
                 $alerts[$plot->id] = [
                     'plot' => $plot,
@@ -43,20 +50,24 @@ class AlertService
     /**
      * Check alerts for a specific plot against a specific user's preferences.
      */
-    public function checkPlotAlerts(Plot $plot, User $user): array
+    public function checkPlotAlerts(Plot $plot, ?PlotAlertPreference $preference = null): array
     {
         $alerts = [];
 
-        $latestData = PlotRemoteSensing::where('plot_id', $plot->id)
-            ->orderBy('image_date', 'desc')
-            ->first();
+        // Usa la relación eager-cargada si está disponible; query directa si se llama de forma aislada
+        $latestData = $plot->relationLoaded('latestRemoteSensing')
+            ? $plot->latestRemoteSensing
+            : PlotRemoteSensing::where('plot_id', $plot->id)->orderBy('image_date', 'desc')->first();
 
         if (! $latestData) {
             return $alerts;
         }
 
-        // Get this user's personal thresholds for the plot (or defaults if not configured)
-        $thresholds = $this->getPlotThresholds($plot, $user);
+        $thresholds = [
+            'ndvi' => $preference?->ndvi_threshold ?? self::DEFAULT_NDVI_THRESHOLD,
+            'ndwi' => self::DEFAULT_NDWI_THRESHOLD,
+            'temp' => self::DEFAULT_TEMP_THRESHOLD,
+        ];
 
         // Check NDVI
         if ($latestData->ndvi_mean !== null && $latestData->ndvi_mean < $thresholds['ndvi']) {
@@ -114,13 +125,11 @@ class AlertService
     }
 
     /**
-     * Get all active alerts count for a user
+     * Get all active alerts count from an already-computed alerts array.
      */
-    public function getAlertCountForUser(User $user): int
+    public function countAlerts(array $alertsByPlot): int
     {
-        $alerts = $this->checkAlertsForUser($user);
-
-        return collect($alerts)->sum(fn ($plotData) => count($plotData['alerts']));
+        return collect($alertsByPlot)->sum(fn ($plotData) => count($plotData['alerts']));
     }
 
     /**
@@ -149,21 +158,6 @@ class AlertService
         };
     }
 
-    /**
-     * Get thresholds for a plot from this user's personal preferences.
-     */
-    private function getPlotThresholds(Plot $plot, User $user): array
-    {
-        $pref = PlotAlertPreference::where('plot_id', $plot->id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        return [
-            'ndvi' => $pref->ndvi_threshold ?? self::DEFAULT_NDVI_THRESHOLD,
-            'ndwi' => self::DEFAULT_NDWI_THRESHOLD,
-            'temp' => self::DEFAULT_TEMP_THRESHOLD,
-        ];
-    }
 
     /**
      * Format numeric value

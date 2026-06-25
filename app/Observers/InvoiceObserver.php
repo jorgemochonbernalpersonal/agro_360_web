@@ -105,6 +105,7 @@ class InvoiceObserver
                 'new_delivery_status' => $newDeliveryStatus,
                 'error' => $e->getMessage(),
             ]);
+            throw $e;
         }
     }
 
@@ -166,21 +167,7 @@ class InvoiceObserver
                 $invoice->updateQuietly(['invoice_number' => $invoiceNumber]);
             }
             $this->populateBillingSnapshot($invoice);
-
-            // Convertir reservas en ventas contables
-            $invoice->loadMissing('items.harvest');
-            DB::transaction(function () use ($invoice) {
-                foreach ($invoice->items as $item) {
-                    if (! $item->harvest_id) {
-                        continue;
-                    }
-                    $this->stockService->confirmSale(
-                        $item->harvest,
-                        $item,
-                        $invoice->invoice_number ?? ''
-                    );
-                }
-            });
+            // Stock no se mueve aquí: reserved→sold ocurre al confirmar entrega (delivery_status→delivered).
         }
 
         // sent → draft: revertir ventas a reservas

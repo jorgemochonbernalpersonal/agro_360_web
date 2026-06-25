@@ -23,7 +23,7 @@ class AlertsWidget extends Component
 
         $alertsByPlot = $service->checkAlertsForUser($user);
         $this->alerts = $alertsByPlot;
-        $this->totalCount = $service->getAlertCountForUser($user);
+        $this->totalCount = $service->countAlerts($alertsByPlot);
     }
 
     public function reloadData()

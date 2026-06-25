@@ -12,6 +12,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\MarketedHarvest;
 use App\Models\ViticulturistSetting;
+use App\Services\ContainerStockService;
 use App\Services\InvoiceService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -50,9 +51,12 @@ class Edit extends Component
 
     protected InvoiceService $invoiceService;
 
-    public function boot(InvoiceService $invoiceService): void
+    protected ContainerStockService $stockService;
+
+    public function boot(InvoiceService $invoiceService, ContainerStockService $stockService): void
     {
         $this->invoiceService = $invoiceService;
+        $this->stockService = $stockService;
     }
 
     public function mount(int $id): void
@@ -151,14 +155,17 @@ class Edit extends Component
                 // Lock invoice row to prevent concurrent edits
                 Invoice::where('id', $this->invoice->id)->lockForUpdate()->first();
 
-                // ── 1. Revert old stock reservations ───────────────────────────
-                $oldItems = InvoiceItem::where('invoice_id', $this->invoice->id)->get();
+                // ── 1. Revert old stock reservations via ContainerStockService
+                //    (misma cadena que usó InvoiceItemObserver al crear los items)
+                $oldItems = InvoiceItem::where('invoice_id', $this->invoice->id)
+                    ->with('harvest')
+                    ->get();
                 foreach ($oldItems as $oldItem) {
-                    if ($oldItem->harvest_id && $oldItem->quantity > 0) {
-                        $this->releaseHarvestStock(
-                            $oldItem->harvest_id,
-                            (float) $oldItem->quantity,
-                            $this->invoice->id
+                    if ($oldItem->harvest_id && $oldItem->quantity > 0 && $oldItem->harvest) {
+                        $this->stockService->releaseFromInvoice(
+                            $oldItem->harvest,
+                            $oldItem,
+                            $this->invoice->status
                         );
                     }
                 }
