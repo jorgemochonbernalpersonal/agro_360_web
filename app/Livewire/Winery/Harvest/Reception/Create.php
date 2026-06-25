@@ -8,15 +8,12 @@ use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Winery\Harvest\Reception\Traits\WithHarvestContextSelect;
 use App\Livewire\Winery\Harvest\Reception\Traits\WithHarvestLimitPanel;
-use App\Models\Campaign;
 use App\Models\Container;
-use App\Models\GrapeReceptionBatch;
-use App\Models\Harvest;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\WineryViticulturist;
+use App\Services\GrapeReceptionService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -142,95 +139,54 @@ class Create extends Component
             return null;
         }
 
-        $campaign = Campaign::getOrCreateActiveForYear($wineryId, $this->vintage_year);
-        abort_if(! $campaign, 500, 'No se pudo obtener la campaña.');
-
-        $existingBatch = GrapeReceptionBatch::where('winery_id', $wineryId)
-            ->where('plot_planting_id', $planting->id)
-            ->where('campaign_id', $campaign->id)
-            ->first();
-        if ($existingBatch && $existingBatch->status === 'closed') {
-            $this->toastError(__('El lote de esta plantación está cerrado. Réabrelo desde el Cuadro de Mando antes de añadir más recepciones.'));
-
-            return null;
-        }
-
         $pricePerKg = $this->price_per_kg ? (float) $this->price_per_kg : null;
         $totalValue = ($weight && $pricePerKg) ? round($weight * $pricePerKg, 3) : null;
 
+        $harvestData = [
+            'plot_planting_id' => $planting->id,
+            'container_id' => $containerId,
+            'harvest_start_date' => $this->harvest_start_date,
+            'harvest_time' => $this->harvest_time ?: null,
+            'vintage' => $this->vintage_year,
+            'total_weight' => $weight,
+            'baume_degree' => $this->baume_degree ?: null,
+            'brix_degree' => $this->brix_degree ?: null,
+            'acidity_level' => $this->acidity_level ?: null,
+            'ph_level' => $this->ph_level ?: null,
+            'potential_alcohol' => $this->potential_alcohol ?: null,
+            'health_status' => $this->health_status ?: null,
+            'harvest_ticket_number' => $this->harvest_ticket_number ?: null,
+            'sanitary_state_grapes' => $this->sanitary_state_grapes ?: null,
+            'sanitary_state_agraces' => $this->sanitary_state_agraces ?: null,
+            'sanitary_state_botrytis' => $this->sanitary_state_botrytis ?: null,
+            'sanitary_state_oidium' => $this->sanitary_state_oidium ?: null,
+            'sanitary_state_mildew' => $this->sanitary_state_mildew ?: null,
+            'transport_document_number' => $this->transport_document_number ?: null,
+            'destination_rega_code' => $this->destination_rega_code ?: null,
+            'vehicle_plate' => $this->vehicle_plate ?: null,
+            'price_per_kg' => $pricePerKg,
+            'total_value' => $totalValue,
+            'disqualified' => $this->disqualified,
+            'disqualified_reason' => ($this->disqualified && $this->disqualified_reason) ? $this->disqualified_reason : null,
+            'notes' => $this->notes ?: null,
+        ];
+
         try {
-            DB::transaction(function () use ($wineryId, $campaign, $planting, $containerId, $weight, $pricePerKg, $totalValue) {
-
-                $batch = GrapeReceptionBatch::firstOrCreate(
-                    [
-                        'winery_id' => $wineryId,
-                        'plot_planting_id' => $planting->id,
-                        'campaign_id' => $campaign->id,
-                    ],
-                    [
-                        'viticulturist_id' => (int) $this->viticulturist_id,
-                        'vintage_year' => $this->vintage_year,
-                        'total_weight_kg' => 0,
-                        'designation_of_origin' => $planting->designation_of_origin,
-                        'status' => 'open',
-                    ]
-                );
-
-                Harvest::create([
-                    'winery_id' => $wineryId,
-                    'batch_id' => $batch->id,
-                    'plot_planting_id' => $planting->id,
-                    'container_id' => $containerId,
-                    'harvest_start_date' => $this->harvest_start_date,
-                    'harvest_time' => $this->harvest_time ?: null,
-                    'vintage' => $this->vintage_year,
-                    'total_weight' => $weight,
-                    'baume_degree' => $this->baume_degree ?: null,
-                    'brix_degree' => $this->brix_degree ?: null,
-                    'acidity_level' => $this->acidity_level ?: null,
-                    'ph_level' => $this->ph_level ?: null,
-                    'potential_alcohol' => $this->potential_alcohol ?: null,
-                    'health_status' => $this->health_status ?: null,
-                    'harvest_ticket_number' => $this->harvest_ticket_number ?: null,
-                    'sanitary_state_grapes' => $this->sanitary_state_grapes ?: null,
-                    'sanitary_state_agraces' => $this->sanitary_state_agraces ?: null,
-                    'sanitary_state_botrytis' => $this->sanitary_state_botrytis ?: null,
-                    'sanitary_state_oidium' => $this->sanitary_state_oidium ?: null,
-                    'sanitary_state_mildew' => $this->sanitary_state_mildew ?: null,
-                    'transport_document_number' => $this->transport_document_number ?: null,
-                    'destination_rega_code' => $this->destination_rega_code ?: null,
-                    'vehicle_plate' => $this->vehicle_plate ?: null,
-                    'destination_type' => 'winery',
-                    'price_per_kg' => $pricePerKg,
-                    'total_value' => $totalValue,
-                    'status' => 'active',
-                    'disqualified' => $this->disqualified,
-                    'disqualified_reason' => ($this->disqualified && $this->disqualified_reason)
-                        ? $this->disqualified_reason
-                        : null,
-                    'notes' => $this->notes ?: null,
-                ]);
-
-                $batch->increment('total_weight_kg', $weight);
-
-                $hasQuality = $this->baume_degree || $this->potential_alcohol || $this->acidity_level || $this->ph_level;
-                $isExternalViticulturist = $batch->viticulturist_id && $batch->viticulturist_id !== $wineryId;
-                if ($hasQuality && $isExternalViticulturist) {
-                    $viticulturist = \App\Models\User::find($batch->viticulturist_id);
-                    $harvest = \App\Models\Harvest::where('batch_id', $batch->id)->latest()->first();
-                    if ($viticulturist?->can_login && $harvest) {
-                        $viticulturist->notify(new \App\Notifications\QualityFeedbackNotification(
-                            $harvest->load('plotPlanting.grapeVariety', 'plotPlanting.plot'),
-                            Auth::user()->name,
-                        ));
-                    }
-                }
-            });
+            app(GrapeReceptionService::class)->createReception(
+                $wineryId,
+                (int) $this->viticulturist_id,
+                $this->vintage_year,
+                $planting,
+                $harvestData,
+                Auth::user()->name,
+            );
 
             $this->toastSuccess(__('Recepción registrada correctamente.'));
 
             return $this->roleRedirect('grape-reception.index');
 
+        } catch (\RuntimeException $e) {
+            $this->toastError($e->getMessage());
         } catch (\Exception $e) {
             \Log::error('Error al registrar recepción de uva', [
                 'error' => $e->getMessage(),

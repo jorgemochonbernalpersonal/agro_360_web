@@ -9,8 +9,8 @@ use App\Models\Container;
 use App\Models\Harvest;
 use App\Models\PlotPlanting;
 use App\Models\WineryYieldForecast;
+use App\Services\GrapeReceptionService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -184,57 +184,43 @@ class Edit extends Component
             return null;
         }
 
+        $harvestData = [
+            'harvest_start_date' => $this->harvest_start_date,
+            'harvest_time' => $this->harvest_time ?: null,
+            'harvest_ticket_number' => $this->harvest_ticket_number ?: null,
+            'total_weight' => $weight,
+            'price_per_kg' => $pricePerKg,
+            'total_value' => $totalValue,
+            'baume_degree' => $this->baume_degree ?: null,
+            'brix_degree' => $this->brix_degree ?: null,
+            'acidity_level' => $this->acidity_level ?: null,
+            'ph_level' => $this->ph_level ?: null,
+            'potential_alcohol' => $this->potential_alcohol ?: null,
+            'health_status' => $this->health_status ?: null,
+            'sanitary_state_grapes' => $this->sanitary_state_grapes ?: null,
+            'sanitary_state_agraces' => $this->sanitary_state_agraces ?: null,
+            'sanitary_state_botrytis' => $this->sanitary_state_botrytis ?: null,
+            'sanitary_state_oidium' => $this->sanitary_state_oidium ?: null,
+            'sanitary_state_mildew' => $this->sanitary_state_mildew ?: null,
+            'transport_document_number' => $this->transport_document_number ?: null,
+            'destination_rega_code' => $this->destination_rega_code ?: null,
+            'vehicle_plate' => $this->vehicle_plate ?: null,
+            'container_id' => $containerId,
+            'disqualified' => $this->disqualified,
+            'disqualified_reason' => ($this->disqualified && $this->disqualified_reason) ? $this->disqualified_reason : null,
+            'notes' => $this->notes ?: null,
+            'edited_at' => now(),
+            'edited_by' => $wineryId,
+        ];
+
         try {
-            DB::transaction(function () use ($wineryId, $weight, $pricePerKg, $totalValue, $containerId, $oldWeight) {
-                $this->harvest->update([
-                    'harvest_start_date' => $this->harvest_start_date,
-                    'harvest_time' => $this->harvest_time ?: null,
-                    'harvest_ticket_number' => $this->harvest_ticket_number ?: null,
-                    'total_weight' => $weight,
-                    'price_per_kg' => $pricePerKg,
-                    'total_value' => $totalValue,
-                    'baume_degree' => $this->baume_degree ?: null,
-                    'brix_degree' => $this->brix_degree ?: null,
-                    'acidity_level' => $this->acidity_level ?: null,
-                    'ph_level' => $this->ph_level ?: null,
-                    'potential_alcohol' => $this->potential_alcohol ?: null,
-                    'health_status' => $this->health_status ?: null,
-                    'sanitary_state_grapes' => $this->sanitary_state_grapes ?: null,
-                    'sanitary_state_agraces' => $this->sanitary_state_agraces ?: null,
-                    'sanitary_state_botrytis' => $this->sanitary_state_botrytis ?: null,
-                    'sanitary_state_oidium' => $this->sanitary_state_oidium ?: null,
-                    'sanitary_state_mildew' => $this->sanitary_state_mildew ?: null,
-                    'transport_document_number' => $this->transport_document_number ?: null,
-                    'destination_rega_code' => $this->destination_rega_code ?: null,
-                    'vehicle_plate' => $this->vehicle_plate ?: null,
-                    'container_id' => $containerId,
-                    'disqualified' => $this->disqualified,
-                    'disqualified_reason' => ($this->disqualified && $this->disqualified_reason) ? $this->disqualified_reason : null,
-                    'notes' => $this->notes ?: null,
-                    'edited_at' => now(),
-                    'edited_by' => $wineryId,
-                ]);
-
-                // Actualizar acumulado del batch si cambió el peso (dentro de la misma transacción)
-                if ($oldWeight !== $weight && $this->harvest->batch_id) {
-                    $this->harvest->batch?->recalculateTotal();
-                }
-
-                // Feedback de calidad al viticultor (si se añadieron/actualizaron datos y no es el propio usuario)
-                $qualityChanged = $this->harvest->wasChanged(['baume_degree', 'potential_alcohol', 'acidity_level', 'ph_level']);
-                $hasQuality = $this->baume_degree || $this->potential_alcohol || $this->acidity_level || $this->ph_level;
-                $isExternalViticulturist = $this->harvest->batch?->viticulturist_id
-                    && $this->harvest->batch->viticulturist_id !== Auth::id();
-                if ($qualityChanged && $hasQuality && $isExternalViticulturist) {
-                    $viticulturist = \App\Models\User::find($this->harvest->batch->viticulturist_id);
-                    if ($viticulturist?->can_login) {
-                        $viticulturist->notify(new \App\Notifications\QualityFeedbackNotification(
-                            $this->harvest->load('plotPlanting.grapeVariety', 'plotPlanting.plot'),
-                            Auth::user()->name,
-                        ));
-                    }
-                }
-            });
+            app(GrapeReceptionService::class)->updateReception(
+                $this->harvest,
+                $harvestData,
+                $oldWeight,
+                $wineryId,
+                Auth::user()->name,
+            );
 
             $this->toastSuccess(__('Recepción actualizada correctamente.'));
 
