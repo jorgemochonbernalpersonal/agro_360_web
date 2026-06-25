@@ -267,7 +267,7 @@ class Index extends Component
                         continue;
                     }
 
-                    if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
+                    if (! preg_match(SigpacGeometryService::WKT_PATTERN, $wkt)) {
                         $errorCount++;
                         $errors[] = "Formato de coordenadas inválido para el código {$sigpacCode->code}";
 
@@ -361,7 +361,7 @@ class Index extends Component
                             continue;
                         }
 
-                        if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
+                        if (! preg_match(SigpacGeometryService::WKT_PATTERN, $wkt)) {
                             $errorCount++;
 
                             continue;

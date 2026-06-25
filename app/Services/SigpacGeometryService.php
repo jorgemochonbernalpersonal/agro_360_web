@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 class SigpacGeometryService
 {
+    public const WKT_PATTERN = '/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i';
+
     /**
      * Obtiene el WKT de un código SIGPAC desde la API pública de SIGPAC Hub Cloud.
      * Devuelve null si la petición falla o la respuesta no contiene geometría válida.
@@ -94,5 +96,21 @@ class SigpacGeometryService
         }
 
         return $geometryId;
+    }
+
+    /**
+     * Actualiza una geometría existente con nuevas coordenadas WKT.
+     * Debe llamarse dentro de una transacción activa.
+     */
+    public function updateGeometry(int $geometryId, string $wkt): void
+    {
+        DB::statement(
+            'UPDATE plot_geometry SET
+                coordinates = ST_GeomFromText(?, 4326),
+                centroid = ST_Centroid(ST_GeomFromText(?, 4326)),
+                updated_at = NOW()
+            WHERE id = ?',
+            [$wkt, $wkt, $geometryId]
+        );
     }
 }
