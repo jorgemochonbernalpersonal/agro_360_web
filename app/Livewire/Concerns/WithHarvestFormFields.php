@@ -6,7 +6,6 @@ use App\Models\Campaign;
 use App\Models\Crew;
 use App\Models\CrewMember;
 use App\Models\Machinery;
-use App\Models\PhenologyObservation;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\User;
@@ -226,24 +225,6 @@ trait WithHarvestFormFields
         }
 
         return $notes;
-    }
-
-    protected function syncPhenologyObservation(int $campaignId, User $user): void
-    {
-        PhenologyObservation::updateOrCreate(
-            [
-                'plot_planting_id' => $this->plot_planting_id,
-                'campaign_id' => $campaignId,
-                'event' => 'harvest',
-            ],
-            [
-                'viticulturist_id' => $user->id,
-                'obs_date' => $this->harvest_start_date,
-                'bbch_code' => 89,
-                'source' => 'manual',
-                'active' => true,
-            ]
-        );
     }
 
     protected function harvestFormRenderData(User $user): array

@@ -10,8 +10,8 @@ use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Models\Container;
 use App\Models\Harvest;
+use App\Services\HarvestNotebookService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 /**
@@ -152,30 +152,15 @@ class EditHarvest extends Component
         }
 
         try {
-            DB::transaction(function () use ($user, $container) {
-                $crewMemberId = $this->resolveCrewMemberId($user, $this->harvest->activity->crew_member_id);
+            $crewMemberId = $this->resolveCrewMemberId($user, $this->harvest->activity->crew_member_id);
+            $activityData = $this->buildActivityData($crewMemberId);
+            $harvestData = array_merge($this->buildHarvestData(), [
+                'edited_at' => now(),
+                'edited_by' => $user->id,
+                'edit_notes' => $this->edit_notes ?: null,
+            ]);
 
-                $this->harvest->activity->update($this->buildActivityData($crewMemberId));
-
-                if ($this->container_id != $this->original_container_id) {
-                    if ($this->original_container_id) {
-                        Container::where('id', $this->original_container_id)
-                            ->where('user_id', $user->id)
-                            ->update(['harvest_id' => null]);
-                    }
-                    if ($container) {
-                        $container->update(['harvest_id' => $this->harvest->id]);
-                    }
-                }
-
-                $this->harvest->update(array_merge($this->buildHarvestData(), [
-                    'edited_at' => now(),
-                    'edited_by' => $user->id,
-                    'edit_notes' => $this->edit_notes ?: null,
-                ]));
-
-                $this->syncPhenologyObservation($this->harvest->activity->campaign_id, $user);
-            });
+            app(HarvestNotebookService::class)->update($this->harvest, $activityData, $harvestData, $user);
 
             $this->toastSuccess(__('Cosecha actualizada correctamente.'));
 

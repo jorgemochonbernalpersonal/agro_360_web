@@ -8,12 +8,10 @@ use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithViticulturistValidation;
-use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\Container;
-use App\Models\Harvest;
+use App\Services\HarvestNotebookService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -93,25 +91,15 @@ class CreateHarvest extends Component
         }
 
         try {
-            DB::transaction(function () use ($user) {
-                $crewMemberId = $this->resolveCrewMemberId($user);
+            $crewMemberId = $this->resolveCrewMemberId($user);
+            $activityData = array_merge($this->buildActivityData($crewMemberId), [
+                'viticulturist_id' => $user->id,
+                'activity_type' => 'harvest',
+                'notes' => $this->buildWithdrawalNotes(),
+            ]);
+            $harvestData = array_merge($this->buildHarvestData(), ['notes' => $this->notes]);
 
-                $activityData = array_merge($this->buildActivityData($crewMemberId), [
-                    'viticulturist_id' => $user->id,
-                    'activity_type' => 'harvest',
-                    'notes' => $this->buildWithdrawalNotes(),
-                ]);
-
-                $activity = AgriculturalActivity::create($activityData);
-
-                Harvest::create(array_merge($this->buildHarvestData(), [
-                    'activity_id' => $activity->id,
-                    'status' => 'active',
-                    'notes' => $this->notes,
-                ]));
-
-                $this->syncPhenologyObservation($activity->campaign_id, $user);
-            });
+            app(HarvestNotebookService::class)->create($activityData, $harvestData);
 
             $this->toastSuccess(__('Cosecha registrada correctamente.'));
 
