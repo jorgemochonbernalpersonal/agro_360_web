@@ -4,10 +4,9 @@ namespace App\Livewire\Winery\Cellar\ProductLots;
 
 use App\Livewire\Winery\AbstractCreate;
 use App\Models\GrapeVariety;
-use App\Models\ProductLot;
 use App\Models\Wine;
+use App\Services\ProductLotService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
@@ -180,9 +179,9 @@ class Create extends AbstractCreate
             ]);
         }
 
-        DB::transaction(function () use ($validGrapes) {
-            $lot = ProductLot::create([
-                'user_id' => $this->ownerId(),
+        app(ProductLotService::class)->createLot(
+            $this->ownerId(),
+            [
                 'wine_id' => $this->wine_id ?: null,
                 'name' => $this->name,
                 'vintage' => $this->vintage ?: null,
@@ -192,7 +191,6 @@ class Create extends AbstractCreate
                 'alcohol' => $this->alcohol ?: null,
                 'sku' => $this->sku ?: null,
                 'quantity' => $this->quantity,
-                'initial_quantity' => $this->quantity,
                 'unit' => $this->unit,
                 'available_quantity' => $this->available_quantity,
                 'price_per_unit' => $this->price_per_unit ?: 0,
@@ -228,14 +226,9 @@ class Create extends AbstractCreate
                 'bottling_date' => $this->bottling_date ?: null,
                 'release_date' => $this->release_date ?: null,
                 'notes' => $this->notes ?: null,
-                'archived' => false,
-            ]);
-
-            $syncGrapes = $validGrapes->mapWithKeys(fn ($g) => [
-                $g['grape_variety_id'] => ['percentage' => (float) ($g['percentage'] ?? 0)],
-            ])->toArray();
-            $lot->grapeVarieties()->sync($syncGrapes);
-        });
+            ],
+            $validGrapes->values()->all(),
+        );
     }
 
     protected function successMessage(): string

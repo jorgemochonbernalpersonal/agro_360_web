@@ -6,8 +6,8 @@ use App\Livewire\Winery\AbstractEdit;
 use App\Models\GrapeVariety;
 use App\Models\ProductLot;
 use App\Models\Wine;
+use App\Services\ProductLotService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
@@ -268,8 +268,9 @@ class Edit extends AbstractEdit
             ]);
         }
 
-        DB::transaction(function () use ($validGrapes) {
-            $this->lot->update([
+        app(ProductLotService::class)->updateLot(
+            $this->lot,
+            [
                 'wine_id' => $this->wine_id ?: null,
                 'name' => $this->name,
                 'vintage' => $this->vintage ?: null,
@@ -314,13 +315,9 @@ class Edit extends AbstractEdit
                 'bottling_date' => $this->bottling_date ?: null,
                 'release_date' => $this->release_date ?: null,
                 'notes' => $this->notes ?: null,
-            ]);
-
-            $syncGrapes = $validGrapes->mapWithKeys(fn ($g) => [
-                $g['grape_variety_id'] => ['percentage' => (float) ($g['percentage'] ?? 0)],
-            ])->toArray();
-            $this->lot->grapeVarieties()->sync($syncGrapes);
-        });
+            ],
+            $validGrapes->values()->all(),
+        );
     }
 
     protected function successMessage(): string
