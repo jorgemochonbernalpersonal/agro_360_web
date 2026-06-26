@@ -64,7 +64,7 @@ class AlertService
         }
 
         $thresholds = [
-            'ndvi' => $preference?->ndvi_threshold ?? self::DEFAULT_NDVI_THRESHOLD,
+            'ndvi' => $preference !== null ? $preference->ndvi_threshold ?? self::DEFAULT_NDVI_THRESHOLD : self::DEFAULT_NDVI_THRESHOLD,
             'ndwi' => self::DEFAULT_NDWI_THRESHOLD,
             'temp' => self::DEFAULT_TEMP_THRESHOLD,
         ];
@@ -157,7 +157,6 @@ class AlertService
             default => '📋',
         };
     }
-
 
     /**
      * Format numeric value

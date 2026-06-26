@@ -336,8 +336,8 @@ class ContainerStockService
                         [
                             'current_quantity' => $newWeight,
                             'available_qty' => $available,
-                            'reserved_qty' => $lastStock?->reserved_qty ?? 0,
-                            'sold_qty' => $lastStock?->sold_qty ?? 0,
+                            'reserved_qty' => $lastStock !== null ? $lastStock->reserved_qty : 0,
+                            'sold_qty' => $lastStock !== null ? $lastStock->sold_qty : 0,
                             'has_subproducts' => false,
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),

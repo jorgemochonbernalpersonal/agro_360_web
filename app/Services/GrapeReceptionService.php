@@ -82,7 +82,7 @@ class GrapeReceptionService
         int $wineryId,
         string $wineryName
     ): void {
-        DB::transaction(function () use ($harvest, $harvestData, $oldWeight, $wineryId, $wineryName) {
+        DB::transaction(function () use ($harvest, $harvestData, $oldWeight, $wineryName) {
             $harvest->update($harvestData);
 
             if ($oldWeight !== (float) $harvestData['total_weight'] && $harvest->batch_id) {

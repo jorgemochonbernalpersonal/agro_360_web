@@ -88,7 +88,7 @@ class FinancialStats extends Component
             ->selectRaw('YEAR(invoice_date) as year, MONTH(invoice_date) as month, SUM(total_amount) as total')
             ->groupBy('year', 'month')
             ->get()
-            ->keyBy(fn ($row) => $row->year.'-'.str_pad($row->month, 2, '0', STR_PAD_LEFT));
+            ->keyBy(fn ($row) => $row->getAttribute('year').'-'.str_pad($row->getAttribute('month'), 2, '0', STR_PAD_LEFT));
 
         $monthlyIncome = [];
         for ($i = 11; $i >= 0; $i--) {
@@ -167,9 +167,9 @@ class FinancialStats extends Component
 
                 foreach ($varietyHarvests as $harvest) {
                     $stock = $latestStocks->get($harvest->id);
-                    $available += $stock?->available_qty ?? 0;
-                    $reserved += $stock?->reserved_qty ?? 0;
-                    $sold += $stock?->sold_qty ?? 0;
+                    $available += $stock !== null ? (float) $stock->available_qty : 0;
+                    $reserved += $stock !== null ? (float) $stock->reserved_qty : 0;
+                    $sold += $stock !== null ? (float) $stock->sold_qty : 0;
                 }
 
                 return [
