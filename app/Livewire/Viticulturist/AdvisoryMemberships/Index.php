@@ -28,7 +28,9 @@ class Index extends AbstractIndex
 
     protected function baseQuery(): Builder
     {
-        return AdvisoryMembership::where('viticulturist_id', $this->viticulturistId())->active();
+        return AdvisoryMembership::where('viticulturist_id', $this->viticulturistId())
+            ->with('campaign:id,name')
+            ->active();
     }
 
     protected function applyFilters(Builder $query): void

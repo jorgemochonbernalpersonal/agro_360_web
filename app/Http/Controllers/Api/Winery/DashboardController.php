@@ -18,7 +18,6 @@ class DashboardController extends BaseApiController
     {
         $user = $request->user();
 
-
         $userId = $user->id;
         $campaignYear = now()->year;
         $cacheKey = "winery_dashboard:{$userId}:{$campaignYear}";

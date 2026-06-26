@@ -263,7 +263,7 @@ class Index extends Component
         $baseQuery = Organization::query();
 
         $organizations = $baseQuery
-            ->with(['ownerUser', 'province'])
+            ->with(['ownerUser', 'province', 'parent'])
             ->withCount('members')
             ->when($this->search, fn ($q) => $q->where(fn ($q) => $q->where('name', 'like', '%'.$this->search.'%')
                 ->orWhere('vat_number', 'like', '%'.$this->search.'%')

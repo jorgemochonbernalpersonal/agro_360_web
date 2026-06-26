@@ -4,8 +4,8 @@ namespace App\Livewire\Viticulturist\DigitalNotebook;
 
 use App\Models\AgriculturalActivity;
 use App\Models\Irrigation;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class EditIrrigation extends AbstractActivityForm
 {
@@ -77,10 +77,10 @@ class EditIrrigation extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $this->activity->update($this->activityData('irrigation'));
-
-                $this->irrigation->update([
+            app(NotebookActivityService::class)->updateActivity(
+                $this->activity,
+                $this->activityData('irrigation'),
+                fn () => $this->irrigation->update([
                     'water_volume' => $this->water_volume ?: null,
                     'water_volume_unit' => $this->water_volume_unit,
                     'irrigation_method' => $this->irrigation_method,
@@ -93,8 +93,8 @@ class EditIrrigation extends AbstractActivityForm
                     'is_fertirrigation' => $this->is_fertirrigation,
                     'fertilizer_product' => $this->is_fertirrigation ? ($this->fertilizer_product ?: null) : null,
                     'fertilizer_dose_per_ha' => $this->is_fertirrigation ? ($this->fertilizer_dose_per_ha ?: null) : null,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Riego actualizado correctamente.'));
 

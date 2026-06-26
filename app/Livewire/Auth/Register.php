@@ -3,12 +3,10 @@
 namespace App\Livewire\Auth;
 
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Models\SupervisorWinery;
 use App\Models\User;
-use App\Models\WineryViticulturist;
+use App\Services\UserRegistrationService;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Component;
@@ -84,15 +82,12 @@ class Register extends Component
 
     public function register()
     {
-        // Honeypot: Si está lleno, es un bot
         if (! empty($this->honeypot)) {
             \App\Services\SecurityLogger::logSecurityEvent('honeypot_triggered_register', [
                 'email' => $this->email,
                 'name' => $this->name,
                 'honeypot_value' => substr($this->honeypot, 0, 50),
             ]);
-
-            // Simular éxito para confundir al bot
             $this->toastSuccess(__('Registro completado. Revisa tu email para verificar tu cuenta.'));
 
             return;
@@ -102,47 +97,27 @@ class Register extends Component
 
         $this->email = strtolower(trim($this->email));
         $normalizedDni = $this->dni ? strtoupper(preg_replace('/\s+/', '', $this->dni)) : null;
-
         $existing = User::where('email', $this->email)->first();
+        $service = app(UserRegistrationService::class);
 
-        // Registro público (sin usuario autenticado): puede ser alta nueva o activación de viticultor pre-creado
         if (! Auth::check()) {
             if ($existing) {
-                // Activar viticultor que fue creado previamente sin acceso (can_login = false)
+                // Activar viticultor ghost creado previamente sin acceso (can_login = false)
                 if ($existing->role === User::ROLE_VITICULTURIST && $existing->can_login === false) {
-                    // Solo auto-verificar si el email del registro coincide con el del ghost.
-                    // Si coincide, la bodega envió la invitación a este correo y el viticultor
-                    // lo recibió → verificación implícita. Si no coincide, debe verificar.
                     $ghostEmailMatches = strtolower($existing->email) === strtolower($this->email);
+                    $activated = $service->activateGhostByEmail($existing, $this->name, $this->password, $normalizedDni, $this->email);
 
-                    $existing->update([
-                        'name' => $this->name,
-                        'password' => Hash::make($this->password),
-                        'can_login' => true,
-                        'password_must_reset' => false,
-                        'email_verified_at' => $ghostEmailMatches ? ($existing->email_verified_at ?? now()) : null,
-                        'dni' => $normalizedDni ?? $existing->dni,
-                        'invitation_token' => null,
-                        'invitation_expires_at' => null,
-                        'invitation_sent_at' => null,
-                    ]);
-
-                    // Si el email no coincide con el ghost, enviar verificación
                     if (! $ghostEmailMatches) {
-                        $existing->fresh()->sendEmailVerificationNotification();
+                        $activated->sendEmailVerificationNotification();
                     }
 
-                    Auth::login($existing->fresh());
+                    Auth::login($activated);
                     session()->regenerate();
-
                     $this->toastSuccess(__('Cuenta activada correctamente. ¡Bienvenido a Agro365!'));
 
-                    $target = $ghostEmailMatches ? 'viticulturist.dashboard' : 'verification.notice';
-
-                    return $this->redirect(route($target), navigate: true);
+                    return $this->redirect(route($ghostEmailMatches ? 'viticulturist.dashboard' : 'verification.notice'), navigate: true);
                 }
 
-                // Cualquier otro caso: email ya usado por una cuenta activa
                 $this->addError('email', __('Este email ya está registrado.'));
 
                 return;
@@ -150,12 +125,16 @@ class Register extends Component
 
             // DNI merge: ghost sin email coincidente pero con DNI registrado por la bodega
             if ($normalizedDni && $this->role === 'viticulturist') {
-                $merged = $this->mergeGhostByDni($normalizedDni, $this->email);
-                if ($merged instanceof \App\Models\User) {
-                    $target = $merged->email_verified_at ? 'viticulturist.dashboard' : 'verification.notice';
+                $merged = $service->mergeGhostByDni($normalizedDni, $this->email, $this->name, $this->password);
 
-                    return $this->redirect(route($target), navigate: true);
+                if ($merged instanceof User) {
+                    Auth::login($merged);
+                    session()->regenerate();
+                    $this->toastSuccess(__('¡Cuenta vinculada! Tu bodega ya tenía tus datos registrados. Bienvenido a Agro365.'));
+
+                    return $this->redirect(route($merged->email_verified_at ? 'viticulturist.dashboard' : 'verification.notice'), navigate: true);
                 }
+
                 if ($merged === 'email_taken') {
                     $this->addError('email', __('Este email ya está registrado.'));
 
@@ -164,17 +143,14 @@ class Register extends Component
                 // null → no ghost found, continue with normal registration
             }
 
-            // DNI activo duplicado: evitar conflicto de unique constraint
             if ($normalizedDni) {
-                $dniTaken = User::where('dni', $normalizedDni)->where('can_login', true)->exists();
-                if ($dniTaken) {
+                if (User::where('dni', $normalizedDni)->where('can_login', true)->exists()) {
                     $this->addError('dni', __('Este DNI ya está registrado en el sistema.'));
 
                     return;
                 }
             }
         } else {
-            // Creación interna (admin/supervisor/winery/viticultor): no permitir reutilizar emails
             if ($existing) {
                 $this->addError('email', __('Este email ya está registrado.'));
 
@@ -182,12 +158,10 @@ class Register extends Component
             }
         }
 
-        // Detectar si viticultor esta creando otro viticultor (requiere password temporal)
         $isViticulturistCreatingViticulturist = Auth::check()
             && Auth::user()->hasViticulturistAccess()
             && $this->role === 'viticulturist';
 
-        // Generar contraseña temporal si es necesario
         $temporaryPassword = null;
         if ($isViticulturistCreatingViticulturist) {
             $temporaryPassword = \Illuminate\Support\Str::random(12);
@@ -196,69 +170,19 @@ class Register extends Component
             $password = Hash::make($this->password);
         }
 
-        // Detectar fundador: código correcto + plazas disponibles + registro público
-        $isFounder = false;
-        if (! Auth::check() && $this->founder_code !== '') {
-            $founderCode = config('app.founder_code', '');
-            $isFounder = $founderCode !== ''
-                && hash_equals($founderCode, $this->founder_code)
-                && User::where('is_founder', true)->count() < config('app.founder_max_slots', 25);
-        }
+        $isFounder = ! Auth::check() && $service->isFounder($this->founder_code);
 
         try {
-            $user = DB::transaction(function () use ($password, $normalizedDni, $isViticulturistCreatingViticulturist, $isFounder) {
-                $user = User::create([
-                    'name' => $this->name,
-                    'email' => $this->email,
-                    'password' => $password,
-                    'role' => $this->role,
-                    'dni' => $normalizedDni ?? null,
-                    'password_must_reset' => $isViticulturistCreatingViticulturist,
-                    'can_login' => true,
-                    'is_founder' => $isFounder,
-                ]);
-
-                // Crear relaciones automáticas si está autenticado
-                if (Auth::check()) {
-                    $creator = Auth::user();
-
-                    // Si supervisor crea winery
-                    if ($creator->isSupervisor() && $this->role === 'winery') {
-                        SupervisorWinery::create([
-                            'supervisor_id' => $creator->id,
-                            'winery_id' => $user->id,
-                            'assigned_by' => $creator->id,
-                        ]);
-                    }
-
-                    // Si winery crea viticulturist
-                    if ($creator->hasWineryAccess() && $this->role === 'viticulturist') {
-                        WineryViticulturist::create([
-                            'winery_id' => $creator->id,
-                            'viticulturist_id' => $user->id,
-                            'source' => 'own',
-                            'assigned_by' => $creator->id,
-                        ]);
-                    }
-
-                    // Si viticultor crea viticultor — solo vincular si el creador tiene bodega real
-                    if ($creator->hasViticulturistAccess() && $this->role === 'viticulturist') {
-                        $creatorWinery = $creator->wineries->first();
-
-                        if ($creatorWinery) {
-                            WineryViticulturist::create([
-                                'winery_id' => $creatorWinery->id,
-                                'viticulturist_id' => $user->id,
-                                'source' => WineryViticulturist::SOURCE_VITICULTURIST,
-                                'parent_viticulturist_id' => $creator->id,
-                                'assigned_by' => $creator->id,
-                            ]);
-                        }
-                    }
-                }
-
-                return $user;
-            });
+            $user = $service->createUserWithRelationships([
+                'name' => $this->name,
+                'email' => $this->email,
+                'password' => $password,
+                'role' => $this->role,
+                'dni' => $normalizedDni ?? null,
+                'password_must_reset' => $isViticulturistCreatingViticulturist,
+                'can_login' => true,
+                'is_founder' => $isFounder,
+            ], Auth::check() ? Auth::user() : null);
         } catch (QueryException $e) {
             if (str_contains($e->getMessage(), 'users_email_unique')) {
                 $this->addError('email', __('Este email ya está registrado.'));
@@ -275,11 +199,7 @@ class Register extends Component
 
         // Enviar emails FUERA de la transacción (no deben hacer rollback)
         if (Auth::check()) {
-            $creator = Auth::user();
-
-            // Enviar email según el tipo de usuario creado
             if ($isViticulturistCreatingViticulturist) {
-                // Generar PDF con credenciales en memoria (sin escritura a disco)
                 $pdf = \PDF::loadView('pdf.credentials', [
                     'email' => $user->email,
                     'password' => $temporaryPassword,
@@ -287,14 +207,11 @@ class Register extends Component
                 ]);
                 $pdfContent = $pdf->output();
 
-                // Enviar email con PDF adjunto desde contenido en memoria
                 $user->notify(new \App\Notifications\TemporaryPasswordNotification($temporaryPassword, $pdfContent));
-
                 $this->toastSuccess(__('Viticultor creado correctamente. Se ha enviado un email con las credenciales de acceso.'));
                 session()->flash('pdf_download', base64_encode($pdfContent));
                 session()->flash('pdf_filename', 'credenciales_'.str_replace(['@', '.'], '_', $user->email).'.pdf');
             } else {
-                // Enviar email de verificación tradicional
                 $user->sendEmailVerificationNotification();
                 $this->toastSuccess(__('Usuario creado correctamente. Se ha enviado un email de verificación.'));
             }
@@ -302,12 +219,7 @@ class Register extends Component
             return $this->redirect(route($this->getRedirectRoute()), navigate: true);
         }
 
-        // Para registro público: enviar email de verificación
-        // El beta de 3 meses se activa automáticamente al confirmar el email (evento Verified)
         $user->sendEmailVerificationNotification();
-
-        // Viticultor independiente: NO crear WineryViticulturist con winery_id=null.
-        // El registro se crea solo cuando una bodega real lo vincula.
 
         Auth::login($user);
         session()->regenerate();
@@ -391,52 +303,4 @@ class Register extends Component
         };
     }
 
-    /**
-     * Attempt to activate a ghost viticulturist matched by DNI.
-     *
-     * Returns true on success, 'email_taken' if the supplied email belongs to
-     * another active account, or null when no ghost is found.
-     */
-    private function mergeGhostByDni(string $normalizedDni, string $email): \App\Models\User|string|null
-    {
-        $ghost = User::where('dni', $normalizedDni)
-            ->where('role', User::ROLE_VITICULTURIST)
-            ->where('can_login', false)
-            ->first();
-
-        if (! $ghost) {
-            return null;
-        }
-
-        // The email the registrant chose must not already belong to a different active account.
-        $emailTaken = User::where('email', $email)
-            ->where('id', '!=', $ghost->id)
-            ->where('can_login', true)
-            ->exists();
-
-        if ($emailTaken) {
-            return 'email_taken';
-        }
-
-        $ghost->update([
-            'name' => $this->name,
-            'email' => $email,
-            'password' => Hash::make($this->password),
-            'can_login' => true,
-            'password_must_reset' => false,
-            'email_verified_at' => now(),
-            'invitation_token' => null,
-            'invitation_expires_at' => null,
-            'invitation_sent_at' => null,
-        ]);
-
-        $freshGhost = $ghost->fresh();
-
-        Auth::login($freshGhost);
-        session()->regenerate();
-
-        $this->toastSuccess(__('¡Cuenta vinculada! Tu bodega ya tenía tus datos registrados. Bienvenido a Agro365.'));
-
-        return $freshGhost;
-    }
 }

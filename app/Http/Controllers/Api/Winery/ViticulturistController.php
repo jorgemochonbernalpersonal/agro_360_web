@@ -132,17 +132,17 @@ class ViticulturistController extends BaseApiController
         if ($selfRecord) {
             $rel = $selfRecord;
             $selfRecord->update([
-                'winery_id'   => $winery->id,
-                'source'      => WineryViticulturist::SOURCE_OWN,
+                'winery_id' => $winery->id,
+                'source' => WineryViticulturist::SOURCE_OWN,
                 'assigned_by' => $winery->id,
             ]);
         } else {
             $rel = WineryViticulturist::create([
-                'winery_id'        => $winery->id,
+                'winery_id' => $winery->id,
                 'viticulturist_id' => $vit->id,
-                'source'           => WineryViticulturist::SOURCE_OWN,
-                'assigned_by'      => $winery->id,
-                'notebook_access'  => false,
+                'source' => WineryViticulturist::SOURCE_OWN,
+                'assigned_by' => $winery->id,
+                'notebook_access' => false,
             ]);
         }
 
@@ -154,10 +154,10 @@ class ViticulturistController extends BaseApiController
 
         if (! $alreadyPending) {
             NotebookAccessRequest::create([
-                'winery_id'        => $winery->id,
+                'winery_id' => $winery->id,
                 'viticulturist_id' => $vit->id,
-                'status'           => NotebookAccessRequest::STATUS_PENDING,
-                'requested_at'     => now(),
+                'status' => NotebookAccessRequest::STATUS_PENDING,
+                'requested_at' => now(),
             ]);
         }
 

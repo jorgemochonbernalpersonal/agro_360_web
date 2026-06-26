@@ -2,17 +2,12 @@
 
 namespace App\Livewire\Winery\Harvest\Forecasts;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\EstimatedYield;
 use App\Models\WineryYieldForecast;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public WineryYieldForecast $forecast;
 
     public string $estimated_kg = '';
@@ -46,7 +41,7 @@ class Edit extends Component
 
     public function mount(WineryYieldForecast $forecast): void
     {
-        abort_unless($forecast->winery_id === Auth::id(), 403);
+        $this->authorizeOwnership($forecast);
 
         $this->forecast = $forecast->load([
             'viticulturist:id,name',
@@ -91,26 +86,29 @@ class Edit extends Component
         }
     }
 
-    public function save(): mixed
+    protected function ownerColumn(): string
     {
-        $this->validate();
+        return 'winery_id';
+    }
 
+    protected function performUpdate(): void
+    {
         $this->forecast->update([
             'estimated_kg' => (float) $this->estimated_kg,
             'estimation_date' => $this->estimation_date,
             'status' => $this->status,
             'notes' => $this->notes ?: null,
         ]);
-
-        $this->toastSuccess(__('Previsión actualizada correctamente.'));
-
-        return $this->roleRedirect('harvest-forecasts.index');
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.winery.harvest.forecasts.edit')
-            ->layout('layouts.app');
+        return __('Previsión actualizada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.harvest-forecasts.index';
     }
 
     protected function rules(): array

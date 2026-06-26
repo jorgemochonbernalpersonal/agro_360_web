@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\WineAnalysis;
 use App\Models\User;
+use App\Models\WineAnalysis;
 
 class WineAnalysisPolicy
 {

@@ -216,7 +216,7 @@ abstract class AbstractActivityIndex extends Component
 
     protected function eagerLoadRelations(): array
     {
-        $base = ['plot', 'plotPlanting.grapeVariety', 'crew'];
+        $base = ['plot', 'plotPlanting.grapeVariety', 'crew', 'campaign'];
 
         return array_merge($base, match ($this->activityType()) {
             'phytosanitary' => ['phytosanitaryTreatment.product', 'phytosanitaryTreatment.pest'],

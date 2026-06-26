@@ -5,10 +5,9 @@ namespace App\Livewire\Viticulturist\Pac\Declarations;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Models\PacDeclaration;
-use App\Models\PacDeclarationItem;
 use App\Models\Plot;
+use App\Services\PacDeclarationService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Create extends Component
@@ -67,31 +66,13 @@ class Create extends Component
             return;
         }
 
-        DB::transaction(function () use ($selectedIds, $status) {
-            $declaration = PacDeclaration::create([
-                'viticulturist_id' => Auth::id(),
-                'year' => $this->year,
-                'reference_number' => $this->reference_number ?: null,
-                'status' => $status,
-                'submitted_at' => $status === 'submitted' ? now() : null,
-                'notes' => $this->notes ?: null,
-                'total_declared_area' => 0,
-                'total_eligible_area' => 0,
-            ]);
+        $selectedItems = array_intersect_key($this->items, array_flip($selectedIds));
 
-            foreach ($selectedIds as $plotId) {
-                $item = $this->items[$plotId];
-                PacDeclarationItem::create([
-                    'declaration_id' => $declaration->id,
-                    'plot_id' => $plotId,
-                    'declared_area' => $item['declared_area'],
-                    'eligible_area' => $item['eligible_area'],
-                    'eco_schemes' => ! empty($item['eco_schemes']) ? $item['eco_schemes'] : null,
-                ]);
-            }
-
-            $declaration->recalculateTotals();
-        });
+        app(PacDeclarationService::class)->create(Auth::id(), $this->year, [
+            'reference_number' => $this->reference_number,
+            'notes' => $this->notes,
+            'status' => $status,
+        ], $selectedItems);
 
         $label = $status === 'submitted' ? 'presentada' : 'guardada como borrador';
         $this->toastSuccess("Declaración PAC {$this->year} {$label} correctamente.");

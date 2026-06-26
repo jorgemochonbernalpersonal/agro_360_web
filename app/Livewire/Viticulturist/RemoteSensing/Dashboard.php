@@ -399,5 +399,4 @@ class Dashboard extends Component
             $this->ndviData = $query->orderBy('image_date', 'desc')->first();
         }
     }
-
 }

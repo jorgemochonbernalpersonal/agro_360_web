@@ -17,6 +17,14 @@ class StoreNotebookRequest extends ViticulturistApiRequest
         'post-harvest-treatments' => 'post_harvest',
     ];
 
+    public function rules(): array
+    {
+        return array_merge(
+            $this->baseRules(),
+            $this->detailRules($this->input('activity_type'))
+        );
+    }
+
     protected function prepareForValidation(): void
     {
         $notebookType = $this->route('notebook_type');
@@ -35,14 +43,6 @@ class StoreNotebookRequest extends ViticulturistApiRequest
 
             $this->merge($merge);
         }
-    }
-
-    public function rules(): array
-    {
-        return array_merge(
-            $this->baseRules(),
-            $this->detailRules($this->input('activity_type'))
-        );
     }
 
     private function baseRules(): array

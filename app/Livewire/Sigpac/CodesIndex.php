@@ -2,20 +2,24 @@
 
 namespace App\Livewire\Sigpac;
 
+use App\Livewire\Concerns\WithGeoFiltering;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
 use App\Models\SigpacCode;
+use App\Services\SigpacGeometryService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class CodesIndex extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithGeoFiltering, WithPagination, WithToastNotifications;
+
+    // geoCachePrefix() usa el valor por defecto 'filter' del trait,
+    // que coincide con las claves existentes en caché.
 
     public $search = '';
 
@@ -100,22 +104,15 @@ class CodesIndex extends Component
             return;
         }
 
-        $sigpacCodes = $plot->sigpacCodes->where('id', $sigpacCodeId);
-
-        if ($sigpacCodes->isEmpty()) {
+        if (! $plot->sigpacCodes->contains('id', $sigpacCodeId)) {
             $this->toastError(__('Este código SIGPAC no está asociado a esta parcela.'));
 
             return;
         }
 
-        $successCount = 0;
-        $errorCount = 0;
-        $errors = [];
-
         try {
-            DB::beginTransaction();
-
-            $wkt = $this->fetchCoordinatesFromSigpacApi($sigpacCode);
+            $service = app(SigpacGeometryService::class);
+            $wkt = $service->fetchWkt($sigpacCode);
 
             if (! $wkt) {
                 $this->toastError("No se pudieron obtener coordenadas para el código {$sigpacCode->code}");
@@ -123,43 +120,17 @@ class CodesIndex extends Component
                 return;
             }
 
-            if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
+            if (! preg_match(SigpacGeometryService::WKT_PATTERN, $wkt)) {
                 $this->toastError("Formato de coordenadas inválido para el código {$sigpacCode->code}");
 
                 return;
             }
 
-            // Insertar geometría directamente con ST_GeomFromText
-            DB::statement(
-                'INSERT INTO plot_geometry (coordinates, centroid, created_at, updated_at) 
-                 VALUES (ST_GeomFromText(?, 4326), ST_Centroid(ST_GeomFromText(?, 4326)), ?, ?)',
-                [$wkt, $wkt, now(), now()]
-            );
+            DB::transaction(fn () => $service->upsertGeometry($plotId, $sigpacCode, $wkt));
 
-            $geometryId = DB::getPdo()->lastInsertId();
-
-            $mps = MultipartPlotSigpac::where('plot_id', $plotId)
-                ->where('sigpac_code_id', $sigpacCodeId)
-                ->first();
-
-            if ($mps) {
-                $mps->plot_geometry_id = $geometryId;
-                $mps->updated_at = now();
-                $mps->save();
-            } else {
-                MultipartPlotSigpac::create([
-                    'plot_id' => $plotId,
-                    'sigpac_code_id' => $sigpacCodeId,
-                    'plot_geometry_id' => $geometryId,
-                ]);
-            }
-
-            DB::commit();
             $this->toastSuccess(__('Mapa generado correctamente.'));
-            // Forzar recarga de la vista
             $this->dispatch('$refresh');
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Error generating map from SIGPAC', [
                 'plot_id' => $plotId,
                 'sigpac_code_id' => $sigpacCodeId,
@@ -170,73 +141,6 @@ class CodesIndex extends Component
     }
 
     /**
-     * Obtener opciones de Comunidades Autónomas (con caché)
-     */
-    public function getAutonomousCommunitiesProperty()
-    {
-        return \Illuminate\Support\Facades\Cache::remember('filter_autonomous_communities', now()->addHours(24), function () {
-            $user = Auth::user();
-            $plotIds = Plot::forUser($user)->pluck('id');
-
-            return \App\Models\AutonomousCommunity::whereHas('plots', function ($query) use ($plotIds) {
-                $query->whereIn('plots.id', $plotIds);
-            })
-                ->orderBy('name')
-                ->get()
-                ->mapWithKeys(fn ($ca) => [$ca->id => $ca->name]);
-        });
-    }
-
-    /**
-     * Obtener opciones de Provincias (filtradas por CA seleccionada)
-     */
-    public function getProvincesProperty()
-    {
-        if (! $this->filterAutonomousCommunity) {
-            return collect();
-        }
-
-        $cacheKey = "filter_provinces_{$this->filterAutonomousCommunity}";
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(24), function () {
-            $user = Auth::user();
-            $plotIds = Plot::forUser($user)->pluck('id');
-
-            return \App\Models\Province::where('autonomous_community_id', $this->filterAutonomousCommunity)
-                ->whereHas('plots', function ($query) use ($plotIds) {
-                    $query->whereIn('plots.id', $plotIds);
-                })
-                ->orderBy('name')
-                ->get()
-                ->mapWithKeys(fn ($prov) => [$prov->id => $prov->name]);
-        });
-    }
-
-    /**
-     * Obtener opciones de Municipios (filtradas por Provincia seleccionada)
-     */
-    public function getMunicipalitiesProperty()
-    {
-        if (! $this->filterProvince) {
-            return collect();
-        }
-
-        $cacheKey = "filter_municipalities_{$this->filterProvince}";
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(24), function () {
-            $user = Auth::user();
-            $plotIds = Plot::forUser($user)->pluck('id');
-
-            return \App\Models\Municipality::where('province_id', $this->filterProvince)
-                ->whereHas('plots', function ($query) use ($plotIds) {
-                    $query->whereIn('plots.id', $plotIds);
-                })
-                ->orderBy('name')
-                ->get()
-                ->mapWithKeys(fn ($mun) => [$mun->id => $mun->name]);
-        });
-    }
-
     /**
      * Verificar si el municipio seleccionado tiene códigos SIGPAC
      */
@@ -308,7 +212,6 @@ class CodesIndex extends Component
         $user = Auth::user();
         $plotIds = Plot::forUser($user)->pluck('id');
 
-        // Obtener todos los códigos SIGPAC del municipio que no tienen geometría
         $codesWithoutGeometry = SigpacCode::query()
             ->whereHas('plots', function ($query) use ($plotIds) {
                 $query->whereIn('plots.id', $plotIds)
@@ -322,17 +225,11 @@ class CodesIndex extends Component
             ->get()
             ->filter(function ($code) {
                 $plot = $code->plots->first();
-                if (! $plot) {
-                    return false;
-                }
 
-                // Verificar si ya tiene geometría
-                $hasGeometry = MultipartPlotSigpac::where('plot_id', $plot->id)
+                return $plot && ! MultipartPlotSigpac::where('plot_id', $plot->id)
                     ->where('sigpac_code_id', $code->id)
                     ->whereNotNull('plot_geometry_id')
                     ->exists();
-
-                return ! $hasGeometry;
             });
 
         if ($codesWithoutGeometry->isEmpty()) {
@@ -341,6 +238,7 @@ class CodesIndex extends Component
             return;
         }
 
+        $service = app(SigpacGeometryService::class);
         $successCount = 0;
         $errorCount = 0;
 
@@ -350,54 +248,18 @@ class CodesIndex extends Component
                 continue;
             }
 
+            $wkt = $service->fetchWkt($code);
+
+            if (! $wkt || ! preg_match(SigpacGeometryService::WKT_PATTERN, $wkt)) {
+                $errorCount++;
+
+                continue;
+            }
+
             try {
-                DB::beginTransaction();
-
-                $wkt = $this->fetchCoordinatesFromSigpacApi($code);
-
-                if (! $wkt) {
-                    $errorCount++;
-                    DB::rollBack();
-
-                    continue;
-                }
-
-                if (! preg_match('/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i', $wkt)) {
-                    $errorCount++;
-                    DB::rollBack();
-
-                    continue;
-                }
-
-                // Insertar geometría directamente con ST_GeomFromText
-                DB::statement(
-                    'INSERT INTO plot_geometry (coordinates, centroid, created_at, updated_at) 
-                     VALUES (ST_GeomFromText(?, 4326), ST_Centroid(ST_GeomFromText(?, 4326)), ?, ?)',
-                    [$wkt, $wkt, now(), now()]
-                );
-
-                $geometryId = DB::getPdo()->lastInsertId();
-
-                $mps = MultipartPlotSigpac::where('plot_id', $plot->id)
-                    ->where('sigpac_code_id', $code->id)
-                    ->first();
-
-                if ($mps) {
-                    $mps->plot_geometry_id = $geometryId;
-                    $mps->updated_at = now();
-                    $mps->save();
-                } else {
-                    MultipartPlotSigpac::create([
-                        'plot_id' => $plot->id,
-                        'sigpac_code_id' => $code->id,
-                        'plot_geometry_id' => $geometryId,
-                    ]);
-                }
-
-                DB::commit();
+                DB::transaction(fn () => $service->upsertGeometry($plot->id, $code, $wkt));
                 $successCount++;
             } catch (\Exception $e) {
-                DB::rollBack();
                 $errorCount++;
                 Log::error('Error generating bulk map', [
                     'sigpac_code_id' => $code->id,
@@ -417,45 +279,4 @@ class CodesIndex extends Component
         $this->dispatch('$refresh');
     }
 
-    private function fetchCoordinatesFromSigpacApi(SigpacCode $sigpacCode): ?string
-    {
-        try {
-            $url = sprintf(
-                'https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/%s/%s/%s/%s/%s/%s/%s.json',
-                $sigpacCode->code_province,
-                $sigpacCode->code_municipality,
-                $sigpacCode->code_aggregate ?? '0',
-                $sigpacCode->code_zone,
-                $sigpacCode->code_polygon,
-                $sigpacCode->code_plot,
-                $sigpacCode->code_enclosure
-            );
-
-            $httpClient = Http::timeout(10);
-            if (app()->environment('local')) {
-                $httpClient = $httpClient->withoutVerifying();
-            }
-
-            $response = $httpClient->get($url);
-
-            if ($response->status() !== 200) {
-                return null;
-            }
-
-            $data = $response->json();
-
-            if (! is_array($data) || empty($data) || ! isset($data[0]['wkt'])) {
-                return null;
-            }
-
-            return $data[0]['wkt'];
-        } catch (\Exception $e) {
-            Log::warning('Error fetching SIGPAC coordinates', [
-                'sigpac_code_id' => $sigpacCode->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return null;
-        }
-    }
 }

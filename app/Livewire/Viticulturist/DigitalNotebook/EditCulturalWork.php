@@ -4,8 +4,8 @@ namespace App\Livewire\Viticulturist\DigitalNotebook;
 
 use App\Models\AgriculturalActivity;
 use App\Models\CulturalWork;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class EditCulturalWork extends AbstractActivityForm
 {
@@ -68,10 +68,10 @@ class EditCulturalWork extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $this->activity->update($this->activityData('cultural'));
-
-                $this->culturalWork->update([
+            app(NotebookActivityService::class)->updateActivity(
+                $this->activity,
+                $this->activityData('cultural'),
+                fn () => $this->culturalWork->update([
                     'work_type' => $this->work_type,
                     'hours_worked' => $this->hours_worked ?: null,
                     'workers_count' => $this->workers_count ?: null,
@@ -81,8 +81,8 @@ class EditCulturalWork extends AbstractActivityForm
                     'residue_management' => $this->residue_management ?: null,
                     'defoliation_face' => $this->work_type === 'deshojado' ? ($this->defoliation_face ?: null) : null,
                     'topping_height_cm' => $this->work_type === 'despuntado' ? ($this->topping_height_cm ?: null) : null,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Labor cultural actualizada correctamente.'));
 

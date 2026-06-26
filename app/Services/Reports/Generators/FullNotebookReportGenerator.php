@@ -135,6 +135,8 @@ class FullNotebookReportGenerator
             ->forCampaign($campaignId)
             ->with([
                 'plot',
+                'plot.sigpacCodes',
+                'plot.sigpacUses',
                 'plotPlanting.grapeVariety',
                 'phytosanitaryTreatment.product',
                 'fertilization',

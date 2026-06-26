@@ -84,10 +84,10 @@ class SubproductsTest extends WineryTestCase
     public function test_create_rejects_wine_from_other_winery(): void
     {
         $otherWine = Wine::create([
-            'user_id'   => $this->makeOtherWinery()->id,
-            'name'      => 'Other Wine',
+            'user_id' => $this->makeOtherWinery()->id,
+            'name' => 'Other Wine',
             'wine_type' => 'red',
-            'status'    => 'in_progress',
+            'status' => 'in_progress',
         ]);
 
         $firstType = array_key_first(WineSubproduct::TYPES);

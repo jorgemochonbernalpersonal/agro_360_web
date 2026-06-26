@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Winery\Silicie;
 
-use App\Livewire\Winery\Silicie\Traits\HasInfoviCalculations;
+use App\Services\WineryInfoviService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -21,7 +21,6 @@ use Livewire\Component;
  */
 class Infovi extends Component
 {
-    use HasInfoviCalculations;
 
     public string $filterCampaign = '';
 
@@ -48,14 +47,15 @@ class Infovi extends Component
         $campaignEnd = ($campaign + 1).'-07-31';
 
         $org = Auth::user()->organization;
-        $threshold = $this->buildThreshold($wineryId);
+        $service = app(WineryInfoviService::class);
+        $threshold = $service->buildThreshold($wineryId);
 
-        $existencias = $this->buildCuadroExistencias($wineryId, $campaign);
-        $produccion = $this->buildCuadroProduccion($wineryId, $campaign);
-        $ventas = $this->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd);
-        $entradas = $this->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd);
-        $balanceSheet = $this->buildBalanceSheet($wineryId, $campaign, $campaignStart, $campaignEnd);
-        $mosto = $this->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd);
+        $existencias = $service->buildCuadroExistencias($wineryId, $campaign, $this->showCategoryBreakdown);
+        $produccion = $service->buildCuadroProduccion($wineryId, $campaign, $this->showCategoryBreakdown);
+        $ventas = $service->buildCuadroVentas($wineryId, $campaignStart, $campaignEnd);
+        $entradas = $service->buildCuadroEntradas($wineryId, $campaign, $campaignStart, $campaignEnd);
+        $balanceSheet = $service->buildBalanceSheet($wineryId, $campaign, $campaignStart, $campaignEnd);
+        $mosto = $service->buildCuadroMosto($wineryId, $campaign, $campaignStart, $campaignEnd);
 
         $campaigns = DB::table('harvests')
             ->where('winery_id', $wineryId)

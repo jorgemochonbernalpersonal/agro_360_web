@@ -32,7 +32,7 @@ class RequireAbility
         if ($user->hasBasicFreeAccess()) {
             return redirect()->route('subscription.manage')
                 ->with('upgrade_required', [
-                    'price'   => number_format($user->viticulturistMonthlyPrice(), 0),
+                    'price' => number_format($user->viticulturistMonthlyPrice(), 0),
                     'feature' => $request->route()?->getName() ?? $request->path(),
                 ]);
         }

@@ -2,17 +2,13 @@
 
 namespace App\Livewire\Winery\BottlingAuthorizations;
 
-use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractCreate;
 use App\Models\BottlingAuthorization;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Create extends Component
+class Create extends AbstractCreate
 {
-    use WithOwnershipRules, WithToastNotifications;
-
     public string $authorization_number = '';
 
     public string $authorization_type = 'standard';
@@ -33,12 +29,10 @@ class Create extends Component
 
     public string $notes = '';
 
-    public function save(): void
+    protected function performCreate(): void
     {
-        $this->validate();
-
         BottlingAuthorization::create([
-            'user_id' => Auth::id(),
+            'user_id' => $this->ownerId(),
             'authorization_number' => $this->authorization_number,
             'authorization_type' => $this->authorization_type,
             'wine_id' => $this->wine_id ?: null,
@@ -50,18 +44,25 @@ class Create extends Component
             'conditions' => $this->conditions ?: null,
             'notes' => $this->notes ?: null,
         ]);
-
-        $this->toastSuccess("Autorización «{$this->authorization_number}» creada correctamente.");
-        $this->redirect(roleRoute('bottling-authorizations.index'), navigate: true);
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.winery.bottling-authorizations.create', [
+        return "Autorización «{$this->authorization_number}» creada correctamente.";
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.bottling-authorizations.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
             'types' => BottlingAuthorization::authorizationTypeOptions(),
             'statuses' => BottlingAuthorization::statusOptions(),
             'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
-        ])->layout('layouts.app');
+        ];
     }
 
     protected function rules(): array

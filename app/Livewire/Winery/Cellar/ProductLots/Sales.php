@@ -4,7 +4,6 @@ namespace App\Livewire\Winery\Cellar\ProductLots;
 
 use App\Models\InvoiceItem;
 use App\Models\ProductLot;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 

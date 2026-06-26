@@ -80,7 +80,6 @@ class PromoteToReception extends Component
     {
         $user = Auth::user();
 
-        abort_unless($user->isProducer(), 403);
         abort_unless($notebookHarvest->isViticulturistRecord(), 404);
         abort_unless(
             $notebookHarvest->activity?->viticulturist_id === $user->id,

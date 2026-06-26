@@ -127,6 +127,8 @@ class PhytosanitaryReportGenerator
                 ->with([
                     'phytosanitaryTreatment.product:id,name,registration_number,withdrawal_period_days',
                     'plot:id,name',
+                    'plot.sigpacCodes',
+                    'plot.sigpacUses',
                     'plotPlanting:id,plot_id,name',
                     'plotPlanting.grapeVariety:id,name',
                     'crewMember:id,name',

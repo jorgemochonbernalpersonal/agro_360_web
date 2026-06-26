@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property mixed $total_paid_amount
  * @property mixed $tax_total
  * @property mixed $total
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static> forUser(int $userId)
  */
 class Invoice extends Model

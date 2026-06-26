@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Viticulturist;
 use App\Http\Controllers\Controller;
 use App\Models\HarvestDelivery;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Response;
 
 class HarvestDeliveryAlbaranController extends Controller
 {
+    use AuthorizesRequests;
+
     public function __invoke(HarvestDelivery $delivery): Response
     {
         $this->authorize('view', $delivery);

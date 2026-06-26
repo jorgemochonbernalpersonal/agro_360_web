@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\WineryDocument;
 use App\Models\User;
+use App\Models\WineryDocument;
 
 class WineryDocumentPolicy
 {

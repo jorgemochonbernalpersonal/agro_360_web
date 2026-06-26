@@ -11,26 +11,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class CreateStockTest extends ViticulturistTestCase
 {
-    private function makeUnit(): Unit
-    {
-        return Unit::firstOrCreate(
-            ['symbol' => 'L'],
-            ['name' => 'Litros', 'category' => 'volume', 'active' => true]
-        );
-    }
-
-    private function makeProduct($viticulturist): PhytosanitaryProduct
-    {
-        return PhytosanitaryProduct::create([
-            'user_id' => $viticulturist->id,
-            'name' => 'Fungicida Test',
-            'registration_number' => 'ES-12345678',
-            'registration_status' => 'active',
-            'withdrawal_period_days' => 0,
-            'active' => true,
-        ]);
-    }
-
     public function test_can_create_stock(): void
     {
         $v = $this->makeViticulturist();
@@ -100,6 +80,26 @@ class CreateStockTest extends ViticulturistTestCase
         $this->assertDatabaseHas('product_stock_movements', [
             'stock_id' => $stock->id,
             'movement_type' => 'purchase',
+        ]);
+    }
+
+    private function makeUnit(): Unit
+    {
+        return Unit::firstOrCreate(
+            ['symbol' => 'L'],
+            ['name' => 'Litros', 'category' => 'volume', 'active' => true]
+        );
+    }
+
+    private function makeProduct($viticulturist): PhytosanitaryProduct
+    {
+        return PhytosanitaryProduct::create([
+            'user_id' => $viticulturist->id,
+            'name' => 'Fungicida Test',
+            'registration_number' => 'ES-12345678',
+            'registration_status' => 'active',
+            'withdrawal_period_days' => 0,
+            'active' => true,
         ]);
     }
 }

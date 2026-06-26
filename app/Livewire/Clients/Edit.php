@@ -8,7 +8,6 @@ use App\Models\AutonomousCommunity;
 use App\Models\Client;
 use App\Models\Municipality;
 use App\Models\Province;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 

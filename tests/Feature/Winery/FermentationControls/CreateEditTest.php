@@ -21,34 +21,6 @@ class CreateEditTest extends WineryTestCase
         $this->actingAs($this->winery);
     }
 
-    private function makeWine(?int $userId = null): Wine
-    {
-        return Wine::create([
-            'user_id' => $userId ?? $this->winery->id,
-            'name'      => 'Vino Test',
-            'wine_type' => 'red',
-            'status'    => 'in_progress',
-        ]);
-    }
-
-    private function makeContainer(?int $userId = null): Container
-    {
-        return Container::create([
-            'user_id'  => $userId ?? $this->winery->id,
-            'name'     => 'Depósito Test',
-            'capacity' => 1000,
-        ]);
-    }
-
-    private function makeControl(Wine $wine): WineFermentationControl
-    {
-        return WineFermentationControl::create([
-            'wine_id'      => $wine->id,
-            'container_id' => $this->makeContainer($wine->user_id)->id,
-            'control_date' => now()->format('Y-m-d H:i:s'),
-        ]);
-    }
-
     // --- Create ---
 
     public function test_create_renders(): void
@@ -68,7 +40,7 @@ class CreateEditTest extends WineryTestCase
 
     public function test_create_saves_control(): void
     {
-        $wine      = $this->makeWine();
+        $wine = $this->makeWine();
         $container = $this->makeContainer();
 
         Livewire::test(Create::class)
@@ -81,7 +53,7 @@ class CreateEditTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_fermentation_controls', [
-            'wine_id'      => $wine->id,
+            'wine_id' => $wine->id,
             'container_id' => $container->id,
         ]);
     }
@@ -101,8 +73,8 @@ class CreateEditTest extends WineryTestCase
 
     public function test_create_rejects_container_from_other_winery(): void
     {
-        $wine            = $this->makeWine();
-        $otherContainer  = $this->makeContainer($this->makeOtherWinery()->id);
+        $wine = $this->makeWine();
+        $otherContainer = $this->makeContainer($this->makeOtherWinery()->id);
 
         Livewire::test(Create::class)
             ->set('wine_id', (string) $wine->id)
@@ -140,8 +112,36 @@ class CreateEditTest extends WineryTestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('wine_fermentation_controls', [
-            'id'          => $control->id,
+            'id' => $control->id,
             'temperature' => '22.0',
+        ]);
+    }
+
+    private function makeWine(?int $userId = null): Wine
+    {
+        return Wine::create([
+            'user_id' => $userId ?? $this->winery->id,
+            'name' => 'Vino Test',
+            'wine_type' => 'red',
+            'status' => 'in_progress',
+        ]);
+    }
+
+    private function makeContainer(?int $userId = null): Container
+    {
+        return Container::create([
+            'user_id' => $userId ?? $this->winery->id,
+            'name' => 'Depósito Test',
+            'capacity' => 1000,
+        ]);
+    }
+
+    private function makeControl(Wine $wine): WineFermentationControl
+    {
+        return WineFermentationControl::create([
+            'wine_id' => $wine->id,
+            'container_id' => $this->makeContainer($wine->user_id)->id,
+            'control_date' => now()->format('Y-m-d H:i:s'),
         ]);
     }
 }

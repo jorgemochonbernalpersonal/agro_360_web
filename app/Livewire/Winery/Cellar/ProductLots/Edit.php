@@ -2,26 +2,23 @@
 
 namespace App\Livewire\Winery\Cellar\ProductLots;
 
-use App\Livewire\Concerns\WithRoleAwareRedirect;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\GrapeVariety;
 use App\Models\ProductLot;
 use App\Models\Wine;
+use App\Services\ProductLotService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
 /**
  * @property-read mixed $wines
  * @property-read mixed $grapeVarieties
  * @property-read float $grapeTotal
  */
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithRoleAwareRedirect, WithToastNotifications;
-
     public ProductLot $lot;
 
     // ── Básico ──────────────────────────────────────────────────────
@@ -195,7 +192,7 @@ class Edit extends Component
         // Notas
         $this->notes = $lot->notes ?? '';
 
-        // Cargar variedades de uva existentes
+        // Variedades de uva
         $existingGrapes = $lot->grapeVarieties()->get();
         $this->grapes = $existingGrapes->isEmpty()
             ? [['grape_variety_id' => '', 'percentage' => '']]
@@ -237,106 +234,109 @@ class Edit extends Component
         $this->grapes = array_values($this->grapes);
     }
 
-    public function update(): void
+    protected function performUpdate(): void
     {
-        $data = $this->validate();
-
-        $newQuantity = (float) $data['quantity'];
+        $newQuantity = (float) $this->quantity;
         $committed = (float) $this->lot->reserved_quantity + (float) $this->lot->sold_quantity;
 
         if ($newQuantity < $committed) {
-            $this->addError('quantity', __('La cantidad total no puede ser menor que lo ya comprometido (:committed :unit).', ['committed' => $committed, 'unit' => $this->lot->unit]));
-
-            return;
+            throw ValidationException::withMessages([
+                'quantity' => __('La cantidad total no puede ser menor que lo ya comprometido (:committed :unit).', [
+                    'committed' => $committed,
+                    'unit' => $this->lot->unit,
+                ]),
+            ]);
         }
 
         // If quantity increased, add the increment directly to available
         $increment = max(0.0, $newQuantity - (float) $this->lot->quantity);
         if ($increment > 0) {
-            $data['available_quantity'] = round((float) $this->lot->available_quantity + $increment, 3);
-            $this->available_quantity = (string) $data['available_quantity'];
+            $this->available_quantity = (string) round((float) $this->lot->available_quantity + $increment, 3);
         }
 
-        if ((float) $data['available_quantity'] > $newQuantity - $committed) {
-            $this->addError('available_quantity', __('La cantidad disponible no puede superar la cantidad libre (total − reservado − vendido).'));
-
-            return;
+        if ((float) $this->available_quantity > $newQuantity - $committed) {
+            throw ValidationException::withMessages([
+                'available_quantity' => __('La cantidad disponible no puede superar la cantidad libre (total − reservado − vendido).'),
+            ]);
         }
 
         $validGrapes = collect($this->grapes)->filter(fn ($g) => ! empty($g['grape_variety_id']));
 
         if ($validGrapes->isNotEmpty() && $this->grapeTotal > 100.01) {
-            $this->addError('grapes', __('El total de variedades no puede superar el 100%.'));
-
-            return;
+            throw ValidationException::withMessages([
+                'grapes' => __('El total de variedades no puede superar el 100%.'),
+            ]);
         }
 
-        DB::transaction(function () use ($data, $validGrapes) {
-            $this->lot->update([
-                'wine_id' => $data['wine_id'] ?: null,
-                'name' => $data['name'],
-                'vintage' => $data['vintage'] ?: null,
-                'wine_type' => $data['wine_type'],
-                'aging_type' => $data['aging_type'] ?: null,
-                'agingtime' => $data['agingtime'] ?: null,
-                'alcohol' => $data['alcohol'] ?: null,
-                'sku' => $data['sku'] ?: null,
-                'quantity' => $data['quantity'],
-                'unit' => $data['unit'],
-                'available_quantity' => $data['available_quantity'],
-                'price_per_unit' => $data['price_per_unit'] ?: 0,
-                'cost_price' => $data['cost_price'] ?: null,
-                'ean' => $data['ean'] ?: null,
-                'bottle_format' => $data['bottle_format'] ?: null,
-                'units_per_case' => $data['units_per_case'] ?: null,
+        app(ProductLotService::class)->updateLot(
+            $this->lot,
+            [
+                'wine_id' => $this->wine_id ?: null,
+                'name' => $this->name,
+                'vintage' => $this->vintage ?: null,
+                'wine_type' => $this->wine_type,
+                'aging_type' => $this->aging_type ?: null,
+                'agingtime' => $this->agingtime ?: null,
+                'alcohol' => $this->alcohol ?: null,
+                'sku' => $this->sku ?: null,
+                'quantity' => $this->quantity,
+                'unit' => $this->unit,
+                'available_quantity' => $this->available_quantity,
+                'price_per_unit' => $this->price_per_unit ?: 0,
+                'cost_price' => $this->cost_price ?: null,
+                'ean' => $this->ean ?: null,
+                'bottle_format' => $this->bottle_format ?: null,
+                'units_per_case' => $this->units_per_case ?: null,
                 'sulfites' => $this->sulfites,
                 'ecological' => $this->ecological,
                 'is_vegan' => $this->is_vegan,
                 'is_biodynamic' => $this->is_biodynamic,
-                'description' => $data['description'] ?: null,
-                'pairing' => $data['pairing'] ?: null,
-                'tasting_notes' => $data['tasting_notes'] ?: null,
-                'consumption_recommendation' => $data['consumption_recommendation'] ?: null,
-                'recommended_temperature_min' => $data['recommended_temperature_min'] ?: null,
-                'recommended_temperature_max' => $data['recommended_temperature_max'] ?: null,
-                'tags' => $data['tags'] ?: null,
-                'residual_sugar' => $data['residual_sugar'] ?: null,
-                'total_acidity' => $data['total_acidity'] ?: null,
-                'volatile_acidity' => $data['volatile_acidity'] ?: null,
-                'ph' => $data['ph'] ?: null,
-                'vine_age' => $data['vine_age'] ?: null,
-                'altitude' => $data['altitude'] ?: null,
-                'soil_type' => $data['soil_type'] ?: null,
-                'winemaker' => $data['winemaker'] ?: null,
-                'harvest_method' => $data['harvest_method'] ?: null,
-                'fermentation_vessel' => $data['fermentation_vessel'] ?: null,
-                'oak_type' => $data['oak_type'] ?: null,
-                'oak_months' => $data['oak_months'] ?: null,
-                'awards_notes' => $data['awards_notes'] ?: null,
-                'production_quantity' => $data['production_quantity'] ?: null,
-                'bottling_date' => $data['bottling_date'] ?: null,
-                'release_date' => $data['release_date'] ?: null,
-                'notes' => $data['notes'] ?: null,
-            ]);
-
-            // Sincronizar variedades de uva
-            $syncGrapes = $validGrapes->mapWithKeys(fn ($g) => [
-                $g['grape_variety_id'] => ['percentage' => (float) ($g['percentage'] ?? 0)],
-            ])->toArray();
-            $this->lot->grapeVarieties()->sync($syncGrapes);
-        });
-
-        $this->toastSuccess(__('Producto actualizado correctamente.'));
-        $this->roleRedirect('product-lots.index');
+                'description' => $this->description ?: null,
+                'pairing' => $this->pairing ?: null,
+                'tasting_notes' => $this->tasting_notes ?: null,
+                'consumption_recommendation' => $this->consumption_recommendation ?: null,
+                'recommended_temperature_min' => $this->recommended_temperature_min ?: null,
+                'recommended_temperature_max' => $this->recommended_temperature_max ?: null,
+                'tags' => $this->tags ?: null,
+                'residual_sugar' => $this->residual_sugar ?: null,
+                'total_acidity' => $this->total_acidity ?: null,
+                'volatile_acidity' => $this->volatile_acidity ?: null,
+                'ph' => $this->ph ?: null,
+                'vine_age' => $this->vine_age ?: null,
+                'altitude' => $this->altitude ?: null,
+                'soil_type' => $this->soil_type ?: null,
+                'winemaker' => $this->winemaker ?: null,
+                'harvest_method' => $this->harvest_method ?: null,
+                'fermentation_vessel' => $this->fermentation_vessel ?: null,
+                'oak_type' => $this->oak_type ?: null,
+                'oak_months' => $this->oak_months ?: null,
+                'awards_notes' => $this->awards_notes ?: null,
+                'production_quantity' => $this->production_quantity ?: null,
+                'bottling_date' => $this->bottling_date ?: null,
+                'release_date' => $this->release_date ?: null,
+                'notes' => $this->notes ?: null,
+            ],
+            $validGrapes->values()->all(),
+        );
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.winery.cellar.product-lots.edit', [
+        return __('Producto actualizado correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.product-lots.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
             'wines' => $this->wines,
             'grapeVarieties' => $this->grapeVarieties,
             'grapeTotal' => $this->grapeTotal,
-        ])->layout('layouts.app');
+        ];
     }
 
     protected function rules(): array

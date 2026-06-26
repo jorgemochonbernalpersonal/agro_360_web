@@ -4,8 +4,8 @@ namespace App\Livewire\Viticulturist\DigitalNotebook;
 
 use App\Models\AgriculturalActivity;
 use App\Models\CulturalWork;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class EditPruning extends AbstractActivityForm
 {
@@ -59,18 +59,18 @@ class EditPruning extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $this->activity->update($this->activityData('pruning'));
-
-                $this->culturalWork->update([
+            app(NotebookActivityService::class)->updateActivity(
+                $this->activity,
+                $this->activityData('pruning'),
+                fn () => $this->culturalWork->update([
                     'pruning_type' => $this->pruning_type,
                     'productive_buds_per_hectare' => $this->productive_buds_per_hectare ?: null,
                     'residue_management' => $this->residue_management ?: null,
                     'hours_worked' => $this->hours_worked ?: null,
                     'workers_count' => $this->workers_count ?: null,
                     'description' => $this->description,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Poda actualizada correctamente.'));
 

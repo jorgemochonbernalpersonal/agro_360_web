@@ -3,9 +3,7 @@
 namespace Tests\Feature\Viticulturist\Personal;
 
 use App\Livewire\Viticulturist\Personal\Create;
-use App\Models\Crew;
 use App\Models\User;
-use App\Models\WineryViticulturist;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 

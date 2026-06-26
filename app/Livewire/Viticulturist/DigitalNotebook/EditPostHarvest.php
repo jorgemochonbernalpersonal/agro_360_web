@@ -5,8 +5,8 @@ namespace App\Livewire\Viticulturist\DigitalNotebook;
 use App\Models\AgriculturalActivity;
 use App\Models\PhytosanitaryProduct;
 use App\Models\PostHarvestTreatment;
+use App\Services\NotebookActivityService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 
 /**
@@ -77,10 +77,10 @@ class EditPostHarvest extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $this->activity->update($this->activityData('post_harvest'));
-
-                $this->postHarvestTreatment->update([
+            app(NotebookActivityService::class)->updateActivity(
+                $this->activity,
+                $this->activityData('post_harvest'),
+                fn () => $this->postHarvestTreatment->update([
                     'product_id' => $this->product_id ?: null,
                     'application_type' => $this->application_type,
                     'treated_area_ha' => $this->treated_area_ha,
@@ -89,8 +89,8 @@ class EditPostHarvest extends AbstractActivityForm
                     'water_volume_liters' => $this->water_volume_liters ?: null,
                     'reentry_interval_hours' => $this->reentry_interval_hours !== '' ? (int) $this->reentry_interval_hours : null,
                     'notes' => $this->notes,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Tratamiento post-vendimia actualizado correctamente.'));
 

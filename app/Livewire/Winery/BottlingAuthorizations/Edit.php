@@ -2,17 +2,13 @@
 
 namespace App\Livewire\Winery\BottlingAuthorizations;
 
-use App\Livewire\Concerns\WithOwnershipRules;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractEdit;
 use App\Models\BottlingAuthorization;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class Edit extends Component
+class Edit extends AbstractEdit
 {
-    use WithOwnershipRules, WithToastNotifications;
-
     public BottlingAuthorization $bottlingAuthorization;
 
     public string $authorization_number = '';
@@ -38,6 +34,7 @@ class Edit extends Component
     public function mount(BottlingAuthorization $bottlingAuthorization): void
     {
         $this->authorize('update', $bottlingAuthorization);
+
         $this->bottlingAuthorization = $bottlingAuthorization;
         $this->authorization_number = $bottlingAuthorization->authorization_number;
         $this->authorization_type = $bottlingAuthorization->authorization_type;
@@ -53,10 +50,8 @@ class Edit extends Component
         $this->notes = $bottlingAuthorization->notes ?? '';
     }
 
-    public function save(): void
+    protected function performUpdate(): void
     {
-        $this->validate();
-
         $this->bottlingAuthorization->update([
             'authorization_number' => $this->authorization_number,
             'authorization_type' => $this->authorization_type,
@@ -69,18 +64,25 @@ class Edit extends Component
             'conditions' => $this->conditions ?: null,
             'notes' => $this->notes ?: null,
         ]);
-
-        $this->toastSuccess(__('Autorización de embotellado actualizada correctamente.'));
-        $this->redirect(roleRoute('bottling-authorizations.index'), navigate: true);
     }
 
-    public function render()
+    protected function successMessage(): string
     {
-        return view('livewire.winery.bottling-authorizations.edit', [
+        return __('Autorización de embotellado actualizada correctamente.');
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.bottling-authorizations.index';
+    }
+
+    protected function viewData(): array
+    {
+        return [
             'types' => BottlingAuthorization::authorizationTypeOptions(),
             'statuses' => BottlingAuthorization::statusOptions(),
             'wines' => Wine::where('user_id', Auth::id())->orderBy('name')->get(),
-        ])->layout('layouts.app');
+        ];
     }
 
     protected function rules(): array

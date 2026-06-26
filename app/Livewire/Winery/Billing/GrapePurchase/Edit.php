@@ -7,10 +7,8 @@ use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
-use App\Services\InvoiceService;
+use App\Services\GrapePurchaseService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
@@ -30,13 +28,6 @@ class Edit extends Component
     public string $payment_type = '';
 
     public array $lines = [];
-
-    protected InvoiceService $invoiceService;
-
-    public function boot(InvoiceService $invoiceService): void
-    {
-        $this->invoiceService = $invoiceService;
-    }
 
     public function mount(int $id): void
     {
@@ -123,58 +114,16 @@ class Edit extends Component
         $wineryId = Auth::id();
 
         try {
-            DB::transaction(function () use ($viticulturistId, $wineryId) {
-                // ── 1. Calculate new totals
-                $totals = $this->invoiceService->calculateIrpfTotals($this->lines);
-
-                // ── 2. Update invoice header (numbers stay unchanged)
-                $this->invoice->update([
+            app(GrapePurchaseService::class)->updateInvoice(
+                $this->invoice,
+                [
                     'invoice_date' => $this->invoice_date,
-                    'subtotal' => $totals['subtotal'],
-                    'tax_base' => $totals['tax_base'],
-                    'tax_amount' => $totals['tax_amount'],
-                    'total_amount' => $totals['total'],
                     'payment_type' => $this->payment_type ?: null,
                     'observations' => $this->observations ?: null,
-                ]);
-
-                // ── 3. Delete existing items
-                //       No stock to unreserve — GrapePurchase has no HarvestStock movements.
-                //       InvoiceItemObserver.deleting also skips items without harvest stock tracking.
-                $this->invoice->items()->delete();
-
-                // ── 4. Create new items with ownership + double-invoicing guards
-                foreach ($this->lines as $line) {
-                    $harvest = $this->invoiceService->validateWineryHarvestOwnership(
-                        (int) $line['harvest_id'],
-                        $wineryId,
-                        (int) $viticulturistId,
-                        $this->invoice->id,
-                    );
-
-                    $amounts = $this->invoiceService->calculateIrpfLine($line);
-                    $qty = $amounts['quantity'];
-                    $unitPrice = $amounts['unit_price'];
-
-                    $variety = $harvest->plotPlanting?->grapeVariety->name ?? 'uva';
-                    $description = $line['description'] ?: "Vendimia #{$harvest->id} - {$variety}";
-
-                    InvoiceItem::create([
-                        'invoice_id' => $this->invoice->id,
-                        'harvest_id' => $harvest->id,
-                        'concept_type' => 'harvest',
-                        'name' => $description,
-                        'description' => $line['description'] ?: null,
-                        'quantity' => $qty,
-                        'unit_price' => $unitPrice,
-                        'tax_rate' => $amounts['tax_rate'],
-                        'subtotal' => $amounts['subtotal'],
-                        'tax_base' => $amounts['tax_base'],
-                        'tax_amount' => $amounts['tax_amount'],
-                        'total' => $amounts['total'],
-                    ]);
-                }
-            });
+                ],
+                $this->lines,
+                $wineryId,
+            );
 
             $this->toastSuccess(__('Liquidación actualizada correctamente.'));
 

@@ -254,7 +254,7 @@ class LAICalculator
      * Calculate optimal treatment dose based on LAI
      * Higher LAI = more leaf area = more product needed
      *
-     * @param float $lai               Current LAI
+     * @param float $lai                 Current LAI
      * @param float $baseDoseLitersPerHa Base dose (L/ha)
      *
      * @return float Adjusted dose

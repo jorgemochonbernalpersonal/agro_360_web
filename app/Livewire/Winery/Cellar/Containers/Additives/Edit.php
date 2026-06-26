@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Cellar\Containers\Additives;
 
+use App\Livewire\Concerns\WithContainerAdditiveFormRules;
 use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithOwnershipRules, WithToastNotifications;
+    use WithContainerAdditiveFormRules, WithOwnershipRules, WithToastNotifications;
 
     public Container $container;
 
@@ -74,13 +75,6 @@ class Edit extends Component
 
     protected function rules(): array
     {
-        return [
-            'winery_supply_id' => $this->ownedWinerySupplyRule(false),
-            'additive_name' => ['nullable', 'string', 'max:200'],
-            'quantity' => ['required', 'numeric', 'min:0.001'],
-            'unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
-            'additive_date' => ['required', 'date'],
-            'notes' => ['nullable', 'string'],
-        ];
+        return $this->additiveFormRules();
     }
 }

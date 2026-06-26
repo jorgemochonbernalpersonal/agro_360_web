@@ -9,18 +9,6 @@ use Tests\Feature\ViticulturistTestCase;
 
 class IndexTest extends ViticulturistTestCase
 {
-    private function makeProduct($viticulturist, array $attrs = []): PhytosanitaryProduct
-    {
-        return PhytosanitaryProduct::create(array_merge([
-            'user_id' => $viticulturist->id,
-            'name' => 'Producto ' . uniqid(),
-            'registration_number' => 'ES-' . str_pad(rand(1, 99999999), 8, '0', STR_PAD_LEFT),
-            'registration_status' => 'active',
-            'withdrawal_period_days' => 0,
-            'active' => true,
-        ], $attrs));
-    }
-
     public function test_index_shows_active_products(): void
     {
         $v = $this->makeViticulturist();
@@ -95,5 +83,17 @@ class IndexTest extends ViticulturistTestCase
         Livewire::test(Index::class)
             ->call('switchTab', 'inactive')
             ->assertViewHas('stats', fn ($s) => $s['inactive'] === 1);
+    }
+
+    private function makeProduct($viticulturist, array $attrs = []): PhytosanitaryProduct
+    {
+        return PhytosanitaryProduct::create(array_merge([
+            'user_id' => $viticulturist->id,
+            'name' => 'Producto '.uniqid(),
+            'registration_number' => 'ES-'.str_pad(rand(1, 99999999), 8, '0', STR_PAD_LEFT),
+            'registration_status' => 'active',
+            'withdrawal_period_days' => 0,
+            'active' => true,
+        ], $attrs));
     }
 }

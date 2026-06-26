@@ -6,15 +6,12 @@ use App\Livewire\Concerns\WithProductSaleFormRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
-use App\Models\Invoice;
-use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
 use App\Models\ProductLot;
 use App\Models\Tax;
 use App\Services\InvoiceService;
-use App\Services\ProductStockService;
+use App\Services\ProductSaleService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
@@ -197,86 +194,28 @@ class Create extends Component
         $taxRates = $this->availableTaxes->keyBy('id');
 
         try {
-            DB::beginTransaction();
+            $invoice = app(ProductSaleService::class)->createSaleInvoice(
+                Auth::id(),
+                $client,
+                [
+                    'client_address_id' => $this->client_address_id ?: null,
+                    'delivery_note_date' => $this->delivery_note_date ?: null,
+                    'order_date' => $this->order_date,
+                    'invoice_date' => null,
+                    'payment_type' => $this->payment_type ?: null,
+                    'observations' => $this->observations ?: null,
+                    'observations_invoice' => $this->observations_invoice ?: null,
+                ],
+                $this->items,
+                $taxRates,
+                $this->is_gift,
+            );
 
-            $noteCode = $this->invoiceService->generateDeliveryNoteCode(Auth::id(), false, '');
-
-            $totals = $this->invoiceService->calculateVatTotals($this->items, $taxRates);
-
-            $multiplyGift = $this->is_gift ? 0 : 1;
-
-            // Crear factura en borrador (sin número de factura)
-            $invoice = Invoice::create([
-                'user_id' => Auth::id(),
-                'client_id' => $client->id,
-                'client_address_id' => $this->client_address_id ?: null,
-                'invoice_type' => 'wine_sale',
-                'delivery_note_code' => $noteCode,
-                'delivery_note_date' => $this->delivery_note_date ?: null,
-                'order_date' => $this->order_date,
-                'invoice_date' => null,
-                'delivery_status' => 'pending',
-                'status' => 'draft',
-                'payment_status' => 'unpaid',
-                'payment_type' => $this->payment_type ?: null,
-                'gift' => $this->is_gift,
-                'billing_first_name' => $client->first_name,
-                'billing_last_name' => $client->last_name,
-                'billing_company_name' => $client->company_name,
-                'billing_email' => $client->email,
-                'billing_phone' => $client->phone,
-                'subtotal' => round($totals['gross_subtotal'] * $multiplyGift, 3),
-                'discount_amount' => round($totals['discount_amount'] * $multiplyGift, 3),
-                'tax_base' => round($totals['tax_base'] * $multiplyGift, 3),
-                'tax_amount' => round($totals['tax_amount'] * $multiplyGift, 3),
-                'total_amount' => round($totals['total'] * $multiplyGift, 3),
-                'observations' => $this->observations ?: null,
-                'observations_invoice' => $this->observations_invoice ?: null,
-            ]);
-
-            // Crear líneas
-            foreach ($this->items as $item) {
-                $tax = $item['tax_id'] ? $taxRates[$item['tax_id']] ?? null : null;
-                $line = $this->invoiceService->calculateVatLine($item, $tax);
-                $qty = $line['quantity'];
-
-                $lot = $item['wine_lot_id']
-                    ? ProductLot::where('user_id', Auth::id())->lockForUpdate()->find($item['wine_lot_id'])
-                    : null;
-
-                $createdItem = InvoiceItem::create([
-                    'invoice_id' => $invoice->id,
-                    'wine_lot_id' => $lot?->id,
-                    'concept_type' => $item['concept_type'] ?? ($lot ? 'wine' : 'other'),
-                    'name' => $item['name'],
-                    'description' => $item['description'] ?: null,
-                    'sku' => $item['sku'] ?: ($lot->sku ?? null),
-                    'quantity' => $qty,
-                    'unit_price' => $line['unit_price'],
-                    'discount_percentage' => $line['discount_percentage'],
-                    'discount_amount' => $line['discount_amount'] * $multiplyGift,
-                    'tax_id' => $tax?->id,
-                    'tax_name' => $tax?->name,
-                    'tax_rate' => $line['tax_rate'],
-                    'subtotal' => $line['subtotal'] * $multiplyGift,
-                    'tax_base' => $line['tax_base'] * $multiplyGift,
-                    'tax_amount' => $line['tax_amount'] * $multiplyGift,
-                    'total' => $line['total'] * $multiplyGift,
-                ]);
-
-                if ($lot) {
-                    ProductStockService::moveOnCreate($invoice, $createdItem, $lot, $qty);
-                }
-            }
-
-            DB::commit();
-
-            $this->toastSuccess("Albarán {$noteCode} creado. Emítelo para generar el número de factura.");
+            $this->toastSuccess("Albarán {$invoice->delivery_note_code} creado. Emítelo para generar el número de factura.");
 
             return $this->roleRedirect('invoices.products.index');
 
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Error al crear factura de productos: '.$e->getMessage(), [
                 'user_id' => Auth::id(),
                 'exception' => $e,
@@ -312,7 +251,7 @@ class Create extends Component
                     }
                 },
             ],
-            'order_date'         => 'required|date',
+            'order_date' => 'required|date',
             'delivery_note_date' => 'nullable|date',
             'delivery_note_code' => 'required|string|max:255',
         ]);

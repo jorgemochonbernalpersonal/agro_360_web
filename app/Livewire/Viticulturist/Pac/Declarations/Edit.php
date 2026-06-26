@@ -5,10 +5,9 @@ namespace App\Livewire\Viticulturist\Pac\Declarations;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Models\PacDeclaration;
-use App\Models\PacDeclarationItem;
 use App\Models\Plot;
+use App\Services\PacDeclarationService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Edit extends Component
@@ -61,31 +60,13 @@ class Edit extends Component
             return;
         }
 
-        DB::transaction(function () use ($selectedIds, $status) {
-            $this->declaration->update([
-                'reference_number' => $this->reference_number ?: null,
-                'status' => $status,
-                'submitted_at' => $status === 'submitted' ? now() : null,
-                'notes' => $this->notes ?: null,
-            ]);
+        $selectedItems = array_intersect_key($this->items, array_flip($selectedIds));
 
-            // Sincronizar items: eliminar los que no están seleccionados
-            $this->declaration->items()->whereNotIn('plot_id', $selectedIds)->delete();
-
-            foreach ($selectedIds as $plotId) {
-                $item = $this->items[$plotId];
-                PacDeclarationItem::updateOrCreate(
-                    ['declaration_id' => $this->declaration->id, 'plot_id' => $plotId],
-                    [
-                        'declared_area' => $item['declared_area'],
-                        'eligible_area' => $item['eligible_area'],
-                        'eco_schemes' => ! empty($item['eco_schemes']) ? $item['eco_schemes'] : null,
-                    ]
-                );
-            }
-
-            $this->declaration->recalculateTotals();
-        });
+        app(PacDeclarationService::class)->update($this->declaration, [
+            'reference_number' => $this->reference_number,
+            'notes' => $this->notes,
+            'status' => $status,
+        ], $selectedItems);
 
         $label = $status === 'submitted' ? 'presentada' : 'guardada';
         $this->toastSuccess("Declaración PAC {$this->declaration->year} {$label} correctamente.");

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property mixed $total_used
  * @property mixed $pivot
  * @property mixed $notes
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static> empty()
  * @method static \Illuminate\Database\Eloquent\Builder<static> full()
  */

@@ -4,9 +4,8 @@ namespace App\Livewire\Viticulturist\Campaign;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
-use App\Models\WineryViticulturist;
+use App\Services\CampaignService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Create extends Component
@@ -27,12 +26,10 @@ class Create extends Component
 
     public function mount()
     {
-        // Validar autorización
         if (! Auth::user()->can('create', Campaign::class)) {
             abort(403, __('No tienes permiso para crear campañas.'));
         }
 
-        // Valores por defecto
         $this->year = now()->year;
         $this->start_date = now()->startOfYear()->format('Y-m-d');
         $this->end_date = now()->endOfYear()->format('Y-m-d');
@@ -45,50 +42,17 @@ class Create extends Component
 
         $user = Auth::user();
 
-        // Validar que no exista otra campaña del mismo año
-        $existingCampaign = Campaign::forViticulturist($user->id)
-            ->forYear($this->year)
-            ->first();
-
-        if ($existingCampaign) {
-            $this->addError('year', __('Ya existe una campaña para el año :year.', ['year' => $this->year]));
-
-            return;
-        }
-
         try {
-            DB::transaction(function () use ($user) {
-                // Vincular a bodega solo si el viticultor tiene exactamente una.
-                // Con múltiples bodegas no hay forma de saber a cuál pertenece esta campaña
-                // sin un selector explícito, por lo que se deja sin vincular.
-                $wineryViticulturistId = null;
-                if ($user->isViticulturist()) {
-                    $wineryRelations = WineryViticulturist::where('viticulturist_id', $user->id)
-                        ->whereNotNull('winery_id')
-                        ->get();
-                    if ($wineryRelations->count() === 1) {
-                        $wineryViticulturistId = $wineryRelations->first()->id;
-                    }
-                }
+            $result = app(CampaignService::class)->create($user, [
+                'name' => $this->name,
+                'year' => $this->year,
+                'start_date' => $this->start_date,
+                'end_date' => $this->end_date,
+                'description' => $this->description,
+                'active' => $this->active,
+            ]);
 
-                $campaign = Campaign::create([
-                    'name' => $this->name,
-                    'year' => $this->year,
-                    'viticulturist_id' => $user->id,
-                    'winery_viticulturist_id' => $wineryViticulturistId,  // ← Vincular a bodega
-                    'start_date' => $this->start_date ?: null,
-                    'end_date' => $this->end_date ?: null,
-                    'description' => $this->description,
-                    'active' => false, // Se activará después si es necesario
-                ]);
-
-                // Si se marca como activa, activarla
-                if ($this->active) {
-                    $campaign->activate();
-                }
-            });
-
-            if ($this->active) {
+            if ($result['activated']) {
                 session()->flash('campaign_activated', __('Campaña :year activada. Ya puedes registrar actividades.', ['year' => $this->year]));
                 $route = $user->isProducer() ? route('producer.digital-notebook.estimated-yields.index') : route('viticulturist.digital-notebook');
 
@@ -99,6 +63,8 @@ class Create extends Component
             $route = $user->isProducer() ? route('producer.campaign.index') : route('viticulturist.campaign.index');
 
             return $this->redirect($route, navigate: true);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
             \Log::error('Error al crear campaña', [
                 'error' => $e->getMessage(),
@@ -108,8 +74,6 @@ class Create extends Component
             ]);
 
             $this->toastError(__('Error al crear la campaña. Por favor, intenta de nuevo.'));
-
-            return;
         }
     }
 

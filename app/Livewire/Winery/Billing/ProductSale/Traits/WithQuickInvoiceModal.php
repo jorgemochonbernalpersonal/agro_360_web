@@ -8,6 +8,7 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
 use App\Models\ProductLot;
 use App\Models\Tax;
+use App\Services\InvoiceService;
 use App\Services\ProductStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -114,13 +115,19 @@ trait WithQuickInvoiceModal
         $qty = (float) $this->quickQty;
         $price = (float) $this->quickPrice;
         $tax = $this->quickTaxId ? ($taxes[$this->quickTaxId] ?? null) : null;
-        $taxRate = $tax ? (float) $tax->rate : 0;
-        $subtotal = round($qty * $price, 3);
-        $taxAmt = round($subtotal * ($taxRate / 100), 3);
-        $total = $subtotal + $taxAmt;
+
+        $vatLine = app(InvoiceService::class)->calculateVatLine([
+            'quantity' => $qty,
+            'unit_price' => $price,
+            'discount_percentage' => 0,
+        ], $tax);
+
+        $subtotal = $vatLine['subtotal'];
+        $taxAmt = $vatLine['tax_amount'];
+        $total = $vatLine['total'];
 
         try {
-            DB::transaction(function () use ($client, $tax, $qty, $price, $taxRate, $subtotal, $taxAmt, $total) {
+            DB::transaction(function () use ($client, $tax, $qty, $price, $vatLine, $subtotal, $taxAmt, $total) {
                 $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
                 $noteCode = $settings->generateAndIncrementDeliveryNoteCode();
 
@@ -143,7 +150,7 @@ trait WithQuickInvoiceModal
                     'billing_phone' => $client->phone,
                     'subtotal' => $subtotal,
                     'discount_amount' => 0,
-                    'tax_base' => $subtotal,
+                    'tax_base' => $vatLine['tax_base'],
                     'tax_amount' => $taxAmt,
                     'total_amount' => $total,
                 ]);
@@ -160,9 +167,9 @@ trait WithQuickInvoiceModal
                     'discount_amount' => 0,
                     'tax_id' => $tax?->id,
                     'tax_name' => $tax?->name,
-                    'tax_rate' => $taxRate,
+                    'tax_rate' => $vatLine['tax_rate'],
                     'subtotal' => $subtotal,
-                    'tax_base' => $subtotal,
+                    'tax_base' => $vatLine['tax_base'],
                     'tax_amount' => $taxAmt,
                     'total' => $total,
                 ]);

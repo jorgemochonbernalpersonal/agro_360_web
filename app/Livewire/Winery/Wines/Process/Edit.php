@@ -4,6 +4,7 @@ namespace App\Livewire\Winery\Wines\Process;
 
 use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithWineProcessFormRules;
 use App\Models\Container;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithOwnershipRules, WithToastNotifications;
+    use WithOwnershipRules, WithToastNotifications, WithWineProcessFormRules;
 
     public Wine $wine;
 
@@ -116,16 +117,6 @@ class Edit extends Component
 
     protected function rules(): array
     {
-        return [
-            'process_type' => ['required', 'in:'.implode(',', array_keys(WineProcessDetail::PROCESS_TYPES))],
-            'container_id' => $this->ownedContainerRule(false),
-            'start_date' => ['required', 'date'],
-            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'quantity' => ['nullable', 'numeric', 'min:0'],
-            'unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],
-            'observations' => ['nullable', 'string'],
-            'extraContainers.*.container_id' => $this->ownedContainerRule(false),
-            'extraContainers.*.quantity' => ['nullable', 'numeric', 'min:0'],
-        ];
+        return $this->wineProcessFormRules();
     }
 }

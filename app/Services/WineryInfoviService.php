@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Livewire\Winery\Silicie\Traits;
+namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 
-trait HasInfoviCalculations
+class WineryInfoviService
 {
-    const WINE_CATEGORIES = [
+    public const WINE_CATEGORIES = [
         'red' => 'Vino tinto tranquilo',
         'white' => 'Vino blanco tranquilo',
         'rose' => 'Vino rosado tranquilo',
@@ -17,13 +17,13 @@ trait HasInfoviCalculations
         'other' => 'Otros vinos',
     ];
 
-    const PROTECTION_LEVELS = [
+    public const PROTECTION_LEVELS = [
         'DO' => 'Denominación de Origen (DO/DOCa/Pago)',
         'IGP' => 'Indicación Geográfica Protegida (IGP)',
         'VdM' => 'Vino de Mesa / Sin indicación geográfica',
     ];
 
-    const BOTTLE_ML = [
+    public const BOTTLE_ML = [
         '187' => 187,
         '375' => 375,
         '500' => 500,
@@ -34,7 +34,7 @@ trait HasInfoviCalculations
         '5000' => 5000,
     ];
 
-    private function buildThreshold(int $wineryId): array
+    public function buildThreshold(int $wineryId): array
     {
         $vintageHl = DB::table('wines')
             ->where('user_id', $wineryId)
@@ -62,45 +62,7 @@ trait HasInfoviCalculations
         ];
     }
 
-    private function buildDeadlines(bool $isLarge): array
-    {
-        $now = now();
-        $deadlines = [];
-
-        if ($isLarge) {
-            $nextMonth = $now->copy()->addMonth()->startOfMonth();
-            $deadlines[] = [
-                'label' => 'Declaración mensual '.$nextMonth->translatedFormat('F Y'),
-                'date' => $nextMonth->copy()->setDay(19)->toDateString(),
-                'type' => 'monthly',
-            ];
-        } else {
-            $candidates = [
-                now()->year.'-08-19',
-                now()->year.'-12-19',
-                (now()->year + 1).'-08-19',
-                (now()->year + 1).'-12-19',
-            ];
-            foreach ($candidates as $d) {
-                if ($d >= $now->toDateString()) {
-                    $date = \Carbon\Carbon::parse($d);
-                    $month = $date->month === 12 ? 'noviembre' : 'julio';
-                    $deadlines[] = [
-                        'label' => 'Declaración ampliada '.$month.' '.$date->year,
-                        'date' => $d,
-                        'type' => 'semi_annual',
-                    ];
-                    if (count($deadlines) >= 2) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        return $deadlines;
-    }
-
-    private function buildCuadroExistencias(int $wineryId, int $campaign): array
+    public function buildCuadroExistencias(int $wineryId, int $campaign, bool $showCategoryBreakdown): array
     {
         $snapshotDate = DB::table('wine_stock_snapshots')
             ->where('user_id', $wineryId)
@@ -122,7 +84,7 @@ trait HasInfoviCalculations
                 ->groupBy('wss.wine_type')
                 ->get();
 
-            $categoryRows = $this->showCategoryBreakdown
+            $categoryRows = $showCategoryBreakdown
                 ? DB::table('wine_stock_snapshots as wss')
                     ->join('wines as w', 'w.id', '=', 'wss.wine_id')
                     ->where('wss.user_id', $wineryId)
@@ -151,7 +113,7 @@ trait HasInfoviCalculations
                 ->groupBy('w.wine_type')
                 ->get();
 
-            $categoryRows = $this->showCategoryBreakdown
+            $categoryRows = $showCategoryBreakdown
                 ? DB::table('container_current_states as ccs')
                     ->join('containers as c', 'c.id', '=', 'ccs.container_id')
                     ->join('wines as w', 'w.id', '=', 'ccs.wine_id')
@@ -176,7 +138,7 @@ trait HasInfoviCalculations
             $hl = $row ? round((float) $row->hl, 3) : 0;
 
             $categories = [];
-            if ($this->showCategoryBreakdown) {
+            if ($showCategoryBreakdown) {
                 foreach (self::PROTECTION_LEVELS as $lvl => $lvlLabel) {
                     $catRow = $categoryRows->first(fn ($r) => $r->wine_type === $type && $r->infovi_bucket === $lvl);
                     $categories[$lvl] = [
@@ -204,7 +166,7 @@ trait HasInfoviCalculations
         ];
     }
 
-    private function buildCuadroProduccion(int $wineryId, int $campaign): array
+    public function buildCuadroProduccion(int $wineryId, int $campaign, bool $showCategoryBreakdown): array
     {
         $rows = DB::table('wines as w')
             ->where('w.user_id', $wineryId)
@@ -221,7 +183,7 @@ trait HasInfoviCalculations
             ->groupBy('w.wine_type')
             ->get();
 
-        $categoryRows = $this->showCategoryBreakdown
+        $categoryRows = $showCategoryBreakdown
             ? DB::table('wines as w')
                 ->where('w.user_id', $wineryId)
                 ->where('w.vintage', $campaign)
@@ -246,7 +208,7 @@ trait HasInfoviCalculations
             $hl = $row ? round((float) $row->hl, 3) : 0;
 
             $categories = [];
-            if ($this->showCategoryBreakdown) {
+            if ($showCategoryBreakdown) {
                 foreach (self::PROTECTION_LEVELS as $lvl => $lvlLabel) {
                     $catRow = $categoryRows->first(fn ($r) => $r->wine_type === $type && $r->infovi_bucket === $lvl);
                     $categories[$lvl] = [
@@ -272,7 +234,7 @@ trait HasInfoviCalculations
         ];
     }
 
-    private function buildCuadroVentas(int $wineryId, string $from, string $to): array
+    public function buildCuadroVentas(int $wineryId, string $from, string $to): array
     {
         $lotRows = DB::table('invoice_items as ii')
             ->join('invoices as i', 'i.id', '=', 'ii.invoice_id')
@@ -334,7 +296,7 @@ trait HasInfoviCalculations
         ];
     }
 
-    private function buildCuadroEntradas(int $wineryId, int $campaign, string $from, string $to): array
+    public function buildCuadroEntradas(int $wineryId, int $campaign, string $from, string $to): array
     {
         $kgPropia = DB::table('harvests')
             ->where('winery_id', $wineryId)
@@ -361,7 +323,7 @@ trait HasInfoviCalculations
         ];
     }
 
-    private function buildBalanceSheet(int $wineryId, int $campaign, string $campaignStart, string $campaignEnd): array
+    public function buildBalanceSheet(int $wineryId, int $campaign, string $campaignStart, string $campaignEnd): array
     {
         $openingSnapshotDate = DB::table('wine_stock_snapshots')
             ->where('user_id', $wineryId)
@@ -493,7 +455,7 @@ trait HasInfoviCalculations
         ];
     }
 
-    private function buildCuadroMosto(int $wineryId, int $campaign, string $from, string $to): array
+    public function buildCuadroMosto(int $wineryId, int $campaign, string $from, string $to): array
     {
         $openingDate = DB::table('wine_stock_snapshots')
             ->where('user_id', $wineryId)
@@ -576,5 +538,43 @@ trait HasInfoviCalculations
             'closing_snapshot' => $closingDate,
             'has_data' => ($producido + $comprado + $apertura) > 0,
         ];
+    }
+
+    private function buildDeadlines(bool $isLarge): array
+    {
+        $now = now();
+        $deadlines = [];
+
+        if ($isLarge) {
+            $nextMonth = $now->copy()->addMonth()->startOfMonth();
+            $deadlines[] = [
+                'label' => 'Declaración mensual '.$nextMonth->translatedFormat('F Y'),
+                'date' => $nextMonth->copy()->setDay(19)->toDateString(),
+                'type' => 'monthly',
+            ];
+        } else {
+            $candidates = [
+                now()->year.'-08-19',
+                now()->year.'-12-19',
+                (now()->year + 1).'-08-19',
+                (now()->year + 1).'-12-19',
+            ];
+            foreach ($candidates as $d) {
+                if ($d >= $now->toDateString()) {
+                    $date = \Carbon\Carbon::parse($d);
+                    $month = $date->month === 12 ? 'noviembre' : 'julio';
+                    $deadlines[] = [
+                        'label' => 'Declaración ampliada '.$month.' '.$date->year,
+                        'date' => $d,
+                        'type' => 'semi_annual',
+                    ];
+                    if (count($deadlines) >= 2) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $deadlines;
     }
 }

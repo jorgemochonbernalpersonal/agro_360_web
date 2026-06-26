@@ -33,7 +33,7 @@ class WineProcessOwnershipTest extends WineryTestCase
         $this->owner = $this->makeWinery();
         $this->other = $this->makeOtherWinery();
         $this->admin = User::factory()->create(['role' => 'admin']);
-        $this->wine  = Wine::create(['user_id' => $this->owner->id, 'name' => 'Tempranillo Test']);
+        $this->wine = Wine::create(['user_id' => $this->owner->id, 'name' => 'Tempranillo Test']);
     }
 
     // ── WineTransferPolicy ────────────────────────────────────────────────────

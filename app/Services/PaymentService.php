@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
@@ -174,25 +175,30 @@ class PaymentService
             ->where('user_id', $user->id)
             ->firstOrFail();
 
-        // 2. Capturar el pago en PayPal
+        // 2. Capturar el pago en PayPal (externo — fuera de la transacción BD)
         $paypalResponse = $this->capturePayPalPayment($orderId);
 
-        // 3. Marcar el pago como completado
-        $this->completePayment($payment, $paypalResponse);
+        // 3-6. Efectos en BD son atómicos: si cualquier write falla, todo revierte
+        $subscription = DB::transaction(function () use ($user, $payment, $paypalResponse, $pendingData, $orderId) {
+            // 3. Marcar el pago como completado
+            $this->completePayment($payment, $paypalResponse);
 
-        // 4. Cancelar suscripciones anteriores
-        $this->cancelActiveSubscriptions($user);
+            // 4. Cancelar suscripciones anteriores
+            $this->cancelActiveSubscriptions($user);
 
-        // 5. Crear nueva suscripción
-        $subscription = $this->createSubscription(
-            $user,
-            $pendingData['plan_type'],
-            $pendingData['amount'],
-            $orderId
-        );
+            // 5. Crear nueva suscripción
+            $subscription = $this->createSubscription(
+                $user,
+                $pendingData['plan_type'],
+                $pendingData['amount'],
+                $orderId
+            );
 
-        // 6. Vincular pago con suscripción
-        $this->linkPaymentToSubscription($payment, $subscription);
+            // 6. Vincular pago con suscripción
+            $this->linkPaymentToSubscription($payment, $subscription);
+
+            return $subscription;
+        });
 
         return $subscription;
     }

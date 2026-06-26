@@ -132,9 +132,9 @@ class UserManagementTest extends TestCase
     {
         // Usuario con beta de 3 meses ya concedida
         $this->winery->update([
-            'is_beta_user'       => true,
+            'is_beta_user' => true,
             'beta_access_granted' => true,
-            'beta_ends_at'       => now()->addMonths(3),
+            'beta_ends_at' => now()->addMonths(3),
         ]);
 
         $this->actingAs($this->admin);

@@ -42,7 +42,15 @@ class WineryAnnouncement extends Model
         self::TYPE_HARVEST_ALERT => 'bell-alert',
     ];
 
-    protected $guarded = [];
+    protected $fillable = [
+        'winery_id',
+        'title',
+        'body',
+        'type',
+        'target',
+        'published_at',
+        'expires_at',
+    ];
 
     protected $casts = [
         'published_at' => 'datetime',

@@ -19,12 +19,12 @@ trait WithProductSaleFormRules
                     }
                 },
             ],
-            'payment_type'                 => 'nullable|in:cash,transfer,check,other',
-            'observations'                 => 'nullable|string',
-            'observations_invoice'         => 'nullable|string',
-            'items'                        => 'required|array|min:1',
-            'items.*.name'                 => 'required|string|max:255',
-            'items.*.wine_lot_id'          => [
+            'payment_type' => 'nullable|in:cash,transfer,check,other',
+            'observations' => 'nullable|string',
+            'observations_invoice' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.name' => 'required|string|max:255',
+            'items.*.wine_lot_id' => [
                 'nullable',
                 function ($attribute, $value, $fail) use ($allowArchivedLots) {
                     if ($value) {
@@ -39,12 +39,12 @@ trait WithProductSaleFormRules
                     }
                 },
             ],
-            'items.*.quantity'             => 'required|numeric|min:0.001',
-            'items.*.unit_price'           => 'required|numeric|min:0',
-            'items.*.tax_id'               => 'nullable|exists:taxes,id',
-            'items.*.discount_percentage'  => 'nullable|numeric|min:0|max:100',
-            'items.*.description'          => 'nullable|string',
-            'items.*.sku'                  => 'nullable|string|max:100',
+            'items.*.quantity' => 'required|numeric|min:0.001',
+            'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.tax_id' => 'nullable|exists:taxes,id',
+            'items.*.discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'items.*.description' => 'nullable|string',
+            'items.*.sku' => 'nullable|string|max:100',
         ];
     }
 }

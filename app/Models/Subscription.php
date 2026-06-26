@@ -65,7 +65,26 @@ class Subscription extends Model
         ['min' => 26,  'max' => 50,  'label' => 'do_m',      'monthly' => 249.00, 'yearly' => 2350.00],
         ['min' => 51,  'max' => 75,  'label' => 'do_l',      'monthly' => 349.00, 'yearly' => 3300.00],
         ['min' => 76,  'max' => 100, 'label' => 'do_xl',     'monthly' => 449.00, 'yearly' => 4250.00],
-        ['min' => 101, 'max' => null,'label' => 'enterprise', 'monthly' => null,   'yearly' => null],
+        ['min' => 101, 'max' => null, 'label' => 'enterprise', 'monthly' => null,   'yearly' => null],
+    ];
+
+    protected $fillable = [
+        'user_id',
+        'plan_type',
+        'amount',
+        'status',
+        'starts_at',
+        'ends_at',
+        'cancelled_at',
+        'paypal_subscription_id',
+        'paypal_plan_id',
+    ];
+
+    protected $casts = [
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+        'cancelled_at' => 'datetime',
+        'amount' => 'decimal:2',
     ];
 
     /**
@@ -99,25 +118,6 @@ class Subscription extends Model
 
         return self::WINERY_TIERS[0];
     }
-
-    protected $fillable = [
-        'user_id',
-        'plan_type',
-        'amount',
-        'status',
-        'starts_at',
-        'ends_at',
-        'cancelled_at',
-        'paypal_subscription_id',
-        'paypal_plan_id',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-        'cancelled_at' => 'datetime',
-        'amount' => 'decimal:2',
-    ];
 
     /**
      * Relación con el usuario

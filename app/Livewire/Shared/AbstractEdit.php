@@ -52,6 +52,14 @@ abstract class AbstractEdit extends Component
     }
 
     /**
+     * The authenticated user's id, for ownership comparisons in performUpdate().
+     */
+    protected function ownerId(): int
+    {
+        return (int) Auth::id();
+    }
+
+    /**
      * Guard ownership in mount(): aborts 403 if the model is not owned by the
      * authenticated user. Roles with relational ownership (e.g. harvest via
      * activity) should override this with their own check.

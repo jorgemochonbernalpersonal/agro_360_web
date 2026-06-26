@@ -6,14 +6,11 @@ use App\Livewire\Concerns\WithGrapePurchaseFormRules;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
-use App\Models\Invoice;
-use App\Models\InvoiceItem;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use App\Notifications\GrapePurchaseInvoiceIssuedNotification;
-use App\Services\InvoiceService;
+use App\Services\GrapePurchaseService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
@@ -31,13 +28,6 @@ class Create extends Component
 
     // Selected harvest rows
     public array $lines = [];
-
-    protected InvoiceService $invoiceService;
-
-    public function boot(InvoiceService $invoiceService): void
-    {
-        $this->invoiceService = $invoiceService;
-    }
 
     public function mount(): void
     {
@@ -100,78 +90,25 @@ class Create extends Component
         $viticulturist = User::findOrFail($this->viticulturist_id);
 
         try {
-            DB::beginTransaction();
+            $invoice = app(GrapePurchaseService::class)->createInvoice(
+                Auth::id(),
+                $viticulturist,
+                [
+                    'invoice_date' => $this->invoice_date,
+                    'payment_type' => $this->payment_type ?: null,
+                    'observations' => $this->observations ?: null,
+                ],
+                $this->lines,
+            );
 
-            // ── Atomic sequential numbering ───────────────────────────────────────────
-            ['number' => $number, 'noteCode' => $noteCode] =
-                $this->invoiceService->generateSequentialNumber(Auth::id(), 'grape_purchase_seq', 'GP-', 'LIQ-');
-
-            // ── Calculate totals (IRPF: tax deducted from payment) ────────────────────
-            $totals = $this->invoiceService->calculateIrpfTotals($this->lines);
-
-            // ── Create invoice ────────────────────────────────────────────────────────
-            $invoice = Invoice::create([
-                'user_id' => Auth::id(),
-                'invoice_type' => 'grape_purchase',
-                'viticulturist_id' => $viticulturist->id,
-                'invoice_number' => $number,
-                'delivery_note_code' => $noteCode,
-                'invoice_date' => $this->invoice_date,
-                'billing_first_name' => $viticulturist->name,
-                'billing_email' => $viticulturist->email,
-                'subtotal' => $totals['subtotal'],
-                'tax_base' => $totals['tax_base'],
-                'tax_amount' => $totals['tax_amount'],
-                'total_amount' => $totals['total'],
-                'status' => 'draft',
-                'payment_status' => 'unpaid',
-                'payment_type' => $this->payment_type ?: null,
-                'observations' => $this->observations ?: null,
-            ]);
-
-            // ── Create items — guard against double-invoicing per harvest ─────────────
-            foreach ($this->lines as $line) {
-                $harvest = $this->invoiceService->validateWineryHarvestOwnership(
-                    (int) $line['harvest_id'],
-                    Auth::id(),
-                    (int) $this->viticulturist_id,
-                );
-
-                $amounts = $this->invoiceService->calculateIrpfLine($line);
-                $qty = $amounts['quantity'];
-                $unitPrice = $amounts['unit_price'];
-
-                $variety = $harvest->plotPlanting?->grapeVariety->name ?? 'uva';
-                $description = $line['description'] ?: "Vendimia #{$harvest->id} - {$variety}";
-
-                InvoiceItem::create([
-                    'invoice_id' => $invoice->id,
-                    'harvest_id' => $harvest->id,
-                    'concept_type' => 'harvest',
-                    'name' => $description,
-                    'description' => $line['description'] ?: null,
-                    'quantity' => $qty,
-                    'unit_price' => $unitPrice,
-                    'tax_rate' => $amounts['tax_rate'],
-                    'subtotal' => $amounts['subtotal'],
-                    'tax_base' => $amounts['tax_base'],
-                    'tax_amount' => $amounts['tax_amount'],
-                    'total' => $amounts['total'],
-                ]);
-            }
-
-            DB::commit();
-
-            // Notify viticulturist
             $invoice->load('user');
             $viticulturist->notify(new GrapePurchaseInvoiceIssuedNotification($invoice));
 
-            $this->toastSuccess("Liquidación {$number} creada — Ref.: {$noteCode}");
+            $this->toastSuccess("Liquidación {$invoice->invoice_number} creada — Ref.: {$invoice->delivery_note_code}");
 
             return $this->roleRedirect('invoices.grape-purchase.index');
 
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Error al crear liquidación de vendimia: '.$e->getMessage(), [
                 'user_id' => Auth::id(),
                 'exception' => $e,

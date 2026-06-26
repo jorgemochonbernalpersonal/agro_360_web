@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property mixed $total_volume
- * @property mixed $operations
- * @property mixed $count
- * @property mixed $month
- * @property mixed $net_volume
+ * @property mixed  $total_volume
+ * @property mixed  $operations
+ * @property mixed  $count
+ * @property mixed  $month
+ * @property mixed  $net_volume
  * @property string $operation_type
  */
 class ContainerHistory extends Model

@@ -261,17 +261,13 @@ class Create extends Component
             }
 
             // Validar duplicados final antes de guardar
-            $polygonPlotEnclosure = [];
             foreach ($this->sigpacCodes as $index => $sigpacData) {
-                $polygon = $sigpacData['code_polygon'] ?? '';
-                $plotCode = $sigpacData['code_plot'] ?? '';
-                $enclosure = $sigpacData['code_enclosure'] ?? '';
-
-                $key = "{$polygon}-{$plotCode}-{$enclosure}";
-                if (isset($polygonPlotEnclosure[$key])) {
+                if ($this->hasDuplicate($index)) {
+                    $polygon = $sigpacData['code_polygon'] ?? '';
+                    $plotCode = $sigpacData['code_plot'] ?? '';
+                    $enclosure = $sigpacData['code_enclosure'] ?? '';
                     throw new \Exception("No puedes tener dos códigos SIGPAC con el mismo Polígono ({$polygon}), Parcela ({$plotCode}) y Recinto ({$enclosure}).");
                 }
-                $polygonPlotEnclosure[$key] = true;
             }
 
             $createdCodes = [];
@@ -365,35 +361,14 @@ class Create extends Component
             ];
 
             // Validar que no haya duplicados dentro del mismo formulario
-            // No puede haber dos códigos con el mismo Polígono + Parcela + Recinto
             $rules["sigpacCodes.{$index}.duplicate_check"] = [
                 function ($attribute, $value, $fail) use ($index) {
-                    $code = $this->sigpacCodes[$index] ?? [];
-                    $polygon = $code['code_polygon'] ?? '';
-                    $plot = $code['code_plot'] ?? '';
-                    $enclosure = $code['code_enclosure'] ?? '';
-
-                    // Solo validar si todos los campos están completos
-                    if (! empty($polygon) && strlen($polygon) <= 3 && strlen($plot) === 5 && strlen($enclosure) === 3) {
-                        // Buscar duplicados en otros códigos del formulario
-                        foreach ($this->sigpacCodes as $otherIndex => $otherCode) {
-                            if ($otherIndex !== $index) {
-                                $otherPolygon = $otherCode['code_polygon'] ?? '';
-                                $otherPlot = $otherCode['code_plot'] ?? '';
-                                $otherEnclosure = $otherCode['code_enclosure'] ?? '';
-
-                                // Si todos los campos están completos y coinciden
-                                if (! empty($otherPolygon) &&
-                                        strlen($otherPolygon) <= 3 &&
-                                        strlen($otherPlot) === 5 &&
-                                        strlen($otherEnclosure) === 3 &&
-                                        $polygon === $otherPolygon &&
-                                        $plot === $otherPlot &&
-                                        $enclosure === $otherEnclosure) {
-                                    $fail("No puedes tener dos códigos SIGPAC con el mismo Polígono ({$polygon}), Parcela ({$plot}) y Recinto ({$enclosure}). Al menos uno de estos campos debe ser diferente.");
-                                }
-                            }
-                        }
+                    if ($this->hasDuplicate($index)) {
+                        $code = $this->sigpacCodes[$index] ?? [];
+                        $polygon = $code['code_polygon'] ?? '';
+                        $plot = $code['code_plot'] ?? '';
+                        $enclosure = $code['code_enclosure'] ?? '';
+                        $fail("No puedes tener dos códigos SIGPAC con el mismo Polígono ({$polygon}), Parcela ({$plot}) y Recinto ({$enclosure}). Al menos uno de estos campos debe ser diferente.");
                     }
                 },
             ];

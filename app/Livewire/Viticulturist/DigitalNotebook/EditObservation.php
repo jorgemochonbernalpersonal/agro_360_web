@@ -4,9 +4,9 @@ namespace App\Livewire\Viticulturist\DigitalNotebook;
 
 use App\Models\AgriculturalActivity;
 use App\Models\Observation;
+use App\Services\NotebookActivityService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class EditObservation extends AbstractActivityForm
 {
@@ -64,10 +64,10 @@ class EditObservation extends AbstractActivityForm
         $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
-            DB::transaction(function () {
-                $this->activity->update($this->activityData('observation'));
-
-                $this->observation->update([
+            app(NotebookActivityService::class)->updateActivity(
+                $this->activity,
+                $this->activityData('observation'),
+                fn () => $this->observation->update([
                     'observation_type' => $this->observation_type,
                     'description' => $this->description,
                     'severity' => $this->severity ?: null,
@@ -75,8 +75,8 @@ class EditObservation extends AbstractActivityForm
                     'threshold_exceeded' => (bool) $this->threshold_exceeded,
                     'follow_up_date' => $this->follow_up_date ?: null,
                     'action_taken' => $this->action_taken,
-                ]);
-            });
+                ]),
+            );
 
             $this->toastSuccess(__('Observación actualizada correctamente.'));
 

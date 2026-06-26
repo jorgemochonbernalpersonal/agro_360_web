@@ -26,6 +26,10 @@ class InvoiceService
         string $numberPrefix,
         string $notePrefix,
     ): array {
+        if (DB::transactionLevel() === 0) {
+            throw new RuntimeException('generateSequentialNumber debe llamarse dentro de una DB::transaction().');
+        }
+
         DB::table('users')->where('id', $userId)->lockForUpdate()->first();
         DB::table('users')->where('id', $userId)->increment($seqColumn);
         $seq = DB::table('users')->where('id', $userId)->value($seqColumn);

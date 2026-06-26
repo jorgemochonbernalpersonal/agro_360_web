@@ -5,7 +5,6 @@ namespace Tests\Feature\Winery\LabelBatches;
 use App\Livewire\Winery\LabelBatches\Create;
 use App\Livewire\Winery\LabelBatches\Edit;
 use App\Livewire\Winery\LabelBatches\Waste\Create as WasteCreate;
-use App\Livewire\Winery\LabelBatches\Waste\Index as WasteIndex;
 use App\Models\LabelBatch;
 use App\Models\User;
 use App\Models\Wine;

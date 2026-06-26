@@ -3,7 +3,6 @@
 namespace Tests\Feature\Viticulturist\BiodiversityRecords;
 
 use App\Livewire\Viticulturist\BiodiversityRecords\Create;
-use App\Models\BiodiversityRecord;
 use App\Models\Plot;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;

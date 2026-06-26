@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\AgriculturalActivity;
 use App\Models\Traits\HasBetaAccess;
 use App\Models\Traits\HasHierarchy;
 use App\Models\Traits\HasInvoicing;
@@ -18,30 +17,30 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * @property array<string, mixed>|null $notification_preferences
- * @property array<string, mixed>|null $preferences
+ * @property array<string, mixed>|null       $notification_preferences
+ * @property array<string, mixed>|null       $preferences
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \Illuminate\Support\Carbon|null $invitation_sent_at
  * @property \Illuminate\Support\Carbon|null $invitation_expires_at
  * @property \Illuminate\Support\Carbon|null $beta_ends_at
  * @property \Illuminate\Support\Carbon|null $last_login_at
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @property mixed $total
- * @property mixed $role_admin
- * @property mixed $role_supervisor
- * @property mixed $role_winery
- * @property mixed $role_viticulturist
- * @property mixed $role_producer
- * @property mixed $active
- * @property mixed $inactive
- * @property mixed $verified
- * @property mixed $unverified
- * @property mixed $beta_active
- * @property mixed $beta_expired
- * @property mixed $can_edit
- * @property mixed $activeSubscription
- * @property mixed $adminNotes
+ * @property \Illuminate\Support\Carbon      $created_at
+ * @property \Illuminate\Support\Carbon      $updated_at
+ * @property mixed                           $total
+ * @property mixed                           $role_admin
+ * @property mixed                           $role_supervisor
+ * @property mixed                           $role_winery
+ * @property mixed                           $role_viticulturist
+ * @property mixed                           $role_producer
+ * @property mixed                           $active
+ * @property mixed                           $inactive
+ * @property mixed                           $verified
+ * @property mixed                           $unverified
+ * @property mixed                           $beta_active
+ * @property mixed                           $beta_expired
+ * @property mixed                           $can_edit
+ * @property mixed                           $activeSubscription
+ * @property mixed                           $adminNotes
  */
 class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {

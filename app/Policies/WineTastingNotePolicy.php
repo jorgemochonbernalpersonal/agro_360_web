@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\WineTastingNote;
 use App\Models\User;
+use App\Models\WineTastingNote;
 
 class WineTastingNotePolicy
 {
