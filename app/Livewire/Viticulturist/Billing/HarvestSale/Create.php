@@ -149,9 +149,6 @@ class Create extends Component
                     $harvest->harvest_start_date->format('d/m/Y')
                 );
 
-                // Reserve stock (available → reserved)
-                $this->reserveHarvestStock($harvest->id, $qty, $invoice->id);
-
                 // Create invoice item
                 $item = InvoiceItem::create([
                     'invoice_id' => $invoice->id,
@@ -227,7 +224,6 @@ class Create extends Component
             ->get()
             ->map(function ($harvest) {
                 $latest = HarvestStock::where('harvest_id', $harvest->id)
-                    ->whereNull('container_id')
                     ->latest()
                     ->first();
 

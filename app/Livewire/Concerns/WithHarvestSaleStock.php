@@ -15,7 +15,6 @@ trait WithHarvestSaleStock
     private function getHarvestStockState(int $harvestId): array
     {
         $latest = HarvestStock::where('harvest_id', $harvestId)
-            ->whereNull('container_id')
             ->orderByDesc('id')
             ->first();
 

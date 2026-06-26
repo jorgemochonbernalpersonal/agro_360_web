@@ -282,7 +282,6 @@ class Edit extends Component
             ->get()
             ->map(function ($harvest) use ($currentHarvestIds) {
                 $latest = HarvestStock::where('harvest_id', $harvest->id)
-                    ->whereNull('container_id')
                     ->latest()
                     ->first();
 
