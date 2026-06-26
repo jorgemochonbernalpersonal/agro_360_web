@@ -139,4 +139,7 @@ return [
     'founder_code' => env('FOUNDER_CODE', ''),
     'founder_max_slots' => 25,
 
+    // App móvil Android (Google Play). Roles soportados: viticultor y bodega.
+    'play_store_url' => env('PLAY_STORE_URL', 'https://play.google.com/store/apps/details?id=com.agro365.mobile'),
+
 ];

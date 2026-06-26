@@ -38,7 +38,7 @@ return [
         'content.plantaciones-viñedo' => 'plantaciones-viñedo-variedades',
         'content.rendimientos-cosecha' => 'rendimientos-cosecha-viñedo',
         'content.informes-oficiales' => 'informes-oficiales-agricultura',
-        'content.ndvi-teledeteccion' => 'ndvi-viñedo-teledeteccion',
+        'content.ndvi-teledeteccion' => 'ndvi-vinedo-teledeteccion',
         'content.calendario-viticola' => 'calendario-viticola',
         'content.trazabilidad-vino' => 'trazabilidad-vino-origen',
         'content.firma-digital' => 'firma-digital-agricultura',

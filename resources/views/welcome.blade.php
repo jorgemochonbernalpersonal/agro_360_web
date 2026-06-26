@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
     <!-- SEO Meta Tags -->
-    <title>Agro365 | Cuaderno de Campo Digital Obligatorio 2027 · Software Viticultura y Bodegas</title>
-    <meta name="description" content="Cuaderno de campo digital obligatorio desde 2027. Software de gestión para viticultores, bodegas y Denominaciones de Origen. Cumplimiento PAC, SIGPAC y trazabilidad completa. Viticultor básico gratis, completo desde 9€/mes.">
+    <title>Agro365 | Cuaderno de Campo Digital Obligatorio 2027</title>
+    <meta name="description" content="Cuaderno de campo digital obligatorio 2027. Gestión para viticultores, bodegas y DO: PAC, SIGPAC, trazabilidad completa. Básico gratis, completo desde 9€/mes.">
     <meta name="author" content="Agro365">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="language" content="Spanish">
@@ -149,7 +149,7 @@
                 ]
             ],
             'description' => 'Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen. Cuaderno de campo digital obligatorio 2027. Teledetección NDVI, Verifactu y trazabilidad completa.',
-            'operatingSystem' => ['Web', 'iOS', 'Android'],
+            'operatingSystem' => ['Web', 'Android'],
             'releaseNotes' => 'Versión 1.0 - Plataforma en producción',
             'screenshot' => asset('images/foto1.webp'),
             'featureList' => [
@@ -168,7 +168,30 @@
     @endphp
     {!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
-    
+
+    <!-- MobileApplication Schema (app Android en Google Play) -->
+    <script type="application/ld+json">
+    @php
+        $mobileAppData = [
+            '@context' => 'https://schema.org',
+            '@type' => 'MobileApplication',
+            'name' => 'Agro365',
+            'operatingSystem' => 'Android',
+            'applicationCategory' => 'BusinessApplication',
+            'installUrl' => config('app.play_store_url'),
+            'downloadUrl' => config('app.play_store_url'),
+            'description' => 'App Android de Agro365 para viticultores y bodegas: cuaderno de campo digital, mapa de parcelas con GPS, registro con foto desde el viñedo, teledetección NDVI, gestión de vendimia y notificaciones en tiempo real.',
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => '0',
+                'priceCurrency' => 'EUR',
+                'availability' => 'https://schema.org/InStock',
+            ],
+        ];
+    @endphp
+    {!! json_encode($mobileAppData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+
     <!-- Organization Schema -->
     <script type="application/ld+json">
     @php
@@ -180,12 +203,20 @@
             'logo' => asset('images/icon_512x512.png'),
             'description' => 'Plataforma de gestión agrícola profesional para viticultores y bodegas',
             'foundingDate' => '2024',
+            'telephone' => '+34-684-217-167',
+            'email' => 'info@agro365.es',
             'contactPoint' => [
                 '@type' => 'ContactPoint',
+                'telephone' => '+34-684-217-167',
                 'email' => 'info@agro365.es',
                 'contactType' => 'customer service',
                 'availableLanguage' => ['Spanish'],
                 'areaServed' => 'ES'
+            ],
+            'address' => [
+                '@type' => 'PostalAddress',
+                'addressCountry' => 'ES',
+                'addressRegion' => 'España'
             ],
             // 'sameAs' => [...]  ← re-añadir SOLO cuando existan perfiles sociales reales y verificables.
             //   Declarar perfiles inexistentes perjudica la validación del structured data en Google.
@@ -214,7 +245,7 @@
                 'name' => 'España'
             ],
             'availableLanguage' => 'Spanish',
-            'priceRange' => '€0-€119',
+            'priceRange' => '€0+',
             'email' => 'info@agro365.es'
         ];
     @endphp
@@ -418,15 +449,16 @@
     
     <!-- Preload critical resources -->
     <link rel="preload" href="{{ asset('images/logo-nav.png') }}" as="image">
-    <link rel="preload" href="{{ asset('images/dashboard-preview-1400.jpg') }}" as="image" fetchpriority="high">
-    
+
     <!-- DNS Prefetch for faster loading -->
     <link rel="dns-prefetch" href="https://fonts.bunny.net">
 
     <!-- Analítica cookieless (Plausible) — sin cookies ni datos personales, exenta de consentimiento.
          Requiere dar de alta el dominio en https://plausible.io (o tu instancia self-hosted). -->
+    @production
     <link rel="dns-prefetch" href="https://plausible.io">
     <script defer data-domain="agro365.es" src="https://plausible.io/js/script.js"></script>
+    @endproduction
 </head>
 <body class="bg-white min-h-screen text-zinc-800 antialiased">
     @php
@@ -436,11 +468,11 @@
         $waDO       = $waBase . '?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365';
 
         $foundersTotal = (int) config('app.founder_max_slots', 25);
-        $foundersTaken = \App\Models\User::where('is_founder', true)->count();
+        $foundersTaken = \Illuminate\Support\Facades\Cache::remember('founders_taken', 60, fn () => \App\Models\User::where('is_founder', true)->count());
         $foundersLeft  = max(0, $foundersTotal - $foundersTaken);
-        $foundersPct   = (int) round($foundersTaken / $foundersTotal * 100);
+        $foundersPct   = min(100, (int) round($foundersTaken / $foundersTotal * 100));
 
-        $daysLeft = now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0;
+        $daysLeft = now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : null;
     @endphp
     
     <!-- Navigation Header -->
@@ -468,6 +500,10 @@
                     <a href="#funcionalidades" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('Funcionalidades') }}</a>
                     <a href="#precios" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('Precios') }}</a>
                     <a href="#faq" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">{{ __('FAQ') }}</a>
+                    <a href="#app-movil" class="inline-flex items-center gap-1.5 text-sm font-semibold text-agro-700 hover:text-agro-900 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+                        {{ __('App') }}
+                    </a>
                 </div>
 
                 <!-- Auth + hamburger -->
@@ -510,6 +546,10 @@
                 <a href="#funcionalidades" @click="open = false" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">{{ __('Funcionalidades') }}</a>
                 <a href="#precios"      @click="open = false" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">{{ __('Precios') }}</a>
                 <a href="#faq"          @click="open = false" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">{{ __('FAQ') }}</a>
+                <a href="#app-movil"    @click="open = false" class="flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-semibold text-agro-700 hover:text-agro-900 hover:bg-agro-50 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+                    {{ __('App Android') }}
+                </a>
             </div>
         </div>
     </nav>
@@ -620,7 +660,7 @@
                 {{-- Badge urgencia --}}
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm max-w-full">
                     <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
-                    <span class="text-xs font-semibold text-white/80 tracking-wide">{{ __('Cuaderno digital obligatorio desde enero 2027') }} — quedan {{ $daysLeft }} días</span>
+                    <span class="text-xs font-semibold text-white/80 tracking-wide">{{ __('Cuaderno digital obligatorio desde enero 2027') }}{{ $daysLeft ? ' — quedan ' . $daysLeft . ' días' : ' — ya en vigor' }}</span>
                 </div>
 
                 {{-- H1 --}}
@@ -650,6 +690,12 @@
                     </a>
                 </div>
 
+                {{-- Badge app Android --}}
+                <div class="flex items-center gap-3 flex-wrap">
+                    @include('partials.google-play-badge', ['eager' => true])
+                    <span class="text-white/50 text-xs leading-snug max-w-[11rem]">{{ __('App Android para viticultores y bodegas') }}</span>
+                </div>
+
                 {{-- Claims --}}
                 <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
                     @foreach([
@@ -674,7 +720,7 @@
     </section>
 
     <!-- Marquee de features -->
-    <div class="overflow-hidden bg-[#0a1c04] border-b border-[#1a4008] py-3.5 select-none">
+    <div class="overflow-hidden bg-[#0a1c04] border-b border-[#1a4008] py-3.5 select-none" aria-hidden="true">
         <div class="marquee-track gap-0">
             @php
             $items = [
@@ -747,34 +793,52 @@
 
             {{-- Tabs --}}
             <div x-data="{ tab: 1 }">
-                <div class="flex flex-wrap justify-center gap-2 mb-8">
+                <div class="flex flex-wrap justify-center gap-2 mb-8" role="tablist" aria-label="Vistas del producto">
                     <button @click="tab = 1"
+                            :aria-selected="tab === 1"
+                            :tabindex="tab === 1 ? 0 : -1"
+                            role="tab" aria-controls="panel-tab-1"
                             :class="tab === 1 ? 'bg-agro-700 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'"
                             class="px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-150">
                         📋 Cuaderno de Campo
                     </button>
                     <button @click="tab = 2"
+                            :aria-selected="tab === 2"
+                            :tabindex="tab === 2 ? 0 : -1"
+                            role="tab" aria-controls="panel-tab-2"
                             :class="tab === 2 ? 'bg-agro-700 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'"
                             class="px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-150">
                         🗺️ Mapa SIGPAC
                     </button>
                     <button @click="tab = 3"
+                            :aria-selected="tab === 3"
+                            :tabindex="tab === 3 ? 0 : -1"
+                            role="tab" aria-controls="panel-tab-3"
                             :class="tab === 3 ? 'bg-agro-700 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'"
                             class="px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-150">
                         🍇 Declaraciones de Vendimia
                     </button>
+                    <button @click="tab = 4"
+                            :aria-selected="tab === 4"
+                            :tabindex="tab === 4 ? 0 : -1"
+                            role="tab" aria-controls="panel-tab-4"
+                            :class="tab === 4 ? 'bg-agro-700 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'"
+                            class="px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-150">
+                        📱 App móvil
+                    </button>
                 </div>
 
                 <div class="relative rounded-2xl border border-zinc-200 shadow-2xl shadow-zinc-900/8 overflow-hidden bg-white">
-                    {{-- Barra de navegador falsa --}}
-                    <div class="flex items-center gap-1.5 px-4 py-2.5 bg-zinc-50 border-b border-zinc-200">
+                    {{-- Barra de navegador falsa (solo vistas web) --}}
+                    <div x-show="tab !== 4" class="flex items-center gap-1.5 px-4 py-2.5 bg-zinc-50 border-b border-zinc-200">
                         <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>
                         <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
                         <span class="w-2.5 h-2.5 rounded-full bg-green-400"></span>
                         <span class="ml-3 text-xs text-zinc-400 font-mono">app.agro365.es</span>
                     </div>
 
-                    <div x-show="tab === 1" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                    <div id="panel-tab-1" role="tabpanel" aria-labelledby="tab-1"
+                         x-show="tab === 1" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                         <picture>
                             <source srcset="{{ asset('images/foto1.webp') }}" type="image/webp">
                             <img src="{{ asset('images/foto1.png') }}"
@@ -784,7 +848,8 @@
                                  loading="lazy" decoding="async">
                         </picture>
                     </div>
-                    <div x-show="tab === 2" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                    <div id="panel-tab-2" role="tabpanel" aria-labelledby="tab-2"
+                         x-show="tab === 2" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                         <div class="w-full overflow-hidden" style="height:480px">
                             <picture>
                                 <source srcset="{{ asset('images/foto2.webp') }}" type="image/webp">
@@ -796,7 +861,8 @@
                             </picture>
                         </div>
                     </div>
-                    <div x-show="tab === 3" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                    <div id="panel-tab-3" role="tabpanel" aria-labelledby="tab-3"
+                         x-show="tab === 3" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                         <picture>
                             <source srcset="{{ asset('images/foto3.webp') }}" type="image/webp">
                             <img src="{{ asset('images/foto3.png') }}"
@@ -806,6 +872,22 @@
                                  loading="lazy" decoding="async">
                         </picture>
                     </div>
+
+                    {{-- Tab 4: App móvil — screenshot real --}}
+                    {{-- Imagen: public/images/app-screenshot-cuaderno.webp (9:19,5 aprox, ancho mín 270px) --}}
+                    <div id="panel-tab-4" role="tabpanel" aria-labelledby="tab-4"
+                         x-show="tab === 4" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                         class="bg-gradient-to-br from-zinc-50 to-zinc-100 py-10 px-4 flex justify-center">
+                        <div class="relative w-[270px] rounded-[2.2rem] bg-zinc-900 p-2.5 shadow-2xl shadow-zinc-900/20">
+                            <div class="absolute left-1/2 -translate-x-1/2 top-2.5 w-24 h-5 bg-zinc-900 rounded-b-2xl z-20"></div>
+                            <div class="rounded-[1.7rem] overflow-hidden">
+                                <img src="{{ asset('images/app-screenshot-cuaderno.webp') }}"
+                                     alt="App Agro365 — Cuaderno de campo digital desde el móvil"
+                                     class="w-full h-auto block"
+                                     loading="lazy" decoding="async">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Leyenda por tab --}}
@@ -813,6 +895,69 @@
                     <span x-show="tab === 1">Cuaderno de Campo · Campaña 2026 · Tratamientos fitosanitarios, fertilización, riegos y cosecha en un solo panel</span>
                     <span x-show="tab === 2">Mapa SIGPAC · Parcelas importadas automáticamente desde el Ministerio con un solo clic</span>
                     <span x-show="tab === 3">Declaraciones de Vendimia · Gestión de declaraciones ante la DO con trazabilidad completa por parcela</span>
+                    <span x-show="tab === 4">App Android · Registra en el viñedo con GPS y foto · Sincronización en tiempo real con la web</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App móvil Android -->
+    <section id="app-movil" class="py-20 bg-zinc-900 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                {{-- Texto + features --}}
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/15 bg-white/5 mb-6">
+                        <span class="w-2 h-2 rounded-full bg-agro-action shrink-0"></span>
+                        <span class="text-xs font-semibold text-white/80 tracking-wide">{{ __('Nueva app para Android') }}</span>
+                    </div>
+                    <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-white mb-4">
+                        {{ __('Tu viñedo y tu bodega') }}<span class="text-agro-action">, {{ __('también en el móvil') }}</span>
+                    </h2>
+                    <p class="text-white/60 text-lg leading-relaxed mb-8 max-w-xl">
+                        Lleva el cuaderno de campo en el bolsillo. Registra desde la misma parcela y todo se
+                        <strong class="text-white/80 font-semibold">sincroniza al instante con tu panel web</strong> —
+                        la misma cuenta, los mismos datos.
+                    </p>
+
+                    <div class="grid sm:grid-cols-2 gap-5 mb-9">
+                        @php
+                            $appFeatures = [
+                                ['🗺️', 'Mapa de parcelas con GPS', 'Abre tus parcelas y ubícate con el GPS del móvil en pleno campo.'],
+                                ['📷', 'Registra con foto', 'Tratamientos, riegos, podas y cosechas con foto adjunta, ahí mismo.'],
+                                ['🔔', 'Notificaciones al instante', 'Avisos de tu bodega, alertas y novedades en tiempo real.'],
+                                ['🔄', 'Sincronizado con la web', 'Lo que anotas en el móvil aparece al momento en tu panel de Agro365.'],
+                            ];
+                        @endphp
+                        @foreach($appFeatures as $f)
+                        <div class="flex gap-3">
+                            <span class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg shrink-0">{{ $f[0] }}</span>
+                            <div>
+                                <h3 class="text-white font-semibold text-sm mb-0.5">{{ __($f[1]) }}</h3>
+                                <p class="text-white/50 text-xs leading-relaxed">{{ __($f[2]) }}</p>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    @include('partials.google-play-badge', ['extraClass' => 'border-white/15'])
+                    <p class="text-white/40 text-xs mt-4">
+                        {{ __('Para Viticultores y Bodegas · Acceso con Google o huella · Solo Android por ahora — iOS en camino.') }}
+                    </p>
+                </div>
+
+                {{-- Screenshot teléfono --}}
+                {{-- Imagen: public/images/app-screenshot-mapa.webp (9:19,5 aprox, ancho mín 260px) --}}
+                <div class="flex justify-center lg:justify-end">
+                    <div class="relative w-[260px] rounded-[2.2rem] bg-black p-2.5 shadow-2xl shadow-black/40">
+                        <div class="absolute left-1/2 -translate-x-1/2 top-2.5 w-24 h-5 bg-black rounded-b-2xl z-20"></div>
+                        <div class="rounded-[1.7rem] overflow-hidden">
+                            <img src="{{ asset('images/app-screenshot-mapa.webp') }}"
+                                 alt="App Agro365 — Mapa de parcelas con GPS"
+                                 class="w-full h-auto block"
+                                 loading="lazy" decoding="async">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -927,7 +1072,7 @@
                             Empezar como bodega
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
-                        <a href="{{ url('/software-bodegas') }}" class="block text-zinc-500 text-sm hover:text-zinc-700 hover:underline">Ver todo lo que incluye para bodegas</a>
+                        <a href="{{ content_route('content.software-bodegas') }}" class="block text-zinc-500 text-sm hover:text-zinc-700 hover:underline">Ver todo lo que incluye para bodegas</a>
                     </div>
                 </div>
 
@@ -1508,8 +1653,13 @@
          class="fixed bottom-0 left-0 right-0 z-40 translate-y-full transition-transform duration-300 bg-agro-800/95 backdrop-blur-md border-t border-agro-700 shadow-[0_-4px_24px_rgba(0,0,0,0.18)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
             <p class="text-sm text-white/70 hidden sm:block">
+                @if($daysLeft)
                 <span class="text-amber-400 font-semibold">Quedan {{ $daysLeft }} días</span>
                 · Cuaderno digital obligatorio 2027
+                @else
+                <span class="text-amber-400 font-semibold">Cuaderno digital obligatorio</span>
+                · Ya en vigor desde 2027
+                @endif
             </p>
             <div class="flex items-center gap-3 w-full sm:w-auto justify-center sm:justify-end">
                 <a href="{{ route('login') }}" rel="nofollow"
@@ -1525,14 +1675,19 @@
     </div>
 
     <!-- Botón flotante WhatsApp -->
+    {{-- x-bind:class sube el botón cuando el banner de cookies está activo para evitar solapamiento --}}
+    <div x-data="{ cookieBannerVisible: ! localStorage.getItem('cookieConsent') }"
+         @cookie-accepted.window="cookieBannerVisible = false">
     <a href="{{ $waDefault }}"
        target="_blank" rel="noopener noreferrer"
-       class="fixed bottom-20 right-5 z-50 w-14 h-14 rounded-full bg-[#25D366] shadow-xl flex items-center justify-center hover:scale-110 transition-transform duration-200"
+       :class="cookieBannerVisible ? 'bottom-[9rem]' : 'bottom-20'"
+       class="fixed right-5 z-50 w-14 h-14 rounded-full bg-[#25D366] shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300"
        aria-label="Contactar por WhatsApp">
         <svg viewBox="0 0 24 24" class="w-7 h-7 fill-white" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
         </svg>
     </a>
+    </div>
 
     <!-- Banner de cookies / privacidad -->
     {{-- Nota: la analítica (Plausible) es cookieless y está exenta de consentimiento.
@@ -1552,7 +1707,7 @@
             <a href="{{ route('cookies') }}" class="text-agro-700 font-semibold hover:underline">{{ __('Más información') }}</a>.
         </p>
         <div class="flex items-center gap-2 mt-4">
-            <button @click="localStorage.setItem('cookieConsent', '1'); show = false"
+            <button @click="localStorage.setItem('cookieConsent', '1'); show = false; $dispatch('cookie-accepted')"
                     class="flex-1 px-4 py-2.5 rounded-lg bg-agro-700 text-white hover:bg-agro-600 transition-colors font-semibold text-sm">
                 {{ __('Entendido') }}
             </button>

@@ -46,6 +46,12 @@
                         Ir al Dashboard
                     </a>
                 @endguest
+
+                {{-- App Android --}}
+                <div class="mt-6">
+                    <p class="text-white/60 text-xs font-semibold uppercase tracking-wide mb-2">{{ __('App para el campo') }}</p>
+                    @include('partials.google-play-badge')
+                </div>
             </div>
             
             <!-- Producto -->
@@ -140,32 +146,5 @@
         </div>
     </div>
 </footer>
-
-<!-- Schema.org Organization -->
-<script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "Organization",
-    "name": "Agro365",
-    "url": "{{ url('/') }}",
-    "logo": "{{ asset('images/logo.png') }}",
-    "description": "Plataforma de gestión agrícola para viticultores, bodegas y Denominaciones de Origen en España. Cuaderno de campo digital obligatorio 2027.",
-    "foundingDate": "2024",
-    "contactPoint": {
-        "@@type": "ContactPoint",
-        "telephone": "+34-684-217-167",
-        "email": "{{ config('app.legal_contact_email', 'info@agro365.es') }}",
-        "contactType": "customer service",
-        "availableLanguage": ["Spanish"],
-        "areaServed": "ES"
-    },
-    "address": {
-        "@@type": "PostalAddress",
-        "addressCountry": "ES",
-        "addressRegion": "España"
-    }
-}
-</script>
-
 
 
