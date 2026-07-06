@@ -282,7 +282,7 @@ class Edit extends Component
             ->get()
             ->map(function ($harvest) use ($currentHarvestIds) {
                 $latest = HarvestStock::where('harvest_id', $harvest->id)
-                    ->latest()
+                    ->orderByDesc('id')
                     ->first();
 
                 $available = $latest

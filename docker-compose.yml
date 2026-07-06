@@ -10,7 +10,7 @@ services:
       MYSQL_USER: ${DB_USERNAME:-agro365}
       MYSQL_PASSWORD: ${DB_PASSWORD:-password}
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -28,7 +28,7 @@ services:
       MYSQL_USER: agro365
       MYSQL_PASSWORD: password
     ports:
-      - "3308:3306"
+      - "127.0.0.1:3308:3306"
     volumes:
       - mariadb_test_data:/var/lib/mysql
     networks:
@@ -48,7 +48,9 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
       UPLOAD_LIMIT: 300M
     ports:
-      - "8081:80"
+      # 8081 chocaba con reform_viz (mismo valor por defecto). Llega
+      # pre-autenticado como root: nunca exponerlo a la LAN.
+      - "127.0.0.1:8085:80"
     networks:
       - agro365_network
     restart: unless-stopped
@@ -60,8 +62,10 @@ services:
     image: mailhog/mailhog:latest
     container_name: agro365_mailhog
     ports:
-      - "1025:1025"   # SMTP
-      - "8025:8025"   # Web UI
+      # 1025/8025 chocaban con gsc_site y reform_viz (mismos valores por
+      # defecto en los tres docker-compose).
+      - "127.0.0.1:1030:1025"   # SMTP
+      - "127.0.0.1:8030:8025"   # Web UI
     networks:
       - agro365_network
     restart: unless-stopped
