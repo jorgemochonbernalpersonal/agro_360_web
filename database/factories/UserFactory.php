@@ -32,6 +32,12 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'can_login' => true,
             'password_must_reset' => false,
+            // Coincide con el default de la columna en BD (migración
+            // 2025_12_21_201047). Sin esto, el objeto en memoria devuelto por
+            // create() no hidrata la columna y create()->is_beta_user es null,
+            // no true, hasta que se hace refresh() — rompe cualquier test que
+            // use Sanctum::actingAs() con el modelo recién creado.
+            'is_beta_user' => true,
         ];
     }
 
