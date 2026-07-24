@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Plot;
 use App\Services\RemoteSensing\NasaEarthdataService;
+use App\Services\RemoteSensing\RateLimitService;
 use Illuminate\Console\Command;
 
 class UpdateEnrichedRemoteSensingData extends Command
@@ -19,10 +20,13 @@ class UpdateEnrichedRemoteSensingData extends Command
 
     private NasaEarthdataService $service;
 
-    public function __construct(NasaEarthdataService $service)
+    private RateLimitService $rateLimitService;
+
+    public function __construct(NasaEarthdataService $service, RateLimitService $rateLimitService)
     {
         parent::__construct();
         $this->service = $service;
+        $this->rateLimitService = $rateLimitService;
     }
 
     public function handle(): int
@@ -63,6 +67,13 @@ class UpdateEnrichedRemoteSensingData extends Command
         $this->info("📍 Found {$plots->count()} plot(s) to update");
         $this->newLine();
 
+        if (! $this->rateLimitService->canMakeNasaRequest()) {
+            $usage = $this->rateLimitService->getUsage('nasa');
+            $this->error("❌ NASA rate limit already reached ({$usage['hour']['used']}/{$usage['hour']['limit']} this hour, {$usage['day']['used']}/{$usage['day']['limit']} today). Aborting to avoid spamming failed requests.");
+
+            return Command::FAILURE;
+        }
+
         $includeArea = $this->option('include-area');
 
         if ($includeArea) {
@@ -76,8 +87,16 @@ class UpdateEnrichedRemoteSensingData extends Command
         $success = 0;
         $failed = 0;
         $skipped = 0;
+        $rateLimited = 0;
 
         foreach ($plots as $plot) {
+            if (! $this->rateLimitService->canMakeNasaRequest()) {
+                $rateLimited = $plots->count() - $success - $failed - $skipped;
+                $this->newLine();
+                $this->warn('⚠️ NASA rate limit reached mid-run — stopping early instead of retrying each remaining plot.');
+                break;
+            }
+
             $progressBar->setMessage("Processing: {$plot->name}");
 
             try {
@@ -138,6 +157,7 @@ class UpdateEnrichedRemoteSensingData extends Command
             [
                 ['✅ Success', $success],
                 ['⏭️ Skipped (already updated today)', $skipped],
+                ['🚫 Skipped (NASA rate limit)', $rateLimited],
                 ['❌ Failed', $failed],
                 ['📁 Total', $plots->count()],
             ]
