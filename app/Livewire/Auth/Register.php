@@ -113,6 +113,7 @@ class Register extends Component
 
                     Auth::login($activated);
                     session()->regenerate();
+                    $activated->update(['last_login_at' => now()]);
                     $this->toastSuccess(__('Cuenta activada correctamente. ¡Bienvenido a Agro365!'));
 
                     return $this->redirect(route($ghostEmailMatches ? 'viticulturist.dashboard' : 'verification.notice'), navigate: true);
@@ -130,6 +131,7 @@ class Register extends Component
                 if ($merged instanceof User) {
                     Auth::login($merged);
                     session()->regenerate();
+                    $merged->update(['last_login_at' => now()]);
                     $this->toastSuccess(__('¡Cuenta vinculada! Tu bodega ya tenía tus datos registrados. Bienvenido a Agro365.'));
 
                     return $this->redirect(route($merged->email_verified_at ? 'viticulturist.dashboard' : 'verification.notice'), navigate: true);
@@ -223,6 +225,7 @@ class Register extends Component
 
         Auth::login($user);
         session()->regenerate();
+        $user->update(['last_login_at' => now()]);
         $this->toastSuccess(__('¡Bienvenido a Agro365! Revisa tu email para verificar tu cuenta.'));
 
         return $this->redirect(route('verification.notice'), navigate: true);

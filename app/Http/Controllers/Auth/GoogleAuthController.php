@@ -88,6 +88,8 @@ class GoogleAuthController extends Controller
         Auth::login($user, remember: true);
         request()->session()->regenerate();
 
+        $user->update(['last_login_at' => now()]);
+
         return redirect()->intended($this->dashboardRoute($user));
     }
 

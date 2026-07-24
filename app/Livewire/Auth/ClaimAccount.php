@@ -129,6 +129,7 @@ class ClaimAccount extends Component
 
         // Login automático con modelo fresco de BD (garantiza email_verified_at cargado)
         Auth::login($this->pendingUser->fresh());
+        $this->pendingUser->update(['last_login_at' => now()]);
 
         $this->activated = true;
 
