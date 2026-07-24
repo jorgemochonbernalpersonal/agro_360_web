@@ -43,6 +43,7 @@ class ContentController extends Controller
         'subvenciones-pac' => 'content.subvenciones-pac-2024',
         'control-plagas-vinedo' => 'content.control-plagas-vinedo',
         'facturacion-agricola' => 'content.facturacion-agricola',
+        'cumplimiento-verifactu' => 'content.cumplimiento-verifactu',
 
         // Media prioridad
         'gestion-cuadrillas-agricolas' => 'content.gestion-cuadrillas-agricolas',

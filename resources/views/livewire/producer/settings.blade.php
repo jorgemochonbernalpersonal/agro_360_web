@@ -352,6 +352,8 @@
                         </flux:button>
                     </div>
                 </form>
+
+                @include('livewire.partials.verifactu-certificate-card')
             @endif
 
             {{-- FIELDBOOK TAB --}}

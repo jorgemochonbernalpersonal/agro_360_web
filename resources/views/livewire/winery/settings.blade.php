@@ -302,6 +302,8 @@
                         <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="saveFiscal">{{ __('Guardar Datos Fiscales') }}</flux:button>
                     </div>
                 </form>
+
+                @include('livewire.partials.verifactu-certificate-card')
             @endif
 
             {{-- INFOVI TAB --}}

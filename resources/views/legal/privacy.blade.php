@@ -61,12 +61,15 @@
                 <section>
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('1. Responsable del Tratamiento') }}</h2>
                     <ul class="space-y-2 text-gray-700">
-                        <li><strong>{{ __('Denominación social:') }}</strong> Agro365</li>
-                        <li><strong>{{ __('Domicilio:') }}</strong> Calle Toledo 172, Madrid, España</li>
+                        <li><strong>{{ __('Denominación social / nombre comercial:') }}</strong> {{ config('app.legal_owner_name') ?: __('Pendiente de formalización del alta') }}</li>
+                        <li><strong>{{ __('NIF/CIF:') }}</strong> {{ config('app.legal_owner_dni') ?: __('Pendiente de formalización del alta') }}</li>
+                        <li><strong>{{ __('Domicilio:') }}</strong> {{ config('app.legal_owner_address') ?: __('Pendiente de formalización del alta') }}</li>
                         <li><strong>{{ __('Email:') }}</strong> <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline">info@agro365.es</a></li>
                         <li><strong>{{ __('Actividad:') }}</strong> Software de gestión agrícola</li>
                     </ul>
-                    <p class="text-gray-500 text-sm mt-3 italic">{{ __('(NIF se añadirá al formalizarse el alta)') }}</p>
+                    @unless(config('app.legal_owner_name'))
+                        <p class="text-amber-600 text-sm mt-3 italic">{{ __('El titular aún no ha formalizado su alta como autónomo o sociedad. Estos datos se completarán en cuanto se constituya la actividad.') }}</p>
+                    @endunless
                 </section>
 
                 <section>

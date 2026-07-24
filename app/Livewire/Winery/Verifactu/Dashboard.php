@@ -135,7 +135,7 @@ class Dashboard extends Component
                 ->orderByDesc('updated_at')
                 ->paginate(20);
         } elseif ($this->tab === 'config') {
-            $config = app(VerifactuService::class)->getConfig();
+            $config = app(VerifactuService::class)->getConfig(Auth::user());
         }
 
         return view('livewire.winery.verifactu.dashboard', compact(

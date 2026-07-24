@@ -117,6 +117,7 @@
                 
                 <h4 class="font-semibold text-lg mb-4">{{ __('Legal') }}</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
+                    <li><a href="{{ content_route('content.cumplimiento-verifactu') }}" class="hover:text-white transition-colors">Cumplimiento VeriFactu</a></li>
                     <li><a href="{{ route('aviso-legal') }}" class="hover:text-white transition-colors">Aviso Legal</a></li>
                     <li><a href="{{ route('privacy') }}" class="hover:text-white transition-colors">Privacidad</a></li>
                     <li><a href="{{ route('cookies') }}" class="hover:text-white transition-colors">Cookies</a></li>

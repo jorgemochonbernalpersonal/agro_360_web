@@ -86,6 +86,11 @@ Schedule::command('supervisor-requests:due-reminders')
     ->dailyAt('09:00')
     ->withoutOverlapping();
 
+// 🔏 Avisos de caducidad de certificado VeriFactu (diario a las 8:45 AM — 30/7/1 días antes)
+Schedule::command('verifactu:notify-expiring-certs')
+    ->dailyAt('08:45')
+    ->withoutOverlapping();
+
 // 🗺️ Regenerar sitemap estático (cada lunes a las 4:30 AM)
 Schedule::command('sitemap:generate')
     ->weeklyOn(1, '04:30')

@@ -24,6 +24,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property \Illuminate\Support\Carbon|null $invitation_expires_at
  * @property \Illuminate\Support\Carbon|null $beta_ends_at
  * @property \Illuminate\Support\Carbon|null $last_login_at
+ * @property \Illuminate\Support\Carbon|null $sif_cert_uploaded_at
+ * @property \Illuminate\Support\Carbon|null $sif_cert_expires_at
  * @property \Illuminate\Support\Carbon      $created_at
  * @property \Illuminate\Support\Carbon      $updated_at
  * @property mixed                           $total
@@ -101,6 +103,8 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     protected $hidden = [
         'password',
         'remember_token',
+        'sif_cert_path',
+        'sif_cert_password',
     ];
 
     public function preferredLocale(): string
@@ -313,6 +317,9 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'preferences' => 'array',
             'notification_preferences' => 'array',
             'last_login_at' => 'datetime',
+            'sif_cert_password' => 'encrypted',
+            'sif_cert_uploaded_at' => 'datetime',
+            'sif_cert_expires_at' => 'datetime',
         ];
     }
 

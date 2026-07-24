@@ -8,6 +8,7 @@ use App\Livewire\Concerns\WithSettingsInvoicing;
 use App\Livewire\Concerns\WithSettingsSignature;
 use App\Livewire\Concerns\WithSettingsTaxes;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithVerifactuCertificate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
@@ -19,7 +20,8 @@ class Settings extends Component
         WithSettingsInvoicing,
         WithSettingsSignature,
         WithSettingsTaxes,
-        WithToastNotifications;
+        WithToastNotifications,
+        WithVerifactuCertificate;
 
     public $currentTab = 'taxes';
 
@@ -35,6 +37,7 @@ class Settings extends Component
         $this->loadFiscal();
         $this->loadFieldbook();
         $this->loadDigitalSignature();
+        $this->loadVerifactuCertificate();
     }
 
     public function switchTab($tab): void

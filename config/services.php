@@ -126,10 +126,8 @@ return [
     |
     */
 
-    'sif_cert' => [
-        'path' => env('SIF_CERT_PATH', ''),
-        'password' => env('SIF_CERT_PASSWORD', ''),
-    ],
+    // El certificado de firma NO es de plataforma: cada usuario sube el suyo
+    // propio (ver App\Services\VerifactuCertificateService, users.sif_cert_*).
 
     'sif_aeat' => [
         'environment' => env('SIF_ENVIRONMENT', 'testing'),

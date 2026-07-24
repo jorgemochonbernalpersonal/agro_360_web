@@ -5,7 +5,10 @@ namespace App\Services;
 use App\Models\Invoice;
 use App\Models\InvoicingSetting;
 use App\Models\SifRecord;
+use App\Models\User;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Verifactu (VERI*FACTU) — AEAT Sistema Informático de Facturación
@@ -36,7 +39,7 @@ class VerifactuService
             ['xml' => $xml, 'huella' => $huella, 'fechaHoraGen' => $fechaHoraGen] = $xmlResult;
 
             // 3. Sign (skipped in test mode without cert)
-            $signedXml = $this->signXml($xml);
+            $signedXml = $this->signXml($xml, $invoice->user);
 
             // 4. Send to AEAT (simulated in test mode)
             $response = $this->sendToAeat($signedXml, $invoice);
@@ -112,7 +115,7 @@ class VerifactuService
             $fechaHoraGen = now()->setTimezone('Europe/Madrid')->format('Y-m-d\TH:i:sP');
             $huella = $this->buildAnulacionHuella($invoice, $chain, $fechaHoraGen);
             $xml = $this->buildAnulacionXml($invoice, $chain, $huella, $fechaHoraGen);
-            $signedXml = $this->signXml($xml);
+            $signedXml = $this->signXml($xml, $invoice->user);
             $response = $this->sendToAeat($signedXml, $invoice);
 
             $linea = $response->RespuestaLinea[0] ?? null;
@@ -407,31 +410,26 @@ class VerifactuService
     }
 
     /**
-     * Sign XML with PKCS#12 certificate (XMLDSig RSA-SHA256).
-     * In testing mode without a cert, returns the XML unsigned.
+     * Sign XML with the ISSUER'S OWN PKCS#12 certificate (XMLDSig RSA-SHA256).
+     * Cada usuario firma con su propio certificado (ver VerifactuCertificateService) —
+     * no existe un certificado único de plataforma. En modo testing, sin
+     * certificado configurado, devuelve el XML sin firmar.
      */
-    public function signXml(string $xmlString): string
+    public function signXml(string $xmlString, User $issuer): string
     {
-        $certPath = config('services.sif_cert.path');
-        $certPassword = config('services.sif_cert.password', '');
         $environment = config('services.sif_aeat.environment', 'testing');
+        $certs = $this->loadCertificate($issuer);
 
-        if ($environment !== 'production' && (! $certPath || ! file_exists($certPath))) {
+        if ($certs !== null && $issuer->sif_cert_expires_at && $issuer->sif_cert_expires_at->isPast()) {
+            throw new \Exception(__('Tu certificado VeriFactu ha caducado. Sube uno nuevo en Ajustes → Datos Fiscales.'));
+        }
+
+        if ($certs === null) {
+            if ($environment === 'production') {
+                throw new \Exception(__('No tienes un certificado VeriFactu configurado. Súbelo en Ajustes → Datos Fiscales antes de enviar facturas en producción.'));
+            }
+
             return $xmlString;
-        }
-
-        if (empty($certPath)) {
-            throw new \Exception(__('No hay certificado configurado (SIF_CERT_PATH). Es obligatorio en producción.'));
-        }
-
-        if (! file_exists($certPath)) {
-            throw new \Exception(__('Certificado no encontrado en: :path', ['path' => $certPath]));
-        }
-
-        $pkcs12 = file_get_contents($certPath);
-        $certs = [];
-        if (! openssl_pkcs12_read($pkcs12, $certs, $certPassword)) {
-            throw new \Exception(__('No se pudo abrir el certificado PKCS#12. Verifica la contraseña.'));
         }
 
         $dom = new \DOMDocument;
@@ -480,20 +478,50 @@ class VerifactuService
     }
 
     /**
-     * Return current environment configuration status.
+     * Carga y descifra el certificado PKCS#12 del emisor. El .p12 se guarda
+     * cifrado en reposo (Crypt) en el disco privado; la clave nunca queda en
+     * claro en disco. Devuelve ['cert' => ..., 'pkey' => ...] o null si el
+     * usuario no tiene certificado configurado.
+     *
+     * @return array{cert: string, pkey: string}|null
      */
-    public function getConfig(): array
+    private function loadCertificate(User $issuer): ?array
     {
-        $certPath = config('services.sif_cert.path');
+        $path = $issuer->sif_cert_path;
+        if (empty($path) || ! Storage::disk('local')->exists($path)) {
+            return null;
+        }
+
+        $encrypted = Storage::disk('local')->get($path);
+        $pkcs12 = Crypt::decryptString($encrypted);
+        $password = (string) ($issuer->sif_cert_password ?? '');
+
+        $certs = [];
+        if (! openssl_pkcs12_read($pkcs12, $certs, $password)) {
+            throw new \Exception(__('No se pudo abrir tu certificado VeriFactu. Verifica la contraseña en Ajustes → Datos Fiscales.'));
+        }
+
+        return ['cert' => $certs['cert'], 'pkey' => $certs['pkey']];
+    }
+
+    /**
+     * Return current environment configuration status for the given issuer.
+     * El entorno/WSDL/endpoint son de plataforma; el certificado es del usuario.
+     */
+    public function getConfig(?User $user = null): array
+    {
         $wsdlPath = config('services.sif_aeat.wsdl');
-        $certConfigured = ! empty($certPath) && file_exists($certPath);
         $wsdlConfigured = ! empty($wsdlPath) && file_exists($wsdlPath);
+        $certConfigured = $user
+            ? app(VerifactuCertificateService::class)->hasCertificate($user)
+            : false;
 
         return [
             'environment' => config('services.sif_aeat.environment', 'testing'),
             'endpoint' => config('services.sif_aeat.endpoint'),
-            'cert_path' => $certPath,
             'cert_configured' => $certConfigured,
+            'cert_uploaded_at' => $certConfigured ? $user->sif_cert_uploaded_at : null,
+            'cert_expires_at' => $certConfigured ? $user->sif_cert_expires_at : null,
             'wsdl_path' => $wsdlPath,
             'wsdl_configured' => $wsdlConfigured,
             'is_production' => config('services.sif_aeat.environment') === 'production',

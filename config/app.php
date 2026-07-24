@@ -134,6 +134,7 @@ return [
 
     'legal_owner_name' => env('LEGAL_OWNER_NAME', ''),
     'legal_owner_dni' => env('LEGAL_OWNER_DNI', ''),
+    'legal_owner_address' => env('LEGAL_OWNER_ADDRESS', ''),
     'legal_contact_email' => env('LEGAL_CONTACT_EMAIL', 'info@agro365.es'),
 
     'founder_code' => env('FOUNDER_CODE', ''),

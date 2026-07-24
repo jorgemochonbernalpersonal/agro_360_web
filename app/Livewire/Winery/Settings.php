@@ -3,6 +3,7 @@
 namespace App\Livewire\Winery;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithVerifactuCertificate;
 use App\Models\InvoicingSetting;
 use App\Models\Organization;
 use App\Models\Tax;
@@ -14,7 +15,7 @@ use Livewire\Component;
 
 class Settings extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithVerifactuCertificate;
 
     public $currentTab = 'taxes';
 
@@ -74,6 +75,7 @@ class Settings extends Component
         $this->loadPlots();
         $this->loadFiscal();
         $this->loadInfovi();
+        $this->loadVerifactuCertificate();
     }
 
     public function switchTab($tab): void

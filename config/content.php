@@ -33,6 +33,7 @@ return [
         'content.subvenciones-pac' => 'subvenciones-pac-2024',
         'content.control-plagas' => 'control-plagas-viñedo',
         'content.facturacion-agricola' => 'facturacion-agricola',
+        'content.cumplimiento-verifactu' => 'cumplimiento-verifactu',
         'content.gestion-cuadrillas' => 'gestion-cuadrillas-agricolas',
         'content.maquinaria-agricola' => 'maquinaria-agricola-registro',
         'content.plantaciones-viñedo' => 'plantaciones-viñedo-variedades',

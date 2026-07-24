@@ -50,6 +50,7 @@
             'sent'    => ['label' => 'Verificadas', 'icon' => 'check-circle'],
             'errors'  => ['label' => 'Errores',     'icon' => 'exclamation-circle'],
             'config'  => ['label' => 'Config',      'icon' => 'cog-6-tooth'],
+            'cumplimiento' => ['label' => 'Cumplimiento', 'icon' => 'shield-check'],
         ] as $key => $t)
             <button wire:click="$set('tab','{{ $key }}')"
                 class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
@@ -309,23 +310,28 @@
                     @endif
                 </div>
 
-                {{-- Certificado --}}
+                {{-- Certificado — de este usuario, no de plataforma --}}
                 <div class="flex items-center justify-between p-4 bg-zinc-50 rounded-xl border border-zinc-200">
                     <div>
-                        <p class="text-sm font-semibold text-zinc-800">{{ __('Certificado digital') }}</p>
+                        <p class="text-sm font-semibold text-zinc-800">{{ __('Tu certificado de firma') }}</p>
                         <p class="text-xs text-zinc-500 mt-0.5">
                             @if($config['cert_configured'])
-                                Certificado cargado en: <code class="text-xs bg-white px-1 rounded border border-zinc-200">{{ $config['cert_path'] }}</code>
+                                {{ __('Caduca el :date.', ['date' => $config['cert_expires_at']?->format('d/m/Y') ?? '—']) }}
                             @else
-                                No hay certificado configurado. En modo pruebas se envía sin firmar.
+                                {{ __('No has subido tu certificado. En modo pruebas se envía sin firmar; en producción es obligatorio.') }}
                             @endif
                         </p>
                     </div>
-                    @if($config['cert_configured'])
-                        <flux:badge color="green">{{ __('Configurado') }}</flux:badge>
-                    @else
-                        <flux:badge color="zinc">{{ __('Sin certificado') }}</flux:badge>
-                    @endif
+                    <div class="flex items-center gap-2">
+                        @if($config['cert_configured'])
+                            <flux:badge color="green">{{ __('Configurado') }}</flux:badge>
+                        @else
+                            <flux:badge color="zinc">{{ __('Sin certificado') }}</flux:badge>
+                        @endif
+                        <flux:button href="{{ roleRoute('settings', ['tab' => 'fiscal']) }}" wire:navigate size="sm" variant="ghost" icon="arrow-top-right-on-square">
+                            {{ __('Gestionar') }}
+                        </flux:button>
+                    </div>
                 </div>
 
                 {{-- WSDL --}}
@@ -387,12 +393,30 @@
                 <div class="text-xs text-zinc-400 flex items-start gap-2 bg-blue-50 border border-blue-200 rounded-xl p-3">
                     <flux:icon icon="information-circle" class="size-4 text-blue-400 shrink-0 mt-0.5" />
                     <span>
-                        Para cambiar el entorno o el certificado, actualiza las variables
-                        <code>SIF_ENVIRONMENT</code>, <code>SIF_CERT_PATH</code>, <code>SIF_CERT_PASSWORD</code>
-                        y <code>SIF_AEAT_ENDPOINT</code> en el fichero <code>.env</code>.
+                        {{ __('El entorno y el endpoint son de plataforma, configurables en el fichero .env con') }}
+                        <code>SIF_ENVIRONMENT</code> {{ __('y') }} <code>SIF_AEAT_ENDPOINT</code>.
+                        {{ __('Tu certificado de firma se gestiona en Ajustes → Datos Fiscales, no aquí.') }}
                     </span>
                 </div>
             </div>
+        </x-agro.card>
+    </div>
+    @endif
+
+    {{-- Cumplimiento normativo ──────────────────────────────────────────────── --}}
+    @if($tab === 'cumplimiento')
+    <div wire:loading.remove wire:target="tab">
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-zinc-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="shield-check" class="size-4 text-zinc-500" />
+                    </div>
+                    <h3 class="text-sm font-semibold text-zinc-800">{{ __('Declaración responsable del sistema informático') }}</h3>
+                </div>
+            </x-slot:header>
+
+            @include('partials.verifactu-declaracion-responsable')
         </x-agro.card>
     </div>
     @endif

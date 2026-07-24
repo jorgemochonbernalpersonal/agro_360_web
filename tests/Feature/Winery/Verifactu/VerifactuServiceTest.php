@@ -5,6 +5,7 @@ namespace Tests\Feature\Winery\Verifactu;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Services\VerifactuService;
+use Illuminate\Http\UploadedFile;
 use Tests\Feature\WineryTestCase;
 
 /**
@@ -185,6 +186,64 @@ class VerifactuServiceTest extends WineryTestCase
         $this->assertStringContainsString('Liquidación de vendimia', $result['xml']);
     }
 
+    // ── firma con certificado del emisor ──────────────────────────────────────
+
+    public function test_signxml_signs_with_the_issuers_own_certificate(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+
+        $winery = $this->makeWineryWithNif('12345678Z');
+        app(\App\Services\VerifactuCertificateService::class)->store(
+            $winery,
+            $this->makeP12Upload('12345678Z'),
+            'secret123'
+        );
+        $winery->refresh();
+
+        $invoice = $this->makeInvoice($winery->id)->fresh(['user']);
+        $xml = $this->service()->generateXml($invoice)['xml'];
+
+        $signed = $this->service()->signXml($xml, $winery);
+
+        $this->assertStringContainsString('<ds:Signature', $signed);
+        $this->assertStringContainsString('<ds:SignatureValue>', $signed);
+    }
+
+    public function test_signxml_returns_unsigned_in_testing_without_certificate(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+
+        $winery = $this->makeWineryWithNif('12345678Z');
+        $invoice = $this->makeInvoice($winery->id)->fresh(['user']);
+        $xml = $this->service()->generateXml($invoice)['xml'];
+
+        $signed = $this->service()->signXml($xml, $winery);
+
+        $this->assertSame($xml, $signed);
+        $this->assertStringNotContainsString('<ds:Signature', $signed);
+    }
+
+    public function test_signxml_throws_when_certificate_expired(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+
+        $winery = $this->makeWineryWithNif('12345678Z');
+        app(\App\Services\VerifactuCertificateService::class)->store(
+            $winery,
+            $this->makeP12Upload('12345678Z'),
+            'secret123'
+        );
+        $winery->forceFill(['sif_cert_expires_at' => now()->subDay()])->save();
+        $winery->refresh();
+
+        $invoice = $this->makeInvoice($winery->id)->fresh(['user']);
+        $xml = $this->service()->generateXml($invoice)['xml'];
+
+        $this->expectExceptionMessage('caducado');
+
+        $this->service()->signXml($xml, $winery);
+    }
+
     // ── QR ──────────────────────────────────────────────────────────────────
 
     public function test_qr_url_contains_invoice_identifiers(): void
@@ -207,6 +266,37 @@ class VerifactuServiceTest extends WineryTestCase
             'email_verified_at' => now(),
             'dni' => $dni,
         ]);
+    }
+
+    /**
+     * Genera un .p12 autofirmado de prueba con el NIF dado incrustado en el
+     * Subject, para probar la firma real con el certificado del emisor.
+     */
+    private function makeP12Upload(string $dni, string $password = 'secret123'): UploadedFile
+    {
+        $opensslConfig = [];
+        foreach ([
+            'C:\\Program Files\\Common Files\\SSL\\openssl.cnf',
+            'C:\\Program Files\\Git\\mingw64\\etc\\ssl\\openssl.cnf',
+            'C:\\Program Files\\Git\\usr\\ssl\\openssl.cnf',
+            '/etc/ssl/openssl.cnf',
+        ] as $candidate) {
+            if (file_exists($candidate)) {
+                $opensslConfig = ['config' => $candidate];
+                break;
+            }
+        }
+
+        $pkey = openssl_pkey_new($opensslConfig + ['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
+        $csr = openssl_csr_new(['commonName' => "TEST {$dni}", 'countryName' => 'ES'], $pkey, $opensslConfig);
+        $cert = openssl_csr_sign($csr, null, $pkey, 365, $opensslConfig);
+
+        openssl_pkcs12_export($cert, $p12, $pkey, $password);
+
+        $path = tempnam(sys_get_temp_dir(), 'verifactu_test_').'.p12';
+        file_put_contents($path, $p12);
+
+        return new UploadedFile($path, 'certificado.p12', 'application/x-pkcs12', null, true);
     }
 
     private function makeInvoice(int $wineryId, array $attrs = []): Invoice
