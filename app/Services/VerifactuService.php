@@ -227,13 +227,15 @@ class VerifactuService
         $huella = strtoupper(hash('sha256', $hashInput));
 
         // ── Recipient ────────────────────────────────────────────────────────
+        // En liquidaciones de vendimia (grape_purchase) no hay Client: el
+        // destinatario es el viticultor, así que caemos a su NIF/nombre.
         $recipientNif = $invoice->billing_company_document
-            ?? $invoice->client->company_document
-            ?? $invoice->client->particular_document
-            ?? null;
+            ?: $invoice->client?->company_document
+            ?: $invoice->client?->particular_document
+            ?: $invoice->viticulturist?->dni;
         $recipientName = $invoice->billing_company_name
-            ?? trim(($invoice->billing_first_name ?? '').' '.($invoice->billing_last_name ?? ''))
-            ?: null;
+            ?: trim(($invoice->billing_first_name ?? '').' '.($invoice->billing_last_name ?? ''))
+            ?: $invoice->viticulturist?->name;
 
         // ── Software block (SistemaInformatico) ─────────────────────────────
         $swVendorName = config('services.sif_software.vendor_name', 'Agro365');
@@ -418,6 +420,10 @@ class VerifactuService
             return $xmlString;
         }
 
+        if (empty($certPath)) {
+            throw new \Exception(__('No hay certificado configurado (SIF_CERT_PATH). Es obligatorio en producción.'));
+        }
+
         if (! file_exists($certPath)) {
             throw new \Exception(__('Certificado no encontrado en: :path', ['path' => $certPath]));
         }
@@ -479,13 +485,20 @@ class VerifactuService
     public function getConfig(): array
     {
         $certPath = config('services.sif_cert.path');
+        $wsdlPath = config('services.sif_aeat.wsdl');
+        $certConfigured = ! empty($certPath) && file_exists($certPath);
+        $wsdlConfigured = ! empty($wsdlPath) && file_exists($wsdlPath);
 
         return [
             'environment' => config('services.sif_aeat.environment', 'testing'),
             'endpoint' => config('services.sif_aeat.endpoint'),
             'cert_path' => $certPath,
-            'cert_configured' => ! empty($certPath) && file_exists($certPath),
+            'cert_configured' => $certConfigured,
+            'wsdl_path' => $wsdlPath,
+            'wsdl_configured' => $wsdlConfigured,
             'is_production' => config('services.sif_aeat.environment') === 'production',
+            // Todo lo necesario para declarar de verdad ante la AEAT.
+            'production_ready' => $certConfigured && $wsdlConfigured,
         ];
     }
 

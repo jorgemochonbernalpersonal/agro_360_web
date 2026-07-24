@@ -156,6 +156,35 @@ class VerifactuServiceTest extends WineryTestCase
         $this->assertStringContainsString('<T:TipoFactura>R1</T:TipoFactura>', $result['xml']);
     }
 
+    // ── destinatario ──────────────────────────────────────────────────────────
+
+    /**
+     * En liquidaciones de vendimia no hay Client y el destinatario es el
+     * viticultor. Sin su NIF la AEAT rechaza la F1, así que debe caer al DNI
+     * del viticultor aunque billing_company_document esté vacío.
+     */
+    public function test_grape_purchase_falls_back_to_viticulturist_nif(): void
+    {
+        $winery = $this->makeWineryWithNif();
+        $viticulturist = User::factory()->create([
+            'role' => 'viticulturist',
+            'name' => 'Bodega Ejemplo Viticultor',
+            'dni' => '87654321X',
+        ]);
+
+        $invoice = $this->makeInvoice($winery->id, [
+            'invoice_type' => 'grape_purchase',
+            'viticulturist_id' => $viticulturist->id,
+            'billing_first_name' => $viticulturist->name,
+        ])->fresh(['user', 'viticulturist']);
+
+        $result = $this->service()->generateXml($invoice);
+
+        $this->assertStringContainsString('<T:Destinatarios>', $result['xml']);
+        $this->assertStringContainsString('<T:NIF>87654321X</T:NIF>', $result['xml']);
+        $this->assertStringContainsString('Liquidación de vendimia', $result['xml']);
+    }
+
     // ── QR ──────────────────────────────────────────────────────────────────
 
     public function test_qr_url_contains_invoice_identifiers(): void

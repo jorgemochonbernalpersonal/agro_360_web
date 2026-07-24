@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property mixed $quarter
@@ -159,12 +158,6 @@ class Invoice extends Model
     public function items(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
-    }
-
-    /** @return HasOne<VerifactuRecord, $this> */
-    public function verifactuRecord(): HasOne
-    {
-        return $this->hasOne(VerifactuRecord::class);
     }
 
     /**

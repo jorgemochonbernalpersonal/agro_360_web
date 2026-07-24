@@ -33,6 +33,8 @@ class GrapePurchaseService
                 'payment_status' => 'unpaid',
                 'billing_first_name' => $viticulturist->name,
                 'billing_email' => $viticulturist->email,
+                // NIF del viticultor: obligatorio como destinatario en Verifactu.
+                'billing_company_document' => $viticulturist->dni,
                 'subtotal' => $totals['subtotal'],
                 'tax_base' => $totals['tax_base'],
                 'tax_amount' => $totals['tax_amount'],

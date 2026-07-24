@@ -328,11 +328,41 @@
                     @endif
                 </div>
 
+                {{-- WSDL --}}
+                <div class="flex items-center justify-between p-4 bg-zinc-50 rounded-xl border border-zinc-200">
+                    <div>
+                        <p class="text-sm font-semibold text-zinc-800">{{ __('Servicio SOAP (WSDL)') }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">
+                            @if($config['wsdl_configured'])
+                                WSDL disponible en: <code class="text-xs bg-white px-1 rounded border border-zinc-200">{{ $config['wsdl_path'] }}</code>
+                            @else
+                                {{ __('Falta el WSDL de AEAT. Es obligatorio para enviar en producción.') }}
+                            @endif
+                        </p>
+                    </div>
+                    @if($config['wsdl_configured'])
+                        <flux:badge color="green">{{ __('Disponible') }}</flux:badge>
+                    @else
+                        <flux:badge color="zinc">{{ __('No encontrado') }}</flux:badge>
+                    @endif
+                </div>
+
                 {{-- Endpoint --}}
                 <div class="p-4 bg-zinc-50 rounded-xl border border-zinc-200">
                     <p class="text-sm font-semibold text-zinc-800 mb-1">{{ __('Endpoint AEAT') }}</p>
                     <code class="text-xs text-zinc-600 break-all">{{ $config['endpoint'] ?? 'No configurado' }}</code>
                 </div>
+
+                {{-- Preparado para producción --}}
+                @if($config['is_production'] && ! $config['production_ready'])
+                    <div class="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-200">
+                        <div>
+                            <p class="text-sm font-semibold text-red-800">{{ __('No listo para producción') }}</p>
+                            <p class="text-xs text-red-600 mt-0.5">{{ __('Faltan el certificado y/o el WSDL. Los envíos a AEAT fallarán hasta configurarlos.') }}</p>
+                        </div>
+                        <flux:badge color="red">{{ __('Bloqueado') }}</flux:badge>
+                    </div>
+                @endif
 
                 {{-- NIF check --}}
                 <div class="flex items-center justify-between p-4 bg-amber-50 rounded-xl border border-amber-200">
