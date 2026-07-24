@@ -216,9 +216,19 @@ trait HasBetaAccess
      * Verificar si el usuario tiene una ability según su plan efectivo O
      * si la DO le ha concedido un override individual (lógica existente en hasAbility).
      * Este método unifica ambas fuentes para que el middleware pueda usarlo.
+     *
+     * Caso especial: la compra de uva a terceros no es una ability de plan para
+     * el producer (su plan es 'vit_pro', espejo del viticultor), sino un módulo
+     * opcional que activa por su cuenta vía compra_uva_externa. La web ya lo
+     * gatea así (EnsureProducerBuysExternalGrape); se replica aquí para que la
+     * API tenga el mismo criterio en vez de bloquearlo siempre.
      */
     public function hasPlanAbility(string $code): bool
     {
+        if ($code === \App\Models\Ability::GRAPE_PURCHASE_INV && $this->isProducer()) {
+            return (bool) $this->compra_uva_externa;
+        }
+
         return in_array($code, $this->planAbilities(), true);
     }
 

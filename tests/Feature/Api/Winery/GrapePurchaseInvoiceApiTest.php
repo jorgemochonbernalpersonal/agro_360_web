@@ -48,13 +48,22 @@ class GrapePurchaseInvoiceApiTest extends TestCase
             ->assertStatus(403);
     }
 
-    public function test_producer_can_access(): void
+    public function test_producer_with_external_grape_can_access(): void
     {
-        $producer = User::factory()->producer()->create(['can_login' => true]);
+        $producer = User::factory()->producer()->create(['can_login' => true, 'compra_uva_externa' => true]);
 
         $this->api($producer)
             ->getJson('/api/v1/winery/grape-invoices')
             ->assertStatus(200);
+    }
+
+    public function test_producer_without_external_grape_is_forbidden(): void
+    {
+        $producer = User::factory()->producer()->create(['can_login' => true, 'compra_uva_externa' => false]);
+
+        $this->api($producer)
+            ->getJson('/api/v1/winery/grape-invoices')
+            ->assertStatus(403);
     }
 
     // ─── store ───────────────────────────────────────────────────────────────
