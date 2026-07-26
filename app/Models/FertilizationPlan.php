@@ -56,12 +56,12 @@ class FertilizationPlan extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status];
+        return self::STATUSES[$this->status] ?? $this->status;
     }
 
     public function getStatusColorAttribute(): string
     {
-        return self::STATUS_COLORS[$this->status];
+        return self::STATUS_COLORS[$this->status] ?? 'zinc';
     }
 
     public function isDraft(): bool

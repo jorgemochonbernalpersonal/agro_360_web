@@ -89,3 +89,21 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: app/Livewire/Viticulturist/PestManagement/Index.php
+
+		-
+			message: '#^Offset .+ on array\{.+\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: app/Models/Certification.php
+
+		-
+			message: '#^Offset .+ on array\{.+\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: app/Models/FertilizationPlan.php
+
+		-
+			message: '#^Offset .+ on array\{.+\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Models/WaterConcession.php
