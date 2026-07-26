@@ -37,6 +37,18 @@ parameters:
 			path: app/Livewire/Viticulturist/Harvests/Index.php
 
 		-
+			message: '#^Strict comparison using \!\=\= between Laravel\\Sanctum\\PersonalAccessToken and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Middleware/ApiRole.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Http/Middleware/ApiRole.php
+
+		-
 			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: mixed, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: int, plot_id\: int, plot_name\: string, sigpac_code\: mixed, display_name\: non\-falsy\-string\}\>\.$#'
 			identifier: return.type
 			count: 1

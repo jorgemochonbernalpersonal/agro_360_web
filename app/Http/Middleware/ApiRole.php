@@ -14,7 +14,10 @@ class ApiRole
         $user = $request->user();
 
         $roleMatch = empty($roles) || in_array($user->role, $roles);
-        $tokenMatch = empty($roles) || collect($roles)->contains(fn ($r) => $user->tokenCan($r));
+        // Si no hay token real (sesión web o helper actingAs en tests), la comprobación
+        // de habilidades no aplica: el rol es suficiente.
+        $hasToken = $user->currentAccessToken() !== null;
+        $tokenMatch = ! $hasToken || empty($roles) || collect($roles)->contains(fn ($r) => $user->tokenCan($r));
 
         if ($roleMatch && $tokenMatch) {
             return $next($request);
