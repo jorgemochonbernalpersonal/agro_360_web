@@ -137,10 +137,11 @@ class Show extends Component
             ->join('grape_varieties', 'grape_varieties.id', '=', 'plot_plantings.grape_variety_id')
             ->where('harvests.winery_id', $wineryId)
             ->where('harvests.vintage', $currentVintage)
-            ->select(
-                'grape_varieties.name as variety',
-                DB::raw('COALESCE(SUM(harvests.total_weight), 0) as total_kg'),
-                DB::raw('COUNT(*) as receptions')
+            ->selectRaw(
+                'JSON_UNQUOTE(JSON_EXTRACT(grape_varieties.name, ?)) as variety, '.
+                'COALESCE(SUM(harvests.total_weight), 0) as total_kg, '.
+                'COUNT(*) as receptions',
+                ['$."'.app()->getLocale().'"']
             )
             ->groupBy('grape_varieties.id', 'grape_varieties.name')
             ->orderByDesc('total_kg')

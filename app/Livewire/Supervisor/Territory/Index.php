@@ -51,11 +51,12 @@ class Index extends Component
             ->whereIn('plots.viticulturist_id', $viticulturistIds)
             ->where('plots.active', true)
             ->where('plot_plantings.status', 'active')
-            ->select(
-                'grape_varieties.name as variety_name',
-                'grape_varieties.color as variety_color',
-                DB::raw('COUNT(DISTINCT plots.id) as plot_count'),
-                DB::raw('COALESCE(SUM(plot_plantings.area_planted), 0) as planted_area')
+            ->selectRaw(
+                'JSON_UNQUOTE(JSON_EXTRACT(grape_varieties.name, ?)) as variety_name, '.
+                'grape_varieties.color as variety_color, '.
+                'COUNT(DISTINCT plots.id) as plot_count, '.
+                'COALESCE(SUM(plot_plantings.area_planted), 0) as planted_area',
+                ['$."'.app()->getLocale().'"']
             )
             ->groupBy('grape_varieties.id', 'grape_varieties.name', 'grape_varieties.color')
             ->orderByDesc('planted_area')
