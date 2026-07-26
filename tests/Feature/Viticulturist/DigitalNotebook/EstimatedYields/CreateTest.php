@@ -267,6 +267,17 @@ class CreateTest extends ViticulturistTestCase
 
     private function makeCampaign($viticulturist): Campaign
     {
+        // makeViticulturist() ya dispara UserObserver, que auto-crea la campaña
+        // activa del año en curso: reutilizarla evita duplicar campañas activas
+        // (sin unique constraint en BD, un first() posterior sería no determinista).
+        $campaign = Campaign::where('viticulturist_id', $viticulturist->id)->first();
+
+        if ($campaign) {
+            $campaign->update(['year' => now()->year, 'active' => true]);
+
+            return $campaign;
+        }
+
         return Campaign::factory()->active()->create([
             'viticulturist_id' => $viticulturist->id,
             'year' => now()->year,
