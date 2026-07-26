@@ -67,7 +67,7 @@ class ExternalGrapeTest extends WineryTestCase
 
         Livewire::test(Edit::class, ['grape' => $grape])
             ->set('supplier_name', 'Nuevo Proveedor')
-            ->call('update')
+            ->call('save')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('external_grapes', [
