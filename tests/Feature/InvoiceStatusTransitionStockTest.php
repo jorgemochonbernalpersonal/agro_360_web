@@ -34,16 +34,17 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->actingAs($this->user);
     }
 
-    public function test_changing_draft_to_sent_converts_reservations_to_sales()
+    public function test_changing_draft_to_sent_keeps_stock_reserved()
     {
-        // Arrange - Create draft invoice with items
+        // Modelo de único disparador: draft→sent solo asigna número/snapshot.
+        // El stock no se confirma como venta hasta que se entrega (delivery_status→delivered).
         $invoice = Invoice::factory()->draft()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
         $quantity = 200;
-        $item = InvoiceItem::create([
+        InvoiceItem::create([
             'invoice_id' => $invoice->id,
             'harvest_id' => $this->harvest->id,
             'name' => 'Uva Tempranillo',
@@ -63,6 +64,49 @@ class InvoiceStatusTransitionStockTest extends TestCase
 
         // Act - Change status to sent
         $invoice->update(['status' => 'sent']);
+
+        // Assert - Stock remains reserved (aún no se ha entregado)
+        $latestStock = $this->harvest->stockMovements()->latest()->first();
+        $this->assertEquals('reserve', $latestStock->movement_type);
+        $this->assertEquals($quantity, $latestStock->reserved_qty);
+        $this->assertEquals(0, $latestStock->sold_qty);
+
+        // Assert - Container state también sigue reservado
+        $container = Container::find($this->harvest->container_id);
+        $this->assertNotNull($container, 'Container should exist');
+        $containerState = ContainerCurrentState::where('container_id', $container->id)->first();
+        $this->assertNotNull($containerState, 'ContainerCurrentState should exist');
+        $this->assertEquals($quantity, $containerState->reserved_qty);
+        $this->assertEquals(0, $containerState->sold_qty);
+    }
+
+    public function test_confirming_delivery_converts_reservation_to_sale()
+    {
+        $invoice = Invoice::factory()->draft()->create([
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
+        ]);
+
+        $quantity = 200;
+        InvoiceItem::create([
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva Tempranillo',
+            'quantity' => $quantity,
+            'unit_price' => 2.0,
+            'discount_percentage' => 0,
+            'discount_amount' => 0,
+            'tax_base' => 400,
+            'tax_amount' => 0,
+            'subtotal' => 400,
+            'total' => 400,
+            'concept_type' => 'harvest',
+        ]);
+
+        $invoice->update(['status' => 'sent']);
+
+        // Act - Confirmar entrega (único disparador de venta)
+        $invoice->refresh()->update(['delivery_status' => 'delivered']);
 
         // Assert - Stock converted from reserved to sold
         $latestStock = $this->harvest->stockMovements()->latest()->first();
@@ -107,16 +151,20 @@ class InvoiceStatusTransitionStockTest extends TestCase
         // Act
         $invoice->update(['status' => 'sent']);
 
-        // Assert - stock is converted to sale
+        // Assert - se genera el número de factura al emitir
+        $this->assertNotNull($invoice->fresh()->invoice_number);
+
+        // Assert - el stock permanece reservado (la venta se confirma con la entrega)
         $latestStock = $this->harvest->stockMovements()->latest()->first();
-        $this->assertEquals('sale', $latestStock->movement_type);
-        $this->assertEquals($quantity, $latestStock->sold_qty);
-        $this->assertEquals(0, $latestStock->reserved_qty);
+        $this->assertEquals('reserve', $latestStock->movement_type);
+        $this->assertEquals($quantity, $latestStock->reserved_qty);
+        $this->assertEquals(0, $latestStock->sold_qty);
     }
 
-    public function test_changing_sent_back_to_draft_converts_sales_to_reservations()
+    public function test_adding_item_to_sent_invoice_reserves_until_delivery()
     {
-        // Arrange - Create sent invoice
+        // Añadir un item a una factura ya 'sent' (pero no entregada) reserva,
+        // igual que en un borrador: delivery_status es el único disparador de venta.
         $invoice = Invoice::factory()->sent()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
@@ -138,10 +186,50 @@ class InvoiceStatusTransitionStockTest extends TestCase
             'concept_type' => 'harvest',
         ]);
 
-        $stockAfterSale = $this->harvest->stockMovements()->latest()->first();
-        $this->assertEquals($quantity, $stockAfterSale->sold_qty);
+        $stockAfterCreate = $this->harvest->stockMovements()->latest()->first();
+        $this->assertEquals('reserve', $stockAfterCreate->movement_type);
+        $this->assertEquals($quantity, $stockAfterCreate->reserved_qty);
+        $this->assertEquals(0, $stockAfterCreate->sold_qty);
 
-        // Act - Change back to draft
+        // Act - Change back to draft: delivery_status no cambia → no-op de stock
+        $invoice->update(['status' => 'draft']);
+
+        $latestStock = $this->harvest->stockMovements()->latest()->first();
+        $this->assertEquals($quantity, $latestStock->reserved_qty);
+        $this->assertEquals(0, $latestStock->sold_qty);
+    }
+
+    public function test_reverting_status_after_delivery_converts_sale_back_to_reservation()
+    {
+        // Si la entrega ya se confirmó (delivery_status=delivered) y luego el
+        // documento se reabre a borrador, la venta sí debe revertirse a reserva.
+        $invoice = Invoice::factory()->sent()->create([
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
+        ]);
+
+        $quantity = 180;
+        InvoiceItem::create([
+            'invoice_id' => $invoice->id,
+            'harvest_id' => $this->harvest->id,
+            'name' => 'Uva',
+            'quantity' => $quantity,
+            'unit_price' => 1.8,
+            'discount_percentage' => 0,
+            'discount_amount' => 0,
+            'tax_base' => 324,
+            'tax_amount' => 0,
+            'subtotal' => 324,
+            'total' => 324,
+            'concept_type' => 'harvest',
+        ]);
+
+        $invoice->refresh()->update(['delivery_status' => 'delivered']);
+
+        $stockAfterDelivery = $this->harvest->stockMovements()->latest()->first();
+        $this->assertEquals($quantity, $stockAfterDelivery->sold_qty);
+
+        // Act - Change back to draft (delivery_status se mantiene 'delivered')
         $invoice->update(['status' => 'draft']);
 
         // Assert - Stock converted back to reserved
@@ -290,8 +378,9 @@ class InvoiceStatusTransitionStockTest extends TestCase
             'concept_type' => 'harvest',
         ]);
 
-        // Act - Send invoice (converts reservations to sales)
+        // Act - Send invoice, then confirm delivery (converts reservations to sales)
         $invoice->update(['status' => 'sent']);
+        $invoice->refresh()->update(['delivery_status' => 'delivered']);
 
         // Assert - Both harvests transitioned
         $stock1 = $this->harvest->stockMovements()->latest()->first();

@@ -20,7 +20,8 @@ use Tests\TestCase;
  * - HarvestObserver: eliminar cosecha libera contenedor
  * - Capacidad máxima del contenedor
  * - InvoiceItemObserver::restored (soft-delete restore)
- * - delivery_status no mueve stock en ningún caso
+ * - delivery_status: no mueve stock salvo al confirmar entrega (pending/in_transit
+ *   son no-ops; solo la transición a 'delivered' convierte reserva en venta)
  */
 class ContainerStockServiceTest extends TestCase
 {
@@ -337,8 +338,11 @@ class ContainerStockServiceTest extends TestCase
         $this->assertEquals($stockBefore->reserved_qty, $stockAfter->reserved_qty);
     }
 
-    public function test_changing_delivery_status_to_delivered_does_not_move_stock()
+    public function test_changing_delivery_status_to_delivered_converts_reservation_to_sale()
     {
+        // delivery_status='delivered' es el único disparador de venta: el item
+        // se crea reservado (delivery aún no confirmada) y al confirmar la
+        // entrega la reserva se convierte en venta.
         $invoice = Invoice::factory()->sent()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
@@ -360,13 +364,16 @@ class ContainerStockServiceTest extends TestCase
             'concept_type' => 'harvest',
         ]);
 
-        $countBefore = $this->harvest->stockMovements()->count();
-        $soldBefore = $this->harvest->stockMovements()->latest()->first()->sold_qty;
+        $stockAfterCreate = $this->harvest->stockMovements()->latest()->first();
+        $this->assertEquals(200, $stockAfterCreate->reserved_qty);
+        $this->assertEquals(0, $stockAfterCreate->sold_qty);
 
         $invoice->update(['delivery_status' => 'delivered']);
 
-        $this->assertEquals($countBefore, $this->harvest->stockMovements()->count());
-        $this->assertEquals($soldBefore, $this->harvest->fresh()->stockMovements()->latest()->first()->sold_qty);
+        $stockAfterDelivery = $this->harvest->fresh()->stockMovements()->latest()->first();
+        $this->assertEquals('sale', $stockAfterDelivery->movement_type);
+        $this->assertEquals(0, $stockAfterDelivery->reserved_qty);
+        $this->assertEquals(200, $stockAfterDelivery->sold_qty);
     }
 
     public function test_changing_delivery_status_pending_to_in_transit_sets_no_stock_movements()
@@ -446,12 +453,14 @@ class ContainerStockServiceTest extends TestCase
         $this->assertEquals($quantity, $stockAfterRestore->reserved_qty);
     }
 
-    public function test_restoring_item_from_non_draft_invoice_does_not_re_reserve()
+    public function test_restoring_item_with_delivery_confirmed_re_sells_not_reserves()
     {
-        // Si el item restaurado pertenece a una factura NO-draft, el observer no re-reserva
+        // Si la entrega ya está confirmada (delivery_status=delivered), el observer
+        // re-vende (directSale) al restaurar, no re-reserva.
         $invoice = Invoice::factory()->sent()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
+            'delivery_status' => 'delivered',
         ]);
 
         $item = InvoiceItem::create([
@@ -469,16 +478,15 @@ class ContainerStockServiceTest extends TestCase
             'concept_type' => 'harvest',
         ]);
 
-        $countBefore = $this->harvest->stockMovements()->count();
-
         $item->delete();
         $item->restore();
 
-        // Solo debe haber añadido el 'return' del delete, no un 'reserve' del restore
+        // El último movimiento tras restore con entrega confirmada debe ser 'sale', no 'reserve'
         $movements = $this->harvest->fresh()->stockMovements()->orderBy('id')->get();
         $lastMovement = $movements->last();
 
-        // El último movimiento tras restore en factura sent NO debe ser 'reserve'
-        $this->assertNotEquals('reserve', $lastMovement->movement_type);
+        $this->assertEquals('sale', $lastMovement->movement_type);
+        $this->assertEquals(200, $lastMovement->sold_qty);
+        $this->assertEquals(0, $lastMovement->reserved_qty);
     }
 }

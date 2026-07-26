@@ -36,8 +36,9 @@ class StockManagementIntegrationTest extends TestCase
 
     public function test_complete_flow_create_approve_revert_cancel_restores_stock()
     {
-        // Flujo: draft (reserve) → sent (confirm) → draft (revert) → cancel (release).
-        // No se puede cancelar directamente desde sent (requiere rectificativa).
+        // Flujo: draft (reserve) → sent (sigue reservado) → delivered (confirm) →
+        // draft (revert) → cancel (release). No se puede cancelar directamente desde
+        // sent (requiere rectificativa); el único disparador de venta es delivery_status.
 
         $initialStock = $this->harvest->stockMovements()->latest()->first();
         $initialAvailable = $initialStock->available_qty;
@@ -70,15 +71,23 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals($quantity, $stockAfterDraft->reserved_qty);
         $this->assertEquals(0, $stockAfterDraft->sold_qty);
 
-        // Step 2: Send invoice (draft → sent converts reservations to sales)
+        // Step 2: Send invoice (draft → sent no mueve stock; sigue reservado)
         $invoice->update(['status' => 'sent']);
 
         $stockAfterSent = $this->harvest->fresh()->stockMovements()->latest()->first();
         $this->assertEquals($initialAvailable - $quantity, $stockAfterSent->available_qty);
-        $this->assertEquals(0, $stockAfterSent->reserved_qty);
-        $this->assertEquals($quantity, $stockAfterSent->sold_qty);
+        $this->assertEquals($quantity, $stockAfterSent->reserved_qty);
+        $this->assertEquals(0, $stockAfterSent->sold_qty);
 
-        // Step 3: Revert to draft (sent → draft reverts sales to reservations)
+        // Step 3: Confirm delivery (delivery_status → delivered convierte reserva en venta)
+        $invoice->refresh()->update(['delivery_status' => 'delivered']);
+
+        $stockAfterDelivery = $this->harvest->fresh()->stockMovements()->latest()->first();
+        $this->assertEquals($initialAvailable - $quantity, $stockAfterDelivery->available_qty);
+        $this->assertEquals(0, $stockAfterDelivery->reserved_qty);
+        $this->assertEquals($quantity, $stockAfterDelivery->sold_qty);
+
+        // Step 4: Revert to draft (con la entrega ya confirmada, revierte venta a reserva)
         $invoice->update(['status' => 'draft']);
 
         $stockAfterRevert = $this->harvest->fresh()->stockMovements()->latest()->first();
@@ -86,7 +95,7 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals($quantity, $stockAfterRevert->reserved_qty);
         $this->assertEquals(0, $stockAfterRevert->sold_qty);
 
-        // Step 4: Cancel draft (releases reservation)
+        // Step 5: Cancel draft (releases reservation)
         $invoice->update(['status' => 'cancelled']);
 
         $finalStock = $this->harvest->fresh()->stockMovements()->latest()->first();
@@ -145,8 +154,9 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals($initialAvailable - $totalReserved, $stockAfterReservations->available_qty);
         $this->assertEquals($totalReserved, $stockAfterReservations->reserved_qty);
 
-        // Send first invoice (converts reservation to sale)
+        // Send + deliver first invoice (delivery_status→delivered convierte reserva en venta)
         $invoices[0]->update(['status' => 'sent']);
+        $invoices[0]->refresh()->update(['delivery_status' => 'delivered']);
 
         $stockAfterFirstApproval = $this->harvest->fresh()->stockMovements()->latest()->first();
         $this->assertEquals($quantities[0], $stockAfterFirstApproval->sold_qty);
@@ -205,15 +215,23 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals($initialAvailable - 180, $stockAfterModifications->available_qty);
         $this->assertEquals(180, $stockAfterModifications->reserved_qty);
 
-        // Send invoice (converts reservations to sales)
+        // Send invoice: sigue reservado hasta confirmar la entrega
         $invoice->update(['status' => 'sent']);
+
+        $stockAfterSent = $this->harvest->fresh()->stockMovements()->latest()->first();
+        $this->assertEquals($initialAvailable - 180, $stockAfterSent->available_qty);
+        $this->assertEquals(180, $stockAfterSent->reserved_qty);
+        $this->assertEquals(0, $stockAfterSent->sold_qty);
+
+        // Confirm delivery (delivery_status→delivered converts reservations to sales)
+        $invoice->refresh()->update(['delivery_status' => 'delivered']);
 
         $stockAfterApproval = $this->harvest->fresh()->stockMovements()->latest()->first();
         $this->assertEquals($initialAvailable - 180, $stockAfterApproval->available_qty);
         $this->assertEquals(0, $stockAfterApproval->reserved_qty);
         $this->assertEquals(180, $stockAfterApproval->sold_qty);
 
-        // Modify quantity in sent invoice
+        // Modify quantity in delivered invoice
         $item->update(['quantity' => 150]); // -30 from sold
 
         $finalStock = $this->harvest->fresh()->stockMovements()->latest()->first();
@@ -276,7 +294,8 @@ class StockManagementIntegrationTest extends TestCase
 
     public function test_stock_movements_create_complete_audit_trail()
     {
-        // Flujo completo: draft(initial+reserve) → sent(sale) → draft(reserve) → cancel(unreserve).
+        // Flujo completo: draft(initial+reserve) → sent(sin cambio) → delivered(sale) →
+        // draft(reserve, revierte venta) → cancel(unreserve).
         // Cancelar desde sent está prohibido; se debe revertir a draft primero.
 
         $invoice = Invoice::factory()->draft()->create([
@@ -303,10 +322,15 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals(2, $this->harvest->stockMovements()->count());
 
         $invoice->update(['status' => 'sent']);
+        // Sin movimiento nuevo: draft→sent ya no mueve stock (único disparador: delivery_status)
+        $this->assertEquals(2, $this->harvest->stockMovements()->count());
+
+        // Confirmar entrega
+        $invoice->refresh()->update(['delivery_status' => 'delivered']);
         // + Sale
         $this->assertEquals(3, $this->harvest->stockMovements()->count());
 
-        // Sent → draft (revert sale to reservation)
+        // Sent → draft (revert sale to reservation, la entrega ya estaba confirmada)
         $invoice->update(['status' => 'draft']);
         // + Reserve (revert)
         $this->assertEquals(4, $this->harvest->stockMovements()->count());
@@ -327,7 +351,7 @@ class StockManagementIntegrationTest extends TestCase
         // Refresh invoice to get the generated invoice_number
         $invoice->refresh();
 
-        // The sale movement (created when draft→sent) references the invoice number.
+        // The sale movement (created when delivery_status→delivered) references the invoice number.
         $this->assertEquals($invoice->invoice_number, $movements[2]->reference_number);
     }
 }

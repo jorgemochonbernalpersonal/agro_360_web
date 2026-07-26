@@ -829,22 +829,23 @@ class ContainerStockService
     /**
      * Ajusta el stock cuando cambia la cantidad de un InvoiceItem existente.
      *
-     * @param string $invoiceStatus Estado actual de la factura ('draft', 'sent', 'approved', etc.)
+     * @param bool $isDelivered Si la entrega ya está confirmada (delivery_status=delivered),
+     *                          el item está vendido; si no, sigue reservado.
      */
-    public function adjustItemQuantity(Harvest $harvest, InvoiceItem $item, float $oldQty, float $newQty, string $invoiceStatus): void
+    public function adjustItemQuantity(Harvest $harvest, InvoiceItem $item, float $oldQty, float $newQty, bool $isDelivered): void
     {
         $diff = $newQty - $oldQty;
         if ($diff == 0) {
             return;
         }
 
-        DB::transaction(function () use ($harvest, $item, $oldQty, $newQty, $diff, $invoiceStatus) {
+        DB::transaction(function () use ($harvest, $item, $oldQty, $newQty, $diff, $isDelivered) {
             $lastStock = $this->getLatestStock($harvest);
             if (! $lastStock) {
                 return;
             }
 
-            if ($invoiceStatus === 'draft') {
+            if (! $isDelivered) {
                 // Ajuste de reserva
                 if ($diff > 0 && $lastStock->available_qty < $diff) {
                     throw new \RuntimeException(
@@ -940,7 +941,7 @@ class ContainerStockService
                 'item_id' => $item->id,
                 'old_qty' => $oldQty,
                 'new_qty' => $newQty,
-                'invoice_status' => $invoiceStatus,
+                'is_delivered' => $isDelivered,
             ]);
         });
     }

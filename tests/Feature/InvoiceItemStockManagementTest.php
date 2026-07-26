@@ -81,9 +81,11 @@ class InvoiceItemStockManagementTest extends TestCase
     public function test_creating_sent_invoice_item_marks_as_sold()
     {
         // Arrange
+        // delivery_status='delivered' es el único disparador de venta directa
         $invoice = Invoice::factory()->sent()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
+            'delivery_status' => 'delivered',
         ]);
 
         $initialStock = $this->harvest->stockMovements()->latest()->first();
@@ -158,9 +160,11 @@ class InvoiceItemStockManagementTest extends TestCase
     public function test_updating_quantity_in_sent_invoice_adjusts_sale()
     {
         // Arrange
+        // delivery_status='delivered' es el único disparador de venta directa
         $invoice = Invoice::factory()->sent()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
+            'delivery_status' => 'delivered',
         ]);
 
         $item = InvoiceItem::create([
@@ -228,9 +232,11 @@ class InvoiceItemStockManagementTest extends TestCase
     public function test_deleting_sent_item_returns_stock()
     {
         // Arrange
+        // delivery_status='delivered' es el único disparador de venta directa
         $invoice = Invoice::factory()->sent()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
+            'delivery_status' => 'delivered',
         ]);
 
         $quantity = 150;

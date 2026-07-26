@@ -160,12 +160,14 @@ class Edit extends Component
                 $oldItems = InvoiceItem::where('invoice_id', $this->invoice->id)
                     ->with('harvest')
                     ->get();
+                // isLocked ya descarta delivery_status='delivered', así que el stock
+                // de estos items nunca está vendido: siempre viene de una reserva.
                 foreach ($oldItems as $oldItem) {
                     if ($oldItem->harvest_id && $oldItem->quantity > 0 && $oldItem->harvest) {
                         $this->stockService->releaseFromInvoice(
                             $oldItem->harvest,
                             $oldItem,
-                            $this->invoice->status
+                            'draft'
                         );
                     }
                 }

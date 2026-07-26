@@ -80,8 +80,11 @@ class InvoiceObserver
     {
         $oldStatus = $invoice->getOriginal('status');
         $newStatus = $invoice->status;
-        $oldDeliveryStatus = $invoice->getOriginal('delivery_status');
-        $newDeliveryStatus = $invoice->delivery_status;
+        // Fallback al default de BD ('pending'): un modelo creado en memoria sin
+        // recargar desde BD no tiene hidratado el default de columna, y dejaría
+        // null aquí en vez del string que exige handleDeliveryStatusChange().
+        $oldDeliveryStatus = $invoice->getOriginal('delivery_status') ?? 'pending';
+        $newDeliveryStatus = $invoice->delivery_status ?? 'pending';
         $oldPaymentStatus = $invoice->getOriginal('payment_status');
         $newPaymentStatus = $invoice->payment_status;
 
@@ -170,8 +173,11 @@ class InvoiceObserver
             // Stock no se mueve aquí: reserved→sold ocurre al confirmar entrega (delivery_status→delivered).
         }
 
-        // sent → draft: revertir ventas a reservas
-        elseif ($oldStatus === 'sent' && $newStatus === 'draft') {
+        // sent → draft: revertir ventas a reservas, solo si la entrega ya se había
+        // confirmado (delivery_status='delivered'). Si no, el stock nunca dejó de
+        // estar reservado (único disparador de venta: delivery_status→delivered) y
+        // revertir aquí duplicaría la reserva.
+        elseif ($oldStatus === 'sent' && $newStatus === 'draft' && $invoice->delivery_status === 'delivered') {
             $invoice->loadMissing('items.harvest');
             DB::transaction(function () use ($invoice) {
                 foreach ($invoice->items as $item) {
