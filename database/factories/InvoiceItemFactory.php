@@ -45,7 +45,7 @@ class InvoiceItemFactory extends Factory
 
             return [
                 'harvest_id' => $harvestModel->id,
-                'name' => 'Cosecha '.$harvestModel->plotPlanting->grapeVariety->name ?? 'Uva',
+                'name' => 'Cosecha '.($harvestModel->plotPlanting?->grapeVariety?->name ?? 'Uva'),
                 'concept_type' => 'harvest',
                 'quantity' => min($attributes['quantity'], $harvestModel->total_weight / 2), // No más de la mitad
             ];

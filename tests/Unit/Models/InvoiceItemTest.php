@@ -45,9 +45,10 @@ class InvoiceItemTest extends TestCase
     {
         $harvest = Harvest::factory()->create();
 
-        $item = InvoiceItem::factory()->create([
-            'harvest_id' => $harvest->id,
-        ]);
+        // withHarvest() clampa quantity a la mitad del peso de la cosecha:
+        // sin esto, quantity y total_weight son rangos aleatorios independientes
+        // y ocasionalmente quantity > stock disponible, lanzando RuntimeException.
+        $item = InvoiceItem::factory()->withHarvest($harvest)->create();
 
         $this->assertEquals($harvest->id, $item->harvest->id);
     }
@@ -154,9 +155,9 @@ class InvoiceItemTest extends TestCase
     {
         $harvest = Harvest::factory()->create();
 
-        $item = InvoiceItem::factory()->create([
-            'harvest_id' => $harvest->id,
-        ]);
+        // withHarvest() clampa quantity a la mitad del peso de la cosecha (ver
+        // test_invoice_item_belongs_to_harvest arriba para el porqué).
+        $item = InvoiceItem::factory()->withHarvest($harvest)->create();
 
         $this->assertTrue($item->hasHarvest());
     }
