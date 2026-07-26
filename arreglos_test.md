@@ -1,6 +1,7 @@
 # Arreglos de tests pendientes
 
-Estado a 2026-07-26 (sesión de continuación).
+Estado a 2026-07-26: **suite completa en verde — 3918 passed, 0 failed** (última corrida de
+verificación, 1561s). Mergeado a `main` (fast-forward `27b3c116..59a9f35a`).
 
 ## Ya arreglados y mergeados a `main`
 
@@ -114,10 +115,9 @@ del nombre localizado (bypasean el accessor de Eloquent al ser raw query). Un su
 el mismo patrón (sin test que lo cubra) en `Supervisor/Oversight/Wineries/Show.php` (`variety`) y se
 corrigió igual por consistencia.
 
-## Cómo retomar
+## Cómo retomar (si en el futuro vuelven a aparecer fallos)
 
-Si la corrida de verificación final (`/tmp/fixed4.txt` / `/tmp/fixed4_fails.txt`) no ha terminado,
-esperar la notificación en vez de lanzar otra — **nunca dos `php artisan test` en paralelo**: el
+**Nunca dos `php artisan test` en paralelo**: el
 `tests/bootstrap.php` hace DROP + migrate + seed completo de la BD compartida `agro365_test` en cada
 invocación, y dos procesos a la vez corrompen la corrida del otro (visto en esta sesión: crash con
 `Duplicate entry 'EXENTO-0.00-General'` en `TaxSeeder`).
