@@ -53,8 +53,6 @@ class SecurityLoggerTest extends TestCase
 
     public function test_log_captcha_activated_logs_notice(): void
     {
-        session(['login_failed_attempts' => 5]);
-
         $logChannel = Mockery::mock();
         Log::shouldReceive('channel')
             ->with('security')
@@ -73,7 +71,7 @@ class SecurityLoggerTest extends TestCase
                        isset($context['timestamp']);
             }));
 
-        SecurityLogger::logCaptchaActivated('test@example.com');
+        SecurityLogger::logCaptchaActivated('test@example.com', 5);
 
         $this->assertTrue(true); // Assertion explícita
     }
