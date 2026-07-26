@@ -44,7 +44,7 @@ class ContainerMaintenanceAlertNotification extends Notification implements Shou
             ? 'Aviso de mantenimiento de contenedor'
             : "{$total} avisos de mantenimiento de contenedores";
 
-        $url = AppLink::url(route('winery.cellar.containers.index'), 'agro365://containers');
+        $url = AppLink::url(route('winery.containers.index'), 'agro365://containers');
         if (app()->environment('production')) {
             $url = str_replace('http://', 'https://', $url);
         }

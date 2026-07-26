@@ -8,7 +8,7 @@ namespace App\Support;
  *
  * Uso en notificaciones:
  *   ->action('Ver contenedores', AppLink::url(
- *       route('winery.cellar.containers.index'),
+ *       route('winery.containers.index'),
  *       'agro365://containers'
  *   ))
  */
