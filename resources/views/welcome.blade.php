@@ -874,14 +874,14 @@
                     </div>
 
                     {{-- Tab 4: App móvil — screenshot real --}}
-                    {{-- Imagen: public/images/app-screenshot-cuaderno.webp (9:19,5 aprox, ancho mín 270px) --}}
+                    {{-- Mockup provisional: public/images/app-mockup-cuaderno.svg — sustituir por la captura real (9:19,5 aprox, ancho mín 270px) --}}
                     <div id="panel-tab-4" role="tabpanel" aria-labelledby="tab-4"
                          x-show="tab === 4" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                          class="bg-gradient-to-br from-zinc-50 to-zinc-100 py-10 px-4 flex justify-center">
                         <div class="relative w-[270px] rounded-[2.2rem] bg-zinc-900 p-2.5 shadow-2xl shadow-zinc-900/20">
                             <div class="absolute left-1/2 -translate-x-1/2 top-2.5 w-24 h-5 bg-zinc-900 rounded-b-2xl z-20"></div>
                             <div class="rounded-[1.7rem] overflow-hidden">
-                                <img src="{{ asset('images/app-screenshot-cuaderno.webp') }}"
+                                <img src="{{ asset('images/app-mockup-cuaderno.svg') }}"
                                      alt="App Agro365 — Cuaderno de campo digital desde el móvil"
                                      class="w-full h-auto block"
                                      loading="lazy" decoding="async">
@@ -947,12 +947,12 @@
                 </div>
 
                 {{-- Screenshot teléfono --}}
-                {{-- Imagen: public/images/app-screenshot-mapa.webp (9:19,5 aprox, ancho mín 260px) --}}
+                {{-- Mockup provisional: public/images/app-mockup-mapa.svg — sustituir por la captura real (9:19,5 aprox, ancho mín 260px) --}}
                 <div class="flex justify-center lg:justify-end">
                     <div class="relative w-[260px] rounded-[2.2rem] bg-black p-2.5 shadow-2xl shadow-black/40">
                         <div class="absolute left-1/2 -translate-x-1/2 top-2.5 w-24 h-5 bg-black rounded-b-2xl z-20"></div>
                         <div class="rounded-[1.7rem] overflow-hidden">
-                            <img src="{{ asset('images/app-screenshot-mapa.webp') }}"
+                            <img src="{{ asset('images/app-mockup-mapa.svg') }}"
                                  alt="App Agro365 — Mapa de parcelas con GPS"
                                  class="w-full h-auto block"
                                  loading="lazy" decoding="async">

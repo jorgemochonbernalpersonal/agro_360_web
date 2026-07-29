@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 270 585" width="270" height="585" role="img" aria-label="Mockup de la app Agro365: mapa de parcelas con GPS">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef3ea"/>
+      <stop offset="1" stop-color="#e4ebdf"/>
+    </linearGradient>
+    <filter id="card" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f2508" flood-opacity="0.16"/>
+    </filter>
+    <filter id="pinGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1d4ed8" flood-opacity="0.45"/>
+    </filter>
+    <clipPath id="screen"><rect width="270" height="585"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#screen)" font-family="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif">
+    <!-- Mapa base -->
+    <rect width="270" height="585" fill="url(#sky)"/>
+
+    <!-- Caminos rurales -->
+    <g stroke="#d8cfbb" stroke-linecap="round" fill="none">
+      <path d="M-10 172 L120 150 L200 186 L290 168" stroke-width="9"/>
+      <path d="M62 -10 L78 190 L54 330 L88 600" stroke-width="7"/>
+      <path d="M-10 402 L110 386 L210 424 L290 408" stroke-width="6"/>
+    </g>
+    <g stroke="#f3efe4" stroke-linecap="round" stroke-dasharray="7 9" fill="none" stroke-width="2">
+      <path d="M-10 172 L120 150 L200 186 L290 168"/>
+      <path d="M62 -10 L78 190 L54 330 L88 600"/>
+    </g>
+
+    <!-- Río -->
+    <path d="M-10 486 C60 470 96 512 160 494 C216 478 244 510 290 498" stroke="#a9cfe3" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.75"/>
+
+    <!-- Parcelas -->
+    <g stroke-linejoin="round">
+      <polygon points="14,196 92,180 106,256 26,272" fill="#4a7c59" fill-opacity="0.34" stroke="#3d6b4a" stroke-width="1.8"/>
+      <polygon points="112,178 196,192 186,262 108,254" fill="#6bbf3e" fill-opacity="0.42" stroke="#4a7c59" stroke-width="1.8"/>
+      <polygon points="200,196 262,208 254,284 190,268" fill="#4a7c59" fill-opacity="0.22" stroke="#3d6b4a" stroke-width="1.6"/>
+      <polygon points="20,288 104,272 116,352 34,368" fill="#6bbf3e" fill-opacity="0.26" stroke="#4a7c59" stroke-width="1.6"/>
+      <polygon points="124,272 206,282 200,360 118,352" fill="#4a7c59" fill-opacity="0.3" stroke="#3d6b4a" stroke-width="1.6"/>
+      <polygon points="30,390 118,378 128,440 40,452" fill="#6bbf3e" fill-opacity="0.2" stroke="#4a7c59" stroke-width="1.5"/>
+      <polygon points="140,382 232,394 226,450 136,442" fill="#4a7c59" fill-opacity="0.18" stroke="#3d6b4a" stroke-width="1.5"/>
+    </g>
+
+    <!-- Hileras de viña en la parcela activa -->
+    <g stroke="#2d5016" stroke-opacity="0.28" stroke-width="1.1">
+      <path d="M116 186 L112 250"/><path d="M128 187 L124 251"/><path d="M140 189 L136 252"/>
+      <path d="M152 190 L148 253"/><path d="M164 192 L160 254"/><path d="M176 193 L172 256"/>
+    </g>
+
+    <!-- Parcela seleccionada -->
+    <polygon points="112,178 196,192 186,262 108,254" fill="none" stroke="#6bbf3e" stroke-width="3"/>
+    <g fill="#ffffff" stroke="#6bbf3e" stroke-width="2">
+      <circle cx="112" cy="178" r="3.6"/><circle cx="196" cy="192" r="3.6"/>
+      <circle cx="186" cy="262" r="3.6"/><circle cx="108" cy="254" r="3.6"/>
+    </g>
+
+    <!-- Posición GPS -->
+    <circle cx="150" cy="222" r="26" fill="#2563eb" fill-opacity="0.14"/>
+    <circle cx="150" cy="222" r="15" fill="#2563eb" fill-opacity="0.2"/>
+    <g filter="url(#pinGlow)">
+      <circle cx="150" cy="222" r="7.5" fill="#2563eb" stroke="#ffffff" stroke-width="3"/>
+    </g>
+
+    <!-- Status bar -->
+    <text x="18" y="30" font-size="12" font-weight="600" fill="#1a3a0e">9:41</text>
+    <g fill="#1a3a0e" opacity="0.85">
+      <rect x="212" y="21" width="3" height="6" rx="1"/>
+      <rect x="217" y="18" width="3" height="9" rx="1"/>
+      <rect x="222" y="15" width="3" height="12" rx="1"/>
+      <rect x="230" y="16" width="18" height="10" rx="3" fill="none" stroke="#1a3a0e" stroke-width="1.4"/>
+      <rect x="232" y="18" width="11" height="6" rx="1.5"/>
+      <rect x="249" y="19" width="2" height="4" rx="1"/>
+    </g>
+
+    <!-- Buscador -->
+    <g filter="url(#card)">
+      <rect x="14" y="46" width="242" height="42" rx="21" fill="#ffffff"/>
+    </g>
+    <g stroke="#4a7c59" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="36" cy="66" r="6"/><path d="M40.5 70.5 L45 75"/>
+    </g>
+    <text x="56" y="71" font-size="12.5" fill="#8a9487">Buscar parcela o SIGPAC</text>
+    <circle cx="234" cy="67" r="13" fill="#eef3ea"/>
+    <g stroke="#3d6b4a" stroke-width="1.6" fill="none" stroke-linecap="round">
+      <path d="M234 60.5 v13 M227.5 67 h13"/>
+    </g>
+
+    <!-- Chips de capa -->
+    <g>
+      <rect x="14" y="100" width="76" height="28" rx="14" fill="#2d5016"/>
+      <text x="52" y="118.5" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle">SIGPAC</text>
+      <rect x="96" y="100" width="72" height="28" rx="14" fill="#ffffff" stroke="#dde3d8"/>
+      <text x="132" y="118.5" font-size="11" font-weight="600" fill="#4a5a48" text-anchor="middle">Satélite</text>
+      <rect x="174" y="100" width="82" height="28" rx="14" fill="#ffffff" stroke="#dde3d8"/>
+      <text x="215" y="118.5" font-size="11" font-weight="600" fill="#4a5a48" text-anchor="middle">Variedad</text>
+    </g>
+
+    <!-- Botón centrar GPS -->
+    <g filter="url(#card)">
+      <circle cx="234" cy="392" r="21" fill="#ffffff"/>
+    </g>
+    <g stroke="#2563eb" stroke-width="1.9" fill="none" stroke-linecap="round">
+      <circle cx="234" cy="392" r="7"/>
+      <path d="M234 378 v5 M234 401 v5 M220 392 h5 M243 392 h5"/>
+    </g>
+
+    <!-- Ficha de parcela -->
+    <g filter="url(#card)">
+      <rect x="10" y="432" width="250" height="112" rx="20" fill="#ffffff"/>
+    </g>
+    <rect x="118" y="442" width="34" height="4" rx="2" fill="#e2e7dd"/>
+    <text x="26" y="474" font-size="14.5" font-weight="700" fill="#0f2508">Parcela 12 · La Solana</text>
+    <text x="26" y="493" font-size="11.5" fill="#7c877a">SIGPAC 45:12:0:0:8:3 · 1,84 ha</text>
+    <g>
+      <rect x="26" y="504" width="86" height="24" rx="12" fill="#eef7e8"/>
+      <circle cx="39" cy="516" r="3.5" fill="#6bbf3e"/>
+      <text x="49" y="520" font-size="10.5" font-weight="600" fill="#2d5016">Tempranillo</text>
+      <rect x="118" y="504" width="72" height="24" rx="12" fill="#f1f4ef"/>
+      <text x="154" y="520" font-size="10.5" font-weight="600" fill="#4a5a48" text-anchor="middle">Vaso · 2011</text>
+    </g>
+    <circle cx="228" cy="490" r="20" fill="#6bbf3e"/>
+    <g stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round">
+      <path d="M228 481 v18 M219 490 h18"/>
+    </g>
+
+    <!-- Barra de navegación -->
+    <rect x="0" y="548" width="270" height="37" fill="#ffffff"/>
+    <rect x="0" y="548" width="270" height="1" fill="#e6eae2"/>
+    <g fill="none" stroke="#9aa596" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M28 560 l8 -6 l8 6 v8 h-16 z"/>
+      <path d="M156 556 h16 M156 562 h16 M156 568 h11"/>
+      <circle cx="223" cy="559" r="4.2"/><path d="M215 570 c0 -5 4 -7 8 -7 c4 0 8 2 8 7"/>
+    </g>
+    <g>
+      <path d="M92 554 l8 -4 l8 4 v10 l-8 4 l-8 -4 z" fill="none" stroke="#2d5016" stroke-width="1.9" stroke-linejoin="round"/>
+      <circle cx="100" cy="559" r="2.4" fill="#6bbf3e"/>
+    </g>
+  </g>
+</svg>
