@@ -89,6 +89,7 @@ class SitemapService
         'herramientas/test-cuaderno-digital-2027' => '2026-09-23',
         'herramientas/visor-sigpac' => '2026-09-23',
         'herramientas/alertas-mildiu-oidio' => '2026-09-23',
+        'herramientas/buscador-fitosanitarios' => '2026-09-23',
     ];
 
     public function getUrls(): array

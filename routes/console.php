@@ -82,6 +82,12 @@ Schedule::command('tools:send-disease-alerts')
     ->timezone('Europe/Madrid')
     ->withoutOverlapping();
 
+// 🧪 Registro oficial de fitosanitarios del MAPA (se actualiza los viernes) — sábados 5:00
+Schedule::command('phyto:import-registry')
+    ->weeklyOn(6, '05:00')
+    ->timezone('Europe/Madrid')
+    ->withoutOverlapping();
+
 // 📬 Digest diario de notificaciones (8:00 AM para usuarios con modo digest)
 Schedule::command('notifications:send-digest')
     ->dailyAt('08:00')

@@ -33,6 +33,12 @@ class ToolsController extends Controller
             'summary' => 'Superficie, uso, pendiente, regadío e incidencias de tu recinto a partir de su referencia, sobre la ortofoto.',
             'icon' => '🗺️',
         ],
+        'buscador-fitosanitarios' => [
+            'view' => 'tools.phyto-search',
+            'title' => 'Buscador de fitosanitarios autorizados',
+            'summary' => 'Productos autorizados por cultivo y plaga, con dosis y plazo de seguridad, del registro oficial del MAPA.',
+            'icon' => '🔎',
+        ],
         'alertas-mildiu-oidio' => [
             'view' => 'tools.disease-alerts',
             'title' => 'Alertas de mildiu y oídio',
@@ -49,7 +55,6 @@ class ToolsController extends Controller
 
     /** Herramientas anunciadas que aún no están construidas (se muestran como "Próximamente"). */
     public const UPCOMING = [
-        ['title' => 'Buscador de fitosanitarios autorizados', 'summary' => 'Por cultivo y plaga, con plazo de seguridad y dosis máxima.', 'icon' => '🔎'],
         ['title' => 'Factura Verifactu gratis', 'summary' => 'Factura homologada para autónomos agrarios, con IRPF agrario.', 'icon' => '🧾'],
     ];
 
