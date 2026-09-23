@@ -74,6 +74,13 @@ class NavigationHelper
                     'badge' => Cache::remember('nav_badge_admin_support', 60, fn () => \App\Models\SupportTicket::open()->count()),
                 ],
                 [
+                    'icon' => 'envelope',
+                    'label' => __('Contactos'),
+                    'route' => 'admin.leads.index',
+                    'active' => request()->routeIs('admin.leads.*'),
+                    'badge' => Cache::remember('nav_badge_admin_leads', 60, fn () => \App\Models\ToolLead::pending()->count()),
+                ],
+                [
                     'icon' => 'credit-card',
                     'label' => __('Suscripciones'),
                     'route' => 'admin.subscriptions.index',

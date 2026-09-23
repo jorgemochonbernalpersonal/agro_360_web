@@ -40,6 +40,9 @@ Route::middleware(['role:admin'])
             Route::get('/', \App\Livewire\Admin\Sigpac\Index::class)->name('index');
         });
 
+        // Contactos captados en las herramientas públicas
+        Route::get('/leads', \App\Livewire\Admin\Leads\Index::class)->name('leads.index');
+
         // Log de seguridad
         Route::get('/security-log', \App\Livewire\Admin\SecurityLog\Index::class)->name('security-log.index');
 

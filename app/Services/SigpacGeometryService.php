@@ -13,6 +13,9 @@ class SigpacGeometryService
 {
     public const WKT_PATTERN = '/^(POLYGON|MULTIPOLYGON|LINESTRING|POINT)\s*\(.+\)$/i';
 
+    /** API pública de SIGPAC Hub Cloud: provincia/municipio/agregado/zona/polígono/parcela/recinto. */
+    public const RECINFO_URL = 'https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/%s/%s/%s/%s/%s/%s/%s.json';
+
     /**
      * Obtiene el WKT de un código SIGPAC desde la API pública de SIGPAC Hub Cloud.
      * Devuelve null si la petición falla o la respuesta no contiene geometría válida.
@@ -21,7 +24,7 @@ class SigpacGeometryService
     {
         try {
             $url = sprintf(
-                'https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/%s/%s/%s/%s/%s/%s/%s.json',
+                self::RECINFO_URL,
                 $sigpacCode->code_province,
                 $sigpacCode->code_municipality,
                 $sigpacCode->code_aggregate ?? '0',

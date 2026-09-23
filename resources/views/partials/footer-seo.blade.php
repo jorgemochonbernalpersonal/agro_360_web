@@ -65,6 +65,7 @@
                     <li><a href="{{ content_route('content.facturacion-agricola') }}" class="hover:text-white transition-colors">Facturación</a></li>
                     <li><a href="{{ content_route('content.ndvi-teledeteccion') }}" class="hover:text-white transition-colors">NDVI Teledetección</a></li>
                     <li><a href="{{ content_route('content.trazabilidad-agricola') }}" class="hover:text-white transition-colors">Trazabilidad</a></li>
+                    <li><a href="{{ route('tools.index') }}" class="hover:text-white transition-colors">Herramientas gratis</a></li>
                 </ul>
             </div>
 

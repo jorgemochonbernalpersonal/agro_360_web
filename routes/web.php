@@ -33,6 +33,12 @@ Route::permanentRedirect('/gestion-campañas-agricolas', '/gestion-campanas-agri
 // la ruta dinámica /blog/{slug} para que tenga prioridad.
 Route::permanentRedirect('/blog/cuaderno-campo-digital-obligatorio-2027', '/cuaderno-campo-digital-2027');
 
+// Herramientas públicas gratuitas (calculadoras y tests sin registro)
+Route::get('/herramientas', [App\Http\Controllers\ToolsController::class, 'index'])->name('tools.index');
+Route::get('/herramientas/{slug}', [App\Http\Controllers\ToolsController::class, 'show'])
+    ->whereIn('slug', App\Http\Controllers\ToolsController::slugs())
+    ->name('tools.show');
+
 // ✅ REFACTOR: Rutas de contenido SEO dinámicas
 // Todas las páginas de contenido ahora pasan por ContentController
 Route::get('/{slug}', [App\Http\Controllers\ContentController::class, 'show'])

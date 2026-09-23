@@ -402,6 +402,7 @@
             <x-agro.admin-quick-link href="{{ route('admin.notifications.index') }}" icon="paper-airplane" color="blue" :label="__('Notificaciones')" :description="__('Email masivo a usuarios')" />
             <x-agro.admin-quick-link href="{{ route('admin.users.index') }}" icon="users" color="purple" :label="__('Usuarios')" :description="__('Gestión por roles')" />
             <x-agro.admin-quick-link href="{{ route('admin.support.index') }}" icon="question-mark-circle" color="red" :label="__('Soporte')" :description="__('Tickets del sistema')" />
+            <x-agro.admin-quick-link href="{{ route('admin.leads.index') }}" icon="envelope" color="amber" :label="__('Contactos')" :description="__('Emails de las herramientas')" />
             <x-agro.admin-quick-link href="{{ route('admin.plots.index') }}" icon="map" color="agro" :label="__('Parcelas')" :description="__('Todas las parcelas')" />
             <x-agro.admin-quick-link href="{{ route('admin.sigpac.index') }}" icon="document-text" color="blue" :label="__('SIGPACs')" :description="__('Códigos SIGPAC')" />
             <x-agro.admin-quick-link href="{{ route('admin.subscriptions.index') }}" icon="credit-card" color="agro" :label="__('Suscripciones')" :description="__('Pagos y planes')" />

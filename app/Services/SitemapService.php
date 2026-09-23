@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContentController;
+use App\Http\Controllers\ToolsController;
 use Carbon\Carbon;
 
 class SitemapService
@@ -82,6 +83,11 @@ class SitemapService
         'terminos' => '2026-05-27',
         'cookies' => '2026-05-27',
         'aviso-legal' => '2026-05-27',
+        'herramientas' => '2026-09-23',
+        'herramientas/calculadora-caldo-fitosanitario' => '2026-09-23',
+        'herramientas/calculadora-rendimiento-vendimia' => '2026-09-23',
+        'herramientas/test-cuaderno-digital-2027' => '2026-09-23',
+        'herramientas/visor-sigpac' => '2026-09-23',
     ];
 
     public function getUrls(): array
@@ -124,6 +130,22 @@ class SitemapService
                 'lastmod' => $this->lastmodFor($slug),
                 'changefreq' => $changefreq,
                 'priority' => $priority,
+            ];
+        }
+
+        // ── Herramientas gratuitas ───────────────────────────────────────────
+        $urls[] = [
+            'loc' => $this->getAbsoluteUrl('herramientas'),
+            'lastmod' => $this->lastmodFor('herramientas'),
+            'changefreq' => 'monthly',
+            'priority' => '0.8',
+        ];
+        foreach (ToolsController::slugs() as $slug) {
+            $urls[] = [
+                'loc' => $this->getAbsoluteUrl("herramientas/{$slug}"),
+                'lastmod' => $this->lastmodFor('herramientas/'.$slug),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
             ];
         }
 
