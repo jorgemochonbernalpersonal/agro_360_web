@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DiseaseAlertSubscription;
+
 /**
  * Herramientas públicas gratuitas (/herramientas): calculadoras y tests sin registro
  * que sirven de puerta de entrada SEO y de captación de contactos.
@@ -31,6 +33,12 @@ class ToolsController extends Controller
             'summary' => 'Superficie, uso, pendiente, regadío e incidencias de tu recinto a partir de su referencia, sobre la ortofoto.',
             'icon' => '🗺️',
         ],
+        'alertas-mildiu-oidio' => [
+            'view' => 'tools.disease-alerts',
+            'title' => 'Alertas de mildiu y oídio',
+            'summary' => 'Riesgo de los próximos días en tu municipio y aviso gratis por email cuando sea alto.',
+            'icon' => '🌦️',
+        ],
         'test-cuaderno-digital-2027' => [
             'view' => 'tools.notebook-readiness',
             'title' => '¿Estás listo para el cuaderno digital 2027?',
@@ -42,7 +50,6 @@ class ToolsController extends Controller
     /** Herramientas anunciadas que aún no están construidas (se muestran como "Próximamente"). */
     public const UPCOMING = [
         ['title' => 'Buscador de fitosanitarios autorizados', 'summary' => 'Por cultivo y plaga, con plazo de seguridad y dosis máxima.', 'icon' => '🔎'],
-        ['title' => 'Alertas de mildiu y oídio', 'summary' => 'Aviso por email cuando la meteo de tu municipio dispare el riesgo.', 'icon' => '🌦️'],
         ['title' => 'Factura Verifactu gratis', 'summary' => 'Factura homologada para autónomos agrarios, con IRPF agrario.', 'icon' => '🧾'],
     ];
 
@@ -63,6 +70,24 @@ class ToolsController extends Controller
             'tool' => $tool,
             'related' => array_diff_key(self::TOOLS, [$slug => true]),
         ]);
+    }
+
+    public function showUnsubscribe(string $token)
+    {
+        return view('tools.disease-alerts-unsubscribed', [
+            'subscription' => DiseaseAlertSubscription::with('municipality')->where('token', $token)->first(),
+        ]);
+    }
+
+    public function unsubscribe(string $token)
+    {
+        $subscription = DiseaseAlertSubscription::where('token', $token)->first();
+
+        if ($subscription && ! $subscription->unsubscribed_at) {
+            $subscription->update(['unsubscribed_at' => now()]);
+        }
+
+        return redirect()->route('tools.disease-alerts.unsubscribe', $token);
     }
 
     /** @return array<int, string> */

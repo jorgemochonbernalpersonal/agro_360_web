@@ -76,6 +76,12 @@ Schedule::command('treatments:send-withdrawal-alerts')
     ->dailyAt('08:15')
     ->withoutOverlapping();
 
+// 🍇 Alertas públicas de mildiu y oídio (/herramientas) — 7:00 AM, antes de salir al campo
+Schedule::command('tools:send-disease-alerts')
+    ->dailyAt('07:00')
+    ->timezone('Europe/Madrid')
+    ->withoutOverlapping();
+
 // 📬 Digest diario de notificaciones (8:00 AM para usuarios con modo digest)
 Schedule::command('notifications:send-digest')
     ->dailyAt('08:00')

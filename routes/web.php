@@ -38,6 +38,11 @@ Route::get('/herramientas', [App\Http\Controllers\ToolsController::class, 'index
 Route::get('/herramientas/{slug}', [App\Http\Controllers\ToolsController::class, 'show'])
     ->whereIn('slug', App\Http\Controllers\ToolsController::slugs())
     ->name('tools.show');
+Route::get('/herramientas/alertas-mildiu-oidio/baja/{token}', [App\Http\Controllers\ToolsController::class, 'showUnsubscribe'])
+    ->name('tools.disease-alerts.unsubscribe');
+Route::post('/herramientas/alertas-mildiu-oidio/baja/{token}', [App\Http\Controllers\ToolsController::class, 'unsubscribe'])
+    ->middleware('throttle:20,1')
+    ->name('tools.disease-alerts.unsubscribe.confirm');
 
 // ✅ REFACTOR: Rutas de contenido SEO dinámicas
 // Todas las páginas de contenido ahora pasan por ContentController

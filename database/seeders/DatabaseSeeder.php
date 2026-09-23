@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             AutonomousCommunitySeeder::class,  // Primero: Comunidades autónomas
             ProvinceSeeder::class,              // Segundo: Provincias (depende de comunidades)
             MunicipalitySeeder::class,          // Tercero: Municipios (depende de provincias)
+            MunicipalityCoordinatesSeeder::class, // Coordenadas de municipios (alertas meteo, mapas)
             SigpacUseSeeder::class,            // Usos SIGPAC
             GrapeVarietySeeder::class,          // Variedades de uva base
             MachineryTypeSeeder::class,         // Tipos de maquinaria base
