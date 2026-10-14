@@ -48,8 +48,7 @@ class GenerateOfficialReportJobTest extends TestCase
             [
                 'start_date' => now()->subDays(30)->toDateString(),
                 'end_date' => now()->toDateString(),
-            ],
-            'password123'
+            ]
         );
 
         $this->assertInstanceOf(GenerateOfficialReportJob::class, $job);
@@ -57,7 +56,6 @@ class GenerateOfficialReportJobTest extends TestCase
         $this->assertEquals($user->id, $job->userId);
         $this->assertEquals('phytosanitary_treatments', $job->reportType);
         $this->assertIsArray($job->parameters);
-        $this->assertEquals('password123', $job->password);
     }
 
     /**
@@ -71,8 +69,7 @@ class GenerateOfficialReportJobTest extends TestCase
             1,
             $user->id,
             'phytosanitary_treatments',
-            ['start_date' => now()->subDays(30)->toDateString(), 'end_date' => now()->toDateString()],
-            'password123'
+            ['start_date' => now()->subDays(30)->toDateString(), 'end_date' => now()->toDateString()]
         );
 
         $this->assertEquals(3, $job->tries);
@@ -91,16 +88,14 @@ class GenerateOfficialReportJobTest extends TestCase
             1,
             $user->id,
             'phytosanitary_treatments',
-            ['start_date' => now()->subDays(30)->toDateString(), 'end_date' => now()->toDateString()],
-            'password123'
+            ['start_date' => now()->subDays(30)->toDateString(), 'end_date' => now()->toDateString()]
         );
 
         $notebookJob = new GenerateOfficialReportJob(
             2,
             $user->id,
             'full_digital_notebook',
-            ['campaign_id' => 1],
-            'password123'
+            ['campaign_id' => 1]
         );
 
         $this->assertEquals('phytosanitary_treatments', $phytosanitaryJob->reportType);
@@ -123,8 +118,7 @@ class GenerateOfficialReportJobTest extends TestCase
                 'campaign_id' => 1,
                 'start_date' => '2024-01-01',
                 'end_date' => '2024-12-31',
-            ],
-            'password123'
+            ]
         );
 
         // Job sin filtros de fecha
@@ -132,8 +126,7 @@ class GenerateOfficialReportJobTest extends TestCase
             2,
             $user->id,
             'full_digital_notebook',
-            ['campaign_id' => 1],
-            'password123'
+            ['campaign_id' => 1]
         );
 
         $this->assertArrayHasKey('start_date', $jobWithDates->parameters);

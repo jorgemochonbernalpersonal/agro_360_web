@@ -51,8 +51,7 @@ trait WithOfficialReportBatch
                         'campaign_id' => $this->campaignId,
                         'start_date' => $period['start'],
                         'end_date' => $period['end'],
-                    ],
-                    $this->password
+                    ]
                 );
 
                 $generatedCount++;
