@@ -52,10 +52,10 @@ class SecurityHeaders
         $csp = "default-src 'self'; ".
                "script-src {$scriptSrc} https://cdn.jsdelivr.net https://unpkg.com https://www.googletagmanager.com https://googletagmanager.com; ".
                "style-src {$styleSrc}; ".
-               "img-src 'self' data: blob: https://www.google.com https://maps.gstatic.com https://maps.googleapis.com https://www.googletagmanager.com; ".
+               "img-src 'self' data: blob: https://www.google.com https://maps.gstatic.com https://maps.googleapis.com https://*.googletagmanager.com https://*.google-analytics.com; ".
                "font-src {$fontSrc}; ".
-               "connect-src {$connectSrc} https://agro365.es https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com; ".
-               'frame-src https://www.google.com https://challenges.cloudflare.com; '.
+               "connect-src {$connectSrc} https://agro365.es https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://challenges.cloudflare.com; ".
+               'frame-src https://www.google.com https://challenges.cloudflare.com https://www.googletagmanager.com; '.
                "frame-ancestors 'self'; ".
                "object-src 'none'; ".
                "base-uri 'self'; ".
