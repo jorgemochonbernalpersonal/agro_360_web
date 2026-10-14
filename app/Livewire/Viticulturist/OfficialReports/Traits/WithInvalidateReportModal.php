@@ -16,33 +16,44 @@ trait WithInvalidateReportModal
 
     public function openInvalidateModal($reportId): void
     {
-        $this->reportToInvalidate = OfficialReport::findOrFail($reportId);
+        // Comprobar la propiedad ANTES de asignar a la propiedad pública (ver el
+        // mismo fix en WithShareReportModal): si no, un informe ajeno queda cargado
+        // en $reportToInvalidate aunque el mensaje de error diga que no se puede.
+        $report = OfficialReport::where('user_id', auth()->id())->find($reportId);
 
-        if ($this->reportToInvalidate->user_id !== auth()->id()) {
+        if (! $report) {
             $this->addError('invalidate', __('No tienes permiso para invalidar este informe.'));
 
             return;
         }
 
-        if (! $this->reportToInvalidate->isValid()) {
+        if (! $report->isValid()) {
             $this->addError('invalidate', __('Este informe ya está invalidado.'));
 
             return;
         }
 
-        if (! $this->reportToInvalidate->canBeInvalidated()) {
+        if (! $report->canBeInvalidated()) {
             $maxDays = config('reports.max_days_to_invalidate', 30);
-            $daysSinceSigned = $this->reportToInvalidate->signed_at->diffInDays(now());
+            $daysSinceSigned = $report->signed_at->diffInDays(now());
             $this->addError('invalidate', __('Este informe no puede ser invalidado. Han pasado :days días desde su firma. Solo se pueden invalidar informes con menos de :max días.', ['days' => $daysSinceSigned, 'max' => $maxDays]));
 
             return;
         }
 
+        $this->reportToInvalidate = $report;
         $this->showInvalidateModal = true;
     }
 
     public function invalidateReport(): void
     {
+        // Re-comprobar la propiedad aquí también, no fiarse solo de openInvalidateModal().
+        if (! $this->reportToInvalidate instanceof OfficialReport || $this->reportToInvalidate->user_id !== auth()->id()) {
+            $this->addError('invalidate', __('No tienes permiso para invalidar este informe.'));
+
+            return;
+        }
+
         $this->validate([
             'invalidatePassword' => 'required|string',
             'invalidateReason' => 'required|string|min:10',

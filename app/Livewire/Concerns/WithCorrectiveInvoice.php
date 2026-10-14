@@ -4,7 +4,6 @@ namespace App\Livewire\Concerns;
 
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use App\Models\InvoicingSetting;
 use App\Services\ContainerStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -89,8 +88,7 @@ trait WithCorrectiveInvoice
 
         try {
             DB::transaction(function () use ($original, &$invoiceNumber) {
-                $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
-                $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
+                $invoiceNumber = $this->nextCorrectiveNumber();
 
                 $notes = 'Rectificativa de '.$original->invoice_number.'.'
                     .($this->correctiveReason ? ' Motivo: '.$this->correctiveReason : '');
@@ -155,12 +153,17 @@ trait WithCorrectiveInvoice
                     }
                 });
 
-                // Restore stock: original was 'sent' → harvest items are in sold bucket
-                // ContainerStockService.releaseFromInvoice: sold_qty -= qty, available_qty += qty
+                // Restore stock: el estado de la reserva/venta depende de
+                // delivery_status, NO de invoice->status (que siempre es 'sent'
+                // aquí porque solo se rectifican facturas emitidas). Si aún no se
+                // había entregado, el stock estaba solo reservado ('draft'); si ya
+                // se entregó, estaba vendido ('sent'). Mismo criterio que
+                // InvoiceObserver::restoreDeliveryStock() (ver auditoría fix #9).
                 $stockService = app(ContainerStockService::class);
+                $fromStatus = $original->delivery_status === 'delivered' ? 'sent' : 'draft';
                 foreach ($original->items as $item) {
                     if ($item->harvest_id && $item->harvest) {
-                        $stockService->releaseFromInvoice($item->harvest, $item, 'sent');
+                        $stockService->releaseFromInvoice($item->harvest, $item, $fromStatus);
                     }
                 }
             });
@@ -175,5 +178,27 @@ trait WithCorrectiveInvoice
             ]);
             $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al generar la rectificativa.'));
         }
+    }
+
+    /**
+     * Correctivas propias serie "R-{YEAR}-{0000}", separada del contador FAC- de
+     * las facturas ordinarias (InvoicingSetting::generateAndIncrementInvoiceCode())
+     * para no mezclar ambas numeraciones correlativas (ver auditoría fix #9).
+     * Debe llamarse dentro de una DB::transaction ya abierta: el conteo de
+     * correctivas del año se hace con lockForUpdate() para serializar altas
+     * concurrentes del mismo usuario.
+     */
+    private function nextCorrectiveNumber(): string
+    {
+        // Mismo año que la fecha de la rectificativa (no necesariamente "hoy").
+        $year = $this->correctiveDate ? \Illuminate\Support\Carbon::parse($this->correctiveDate)->year : now()->year;
+
+        $count = Invoice::where('user_id', Auth::id())
+            ->where('corrective', true)
+            ->whereYear('invoice_date', $year)
+            ->lockForUpdate()
+            ->count();
+
+        return sprintf('R-%d-%04d', $year, $count + 1);
     }
 }

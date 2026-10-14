@@ -85,7 +85,10 @@ class VerifactuService
                 'errors' => $isOk ? [] : ["[{$errorCode}] {$errorDesc}"],
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            // \Throwable (no solo \Exception): un \Error real de PHP (p.ej. acceso a
+            // una propiedad inexistente de un stdClass al parsear la respuesta SOAP)
+            // no debe tumbar la petición sin dejar rastro — se registra como error.
             Log::error('VerifactuService::send', [
                 'invoice_id' => $invoice->id,
                 'message' => $e->getMessage(),
@@ -148,10 +151,19 @@ class VerifactuService
                 'errors' => $isOk ? [] : ["[{$errorCode}] {$errorDesc}"],
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            // \Throwable, misma razón que en send(): un \Error de parseo de la
+            // respuesta SOAP no debe crashear sin dejar registro.
             Log::error('VerifactuService::cancel', [
                 'invoice_id' => $invoice->id,
                 'message' => $e->getMessage(),
+            ]);
+
+            SifRecord::create([
+                'invoice_id' => $invoice->id,
+                'tipo_registro' => 'ANULACION',
+                'status' => 'ER',
+                'error_message' => $e->getMessage(),
             ]);
 
             return ['success' => false, 'errors' => [$e->getMessage()]];
@@ -193,8 +205,25 @@ class VerifactuService
         if (empty($issuerNif)) {
             $errors[] = 'Tu NIF/DNI no está configurado. Ve a Ajustes y añádelo.';
         }
-        if ((float) $invoice->total_amount <= 0) {
+
+        // Las rectificativas (R1, "por diferencias") declaran legítimamente
+        // importes negativos ante la AEAT; las facturas ordinarias no.
+        if ($invoice->corrective) {
+            if ((float) $invoice->total_amount === 0.0) {
+                $errors[] = 'El importe total de una rectificativa no puede ser cero.';
+            }
+        } elseif ((float) $invoice->total_amount <= 0) {
             $errors[] = 'El importe total debe ser mayor que cero.';
+        }
+
+        // grape_purchase (liquidación de vendimia) y harvest_sale (venta de vendimia
+        // del viticultor) llevan una retención IRPF en `tax_rate`/`tax_amount`, no una
+        // cuota de IVA. Declararlas tal cual ante Verifactu enviaría una retención
+        // como si fuera IVA repercutido (ver auditoría de facturación — fix #4/#13).
+        // Hasta que exista un modelo fiscal correcto para estos tipos (facturación
+        // por cuenta de terceros / retención), quedan excluidos de Verifactu.
+        if (in_array($invoice->invoice_type, ['grape_purchase', 'harvest_sale'], true)) {
+            $errors[] = 'Las liquidaciones de vendimia con retención IRPF (compra de uva / venta de vendimia) no se declaran ante Verifactu: la retención no es IVA y este tipo de documento no se modela como F1 emitida por la bodega/viticultor.';
         }
 
         if (! empty($errors)) {
@@ -214,19 +243,20 @@ class VerifactuService
         $fechaHoraGen = now()->setTimezone('Europe/Madrid')->format('Y-m-d\TH:i:sP');
 
         // ── Huella (hash) ────────────────────────────────────────────────────
-        // SHA-256 of: NIF + NumSerie + Fecha + TipoFactura + CuotaTotal +
-        //             ImporteTotal + HuellaAnterior + FechaHoraGen
-        // All values concatenated WITHOUT separator, uppercase hex result.
+        // AEAT VERI*FACTU spec: SHA-256 of the literal, field-labelled string
+        // "IDEmisorFactura=...&NumSerieFactura=...&FechaExpedicionFactura=...&
+        //  TipoFactura=...&CuotaTotal=...&ImporteTotal=...&Huella=...&
+        //  FechaHoraHusoGenRegistro=...", uppercase hex result.
         $huellaAnterior = $chain['huella'] ?? '';
         $hashInput =
-            $issuerNif.
-            $numSerie.
-            $fechaAEAT.
-            $tipoFactura.
-            $cuotaTotal.
-            $importeTotal.
-            $huellaAnterior.
-            $fechaHoraGen;
+            'IDEmisorFactura='.$issuerNif.
+            '&NumSerieFactura='.$numSerie.
+            '&FechaExpedicionFactura='.$fechaAEAT.
+            '&TipoFactura='.$tipoFactura.
+            '&CuotaTotal='.$cuotaTotal.
+            '&ImporteTotal='.$importeTotal.
+            '&Huella='.$huellaAnterior.
+            '&FechaHoraHusoGenRegistro='.$fechaHoraGen;
         $huella = strtoupper(hash('sha256', $hashInput));
 
         // ── Recipient ────────────────────────────────────────────────────────
@@ -294,21 +324,48 @@ class VerifactuService
 
         $x .= '<T:DescripcionOperacion>'.$this->e($descOp).'</T:DescripcionOperacion>';
 
-        // Desglose (corrected field names)
-        $x .= '<T:Desglose>';
-        $x .= '<T:DetalleDesglose>';
-        // CalificacionOperacion: S1=sujeto y no exento, S2=ISP; OperacionExenta: E1–E8
-        if ((float) $invoice->tax_rate > 0) {
-            $x .= '<T:CalificacionOperacion>S1</T:CalificacionOperacion>';
-            $x .= '<T:TipoImpositivo>'.number_format((float) $invoice->tax_rate, 2, '.', '').'</T:TipoImpositivo>';
-            $x .= '<T:BaseImponibleOimporteNoSujeto>'.number_format((float) $invoice->tax_base, 2, '.', '').'</T:BaseImponibleOimporteNoSujeto>';
-            $x .= '<T:CuotaRepercutida>'.$cuotaTotal.'</T:CuotaRepercutida>';
-        } else {
-            // Exento (IVA 0%)
-            $x .= '<T:OperacionExenta>E1</T:OperacionExenta>';
-            $x .= '<T:BaseImponibleOimporteNoSujeto>'.number_format((float) $invoice->tax_base, 2, '.', '').'</T:BaseImponibleOimporteNoSujeto>';
+        // Desglose: UNA DetalleDesglose por CADA tipo de IVA distinto presente en
+        // las líneas (nunca un único bloque calculado desde $invoice->tax_rate,
+        // que puede estar vacío en ventas exentas o promediado en facturas con
+        // varios tipos). grape_purchase/harvest_sale ya están excluidas arriba,
+        // así que aquí tax_rate/tax_base/tax_amount de las líneas son SIEMPRE
+        // IVA real, nunca retención IRPF.
+        $taxGroups = $invoice->items
+            ->groupBy(fn ($item) => number_format((float) $item->tax_rate, 2, '.', ''))
+            ->map(fn ($group) => [
+                'rate' => (float) $group->first()->tax_rate,
+                'base' => (float) $group->sum(fn ($item) => (float) $item->tax_base),
+                'cuota' => (float) $group->sum(fn ($item) => (float) $item->tax_amount),
+            ])
+            ->values();
+
+        if ($taxGroups->isEmpty()) {
+            // Fallback defensivo si por lo que sea no hay líneas cargadas: usa los
+            // totales de cabecera para no dejar el Desglose vacío (no debería
+            // ocurrir en el flujo normal, las facturas siempre tienen items).
+            $taxGroups = collect([[
+                'rate' => (float) $invoice->tax_rate,
+                'base' => (float) $invoice->tax_base,
+                'cuota' => (float) $invoice->tax_amount,
+            ]]);
         }
-        $x .= '</T:DetalleDesglose>';
+
+        $x .= '<T:Desglose>';
+        foreach ($taxGroups as $group) {
+            $x .= '<T:DetalleDesglose>';
+            // CalificacionOperacion: S1=sujeto y no exento, S2=ISP; OperacionExenta: E1–E8
+            if ($group['rate'] > 0) {
+                $x .= '<T:CalificacionOperacion>S1</T:CalificacionOperacion>';
+                $x .= '<T:TipoImpositivo>'.number_format($group['rate'], 2, '.', '').'</T:TipoImpositivo>';
+                $x .= '<T:BaseImponibleOimporteNoSujeto>'.number_format($group['base'], 2, '.', '').'</T:BaseImponibleOimporteNoSujeto>';
+                $x .= '<T:CuotaRepercutida>'.number_format($group['cuota'], 2, '.', '').'</T:CuotaRepercutida>';
+            } else {
+                // Exento (IVA 0%)
+                $x .= '<T:OperacionExenta>E1</T:OperacionExenta>';
+                $x .= '<T:BaseImponibleOimporteNoSujeto>'.number_format($group['base'], 2, '.', '').'</T:BaseImponibleOimporteNoSujeto>';
+            }
+            $x .= '</T:DetalleDesglose>';
+        }
         $x .= '</T:Desglose>';
 
         // Totales a nivel de factura
@@ -584,22 +641,29 @@ class VerifactuService
 
     /**
      * Build Huella for a cancellation record (RegistroAnulacion).
-     * Same 8-field SHA-256 formula as RegistroAlta.
+     *
+     * IMPORTANT: RegistroAnulacion has its OWN AEAT spec field list — it does NOT
+     * reuse the RegistroAlta formula (a cancellation record carries no
+     * TipoFactura/CuotaTotal/ImporteTotal). Per the AEAT VERI*FACTU spec, the
+     * huella input is the literal, field-labelled string:
+     * "IDEmisorFacturaAnulada=...&NumSerieFacturaAnulada=...&
+     *  FechaExpedicionFacturaAnulada=...&Huella=...&FechaHoraHusoGenRegistro=...".
      */
     private function buildAnulacionHuella(Invoice $invoice, array $chain, string $fechaHoraGen): string
     {
         $issuerNif = $invoice->user->dni ?? '';
         $numSerie = $invoice->invoice_number ?? '';
         $fechaAEAT = $invoice->invoice_date?->format('d-m-Y') ?? '';
-        $tipoFactura = $invoice->corrective ? 'R1' : 'F1';
         $huellaAnterior = $chain['huella'] ?? '';
 
-        return strtoupper(hash('sha256',
-            $issuerNif.$numSerie.$fechaAEAT.$tipoFactura.
-            number_format((float) $invoice->tax_amount, 2, '.', '').
-            number_format((float) $invoice->total_amount, 2, '.', '').
-            $huellaAnterior.$fechaHoraGen
-        ));
+        $hashInput =
+            'IDEmisorFacturaAnulada='.$issuerNif.
+            '&NumSerieFacturaAnulada='.$numSerie.
+            '&FechaExpedicionFacturaAnulada='.$fechaAEAT.
+            '&Huella='.$huellaAnterior.
+            '&FechaHoraHusoGenRegistro='.$fechaHoraGen;
+
+        return strtoupper(hash('sha256', $hashInput));
     }
 
     /**
@@ -692,28 +756,28 @@ class VerifactuService
      */
     private function sendToAeat(string $signedXml, Invoice $invoice): object
     {
-        if (config('services.sif_aeat.environment') === 'production') {
-            $wsdl = config('services.sif_aeat.wsdl');
-            $endpoint = config('services.sif_aeat.endpoint');
+        $sifEnvironment = config('services.sif_aeat.environment');
 
-            if (! file_exists($wsdl)) {
-                throw new \Exception(__('Fichero WSDL no encontrado: :path', ['path' => $wsdl]));
-            }
-
-            $client = new \SoapClient($wsdl, [
-                'location' => $endpoint,
-                'trace' => 1,
-                'exceptions' => true,
-                'cache_wsdl' => WSDL_CACHE_NONE,
-            ]);
-
-            // Operation name from SistemaFacturacion.wsdl
-            return $client->__soapCall('RegFactuSistemaFacturacion', [
-                'RegFactuSistemaFacturacion' => ['xmlRegistros' => $signedXml],
-            ]);
+        if ($sifEnvironment === 'production') {
+            return $this->sendToAeatSoap($signedXml, $invoice);
         }
 
-        // Simulated response
+        // El modo simulado (que declara la factura "aceptada por la AEAT" sin
+        // enviarla de verdad) SOLO está permitido fuera del entorno de
+        // producción de la app. Si la app corre en producción pero
+        // SIF_ENVIRONMENT no está puesto a "production", es una
+        // configuración incorrecta: fallar alto en vez de fabricar una
+        // aceptación falsa que marcaría facturas reales como verificadas.
+        if (app()->isProduction()) {
+            Log::critical('VerifactuService: SIF_ENVIRONMENT no está en "production" en un entorno de producción — se rechaza simular la aceptación de la AEAT.', [
+                'invoice_id' => $invoice->id,
+                'sif_environment' => $sifEnvironment,
+            ]);
+
+            throw new \Exception(__('Configuración de Verifactu inválida: en producción, SIF_ENVIRONMENT debe ser "production". No se puede simular la aceptación de la AEAT.'));
+        }
+
+        // Simulated response (solo entornos no productivos: local/testing/staging)
         return (object) [
             'EstadoEnvio' => __('Correcto'),
             'RespuestaLinea' => [
@@ -725,6 +789,64 @@ class VerifactuService
                 ],
             ],
         ];
+    }
+
+    /**
+     * Perform the real AEAT SOAP call, hardened with mTLS (client cert),
+     * connection/read timeouts and single-element-array normalization.
+     */
+    private function sendToAeatSoap(string $signedXml, Invoice $invoice): object
+    {
+        $wsdl = config('services.sif_aeat.wsdl');
+        $endpoint = config('services.sif_aeat.endpoint');
+
+        if (! file_exists($wsdl)) {
+            throw new \Exception(__('Fichero WSDL no encontrado: :path', ['path' => $wsdl]));
+        }
+
+        $certs = $this->loadCertificate($invoice->user);
+        $certFile = null;
+        $previousSocketTimeout = ini_get('default_socket_timeout');
+
+        try {
+            $options = [
+                'location' => $endpoint,
+                'trace' => 1,
+                'exceptions' => true,
+                'cache_wsdl' => WSDL_CACHE_NONE,
+                'connection_timeout' => 15,
+                'features' => SOAP_SINGLE_ELEMENT_ARRAYS,
+            ];
+
+            if ($certs !== null) {
+                // El SoapClient de PHP exige el certificado en un fichero PEM
+                // (cert + clave privada); lo volcamos a un temporal con permisos
+                // restrictivos y lo borramos siempre al terminar la llamada.
+                $certFile = tempnam(sys_get_temp_dir(), 'vf_mtls_');
+                file_put_contents($certFile, $certs['cert']."\n".$certs['pkey']);
+                chmod($certFile, 0600);
+
+                $options['local_cert'] = $certFile;
+                $options['passphrase'] = (string) ($invoice->user->sif_cert_password ?? '');
+            }
+
+            // Timeout de lectura del socket, acotado a esta llamada y restaurado
+            // siempre después (evita dejar el proceso colgado indefinidamente
+            // si la AEAT no responde).
+            ini_set('default_socket_timeout', 15);
+
+            $client = new \SoapClient($wsdl, $options);
+
+            // Operation name from SistemaFacturacion.wsdl
+            return $client->__soapCall('RegFactuSistemaFacturacion', [
+                'RegFactuSistemaFacturacion' => ['xmlRegistros' => $signedXml],
+            ]);
+        } finally {
+            if ($certFile !== null && file_exists($certFile)) {
+                @unlink($certFile);
+            }
+            ini_set('default_socket_timeout', $previousSocketTimeout !== false ? $previousSocketTimeout : 60);
+        }
     }
 
     private function responseToXml(object $response): string

@@ -114,9 +114,21 @@ class InvoiceObserver
 
     /**
      * Al eliminar una factura: libera todo el stock.
+     *
+     * El flujo habitual es update(['status' => 'cancelled']) (que ya libera el
+     * stock vía updating()/updated()) seguido de delete(). Si aquí volviéramos a
+     * liberar porque $invoice->status ya es 'cancelled', duplicaríamos el abono
+     * a available_qty (y el incrementUsedCapacity si venía de una venta). Por
+     * eso solo liberamos cuando la factura se elimina directamente desde un
+     * estado donde el stock nunca se liberó (p. ej. sigue en draft con reserva
+     * activa).
      */
     public function deleting(Invoice $invoice): void
     {
+        if ($invoice->status === 'cancelled') {
+            return;
+        }
+
         try {
             $this->releaseAllStock($invoice, $invoice->status);
         } catch (\Exception $e) {

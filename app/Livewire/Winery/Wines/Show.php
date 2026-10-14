@@ -96,7 +96,9 @@ class Show extends Component
         $linkedHarvestIds = $composition->pluck('harvest_id')->all();
         $availableHarvests = Harvest::where('winery_id', Auth::id())
             ->whereNotIn('id', $linkedHarvestIds)
-            ->where('status', '!=', 'cancelled')
+            ->where('status', 'active')
+            ->when($this->wine->vintage !== null, fn ($q) => $q->where('vintage', $this->wine->vintage))
+            ->with(['plotPlanting:id,grape_variety_id', 'plotPlanting.grapeVariety:id,name'])
             ->orderByDesc('harvest_start_date')
             ->get(['id', 'harvest_start_date', 'total_weight', 'plot_planting_id', 'vintage']);
 

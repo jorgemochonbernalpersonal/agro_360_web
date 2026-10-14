@@ -1,4 +1,4 @@
-<div wire:poll.30s="loadNotifications" x-data="{ open: false }" @click.away="open = false" class="relative">
+<div wire:poll.60s.visible="loadNotifications" x-data="{ open: false }" @click.away="open = false" class="relative">
     {{-- Notification Bell Button --}}
     <button
         @click="open = !open"
@@ -86,13 +86,13 @@
             @endif
             @forelse($notifications as $notification)
                 @php
-                    $data = $notification->data;
+                    $data = $notification['data'];
                     $icon = $data['icon'] ?? $data['report_icon'] ?? $this->guessIcon($data);
                     $iconColor = $data['color'] ?? $this->guessIconColor($data);
                 @endphp
                 <div
-                    wire:key="notification-{{ $notification->id }}"
-                    class="px-4 py-3 border-b border-zinc-100 hover:bg-zinc-50 transition-colors duration-150 {{ is_null($notification->read_at) ? 'bg-blue-50/30' : '' }}"
+                    wire:key="notification-{{ $notification['id'] }}"
+                    class="px-4 py-3 border-b border-zinc-100 hover:bg-zinc-50 transition-colors duration-150 {{ is_null($notification['read_at']) ? 'bg-blue-50/30' : '' }}"
                 >
                     <div class="flex items-start gap-3">
                         {{-- Icon --}}
@@ -130,7 +130,7 @@
                                     <a
                                         href="{{ $data['action_url'] }}"
                                         wire:navigate
-                                        wire:click="markAsRead('{{ $notification->id }}')"
+                                        wire:click="markAsRead('{{ $notification['id'] }}')"
                                         @click="open = false"
                                         class="text-xs font-medium text-agro-600 hover:text-agro-700"
                                     >
@@ -161,16 +161,16 @@
                                 @endif
 
                                 <span class="text-xs text-zinc-400 ml-auto">
-                                    {{ $notification->created_at->diffForHumans() }}
+                                    {{ $notification['created_at']->diffForHumans() }}
                                 </span>
                             </div>
                         </div>
 
                         {{-- Mark Read / Delete --}}
                         <div class="flex-shrink-0 flex flex-col gap-1">
-                            @if(is_null($notification->read_at))
+                            @if(is_null($notification['read_at']))
                                 <button
-                                    wire:click="markAsRead('{{ $notification->id }}')"
+                                    wire:click="markAsRead('{{ $notification['id'] }}')"
                                     class="p-1 text-zinc-400 hover:text-agro-600 transition-colors"
                                     title="{{ __('Marcar como leída') }}"
                                 >
@@ -179,7 +179,7 @@
                             @endif
 
                             <button
-                                wire:click="deleteNotification('{{ $notification->id }}')"
+                                wire:click="deleteNotification('{{ $notification['id'] }}')"
                                 class="p-1 text-zinc-400 hover:text-red-600 transition-colors"
                                 title="{{ __('Eliminar') }}"
                             >

@@ -111,14 +111,20 @@ class Manage extends Component
             ]);
 
             if (isset($order['id']) && $order['status'] === 'CREATED') {
-                // Crear registro de pago pendiente
+                // Crear registro de pago pendiente. El plan_type se persiste en la propia
+                // fila del pago (dentro de paypal_response, que ya es un campo JSON) en
+                // lugar de depender solo de la sesión: si el usuario abre un segundo
+                // checkout en otra pestaña, session('pending_subscription') se sobrescribe
+                // y aprobar la orden antigua crearía una suscripción con el plan/precio
+                // equivocado. Al leer el plan_type desde este Payment (localizado por el
+                // order id/token que devuelve PayPal), cada orden mantiene su propio plan.
                 $payment = Payment::create([
                     'user_id' => $user->id,
                     'amount' => $amount,
                     'currency' => 'EUR',
                     'status' => Payment::STATUS_PENDING,
                     'paypal_order_id' => $order['id'],
-                    'paypal_response' => $order,
+                    'paypal_response' => array_merge($order, ['plan_type' => $this->selectedPlan]),
                 ]);
 
                 // Guardar información de la suscripción en sesión

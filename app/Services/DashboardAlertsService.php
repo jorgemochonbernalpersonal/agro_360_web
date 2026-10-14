@@ -35,7 +35,12 @@ class DashboardAlertsService
                 $this->checkNotebookAccessAlerts($user, $alerts);
             }
 
-            return $alerts->values()->all();
+            // routeFor() devuelve null cuando el rol no tiene ese módulo: se
+            // descarta la alerta en vez de pintar un enlace muerto.
+            return $alerts
+                ->filter(fn (array $alert) => $alert['action_url'] !== null)
+                ->values()
+                ->all();
         });
 
         return collect($cached);
@@ -47,6 +52,28 @@ class DashboardAlertsService
     public function getAlertCount(User $user): int
     {
         return $this->getAlerts($user)->count();
+    }
+
+    /**
+     * URL del módulo en el prefijo de ruta que corresponde al rol de $user.
+     *
+     * El producer reutiliza las vistas de bodega y viñedo bajo producer.*, así
+     * que enlazar a los prefijos winery o viticulturist lo sacaría de su área y
+     * le desincronizaría el sidebar. No se puede usar roleRoute() aquí porque
+     * estas alertas se resuelven para un $user concreto, no el autenticado.
+     *
+     * Devuelve null si el rol no tiene ese módulo, para poder omitir la alerta
+     * en vez de generar un enlace muerto.
+     */
+    private function routeFor(User $user, string $suffix): ?string
+    {
+        $name = match (true) {
+            $user->isProducer() => 'producer.'.producerRouteSuffix($suffix),
+            $user->isWinery() => 'winery.'.$suffix,
+            default => 'viticulturist.'.$suffix,
+        };
+
+        return \Illuminate\Support\Facades\Route::has($name) ? route($name) : null;
     }
 
     /**
@@ -78,7 +105,7 @@ class DashboardAlertsService
                     'icon' => $daysLeft <= 1 ? '⚠️' : '📋',
                     'title' => $daysLeft === 0 ? __('Declaración INFOVI — vence hoy') : __('Declaración INFOVI en :days :unit', ['days' => $daysLeft, 'unit' => $daysLeft === 1 ? __('día') : __('días')]),
                     'message' => $deadline['label'],
-                    'action_url' => route('winery.silicie.infovi'),
+                    'action_url' => $this->routeFor($user, 'silicie.infovi'),
                     'action_text' => __('Ver INFOVI'),
                 ]);
                 break; // only show the nearest deadline
@@ -98,7 +125,7 @@ class DashboardAlertsService
                 'icon' => '📷',
                 'title' => __('SILICIE sin instantánea'),
                 'message' => __('Registra una instantánea de existencias para mantener el libro al día'),
-                'action_url' => route('winery.silicie.dashboard'),
+                'action_url' => $this->routeFor($user, 'silicie.dashboard'),
                 'action_text' => __('Ir a SILICIE'),
             ]);
 
@@ -113,7 +140,7 @@ class DashboardAlertsService
                 'icon' => '📷',
                 'title' => __('Instantánea SILICIE desactualizada'),
                 'message' => __('La última instantánea tiene :days días — recomendable actualizar mensualmente', ['days' => $daysSince]),
-                'action_url' => route('winery.silicie.dashboard'),
+                'action_url' => $this->routeFor($user, 'silicie.dashboard'),
                 'action_text' => __('Actualizar instantánea'),
             ]);
         }
@@ -136,7 +163,7 @@ class DashboardAlertsService
                 'icon' => '📓',
                 'title' => __('Acceso al cuaderno de campo'),
                 'message' => $label.' de acceso sin responder',
-                'action_url' => route('viticulturist.winery-access.index'),
+                'action_url' => $this->routeFor($user, 'winery-access.index'),
                 'action_text' => __('Gestionar accesos'),
             ]);
         }
@@ -211,7 +238,7 @@ class DashboardAlertsService
                 'icon' => '📦',
                 'title' => __('Contenedores bajos'),
                 'message' => "Solo quedan {$availableContainers} contenedores disponibles",
-                'action_url' => route('viticulturist.containers.index'),
+                'action_url' => $this->routeFor($user, 'containers.index'),
                 'action_text' => __('Ver contenedores'),
             ]);
         } elseif ($availableContainers === 0) {
@@ -221,7 +248,7 @@ class DashboardAlertsService
                 'icon' => '🚨',
                 'title' => __('Sin contenedores'),
                 'message' => __('No hay contenedores disponibles'),
-                'action_url' => route('viticulturist.containers.index'),
+                'action_url' => $this->routeFor($user, 'containers.index'),
                 'action_text' => __('Añadir contenedores'),
             ]);
         }
@@ -233,8 +260,7 @@ class DashboardAlertsService
     private function checkActivityAlerts(User $user, Collection $alerts): void
     {
         $activitiesThisMonth = AgriculturalActivity::where('viticulturist_id', $user->id)
-            ->whereMonth('created_at', date('m'))
-            ->whereYear('created_at', date('Y'))
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->count();
 
         if ($activitiesThisMonth === 0) {
@@ -244,7 +270,7 @@ class DashboardAlertsService
                 'icon' => '📝',
                 'title' => __('Sin actividades'),
                 'message' => __('No has registrado actividades este mes'),
-                'action_url' => route('viticulturist.digital-notebook'),
+                'action_url' => $this->routeFor($user, 'digital-notebook'),
                 'action_text' => __('Registrar actividad'),
             ]);
         }
@@ -260,7 +286,7 @@ class DashboardAlertsService
         // Check for low NDVI
         $lowNdviPlots = PlotRemoteSensing::whereIn('plot_id', $userPlotIds)
             ->where('ndvi_mean', '<', 0.35)
-            ->whereDate('image_date', '>=', now()->subDays(7))
+            ->where('image_date', '>=', now()->subDays(7)->startOfDay())
             ->with('plot')
             ->get()
             ->unique('plot_id');

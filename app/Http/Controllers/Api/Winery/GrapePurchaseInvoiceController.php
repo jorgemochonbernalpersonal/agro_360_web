@@ -136,7 +136,10 @@ class GrapePurchaseInvoiceController extends BaseApiController
     {
         $invoice = $this->findOwnedInvoice($request->user()->id, $id);
 
-        abort_if($invoice->status === 'cancelled', 422, 'No se puede editar una liquidación cancelada.');
+        // Fiscal-sensitive: solo los borradores se editan libremente. Una vez
+        // confirmada ('sent') o en cualquier estado no-draft queda congelada
+        // (ver auditoría fix #6, misma regla que InvoiceController).
+        abort_if($invoice->status !== 'draft', 422, 'Solo se pueden editar liquidaciones en estado borrador.');
 
         $invoice->update($request->validated());
         $invoice->load(['viticulturist', 'items']);
@@ -150,7 +153,7 @@ class GrapePurchaseInvoiceController extends BaseApiController
     {
         $invoice = $this->findOwnedInvoice($request->user()->id, $id);
 
-        abort_if($invoice->payment_status === 'paid', 422, 'No se puede eliminar una liquidación ya pagada.');
+        abort_unless($invoice->status === 'draft', 422, 'Solo se pueden eliminar liquidaciones en estado borrador.');
 
         DB::transaction(function () use ($invoice) {
             $invoice->items()->delete();
@@ -166,7 +169,7 @@ class GrapePurchaseInvoiceController extends BaseApiController
     {
         $invoice = $this->findOwnedInvoice($request->user()->id, $id);
 
-        abort_if($invoice->status === 'cancelled', 422, 'No se puede modificar una liquidación cancelada.');
+        abort_unless($invoice->status === 'draft', 422, 'Solo se pueden añadir líneas a liquidaciones en estado borrador.');
 
         $validated = $request->validated();
 
@@ -201,7 +204,7 @@ class GrapePurchaseInvoiceController extends BaseApiController
     {
         $invoice = $this->findOwnedInvoice($request->user()->id, $id);
 
-        abort_if($invoice->status === 'cancelled', 422, 'No se puede modificar una liquidación cancelada.');
+        abort_unless($invoice->status === 'draft', 422, 'Solo se pueden modificar líneas de liquidaciones en estado borrador.');
 
         $item = InvoiceItem::where('invoice_id', $invoice->id)->findOrFail($itemId);
 
@@ -221,7 +224,7 @@ class GrapePurchaseInvoiceController extends BaseApiController
     {
         $invoice = $this->findOwnedInvoice($request->user()->id, $id);
 
-        abort_if($invoice->status === 'cancelled', 422, 'No se puede modificar una liquidación cancelada.');
+        abort_unless($invoice->status === 'draft', 422, 'Solo se pueden eliminar líneas de liquidaciones en estado borrador.');
 
         $item = InvoiceItem::where('invoice_id', $invoice->id)->findOrFail($itemId);
 
@@ -299,11 +302,14 @@ class GrapePurchaseInvoiceController extends BaseApiController
         $taxAmount = $items->sum(fn ($i) => (float) $i->tax_amount);
         $taxBase = $items->sum(fn ($i) => (float) ($i->tax_base ?? $i->subtotal));
 
+        // grape_purchase lleva retención IRPF, no IVA: el `tax_amount` se
+        // DESCUENTA del total a pagar al viticultor, no se suma (misma
+        // convención que InvoiceService::calculateIrpfTotals — ver fix #6).
         $invoice->update([
-            'subtotal' => round($subtotal, 3),
-            'tax_base' => round($taxBase, 3),
-            'tax_amount' => round($taxAmount, 3),
-            'total_amount' => round($subtotal + $taxAmount, 3),
+            'subtotal' => round($subtotal, 2),
+            'tax_base' => round($taxBase, 2),
+            'tax_amount' => round($taxAmount, 2),
+            'total_amount' => round($subtotal - $taxAmount, 2),
         ]);
     }
 }

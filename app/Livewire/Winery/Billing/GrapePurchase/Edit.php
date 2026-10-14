@@ -57,7 +57,11 @@ class Edit extends Component
 
     public function getIsLockedProperty(): bool
     {
-        return $this->invoice->status === 'cancelled'
+        // Fiscal-sensitive: solo los borradores son libremente editables (ver
+        // auditoría fix #8). El flujo web no mueve esta liquidación a 'sent', pero
+        // GrapePurchaseInvoiceController::confirm() (API) sí puede hacerlo —
+        // status !== 'draft' cierra ese hueco entre superficies.
+        return $this->invoice->status !== 'draft'
             || $this->invoice->payment_status === 'paid';
     }
 

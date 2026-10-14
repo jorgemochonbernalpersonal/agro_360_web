@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Billing\ProductSale\Traits;
 
+use App\Models\Invoice;
 use App\Models\InvoicingSetting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +49,9 @@ trait WithEmitirModal
             ['emitirDate.required' => __('La fecha de factura es obligatoria.')]
         );
 
+        // Comprobación previa solo para feedback rápido — la comprobación que
+        // realmente cuenta (con lockForUpdate) se hace DENTRO de la transacción
+        // de abajo, para cerrar la ventana de doble-submit (ver auditoría fix #10).
         $invoice = $this->findInvoice($this->emitirId);
         if (! $invoice || $invoice->status !== 'draft') {
             $this->toastError(__('La factura ya no está en borrador.'));
@@ -57,13 +61,28 @@ trait WithEmitirModal
         }
 
         $invoiceNumber = null;
+        $emitirId = $this->emitirId;
 
         try {
-            DB::transaction(function () use ($invoice, &$invoiceNumber) {
+            DB::transaction(function () use ($emitirId, &$invoiceNumber) {
+                // Re-fetch con lockForUpdate() dentro de la transacción: si dos
+                // submits concurrentes llegan aquí, el segundo espera a que el
+                // primero confirme, relee status='sent' y aborta sin consumir
+                // un número de más (evita huecos en la numeración correlativa).
+                $locked = Invoice::where('id', $emitirId)
+                    ->where('user_id', Auth::id())
+                    ->where('invoice_type', 'wine_sale')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $locked || $locked->status !== 'draft') {
+                    throw new \RuntimeException(__('La factura ya no está en borrador.'));
+                }
+
                 $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
                 $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
 
-                $invoice->update([
+                $locked->update([
                     'invoice_number' => $invoiceNumber,
                     'invoice_date' => $this->emitirDate,
                     'status' => 'sent',
@@ -78,7 +97,7 @@ trait WithEmitirModal
                 'invoice_id' => $this->emitirId,
                 'user_id' => Auth::id(),
             ]);
-            $this->toastError(__('Error al emitir la factura.'));
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Error al emitir la factura.'));
         }
     }
 }

@@ -16,6 +16,7 @@ use App\Models\Wine;
 use App\Models\WineFermentationControl;
 use App\Models\WineryViticulturist;
 use App\Models\WineryYieldForecast;
+use Illuminate\Support\Facades\Cache;
 
 class ProducerDashboardService
 {
@@ -26,25 +27,36 @@ class ProducerDashboardService
      */
     public function stats(User $user): array
     {
+        // El endpoint API ya cachea 60s en su capa (DashboardController), pero
+        // el componente Livewire llamaba a este método sin caché alguna en
+        // cada render. Cachearlo aquí cubre ambos consumidores.
+        return Cache::remember("producer-dashboard-{$user->id}", now()->addMinutes(3), fn () => $this->buildStats($user));
+    }
+
+    /**
+     * @return array{field: array, winery: array, containers: array, alerts: array}
+     */
+    private function buildStats(User $user): array
+    {
         $userId = $user->id;
+        $now = now();
 
         // ── Campo ────────────────────────────────────────────────────────────
         $plots = Plot::forUser($user)->select(['id', 'area', 'active'])->get();
         $plotIds = $plots->pluck('id');
 
         $activitiesThisMonth = AgriculturalActivity::where('viticulturist_id', $userId)
-            ->whereYear('activity_date', now()->year)
-            ->whereMonth('activity_date', now()->month)
+            ->whereBetween('activity_date', [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()])
             ->count();
 
         $deliveredKg = (float) HarvestDelivery::whereHas('plotPlanting', fn ($q) => $q->whereIn('plot_id', $plotIds))
             ->where('disqualified', false)
-            ->whereYear('delivery_date', now()->year)
+            ->whereBetween('delivery_date', [$now->copy()->startOfYear(), $now->copy()->endOfYear()])
             ->sum('delivered_kg');
 
         // ── Bodega ───────────────────────────────────────────────────────────
         $activeCampaign = Campaign::forViticulturist($userId)->where('active', true)->first();
-        $vintageYear = $activeCampaign->year ?? now()->year;
+        $vintageYear = $activeCampaign->year ?? $now->year;
 
         $activeBatches = GrapeReceptionBatch::where('winery_id', $userId)
             ->where('vintage_year', $vintageYear)
@@ -59,7 +71,7 @@ class ProducerDashboardService
 
         $todayStats = Harvest::where('winery_id', $userId)
             ->where('status', 'active')
-            ->whereDate('harvest_start_date', today())
+            ->whereBetween('harvest_start_date', [$now->copy()->startOfDay(), $now->copy()->endOfDay()])
             ->selectRaw('COUNT(*) as count, COALESCE(SUM(total_weight), 0) as kg')
             ->first();
 
@@ -73,7 +85,7 @@ class ProducerDashboardService
 
         $maintenanceOverdue = ContainerMaintenance::whereHas('container', fn ($q) => $q->where('user_id', $userId))
             ->whereNotIn('status', ['completed', 'cancelled'])
-            ->whereDate('scheduled_date', '<', today())
+            ->where('scheduled_date', '<', $now->copy()->startOfDay())
             ->count();
 
         // ── Alertas de rendimiento ───────────────────────────────────────────
@@ -115,7 +127,7 @@ class ProducerDashboardService
                 'active_wines' => Wine::where('user_id', $userId)->where('status', 'active')->count(),
                 'active_fermentations' => WineFermentationControl::whereHas('wine', fn ($q) => $q->where('user_id', $userId))
                     ->where(fn ($q) => $q->where('density', '>', 1.000)->orWhere('brix_degree', '>', 2))
-                    ->whereDate('control_date', '>=', now()->subDays(3))
+                    ->where('control_date', '>=', $now->copy()->subDays(3))
                     ->distinct('wine_id')->count('wine_id'),
                 'product_lots' => ProductLot::where('user_id', $userId)->count(),
                 'linked_viticulturists' => WineryViticulturist::where('winery_id', $userId)

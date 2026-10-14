@@ -295,6 +295,34 @@ if (! function_exists('active_route')) {
     }
 }
 
+if (! function_exists('producerRouteSuffix')) {
+    /**
+     * Traduce un sufijo de ruta compartido al nombre que usa el producer.
+     *
+     * Unos pocos módulos de bodega se nombran distinto bajo producer.* para no
+     * colisionar con su homólogo de viñedo: las campañas de vendimia son
+     * 'winery-campaigns' porque 'campaign' ya son las campañas de campo, y el
+     * menú discrimina con el comodín 'producer.campaign*'.
+     *
+     * Acepta tanto sufijos exactos ('campaigns.index') como patrones
+     * ('campaigns*'), para poder usarse desde roleRoute() y roleRouteIs().
+     */
+    function producerRouteSuffix(string $suffix): string
+    {
+        $aliases = [
+            'campaigns' => 'winery-campaigns',
+        ];
+
+        foreach ($aliases as $from => $to) {
+            if ($suffix === $from || preg_match('/^'.preg_quote($from, '/').'[.*]/', $suffix)) {
+                return $to.substr($suffix, strlen($from));
+            }
+        }
+
+        return $suffix;
+    }
+}
+
 if (! function_exists('roleRoute')) {
     /**
      * Generate a role-aware URL for shared Blade views.
@@ -313,7 +341,7 @@ if (! function_exists('roleRoute')) {
         $cleanSuffix = preg_replace('/^(winery|viticulturist|producer)\./', '', $suffix);
 
         if ($user?->isProducer()) {
-            $producerRoute = "producer.{$cleanSuffix}";
+            $producerRoute = 'producer.'.producerRouteSuffix($cleanSuffix);
             if (\Illuminate\Support\Facades\Route::has($producerRoute)) {
                 return route($producerRoute, $parameters);
             }
@@ -336,5 +364,38 @@ if (! function_exists('roleRoute')) {
 
         // Last resort: try the clean suffix (shared routes like plots.*, sigpac.*)
         return route($cleanSuffix, $parameters);
+    }
+}
+
+if (! function_exists('roleRouteIs')) {
+    /**
+     * request()->routeIs() consciente del rol producer.
+     *
+     * El producer reutiliza las vistas de winery y viticulturist bajo el prefijo
+     * producer.*, así que un patrón literal como 'winery.wines*' nunca casa
+     * estando en 'producer.wines.index'. Esta función prueba además la variante
+     * producer.* de cada patrón, aplicando los alias de producerRouteSuffix().
+     *
+     * Úsala en lugar de request()->routeIs() en helpers y vistas compartidas que
+     * deciden estado activo, migas de pan o color de capítulo.
+     */
+    function roleRouteIs(string ...$patterns): bool
+    {
+        if (request()->routeIs(...$patterns)) {
+            return true;
+        }
+
+        if (! auth()->user()?->isProducer()) {
+            return false;
+        }
+
+        $producerPatterns = array_map(
+            fn (string $pattern) => preg_match('/^(winery|viticulturist)\./', $pattern)
+                ? 'producer.'.producerRouteSuffix(preg_replace('/^(winery|viticulturist)\./', '', $pattern))
+                : $pattern,
+            $patterns
+        );
+
+        return request()->routeIs(...$producerPatterns);
     }
 }

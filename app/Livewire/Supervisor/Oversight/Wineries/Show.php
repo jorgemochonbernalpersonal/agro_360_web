@@ -70,18 +70,12 @@ class Show extends Component
 
     public function toggleAccess(): void
     {
-        SupervisorWinery::where('supervisor_id', Auth::id())
-            ->where('winery_id', $this->winery->id)
-            ->firstOrFail();
-
-        $this->winery->update(['can_login' => ! $this->winery->can_login]);
-        $this->winery->refresh();
-
-        $msg = $this->winery->can_login
-            ? 'Acceso restaurado. La bodega puede iniciar sesión.'
-            : 'Bodega desactivada. No podrá iniciar sesión.';
-
-        $this->dispatch('toast', message: $msg, type: $this->winery->can_login ? 'success' : 'warning');
+        // Desactivar el login de una bodega es una acción de administración de cuentas,
+        // no de supervisión de una D.O. — y `SupervisorWinery` se crea por autoservicio
+        // (linkWinery/assignWinery) sin validar ninguna relación real con esa bodega, así
+        // que cualquier supervisor podía "vincularse" a cualquier bodega del sistema y
+        // desactivarle el acceso. Solo un admin puede desactivar cuentas.
+        $this->dispatch('toast', message: __('Para desactivar el acceso de una bodega, contacta con el equipo de Agro365.'), type: 'warning');
     }
 
     #[Layout('layouts.app')]

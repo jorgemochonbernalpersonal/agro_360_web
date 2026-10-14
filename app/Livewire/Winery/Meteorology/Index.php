@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Meteorology;
 use App\Models\Plot;
 use App\Services\RemoteSensing\WeatherService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class Index extends Component
@@ -129,7 +130,11 @@ class Index extends Component
             $service = new WeatherService;
             foreach ($plots as $plot) {
                 try {
-                    $w = $service->getCurrentWeather($plot);
+                    // WeatherService calcula las coordenadas de la parcela ANTES
+                    // de mirar la caché. Si ya tenemos el valor cacheado (misma
+                    // clave que usa el servicio internamente), nos lo saltamos.
+                    $cacheKey = "weather_{$plot->id}";
+                    $w = Cache::has($cacheKey) ? Cache::get($cacheKey) : $service->getCurrentWeather($plot);
                     $plotSummaries[$plot->id] = [
                         'name' => $plot->name,
                         'temperature' => $w['temperature'] ?? null,

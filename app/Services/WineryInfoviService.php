@@ -249,7 +249,7 @@ class WineryInfoviService
             ->where('w.is_must', false)
             ->select([
                 'w.wine_type',
-                DB::raw('SUM(ii.quantity * CAST(pl.bottle_format AS DECIMAL(10,0)) / 1000000) as hl'),
+                DB::raw('SUM(ii.quantity * CAST(pl.bottle_format AS DECIMAL(10,0)) / 100000) as hl'),
                 DB::raw('SUM(ii.quantity) as bottles'),
                 DB::raw('COUNT(DISTINCT i.id) as invoice_count'),
             ])
@@ -378,7 +378,7 @@ class WineryInfoviService
             ->where('w.is_must', false)
             ->whereNotNull('pl.bottle_format')
             ->groupBy('w.wine_type')
-            ->selectRaw('w.wine_type, SUM(ii.quantity * CAST(pl.bottle_format AS DECIMAL(10,0)) / 1000000) as hl')
+            ->selectRaw('w.wine_type, SUM(ii.quantity * CAST(pl.bottle_format AS DECIMAL(10,0)) / 100000) as hl')
             ->pluck('hl', 'wine_type');
 
         $perdidoByType = DB::table('wine_losses as wl')
@@ -497,7 +497,7 @@ class WineryInfoviService
             ->whereDate('i.invoice_date', '<=', $to)
             ->where('w.is_must', true)
             ->whereNotNull('pl.bottle_format')
-            ->sum(DB::raw('ii.quantity * CAST(pl.bottle_format AS DECIMAL(10,0)) / 1000000')), 3);
+            ->sum(DB::raw('ii.quantity * CAST(pl.bottle_format AS DECIMAL(10,0)) / 100000')), 3);
 
         $perdido = round((float) DB::table('wine_losses as wl')
             ->join('wines as w', 'w.id', '=', 'wl.wine_id')

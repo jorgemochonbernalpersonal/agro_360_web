@@ -45,6 +45,13 @@ class WithdrawalPeriodEnding extends Notification implements ShouldQueue
         $activity = $this->treatment->activity;
         $product = $this->treatment->product;
 
+        // No existe una ruta 'activities.show': el tratamiento se consulta desde
+        // su ficha del cuaderno, cuyo prefijo depende del rol del destinatario.
+        $prefix = $notifiable instanceof \App\Models\User && $notifiable->isProducer()
+            ? 'producer'
+            : 'viticulturist';
+        $activityUrl = route("{$prefix}.digital-notebook.treatment.edit", $activity);
+
         return (new MailMessage)
             ->subject(__('Recordatorio: Plazo de Seguridad Fitosanitario'))
             ->greeting('📅 Recordatorio de Plazo de Seguridad')
@@ -53,7 +60,7 @@ class WithdrawalPeriodEnding extends Notification implements ShouldQueue
             ->line("**Fecha de aplicación:** {$activity->activity_date->format('d/m/Y')}")
             ->line("**Fecha segura para cosecha:** {$this->safeDate->format('d/m/Y')}")
             ->line("**Días restantes:** {$this->daysRemaining}")
-            ->action(__('Ver actividad'), AppLink::url(route('activities.show', $activity), 'agro365://home'))
+            ->action(__('Ver actividad'), AppLink::url($activityUrl, 'agro365://home'))
             ->line(__('No olvides respetar el plazo de seguridad antes de la cosecha.'));
     }
 

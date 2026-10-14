@@ -58,6 +58,14 @@
                                         <flux:input wire:model="email" type="email" id="email" :placeholder="__('tu@email.com')" required />
                                         <flux:error name="email" />
                                     </flux:field>
+
+                                    @if ($email !== auth()->user()->email)
+                                        <flux:field class="md:col-span-2">
+                                            <flux:label required>{{ __('Contraseña actual (para confirmar el cambio de email)') }}</flux:label>
+                                            <flux:input wire:model="current_password_for_email" type="password" id="current_password_for_email" />
+                                            <flux:error name="current_password_for_email" />
+                                        </flux:field>
+                                    @endif
                                 </div>
 
                                 {{-- Imagen de Perfil --}}

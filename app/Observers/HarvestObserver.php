@@ -91,6 +91,7 @@ class HarvestObserver
         }
 
         // Si la recepción de bodega pasa a cancelada, liberar la HarvestDelivery enlazada
+        // y la capacidad del contenedor (la recepción deja de contar como uva presente).
         if ($harvest->isWineryReception() && $harvest->wasChanged('status') && $harvest->isCancelled()) {
             HarvestDelivery::where('harvest_id', $harvest->id)->update([
                 'harvest_id' => null,
@@ -101,6 +102,15 @@ class HarvestObserver
                 'dispute_resolution_note' => null,
                 'dispute_resolved_at' => null,
             ]);
+
+            try {
+                $this->stockService->releaseHarvestStock($harvest);
+            } catch (\Exception $e) {
+                Log::error('[HarvestObserver] Error al liberar stock de contenedor al anular recepción', [
+                    'harvest_id' => $harvest->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         // Si cambia el peso de una recepción de bodega ya vinculada, re-calcular discrepancia

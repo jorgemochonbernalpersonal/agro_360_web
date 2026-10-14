@@ -482,8 +482,15 @@ class ContainerStockService
                 return;
             }
 
-            $newAvailable = $lastStock->available_qty + $item->quantity;
             $newReserved = max(0, $lastStock->reserved_qty - $item->quantity);
+            $newAvailable = $lastStock->available_qty + $item->quantity;
+
+            // Techo defensivo: available+reserved+sold+gifted+lost no puede superar
+            // quantity_after. Si esta reserva ya se liberó antes (doble evento), el
+            // resto de campos no baja de 0 y este tope evita que available_qty se
+            // infle por encima del físico real disponible.
+            $maxAvailable = max(0, $lastStock->quantity_after - $newReserved - $lastStock->sold_qty - $lastStock->gifted_qty - $lastStock->lost_qty);
+            $newAvailable = min($newAvailable, $maxAvailable);
 
             HarvestStock::create([
                 'harvest_id' => $harvest->id,
@@ -506,7 +513,12 @@ class ContainerStockService
                 'reference_number' => $item->invoice->delivery_note_code,
             ]);
 
-            // Solo actualiza sub-campos, NO current_quantity ni used_capacity
+            // Solo actualiza sub-campos, NO current_quantity ni used_capacity.
+            // Usa el delta realmente aplicado al ledger (ya con el tope defensivo
+            // aplicado) en vez de $item->quantity, para no desincronizar el estado
+            // del contenedor respecto al HarvestStock recién creado.
+            $appliedDelta = $newAvailable - $lastStock->available_qty;
+
             if ($harvest->container_id) {
                 $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
@@ -515,7 +527,7 @@ class ContainerStockService
                         ->first();
                     if ($state) {
                         $state->update([
-                            'available_qty' => ($state->available_qty ?? 0) + $item->quantity,
+                            'available_qty' => ($state->available_qty ?? 0) + $appliedDelta,
                             'reserved_qty' => max(0, ($state->reserved_qty ?? 0) - $item->quantity),
                             'last_movement_at' => now(),
                             'last_movement_by' => Auth::id(),

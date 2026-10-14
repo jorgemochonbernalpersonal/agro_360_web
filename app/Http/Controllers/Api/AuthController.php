@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Resources\Api\UserResource;
 use App\Models\User;
 use App\Services\SecurityLogger;
+use Firebase\JWT\JWK;
+use Firebase\JWT\JWT;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Validation\ValidationException;
 
@@ -29,7 +33,9 @@ class AuthController extends BaseApiController
             'name' => 'required|string|max:255',
             'email' => 'required|email:rfc,dns|max:255|unique:users,email',
             'password' => ['required', 'confirmed', PasswordRule::min(10)->mixedCase()->numbers()],
-            'role' => 'sometimes|string|in:winery,viticulturist,producer,supervisor',
+            // 'supervisor' (DO) queda fuera del auto-registro: ese rol se adscribe
+            // bodegas/viticultores sin su consentimiento, así que solo un admin lo asigna.
+            'role' => 'sometimes|string|in:winery,viticulturist,producer',
             'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
         ]);
 
@@ -57,16 +63,20 @@ class AuthController extends BaseApiController
     }
 
     // ─── POST /email/verify ────────────────────────────────────────────────────
-    // Verificación nativa para la app móvil: valida id + sha1(email) sin depender
-    // de la firma de la URL (que Gmail/proxies pueden romper → 403). NO emite token:
-    // solo marca el email como verificado; el login sigue exigiendo contraseña, así
-    // conocer el email de otro no concede acceso a su cuenta.
+    // Verificación nativa para la app móvil: la app extrae id/hash/expires/signature
+    // del deep-link firmado que genera MobileVerifyEmailNotification y los reenvía
+    // aquí por POST (evita que un email-proxy/scanner "gaste" el enlace con un GET).
+    // sha1(email) por sí solo NO es un secreto (cualquiera puede calcularlo a partir
+    // del email); la seguridad real la da la firma HMAC (signature), que se valida
+    // igual que en la ruta web `verification.verify` (routes/auth.php, ->middleware('signed')).
 
     public function verifyEmail(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'id' => 'required|integer',
             'hash' => 'required|string',
+            'expires' => 'required|integer',
+            'signature' => 'required|string',
         ]);
 
         $user = User::find($validated['id']);
@@ -74,6 +84,21 @@ class AuthController extends BaseApiController
         if (! $user || ! hash_equals(sha1($user->getEmailForVerification()), $validated['hash'])) {
             return response()->json([
                 'message' => __('Enlace de verificación inválido.'),
+            ], 422);
+        }
+
+        $signedRequest = Request::create(
+            route('verification.verify', ['id' => $validated['id'], 'hash' => $validated['hash']])
+            .'?'.http_build_query([
+                'expires' => $validated['expires'],
+                'platform' => 'mobile',
+                'signature' => $validated['signature'],
+            ])
+        );
+
+        if (! URL::hasValidSignature($signedRequest)) {
+            return response()->json([
+                'message' => __('Enlace de verificación inválido o caducado.'),
             ], 422);
         }
 
@@ -413,6 +438,19 @@ class AuthController extends BaseApiController
     {
         $request->validate(['email' => 'required|email']);
 
+        // Throttle por email (no solo por IP): Password::createToken() no pasa por el
+        // broker de Password::sendResetLink(), así que aquí no había ningún límite y
+        // se podía bombardear de correos a una víctima rotando de IP.
+        $throttleKey = 'forgot-password:'.strtolower($request->email);
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            return response()->json([
+                'message' => __('Si el correo está registrado, recibirás un enlace de recuperación.'),
+            ]);
+        }
+
+        RateLimiter::hit($throttleKey, 60 * 10);
+
         // Buscamos el usuario sin revelar si existe o no en la respuesta
         $user = User::where('email', $request->email)->first();
 
@@ -471,7 +509,14 @@ class AuthController extends BaseApiController
             config('services.google.ios_client_id'),
             config('services.google.android_client_id'),
         ]);
-        if (! empty($allowedAudiences) && ! in_array($payload['aud'] ?? '', $allowedAudiences, true)) {
+        if (empty($allowedAudiences)) {
+            // Sin client IDs configurados no hay nada que comparar: aceptar cualquier
+            // id_token de Google (confused deputy) en vez de rechazar por configuración.
+            SecurityLogger::logSecurityEvent('google_login_misconfigured', []);
+
+            return response()->json(['message' => __('Token de Google inválido.')], 422);
+        }
+        if (! in_array($payload['aud'] ?? '', $allowedAudiences, true)) {
             return response()->json(['message' => __('Token de Google inválido.')], 422);
         }
 
@@ -545,19 +590,19 @@ class AuthController extends BaseApiController
             'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
         ]);
 
-        // Decodificar el JWT de Apple sin verificar la firma (Apple verifica en su servidor)
-        $parts = explode('.', $request->identity_token);
-        if (count($parts) !== 3) {
-            return response()->json(['message' => __('Token de Apple inválido.')], 422);
-        }
+        // Verificar la firma RS256 del JWT contra las claves públicas de Apple (JWKS).
+        // Antes se decodificaba el payload en base64 SIN comprobar la firma, lo que
+        // permitía fabricar un identity_token con cualquier email (incluido el de un
+        // admin) y obtener un token Sanctum de esa cuenta.
+        try {
+            $jwks = Cache::remember('apple_jwks', now()->addHours(6), function () {
+                return Http::timeout(10)->throw()->get('https://appleid.apple.com/auth/keys')->json();
+            });
 
-        $payload = json_decode(base64_decode(str_pad(
-            strtr($parts[1], '-_', '+/'),
-            strlen($parts[1]) % 4 === 0 ? 0 : 4 - strlen($parts[1]) % 4,
-            '='
-        )), true);
+            $payload = (array) JWT::decode($request->identity_token, JWK::parseKeySet($jwks));
+        } catch (\Throwable $e) {
+            SecurityLogger::logSecurityEvent('apple_jwt_invalid', ['error' => $e->getMessage()]);
 
-        if (! $payload) {
             return response()->json(['message' => __('Token de Apple inválido.')], 422);
         }
 
@@ -566,14 +611,10 @@ class AuthController extends BaseApiController
             return response()->json(['message' => __('Token de Apple inválido.')], 422);
         }
 
-        // Verificar expiración
-        if ((int) ($payload['exp'] ?? 0) < time()) {
-            return response()->json(['message' => __('Token de Apple expirado.')], 422);
-        }
-
-        // Verificar audience (bundle ID de la app)
+        // Verificar audience (bundle ID de la app) — obligatorio: sin bundle_id
+        // configurado se aceptaría un token emitido para cualquier app de Apple.
         $bundleId = config('services.apple.bundle_id');
-        if ($bundleId && ($payload['aud'] ?? '') !== $bundleId) {
+        if (! $bundleId || ($payload['aud'] ?? '') !== $bundleId) {
             return response()->json(['message' => __('Token de Apple inválido.')], 422);
         }
 

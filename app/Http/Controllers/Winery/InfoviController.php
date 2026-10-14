@@ -125,25 +125,27 @@ class InfoviController extends Controller
 
     private function buildCuadroVentas(int $wineryId, string $start, string $end): array
     {
-        $bottleMl = [
-            '187' => 187, '375' => 375, '500' => 500, '750' => 750,
-            '1000' => 1000, '1500' => 1500, '3000' => 3000, '5000' => 5000,
-        ];
-
+        // El formato de botella vive en wine_lots.bottle_format (ml en texto) y el
+        // ítem apunta al lote, no al vino: invoice_items no tiene wine_id ni
+        // bottle_size. Mismo criterio que Api\Winery\InfoviController.
         $rows = DB::table('invoice_items as ii')
             ->join('invoices as i', 'i.id', '=', 'ii.invoice_id')
-            ->join('wines as w', 'w.id', '=', 'ii.wine_id')
+            ->join('wine_lots as pl', 'pl.id', '=', 'ii.wine_lot_id')
+            ->join('wines as w', 'w.id', '=', 'pl.wine_id')
             ->where('i.user_id', $wineryId)
-            ->whereBetween('i.issue_date', [$start, $end])
+            ->whereIn('i.status', ['sent', 'paid'])
+            ->whereDate('i.invoice_date', '>=', $start)
+            ->whereDate('i.invoice_date', '<=', $end)
             ->where('w.is_must', false)
-            ->whereNotNull('ii.wine_id')
-            ->selectRaw('w.wine_type, ii.bottle_size, SUM(ii.quantity) as bottles')
-            ->groupBy('w.wine_type', 'ii.bottle_size')
+            ->whereNotNull('pl.bottle_format')
+            ->selectRaw('w.wine_type, pl.bottle_format, SUM(ii.quantity) as bottles')
+            ->groupBy('w.wine_type', 'pl.bottle_format')
             ->get();
 
         $result = [];
         foreach ($rows as $row) {
-            $ml = $bottleMl[$row->bottle_size] ?? 750;
+            // ml -> hl: 1 hl = 100 000 ml
+            $ml = (int) $row->bottle_format ?: 750;
             $hl = ($row->bottles * $ml) / 100000;
             $type = $row->wine_type;
             if (! isset($result[$type])) {

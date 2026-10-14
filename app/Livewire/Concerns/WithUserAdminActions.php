@@ -56,6 +56,14 @@ trait WithUserAdminActions
             return;
         }
 
+        // Impersonar permite ESCRIBIR como el usuario objetivo, así que un admin de
+        // solo lectura no debe poder hacerlo (sería una vía indirecta de escritura).
+        if (Auth::user()->isReadOnlyAdmin()) {
+            $this->toastError(__('Los administradores de solo lectura no pueden impersonar usuarios.'));
+
+            return;
+        }
+
         if ($targetUser->isAdmin()) {
             $this->toastError(__('No puedes impersonar a otro administrador por razones de seguridad.'));
 

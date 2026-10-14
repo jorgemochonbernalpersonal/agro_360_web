@@ -17,7 +17,7 @@ class BreadcrumbHelper
         }
 
         // Dashboard
-        if (request()->routeIs('*.dashboard')) {
+        if (roleRouteIs('*.dashboard')) {
             $role = $user->role;
             $dashboardLabels = [
                 'admin' => __('Dashboard Administrador'),
@@ -36,32 +36,32 @@ class BreadcrumbHelper
         }
 
         // Parcelas
-        if (request()->routeIs('plots.*')) {
+        if (roleRouteIs('plots.*')) {
             $breadcrumbs[] = [
                 'label' => __('Parcelas'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>',
                 'route' => 'plots.index',
-                'active' => request()->routeIs('plots.index'),
+                'active' => roleRouteIs('plots.index'),
                 'alwaysHighlight' => true, // Siempre destacar con color verde cuando estás en plots
             ];
 
             // Plantaciones
-            if (request()->routeIs('plots.plantings.*')) {
+            if (roleRouteIs('plots.plantings.*')) {
                 $breadcrumbs[] = [
                     'label' => __('Plantaciones'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>',
                     'route' => 'plots.plantings.index',
-                    'active' => request()->routeIs('plots.plantings.index'),
+                    'active' => roleRouteIs('plots.plantings.index'),
                 ];
 
-                if (request()->routeIs('plots.plantings.create')) {
+                if (roleRouteIs('plots.plantings.create')) {
                     $breadcrumbs[] = [
                         'label' => __('Nueva Plantación'),
                         'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                         'route' => null,
                         'active' => true,
                     ];
-                } elseif (request()->routeIs('plots.plantings.edit')) {
+                } elseif (roleRouteIs('plots.plantings.edit')) {
                     $breadcrumbs[] = [
                         'label' => __('Editar Plantación'),
                         'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -69,14 +69,14 @@ class BreadcrumbHelper
                         'active' => true,
                     ];
                 }
-            } elseif (request()->routeIs('plots.create')) {
+            } elseif (roleRouteIs('plots.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nueva Parcela'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('plots.edit')) {
+            } elseif (roleRouteIs('plots.edit')) {
                 $plotName = request()->route('plot') ? 'Editar' : 'Editar Parcela';
                 $breadcrumbs[] = [
                     'label' => $plotName,
@@ -84,7 +84,7 @@ class BreadcrumbHelper
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('plots.show')) {
+            } elseif (roleRouteIs('plots.show')) {
                 $breadcrumbs[] = [
                     'label' => __('Detalles'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>',
@@ -95,30 +95,30 @@ class BreadcrumbHelper
         }
 
         // SIGPAC
-        if (request()->routeIs('sigpac.*')) {
+        if (roleRouteIs('sigpac.*')) {
             $breadcrumbs[] = [
                 'label' => 'SIGPAC',
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
                 'route' => 'sigpac.codes',
-                'active' => request()->routeIs('sigpac.codes') || request()->routeIs('sigpac.index'),
+                'active' => roleRouteIs('sigpac.codes') || roleRouteIs('sigpac.index'),
                 'alwaysHighlight' => true,
             ];
 
-            if (request()->routeIs('sigpac.codes.create')) {
+            if (roleRouteIs('sigpac.codes.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nuevo Código SIGPAC'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('sigpac.codes.edit')) {
+            } elseif (roleRouteIs('sigpac.codes.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar Código SIGPAC'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('sigpac.uses')) {
+            } elseif (roleRouteIs('sigpac.uses')) {
                 $breadcrumbs[] = [
                     'label' => __('Usos'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
@@ -129,7 +129,7 @@ class BreadcrumbHelper
         }
 
         // Configuración
-        if (request()->routeIs('config.*')) {
+        if (roleRouteIs('config.*')) {
             $breadcrumbs[] = [
                 'label' => __('Configuración'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
@@ -139,16 +139,16 @@ class BreadcrumbHelper
         }
 
         // Perfil
-        if (request()->routeIs('profile.*')) {
+        if (roleRouteIs('profile.*')) {
             $breadcrumbs[] = [
                 'label' => __('Mi Perfil'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
                 'route' => 'profile.show',
-                'active' => request()->routeIs('profile.show'),
+                'active' => roleRouteIs('profile.show'),
                 'alwaysHighlight' => true,
             ];
 
-            if (request()->routeIs('profile.edit')) {
+            if (roleRouteIs('profile.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -159,27 +159,27 @@ class BreadcrumbHelper
         }
 
         // Configuración
-        if (request()->routeIs('viticulturist.settings*')) {
+        if (roleRouteIs('viticulturist.settings*')) {
             $breadcrumbs[] = [
                 'label' => __('Configuración'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
                 'route' => 'viticulturist.settings',
-                'active' => request()->routeIs('viticulturist.settings') && ! request()->has('tab'),
+                'active' => roleRouteIs('viticulturist.settings') && ! request()->has('tab'),
                 'alwaysHighlight' => true, // Siempre destacar con color verde cuando estás en configuración
             ];
         }
 
         // Soporte
-        if (request()->routeIs('viticulturist.support.*')) {
+        if (roleRouteIs('viticulturist.support.*')) {
             $breadcrumbs[] = [
                 'label' => __('Soporte'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
                 'route' => 'viticulturist.support.index',
-                'active' => request()->routeIs('viticulturist.support.index'),
+                'active' => roleRouteIs('viticulturist.support.index'),
                 'alwaysHighlight' => true,
             ];
 
-            if (request()->routeIs('viticulturist.support.create')) {
+            if (roleRouteIs('viticulturist.support.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nuevo Ticket'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
@@ -190,41 +190,41 @@ class BreadcrumbHelper
         }
 
         // Informes Oficiales
-        if (request()->routeIs('viticulturist.official-reports.*')) {
+        if (roleRouteIs('viticulturist.official-reports.*')) {
             $breadcrumbs[] = [
                 'label' => __('Informes Oficiales'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
                 'route' => 'viticulturist.official-reports.index',
-                'active' => request()->routeIs('viticulturist.official-reports.index'),
+                'active' => roleRouteIs('viticulturist.official-reports.index'),
                 'alwaysHighlight' => true,
             ];
         }
 
         // Campañas
-        if (request()->routeIs('viticulturist.campaign.*')) {
+        if (roleRouteIs('viticulturist.campaign.*')) {
             $breadcrumbs[] = [
                 'label' => __('Campañas'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',
                 'route' => 'viticulturist.campaign.index',
-                'active' => request()->routeIs('viticulturist.campaign.index'),
+                'active' => roleRouteIs('viticulturist.campaign.index'),
                 'alwaysHighlight' => true,
             ];
 
-            if (request()->routeIs('viticulturist.campaign.create')) {
+            if (roleRouteIs('viticulturist.campaign.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nueva Campaña'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.campaign.show')) {
+            } elseif (roleRouteIs('viticulturist.campaign.show')) {
                 $breadcrumbs[] = [
                     'label' => __('Detalles'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.campaign.edit')) {
+            } elseif (roleRouteIs('viticulturist.campaign.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -235,66 +235,66 @@ class BreadcrumbHelper
         }
 
         // Cuaderno Digital
-        if (request()->routeIs('viticulturist.digital-notebook*') && ! request()->routeIs('viticulturist.containers.*') && ! request()->routeIs('viticulturist.digital-notebook.estimated-yields.*')) {
+        if (roleRouteIs('viticulturist.digital-notebook*') && ! roleRouteIs('viticulturist.containers.*') && ! roleRouteIs('viticulturist.digital-notebook.estimated-yields.*')) {
             $breadcrumbs[] = [
                 'label' => __('Cuaderno Digital'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
                 'route' => 'viticulturist.digital-notebook',
-                'active' => request()->routeIs('viticulturist.digital-notebook') && ! request()->routeIs('viticulturist.digital-notebook.*'),
+                'active' => roleRouteIs('viticulturist.digital-notebook') && ! roleRouteIs('viticulturist.digital-notebook.*'),
                 'alwaysHighlight' => true,
             ];
 
             // Sub-rutas del cuaderno digital
-            if (request()->routeIs('viticulturist.digital-notebook.treatment.*')) {
+            if (roleRouteIs('viticulturist.digital-notebook.treatment.*')) {
                 $breadcrumbs[] = [
                     'label' => __('Registrar Tratamiento'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.digital-notebook.fertilization.*')) {
+            } elseif (roleRouteIs('viticulturist.digital-notebook.fertilization.*')) {
                 $breadcrumbs[] = [
                     'label' => __('Registrar Fertilización'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.digital-notebook.irrigation.*')) {
+            } elseif (roleRouteIs('viticulturist.digital-notebook.irrigation.*')) {
                 $breadcrumbs[] = [
                     'label' => __('Registrar Riego'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.digital-notebook.cultural.*')) {
+            } elseif (roleRouteIs('viticulturist.digital-notebook.cultural.*')) {
                 $breadcrumbs[] = [
                     'label' => __('Registrar Labor'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.digital-notebook.observation.*')) {
+            } elseif (roleRouteIs('viticulturist.digital-notebook.observation.*')) {
                 $breadcrumbs[] = [
                     'label' => __('Registrar Observación'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.digital-notebook.harvest.create')) {
+            } elseif (roleRouteIs('viticulturist.digital-notebook.harvest.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Registrar Cosecha'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.digital-notebook.harvest.show')) {
+            } elseif (roleRouteIs('viticulturist.digital-notebook.harvest.show')) {
                 $breadcrumbs[] = [
                     'label' => __('Detalles de Cosecha'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.digital-notebook.harvest.edit')) {
+            } elseif (roleRouteIs('viticulturist.digital-notebook.harvest.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar Cosecha'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -305,7 +305,7 @@ class BreadcrumbHelper
         }
 
         // Contenedores (Recursos)
-        if (request()->routeIs('viticulturist.containers.*')) {
+        if (roleRouteIs('viticulturist.containers.*')) {
             $breadcrumbs[] = [
                 'label' => __('Recursos'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',
@@ -318,24 +318,24 @@ class BreadcrumbHelper
                 'label' => __('Contenedores'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',
                 'route' => 'viticulturist.containers.index',
-                'active' => request()->routeIs('viticulturist.containers.index'),
+                'active' => roleRouteIs('viticulturist.containers.index'),
             ];
 
-            if (request()->routeIs('viticulturist.containers.create')) {
+            if (roleRouteIs('viticulturist.containers.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nuevo Contenedor'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.containers.show')) {
+            } elseif (roleRouteIs('viticulturist.containers.show')) {
                 $breadcrumbs[] = [
                     'label' => __('Detalles'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.containers.edit')) {
+            } elseif (roleRouteIs('viticulturist.containers.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar Contenedor'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -346,7 +346,7 @@ class BreadcrumbHelper
         }
 
         // Rendimientos Estimados (dentro de Cuaderno Digital)
-        if (request()->routeIs('viticulturist.digital-notebook.estimated-yields.*')) {
+        if (roleRouteIs('viticulturist.digital-notebook.estimated-yields.*')) {
             $breadcrumbs[] = [
                 'label' => __('Cuaderno Digital'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
@@ -359,17 +359,17 @@ class BreadcrumbHelper
                 'label' => __('Rendimientos Estimados'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>',
                 'route' => 'viticulturist.digital-notebook.estimated-yields.index',
-                'active' => request()->routeIs('viticulturist.digital-notebook.estimated-yields.index'),
+                'active' => roleRouteIs('viticulturist.digital-notebook.estimated-yields.index'),
             ];
 
-            if (request()->routeIs('viticulturist.digital-notebook.estimated-yields.create')) {
+            if (roleRouteIs('viticulturist.digital-notebook.estimated-yields.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nuevo Rendimiento'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.digital-notebook.estimated-yields.edit')) {
+            } elseif (roleRouteIs('viticulturist.digital-notebook.estimated-yields.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar Rendimiento'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -380,7 +380,7 @@ class BreadcrumbHelper
         }
 
         // Equipos y Personal (Recursos)
-        if (request()->routeIs('viticulturist.personal.*') || request()->routeIs('viticulturist.viticulturists.*')) {
+        if (roleRouteIs('viticulturist.personal.*') || roleRouteIs('viticulturist.viticulturists.*')) {
             $breadcrumbs[] = [
                 'label' => __('Recursos'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',
@@ -393,31 +393,31 @@ class BreadcrumbHelper
                 'label' => __('Equipos y Personal'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>',
                 'route' => 'viticulturist.personal.index',
-                'active' => request()->routeIs('viticulturist.personal.index'),
+                'active' => roleRouteIs('viticulturist.personal.index'),
             ];
 
-            if (request()->routeIs('viticulturist.personal.create')) {
+            if (roleRouteIs('viticulturist.personal.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nuevo Equipo'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.viticulturists.create') || request()->routeIs('viticulturist.personal.viticulturist.create')) {
+            } elseif (roleRouteIs('viticulturist.viticulturists.create') || roleRouteIs('viticulturist.personal.viticulturist.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nuevo Viticultor'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.personal.show')) {
+            } elseif (roleRouteIs('viticulturist.personal.show')) {
                 $breadcrumbs[] = [
                     'label' => __('Detalles'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.personal.edit')) {
+            } elseif (roleRouteIs('viticulturist.personal.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -428,7 +428,7 @@ class BreadcrumbHelper
         }
 
         // Maquinaria (Recursos)
-        if (request()->routeIs('viticulturist.machinery.*')) {
+        if (roleRouteIs('viticulturist.machinery.*')) {
             $breadcrumbs[] = [
                 'label' => __('Recursos'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',
@@ -441,24 +441,24 @@ class BreadcrumbHelper
                 'label' => __('Maquinaria'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
                 'route' => 'viticulturist.machinery.index',
-                'active' => request()->routeIs('viticulturist.machinery.index'),
+                'active' => roleRouteIs('viticulturist.machinery.index'),
             ];
 
-            if (request()->routeIs('viticulturist.machinery.create')) {
+            if (roleRouteIs('viticulturist.machinery.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nueva Maquinaria'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.machinery.show')) {
+            } elseif (roleRouteIs('viticulturist.machinery.show')) {
                 $breadcrumbs[] = [
                     'label' => __('Detalles'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.machinery.edit')) {
+            } elseif (roleRouteIs('viticulturist.machinery.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -469,7 +469,7 @@ class BreadcrumbHelper
         }
 
         // Productos Fitosanitarios (dentro de Cuaderno Digital)
-        if (request()->routeIs('viticulturist.phytosanitary-products.*')) {
+        if (roleRouteIs('viticulturist.phytosanitary-products.*')) {
             $breadcrumbs[] = [
                 'label' => __('Cuaderno Digital'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
@@ -482,17 +482,17 @@ class BreadcrumbHelper
                 'label' => __('Productos Fitosanitarios'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>',
                 'route' => 'viticulturist.phytosanitary-products.index',
-                'active' => request()->routeIs('viticulturist.phytosanitary-products.index'),
+                'active' => roleRouteIs('viticulturist.phytosanitary-products.index'),
             ];
 
-            if (request()->routeIs('viticulturist.phytosanitary-products.create')) {
+            if (roleRouteIs('viticulturist.phytosanitary-products.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nuevo Producto'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.phytosanitary-products.edit')) {
+            } elseif (roleRouteIs('viticulturist.phytosanitary-products.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar Producto'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -503,7 +503,7 @@ class BreadcrumbHelper
         }
 
         // Almacenes (Recursos)
-        if (request()->routeIs('viticulturist.almacen.warehouses.*')) {
+        if (roleRouteIs('viticulturist.warehouse.warehouses.*')) {
             $breadcrumbs[] = [
                 'label' => __('Recursos'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',
@@ -515,19 +515,19 @@ class BreadcrumbHelper
             $breadcrumbs[] = [
                 'label' => __('Almacén de Insumos'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>',
-                'route' => 'viticulturist.almacen.index',
-                'active' => request()->routeIs('viticulturist.almacen.index'),
+                'route' => 'viticulturist.warehouse.index',
+                'active' => roleRouteIs('viticulturist.warehouse.index'),
                 'routeParams' => ['tab' => 'almacenes'],
             ];
 
-            if (request()->routeIs('viticulturist.almacen.warehouses.create')) {
+            if (roleRouteIs('viticulturist.warehouse.warehouses.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nuevo Almacén'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.almacen.warehouses.edit')) {
+            } elseif (roleRouteIs('viticulturist.warehouse.warehouses.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar Almacén'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -538,7 +538,7 @@ class BreadcrumbHelper
         }
 
         // Almacén de Insumos — stock fitosanitarios (Recursos)
-        if (request()->routeIs('viticulturist.almacen.stock.*')) {
+        if (roleRouteIs('viticulturist.warehouse.stock.*')) {
             $breadcrumbs[] = [
                 'label' => __('Recursos'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',
@@ -550,40 +550,40 @@ class BreadcrumbHelper
             $breadcrumbs[] = [
                 'label' => __('Almacén de Insumos'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>',
-                'route' => 'viticulturist.almacen.index',
-                'active' => request()->routeIs('viticulturist.almacen.index'),
+                'route' => 'viticulturist.warehouse.index',
+                'active' => roleRouteIs('viticulturist.warehouse.index'),
                 'routeParams' => ['tab' => 'fitosanitarios'],
             ];
 
-            if (request()->routeIs('viticulturist.almacen.stock.create')) {
+            if (roleRouteIs('viticulturist.warehouse.stock.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Registrar Stock'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.almacen.stock.edit')) {
+            } elseif (roleRouteIs('viticulturist.warehouse.stock.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar Stock'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.almacen.stock.consume')) {
+            } elseif (roleRouteIs('viticulturist.warehouse.stock.consume')) {
                 $breadcrumbs[] = [
                     'label' => __('Consumir Stock'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.almacen.stock.movements')) {
+            } elseif (roleRouteIs('viticulturist.warehouse.stock.movements')) {
                 $breadcrumbs[] = [
                     'label' => __('Movimientos'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.almacen.stock.analytics')) {
+            } elseif (roleRouteIs('viticulturist.warehouse.stock.analytics')) {
                 $breadcrumbs[] = [
                     'label' => __('Analíticas'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>',
@@ -594,37 +594,37 @@ class BreadcrumbHelper
         }
 
         // Facturación
-        if (request()->routeIs('viticulturist.invoices.*')) {
+        if (roleRouteIs('viticulturist.invoices.*')) {
             $breadcrumbs[] = [
                 'label' => __('Facturación'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
                 'route' => 'viticulturist.invoices.index',
-                'active' => request()->routeIs('viticulturist.invoices.index'),
+                'active' => roleRouteIs('viticulturist.invoices.index'),
                 'alwaysHighlight' => true,
             ];
 
-            if (request()->routeIs('viticulturist.invoices.create')) {
+            if (roleRouteIs('viticulturist.invoices.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nueva Factura'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.invoices.harvest.*')) {
+            } elseif (roleRouteIs('viticulturist.invoices.harvest.*')) {
                 $breadcrumbs[] = [
                     'label' => __('Facturar Cosecha'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
                     'route' => 'viticulturist.invoices.harvest.index',
-                    'active' => request()->routeIs('viticulturist.invoices.harvest.index'),
+                    'active' => roleRouteIs('viticulturist.invoices.harvest.index'),
                 ];
-            } elseif (request()->routeIs('viticulturist.invoices.show')) {
+            } elseif (roleRouteIs('viticulturist.invoices.show')) {
                 $breadcrumbs[] = [
                     'label' => __('Detalles'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.invoices.edit')) {
+            } elseif (roleRouteIs('viticulturist.invoices.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -635,30 +635,30 @@ class BreadcrumbHelper
         }
 
         // Clientes
-        if (request()->routeIs('viticulturist.clients.*')) {
+        if (roleRouteIs('viticulturist.clients.*')) {
             $breadcrumbs[] = [
                 'label' => __('Clientes'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
                 'route' => 'viticulturist.clients.index',
-                'active' => request()->routeIs('viticulturist.clients.index'),
+                'active' => roleRouteIs('viticulturist.clients.index'),
                 'alwaysHighlight' => true,
             ];
 
-            if (request()->routeIs('viticulturist.clients.create')) {
+            if (roleRouteIs('viticulturist.clients.create')) {
                 $breadcrumbs[] = [
                     'label' => __('Nuevo Cliente'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.clients.show')) {
+            } elseif (roleRouteIs('viticulturist.clients.show')) {
                 $breadcrumbs[] = [
                     'label' => __('Detalles'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>',
                     'route' => null,
                     'active' => true,
                 ];
-            } elseif (request()->routeIs('viticulturist.clients.edit')) {
+            } elseif (roleRouteIs('viticulturist.clients.edit')) {
                 $breadcrumbs[] = [
                     'label' => __('Editar'),
                     'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
@@ -669,7 +669,7 @@ class BreadcrumbHelper
         }
 
         // Calendario
-        if (request()->routeIs('viticulturist.calendar')) {
+        if (roleRouteIs('viticulturist.calendar')) {
             $breadcrumbs[] = [
                 'label' => __('Calendario'),
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',

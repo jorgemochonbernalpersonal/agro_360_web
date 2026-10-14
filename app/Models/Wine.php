@@ -237,6 +237,10 @@ class Wine extends Model
      */
     public function getCurrentVolumeAttribute(): float
     {
+        if (array_key_exists('current_volume', $this->attributes)) {
+            return (float) $this->attributes['current_volume'];
+        }
+
         return (float) ContainerCurrentState::where('wine_id', $this->id)
             ->sum('current_quantity');
     }

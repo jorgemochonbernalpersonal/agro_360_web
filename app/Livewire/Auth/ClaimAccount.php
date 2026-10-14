@@ -96,16 +96,28 @@ class ClaimAccount extends Component
 
         $this->validate();
 
+        // Solo auto-verificar si el email coincide con el que ya tenía el ghost (el que
+        // la bodega/supervisor conocía al invitar). Si la persona escribe aquí un email
+        // distinto, no hay forma de saber que es suyo: marcarlo verificado sin más dejaría
+        // "pre-secuestrar" cualquier email ajeno con solo conocer un token de invitación.
+        $previousEmail = $this->pendingUser->email ?? '';
+        $emailMatches = ! str_starts_with($previousEmail, 'viticultores.')
+            && mb_strtolower($previousEmail) === mb_strtolower($this->email);
+
         $this->pendingUser->update([
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
             'can_login' => true,
-            'email_verified_at' => now(),
+            'email_verified_at' => $emailMatches ? ($this->pendingUser->email_verified_at ?? now()) : null,
             'invitation_token' => null,
             'invitation_expires_at' => null,
             'invitation_sent_at' => null,
         ]);
+
+        if (! $emailMatches) {
+            $this->pendingUser->fresh()->sendEmailVerificationNotification();
+        }
 
         // Auto-aprobar acceso al cuaderno si el viticultor aceptó
         if ($this->shareCuaderno) {

@@ -16,19 +16,32 @@ trait WithShareReportModal
 
     public function openShareModal($reportId): void
     {
-        $this->reportToShare = OfficialReport::findOrFail($reportId);
+        // Comprobar la propiedad ANTES de asignar a la propiedad pública: si se
+        // asigna primero y se comprueba después, un error deja igualmente el
+        // informe ajeno cargado en $reportToShare (Livewire conserva el estado
+        // entre peticiones), y una llamada directa a shareReport() lo compartiría.
+        $report = OfficialReport::where('user_id', auth()->id())->find($reportId);
 
-        if ($this->reportToShare->user_id !== auth()->id()) {
+        if (! $report) {
             $this->addError('share', __('No tienes permiso para compartir este informe.'));
 
             return;
         }
 
+        $this->reportToShare = $report;
         $this->showShareModal = true;
     }
 
     public function shareReport(): void
     {
+        // Re-comprobar la propiedad aquí también: no fiarse de que solo se pueda
+        // llegar a este método a través de openShareModal().
+        if (! $this->reportToShare instanceof OfficialReport || $this->reportToShare->user_id !== auth()->id()) {
+            $this->addError('share', __('No tienes permiso para compartir este informe.'));
+
+            return;
+        }
+
         $this->validate([
             'shareEmail' => 'required|email',
             'shareMessage' => 'nullable|string|max:500',

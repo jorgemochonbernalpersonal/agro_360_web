@@ -78,6 +78,10 @@ class Crew extends Model
      */
     public function getMembersCountAttribute(): int
     {
+        if (array_key_exists('members_count', $this->attributes)) {
+            return (int) $this->attributes['members_count'];
+        }
+
         return $this->members()->count();
     }
 
@@ -86,6 +90,10 @@ class Crew extends Model
      */
     public function getActivitiesCountAttribute(): int
     {
+        if (array_key_exists('activities_count', $this->attributes)) {
+            return (int) $this->attributes['activities_count'];
+        }
+
         return $this->activities()->count();
     }
 }

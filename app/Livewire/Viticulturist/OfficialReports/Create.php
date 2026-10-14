@@ -171,8 +171,7 @@ class Create extends Component
                 $report->id,
                 auth()->id(),
                 $this->reportType,
-                ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'campaign_id' => $this->campaignId],
-                $this->password
+                ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'campaign_id' => $this->campaignId]
             );
 
             $this->password = '';

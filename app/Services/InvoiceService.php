@@ -52,20 +52,24 @@ class InvoiceService
      */
     public function calculateIrpfTotals(array $lines): array
     {
+        // Suma de líneas YA redondeadas a 2 decimales (calculateIrpfLine), no de
+        // los valores en crudo: así la cabecera cuadra exactamente con la suma
+        // de lo que se ve/guarda por línea (evita el off-by-one-céntimo entre
+        // PDF/BD/Verifactu — ver auditoría fix #11).
         $subtotal = 0.0;
         $taxAmount = 0.0;
 
         foreach ($lines as $line) {
-            $sub = (float) $line['quantity'] * (float) $line['unit_price'];
-            $subtotal += $sub;
-            $taxAmount += $sub * ((float) $line['tax_rate'] / 100);
+            $computed = $this->calculateIrpfLine($line);
+            $subtotal += $computed['subtotal'];
+            $taxAmount += $computed['tax_amount'];
         }
 
         return [
-            'subtotal' => round($subtotal, 3),
-            'tax_base' => round($subtotal, 3),
-            'tax_amount' => round($taxAmount, 3),
-            'total' => round($subtotal - $taxAmount, 3),
+            'subtotal' => round($subtotal, 2),
+            'tax_base' => round($subtotal, 2),
+            'tax_amount' => round($taxAmount, 2),
+            'total' => round($subtotal - $taxAmount, 2),
         ];
     }
 
@@ -86,8 +90,11 @@ class InvoiceService
         $unitPrice = (float) ($line['unit_price'] ?? 0);
         $taxRate = (float) ($line['tax_rate'] ?? 0);
 
-        $subtotal = round($qty * $unitPrice, 3);
-        $taxAmount = round($subtotal * ($taxRate / 100), 3);
+        // Redondeo a 2 decimales A NIVEL DE LÍNEA (no 3): es el valor que se
+        // muestra y se persiste, así que es el que debe cuadrar exactamente con
+        // subtotal - cuota = total (ver auditoría fix #11).
+        $subtotal = round($qty * $unitPrice, 2);
+        $taxAmount = round($subtotal * ($taxRate / 100), 2);
 
         return [
             'quantity' => $qty,
@@ -96,7 +103,7 @@ class InvoiceService
             'subtotal' => $subtotal,
             'tax_base' => $subtotal,
             'tax_amount' => $taxAmount,
-            'total' => round($subtotal - $taxAmount, 3),
+            'total' => round($subtotal - $taxAmount, 2),
         ];
     }
 
@@ -188,31 +195,30 @@ class InvoiceService
      */
     public function calculateVatTotals(array $items, Collection $taxRatesById): array
     {
+        // Suma de líneas YA redondeadas a 2 decimales (calculateVatLine), no de
+        // los valores en crudo — mismo motivo que calculateIrpfTotals (ver
+        // auditoría fix #11): la cabecera debe cuadrar con lo persistido por línea.
         $grossSubtotal = 0.0;
         $discountAmount = 0.0;
+        $taxBase = 0.0;
         $taxAmount = 0.0;
 
         foreach ($items as $item) {
-            $lineGross = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
-            $discPct = (float) ($item['discount_percentage'] ?? 0);
-            $lineDisc = $lineGross * ($discPct / 100);
-            $lineBase = $lineGross - $lineDisc;
             $tax = $taxRatesById->get($item['tax_id'] ?? null);
-            $taxRate = $tax instanceof Tax ? (float) $tax->rate : 0.0;
+            $line = $this->calculateVatLine($item, $tax);
 
-            $grossSubtotal += $lineGross;
-            $discountAmount += $lineDisc;
-            $taxAmount += $lineBase * ($taxRate / 100);
+            $grossSubtotal += $line['subtotal'];
+            $discountAmount += $line['discount_amount'];
+            $taxBase += $line['tax_base'];
+            $taxAmount += $line['tax_amount'];
         }
 
-        $taxBase = $grossSubtotal - $discountAmount;
-
         return [
-            'gross_subtotal' => round($grossSubtotal, 3),
-            'discount_amount' => round($discountAmount, 3),
-            'tax_base' => round($taxBase, 3),
-            'tax_amount' => round($taxAmount, 3),
-            'total' => round($taxBase + $taxAmount, 3),
+            'gross_subtotal' => round($grossSubtotal, 2),
+            'discount_amount' => round($discountAmount, 2),
+            'tax_base' => round($taxBase, 2),
+            'tax_amount' => round($taxAmount, 2),
+            'total' => round($taxBase + $taxAmount, 2),
             'effective_tax_rate' => $taxAmount > 0.0 && $taxBase > 0.0
                 ? round(($taxAmount / $taxBase) * 100, 4)
                 : 0.0,
@@ -237,11 +243,12 @@ class InvoiceService
         $unitPrice = (float) ($item['unit_price'] ?? 0);
         $discPct = (float) ($item['discount_percentage'] ?? 0);
 
-        $lineSubtotal = round($qty * $unitPrice, 3);
-        $lineDiscount = round($lineSubtotal * ($discPct / 100), 3);
-        $lineBase = round($lineSubtotal - $lineDiscount, 3);
+        // Redondeo a 2 decimales A NIVEL DE LÍNEA (no 3) — ver auditoría fix #11.
+        $lineSubtotal = round($qty * $unitPrice, 2);
+        $lineDiscount = round($lineSubtotal * ($discPct / 100), 2);
+        $lineBase = round($lineSubtotal - $lineDiscount, 2);
         $taxRate = $tax instanceof Tax ? (float) $tax->rate : 0.0;
-        $taxAmountLine = round($lineBase * ($taxRate / 100), 3);
+        $taxAmountLine = round($lineBase * ($taxRate / 100), 2);
 
         return [
             'quantity' => $qty,
@@ -252,7 +259,7 @@ class InvoiceService
             'tax_base' => $lineBase,
             'tax_rate' => $taxRate,
             'tax_amount' => $taxAmountLine,
-            'total' => round($lineBase + $taxAmountLine, 3),
+            'total' => round($lineBase + $taxAmountLine, 2),
         ];
     }
 

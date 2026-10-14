@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -17,7 +18,11 @@ abstract class AbstractEdit extends Component
     public function save(): mixed
     {
         $this->validate();
-        $this->performUpdate();
+        // Envuelve la actualización del modelo y su movimiento de stock asociado
+        // en una única transacción: si el servicio de stock lanza tras persistir
+        // el modelo, el rollback también deshace el update y evita dejar la fila
+        // desincronizada con su movimiento de stock.
+        DB::transaction(fn () => $this->performUpdate());
         $this->toastSuccess($this->successMessage());
 
         return redirect()->route($this->resolveIndexRoute());

@@ -983,7 +983,7 @@
                     <flux:select.option value="">{{ __('Seleccionar recepción...') }}</flux:select.option>
                     @foreach($availableHarvests as $h)
                         @php
-                            $label = ($h->plotPlanting?->plotVariety?->grapeVariety?->name ?? 'Sin variedad')
+                            $label = ($h->plotPlanting?->grapeVariety?->name ?? 'Sin variedad')
                                    . ' · ' . ($h->harvest_start_date?->format('d/m/Y') ?? '—')
                                    . ' · ' . number_format($h->total_weight ?? 0, 0) . ' kg';
                         @endphp

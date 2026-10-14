@@ -40,6 +40,19 @@ return [
         Ability::NOTEBOOK_ACCESS,
     ],
 
+    // ── Productor (Capa A + los módulos de bodega que ya opera) ──────────────
+    // 19€/mes. El productor elabora su propio vino, así que su plan incluye los
+    // módulos de bodega que routes/producer.php ya le abre. Lo que NO entra aquí
+    // es la Capa B de red con terceros (panel de viticultores y liquidaciones de
+    // compra de uva): eso lo activa aparte con compra_uva_externa.
+    'producer' => [
+        '@vit_pro',
+        Ability::YIELD_FORECASTS,
+        Ability::QUALITY_ANALYSIS,
+        Ability::PRODUCT_SALES,
+        Ability::LABEL_BATCHES,
+    ],
+
     // ── Bodega (Capa A + Capa B: Red) ────────────────────────────────────────
     // 19€/mes (0 vit.) · 29€ (1-10) · 49€ (11-30) · 79€ (31-60) · 119€ (61-100)
     'winery' => [

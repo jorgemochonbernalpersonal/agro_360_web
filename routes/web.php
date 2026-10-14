@@ -44,6 +44,33 @@ Route::post('/herramientas/alertas-mildiu-oidio/baja/{token}', [App\Http\Control
     ->middleware('throttle:20,1')
     ->name('tools.disease-alerts.unsubscribe.confirm');
 
+// Doble opt-in de las alertas públicas de mildiu/oídio: confirma la suscripción a partir
+// del token enviado por email (evita activar alertas a terceros no consentidos).
+Route::get('/herramientas/alertas-mildiu-oidio/confirmar/{token}', function (string $token) {
+    $subscription = \App\Models\DiseaseAlertSubscription::where('confirmation_token', $token)->first();
+
+    if (! $subscription) {
+        abort(404);
+    }
+
+    if (! $subscription->confirmed_at) {
+        $subscription->confirmed_at = now();
+        $subscription->confirmation_token = null;
+        $subscription->save();
+    }
+
+    return response(
+        '<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">'
+        .'<meta name="viewport" content="width=device-width, initial-scale=1">'
+        .'<title>Suscripción confirmada | Agro365</title></head>'
+        .'<body style="font-family: -apple-system, sans-serif; text-align: center; padding: 4rem 1.5rem; color: #1f2937;">'
+        .'<h1 style="margin-bottom: .5rem;">✅ Suscripción confirmada</h1>'
+        .'<p>Ya recibirás un aviso gratuito por email cuando el riesgo de mildiu u oídio sea alto en tu municipio.</p>'
+        .'<p><a href="'.e(route('tools.show', ['slug' => \App\Livewire\Tools\DiseaseAlerts::TOOL])).'" style="color:#166534;">Volver a la herramienta</a></p>'
+        .'</body></html>'
+    );
+})->middleware('throttle:20,1')->name('tools.disease-alerts.confirm');
+
 // ✅ REFACTOR: Rutas de contenido SEO dinámicas
 // Todas las páginas de contenido ahora pasan por ContentController
 Route::get('/{slug}', [App\Http\Controllers\ContentController::class, 'show'])
@@ -88,14 +115,17 @@ if (app()->environment('testing')) {
     });
 }
 
-// Dusk debug (solo testing)
-Route::get('/dusk-env', function () {
-    return response()->json([
-        'env' => app()->environment(),
-        'db' => DB::connection()->getDatabaseName(),
-        'session' => config('session.driver'),
-    ]);
-})->middleware('throttle:60,1');
+// Dusk debug (solo testing) — registrada únicamente en entorno de testing para no
+// exponer información del entorno (BD, driver de sesión) en producción.
+if (app()->environment('testing')) {
+    Route::get('/dusk-env', function () {
+        return response()->json([
+            'env' => app()->environment(),
+            'db' => DB::connection()->getDatabaseName(),
+            'session' => config('session.driver'),
+        ]);
+    })->middleware('throttle:60,1');
+}
 
 // Debug locale (verificar que SetLocale middleware funciona correctamente)
 Route::get('/debug/locale', function () {
@@ -142,6 +172,7 @@ Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'inde
 
 // Verificación pública de informes oficiales
 Route::get('/verify-report/{code}', [App\Http\Controllers\ReportVerificationController::class, 'verify'])
+    ->middleware('throttle:20,1')
     ->name('reports.verify');
 
 // Trazabilidad pública de vinos (sin auth, por token UUID)
@@ -163,9 +194,21 @@ Route::middleware('guest')->get('/activar-cuenta/{token}', \App\Livewire\Auth\Cl
 // Rutas protegidas: password cambiado Y email verificado
 // require.password.change debe ejecutarse ANTES de verified para usuarios creados por otro
 Route::middleware(['auth', 'check.can_login', 'password.changed', 'require.password.change', 'verified'])->group(function () {
-    // Laravel Log Viewer - Solo para administradores
+    // Laravel Log Viewer - Solo para administradores.
+    // El paquete acepta ?del=, ?delall= y ?clean= por GET para borrar logs, lo que lo hace
+    // vulnerable a CSRF (un <img> o enlace visitado por un admin autenticado borraría logs).
+    // Bloqueamos esos parámetros antes de delegar al controlador del paquete, dejando
+    // pasar únicamente la visualización/descarga (acciones de solo lectura).
     Route::middleware('role:admin')
-        ->get('logs', fn () => app('\Rap2hpoutre\LaravelLogViewer\LogViewerController')->index())
+        ->get('logs', function (\Illuminate\Http\Request $request) {
+            abort_if(
+                $request->hasAny(['del', 'delall', 'clean']),
+                403,
+                'Esta acción no está permitida desde el visor de logs.'
+            );
+
+            return app('\Rap2hpoutre\LaravelLogViewer\LogViewerController')->index();
+        })
         ->name('logs');
 
     require __DIR__.'/plots.php';

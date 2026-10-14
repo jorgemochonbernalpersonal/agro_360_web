@@ -54,9 +54,12 @@ class Edit extends Component
 
     public function getIsLockedProperty(): bool
     {
-        return $this->invoice->delivery_status === 'delivered'
-            || $this->invoice->delivery_status === 'cancelled'
-            || $this->invoice->status === 'cancelled';
+        // Fiscal-sensitive: solo los borradores son libremente editables — una vez
+        // 'sent'/'paid'/'cancelled' las líneas/importes quedan congelados (ver
+        // auditoría fix #8). El estado de pago/entrega se cambia con "Guardar estados".
+        return $this->invoice->status !== 'draft'
+            || $this->invoice->delivery_status === 'delivered'
+            || $this->invoice->delivery_status === 'cancelled';
     }
 
     public function getIsInvoicedProperty(): bool

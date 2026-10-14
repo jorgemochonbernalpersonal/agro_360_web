@@ -4,6 +4,7 @@ namespace App\Livewire\Winery\Harvest\Campaigns;
 
 use App\Livewire\Winery\AbstractIndex;
 use App\Models\Campaign;
+use App\Models\GrapeReceptionBatch;
 use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
@@ -46,7 +47,15 @@ class Index extends AbstractIndex
             ->forViticulturist($this->wineryId())
             ->findOrFail($campaignId);
 
-        if ($campaign->activities_count > 0) {
+        // Las recepciones de bodega (grape_reception_batches) no llevan activity_id
+        // — se crean directamente desde la API de recepción, sin agricultural_activity
+        // asociada — así que withCount('activities') no las ve. Sin esta comprobación,
+        // una campaña con recepciones pero sin actividades pasaba el guard y el
+        // cascade de campaign_id borraba en bloque sus lotes de recepción (registros
+        // INFOVI/SICILIE).
+        $hasBatches = GrapeReceptionBatch::where('campaign_id', $campaign->id)->exists();
+
+        if ($campaign->activities_count > 0 || $hasBatches) {
             $this->toastError(__('No se puede eliminar una campaña con recepciones registradas.'));
 
             return;

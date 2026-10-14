@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Schedule;
 // Escucha remote-sensing y default para procesar todos los jobs
 Schedule::command('queue:work --stop-when-empty --max-time=50 --queue=remote-sensing,default')
     ->everyMinute()
-    ->withoutOverlapping()
+    ->withoutOverlapping(2) // expira a las 2h en vez de las 24h por defecto: un reinicio del
+    // servidor con un mutex "stale" no debe bloquear el procesamiento de jobs un día entero.
     ->runInBackground();
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithListing;
 use App\Models\Client;
 use App\Models\Harvest;
 use App\Models\Invoice;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -88,21 +89,26 @@ class Index extends Component
 
     private function getAdvancedStatistics($user)
     {
-        $year = $this->yearFilter;
+        $year = (int) $this->yearFilter;
+        $yearStart = Carbon::create($year, 1, 1)->startOfYear();
+        $yearEnd = Carbon::create($year, 1, 1)->endOfYear();
+
+        // Todas las cosechas del año en una sola consulta: invoiceItems se
+        // resuelve con withExists() (antes: 1 exists() por cosecha en un
+        // bucle, ~N consultas adicionales).
+        $yearHarvests = Harvest::whereHas('activity', function ($q) use ($user, $yearStart, $yearEnd) {
+            $q->where('viticulturist_id', $user->id)
+                ->whereBetween('activity_date', [$yearStart, $yearEnd]);
+        })
+            ->withExists('invoiceItems')
+            ->with(['plotPlanting.grapeVariety:id,name', 'activity.plot:id,name'])
+            ->get();
 
         // Total cosechado este año
-        $totalHarvested = Harvest::whereHas('activity', function ($q) use ($user, $year) {
-            $q->where('viticulturist_id', $user->id)
-                ->whereYear('activity_date', $year);
-        })->sum('total_weight');
+        $totalHarvested = (float) $yearHarvests->sum('total_weight');
 
         // Total facturado de cosechas
-        $totalInvoiced = Harvest::whereHas('activity', function ($q) use ($user, $year) {
-            $q->where('viticulturist_id', $user->id)
-                ->whereYear('activity_date', $year);
-        })
-            ->whereHas('invoiceItems')
-            ->sum('total_weight');
+        $totalInvoiced = (float) $yearHarvests->where('invoice_items_exists', true)->sum('total_weight');
 
         // Pendiente de facturar
         $pendingToInvoice = $totalHarvested - $totalInvoiced;
@@ -111,16 +117,11 @@ class Index extends Component
         $invoicedPercentage = $totalHarvested > 0 ? ($totalInvoiced / $totalHarvested) * 100 : 0;
 
         // Por variedad
-        $byVariety = Harvest::whereHas('activity', function ($q) use ($user, $year) {
-            $q->where('viticulturist_id', $user->id)
-                ->whereYear('activity_date', $year);
-        })
-            ->with('plotPlanting.grapeVariety')
-            ->get()
-            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety->name ?? 'Sin variedad')
+        $byVariety = $yearHarvests
+            ->groupBy(fn ($h) => $h->plotPlanting?->grapeVariety?->name ?? 'Sin variedad')
             ->map(function ($harvests, $variety) {
-                $total = $harvests->sum('total_weight');
-                $invoiced = $harvests->filter(fn ($h) => $h->invoiceItems()->exists())->sum('total_weight');
+                $total = (float) $harvests->sum('total_weight');
+                $invoiced = (float) $harvests->where('invoice_items_exists', true)->sum('total_weight');
                 $pending = $total - $invoiced;
 
                 return [
@@ -135,37 +136,39 @@ class Index extends Component
             ->take(10);
 
         // Ingresos por facturación de cosechas
-        $harvestRevenue = Invoice::whereHas('items.harvest.activity', function ($q) use ($user, $year) {
+        $harvestRevenue = Invoice::whereHas('items.harvest.activity', function ($q) use ($user, $yearStart, $yearEnd) {
             $q->where('viticulturist_id', $user->id)
-                ->whereYear('activity_date', $year);
+                ->whereBetween('activity_date', [$yearStart, $yearEnd]);
         })->sum('total_amount');
 
         // Precio medio por kg
         $avgPricePerKg = $totalInvoiced > 0 ? $harvestRevenue / $totalInvoiced : 0;
 
-        // Cosechas por mes (últimos 12 meses)
-        $harvestsByMonth = collect(range(11, 0))->map(function ($monthsAgo) use ($user) {
+        // Cosechas por mes (últimos 12 meses) — una sola consulta agrupada por
+        // año/mes en vez de 12 consultas (una por mes) en un bucle.
+        $twelveMonthsStart = now()->subMonths(11)->startOfMonth();
+        $monthlyRows = Harvest::query()
+            ->join('agricultural_activities', 'agricultural_activities.id', '=', 'harvests.activity_id')
+            ->where('agricultural_activities.viticulturist_id', $user->id)
+            ->where('agricultural_activities.activity_date', '>=', $twelveMonthsStart)
+            ->selectRaw('YEAR(agricultural_activities.activity_date) as y, MONTH(agricultural_activities.activity_date) as m, COALESCE(SUM(harvests.total_weight), 0) as weight')
+            ->groupBy('y', 'm')
+            ->get()
+            ->keyBy(fn ($row) => $row->y.'-'.$row->m);
+
+        $harvestsByMonth = collect(range(11, 0))->map(function ($monthsAgo) use ($monthlyRows) {
             $date = now()->subMonths($monthsAgo);
-            $weight = Harvest::whereHas('activity', function ($q) use ($user, $date) {
-                $q->where('viticulturist_id', $user->id)
-                    ->whereYear('activity_date', $date->year)
-                    ->whereMonth('activity_date', $date->month);
-            })->sum('total_weight');
+            $row = $monthlyRows->get($date->year.'-'.$date->month);
 
             return [
                 'month' => $date->format('M'),
-                'weight' => $weight,
+                'weight' => $row ? (float) $row->weight : 0.0,
             ];
         });
 
         // Top parcelas por rendimiento
-        $topPlots = Harvest::whereHas('activity', function ($q) use ($user, $year) {
-            $q->where('viticulturist_id', $user->id)
-                ->whereYear('activity_date', $year);
-        })
-            ->with('activity.plot')
-            ->get()
-            ->groupBy(fn ($h) => $h->activity?->plot->name ?? 'Sin parcela')
+        $topPlots = $yearHarvests
+            ->groupBy(fn ($h) => $h->activity?->plot?->name ?? 'Sin parcela')
             ->map(function ($harvests, $plotName) {
                 return [
                     'plot' => $plotName,

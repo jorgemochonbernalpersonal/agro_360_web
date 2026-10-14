@@ -11,7 +11,7 @@
             <flux:callout.heading>{{ __('NIF/CIF no configurado') }}</flux:callout.heading>
             <flux:callout.text>
                 {{ __('Sin tu NIF/CIF no es posible generar el XML de Verifactu ni enviarlo a la AEAT.') }}
-                {{ __('Ve a') }} <a href="{{ route(auth()->user()->role === 'viticulturist' ? 'viticulturist.settings' : 'winery.settings', ['tab' => 'fiscal']) }}" class="font-semibold underline">{{ __('Configuración → Datos Fiscales') }}</a> {{ __('y añade tu NIF antes de verificar facturas.') }}
+                {{ __('Ve a') }} <a href="{{ roleRoute('settings', ['tab' => 'fiscal']) }}" class="font-semibold underline">{{ __('Configuración → Datos Fiscales') }}</a> {{ __('y añade tu NIF antes de verificar facturas.') }}
             </flux:callout.text>
         </flux:callout>
     @endif

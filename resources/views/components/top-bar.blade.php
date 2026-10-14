@@ -4,6 +4,19 @@
     $user = auth()->user();
     $profile = $user->profile;
     $breadcrumbs = BreadcrumbHelper::generate();
+
+    // BreadcrumbHelper nombra las rutas con prefijo winery o viticulturist; el producer
+    // reutiliza esas vistas bajo producer.*, así que hay que traducirlas o los
+    // enlaces lo sacarían de su área. El resto de roles resuelven igual que antes.
+    // Si una miga no tiene equivalente en el rol se pinta sin enlace: la barra
+    // superior sale en todas las páginas y no debe tumbarlas por un enlace suelto.
+    $crumbUrl = function (string $name) use ($user) {
+        try {
+            return $user?->isProducer() ? roleRoute($name) : route($name);
+        } catch (\Throwable) {
+            return null;
+        }
+    };
 @endphp
 
 <header class="fixed top-0 right-0 left-0 lg:left-16 h-16 bg-white/80 backdrop-blur-md border-b border-zinc-200/80 shadow-xs z-30 transition-all duration-300" id="top-bar">
@@ -17,12 +30,9 @@
         <div class="flex-1 flex items-center overflow-x-auto">
             <flux:breadcrumbs>
                 @foreach($breadcrumbs as $index => $crumb)
-                    @if($crumb['route'] && !$crumb['active'] && !($crumb['alwaysHighlight'] ?? false))
-                        <flux:breadcrumbs.item href="{{ route($crumb['route']) }}" wire:navigate>
-                            {{ $crumb['label'] }}
-                        </flux:breadcrumbs.item>
-                    @elseif($crumb['route'] && !$crumb['active'] && ($crumb['alwaysHighlight'] ?? false))
-                        <flux:breadcrumbs.item href="{{ route($crumb['route']) }}" wire:navigate>
+                    @php($href = $crumb['route'] && !$crumb['active'] ? $crumbUrl($crumb['route']) : null)
+                    @if($href)
+                        <flux:breadcrumbs.item href="{{ $href }}" wire:navigate>
                             {{ $crumb['label'] }}
                         </flux:breadcrumbs.item>
                     @else
@@ -82,7 +92,7 @@
                     <flux:menu.item href="{{ route('profile.show') }}" wire:navigate icon="user">{{ __('Ver Perfil') }}</flux:menu.item>
                     <flux:menu.item href="{{ route('profile.edit') }}" wire:navigate icon="pencil-square">{{ __('Editar Perfil') }}</flux:menu.item>
                     @if($user->hasViticulturistAccess())
-                        <flux:menu.item href="{{ route('viticulturist.settings') }}" wire:navigate icon="cog-6-tooth">{{ __('Configuración') }}</flux:menu.item>
+                        <flux:menu.item href="{{ roleRoute('viticulturist.settings') }}" wire:navigate icon="cog-6-tooth">{{ __('Configuración') }}</flux:menu.item>
                     @endif
                     <flux:menu.item href="{{ route('subscription.manage') }}" wire:navigate icon="credit-card">{{ __('Ver Suscripción') }}</flux:menu.item>
                     <flux:separator />

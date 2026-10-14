@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Uso:  ->middleware('require.ability:remote_sensing')
  *
  * Sustituye a require.complete + check.beta para el gating por capacidad.
- * El plan efectivo (free / vit_pro / winery / do) se resuelve en User::effectivePlan().
+ * El plan efectivo (free / vit_pro / producer / winery / do) se resuelve en User::effectivePlan().
  */
 class RequireAbility
 {
@@ -21,11 +21,24 @@ class RequireAbility
         $user = $request->user();
 
         if (! $user) {
-            return redirect()->route('login');
+            return $request->expectsJson()
+                ? response()->json(['message' => __('No autenticado.')], 401)
+                : redirect()->route('login');
         }
 
         if ($user->hasPlanAbility($ability)) {
             return $next($request);
+        }
+
+        // La API móvil no tiene páginas de upgrade/pricing a las que redirigir: devolver
+        // un 403 JSON en vez de un redirect (antes esta ruta simplemente no se aplicaba
+        // a las rutas de la API, así que un plan free consumía módulos de pago sin límite).
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => __('Necesitas una suscripción activa para acceder a esta funcionalidad.'),
+                'ability' => $ability,
+                'upgrade_required' => true,
+            ], 403);
         }
 
         // Viticultor / productor en plan free → upgrade a Pro

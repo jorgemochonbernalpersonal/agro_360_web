@@ -18,6 +18,8 @@ use Illuminate\Support\Str;
  * @property \Carbon\Carbon|null $last_mildew_alert_at
  * @property \Carbon\Carbon|null $last_powdery_alert_at
  * @property \Carbon\Carbon|null $unsubscribed_at
+ * @property string|null         $confirmation_token
+ * @property \Carbon\Carbon|null $confirmed_at
  */
 class DiseaseAlertSubscription extends Model
 {
@@ -30,6 +32,8 @@ class DiseaseAlertSubscription extends Model
         'last_mildew_alert_at',
         'last_powdery_alert_at',
         'unsubscribed_at',
+        'confirmation_token',
+        'confirmed_at',
     ];
 
     protected $casts = [
@@ -38,6 +42,7 @@ class DiseaseAlertSubscription extends Model
         'last_mildew_alert_at' => 'datetime',
         'last_powdery_alert_at' => 'datetime',
         'unsubscribed_at' => 'datetime',
+        'confirmed_at' => 'datetime',
     ];
 
     /** @return BelongsTo<Municipality, $this> */
@@ -49,7 +54,9 @@ class DiseaseAlertSubscription extends Model
     /** @param Builder<DiseaseAlertSubscription> $query */
     public function scopeActive(Builder $query): void
     {
-        $query->whereNull('unsubscribed_at');
+        // Doble opt-in: sin confirmar el email no se envían alertas reales a un
+        // tercero que alguien haya podido suscribir sin su permiso.
+        $query->whereNull('unsubscribed_at')->whereNotNull('confirmed_at');
     }
 
     public function unsubscribeUrl(): string

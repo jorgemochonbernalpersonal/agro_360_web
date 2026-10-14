@@ -227,7 +227,7 @@ class PromoteToReception extends Component
                 'notebook_harvest_id' => $this->notebookHarvest->id,
                 'error' => $e->getMessage(),
             ]);
-            $this->toastError(__('Error al registrar la recepción: :error', ['error' => $e->getMessage()]));
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Ha ocurrido un error. Inténtalo de nuevo.'));
         }
 
         return null;

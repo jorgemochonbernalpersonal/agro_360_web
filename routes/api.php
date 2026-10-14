@@ -645,9 +645,9 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // Cumplimiento PAC
         Route::get('/compliance', [ComplianceController::class, 'index'])->middleware('throttle:30,1');
 
-        // Teledetección NDVI
-        Route::get('/plots/{plot}/ndvi', [RemoteSensingController::class, 'getPlotNdviColors'])->middleware('throttle:30,1');
-        Route::get('/ndvi', [RemoteSensingController::class, 'getAllPlotsNdvi'])->middleware('throttle:30,1');
+        // Teledetección NDVI — gateado por plan (antes accesible en plan free vía API)
+        Route::get('/plots/{plot}/ndvi', [RemoteSensingController::class, 'getPlotNdviColors'])->middleware(['throttle:30,1', 'require.ability:remote_sensing']);
+        Route::get('/ndvi', [RemoteSensingController::class, 'getAllPlotsNdvi'])->middleware(['throttle:30,1', 'require.ability:remote_sensing']);
 
         // ── Fenología ────────────────────────────────────────────────────────
         Route::get('/phenology', [PhenologyObservationController::class, 'index'])->middleware('throttle:60,1');
@@ -775,8 +775,8 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // ── Facturas/liquidaciones bodega (lectura) ─────────────────────────
         Route::get('/grape-purchase-invoices', [VitGrapePurchaseInvoiceController::class, 'index'])->middleware('throttle:60,1');
 
-        // ── Estadísticas financieras ────────────────────────────────────────
-        Route::get('/financial-stats', FinancialStatsController::class)->middleware('throttle:30,1');
+        // ── Estadísticas financieras ─────────────────────────────────────────
+        Route::get('/financial-stats', FinancialStatsController::class)->middleware(['throttle:30,1', 'require.ability:financial_stats']);
 
         // ── Trazabilidad uva ────────────────────────────────────────────────
         Route::get('/grape-traceability', [GrapeTraceabilityController::class, 'index'])->middleware('throttle:60,1');
@@ -794,8 +794,8 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // ── Exportaciones CUE ───────────────────────────────────────────────
         Route::get('/cue-exports', [CueExportController::class, 'index'])->middleware('throttle:60,1');
 
-        // ── Teledetección ───────────────────────────────────────────────────
-        Route::get('/remote-sensing', [VitRemoteSensingController::class, 'index'])->middleware('throttle:60,1');
+        // ── Teledetección ────────────────────────────────────────────────────
+        Route::get('/remote-sensing', [VitRemoteSensingController::class, 'index'])->middleware(['throttle:60,1', 'require.ability:remote_sensing']);
 
         // ── Plantaciones ────────────────────────────────────────────────────
         Route::get('/plantings', [VitPlantingController::class, 'index'])->middleware('throttle:60,1');
@@ -829,7 +829,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/integrated-estate', IntegratedEstateController::class)->middleware('throttle:30,1');
         Route::get('/integrated-campaign/{campaignId}', IntegratedCampaignController::class)->middleware('throttle:30,1');
         Route::get('/full-traceability/{campaignId}', FullTraceabilityController::class)->middleware('throttle:30,1');
-        Route::get('/financial-summary', FinancialSummaryController::class)->middleware('throttle:30,1');
+        Route::get('/financial-summary', FinancialSummaryController::class)->middleware(['throttle:30,1', 'require.ability:financial_stats']);
         Route::get('/campaign-comparison', CampaignComparisonController::class)->middleware('throttle:30,1');
 
         // ── Facturas de venta (productor como bodega) ─────────────────────────

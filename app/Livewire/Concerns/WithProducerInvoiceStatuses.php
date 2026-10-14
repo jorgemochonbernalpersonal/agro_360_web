@@ -2,8 +2,9 @@
 
 namespace App\Livewire\Concerns;
 
+use App\Models\Invoice;
 use App\Models\InvoicingSetting;
-use App\Services\UnifiedStockService;
+use App\Services\ProductStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -107,14 +108,17 @@ trait WithProducerInvoiceStatuses
             DB::transaction(function () use ($newStatus) {
                 $this->invoice->load('items.harvest', 'items.wineLot');
 
-                $stockService = app(UnifiedStockService::class);
-
+                // Solo se mueve aquí el stock de producto/vino embotellado: los
+                // items de cosecha los gestiona InvoiceObserver::handleDeliveryStatusChange()
+                // al disparar el update() de delivery_status de abajo. Llamar también
+                // a UnifiedStockService::confirmDelivery()/cancelDelivery() aquí
+                // duplicaría ese movimiento de stock de cosecha (doble alta/baja de
+                // available_qty/sold_qty y de la capacidad física del contenedor).
                 if (! $this->invoice->corrective) {
-                    if ($newStatus === 'delivered') {
-                        $stockService->confirmDelivery($this->invoice);
-                    } else {
-                        $stockService->cancelDelivery($this->invoice);
-                    }
+                    ProductStockService::moveForInvoice(
+                        $this->invoice,
+                        $newStatus === 'delivered' ? 'deliver' : 'cancel'
+                    );
                 }
 
                 $this->invoice->update(['delivery_status' => $newStatus]);
@@ -170,6 +174,15 @@ trait WithProducerInvoiceStatuses
 
         try {
             DB::transaction(function () {
+                // Bloquear la fila y re-comprobar el estado dentro de la transacción:
+                // evita doble numeración si un doble clic / doble submit dispara dos
+                // llamadas casi simultáneas a markAsSent() para la misma factura.
+                $locked = Invoice::whereKey($this->invoice->id)->lockForUpdate()->first();
+
+                if (! $locked || $locked->status !== 'draft') {
+                    throw new \RuntimeException(__('Esta factura ya no está en borrador.'));
+                }
+
                 $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
 
                 $this->invoice->update([

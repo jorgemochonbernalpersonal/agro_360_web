@@ -27,11 +27,22 @@ class Notifications extends Component
     {
         $this->loadDashboardAlerts();
 
+        // Array plano en vez de una Collection de Eloquent: Livewire re-consulta
+        // en BD cada modelo de una Collection pública en cada hidratación de
+        // CUALQUIER interacción de la página (no solo las de este componente).
+        // Un array plano se (de)serializa sin ir a BD.
         $this->notifications = auth()->user()
             ->notifications()
             ->latest()
             ->take(10)
-            ->get();
+            ->get()
+            ->map(fn ($n) => [
+                'id' => $n->id,
+                'data' => $n->data,
+                'read_at' => $n->read_at,
+                'created_at' => $n->created_at,
+            ])
+            ->all();
 
         $this->unreadCount = auth()->user()->unreadNotifications()->count();
         $this->unreadCount += count($this->dashboardAlerts);

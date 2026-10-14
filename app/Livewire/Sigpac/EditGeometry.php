@@ -11,16 +11,24 @@ use App\Services\SigpacGeometryService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class EditGeometry extends Component
 {
     use WithToastNotifications;
 
+    // Nota (auditoría 2026-09-24): este componente no está montado desde ninguna ruta ni
+    // vista actualmente (confirmado por grep). Se mantiene y se endurece en vez de
+    // eliminarse por si algo lo referencia dinámicamente. #[Locked] impide que el cliente
+    // manipule sigpacId/geometryId vía wire:model, y save() valida además que geometryId
+    // pertenezca de verdad a la parcela ya verificada (ver comprobación en save()).
+    #[Locked]
     public $sigpacId;
 
     public $plotId;
 
+    #[Locked]
     public $geometryId = null;
 
     public $coordinates = [];
@@ -101,6 +109,21 @@ class EditGeometry extends Component
             $this->toastError(__('No tienes permiso para modificar esta parcela.'));
 
             return;
+        }
+
+        // La comprobación anterior solo verifica que el usuario es dueño de $this->plotId,
+        // no que $this->geometryId pertenezca realmente a esa parcela: sin esto, un
+        // geometryId de otra parcela (de otro usuario) podría sobrescribirse (IDOR).
+        if ($this->geometryId) {
+            $geometryBelongsToPlot = MultipartPlotSigpac::where('plot_id', $this->plotId)
+                ->where('plot_geometry_id', $this->geometryId)
+                ->exists();
+
+            if (! $geometryBelongsToPlot) {
+                $this->toastError(__('No tienes permiso para modificar esta geometría.'));
+
+                return;
+            }
         }
 
         try {

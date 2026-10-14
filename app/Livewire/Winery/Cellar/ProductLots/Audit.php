@@ -105,15 +105,16 @@ class Audit extends Component
     public function recalculateAll(): void
     {
         $lots = ProductLot::where('user_id', Auth::id())->get();
+        $aggregatesByLot = $this->aggregatedMovementsByLot($lots->pluck('id')->all());
         $fixed = 0;
 
-        DB::transaction(function () use ($lots, &$fixed) {
+        DB::transaction(function () use ($lots, $aggregatesByLot, &$fixed) {
             foreach ($lots as $lot) {
                 if ($lot->isBalanced()) {
                     continue;
                 }
 
-                [$available, $reserved, $sold] = $this->reconstructFromMovements($lot->id, (float) $lot->initial_quantity);
+                [$available, $reserved, $sold] = $this->reconstructFromAggregates($lot->id, (float) $lot->initial_quantity, $aggregatesByLot);
 
                 $lot->update([
                     'available_quantity' => $available,
@@ -138,9 +139,13 @@ class Audit extends Component
 
         $lots = $query->get();
 
+        // Movimientos agregados de TODOS los lotes en una sola consulta, en vez
+        // de 2 consultas (replay + count) por lote como antes.
+        $aggregatesByLot = $this->aggregatedMovementsByLot($lots->pluck('id')->all());
+
         // Enriquecer con datos de auditoría
-        $rows = $lots->map(function (ProductLot $lot) {
-            [$expAvail, $expRes, $expSold] = $this->reconstructFromMovements($lot->id, (float) $lot->initial_quantity);
+        $rows = $lots->map(function (ProductLot $lot) use ($aggregatesByLot) {
+            [$expAvail, $expRes, $expSold] = $this->reconstructFromAggregates($lot->id, (float) $lot->initial_quantity, $aggregatesByLot);
 
             $expTotal = $expAvail + $expRes + $expSold;
 
@@ -154,7 +159,7 @@ class Audit extends Component
                      || abs($driftSold) >= 0.001
                      || abs($driftTotal) >= 0.001;
 
-            $movCount = InvoiceStockMovement::where('wine_lot_id', $lot->id)->count();
+            $movCount = (int) $aggregatesByLot->get($lot->id, collect())->sum('cnt');
 
             return [
                 'lot' => $lot,
@@ -187,7 +192,71 @@ class Audit extends Component
         ])->layout('layouts.app');
     }
 
-    // ─── Helper: replay de movimientos ───────────────────────────────────────
+    // ─── Helper: movimientos agregados (todos los lotes en 1 consulta) ───────
+
+    /**
+     * SUM(qty)/COUNT(*) de movimientos agrupados por lote + par de buckets, en
+     * una única consulta para todos los $lotIds — evita 1 consulta por lote.
+     *
+     * @param  array<int>  $lotIds
+     * @return \Illuminate\Support\Collection<int, \Illuminate\Support\Collection> agregados agrupados por wine_lot_id
+     */
+    private function aggregatedMovementsByLot(array $lotIds): \Illuminate\Support\Collection
+    {
+        if (empty($lotIds)) {
+            return collect();
+        }
+
+        return InvoiceStockMovement::whereIn('wine_lot_id', $lotIds)
+            ->select('wine_lot_id', 'from_bucket', 'to_bucket')
+            ->selectRaw('SUM(qty) as total_qty, COUNT(*) as cnt')
+            ->groupBy('wine_lot_id', 'from_bucket', 'to_bucket')
+            ->get()
+            ->groupBy('wine_lot_id');
+    }
+
+    /**
+     * Igual resultado que reconstructFromMovements() pero a partir de los
+     * agregados ya cargados en memoria por aggregatedMovementsByLot() — el
+     * orden de los movimientos no afecta al neto final (sumas/restas puras),
+     * así que agregar por bucket antes de aplicar es equivalente al replay.
+     *
+     * @return array{0: float, 1: float, 2: float}
+     */
+    private function reconstructFromAggregates(int $lotId, float $initialQty, \Illuminate\Support\Collection $aggregatesByLot): array
+    {
+        $available = $initialQty;
+        $reserved = 0.0;
+        $sold = 0.0;
+
+        foreach ($aggregatesByLot->get($lotId, collect()) as $agg) {
+            $qty = (float) $agg->total_qty;
+            $from = $agg->from_bucket;
+            $to = $agg->to_bucket;
+
+            match ($from) {
+                'available' => $available -= $qty,
+                'reserved' => $reserved -= $qty,
+                'sold' => $sold -= $qty,
+                default => null,
+            };
+
+            match ($to) {
+                'available' => $available += $qty,
+                'reserved' => $reserved += $qty,
+                'sold' => $sold += $qty,
+                default => null,
+            };
+        }
+
+        return [
+            round(max(0.0, $available), 3),
+            round(max(0.0, $reserved), 3),
+            round(max(0.0, $sold), 3),
+        ];
+    }
+
+    // ─── Helper: replay de movimientos (lote individual) ──────────────────────
 
     private function reconstructFromMovements(int $lotId, float $initialQty): array
     {

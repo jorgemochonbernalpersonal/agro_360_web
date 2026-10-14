@@ -64,6 +64,12 @@ class Index extends Component
         $plotFilter = $this->filterPlot ? (int) $this->filterPlot : null;
         $wineFilter = $this->filterWine ? (int) $this->filterWine : null;
 
+        // El año de la campaña se usa en 4 sub-consultas: resolverlo una vez y
+        // acotado al propio usuario, que el filtro llega del query string.
+        $campaignYear = Campaign::where('viticulturist_id', $userId)
+            ->whereKey($campaignId)
+            ->value('year');
+
         // ── Paso 1: Vendimias de campo (registros del cuaderno) ──────────
         $fieldQuery = Harvest::query()
             ->join('agricultural_activities as aa', 'harvests.activity_id', '=', 'aa.id')
@@ -84,7 +90,7 @@ class Index extends Component
         // ── Paso 2: Recepciones de bodega ────────────────────────────────
         $receptionQuery = Harvest::where('winery_id', $userId)
             ->whereNotNull('batch_id')
-            ->whereHas('batch', fn ($q) => $q->where('vintage_year', Campaign::find($campaignId)?->year));
+            ->whereHas('batch', fn ($q) => $q->where('vintage_year', $campaignYear));
 
         if ($plotFilter) {
             $receptionQuery->whereHas('batch.plotPlanting.plot', fn ($q) => $q->where('id', $plotFilter));
@@ -97,7 +103,7 @@ class Index extends Component
         ')->first();
 
         $batches = GrapeReceptionBatch::where('winery_id', $userId)
-            ->where('vintage_year', Campaign::find($campaignId)?->year)
+            ->where('vintage_year', $campaignYear)
             ->with(['plotPlanting.plot:id,name', 'plotPlanting.grapeVariety:id,name'])
             ->withCount('receptions')
             ->withSum('receptions', 'total_weight')
@@ -107,7 +113,7 @@ class Index extends Component
 
         // ── Paso 3: Vinos elaborados ─────────────────────────────────────
         $wineQuery = Wine::where('user_id', $userId)
-            ->where('vintage', Campaign::find($campaignId)?->year);
+            ->where('vintage', $campaignYear);
 
         if ($wineFilter) {
             $wineQuery->where('id', $wineFilter);

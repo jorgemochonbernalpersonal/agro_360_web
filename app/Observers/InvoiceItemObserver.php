@@ -84,6 +84,7 @@ class InvoiceItemObserver
                 'invoice_status' => $invoice->status,
                 'error' => $e->getMessage(),
             ]);
+            throw $e;
         }
     }
 
@@ -101,6 +102,13 @@ class InvoiceItemObserver
 
         $invoice = $item->invoice()->first();
         if (! $invoice) {
+            return;
+        }
+
+        // Si la factura ya está cancelada, su stock se liberó por completo vía
+        // el flujo status→cancelled del InvoiceObserver (releaseAllStock). Volver
+        // a liberar aquí duplicaría el abono a available_qty por cada item.
+        if ($invoice->status === 'cancelled') {
             return;
         }
 

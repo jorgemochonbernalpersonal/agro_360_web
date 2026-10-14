@@ -251,6 +251,12 @@ class Plot extends Model
      */
     public function getOldestPlantingYearAttribute(): ?int
     {
+        if (array_key_exists('oldest_planting_year', $this->attributes)) {
+            $value = $this->attributes['oldest_planting_year'];
+
+            return $value !== null ? (int) $value : null;
+        }
+
         return $this->plantings()->where('status', 'active')->min('planting_year');
     }
 
@@ -259,6 +265,12 @@ class Plot extends Model
      */
     public function getTotalVinesAttribute(): ?int
     {
+        if (array_key_exists('total_vines', $this->attributes)) {
+            $sum = (float) $this->attributes['total_vines'];
+
+            return $sum > 0 ? (int) $sum : null;
+        }
+
         $sum = $this->plantings()->where('status', 'active')->sum('vine_count');
 
         return $sum > 0 ? (int) $sum : null;

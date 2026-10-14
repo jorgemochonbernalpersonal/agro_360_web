@@ -215,6 +215,18 @@ class ViticulturistController extends BaseApiController
 
         $validated = $request->validated();
 
+        // `source=OWN` también se asigna a cuentas REALES vinculadas vía /link, no solo
+        // a los "ghosts" creados por la propia bodega (store()). Renombrar/cambiar el
+        // email de una cuenta activa (can_login=true) es un vector de toma de cuenta:
+        // la bodega podría cambiar el email a uno propio y pedir un reset de contraseña.
+        // Solo se permite editar nombre/email cuando la cuenta sigue siendo un ghost.
+        if ($vit->can_login) {
+            $rel->update(['notes' => $validated['notes'] ?? null]);
+            $vit->refresh();
+
+            return $this->success($this->format($vit, $rel));
+        }
+
         $rawEmail = $vit->email ?? '';
         $newEmail = $validated['email'] ?? null;
         if ($newEmail === null) {

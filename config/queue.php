@@ -40,7 +40,10 @@ return [
             'connection' => env('DB_QUEUE_CONNECTION'),
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
-            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
+            // Debe superar el $timeout más largo de app/Jobs (600s en GenerateOfficialReportJob,
+            // ProcessSatelliteImageJob y UpdateAllPlotsNdviJob); si no, el worker puede marcar
+            // el job como perdido y volver a encolarlo mientras el proceso original sigue vivo.
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 660),
             'after_commit' => true, // Evita jobs duplicados si la transacción hace rollback
         ],
 

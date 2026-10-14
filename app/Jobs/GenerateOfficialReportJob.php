@@ -31,8 +31,7 @@ class GenerateOfficialReportJob implements ShouldQueue
         public int $reportId,
         public int $userId,
         public string $reportType,
-        public array $parameters,
-        public string $password
+        public array $parameters
     ) {}
 
     public function handle(OfficialReportService $service)

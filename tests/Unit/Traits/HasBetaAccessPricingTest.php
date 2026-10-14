@@ -65,11 +65,49 @@ class HasBetaAccessPricingTest extends TestCase
         $this->assertSame('vit_pro', $user->effectivePlan());
     }
 
-    public function test_plan_efectivo_productor_con_beta_es_vit_pro(): void
+    public function test_plan_efectivo_productor_con_beta_es_producer(): void
     {
         $user = $this->userWithBeta(['role' => 'producer']);
 
-        $this->assertSame('vit_pro', $user->effectivePlan());
+        $this->assertSame('producer', $user->effectivePlan());
+    }
+
+    public function test_plan_productor_hereda_vit_pro_y_suma_los_modulos_de_bodega_que_ya_opera(): void
+    {
+        $user = $this->userWithBeta(['role' => 'producer']);
+
+        // Heredadas de @vit_pro
+        $this->assertTrue($user->hasPlanAbility(Ability::FINANCIAL_STATS));
+        $this->assertTrue($user->hasPlanAbility(Ability::DIGITAL_NOTEBOOK));
+
+        // Propias del plan producer: rutas ya abiertas en routes/producer.php
+        $this->assertTrue($user->hasPlanAbility(Ability::YIELD_FORECASTS));
+        $this->assertTrue($user->hasPlanAbility(Ability::QUALITY_ANALYSIS));
+        $this->assertTrue($user->hasPlanAbility(Ability::PRODUCT_SALES));
+        $this->assertTrue($user->hasPlanAbility(Ability::LABEL_BATCHES));
+    }
+
+    public function test_modulos_de_uva_externa_exigen_plan_activo_y_el_toggle(): void
+    {
+        $externalGrape = [Ability::GRAPE_PURCHASE_INV, Ability::VITICULTURIST_PANEL];
+
+        // Con plan activo pero sin el módulo activado
+        $sinToggle = $this->userWithBeta(['role' => 'producer', 'compra_uva_externa' => false]);
+        foreach ($externalGrape as $code) {
+            $this->assertFalse($sinToggle->hasPlanAbility($code), $code);
+        }
+
+        // Con el módulo activado y plan activo
+        $conToggle = $this->userWithBeta(['role' => 'producer', 'compra_uva_externa' => true]);
+        foreach ($externalGrape as $code) {
+            $this->assertTrue($conToggle->hasPlanAbility($code), $code);
+        }
+
+        // El toggle por sí solo no basta: la web lo anida bajo require.ability:financial_stats
+        $sinPlan = $this->userWithoutAccess(['role' => 'producer', 'compra_uva_externa' => true]);
+        foreach ($externalGrape as $code) {
+            $this->assertFalse($sinPlan->hasPlanAbility($code), $code);
+        }
     }
 
     public function test_plan_efectivo_bodega_con_beta_es_winery(): void

@@ -211,11 +211,16 @@ class ExecutiveDashboard extends Component
             ->orderBy('name')
             ->get();
 
-        $this->sigpacs = $this->plots->flatMap(function (Plot $plot) {
-            return $plot->multiplePlotSigpacs()
-                ->whereNotNull('plot_geometry_id')
-                ->with('sigpacCode')
-                ->get()
+        // Una sola consulta para todas las parcelas en vez de 1 por parcela
+        // (era $plot->multiplePlotSigpacs()->...->get() dentro del flatMap).
+        $sigpacsByPlot = MultipartPlotSigpac::whereIn('plot_id', $this->plots->pluck('id'))
+            ->whereNotNull('plot_geometry_id')
+            ->with('sigpacCode')
+            ->get()
+            ->groupBy('plot_id');
+
+        $this->sigpacs = $this->plots->flatMap(function (Plot $plot) use ($sigpacsByPlot) {
+            return $sigpacsByPlot->get($plot->id, collect())
                 ->map(fn ($mps) => [
                     'id' => $mps->id,
                     'plot_id' => $plot->id,

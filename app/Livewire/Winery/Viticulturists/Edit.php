@@ -21,6 +21,12 @@ class Edit extends AbstractEdit
 
     public string $notes = '';
 
+    // Cuentas reales (can_login=true) vinculadas vía /link también quedan con
+    // source=OWN: si se permitiera editar su nombre/email/dni, la bodega podría
+    // secuestrar una cuenta activa cambiándole el email y pidiendo un reset de
+    // contraseña. Solo son editables los "ghosts" que la propia bodega creó.
+    public bool $isGhost = true;
+
     public function mount(User $viticulturist): void
     {
         $wineryId = Auth::id();
@@ -33,6 +39,7 @@ class Edit extends AbstractEdit
         $user = $viticulturist;
 
         $this->viticulturistId = $user->id;
+        $this->isGhost = ! $user->can_login;
         $this->name = $user->name;
         $this->dni = $user->dni ?? '';
         $rawEmail = $user->email ?? '';
@@ -43,6 +50,12 @@ class Edit extends AbstractEdit
 
     protected function rules(): array
     {
+        if (! $this->isGhost) {
+            return [
+                'phone' => ['nullable', 'string', 'max:20'],
+            ];
+        }
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'dni' => ['nullable', 'string', 'max:20', "unique:users,dni,{$this->viticulturistId}"],
@@ -71,20 +84,24 @@ class Edit extends AbstractEdit
 
         $user = User::findOrFail($this->viticulturistId);
 
-        $emailValue = $this->email ?: null;
+        // Re-comprobar server-side (no fiarse solo del valor cargado en mount()):
+        // si la cuenta es real (can_login=true), no tocar nombre/dni/email.
+        if (! $user->can_login) {
+            $emailValue = $this->email ?: null;
 
-        // If clearing email, keep the existing placeholder (NOT NULL constraint)
-        if ($emailValue === null && str_starts_with($user->email ?? '', 'viticultores.')) {
-            $emailValue = $user->email;
-        } elseif ($emailValue === null) {
-            $emailValue = 'viticultores.'.\Illuminate\Support\Str::uuid().'@noemail.agro365.es';
+            // If clearing email, keep the existing placeholder (NOT NULL constraint)
+            if ($emailValue === null && str_starts_with($user->email ?? '', 'viticultores.')) {
+                $emailValue = $user->email;
+            } elseif ($emailValue === null) {
+                $emailValue = 'viticultores.'.\Illuminate\Support\Str::uuid().'@noemail.agro365.es';
+            }
+
+            $user->update([
+                'name' => $this->name,
+                'dni' => $this->dni ?: null,
+                'email' => $emailValue,
+            ]);
         }
-
-        $user->update([
-            'name' => $this->name,
-            'dni' => $this->dni ?: null,
-            'email' => $emailValue,
-        ]);
 
         if ($this->phone) {
             $user->profile()->updateOrCreate(

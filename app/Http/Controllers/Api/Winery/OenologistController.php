@@ -35,6 +35,26 @@ class OenologistController extends BaseApiController
         ]));
     }
 
+    public function show(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+
+        $o = Oenologist::forUser($user->id)->findOrFail($id);
+
+        return $this->success([
+            'id' => $o->id,
+            'name' => $o->name,
+            'surname' => $o->surname,
+            'full_name' => $o->full_name,
+            'license_number' => $o->license_number,
+            'email' => $o->email,
+            'phone' => $o->phone,
+            'active' => $o->active,
+            'notes' => $o->notes,
+            'created_at' => $o->created_at->toIso8601String(),
+        ]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();

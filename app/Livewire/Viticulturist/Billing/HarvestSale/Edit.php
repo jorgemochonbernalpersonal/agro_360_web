@@ -98,7 +98,11 @@ class Edit extends Component
 
     public function getIsLockedProperty(): bool
     {
-        return $this->invoice->status === 'cancelled'
+        // Fiscal-sensitive: solo los borradores son libremente editables (ver
+        // auditoría fix #8). El flujo web nunca mueve esta factura a 'sent', pero
+        // la API móvil sí puede hacerlo — status !== 'draft' cierra ese hueco
+        // además de las condiciones de pago/entrega ya existentes.
+        return $this->invoice->status !== 'draft'
             || $this->invoice->payment_status === 'paid'
             || $this->invoice->delivery_status === 'delivered';
     }
@@ -271,7 +275,7 @@ class Edit extends Component
         // Current invoice's harvest IDs — always available for re-selection
         $currentHarvestIds = $this->invoice->items->pluck('harvest_id')->filter()->toArray();
 
-        $availableHarvests = Harvest::whereHas(
+        $harvests = Harvest::whereHas(
             'activity', fn ($q) => $q->where('viticulturist_id', $viticulturistId)
         )
             ->where(function ($q) {
@@ -280,12 +284,26 @@ class Edit extends Component
             ->where(function ($q) {
                 $q->whereNull('disqualified')->orWhere('disqualified', false);
             })
-            ->with(['activity.campaign:id,name', 'activity.plotPlanting.plotVariety.grapeVariety:id,name'])
+            ->with(['activity.campaign:id,name', 'activity.plotPlanting.grapeVariety:id,name'])
+            ->get();
+
+        $harvestIds = $harvests->pluck('id');
+
+        // Latest stock row per harvest in a single query instead of one query per
+        // harvest in a loop (was HarvestStock::where(...)->orderByDesc('id')->first() × N).
+        $latestStockByHarvest = HarvestStock::whereIn('harvest_id', $harvestIds)
+            ->whereIn('id', function ($q) use ($harvestIds) {
+                $q->selectRaw('MAX(id)')
+                    ->from('harvest_stocks')
+                    ->whereIn('harvest_id', $harvestIds)
+                    ->groupBy('harvest_id');
+            })
             ->get()
-            ->map(function ($harvest) use ($currentHarvestIds) {
-                $latest = HarvestStock::where('harvest_id', $harvest->id)
-                    ->orderByDesc('id')
-                    ->first();
+            ->keyBy('harvest_id');
+
+        $availableHarvests = $harvests
+            ->map(function ($harvest) use ($currentHarvestIds, $latestStockByHarvest) {
+                $latest = $latestStockByHarvest->get($harvest->id);
 
                 $available = $latest
                     ? (float) $latest->available_qty

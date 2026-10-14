@@ -28,6 +28,9 @@ class Edit extends Component
     // Cambio de Contraseña
     public $current_password = '';
 
+    // Confirmación exigida solo cuando se cambia el email (ver updatePersonalInfo)
+    public $current_password_for_email = '';
+
     public $password = '';
 
     public $password_confirmation = '';
@@ -93,16 +96,39 @@ class Edit extends Component
 
     public function updatePersonalInfo()
     {
-        $this->validate([
+        $user = Auth::user();
+        $emailChanging = mb_strtolower(trim($this->email ?? '')) !== mb_strtolower($user->email);
+
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,'.Auth::id()],
             'profile_image' => ['nullable', 'image', 'max:2048'],  // Max 2MB
+        ];
+
+        // Cambiar el email es sensible: con una sesión robada bastaría con cambiarlo y
+        // luego pedir un "olvidé mi contraseña" para tomar la cuenta. Exigir la
+        // contraseña actual y volver a verificar el nuevo email antes de darlo por bueno.
+        if ($emailChanging) {
+            $rules['current_password_for_email'] = ['required', 'current_password'];
+        }
+
+        $this->validate($rules, [
+            'current_password_for_email.required' => __('Confirma tu contraseña actual para cambiar el email.'),
+            'current_password_for_email.current_password' => __('La contraseña actual no es correcta.'),
         ]);
 
-        $user = Auth::user();
         $user->name = $this->name;
-        $user->email = $this->email;
-        $user->save();
+
+        if ($emailChanging) {
+            $user->email = $this->email;
+            $user->email_verified_at = null;
+            $user->save();
+            $user->sendEmailVerificationNotification();
+            $this->current_password_for_email = '';
+            $this->toastSuccess(__('Email actualizado. Te hemos enviado un correo para verificarlo.'));
+        } else {
+            $user->save();
+        }
 
         $imageUpdated = false;
 
@@ -153,7 +179,10 @@ class Edit extends Component
             }
         }
 
-        $this->toastSuccess(__('Información personal actualizada correctamente.'));
+        // El toast de email cambiado ya se mostró arriba (mensaje más específico)
+        if (! $emailChanging) {
+            $this->toastSuccess(__('Información personal actualizada correctamente.'));
+        }
 
         // Solo disparar evento de recarga si no se actualizó la imagen
         if (! $imageUpdated) {

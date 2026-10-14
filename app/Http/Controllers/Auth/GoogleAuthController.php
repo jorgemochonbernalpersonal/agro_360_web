@@ -45,8 +45,12 @@ class GoogleAuthController extends Controller
             $user = User::where('email', strtolower($googleUser->getEmail()))->first();
 
             if ($user) {
-                // Si es un ghost (can_login=false), activarlo — Google ya verificó el email
-                if (! $user->can_login) {
+                // Si es un ghost sin activar (can_login=false Y nunca ha iniciado sesión),
+                // activarlo — Google ya verificó el email. Si en cambio `last_login_at` no
+                // es null, esta cuenta SÍ llegó a usarse y un admin la desactivó a propósito
+                // (ban/impago/fraude): no reactivarla solo porque el email coincide, o
+                // "Continuar con Google" se convierte en un bypass de la desactivación.
+                if (! $user->can_login && $user->last_login_at === null) {
                     $user->update([
                         'google_id' => $googleUser->getId(),
                         'can_login' => true,
@@ -55,7 +59,7 @@ class GoogleAuthController extends Controller
                         'invitation_expires_at' => null,
                         'invitation_sent_at' => null,
                     ]);
-                } else {
+                } elseif ($user->can_login) {
                     // Link Google to existing active account
                     $user->update(['google_id' => $googleUser->getId()]);
                 }

@@ -83,10 +83,17 @@ class PaymentService
      */
     public function completePayment(Payment $payment, array $paypalResponse): Payment
     {
+        // Preservar el plan_type que se guardó al crear el pedido: paypal_response se
+        // sobrescribe aquí con la respuesta de captura, y perderíamos el plan si no lo
+        // propagamos.
+        $planType = $this->resolvePlanType($payment);
+
         $payment->update([
             'status' => Payment::STATUS_COMPLETED,
             'paypal_payment_id' => $paypalResponse['purchase_units'][0]['payments']['captures'][0]['id'] ?? null,
-            'paypal_response' => $paypalResponse,
+            'paypal_response' => $planType !== null
+                ? array_merge($paypalResponse, ['plan_type' => $planType])
+                : $paypalResponse,
             'paid_at' => now(),
         ]);
 
@@ -164,6 +171,14 @@ class PaymentService
     /**
      * Procesar todo el flujo de pago exitoso
      * Este método orquesta todas las operaciones necesarias
+     *
+     * IMPORTANTE: plan_type y amount se leen del propio registro Payment (localizado
+     * por el orderId que PayPal devuelve), NUNCA de $pendingData/session. La sesión
+     * 'pending_subscription' se sobrescribe si el usuario abre un segundo checkout en
+     * otra pestaña; confiar en ella permitiría aprobar una orden antigua (p. ej. mensual)
+     * y crear una suscripción con el plan/precio de la orden más reciente (p. ej. anual).
+     * $pendingData se mantiene solo como fallback si un pago muy antiguo no tuviera
+     * plan_type persistido.
      */
     public function processSuccessfulPayment(
         User $user,
@@ -180,6 +195,28 @@ class PaymentService
 
         // 3-6. Efectos en BD son atómicos: si cualquier write falla, todo revierte
         $subscription = DB::transaction(function () use ($user, $payment, $paypalResponse, $pendingData, $orderId) {
+            $planType = $this->resolvePlanType($payment) ?? ($pendingData['plan_type'] ?? null);
+            $amount = (float) $payment->amount;
+
+            if (! $planType) {
+                throw new \Exception(__('No se pudo determinar el plan de la suscripción para este pago.'));
+            }
+
+            // Comparar el importe realmente capturado por PayPal contra el importe
+            // esperado registrado en el Payment. Si no coinciden, no confiamos en
+            // ninguno de los dos ciegamente: abortamos para evitar crear una
+            // suscripción con un importe distinto al efectivamente cobrado.
+            $capturedAmount = $paypalResponse['purchase_units'][0]['payments']['captures'][0]['amount']['value'] ?? null;
+            if ($capturedAmount !== null && abs((float) $capturedAmount - $amount) > 0.01) {
+                Log::error('Importe capturado por PayPal no coincide con el Payment', [
+                    'payment_id' => $payment->id,
+                    'expected_amount' => $amount,
+                    'captured_amount' => $capturedAmount,
+                ]);
+
+                throw new \Exception(__('El importe cobrado no coincide con el importe esperado.'));
+            }
+
             // 3. Marcar el pago como completado
             $this->completePayment($payment, $paypalResponse);
 
@@ -189,8 +226,8 @@ class PaymentService
             // 5. Crear nueva suscripción
             $subscription = $this->createSubscription(
                 $user,
-                $pendingData['plan_type'],
-                $pendingData['amount'],
+                $planType,
+                $amount,
                 $orderId
             );
 
@@ -201,6 +238,22 @@ class PaymentService
         });
 
         return $subscription;
+    }
+
+    /**
+     * Leer el plan_type persistido en el propio Payment (guardado dentro de
+     * paypal_response al crear el pedido). Ver processSuccessfulPayment() para el motivo
+     * de no usar la sesión.
+     */
+    private function resolvePlanType(Payment $payment): ?string
+    {
+        $response = $payment->paypal_response;
+
+        if (is_array($response) && ! empty($response['plan_type'])) {
+            return (string) $response['plan_type'];
+        }
+
+        return null;
     }
 
     /**

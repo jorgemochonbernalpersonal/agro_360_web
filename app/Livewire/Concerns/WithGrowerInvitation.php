@@ -18,7 +18,14 @@ trait WithGrowerInvitation
 
     public function openInviteModal(int $growerId): void
     {
+        // A diferencia de sendInvitation()/revokeInvitation(), esta comprobación no
+        // acotaba por SupervisorViticulturist: cualquier usuario con este trait podía
+        // pedir el email de CUALQUIER ghost del sistema (enumeración), no solo el suyo.
         $grower = User::where('id', $growerId)->where('can_login', false)->firstOrFail();
+
+        SupervisorViticulturist::where('supervisor_id', Auth::id())
+            ->where('viticulturist_id', $grower->id)
+            ->firstOrFail();
 
         $this->inviteGrowerId = $growerId;
         $this->inviteEmail = $this->hasRealEmail($grower) ? $grower->email : '';

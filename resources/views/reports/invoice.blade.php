@@ -137,7 +137,12 @@
 
 @php
     $profile  = $user->profile;
-    $isGrape  = $invoice->invoice_type === 'grape_purchase';
+    // grape_purchase (liquidación de vendimia) Y harvest_sale (venta de vendimia
+    // del viticultor) llevan retención IRPF, no IVA — ambas deben imprimirse con
+    // el desglose Base/Retención/A pagar, nunca como Subtotal/IVA/TOTAL (ver
+    // auditoría fix #13; $isGrape se mantiene como nombre por compatibilidad
+    // mínima con el resto de la plantilla).
+    $isGrape  = in_array($invoice->invoice_type, ['grape_purchase', 'harvest_sale'], true);
     $isPaid   = $invoice->payment_status === 'paid';
 
     $logoPath = public_path('images/logo.png');

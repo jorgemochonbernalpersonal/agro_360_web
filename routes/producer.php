@@ -122,6 +122,8 @@ Route::middleware(['role:producer'])
                 Route::get('/', \App\Livewire\Producer\Invoices\Index::class)->name('index');
                 Route::get('/create', \App\Livewire\Producer\Invoices\Create::class)->name('create');
                 Route::get('/{invoice}/edit', \App\Livewire\Producer\Invoices\Edit::class)->name('edit');
+                Route::get('/{invoice}/pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'invoice'])->name('pdf');
+                Route::get('/{invoice}/albaran-pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
             });
 
             Route::prefix('invoices/products')->name('invoices.products.')->group(function () {
@@ -140,6 +142,7 @@ Route::middleware(['role:producer'])
                     Route::get('/create', \App\Livewire\Winery\Billing\GrapePurchase\Create::class)->name('create');
                     Route::get('/{id}/edit', \App\Livewire\Winery\Billing\GrapePurchase\Edit::class)->name('edit');
                     Route::get('/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->name('pdf');
+                    Route::get('/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
                 });
 
             // ── Facturas viticultor (wildcard al final) ────────────────────────
@@ -361,6 +364,7 @@ Route::middleware(['role:producer'])
             // ── Normativa bodega ──────────────────────────────────────────────
             Route::get('/silicie', \App\Livewire\Winery\Silicie\Dashboard::class)->name('silicie.dashboard');
             Route::get('/silicie/infovi', \App\Livewire\Winery\Silicie\Infovi::class)->name('silicie.infovi');
+            Route::get('/silicie/infovi/pdf', [\App\Http\Controllers\Winery\InfoviController::class, 'exportPdf'])->name('silicie.infovi.pdf');
 
             Route::prefix('sanitary-registrations')->name('sanitary-registrations.')->group(function () {
                 Route::get('/', \App\Livewire\Winery\SanitaryRegistrations\Index::class)->name('index');

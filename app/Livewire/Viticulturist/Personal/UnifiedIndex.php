@@ -114,12 +114,19 @@ class UnifiedIndex extends Component
         }
 
         if ($this->statusFilter) {
+            // Acotado a $visibleIds (igual que el resto de esta consulta): antes
+            // se hacía pluck() de crew_members de TODOS los tenants sin filtrar.
             if ($this->statusFilter === 'in_crew') {
-                $query->whereIn('id', CrewMember::whereNotNull('crew_id')->pluck('viticulturist_id'));
+                $query->whereIn('id', CrewMember::whereNotNull('crew_id')
+                    ->whereIn('viticulturist_id', $visibleIds)
+                    ->pluck('viticulturist_id'));
             } elseif ($this->statusFilter === 'individual') {
-                $query->whereIn('id', CrewMember::whereNull('crew_id')->pluck('viticulturist_id'));
+                $query->whereIn('id', CrewMember::whereNull('crew_id')
+                    ->whereIn('viticulturist_id', $visibleIds)
+                    ->pluck('viticulturist_id'));
             } elseif ($this->statusFilter === 'unassigned') {
-                $query->whereNotIn('id', CrewMember::pluck('viticulturist_id'));
+                $query->whereNotIn('id', CrewMember::whereIn('viticulturist_id', $visibleIds)
+                    ->pluck('viticulturist_id'));
             }
         }
 
@@ -132,13 +139,14 @@ class UnifiedIndex extends Component
 
         $crews = Crew::forViticulturist($user->id)->orderBy('name')->get();
 
-        $allViticulturists = User::where('role', 'viticulturist')->whereIn('id', $visibleIds)->get();
-        $allMembers = CrewMember::whereIn('viticulturist_id', $allViticulturists->pluck('id'))
-            ->with('crew')->get()->keyBy('viticulturist_id');
-
-        $inCrewCount = $allMembers->filter(fn ($m) => $m->crew_id !== null)->count();
-        $individualCount = $allMembers->filter(fn ($m) => $m->crew_id === null)->count();
-        $unassignedCount = $allViticulturists->count() - $allMembers->count();
+        // $visibleIds ya está acotado a viticultores visibles para este usuario
+        // (getAllVisibleViticulturists, cacheado). Antes se cargaban TODOS esos
+        // viticultores + TODOS sus crew_members en memoria solo para contarlos;
+        // ahora son 2 COUNT() en SQL, sin traer filas.
+        $viticulturistsTotal = $visibleIds->count();
+        $inCrewCount = CrewMember::whereIn('viticulturist_id', $visibleIds)->whereNotNull('crew_id')->count();
+        $individualCount = CrewMember::whereIn('viticulturist_id', $visibleIds)->whereNull('crew_id')->count();
+        $unassignedCount = $viticulturistsTotal - $inCrewCount - $individualCount;
         $crewsCount = Crew::forViticulturist($user->id)->count();
 
         $wineryRelations = WineryViticulturist::whereIn('viticulturist_id', $viticulturists->pluck('id'))
@@ -150,7 +158,7 @@ class UnifiedIndex extends Component
             'membersByViticulturist' => $membersByViticulturist,
             'crews' => $crews,
             'wineries' => $wineries,
-            'viticulturistsCount' => $allViticulturists->count(),
+            'viticulturistsCount' => $viticulturistsTotal,
             'inCrewCount' => $inCrewCount,
             'individualCount' => $individualCount,
             'unassignedCount' => $unassignedCount,

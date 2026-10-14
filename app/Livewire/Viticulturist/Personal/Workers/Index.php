@@ -65,45 +65,39 @@ class Index extends Component
         // Obtener viticultores disponibles para agregar como trabajador individual
         // Usar scope visibleTo() para filtrar según relaciones (supervisor/winery)
         // Si no hay winery seleccionada, mostrar solo los viticultores creados por el usuario
-        $availableViticulturists = collect();
-        if ($this->selectedWineryId) {
-            // El scope visibleTo() ya incluye eager loading de viticulturist, winery y parentViticulturist
-            $availableViticulturists = WineryViticulturist::visibleTo($user, $this->selectedWineryId)
-                ->get()
-                ->map(function ($relation) use ($user) {
-                    $viticulturist = $relation->viticulturist;
-                    // Agregar flag si puede editar (solo los que creó)
-                    $viticulturist->can_edit = $user->canEditViticulturist($viticulturist->id);
+        // El scope visibleTo() ya incluye eager loading de viticulturist, winery y parentViticulturist
+        $relations = $this->selectedWineryId
+            ? WineryViticulturist::visibleTo($user, $this->selectedWineryId)->get()
+            : WineryViticulturist::visibleTo($user)->get();
 
-                    return $viticulturist;
-                })
-                ->filter(function ($viticulturist) {
-                    // Excluir los que ya son trabajadores individuales
-                    return ! CrewMember::where('viticulturist_id', $viticulturist->id)
-                        ->whereNull('crew_id')
-                        ->exists();
-                })
-                ->sortBy('name')
-                ->values();
-        } else {
-            // Si no hay winery seleccionada, mostrar solo los viticultores creados por el usuario
-            // El scope visibleTo() ya incluye eager loading
-            $availableViticulturists = WineryViticulturist::visibleTo($user)
-                ->get()
-                ->map(function ($relation) use ($user) {
-                    $viticulturist = $relation->viticulturist;
-                    $viticulturist->can_edit = $user->canEditViticulturist($viticulturist->id);
+        $candidateViticulturistIds = $relations->pluck('viticulturist_id');
 
-                    return $viticulturist;
-                })
-                ->filter(function ($viticulturist) {
-                    return ! CrewMember::where('viticulturist_id', $viticulturist->id)
-                        ->whereNull('crew_id')
-                        ->exists();
-                })
-                ->sortBy('name')
-                ->values();
-        }
+        // Dos consultas hechas UNA vez antes del bucle (antes: canEditViticulturist()
+        // + CrewMember::exists() por cada fila, dentro de map()/filter()).
+        $editableViticulturistIds = $user->hasViticulturistAccess()
+            ? WineryViticulturist::where('parent_viticulturist_id', $user->id)
+                ->where('source', WineryViticulturist::SOURCE_VITICULTURIST)
+                ->whereIn('viticulturist_id', $candidateViticulturistIds)
+                ->pluck('viticulturist_id')
+                ->all()
+            : [];
+
+        $individualWorkerIds = CrewMember::whereNull('crew_id')
+            ->whereIn('viticulturist_id', $candidateViticulturistIds)
+            ->pluck('viticulturist_id')
+            ->all();
+
+        $availableViticulturists = $relations
+            ->map(function ($relation) use ($editableViticulturistIds) {
+                $viticulturist = $relation->viticulturist;
+                // Agregar flag si puede editar (solo los que creó)
+                $viticulturist->can_edit = in_array($viticulturist->id, $editableViticulturistIds);
+
+                return $viticulturist;
+            })
+            ->filter(fn ($viticulturist) => ! in_array($viticulturist->id, $individualWorkerIds))
+            ->sortBy('name')
+            ->values();
 
         // Obtener cuadrillas del viticultor para asignación
         $crews = Crew::forViticulturist($user->id)

@@ -7,7 +7,9 @@ use App\Models\Municipality;
 use App\Services\Tools\DiseaseRiskForecast;
 use App\Services\Tools\ToolLeadRecorder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -94,13 +96,19 @@ class DiseaseAlerts extends Component
             return;
         }
 
-        $key = 'disease-alerts:'.request()->ip();
-        if (RateLimiter::tooManyAttempts($key, self::MAX_SUBSCRIPTIONS_PER_HOUR)) {
+        // Limitar por IP y también por email: limitar solo por IP es trivialmente evitable
+        // rotando de IP, lo que permitiría spamear suscripciones (y, sin doble opt-in,
+        // avisos) a la dirección de un tercero.
+        $ipKey = 'disease-alerts:'.request()->ip();
+        $emailKey = 'disease-alerts-email:'.$this->email;
+        if (RateLimiter::tooManyAttempts($ipKey, self::MAX_SUBSCRIPTIONS_PER_HOUR)
+            || RateLimiter::tooManyAttempts($emailKey, self::MAX_SUBSCRIPTIONS_PER_HOUR)) {
             $this->addError('email', 'Demasiados envíos seguidos. Inténtalo de nuevo más tarde.');
 
             return;
         }
-        RateLimiter::hit($key, 3600);
+        RateLimiter::hit($ipKey, 3600);
+        RateLimiter::hit($emailKey, 3600);
 
         $municipality = $this->municipality;
 
@@ -113,13 +121,36 @@ class DiseaseAlerts extends Component
             'lat' => $municipality->lat,
             'lng' => $municipality->lng,
             'unsubscribed_at' => null,
-        ])->save();
+        ]);
+
+        // Doble opt-in: mientras no esté confirmada, cada intento (re)genera el token y
+        // reenvía el email de confirmación (por si el primero se perdió). No se activa
+        // hasta que el destinatario confirme desde ese enlace — evita que cualquiera
+        // pueda suscribir la dirección de un tercero sin su consentimiento. Si ya estaba
+        // confirmada (p. ej. se da de alta otra vez tras haberse dado de baja), no hace
+        // falta volver a confirmar.
+        $needsConfirmation = ! $subscription->confirmed_at;
+        if ($needsConfirmation) {
+            $subscription->confirmation_token = Str::random(48);
+        }
+
+        $subscription->save();
 
         if ($isNew) {
             app(ToolLeadRecorder::class)->record($this->email, self::TOOL, [
                 'municipality' => $municipality->name,
                 'province' => $municipality->province?->name,
             ]);
+        }
+
+        if ($needsConfirmation) {
+            Mail::send('emails.disease-alert-confirm', [
+                'municipalityName' => $municipality->name,
+                'confirmUrl' => route('tools.disease-alerts.confirm', $subscription->confirmation_token),
+            ], function ($message) use ($subscription) {
+                $message->to($subscription->email)
+                    ->subject(__('Confirma tu suscripción a las alertas de Agro365'));
+            });
         }
 
         $this->subscribed = true;

@@ -83,8 +83,8 @@
         {{-- 3. Suscripción --}}
         <div class="rounded-2xl border border-[var(--color-agro-green)]/30 bg-[var(--color-agro-green)]/5 p-6">
             @if ($subscribed)
-                <p class="text-lg font-semibold text-[var(--color-agro-green-dark)]">¡Listo! Te avisaremos por email cuando el riesgo sea alto en {{ $this->municipality->name }}.</p>
-                <p class="text-sm text-gray-600 mt-1">Cada email incluye un enlace para darte de baja cuando quieras.</p>
+                <p class="text-lg font-semibold text-[var(--color-agro-green-dark)]">¡Casi listo! Revisa tu email y confirma la suscripción para empezar a recibir avisos de {{ $this->municipality->name }}.</p>
+                <p class="text-sm text-gray-600 mt-1">Por seguridad, hasta que confirmes el enlace del email no se envía ningún aviso. Cada email incluye también un enlace para darte de baja.</p>
             @else
                 <h2 class="text-lg font-bold text-gray-900 mb-1">3. Recibe el aviso por email</h2>
                 <p class="text-gray-600 mb-4">Gratis. Solo te escribimos cuando el riesgo de mildiu u oídio sea <strong>alto</strong> en tu municipio, durante la campaña.</p>

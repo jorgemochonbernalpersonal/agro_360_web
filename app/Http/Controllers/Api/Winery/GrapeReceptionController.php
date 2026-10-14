@@ -183,6 +183,12 @@ class GrapeReceptionController extends BaseApiController
 
         $harvest = Harvest::where('winery_id', $user->id)->findOrFail($id);
 
+        // Igual que en Winery\Harvest\Reception\Index::cancelReception(): no se
+        // puede eliminar una recepción ya incluida en una liquidación — el FK
+        // set-null de invoice_items.harvest_id y el cascade de harvest_stocks
+        // destruirían la trazabilidad factura↔uva.
+        abort_if($harvest->isInvoiced(), 422, __('No se puede eliminar una recepción incluida en una liquidación.'));
+
         DB::transaction(function () use ($harvest) {
             $batch = $harvest->batch;
             $harvest->delete();

@@ -5,17 +5,23 @@
         :back-url="roleRoute('viticulturists.show', $viticulturistId)"
     >
         <form wire:submit="save" class="space-y-8">
+            @unless ($isGhost)
+                <flux:callout variant="warning" icon="information-circle">
+                    {{ __('Esta cuenta ya está activada por el propio viticultor: solo puedes editar tus notas internas, no su nombre, DNI ni email.') }}
+                </flux:callout>
+            @endunless
+
             <x-agro.form-section title="{{ __('Datos del Viticultor') }}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field class="md:col-span-2">
                         <flux:label>{{ __('Nombre completo') }} <span class="text-red-500">*</span></flux:label>
-                        <flux:input wire:model="name" id="name" required />
+                        <flux:input wire:model="name" id="name" required :disabled="! $isGhost" />
                         <flux:error name="name" />
                     </flux:field>
 
                     <flux:field>
                         <flux:label>{{ __('DNI / NIE') }}</flux:label>
-                        <flux:input wire:model="dni" id="dni" placeholder="12345678A" />
+                        <flux:input wire:model="dni" id="dni" placeholder="12345678A" :disabled="! $isGhost" />
                         <flux:description>{{ __('Clave de fusión con la cuenta pública del viticultor.') }}</flux:description>
                         <flux:error name="dni" />
                     </flux:field>
@@ -28,7 +34,7 @@
 
                     <flux:field class="md:col-span-2">
                         <flux:label>{{ __('Email (opcional)') }}</flux:label>
-                        <flux:input wire:model="email" id="email" type="email" placeholder="viticultor@ejemplo.com" />
+                        <flux:input wire:model="email" id="email" type="email" placeholder="viticultor@ejemplo.com" :disabled="! $isGhost" />
                         <flux:error name="email" />
                     </flux:field>
                 </div>

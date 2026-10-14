@@ -96,6 +96,7 @@ use App\Policies\WineTransferPolicy;
 use App\Services\ContainerStockService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Event;
@@ -158,6 +159,11 @@ class AppServiceProvider extends ServiceProvider
 
         (new \App\Macros\CollectionMacros)->register();
         \App\Macros\StringMacros::register();
+
+        // N+1 detection: lanza excepción en local/testing al hacer lazy-loading
+        // de una relación no cargada. En producción queda desactivado para que
+        // un caso no detectado no tumbe la app.
+        Model::preventLazyLoading(! $this->app->isProduction());
 
         if ($this->app->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');

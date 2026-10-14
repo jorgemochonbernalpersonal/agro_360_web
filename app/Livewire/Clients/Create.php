@@ -10,6 +10,7 @@ use App\Models\Municipality;
 use App\Models\Province;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Create extends Component
@@ -184,7 +185,11 @@ class Create extends Component
             return $this->redirect(roleRoute('clients.index'), navigate: true);
 
         } catch (\Exception $e) {
-            $this->toastError(__('Error al crear el cliente: :error', ['error' => $e->getMessage()]));
+            Log::error('Error al crear cliente', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+            ]);
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : __('Ha ocurrido un error. Inténtalo de nuevo.'));
         }
     }
 

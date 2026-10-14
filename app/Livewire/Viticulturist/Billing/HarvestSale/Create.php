@@ -210,8 +210,8 @@ class Create extends Component
         $viticulturistId = Auth::id();
         $selectedIds = array_column($this->lines, 'harvest_id');
 
-        // Load harvests with available stock
-        $availableHarvests = Harvest::whereHas(
+        // Load harvests (no stock lookup here — resolved below in one bulk query)
+        $harvests = Harvest::whereHas(
             'activity', fn ($q) => $q->where('viticulturist_id', $viticulturistId)
         )
             ->where(function ($q) {
@@ -220,12 +220,26 @@ class Create extends Component
             ->where(function ($q) {
                 $q->whereNull('disqualified')->orWhere('disqualified', false);
             })
-            ->with(['activity.campaign:id,name', 'activity.plotPlanting.plotVariety.grapeVariety:id,name'])
+            ->with(['activity.campaign:id,name', 'activity.plotPlanting.grapeVariety:id,name'])
+            ->get();
+
+        $harvestIds = $harvests->pluck('id');
+
+        // Latest stock row per harvest in a single query instead of one query per
+        // harvest in a loop (was HarvestStock::where(...)->latest()->first() × N).
+        $latestStockByHarvest = HarvestStock::whereIn('harvest_id', $harvestIds)
+            ->whereIn('id', function ($q) use ($harvestIds) {
+                $q->selectRaw('MAX(id)')
+                    ->from('harvest_stocks')
+                    ->whereIn('harvest_id', $harvestIds)
+                    ->groupBy('harvest_id');
+            })
             ->get()
-            ->map(function ($harvest) {
-                $latest = HarvestStock::where('harvest_id', $harvest->id)
-                    ->latest()
-                    ->first();
+            ->keyBy('harvest_id');
+
+        $availableHarvests = $harvests
+            ->map(function ($harvest) use ($latestStockByHarvest) {
+                $latest = $latestStockByHarvest->get($harvest->id);
 
                 $harvest->available_qty = $latest
                     ? (float) $latest->available_qty

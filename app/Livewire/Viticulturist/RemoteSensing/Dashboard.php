@@ -163,7 +163,9 @@ class Dashboard extends Component
         }
 
         $this->deriveSelectedPlot();
-        $this->loadPlotData(forceRefresh: true);
+        // Sin forceRefresh: cambiar de parcela debe aprovechar la caché (4
+        // llamadas HTTP externas secuenciales si no). Solo refreshData() fuerza.
+        $this->loadPlotData();
     }
 
     public function setTab(string $tab): void
@@ -193,7 +195,15 @@ class Dashboard extends Component
             return;
         }
 
-        $this->comparePlot = Plot::find($this->comparePlotId);
+        // comparePlotId es una propiedad pública: sin este scope, cualquier
+        // usuario autenticado podría ver NDVI/clima/nombre de una parcela
+        // ajena manipulando el valor directamente (IDOR).
+        $user = Auth::user();
+        if (! $user) {
+            return;
+        }
+
+        $this->comparePlot = Plot::forUser($user)->find($this->comparePlotId);
         if (! $this->comparePlot) {
             return;
         }

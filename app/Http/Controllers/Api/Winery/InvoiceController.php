@@ -88,7 +88,25 @@ class InvoiceController extends BaseApiController
     {
         $invoice = Invoice::where('user_id', $request->user()->id)->findOrFail($id);
 
-        $invoice->update($request->validated());
+        // Fiscal-sensitive: una vez emitida (status != draft) o ya aceptada por
+        // la AEAT vía Verifactu, la factura queda congelada. Solo los borradores
+        // se pueden editar libremente (ver auditoría fix #5).
+        abort_if(
+            $invoice->status !== 'draft' || $invoice->sif_status === 'aceptado',
+            422,
+            __('Solo se pueden editar facturas en estado borrador.')
+        );
+
+        $validated = $request->validated();
+
+        // Defensa en profundidad: invoice_number/subtotal/tax_amount/total_amount
+        // ya no son reglas válidas en UpdateWineSaleInvoiceRequest, pero por si
+        // llegaran igualmente se ignoran aquí y los importes se recalculan
+        // server-side justo debajo, nunca confiando en el total enviado por el cliente.
+        unset($validated['invoice_number'], $validated['subtotal'], $validated['tax_amount'], $validated['total_amount']);
+
+        $invoice->update($validated);
+        $this->recalculateTotals($invoice);
         $invoice->load('client');
 
         return $this->success(new InvoiceResource($invoice));
@@ -99,8 +117,47 @@ class InvoiceController extends BaseApiController
     public function destroy(WineryApiRequest $request, int $id): JsonResponse
     {
         $invoice = Invoice::where('user_id', $request->user()->id)->findOrFail($id);
+
+        abort_unless(
+            $invoice->status === 'draft',
+            422,
+            __('Solo se pueden eliminar facturas en estado borrador.')
+        );
+
         $invoice->delete();
 
         return $this->deleted(__('Factura eliminada correctamente.'));
+    }
+
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    /**
+     * Recompute subtotal/tax_amount/total_amount server-side, never trusting
+     * client-submitted totals. If the invoice has line items (created e.g. via
+     * the web ProductSale flow), sum from them. Otherwise (flat invoices
+     * created straight from this API, with no items) fall back to the same
+     * subtotal + tax_rate formula used by store().
+     */
+    private function recalculateTotals(Invoice $invoice): void
+    {
+        $items = $invoice->items()->get();
+
+        if ($items->isNotEmpty()) {
+            $invoice->update([
+                'subtotal' => round((float) $items->sum(fn ($i) => (float) $i->subtotal), 2),
+                'tax_amount' => round((float) $items->sum(fn ($i) => (float) $i->tax_amount), 2),
+                'total_amount' => round((float) $items->sum(fn ($i) => (float) $i->total), 2),
+            ]);
+
+            return;
+        }
+
+        $subtotal = (float) $invoice->subtotal;
+        $taxAmount = round($subtotal * ((float) $invoice->tax_rate / 100), 2);
+
+        $invoice->update([
+            'tax_amount' => $taxAmount,
+            'total_amount' => round($subtotal + $taxAmount, 2),
+        ]);
     }
 }

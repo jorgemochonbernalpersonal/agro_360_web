@@ -157,12 +157,17 @@ class PlotPolicy
             return $user->canEditViticulturist($viticulturistId);
         }
 
-        // Para winery: verificar si el viticultor fue creado por la winery
+        // Para winery: verificar si el viticultor sigue siendo un "ghost" gestionado
+        // por la propia bodega. `source=OWN` también se asigna a cuentas REALES que
+        // se vincularon vía /link (búsqueda por nombre/email/DNI, sin su consentimiento);
+        // darles a esas cuentas permiso de EDICIÓN sobre sus propias parcelas por el
+        // mero hecho de haberlas vinculado sería editar datos ajenos sin autorización.
         if ($user->hasWineryAccess()) {
             return WineryViticulturist::where('viticulturist_id', $viticulturistId)
                 ->where('winery_id', $user->id)
                 ->where('source', WineryViticulturist::SOURCE_OWN)
                 ->where('assigned_by', $user->id)
+                ->whereHas('viticulturist', fn ($q) => $q->where('can_login', false))
                 ->exists();
         }
 

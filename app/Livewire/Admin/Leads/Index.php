@@ -67,11 +67,11 @@ class Index extends Component
                 foreach ($leads as $lead) {
                     fputcsv($out, [
                         $lead->created_at?->format('Y-m-d H:i'),
-                        $lead->email,
-                        $lead->name,
-                        $lead->profileLabel(),
-                        $this->toolTitle($lead->tool),
-                        $lead->context['score'] ?? '',
+                        $this->csvSafe($lead->email),
+                        $this->csvSafe($lead->name),
+                        $this->csvSafe($lead->profileLabel()),
+                        $this->csvSafe($this->toolTitle($lead->tool)),
+                        $this->csvSafe((string) ($lead->context['score'] ?? '')),
                         $lead->contacted_at?->format('Y-m-d') ?? '',
                     ], ';');
                 }
@@ -101,6 +101,22 @@ class Index extends Component
     public function toolTitle(string $tool): string
     {
         return $this->toolOptions()[$tool] ?? $tool;
+    }
+
+    /**
+     * Neutraliza la inyección de fórmulas CSV (Excel/Sheets/DDE): si el valor empieza
+     * por =, +, - o @, Excel puede interpretarlo como fórmula. Los datos provienen de un
+     * formulario público (captación de leads), así que no son de confianza.
+     */
+    private function csvSafe(string $value): string
+    {
+        if ($value === '') {
+            return $value;
+        }
+
+        return in_array(mb_substr($value, 0, 1), ['=', '+', '-', '@'], true)
+            ? "'".$value
+            : $value;
     }
 
     /** @return array<string, string> */

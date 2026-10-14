@@ -74,10 +74,18 @@ class PhytoSearch extends Component
     #[Computed]
     public function agentOptions(): Collection
     {
-        return $this->baseQuery(withAgent: false, withText: false)
-            ->distinct()
-            ->orderBy('agent')
-            ->pluck('agent');
+        // Página pública: mismo patrón de caché que cropOptions() (TTL y
+        // fuente de la clave), pero además por cultivo (baseQuery() filtra por
+        // $this->crop) ya que la lista de plagas/agentes depende de él.
+        return collect(Cache::remember(
+            'phyto-search:agents:'.$this->crop.':'.$this->sourceDate(),
+            86400,
+            fn () => $this->baseQuery(withAgent: false, withText: false)
+                ->distinct()
+                ->orderBy('agent')
+                ->pluck('agent')
+                ->all()
+        ));
     }
 
     #[Computed]

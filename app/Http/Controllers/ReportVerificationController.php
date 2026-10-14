@@ -125,7 +125,7 @@ class ReportVerificationController extends Controller
                 $treatments = AgriculturalActivity::ofType('phytosanitary')
                     ->forUser($report->user_id)
                     ->whereBetween('activity_date', [$report->period_start, $report->period_end])
-                    ->with(['plotPlanting'])
+                    ->with(['plotPlanting', 'phytosanitaryTreatment.product', 'plot'])
                     ->get();
 
                 $stats = [

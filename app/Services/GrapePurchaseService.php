@@ -62,7 +62,11 @@ class GrapePurchaseService
                 'total_amount' => $totals['total'],
             ]));
 
-            $invoice->items()->delete();
+            // Borrado uno a uno (no ->delete() masivo del query builder) para que
+            // InvoiceItemObserver::deleting() dispare y libere la reserva de stock
+            // de cada línea antes de recrearlas; un delete() masivo no dispara
+            // eventos Eloquent y dejaría reserved_qty acumulándose en cada edición.
+            $invoice->items()->get()->each->delete();
 
             $this->createLines($invoice, $lines, $wineryId, (int) $invoice->viticulturist_id, $invoice->id);
         });

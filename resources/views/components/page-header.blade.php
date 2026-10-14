@@ -27,9 +27,9 @@
 
     $detectedChapter = 'campana'; // default
 
-    if (request()->routeIs('plots.*', 'sigpac.*', 'remote-sensing.*', 'winery.plots.*', 'winery.field-activities*', 'plots.territory')) {
+    if (roleRouteIs('plots.*', 'sigpac.*', 'remote-sensing.*', 'winery.plots.*', 'winery.field-activities*', 'plots.territory')) {
         $detectedChapter = 'parcelas';
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'winery.harvest*', 'winery.grape-reception*',
         'winery.vitic-estimates*', 'winery.harvest-summary*',
         'winery.harvest-forecasts*', 'winery.harvest-quality*',
@@ -37,51 +37,51 @@
         'winery.viticulturists*'
     )) {
         $detectedChapter = 'vendimia';
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'winery.containers*', 'winery.wines*', 'winery.oenologists*',
         'winery.wine-analysis*', 'winery.product-lots*',
         'winery.external-grape*', 'winery.traceability*',
         'winery.bottling*', 'winery.product-sheets*'
     )) {
         $detectedChapter = 'bodega';
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'winery.silicie*', 'winery.aica*', 'winery.sanitary-registrations*',
         'winery.bottling-authorizations*', 'winery.eco-certifications*'
     )) {
         $detectedChapter = 'normativa';
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'viticulturist.personal*', 'viticulturist.machinery*',
-        'viticulturist.containers*', 'viticulturist.almacen*',
+        'viticulturist.containers*', 'viticulturist.warehouse*',
         'viticulturist.phytosanitary*'
     )) {
         $detectedChapter = 'recursos';
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'viticulturist.exploitations*', 'viticulturist.commercial-authorizations*',
         'viticulturist.advisory*', 'viticulturist.field-applicators*',
         'viticulturist.field-equipment*', 'viticulturist.agri-insurance*'
     )) {
         $detectedChapter = 'normativa';
-    } elseif (request()->routeIs('viticulturist.pac.*')) {
+    } elseif (roleRouteIs('viticulturist.pac.*')) {
         $detectedChapter = 'pac';
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'viticulturist.digital-notebook*',
         'viticulturist.pest-management*',
         'viticulturist.vendimia*',
         'viticulturist.bodega-messages*'
     )) {
         $detectedChapter = 'cuaderno';
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'viticulturist.pac-compliance*',
         'viticulturist.residue*', 'viticulturist.energy*',
         'viticulturist.cue*', 'viticulturist.official*'
     )) {
         $detectedChapter = 'registros';
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'viticulturist.notifications*',
         'viticulturist.settings*', 'viticulturist.support*'
     )) {
         $detectedChapter = 'campana'; // rail items, default al capítulo activo o campana
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'viticulturist.invoices*', 'viticulturist.marketed*',
         'viticulturist.clients*', 'viticulturist.financial*',
         'viticulturist.plot-costs*', 'viticulturist.verifactu*',
@@ -90,7 +90,7 @@
         'winery.financial-summary*', 'winery.financial-stats*'
     )) {
         $detectedChapter = 'negocio';
-    } elseif (request()->routeIs(
+    } elseif (roleRouteIs(
         'viticulturist.settings*', 'viticulturist.support*',
         'winery.settings*', 'winery.documents*',
         'winery.winery-supplies*', 'winery.suppliers*'

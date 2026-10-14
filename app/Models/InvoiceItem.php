@@ -133,17 +133,29 @@ class InvoiceItem extends Model
     {
         static::saving(function ($item) {
             // Calcular subtotal (cantidad * precio - descuento)
+            // Redondeo a 2 decimales a nivel de línea (ver auditoría fix #11).
             $subtotal = $item->quantity * $item->unit_price;
             $discount = $subtotal * ($item->discount_percentage / 100);
-            $item->discount_amount = round($discount, 3);
-            $item->subtotal = round($subtotal - $discount, 3);
+            $item->discount_amount = round($discount, 2);
+            $item->subtotal = round($subtotal - $discount, 2);
 
             // Calcular base imponible y monto de impuesto
             $item->tax_base = $item->subtotal;
-            $item->tax_amount = round($item->tax_base * ($item->tax_rate / 100), 3);
+            $item->tax_amount = round($item->tax_base * ($item->tax_rate / 100), 2);
 
-            // Calcular total (subtotal + impuesto)
-            $item->total = round($item->subtotal + $item->tax_amount, 3);
+            // Calcular total: grape_purchase/harvest_sale llevan una retención
+            // IRPF en `tax_rate`/`tax_amount` que se DESCUENTA del total a pagar,
+            // no una cuota de IVA que se suma. El resto de tipos (wine_sale,
+            // producer_sale...) siguen sumando IVA como siempre (ver auditoría
+            // fix #12 — mismo criterio de signo que InvoiceService::calculateIrpfLine).
+            $invoiceType = $item->invoice_id
+                ? Invoice::where('id', $item->invoice_id)->value('invoice_type')
+                : null;
+            $isWithholding = in_array($invoiceType, ['grape_purchase', 'harvest_sale'], true);
+
+            $item->total = $isWithholding
+                ? round($item->subtotal - $item->tax_amount, 2)
+                : round($item->subtotal + $item->tax_amount, 2);
         });
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Livewire\Concerns;
 
 use App\Services\Validators\PacComplianceValidator;
+use Illuminate\Support\Facades\Log;
 
 trait WithOfficialReportSummary
 {
@@ -132,7 +133,12 @@ trait WithOfficialReportSummary
             $this->showSummaryModal = true;
 
         } catch (\Exception $e) {
-            $this->addError('generation', __('Error al calcular resumen: :message', ['message' => $e->getMessage()]));
+            Log::error('Error al calcular resumen de informe oficial', [
+                'user_id' => auth()->id(),
+                'report_type' => $this->reportType ?? null,
+                'error' => $e->getMessage(),
+            ]);
+            $this->addError('generation', $e instanceof \RuntimeException ? $e->getMessage() : __('Ha ocurrido un error. Inténtalo de nuevo.'));
         }
     }
 

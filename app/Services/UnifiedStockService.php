@@ -26,10 +26,13 @@ class UnifiedStockService
             if (! $harvest) {
                 throw new \RuntimeException("La cosecha #{$item->harvest_id} no te pertenece.");
             }
-            if ($invoice->status === 'draft') {
-                $this->containerStock->reserveStock($harvest, $item);
-            } else {
+            // El criterio de si el item se reserva o se vende directamente es
+            // delivery_status (si la mercancía ya salió físicamente), no status
+            // del documento — igual que InvoiceItemObserver::created().
+            if ($invoice->delivery_status === 'delivered') {
                 $this->containerStock->directSale($harvest, $item, $invoice->invoice_number ?? '');
+            } else {
+                $this->containerStock->reserveStock($harvest, $item);
             }
         } elseif ($item->wine_lot_id) {
             $lot = ProductLot::where('user_id', $userId)->lockForUpdate()->find($item->wine_lot_id);
@@ -49,12 +52,17 @@ class UnifiedStockService
     {
         ProductStockService::moveForInvoice($invoice, 'cancel');
 
+        // El físico (reservado vs. vendido) lo determina delivery_status, no el
+        // status del documento — igual que InvoiceObserver::restoreDeliveryStock().
+        // Un invoice 'sent' con delivery_status='pending' sigue solo reservado.
+        $fromStatus = $invoice->delivery_status === 'delivered' ? 'sent' : 'draft';
+
         foreach ($invoice->items as $item) {
             if ($item->harvest_id && $item->harvest) {
-                if ($invoice->status === 'draft') {
+                if ($fromStatus === 'draft') {
                     $this->containerStock->unreserveStock($item->harvest, $item);
                 } else {
-                    $this->containerStock->releaseFromInvoice($item->harvest, $item, $invoice->status);
+                    $this->containerStock->releaseFromInvoice($item->harvest, $item, $fromStatus);
                 }
             }
         }
@@ -90,9 +98,14 @@ class UnifiedStockService
     {
         ProductStockService::moveForInvoice($invoice, 'cancel');
 
+        // Igual que en InvoiceObserver::restoreDeliveryStock(): el criterio de si
+        // las uvas estaban físicamente fuera (sold) o solo reservadas es
+        // delivery_status, no el status del documento.
+        $fromStatus = $invoice->delivery_status === 'delivered' ? 'sent' : 'draft';
+
         foreach ($invoice->items as $item) {
             if ($item->harvest_id && $item->harvest) {
-                $this->containerStock->releaseFromInvoice($item->harvest, $item, $invoice->status);
+                $this->containerStock->releaseFromInvoice($item->harvest, $item, $fromStatus);
             }
         }
     }

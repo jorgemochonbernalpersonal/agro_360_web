@@ -165,7 +165,7 @@ trait HasBetaAccess
      * Sin acceso activo (beta/suscripción) → 'free'.
      * Con acceso activo → plan correspondiente al rol.
      *
-     * @return 'free'|'vit_pro'|'winery'|'do'
+     * @return 'free'|'vit_pro'|'producer'|'winery'|'do'
      */
     public function effectivePlan(): string
     {
@@ -179,6 +179,13 @@ trait HasBetaAccess
 
         if ($this->hasWineryAccess() && ! $this->hasViticulturistAccess()) {
             return 'winery';
+        }
+
+        // El productor es viñedo + bodega: su plan añade sobre vit_pro los
+        // módulos de bodega que routes/producer.php ya le abre, para que la API
+        // y la web apliquen el mismo criterio.
+        if ($this->isProducer()) {
+            return 'producer';
         }
 
         return 'vit_pro';
@@ -217,16 +224,22 @@ trait HasBetaAccess
      * si la DO le ha concedido un override individual (lógica existente en hasAbility).
      * Este método unifica ambas fuentes para que el middleware pueda usarlo.
      *
-     * Caso especial: la compra de uva a terceros no es una ability de plan para
-     * el producer (su plan es 'vit_pro', espejo del viticultor), sino un módulo
-     * opcional que activa por su cuenta vía compra_uva_externa. La web ya lo
-     * gatea así (EnsureProducerBuysExternalGrape); se replica aquí para que la
-     * API tenga el mismo criterio en vez de bloquearlo siempre.
+     * Caso especial: los módulos de red con viticultores externos (compra de uva
+     * y panel de viticultores) no son abilities del plan 'producer', sino un
+     * módulo opcional que activa por su cuenta vía compra_uva_externa. La web lo
+     * gatea con EnsureProducerBuysExternalGrape, siempre anidado dentro de
+     * require.ability:financial_stats — es decir, exige plan activo Y módulo
+     * activado. Se replica aquí para que la API use el mismo criterio.
      */
     public function hasPlanAbility(string $code): bool
     {
-        if ($code === \App\Models\Ability::GRAPE_PURCHASE_INV && $this->isProducer()) {
-            return (bool) $this->compra_uva_externa;
+        $externalGrapeAbilities = [
+            \App\Models\Ability::GRAPE_PURCHASE_INV,
+            \App\Models\Ability::VITICULTURIST_PANEL,
+        ];
+
+        if ($this->isProducer() && in_array($code, $externalGrapeAbilities, true)) {
+            return (bool) $this->compra_uva_externa && $this->hasActiveAccess();
         }
 
         return in_array($code, $this->planAbilities(), true);

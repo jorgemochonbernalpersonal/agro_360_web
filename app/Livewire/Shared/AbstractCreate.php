@@ -5,6 +5,7 @@ namespace App\Livewire\Shared;
 use App\Livewire\Concerns\WithOwnershipRules;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -16,7 +17,11 @@ abstract class AbstractCreate extends Component
     public function save(): mixed
     {
         $this->validate();
-        $this->performCreate();
+        // Envuelve el alta del modelo y su movimiento de stock asociado en una
+        // única transacción: si el servicio de stock lanza (p. ej. "volumen
+        // insuficiente") tras crear el modelo, el rollback también deshace el
+        // insert y no queda una fila huérfana sin su movimiento correspondiente.
+        DB::transaction(fn () => $this->performCreate());
         $this->toastSuccess($this->successMessage());
 
         return redirect()->route($this->resolveIndexRoute());

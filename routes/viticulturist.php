@@ -298,7 +298,11 @@ Route::middleware(['role:viticulturist,producer'])
                 })->name('workers');
                 Route::get('/viticulturist/create', \App\Livewire\Viticulturist\Viticulturists\Create::class)->name('viticulturist.create');
                 Route::get('/viticulturist/{viticulturist}/edit', \App\Livewire\Viticulturist\Viticulturists\Edit::class)->name('viticulturist.edit');
-                Route::get('/viticulturist/download-credentials', [\App\Http\Controllers\Viticulturist\ViticulturistCredentialsController::class, 'download'])->name('viticulturist.download-credentials');
+                // Ruta a ViticulturistCredentialsController eliminada: el controlador servía
+                // ficheros storage/app/temp/credentials_*.pdf localizados vía glob() sin
+                // validar propiedad, a partir de un ?id sin sanear (IDOR + path issues).
+                // Confirmado por grep que nada genera ya esos ficheros ni enlaza a esta ruta
+                // → código muerto, se elimina junto al controlador.
                 Route::get('/{crew}', PersonalShow::class)->name('show');
                 Route::get('/{crew}/edit', PersonalEdit::class)->name('edit');
             });
